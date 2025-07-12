@@ -1,6 +1,6 @@
 # Commerinity
 
-**Commerinity** is a modular, scalable platform that combines **Multi-Level Marketing (MLM)**, **eCommerce**, **Marketing Automation**, and **Content Management** into a single unified system.
+**Commerinity** is a modular, scalable platform that combines **Multi-Level Marketing (MLM)**, **eCommerce**, **Marketing Automation**, and **Content Management** into a unified system.
 
 > 💡 _"Where Commerce Meets Community"_
 
@@ -10,73 +10,91 @@
 
 ```
 commerinity/
-├── api/              # Backend APIs, authentication, MLM logic, database models
-├── client/           # Frontend application (React, Vue, etc.)
-├── marketing/        # Email/SMS campaigns, tracking, automation tools
-├── docs/             # Architecture diagrams, workflows, and documentation
+├── api/              # Laravel REST API + FilamentPHP Admin
+├── client/           # Frontend (Nuxt or Next.js)
+├── marketing/        # Campaign logic (email, SMS, automation)
+├── docs/             # Architecture diagrams, API docs, DB schemas
 ├── .env.example      # Sample environment config
 ├── README.md         # Project documentation
-├── LICENSE           # Project license
-└── package.json / composer.json / etc.
+├── LICENSE           # License file
+└── composer.json / package.json / etc.
 ```
 
 ---
 
-## 🔧 Technologies Used (Suggested)
+## 🔧 Tech Stack
 
-| Area        | Tech Stack (Example)              |
-|-------------|-----------------------------------|
-| Frontend    | React / Next.js / Vue.js          |
-| Backend     | Node.js / Express OR Laravel      |
-| Database    | PostgreSQL / MongoDB              |
-| Auth        | JWT / OAuth2                      |
-| Marketing   | Nodemailer / Twilio / SendGrid    |
-| CMS         | Custom admin or Headless CMS      |
-| Hosting     | Vercel / AWS / Docker             |
+| Layer        | Technology                                 |
+|--------------|---------------------------------------------|
+| Backend      | Laravel (API) + FilamentPHP (Admin Panel)   |
+| Frontend     | Nuxt 3 (Vue) or Next.js (React)             |
+| Database     | MySQL / PostgreSQL                          |
+| Auth         | Laravel Sanctum / Passport                  |
+| CMS          | FilamentPHP                                 |
+| Marketing    | Email, SMS, Advertising, Automation         |
+| Hosting      | Cloud Hosting, VPS, or Managed Deployments  |
+
 
 ---
 
 ## 🚀 Features
 
-- 🧩 **Modular Architecture** – Easily extendable by feature or module
-- 🛒 **eCommerce Ready** – Product, order, cart, and payment management
-- 🌱 **MLM Engine** – Referral tracking, commission logic, network trees
-- 🧑‍💼 **CMS** – Manage dynamic content, pages, blogs
-- 📣 **Marketing Tools** – Email/SMS campaigns, analytics, segmentation
-- 📊 **Dashboard** – Insights for users, admins, and partners
-- 🛡️ **Authentication & RBAC** – Secure access with role-based control
+- 🧩 Modular Laravel API with Laravel Sanctum / Passport
+- 🛍️ Product, Order, Cart, and Payment APIs
+- 🌱 MLM Logic: Referral Trees, Commission Systems
+- 🧑‍💼 Admin Panel built with **FilamentPHP**
+- 📣 Marketing Automation (Email/SMS Campaigns)
+- 🧑 Frontend in Nuxt or Next.js (SEO + SSR support)
+- 🛡️ Role-based Access Control
+- 📊 Analytics Dashboard and Reporting
 
 ---
 
 ## 📦 Getting Started
 
+### 🔧 Backend (Laravel + Filament)
+
 ```bash
-# Clone the repo
-git clone https://github.com/yourusername/commerinity.git
+# Navigate to backend
+cd api
 
-# Go into the project directory
-cd commerinity
+# Install dependencies
+composer install
 
-# Install dependencies (example for Node.js backend and React frontend)
-cd api && npm install
-cd ../client && npm install
-
-# Set up environment variables
+# Copy and edit environment config
 cp .env.example .env
 
-# Run development servers
-cd api && npm run dev      # Backend
-cd ../client && npm run dev  # Frontend
+# Generate app key
+php artisan key:generate
+
+# Run migrations
+php artisan migrate
+
+# Serve the app
+php artisan serve
+```
+
+### 🌐 Frontend (Nuxt or Next.js)
+
+```bash
+# Navigate to frontend
+cd ../client
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
 ```
 
 ---
 
 ## 🧪 Development Workflow
 
-1. **api/** – All backend logic, authentication, MLM algorithms, APIs
-2. **client/** – Frontend interfaces for admin, vendor, and users
-3. **marketing/** – Campaign automation, tracking, integrations
-4. **docs/** – All internal documentation (API references, DB schema, etc.)
+- `api/` – Laravel API with MLM logic, FilamentPHP for admin UI
+- `client/` – Nuxt or Next.js frontend for users/vendors
+- `marketing/` – Campaign management (SMS/Email automations)
+- `docs/` – Architecture diagrams, workflows, API docs
 
 ---
 
@@ -90,23 +108,32 @@ This project is licensed under the [MIT License](LICENSE).
 
 We welcome contributions! To get started:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin feature/my-feature`)
-5. Open a Pull Request
+```bash
+# 1. Fork the repository
+# 2. Create a feature branch
+git checkout -b feature/your-feature
+
+# 3. Commit your changes
+git commit -am "Add your feature"
+
+# 4. Push the branch
+git push origin feature/your-feature
+
+# 5. Create a Pull Request
+```
 
 ---
 
 ## 📫 Contact
 
-For collaboration, support, or suggestions:
+For feedback, collaboration, or inquiries:
 
-- 📧 your.email@example.com  
-- 🌐 your-portfolio-or-company.com
+- 📧 contactus@mintreu.com  
+- 🌐 mintreu.com
 
 ---
 
-## 🌟 Support the Project
+## ⭐ Support
 
-If you find this project useful, please ⭐ star the repo and share it with others in your community.
+If you find this project useful, please consider starring the repo and sharing it!
+
