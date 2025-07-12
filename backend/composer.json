@@ -7,8 +7,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "dutchcodingcompany/filament-socialite": "^2.4",
+        "filament/filament": "3.3",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "mintreu/laravel-catalogue-manager": "dev-dev",
+        "owenvoke/blade-fontawesome": "^2.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -34,7 +38,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -70,6 +75,15 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-catalogue-manager",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
