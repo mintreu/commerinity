@@ -11,7 +11,10 @@
         "filament/filament": "3.3",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "mintreu/laravel-catalogue-manager": "dev-dev",
+        "mintreu/laravel-shopline": "dev-dev",
+        "mintreu/laravel-naukri-manager": "dev-dev",
+        "mintreu/laravel-helpdesk": "dev-dev",
+        "mintreu/laravel-penpress": "dev-dev",
         "owenvoke/blade-fontawesome": "^2.9"
     },
     "require-dev": {
@@ -78,7 +81,28 @@
     "repositories": [
         {
             "type": "path",
-            "url": "packages/mintreu/laravel-catalogue-manager",
+            "url": "packages/mintreu/laravel-shopline",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-naukri-manager",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-helpdesk",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-penpress",
             "options": {
                 "symlink": true
             }
