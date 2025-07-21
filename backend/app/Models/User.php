@@ -3,16 +3,22 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements FilamentUser
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+
+class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    /** @use HasFactory<UserFactory> */
+    use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -47,7 +53,12 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+    protected $appends = ['avatar'];
 
+    public function getAvatarAttribute(): string
+    {
+        return $this->getFirstMediaUrl('avatarImage') ?: 'https://i.pravatar.cc/300';
+    }
     /**
      * @param Panel $panel
      * @return bool
@@ -55,5 +66,13 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatarImage')
+            //->useFallbackUrl(asset('images/placeholder/user_placeholder.png'));
+            ->useFallbackUrl('https://i.pravatar.cc/300');
+
     }
 }
