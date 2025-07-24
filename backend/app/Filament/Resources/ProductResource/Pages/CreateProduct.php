@@ -3,13 +3,16 @@
 namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Casts\ProductTypeCast;
+use App\Models\FilterGroup;
 use App\Models\Product;
+use App\Services\ProductService\ProductCreationService;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use App\Filament\Resources\ProductResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -21,19 +24,27 @@ class CreateProduct extends CreateRecord
     protected static string $resource = ProductResource::class;
     protected static bool $canCreateAnother = false;
     public bool $continue = false;
+    protected array $filterGroupCache = [];
 
-//    protected function getCreateFormAction(): Action
-//    {
-//        return $this->continue ?  Action::make('continue')
-//            ->label(__('Continue'))
-//            ->action(fn() => null) :
-//            Action::make('create')
-//                ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
-//                ->submit('create')
-//                ->color('success')
-//                ->keyBindings(['mod+s'])
-//            ;
-//    }
+
+    public function create(bool $another = false): void
+    {
+        $data = $this->form->getState();
+        try {
+            $this->record = ProductCreationService::make($data)->create();
+            if ($this->record)
+            {
+                Notification::make()->success()->title('Product Created Successfully')->send();
+                $this->redirect($this->getRedirectUrl());
+            }
+        }catch (\Throwable $t){
+            Notification::make()
+                ->title('Error creating product')
+                ->body($t->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
 
     public function form(Form $form): Form
     {
@@ -49,19 +60,34 @@ class CreateProduct extends CreateRecord
                         ->schema(fn() => $this->getProductFilterSectionSchema()),
 
                 ])->columnSpanFull()
-                    ->skippable()
+                    //->skippable()
                     ->submitAction(new HtmlString(Blade::render(<<<BLADE
                         <x-filament::button type="submit" size="sm" color="success">
                             Create Product
                         </x-filament::button>
-                    BLADE)))
-                ,
-
-
+                    BLADE))),
 
 
             ]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public function getProductInfoFormSectionSchema(): array
@@ -90,6 +116,7 @@ class CreateProduct extends CreateRecord
 
                             Forms\Components\Placeholder::make('preview_type')
                                 ->hiddenLabel()
+                                ->disabled()
                                 ->content(fn (Forms\Get $get) => filled($type = $get('type'))
                                     ? new HtmlString(
                                         '<div class="mt-2">
@@ -113,7 +140,6 @@ class CreateProduct extends CreateRecord
                                 ->required()
                                 ->lazy()
                                 ->maxLength(255)
-                                ->default('Unnamed Product')
                                 ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('url', Str::slug($state))),
 
                             Forms\Components\TextInput::make('url')
@@ -132,15 +158,8 @@ class CreateProduct extends CreateRecord
                                 ->unique('products', 'sku', ignoreRecord: true)
                                 ->maxLength(255),
 
-                            Forms\Components\Select::make('parent_id')
-                                ->label('Parent Product (optional)')
-                                ->relationship(
-                                    name: 'parent',
-                                    titleAttribute: 'name',
-                                    modifyQueryUsing: fn ($query, Forms\Get $get) => $query->where('type', $get('type'))
-                                )
-                                ->searchable()
-                                ->helperText('If this product is a variant, select its main (parent) product.'),
+
+
                         ]),
                 ]),
         ];
@@ -155,18 +174,140 @@ class CreateProduct extends CreateRecord
                 ->description('Attach this product to a filter group for storefront browsing and search.')
                 ->aside()
                 ->columnSpanFull()
-                ->schema([
+                //->live()
+                ->schema(fn(Forms\Get $get) => array_merge([
                     Forms\Components\Select::make('filter_group_id')
                         ->label('Filter Group')
                         ->placeholder('Select a filter group...')
                         ->helperText('Used for grouping and filtering products on the storefront.')
                         ->required()
-                        ->relationship('filter_group', 'name')
+                        ->live()
+                        ->relationship('filterGroup', 'name')
                         ->searchable()
+                        ->afterStateUpdated(fn ($state,Forms\Get $get) => $this->preloadFilterOptions($state, $get('type')))
                         ->preload(),
-                ]),
+                ],$this->getFilterSelectionSchema($get))),
         ];
     }
+
+
+    // HELPER METHODS
+
+    /**
+     * @param callable $get
+     * @return array
+     */
+
+    public function getFilterSelectionSchema(callable $get): array
+    {
+        $filterGroupId = $get('filter_group_id');
+        $productType = $get('type');
+
+        if (!$filterGroupId) {
+            return [
+                Forms\Components\Placeholder::make('NoFilters')
+                    ->content('Select a filter group first.'),
+            ];
+        }
+
+        // Use cached group if exists
+        $filterGroup = $this->filterGroupCache[$filterGroupId]
+            ??= FilterGroup::with(['filters.options'])->find($filterGroupId);
+
+
+        if (!$filterGroup || $filterGroup->filters->isEmpty()) {
+            return [
+                Forms\Components\Placeholder::make('NoFiltersAvailable')
+                    ->content('No filters available for this group.'),
+            ];
+        }
+
+        $isConfigurable = $productType === 'configurable';
+
+
+        return [
+            Forms\Components\Section::make()
+                //->aside()
+                ->columns()
+                ->heading('Product filters')
+                ->description('All filters from the selected group must be configured.')
+                ->schema(
+                    $filterGroup->filters
+                        ->map(fn($filter) => Forms\Components\Select::make("filter_options.{$filter->id}")
+                            ->label($filter->name)
+                            ->options($filter->options->pluck('value', 'id'))
+                            ->multiple($isConfigurable)
+                            ->preload()
+//                            ->createOptionModalHeading('Create '.$filter->name.' Option')
+//                            ->createOptionForm([
+//                                Forms\Components\TextInput::make('value')->label('Option')
+//                                    ->unique('filter_options','value'),
+//                                Forms\Components\TextInput::make('swatch_value')->label('Display'),
+//                            ])
+//                            ->createOptionUsing(function (array $data) use ($filter,$filterGroup) {
+//                                if ($data)
+//                                {
+//                                    $filter->options()->create($data);
+//
+//                                    // Invalidate the current filter group cache to force reload
+//                                    unset($this->filterGroupCache[$filterGroup->id]);
+//
+//                                    // Re-run preload and reload dynamic filter fields
+//                                    $this->preloadFilterOptions($filterGroup->id, $this->data['type']);
+//
+//                                    $this->dispatch('refreshForm'); // Custom Livewire event (optional, for UI)
+//
+//                                    Notification::make()
+//                                        ->title('Filter Option Created Successfully')
+//                                        ->success()
+//                                        ->send();
+//                                }
+//                            })
+
+
+                            ->live()
+                            ->required($filter->is_required))
+                        ->toArray()
+                ),
+        ];
+    }
+
+
+    /**
+     * @param int $filterGroupId
+     * @param string $productType
+     * @return void
+     */
+    protected function preloadFilterOptions(?int $filterGroupId = null, string $productType): void
+    {
+       if ($filterGroupId)
+       {
+           // Pull from cache or query
+           $filterGroup = $this->filterGroupCache[$filterGroupId]
+               ??= FilterGroup::with('filters.options')->find($filterGroupId);
+
+           if (! $filterGroup) return;
+
+           $isConfigurable = $productType === 'configurable';
+
+           $filterOptionState = [];
+
+           foreach ($filterGroup->filters as $filter) {
+               $fieldKey = "filter_options.{$filter->id}";
+
+               // Fill with empty array if multiple, or null for single
+               $filterOptionState[$fieldKey] = $isConfigurable ? [] : null;
+           }
+
+           // Inject into the form state
+           $this->form->fill(array_merge($this->data,$filterOptionState));
+       }
+    }
+
+
+
+
+
 
 
 

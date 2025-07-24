@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use App\Casts\ProductStatusCast;
+use App\Casts\ModelStatusCast;
 use App\Casts\ProductTypeCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -31,6 +34,8 @@ class Product extends Model implements HasMedia
         'short_description',
         'price',
         'reward_point',
+        'min_quantity',
+        'wholesale_unit_quantity',
         'is_returnable',
         'status',
         'status_feedback',
@@ -45,7 +50,10 @@ class Product extends Model implements HasMedia
         'view_count' => 'integer',
         'meta_data' => 'array',
         'type' => ProductTypeCast::class,
-        'status' => ProductStatusCast::class
+        'status' => ModelStatusCast::class,
+        'min_quantity' => 'integer',
+        'wholesale_unit_quantity' => 'integer'
+
     ];
 
     /**
@@ -78,9 +86,36 @@ class Product extends Model implements HasMedia
         );
     }
 
-    public function filter_group()
+    public function filterGroup(): BelongsTo
     {
         return $this->belongsTo(FilterGroup::class,'filter_group_id','id');
+    }
+
+    public function filterOptions(): BelongsToMany
+    {
+        return $this->belongsToMany(FilterOption::class, 'product_filter_options', 'product_id', 'filter_option_id');
+    }
+
+    /**
+     * Get filters relationship for this product
+     */
+    public function filters(): BelongsToMany
+    {
+        return $this->belongsToMany(Filter::class, 'product_filter_options')
+            ->withPivot('filter_option_id');
+    }
+
+    /**
+     * Get the variants of this product
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(Product::class, 'parent_id');
+    }
+
+    public function tiers(): HasMany
+    {
+        return $this->hasMany(ProductTier::class,'product_id','id');
     }
 
 

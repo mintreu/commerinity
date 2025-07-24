@@ -13,9 +13,13 @@ class Filter extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'is_required'
     ];
 
+    protected $casts = [
+        'is_required' => 'boolean'
+    ];
 
 
     public function groups(): BelongsToMany

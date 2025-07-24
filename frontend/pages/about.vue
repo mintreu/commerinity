@@ -55,4 +55,19 @@
 const config = useRuntimeConfig()
 const websiteName = config.public.websiteName
 const companyName = config.public.companyName
+
+
+
+usePageMeta({
+  title: product.value?.name,
+  description: product.value?.short_description,
+  image: product.value?.image,
+  price: product.value?.price,
+  currency: 'USD',
+  keywords: product.value?.tags || [],
+  type: 'product',
+})
+
+
+
 </script>

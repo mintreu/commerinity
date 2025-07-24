@@ -9,14 +9,20 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-//Token Based
+//Token Based [ future plan for tenant type]
+
 Route::post('/tokens/create',[\App\Http\Controllers\Auth\AuthController::class,'storeToken'])->middleware(['guest']);
 
 Route::post('/tokens/delete',[\App\Http\Controllers\Auth\AuthController::class,'destroyToken'])->middleware(['auth:sanctum']);
 
+// sanctum cookie based [currently used]
 
 Route::post('login',[\App\Http\Controllers\Auth\AuthController::class,'login']);
 Route::post('logout',[\App\Http\Controllers\Auth\AuthController::class,'logout']);
+Route::post('/auth/has_contact',[\App\Http\Controllers\Auth\AuthController::class,'checkContactExistence']);
+Route::post('/auth/send-otp',[\App\Http\Controllers\Auth\AuthController::class,'sendOtp']);
+Route::post('/auth/verify-otp',[\App\Http\Controllers\Auth\AuthController::class,'verifyOtp']);
+Route::post('register',[\App\Http\Controllers\Auth\AuthController::class,'register']);
 
 
 Route::prefix('categories')->group(function (){

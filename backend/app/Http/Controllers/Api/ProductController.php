@@ -4,24 +4,67 @@ namespace App\Http\Controllers\Api;
 
 use App\Filament\Resources\ProductResource;
 use App\Http\Controllers\Controller;
+use App\Models\FilterGroup;
 use App\Models\Product;
 use App\Scopes\CategoryScope;
 use App\Scopes\FilterScope;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
 
 
+    protected function scopes()
+    {
+        return [
+            'filters' => new FilterScope,
+            'categories' => new CategoryScope,
+        ];
+    }
+
+
     public function getFilterScopes(?string $scope_name = null): array
     {
         $allScopes = [
-            'filters' => new FilterScope,
-            'categories' => new CategoryScope,
+            'filters' => new FilterScope(),
+            'categories' => new CategoryScope(),
         ];
 
         return is_null($scope_name) ? $allScopes : $allScopes[$scope_name];
     }
+
+
+    public function getFilterOptions()
+    {
+        $filterGroups = FilterGroup::with([
+            'filters.options'
+        ])->get();
+
+        $groupBag = [];
+        foreach ($filterGroups as $group) {
+            if ($group->filters->count()) {
+                foreach ($group->filters as $filter) {
+                    // Map over options and ensure swatch_value is not null
+                    $options = $filter->options->map(function ($option) {
+                        if (is_null($option->swatch_value)) {
+                            $option->swatch_value = Str::ucfirst($option->value);
+                        }
+                        return $option;
+                    });
+
+                    $groupBag[$group->name][$filter->name] = $options->pluck('swatch_value', 'value')->toArray();
+
+                    // Remove or comment this dd for production use
+                    // dd($groupBag, $filter->options);
+                }
+            }
+        }
+
+        return $groupBag;
+    }
+
+
 
     public function getSortingOptions(): array
     {
@@ -68,13 +111,6 @@ class ProductController extends Controller
         });
     }
 
-    protected function scopes()
-    {
-        return [
-            'filters' => new FilterScope,
-            'categories' => new CategoryScope,
-        ];
-    }
 
     /**
      * Display the specified resource.

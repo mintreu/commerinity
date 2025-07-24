@@ -21,7 +21,7 @@ class CategoryFactory extends Factory
             'name' => $name =  fake()->words(2, true),
             'url' => Str::slug($name),
             'status' => fake()->boolean(90),
-            'is_visible_on_front' => fake()->boolean(96),
+            'is_visible_on_front' => fake()->boolean(99),
             'view_count' => fake()->numberBetween(0, 5000),
             'order' => fake()->optional()->numberBetween(1, 100),
             'meta_data' => ['keywords' => fake()->words(3)],

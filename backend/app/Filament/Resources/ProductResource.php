@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-
+    protected static ?string $recordRouteKeyName = 'url';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -102,9 +102,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('tenant_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('reward_point')
                     ->numeric()
                     ->sortable(),
@@ -141,7 +139,8 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\VariantsRelationManager::class,
+            RelationManagers\TiersRelationManager::class
         ];
     }
 
@@ -150,8 +149,8 @@ class ProductResource extends Resource
         return [
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
-            'view' => Pages\ViewProduct::route('/{record}'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'view' => Pages\ViewProduct::route('/{record:url}'),
+            'edit' => Pages\EditProduct::route('/{record:url}/edit'),
         ];
     }
 }

@@ -71,15 +71,16 @@
         }"
           class="w-full"
       >
-        <SwiperSlide v-for="job in filteredJobs" :key="job.id">
-          <div class="p-6 h-full border rounded bg-white dark:bg-gray-900 shadow">
+        <SwiperSlide v-for="job in filteredJobs" :key="job.url">
+        <div class="p-6 h-full border rounded bg-white dark:bg-gray-900 shadow">
             <Icon name="mdi:briefcase-outline" class="text-blue-600 text-xl" />
             <h3 class="font-semibold text-xl mt-2">{{ job.title }}</h3>
             <p class="text-sm text-gray-600 dark:text-gray-400">{{ job.location }}</p>
             <p class="text-sm mt-2">{{ job.summary }}</p>
-            <NuxtLink :to="`/career/${job.id}`" class="text-blue-600 hover:underline mt-4 inline-flex items-center gap-1">
-              <Icon name="mdi:arrow-right" /> Details
+            <NuxtLink :to="`/career/${job.url}`" class="text-blue-600 hover:underline mt-4 inline-flex items-center gap-1">
+              <Icon name="mdi:arrow-right" /> View & Apply
             </NuxtLink>
+
           </div>
         </SwiperSlide>
       </Swiper>
@@ -188,10 +189,32 @@ const whyJoin = [
 ]
 
 const jobs = [
-  { id: 'frontend-dev', title: 'Frontend Developer', location: 'Remote / Kolkata', team: 'Engineering', summary: 'Craft modern UIs with Nuxt & Tailwind.' },
-  { id: 'backend-engineer', title: 'Backend Engineer', location: 'Remote / Bengaluru', team: 'Engineering', summary: 'Design scalable Node.js services.' },
-  { id: 'product-designer', title: 'Product Designer', location: 'Remote / Mumbai', team: 'Design', summary: 'Shape elegant, usable interfaces.' }
+  {
+    id: 'frontend-dev',
+    url: 'frontend-developer',
+    title: 'Frontend Developer',
+    location: 'Remote / Kolkata',
+    team: 'Engineering',
+    summary: 'Craft modern UIs with Nuxt & Tailwind.'
+  },
+  {
+    id: 'backend-engineer',
+    url: 'backend-engineer',
+    title: 'Backend Engineer',
+    location: 'Remote / Bengaluru',
+    team: 'Engineering',
+    summary: 'Design scalable Node.js services.'
+  },
+  {
+    id: 'product-designer',
+    url: 'product-designer',
+    title: 'Product Designer',
+    location: 'Remote / Mumbai',
+    team: 'Design',
+    summary: 'Shape elegant, usable interfaces.'
+  }
 ]
+
 
 const teams = ['All', 'Engineering', 'Design']
 const filterTeam = ref('All')

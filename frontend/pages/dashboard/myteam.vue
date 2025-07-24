@@ -101,7 +101,9 @@
 
 <script setup>
 import { ref, onMounted, nextTick, watch } from 'vue'
-
+definePageMeta({
+  layout: 'dashboard'
+})
 // Sample user
 const loggedInUser = {
   name: 'John Doe',

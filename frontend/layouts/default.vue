@@ -7,7 +7,9 @@
     >
       <!-- Logo -->
       <div class="text-lg font-semibold">
-        <NuxtLink to="/">Commernity</NuxtLink>
+        <NuxtLink to="/" class="gap-2 flex flex-row items-center">
+          <img src="/logo.png" class="w-6 h-6">
+          Commernity</NuxtLink>
       </div>
 
       <!-- Nav & Actions -->

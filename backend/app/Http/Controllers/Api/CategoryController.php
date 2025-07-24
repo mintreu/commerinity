@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Casts\ModelStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Category\CategoryIndexResource;
 use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Product\ProductIndexResource;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductTier;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -30,7 +34,7 @@ class CategoryController extends Controller
 
 
 
-    public function getParentCategoriesWithProducts()
+    public function getParentCategoriesWithProducts(): JsonResponse
     {
         $parentCategories = Category::with([
             'media' => fn($q) => $q->where('collection_name', 'displayImage'),
@@ -54,15 +58,34 @@ class CategoryController extends Controller
 
         $allRelevantCategoryIds = collect($childToAllCategoryIds)->flatten()->unique()->toArray();
 
-        $lowestPrices = Product::selectRaw('MIN(price) as min_price, category_mappings.category_id')
-            ->join('category_mappings', fn($join) => $join
-                ->on('products.id', '=', 'category_mappings.categorized_id')
-                ->where('category_mappings.categorized_type', Product::class)
-            )
-            ->whereNull('products.parent_id')
+//        $lowestPrices = Product::selectRaw('MIN(price) as min_price, category_mappings.category_id')
+//            ->join('category_mappings', fn($join) => $join
+//                ->on('products.id', '=', 'category_mappings.categorized_id')
+//                ->where('category_mappings.categorized_type', Product::class)
+//            )
+//            ->whereNull('products.parent_id')
+//            ->whereIn('category_mappings.category_id', $allRelevantCategoryIds)
+//            ->groupBy('category_mappings.category_id')
+//            ->pluck('min_price', 'category_mappings.category_id');
+
+
+
+        $lowestPrices =  DB::table('products')
+            ->join('category_mappings', function ($join) {
+                $join->on('products.id', '=', 'category_mappings.categorized_id')
+                    ->where('category_mappings.categorized_type', Product::class);
+            })
+            ->join('product_tiers', 'products.id', '=', 'product_tiers.product_id')
+            ->where('products.status', ModelStatusCast::PUBLISHED->value)
+            ->where('products.parent_id', null)
             ->whereIn('category_mappings.category_id', $allRelevantCategoryIds)
+            ->where('product_tiers.in_stock', true)
+            ->selectRaw('MIN(product_tiers.price) as min_price, category_mappings.category_id')
             ->groupBy('category_mappings.category_id')
             ->pluck('min_price', 'category_mappings.category_id');
+
+
+
 
         $response = $parentCategories
             ->map(function ($parent) use ($childToAllCategoryIds, $lowestPrices) {
@@ -104,7 +127,7 @@ class CategoryController extends Controller
 
 
 
-    public function show(Category $category)
+    public function show(Category $category): CategoryResource
     {
         $category->load([
             'descendants',

@@ -10,7 +10,7 @@
 
         <!-- Branding -->
         <div class="flex flex-col items-center mb-6">
-          <img src="https://placehold.co/100x40?text=MyApp&font=montserrat" alt="Logo" class="h-12 w-auto mb-2" />
+          <img src="/logo.png" alt="Logo" class="h-12 w-auto mb-2" />
           <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Welcome to MyApp</h1>
           <p class="text-sm text-gray-500 dark:text-gray-400">Simple. Secure. Seamless Login</p>
         </div>

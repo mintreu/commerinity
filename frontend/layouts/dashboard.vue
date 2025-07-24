@@ -26,17 +26,26 @@
           <Icon name="mdi:view-dashboard" />
           <span v-if="!collapsed">Dashboard</span>
         </NuxtLink>
-        <NuxtLink to="/users" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+        <NuxtLink to="/dashboard/users" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
           <Icon name="mdi:account-multiple-outline" />
           <span v-if="!collapsed">Users</span>
         </NuxtLink>
-        <NuxtLink to="/orders" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+        <NuxtLink to="/dashboard/orders" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
           <Icon name="mdi:cart-outline" />
           <span v-if="!collapsed">Orders</span>
         </NuxtLink>
-        <NuxtLink to="/settings" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+        <NuxtLink to="/dashboard/settings" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
           <Icon name="mdi:cog-outline" />
           <span v-if="!collapsed">Settings</span>
+        </NuxtLink>
+
+        <NuxtLink to="/dashboard/helpdesk" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+          <Icon name="mdi:cog-outline" />
+          <span v-if="!collapsed">HelpDesk</span>
+        </NuxtLink>
+        <NuxtLink to="/dashboard/faq" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+          <Icon name="mdi:cog-outline" />
+          <span v-if="!collapsed">Faq</span>
         </NuxtLink>
       </nav>
     </aside>

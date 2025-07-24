@@ -2,6 +2,9 @@
 
 namespace App\Scopes;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+
 class FilterScope
 {
 

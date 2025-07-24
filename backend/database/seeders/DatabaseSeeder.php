@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
            AdminSeeder::class,
             FilterSeeder::class,
             CategorySeeder::class,
-//            ProductFactory::class,
+            ProductSeeder::class,
         ]);
 
         // User::factory(10)->create();

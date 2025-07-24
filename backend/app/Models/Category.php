@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
@@ -55,7 +56,7 @@ class Category extends Model implements HasMedia
     {
         return $this->hasMany('category_mapping','category_id','id');
     }
-    public function products()
+    public function products(): MorphToMany
     {
         return $this->morphedByMany(
             Product::class,  // Target model

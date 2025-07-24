@@ -24,9 +24,28 @@ export default defineNuxtConfig({
 
   },
 
+
+  // App Information
+  app: {
+    head: {
+      title: 'Commernity - All in One Place',
+      meta: [
+        { name: 'description', content: 'Commernity is a unified platform for shopping, blogging, and more.' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { charset: 'utf-8' },
+      ],
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/logo.png' }, // ✅ Replace with your favicon file
+      ]
+    }
+  },
+
+
   // Client Information
   runtimeConfig: {
     public: {
+      apiBase: 'http://localhost:8000/api',
+      registrationMode: 'mobile',  // or 'email'
       websiteName: 'Commernity',
       companyName: 'Commernity Inc.',
       supportEmail: 'support@commernity.com',

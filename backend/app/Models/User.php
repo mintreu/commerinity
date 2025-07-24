@@ -3,22 +3,27 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Casts\AuthTypeCast;
+use App\Casts\ModelStatusCast;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia;
+    use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships;
 
     /**
      * The attributes that are mass assignable.
@@ -28,8 +33,18 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
     protected $fillable = [
         'name',
         'email',
+        'mobile',
         'password',
+        'referral_code',
+        'parent_id',
+        'type',
+        'status',
+        'status_feedback',
+        'bio',
+        'gender',
+        'dob'
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -50,10 +65,26 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
     {
         return [
             'email_verified_at' => 'datetime',
+            'mobile_verified_at' => 'datetime',
             'password' => 'hashed',
+            'type' => AuthTypeCast::class,
+            'status' => ModelStatusCast::class,
         ];
     }
+
     protected $appends = ['avatar'];
+
+    public function originator(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function originatedUsers(): MorphMany
+    {
+        return $this->morphMany(User::class, 'originator');
+    }
+
+
 
     public function getAvatarAttribute(): string
     {

@@ -6,7 +6,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum ProductStatusCast: string implements HasColor, HasIcon, HasLabel
+enum ModelStatusCast: string implements HasColor, HasIcon, HasLabel
 {
     case DRAFT = 'Draft';
     case REVIEW = 'review';
