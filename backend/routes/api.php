@@ -38,3 +38,13 @@ Route::prefix('/products')->group(function (){
     Route::get('{product:url}', [\App\Http\Controllers\Api\ProductController::class, 'show']);
 
 });
+
+
+Route::prefix('cart')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
+    Route::post('add/{product:sku}', [\App\Http\Controllers\Api\CartController::class, 'addProduct']);
+    Route::delete('remove/{product:sku}', [\App\Http\Controllers\Api\CartController::class, 'removeProduct']);
+    Route::post('clear', [\App\Http\Controllers\Api\CartController::class, 'clearCart']);
+    Route::post('merge', [\App\Http\Controllers\Api\CartController::class, 'mergeGuestCart'])->middleware('auth:sanctum');
+});
+

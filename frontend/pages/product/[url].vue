@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- Place Cart Button -->
+    <CartButton />
+
+
     <div v-if="pending" class="p-10 text-center text-gray-500 dark:text-gray-400">
       Loading product…
     </div>
@@ -20,7 +24,7 @@
           <div v-if="images.length" class="overflow-hidden rounded-xl shadow-lg">
             <Swiper :slides-per-view="1" :space-between="10" navigation pagination>
               <SwiperSlide v-for="(img, i) in images" :key="i">
-                <img :src="img" class="w-full h-60 object-cover" alt="Product Image" />
+                <img :src="img" class="w-full h-96 md:h-[600px] object-cover" alt="Product Image" />
               </SwiperSlide>
             </Swiper>
           </div>
@@ -37,7 +41,7 @@
               <NuxtLink
                   v-for="variant in product.hasParent ? product.parent.variants : product.variants"
                   :key="variant.url"
-                  :to="'/products/' + variant.url"
+                  :to="'/product/' + variant.url"
                   class="relative border rounded-lg overflow-hidden w-24 h-24 flex items-center justify-center transition-all"
                   :class="{
         'ring-2 ring-blue-500': product.url === variant.url,
@@ -172,6 +176,15 @@
 
 
 
+          <!-- Add to Cart Button -->
+          <div class="mt-6">
+            <button
+                @click="addToCart"
+                class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"
+            >
+              Add to Cart
+            </button>
+          </div>
 
 
 
@@ -236,6 +249,35 @@ function isActiveOption(filterName, option) {
       opt => opt.filter.name === filterName && opt.value === option
   )
 }
+
+// Add to cart handler
+function addToCart() {
+  if (!product.value) return
+
+  fetch('/api/cart/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sku: product.value.sku,
+      quantity: 1
+    })
+  })
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to add to cart')
+        return res.json()
+      })
+      .then(() => {
+        console.log(`${product.value.name} added to cart`)
+        // Optionally replace with a toast/notification system
+        alert(`${product.value.name} added to cart`)
+      })
+      .catch((err) => {
+        console.error(err)
+        alert('Add to cart failed')
+      })
+}
+
+
 
 
 </script>
