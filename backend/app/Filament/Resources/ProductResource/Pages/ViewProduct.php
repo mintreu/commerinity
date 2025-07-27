@@ -2,14 +2,20 @@
 
 namespace App\Filament\Resources\ProductResource\Pages;
 
+use App\Casts\ModelStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Filament\Resources\ProductResource;
 use Filament\Actions;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +27,21 @@ class ViewProduct extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+
+            Actions\Action::make('status_changer')
+                ->form([
+                    Select::make('status')
+                    ->options(
+                        collect(ModelStatusCast::cases())
+                            ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])
+                    )
+                ])->action(function ($data){
+                    $this->record->fill(['status' => $data['status']])->save();
+
+                    Notification::make()->title('Status Update Successfully')->success()->send();
+                })
+
+
         ];
     }
 

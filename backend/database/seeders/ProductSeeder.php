@@ -2,161 +2,125 @@
 
 namespace Database\Seeders;
 
+use App\Casts\ModelStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Models\Category;
 use App\Models\FilterGroup;
 use App\Models\Product;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Services\ProductService\ProductCreationService;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $allProductCategory = $this->fetchAllProductCategories();
-
-        if ($allProductCategory->isEmpty()) {
-            $this->command->info('No categories of type PRODUCT found. Seeder aborted.');
-            return;
-        }
-
-
-
-        foreach ($allProductCategory as $productCategory) {
-            $this->createProducts($productCategory);
-        }
-
-        $this->command->info('Product seeding completed successfully!');
-    }
-
-    private function fetchAllProductCategories()
-    {
-        return Category::with('children')
-            //->where('type', CategoryTypeCast::PRODUCT->value)
-            ->where('parent_id', null)
+        $categories = Category::with('children', 'descendants')
+            ->whereNull('parent_id')
             ->get();
+
+        $filterGroups = FilterGroup::with('filters.options')->get();
+
+        foreach ($categories as $category) {
+            $this->createProductsForCategory($category, $filterGroups);
+        }
     }
 
-    private function createProducts($productCategory)
+    private function createProductsForCategory(Category $category, $filterGroups): void
     {
-        Product::factory(20)
-            ->hasVariants(4)
-            ->create([
-                'type' => ProductTypeCast::CONFIGURABLE
-            ])
-            ->each(function (Product $product) use ($productCategory) {
-                $this->processProduct($product, $productCategory);
-            });
+        $products = [];
+
+        for ($i = 0; $i < 15; $i++) {
+            $filterGroup = $filterGroups->random();
+            $type = fake()->randomElement(array_column(ProductTypeCast::cases(), 'value'));
+
+            $productData = Product::factory()->raw([
+                'type' => ProductTypeCast::CONFIGURABLE,
+                'status' => ModelStatusCast::PUBLISHED->value,
+                'filter_group_id' => $filterGroup->id,
+                'filter_options' => $this->mapFilterOptions($filterGroup, $type),
+            ]);
+
+            $product = ProductCreationService::make($productData)->create();
+            $products[] = $product;
+        }
+
+        foreach ($products as $product) {
+            $this->processProduct($product, $category);
+        }
     }
 
-    private function processProduct(Product $product, $productCategory)
+
+    private function mapFilterOptions($filterGroup, string $productType): array
+    {
+        $isConfigurable = $productType === 'configurable';
+
+        return $filterGroup->filters->mapWithKeys(function ($filter) use ($isConfigurable) {
+            $options = $filter->options;
+
+            if ($options->isEmpty()) {
+                return [(string) $filter->id => []];
+            }
+
+            if ($isConfigurable) {
+                $selected = $options->random(min(2, $options->count()))->pluck('id')->values()->toArray();
+            } else {
+                $selected = [$options->random()->id];
+            }
+
+            // Always cast to string to match form data format
+            $selected = array_map('strval', $selected);
+
+            return [(string) $filter->id => $selected];
+        })->toArray();
+    }
+
+
+
+    private function processProduct(Product $product, Category $category): void
     {
         $product->load('variants');
 
         $this->addStock($product);
-        $this->attachCoreCategory($product, $productCategory);
-        $this->attachChildrenCategories($product, $productCategory);
-        $this->attachFilterOptions($product, $productCategory);
+        $this->attachCoreCategory($product, $category);
+        $this->attachChildCategories($product, $category);
 
         $product->save();
     }
 
-    private function addStock(Product $product)
+    private function addStock(Product $product): void
     {
-        $stocks = [
+        $stockRanges = [
             [200, 300],
             [50, 150],
             [100, 200],
         ];
 
-        foreach ($stocks as $stockRange) {
-            $stock = $product->tiers()->create([
-                'init_quantity' => fake()->randomElement($stockRange),
+        foreach ($stockRanges as $range) {
+            $product->tiers()->create([
+                'init_quantity' => fake()->numberBetween($range[0], $range[1]),
                 'sold_quantity' => 0,
                 'min_quantity' => 1,
                 'max_quantity' => 10,
-                'price' => fake()->randomElement([50,100,150,200]),
+                'price' => fake()->randomElement([50, 100, 150, 200]),
             ]);
-
-//
-//            $stockAddress = Address::factory()->create([
-//                'type' => AddressTypeCast::PICKUP,
-//                'default' => true
-//            ]);
-//
-//            $stock->update([
-//                'address_id' => $stockAddress?->id,
-//            ]);
         }
     }
 
-    private function attachCoreCategory(Product $product, $productCategory)
+    private function attachCoreCategory(Product $product, Category $category): void
     {
-        $product->update([
-            'category_id' => $productCategory->id,
-            //'product_brand_id' => $allBrands->random(2)->first()->id
+        $product->categories()->attach($category->id, [
+            'base_category' => true,
         ]);
     }
 
-    private function attachChildrenCategories(Product $product, $productCategory)
+    private function attachChildCategories(Product $product, Category $category): void
     {
-        if ($productCategory->children->count()) {
-            $product->categories()->attach(
-                $productCategory->children->random(2)->pluck('id')->toArray()
-            );
-        }
-    }
+        $childCategories = $category->descendants->isNotEmpty()
+            ? $category->descendants
+            : $category->children;
 
-    private function attachFilterOptions(Product $product, $productCategory)
-    {
-        $selectedFilterGroup = FilterGroup::with([
-            'filters' => function ($query) {
-                $query->with(['options']);
-            }
-        ])->firstWhere('id', $product->filter_group_id);
-
-        if ($selectedFilterGroup) {
-            foreach ($product->variants as $variant) {
-//                $optionIds = $selectedFilterGroup->filters
-//                    ->map(fn($filter) => $filter->options->isNotEmpty() ? $filter->options->random()->id : null)
-//                    ->filter()
-//                    ->toArray();
-//
-//
-//
-//                if (!empty($optionIds)) {
-//                    $variant->filterOptions()->sync($optionIds,['filter_id' => $filterId]);
-//                }
-
-                $optionIdWithPivot = [];
-
-                foreach ($selectedFilterGroup->filters as $filter) {
-                    if ($filter->options->isNotEmpty()) {
-                        $option = $filter->options->random();
-                        $optionIdWithPivot[$option->id] = ['filter_id' => $filter->id];
-                    }
-                }
-
-                if (!empty($optionIdWithPivot)) {
-                    $variant->filterOptions()->sync($optionIdWithPivot);
-                }
-
-
-                $variant->update([
-                    'category_id' => $productCategory->id,
-                   // 'product_brand_id' => $allBrands->random(2)->first()->id
-                ]);
-                $this->attachChildrenCategories($variant, $productCategory);
-
-
-
-
-                $this->addStock($variant);
-
-            }
+        if ($childCategories->isNotEmpty()) {
+            $product->categories()->attach($childCategories->pluck('id')->toArray());
         }
     }
 }

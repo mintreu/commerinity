@@ -300,6 +300,7 @@ async function handleRegister() {
     otp: otp.value.join(''),
     ...(registrationMode === 'mobile' ? { mobile: form.value.mobile } : { email: form.value.email }),
   }
+  console.log(payload);
 
   try {
     await useSanctumFetch(`${config.public.apiBase}/register`, { method: 'POST', body: payload })

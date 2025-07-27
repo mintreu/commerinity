@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Filament\Resources\ProductResource;
+
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\ProductResource;
 use App\Models\FilterGroup;
 use App\Models\Product;
 use App\Scopes\CategoryScope;
@@ -118,20 +119,32 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product->load([
-            'filterGroup.filters.options',
-            'productDisplay',
-            'productGallery',
-            'filterOptions',
+            //'filterGroup.filters.options',
+            'media' => fn($query) => $query->where('collection_name','bannerImage'),
             'filterOptions.filter',
-            'variants',
-            'bulkPricing',
-            'category',
+
+            'tiers',
+            'categories',
         ]);
+
+        if (!is_null($product->parent_id))
+        {
+            $product->load([
+                'parent.variants.media',
+                'parent.variants.filterOptions.filter',
+            ]);
+        }else{
+            $product->load([
+                'variants.media',
+                'variants.filterOptions.filter',
+            ]);
+        }
+
 
         // Load related products using siblingsAndSelf
         if ($product->category) {
             $siblings = $product->siblings()
-                ->with(['productDisplay', 'productGallery'])
+                ->with(['media'])
                 ->limit(4)
                 ->get();
 

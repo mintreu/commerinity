@@ -22,7 +22,10 @@ return new class extends Migration
             $table->nullableMorphs('tenant');
             $table->text('description')->nullable();
             $table->text('short_description')->nullable();
-            //$table->integer('price')->default(0);
+            $table->integer('price')->default(0);
+            $table->integer('min_quantity')->default(1);
+            $table->integer('max_quantity')->nullable();
+
             $table->float('reward_point', 10, 2)->default(0.00);
             $table->boolean('is_returnable')->default(false);
             // Configurable Product

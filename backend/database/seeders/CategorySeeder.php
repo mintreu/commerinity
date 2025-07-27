@@ -23,6 +23,18 @@ class CategorySeeder extends Seeder
                 'url' => Str::slug($item->name),
             ]);
 
+            $displayImagePath = $this->getMediaFromStorage($item->url.'/display.jpeg');
+            if (file_exists($displayImagePath))
+            {
+                $parentCategory->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
+            }
+            $bannerImagePath = $this->getMediaFromStorage($item->url.'/banner.jpeg');
+            if (file_exists($bannerImagePath))
+            {
+                $parentCategory->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('displayImage');
+            }
+
+
             if ($parentCategory && !empty($item->children))
             {
                 foreach ($item->children as $child)
@@ -32,14 +44,40 @@ class CategorySeeder extends Seeder
                         'url' => Str::slug($child->name),
                     ]));
 
+                    $displayImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/display.jpeg');
+                    if (file_exists($displayImagePath))
+                    {
+                        $childrenCategory->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
+                    }
+
+                    $bannerImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/banner.jpeg');
+                    if (file_exists($bannerImagePath))
+                    {
+                        $childrenCategory->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
+                    }
+
+
+
+
                     if (!empty($child->children))
                     {
                         foreach ($child->children as $subChild)
                         {
                             $subChildrenCategory = $childrenCategory->children()->create(Category::factory()->raw([
-                                'name' => $child->name,
-                                'url' => Str::slug($child->name),
+                                'name' => $subChild->name,
+                                'url' => Str::slug($subChild->name),
                             ]));
+                            $displayImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/'.$subChild->url.'/display.jpeg');
+                            if (file_exists($displayImagePath))
+                            {
+                                $subChildrenCategory->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
+                            }
+                            $bannerImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/'.$subChild->url.'/banner.jpeg');
+                            if (file_exists($bannerImagePath))
+                            {
+                                $subChildrenCategory->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
+                            }
+
                         }
                     }
                 }
@@ -57,6 +95,10 @@ class CategorySeeder extends Seeder
     }
 
 
+    protected function getMediaFromStorage(string $path): string
+    {
+        return storage_path('app/private/media/categories/'.$path);
+    }
 
 
 

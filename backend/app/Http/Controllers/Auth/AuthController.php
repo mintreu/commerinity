@@ -86,7 +86,8 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'OTP sent successfully'
+            'message' => 'OTP sent successfully',
+            "note" => 'Otp will be expire after 5 minutes from now'
         ]);
     }
 
@@ -128,7 +129,7 @@ class AuthController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'nullable|email|unique:users,email',
-            'contact'  => 'nullable|digits:10|unique:users,mobile',
+            'mobile'  => 'nullable|digits:10|unique:users,mobile',
             'gender'   => 'required|in:male,female,other',
             'dob'      => 'required|date|before:today',
             'password' => 'required|string|min:6',
@@ -136,7 +137,7 @@ class AuthController extends Controller
         ]);
 
         $email = $request->type === 'email'  ? $request->email   : null;
-        $contact = $request->type === 'mobile' ? $request->contact : null;
+        $contact = $request->type === 'mobile' ? $request->mobile : null;
 
         $user = User::create([
             'name'     => $request->name,
@@ -157,41 +158,68 @@ class AuthController extends Controller
 
 
     /**
-     * Handle SPA login using session-based auth (Fortify).
+     * @throws ValidationException
      */
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
+        // Step 1: Validate the request
+        $validated = $request->validate([
+            'email'    => ['bail', 'nullable', 'email'],
+            'mobile'   => ['bail', 'nullable', 'string'],
+            'password' => ['required', 'string'],
+            'remember' => ['sometimes', 'boolean'],
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        // Step 2: Determine login field
+        $loginField = null;
+        if (empty($validated['mobile']) && empty($validated['email']))
+        {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'email_or_mobile' => ['Either email or mobile is required.'],
+            ]);
+        }
+        $loginField = !empty($validated['mobile']) ? 'mobile' : 'email';
+
+        // Step 3: Attempt login
+        $credentials = [
+            $loginField => $validated[$loginField],
+            'password'  => $validated['password'],
+        ];
+
+        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+            throw ValidationException::withMessages([
+                $loginField => ['The provided credentials are incorrect.'],
             ]);
         }
 
+        // Step 4: Regenerate session & return response
         $request->session()->regenerate();
 
         return response()->json([
             'message' => 'Login successful',
-            'data' => \auth()->user(),
+            'data'    => auth()->user(),
         ]);
     }
+
 
     /**
      * Log the user out and invalidate the session.
      */
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        if(Auth::guard('web')->check())
+        {
+            Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
+            return response()->json([
+                'message' => 'Logout successful',
+            ]);
+        }
         return response()->json([
-            'message' => 'Logout successful',
+            'message' => 'No user found! make sure you login your account and then try to logout',
         ]);
     }
 

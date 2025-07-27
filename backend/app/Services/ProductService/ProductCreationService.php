@@ -24,6 +24,7 @@ class ProductCreationService
             });
         }
         $this->data = $data;
+
     }
 
 
@@ -36,7 +37,8 @@ class ProductCreationService
 
     public function create():?Product
     {
-        return match (ProductTypeCast::from($this->data['type']))
+        $type = $this->data['type'] instanceof ProductTypeCast  ? $this->data['type'] : ProductTypeCast::from($this->data['type']);
+        return match ($type)
         {
             ProductTypeCast::SIMPLE => $this->makeProduct(ProductTypeCast::SIMPLE),
             ProductTypeCast::WHOLESALE => $this->makeProduct(ProductTypeCast::WHOLESALE),
@@ -47,14 +49,16 @@ class ProductCreationService
 
     private function makeProduct(ProductTypeCast $case):Product
     {
-        $product = Product::create([
+        $fillable = $this->data;
+        unset($fillable['filter_options']);
+        $product = Product::create(array_merge($fillable,[
             'name' => $this->data['name'],
             'sku' => $this->data['sku'],
             'url' => $this->data['url'],
-            'status' =>  ModelStatusCast::DRAFT,
+            'status' =>  $this->data['status'] ?? ModelStatusCast::DRAFT,
             'type' => $case->value,
             'filter_group_id' => $this->data['filter_group_id'],
-        ]);
+        ]));
         // Attach filter options for simple product
         if (! empty($this->data['filter_options'])) {
             if ($case == ProductTypeCast::CONFIGURABLE)
@@ -126,7 +130,8 @@ class ProductCreationService
                 if (is_object($optionId)) {
                     $optionId = $optionId->id;
                 } elseif (is_array($optionId)) {
-                    $optionId = $optionId['id'] ?? $optionId[0];
+                    //$optionId = $optionId['id'] ?? $optionId[0];
+                    $optionId = $product->type == ProductTypeCast::CONFIGURABLE ? $optionId[0] : $optionId;
                 }
 
                 $option = FilterOption::with('filter')->find($optionId);

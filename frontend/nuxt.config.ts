@@ -11,6 +11,11 @@ export default defineNuxtConfig({
     },
   },
 
+  // image: {
+  //   provider: 'none',
+  //   domains: ['localhost', '127.0.0.1'],
+  // },
+
   modules: ['@nuxt/icon', '@qirolab/nuxt-sanctum-authentication'],
   laravelSanctum: {
     // Replace with your Laravel API URL

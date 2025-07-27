@@ -70,6 +70,8 @@ class CategoryController extends Controller
 
 
 
+
+
         $lowestPrices =  DB::table('products')
             ->join('category_mappings', function ($join) {
                 $join->on('products.id', '=', 'category_mappings.categorized_id')
@@ -77,7 +79,7 @@ class CategoryController extends Controller
             })
             ->join('product_tiers', 'products.id', '=', 'product_tiers.product_id')
             ->where('products.status', ModelStatusCast::PUBLISHED->value)
-            ->where('products.parent_id', null)
+            //->where('products.parent_id', null)
             ->whereIn('category_mappings.category_id', $allRelevantCategoryIds)
             ->where('product_tiers.in_stock', true)
             ->selectRaw('MIN(product_tiers.price) as min_price, category_mappings.category_id')
@@ -127,7 +129,7 @@ class CategoryController extends Controller
 
 
 
-    public function show(Category $category): CategoryResource
+    public function show(Request $request, Category $category): CategoryResource
     {
         $category->load([
             'descendants',
@@ -135,39 +137,46 @@ class CategoryController extends Controller
             'children.media',
         ]);
 
-        // Get category IDs including descendants + self
+        // Get all related category IDs (self + descendants)
         $categoryIds = $category->descendants->pluck('id')->push($category->id);
 
-        // Get top 4 viewed products mapped to these categories
-        $topProducts = Product::whereNull('parent_id')
-            ->whereHas('categories', function ($query) use ($categoryIds) {
-                $query->whereIn('categories.id', $categoryIds);
-            })
-            ->with([
-                'media' => fn($query) => $query->where('collection_name','displayImage')
-            ])
+        // Base product query builder (closure to reuse with modifications)
+        $baseProductQuery = function () use ($categoryIds) {
+            return Product::whereNull('parent_id')
+                ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+                ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')]);
+        };
+
+        // Top viewed products (max 20)
+        $topProducts = (clone $baseProductQuery())
             ->orderBy('view_count', 'desc')
-            ->take(12)
+            ->take(20)
             ->get();
 
-        // Get latest 4 products mapped to these categories
-        $latestProducts = Product::whereNull('parent_id')
-            ->whereHas('categories', function ($query) use ($categoryIds) {
-                $query->whereIn('categories.id', $categoryIds);
-            })
-            ->with([
-                'media' => fn($query) => $query->where('collection_name','displayImage')
-            ])
+        // Latest products (max 20)
+        $latestProducts = (clone $baseProductQuery())
             ->orderBy('created_at', 'desc')
-            ->take(12)
+            ->take(20)
             ->get();
 
-        return (new CategoryResource($category))
-            ->additional([
-                'top_products' => ProductIndexResource::collection($topProducts),
-                'latest_products' => ProductIndexResource::collection($latestProducts),
-            ]);
+        // All products (paginated, 12 per page)
+        $allProducts = (clone $baseProductQuery())
+            ->orderBy('created_at', 'desc') // Optional: default sort
+            ->paginate(15);
+
+        return (new CategoryResource($category))->additional([
+            'top_products'    => ProductIndexResource::collection($topProducts),
+            'latest_products' => ProductIndexResource::collection($latestProducts),
+            'all_products'    => ProductIndexResource::collection($allProducts),
+            'pagination'      => [
+                'current_page' => $allProducts->currentPage(),
+                'last_page'    => $allProducts->lastPage(),
+                'total'        => $allProducts->total(),
+                'per_page'     => $allProducts->perPage(),
+            ],
+        ]);
     }
+
 
 
 

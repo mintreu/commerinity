@@ -25,4 +25,9 @@ class CategoryResource extends JsonResource
             'meta' => $this->meta_data
         ];
     }
+
+
+
+
+
 }

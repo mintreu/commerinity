@@ -27,7 +27,7 @@ class Product extends Model implements HasMedia
         'url',
         'type',
         'filter_group_id',
-        'category_id',
+//        'category_id',
         'tenant_id',
         'tenant_type',
         'description',
@@ -35,7 +35,7 @@ class Product extends Model implements HasMedia
         'price',
         'reward_point',
         'min_quantity',
-        'wholesale_unit_quantity',
+//        'wholesale_unit_quantity',
         'is_returnable',
         'status',
         'status_feedback',
@@ -108,10 +108,17 @@ class Product extends Model implements HasMedia
     /**
      * Get the variants of this product
      */
-    public function variants(): HasMany
+//    public function variants(): HasMany
+//    {
+//        return $this->hasMany(Product::class, 'parent_id');
+//    }
+
+
+    public function variants():HasMany
     {
-        return $this->hasMany(Product::class, 'parent_id');
+        return $this->hasMany(static::class, 'parent_id','id');
     }
+
 
     public function tiers(): HasMany
     {

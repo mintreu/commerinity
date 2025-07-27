@@ -30,13 +30,13 @@
       <!-- Banner Header -->
       <section class="text-center mb-6">
         <div
-          class="relative py-16 px-6 bg-center bg-cover bg-no-repeat rounded-xl overflow-hidden"
+          class="relative py-16 px-6 bg-center bg-cover bg-no-repeat rounded-xl overflow-hidden h-96"
           :style="`background-image: url(${category.banner})`"
         >
           <div class="absolute inset-0 bg-black/30"></div>
           <div class="relative z-10">
             <div class="inline-block mb-4">
-              <img :src="category.thumbnail" alt="Thumbnail" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-white shadow" />
+              <img  :src="category.thumbnail" alt="Thumbnail" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-white shadow" />
             </div>
             <h1 class="text-3xl font-bold capitalize mb-2 text-white">{{ category.name }}</h1>
             <p class="text-sm text-gray-200">{{ category.views }} views</p>
@@ -57,18 +57,18 @@
         <Swiper
           :slides-per-view="1"
           :space-between="20"
-          :breakpoints="{ 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } }"
+          :breakpoints="{ 640: { slidesPerView: 3 }, 768: { slidesPerView: 6 }, 1024: { slidesPerView: 8 } }"
           class="my-6"
         >
           <SwiperSlide v-for="child in category.children" :key="child.url">
             <NuxtLink :to="`/category/${child.url}`" class="block hover:no-underline">
-              <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow hover:shadow-lg transition">
+              <div class="bg-gray-100 dark:bg-gray-900 p-4 w-48 md:w-full md:h-60 rounded-lg shadow hover:shadow-lg transition hover:border-2 border-gray-400">
                 <img :src="child.thumbnail" class="w-full h-32 object-cover rounded mb-4" />
                 <h3 class="text-lg font-semibold">{{ child.name }}</h3>
                 <p class="text-xs text-gray-500">{{ child.views }} views</p>
-                <div v-if="child.meta?.keywords?.length" class="mt-2 text-sm text-primary-600 dark:text-primary-400">
-                  <span v-for="kw in child.meta.keywords" :key="kw" class="mr-2">#{{ kw }}</span>
-                </div>
+<!--                <div v-if="child.meta?.keywords?.length" class="mt-2 text-sm text-primary-600 dark:text-primary-400">-->
+<!--                  <span v-for="kw in child.meta.keywords" :key="kw" class="mr-2">#{{ kw }}</span>-->
+<!--                </div>-->
               </div>
             </NuxtLink>
           </SwiperSlide>
@@ -85,6 +85,7 @@
             class="my-6"
         >
           <SwiperSlide v-for="product in latestProducts" :key="product.url">
+            <NuxtLink :to="`/product/${product.url}`">
             <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">
               <img :src="product.thumbnail" class="h-40 w-full object-cover rounded mb-4" />
               <h3 class="font-semibold mb-1">{{ product.name }}</h3>
@@ -92,6 +93,7 @@
               <p class="text-xs text-gray-400 mb-2">{{ product.short_description }}</p>
               <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
             </div>
+            </NuxtLink>
           </SwiperSlide>
         </Swiper>
       </section>
@@ -296,12 +298,16 @@
 
             <!-- Product Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div v-for="i in 12" :key="i" class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-md transition">
-                <div class="w-full h-40 bg-gray-200 dark:bg-gray-800 rounded mb-4"></div>
-                <h3 class="font-semibold mb-1">Product Name {{ i }}</h3>
-                <p class="text-sm text-gray-500 mb-1">$99.99</p>
-                <p class="text-xs text-gray-400 mb-2">Short description of the product goes here.</p>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Add to Cart</button>
+              <div v-for="product in allProducts" :key="product.url" class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-md transition">
+                <NuxtLink :to="`/product/${product.url}`">
+                 <div class="w-full h-40 bg-gray-200 dark:bg-gray-800 rounded mb-4">
+                   <img :src="product.thumbnail" class="h-40 w-full object-cover rounded mb-4" />
+                 </div>
+                 <h3 class="font-semibold mb-1">{{ product.name }}</h3>
+                 <p class="text-sm text-gray-500 mb-1">{{ product.price }}</p>
+                 <p class="text-xs text-gray-400 mb-2">{{ product.short_description }}</p>
+                 <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Add to Cart</button>
+               </NuxtLink>
               </div>
             </div>
           </div>
@@ -342,6 +348,7 @@
           class="my-6"
         >
           <SwiperSlide v-for="product in topProducts" :key="product.url">
+            <NuxtLink :to="`/product/${product.url}`">
             <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">
               <img :src="product.thumbnail" class="h-40 w-full object-cover rounded mb-4" />
               <h3 class="font-semibold mb-1">{{ product.name }}</h3>
@@ -349,6 +356,7 @@
               <p class="text-xs text-gray-400 mb-2">{{ product.short_description }}</p>
               <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
             </div>
+            </NuxtLink>
           </SwiperSlide>
         </Swiper>
       </section>
@@ -377,32 +385,73 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
-const mobileFilterOpen = ref(false);
+const mobileFilterOpen = ref(false)
+
 const route = useRoute()
 const categoryUrl = route.params.url as string
 
-const { data, pending, error } = await useFetch(() => `http://localhost:8000/api/categories/${categoryUrl}`)
+// Data containers
+const category = ref({})
+const topProducts = ref<any[]>([])
+const latestProducts = ref<any[]>([])
+const allProducts = ref<any[]>([])
+const pagination = ref({ current_page: 1, last_page: 1, total: 0, per_page: 12 })
 
-const category = data?.value?.data || {}
-const topProducts = data?.value?.top_products || []
-const latestProducts = data?.value?.latest_products || []
+const sortOptions = ref<any[]>([])
+const selectedSort = ref<any>(null)
 
-const sortOptions = ref([]);
-const selectedSort = ref(null);
+// Fetch category + top/latest/all products in one API call
+const fetchCategory = async (page = 1, sortKey = '') => {
+  try {
+    const res = await fetch(`http://localhost:8000/api/categories/${categoryUrl}?page=${page}&sort=${sortKey}`)
+    const json = await res.json()
+    category.value = json.data || {}
+    topProducts.value = json.top_products || []
+    latestProducts.value = json.latest_products || []
+    allProducts.value = json.all_products || []
+    if (json.pagination) pagination.value = json.pagination
+  } catch (e) {
+    console.error('Category fetch error', e)
+    throw e
+  }
+}
 
-// Fetch sort options from API
+// Initial fetch
+onMounted(() => fetchCategory())
+
+// Watch sort change
+watch(selectedSort, () => fetchCategory(1, selectedSort.value?.key || ''))
+
+// Pagination load more
+const loadNextPage = () => {
+  if (pagination.value.current_page < pagination.value.last_page) {
+    fetchCategory(pagination.value.current_page + 1, selectedSort.value?.key || '')
+  }
+}
+
+// Fetch sort options
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:8000/api/products/sorts/get');
-    sortOptions.value = await res.json();
-    selectedSort.value = sortOptions.value[0]; // Default selection
+    const res = await fetch('http://localhost:8000/api/products/sorts/get')
+    sortOptions.value = await res.json() || []
+    selectedSort.value = sortOptions.value[0] || {}
   } catch (e) {
-    console.error("Failed to fetch sort options", e);
+    console.error('Sort options fetch failed', e)
   }
-});
+})
 
-
+// Add to cart handler
+function addToCart(product: any) {
+  fetch('/api/cart/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sku: product.sku, quantity: 1 })
+  })
+      .then(() => alert(`${product.name} added to cart`))
+      .catch(() => alert('Add to cart failed'))
+}
 </script>
