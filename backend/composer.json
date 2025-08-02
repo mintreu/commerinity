@@ -7,18 +7,22 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "akaunting/laravel-money": "^6.0",
         "awcodes/filament-curator": "^3.7",
         "awcodes/filament-tiptap-editor": "^3.5",
+        "awcodes/shout": "^2.1",
         "codewithdennis/filament-select-tree": "^3.1",
         "dutchcodingcompany/filament-socialite": "^2.4",
         "filament/filament": "3.3",
         "filament/spatie-laravel-media-library-plugin": "^3.3",
+        "icetalker/filament-table-repeater": "^1.4",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.10",
         "laravel/tinker": "^2.10.1",
+        "mintreu/laravel-money": "dev-main",
+        "mintreu/laravel-product-catalogue": "dev-main",
         "owenvoke/blade-fontawesome": "^2.9",
+        "saade/filament-adjacency-list": "^3.2",
         "staudenmeir/laravel-adjacency-list": "^1.25"
     },
     "require-dev": {
@@ -83,7 +87,23 @@
             "php-http/discovery": true
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-product-catalogue",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-money",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
 
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

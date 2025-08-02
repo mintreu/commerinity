@@ -3,15 +3,12 @@
 namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Casts\ProductTypeCast;
+use App\Filament\Resources\ProductResource;
 use App\Models\FilterGroup;
-use App\Models\Product;
 use App\Services\ProductService\ProductCreationService;
-use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
-use App\Filament\Resources\ProductResource;
-use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Blade;

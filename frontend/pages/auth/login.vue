@@ -1,170 +1,291 @@
 <template>
-  <div class="relative h-screen w-full bg-gray-100 dark:bg-gray-900 overflow-hidden">
-    <!-- Background -->
-    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/images/bg-login.jpeg');"></div>
-    <div class="absolute inset-0 bg-black bg-opacity-50 dark:bg-opacity-60 backdrop-blur-sm"></div>
+  <div class="h-screen w-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+    <div class="w-full max-w-md p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
+      <!-- Branding -->
+      <div class="text-center mb-6">
+        <img src="/logo.png" alt="Logo" class="mx-auto h-12 mb-2" />
+        <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Welcome to Commernity</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Simple. Secure. Seamless Login</p>
 
-    <!-- Login Card -->
-    <div class="relative z-10 flex items-center justify-center h-full px-4 max-w-full">
-      <div class="w-full max-w-md bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 md:p-8">
+        <NuxtLink
+            to="/auth/register"
+            class="mt-4 inline-block text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors underline"
+        >
+          Don’t have an account? Register here
+        </NuxtLink>
+      </div>
 
-        <!-- Branding -->
-        <div class="flex flex-col items-center mb-6">
-          <img src="/logo.png" alt="Logo" class="h-12 w-auto mb-2" />
-          <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Welcome to MyApp</h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Simple. Secure. Seamless Login</p>
+      <!-- Mode Toggle -->
+      <div class="flex justify-center mb-6 space-x-6 text-sm">
+        <button :class="loginMode === 'mobile' ? activeTab : inactiveTab" @click="switchMode('mobile')">Mobile Login</button>
+        <button :class="loginMode === 'email' ? activeTab : inactiveTab" @click="switchMode('email')">Email Login</button>
+      </div>
+
+      <!-- Mobile Login Form -->
+      <form v-if="loginMode === 'mobile'" @submit.prevent="handleMobileSubmit" class="space-y-5">
+        <!-- Mobile Number -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mobile Number</label>
+          <input v-model="form.mobile" type="tel" required placeholder="+91 9XXXXXXXXX"
+                 class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
+          <p v-if="errors.mobile" class="text-red-500 text-sm mt-1">{{ errors.mobile }}</p>
         </div>
 
-
-        <!-- Toggle Between Email / Mobile -->
-        <div class="flex justify-center gap-6 text-sm mb-6">
-          <button :class="loginMode === 'mobile' ? activeTab : inactiveTab" @click="loginMode = 'mobile'">Mobile Login</button>
-          <button :class="loginMode === 'email' ? activeTab : inactiveTab" @click="loginMode = 'email'">Email Login</button>
-        </div>
-
-        <!-- Mobile Login -->
-        <form v-if="loginMode === 'mobile'" @submit.prevent="handleMobileLogin" class="space-y-5">
-          <div>
-            <label for="mobile" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mobile Number</label>
-            <input
-                id="mobile"
-                v-model="form.mobile"
-                type="tel"
-                required
-                placeholder="+880 1XXXXXXXXX"
-                class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          <div v-if="otpSent" class="space-y-2">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Enter OTP</label>
-            <div class="flex gap-2 justify-between">
-              <input v-for="(digit, i) in 6" :key="i" v-model="otp[i]" maxlength="1" class="w-10 h-10 text-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" />
-            </div>
-          </div>
-
-          <button
-              type="submit"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 shadow"
-          >
-            {{ otpSent ? 'Verify OTP' : 'Send OTP' }}
-          </button>
-        </form>
-
-        <!-- Email Login -->
-        <form v-else @submit.prevent="handleEmailLogin" class="space-y-5">
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-            <input
-                v-model="form.email"
-                type="email"
-                id="email"
-                required
-                placeholder="you@example.com"
-                class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-            <div class="relative mt-1">
-              <input
-                  :type="showPassword ? 'text' : 'password'"
-                  v-model="form.password"
-                  id="password"
-                  required
-                  placeholder="••••••••"
-                  class="w-full px-4 py-2 pr-10 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              <!-- Toggle Icon -->
-              <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-2 flex items-center text-gray-500 dark:text-gray-400 hover:text-blue-600 focus:outline-none">
-                <Icon :name="showPassword ? 'heroicons-outline:eye-off' : 'heroicons-outline:eye'" class="w-5 h-5" />
+        <!-- OTP or Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ useOtp ? 'OTP' : 'Password' }}</label>
+          <div v-if="useOtp">
+            <div v-if="!otpSent">
+              <button @click="sendOtp" type="button"
+                      class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                      :disabled="sendingOtp">
+                {{ sendingOtp ? 'Sending OTP...' : 'Send OTP' }}
               </button>
             </div>
+            <div v-else>
+              <!-- OTP Input Fields and Verify Button -->
+              <template v-if="!otpVerified">
+                <div class="flex gap-2 mt-2">
+                  <input v-for="(_, i) in 6" :key="i" v-model="otp[i]" :ref="el => otpRefs[i] = el"
+                         maxlength="1" inputmode="numeric" type="text"
+                         class="w-10 h-10 text-center border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                         @input="onOtpInput(i)" @keydown.backspace.prevent="onOtpBackspace(i)" />
+                </div>
+                <button type="button" @click="verifyOtp"
+                        class="w-full mt-3 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                        :disabled="verifyingOtp">
+                  {{ verifyingOtp ? 'Verifying...' : 'Verify OTP' }}
+                </button>
+
+                <!-- Countdown + Resend -->
+                <div class="text-xs text-gray-500 text-center mt-2">
+                  <span v-if="otpCountdown > 0">Resend OTP in {{ otpCountdown }}s</span>
+                  <button v-else @click="resendOtp" class="text-blue-600 hover:underline" type="button">Resend OTP</button>
+                </div>
+
+                <p v-if="errors.validated_otp" class="text-red-500 text-sm mt-1">{{ errors.validated_otp }}</p>
+              </template>
+
+              <!-- Success Message -->
+              <p v-else class="text-green-600 text-sm mt-3 text-center">✅ OTP Verified Successfully!</p>
+            </div>
           </div>
-
-          <div class="flex items-center justify-between text-sm">
-            <label class="inline-flex items-center">
-              <input type="checkbox" class="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:bg-gray-800 focus:ring-blue-500" />
-              <span class="ml-2 text-gray-700 dark:text-gray-300">Remember me</span>
-            </label>
-            <NuxtLink to="/auth/forgot-password" class="text-blue-600 hover:underline dark:text-blue-400">Forgot?</NuxtLink>
+          <div v-else>
+            <input v-model="form.password" type="password" required placeholder="••••••••"
+                   class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
+            <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
           </div>
-
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 shadow">
-            Sign In
-          </button>
-        </form>
-
-        <!-- Social Login -->
-        <div class="mt-6">
-          <button @click="loginWithGoogle" class="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition text-sm font-medium text-gray-700 dark:text-gray-300">
-            <Icon name="logos:google-icon" class="w-5 h-5" />
-            Continue with Google
-          </button>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          Don't have an account?
-          <NuxtLink to="/auth/register" class="text-blue-600 hover:underline dark:text-blue-400">Register</NuxtLink>
+        <!-- Options -->
+        <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+          <label class="inline-flex items-center">
+            <input type="checkbox" v-model="form.remember" class="mr-2" />
+            Remember me
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" v-model="useOtp" class="mr-2" />
+            Login with OTP
+          </label>
         </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                :disabled="useOtp && !otpVerified">
+          Sign In
+        </button>
+        <p v-if="errors.auth" class="text-red-500 text-sm text-center mt-1">{{ errors.auth }}</p>
+      </form>
+
+      <!-- Email Login Form -->
+      <form v-else @submit.prevent="handleEmailLogin" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+          <input v-model="form.email" type="email" required placeholder="you@example.com"
+                 class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+          <input v-model="form.password" type="password" required placeholder="••••••••"
+                 class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
+        </div>
+        <div class="flex text-sm text-gray-700 dark:text-gray-300">
+          <label><input type="checkbox" v-model="form.remember" class="mr-2" />Remember me</label>
+        </div>
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+          Sign In
+        </button>
+        <p v-if="errors.auth" class="text-red-500 text-sm text-center mt-1">{{ errors.auth }}</p>
+      </form>
+
+      <!-- Social Login -->
+      <div class="mt-6">
+        <button @click="loginWithGoogle" class="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition text-sm font-medium text-gray-700 dark:text-gray-300">
+          <Icon name="logos:google-icon" class="w-5 h-5" />
+          Continue with Google
+        </button>
       </div>
+
+
+      <!-- Forgot password -->
+      <p class="text-center text-sm mt-4">
+        <NuxtLink to="/auth/forgot-password" class="text-blue-600 hover:underline">Forgot your password?</NuxtLink>
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
-import {useSanctum} from "#imports";
+import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter, useRuntimeConfig } from '#imports'
+import { useSanctumFetch, useSanctum } from '#imports'
+
 const router = useRouter()
-const {login} = useSanctum();
+const config = useRuntimeConfig()
+const { login } = useSanctum()
 
-const showPassword = ref(false)
-const loginMode = ref('mobile') // or 'email'
+const loginMode = ref<'mobile' | 'email'>('mobile')
+const useOtp = ref(false)
 const otpSent = ref(false)
+const otpVerified = ref(false)
+const sendingOtp = ref(false)
+const verifyingOtp = ref(false)
+const otpCountdown = ref(0)
+const countdownInterval = ref<NodeJS.Timeout | null>(null)
 const otp = ref(['', '', '', '', '', ''])
+const otpRefs = ref<HTMLInputElement[]>([])
+const errors = ref<Record<string, string>>({})
+const form = ref({ mobile: '', email: '', password: '', remember: false })
 
+const activeTab = 'px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-semibold'
+const inactiveTab = 'px-4 py-2 text-gray-500 hover:text-blue-600'
 
-const form = ref({
-  mobile: '',
-  otp: '',
-  email: '',
-  password: ''
-})
-
-const handleEmailLogin = () => {
-  login(form.value)
+function switchMode(mode: 'mobile' | 'email') {
+  loginMode.value = mode
+  useOtp.value = otpSent.value = otpVerified.value = false
+  otp.value = ['', '', '', '', '', '']
+  form.value = { mobile: '', email: '', password: '', remember: false }
+  errors.value = {}
+  clearOtpCountdown()
 }
 
+function validateIndianMobile(mobile: string): string | null {
+  const cleaned = mobile.trim()
+  if (!/^[6-9]\d{9}$/.test(cleaned)) return 'Enter a valid 10-digit Indian mobile number'
+  return null
+}
 
+function startOtpCountdown() {
+  otpCountdown.value = 60
+  countdownInterval.value = setInterval(() => {
+    if (otpCountdown.value > 0) otpCountdown.value--
+    else clearOtpCountdown()
+  }, 1000)
+}
 
+function clearOtpCountdown() {
+  if (countdownInterval.value) clearInterval(countdownInterval.value)
+  countdownInterval.value = null
+}
 
+async function sendOtp() {
+  errors.value.mobile = validateIndianMobile(form.value.mobile) || ''
+  if (errors.value.mobile) return
 
-function handleMobileLogin() {
-  if (!otpSent.value) {
+  sendingOtp.value = true
+  try {
+    await useSanctumFetch(`${config.public.apiBase}/auth/send-otp`, {
+      method: 'POST',
+      body: { type: 'mobile', value: form.value.mobile.trim() }
+    })
     otpSent.value = true
-    // simulate sending OTP
+    startOtpCountdown()
+    nextTick(() => otpRefs.value[0]?.focus())
+  } catch {
+    errors.value.validated_otp = 'Failed to send OTP'
+  } finally {
+    sendingOtp.value = false
+  }
+}
+
+function resendOtp() {
+  otp.value = ['', '', '', '', '', '']
+  otpVerified.value = false
+  sendOtp()
+}
+
+async function verifyOtp() {
+  errors.value.validated_otp = ''
+  const fullOtp = otp.value.join('')
+  if (fullOtp.length !== 6) {
+    errors.value.validated_otp = 'Enter 6-digit OTP'
+    return
+  }
+  verifyingOtp.value = true
+  try {
+    const res = await useSanctumFetch(`${config.public.apiBase}/auth/verify-otp`, {
+      method: 'POST',
+      body: { type: 'mobile', value: form.value.mobile.trim(), otp: fullOtp }
+    })
+    if (res.data?.valid) {
+      otpVerified.value = true
+      clearOtpCountdown()
+    } else {
+      errors.value.validated_otp = 'Invalid OTP'
+    }
+  } catch {
+    errors.value.validated_otp = 'OTP verification failed'
+  } finally {
+    verifyingOtp.value = false
+  }
+}
+
+async function handleMobileSubmit() {
+  errors.value = {}
+  const mobileError = validateIndianMobile(form.value.mobile)
+  if (mobileError) {
+    errors.value.mobile = mobileError
     return
   }
 
-  const code = otp.value.join('')
-  if (code.length === 6) {
-    console.log('Verifying OTP:', form.value.mobile, code)
-    // Handle OTP verification here
-  } else {
-    alert('Enter 6-digit OTP')
+  const payload: any = {
+    mobile: form.value.mobile.trim(),
+    remember: form.value.remember,
+    validated_otp: otpVerified.value
+  }
+  if (!useOtp.value) payload.password = form.value.password
+  try {
+    await login(payload)
+    router.push('/dashboard')
+  } catch (e: any) {
+    const err = e?.data?.errors || {}
+    errors.value.auth = err.mobile?.[0] || err.password?.[0] || e?.data?.message || 'Login failed'
   }
 }
 
-
-
-function loginWithGoogle() {
-  console.log('Redirecting to Google Login...')
-  // Add Google login logic or redirect
+async function handleEmailLogin() {
+  errors.value = {}
+  try {
+    await login({
+      email: form.value.email.trim(),
+      password: form.value.password,
+      remember: form.value.remember
+    })
+    router.push('/dashboard')
+  } catch (e: any) {
+    const err = e?.data?.errors || {}
+    errors.value.auth = err.email?.[0] || err.password?.[0] || e?.data?.message || 'Login failed'
+  }
 }
 
-const activeTab = 'border-b-2 border-blue-600 font-semibold text-blue-600 dark:text-blue-400 pb-1'
-const inactiveTab = 'text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-300 pb-1'
+function onOtpInput(i: number) {
+  if (otp.value[i].length === 1 && i < 5) nextTick(() => otpRefs.value[i + 1]?.focus())
+}
+function onOtpBackspace(i: number) {
+  if (otp.value[i] === '' && i > 0) nextTick(() => otpRefs.value[i - 1]?.focus())
+}
+
+onBeforeUnmount(clearOtpCountdown)
 </script>

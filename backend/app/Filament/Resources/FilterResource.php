@@ -10,14 +10,13 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FilterResource extends Resource
 {
     protected static ?string $model = Filter::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Catalogue';
 
     public static function form(Form $form): Form
     {
@@ -26,6 +25,12 @@ class FilterResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+
+                Forms\Components\Select::make('filterGroup')
+                    ->relationship('groups','name')
+                    ->required(),
+
+                Forms\Components\Toggle::make('is_required')->default(false)->required(),
             ]);
     }
 
@@ -61,7 +66,7 @@ class FilterResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\OptionsRelationManager::class
         ];
     }
 

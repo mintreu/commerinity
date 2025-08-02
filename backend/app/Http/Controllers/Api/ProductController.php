@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 
+use App\Casts\ModelStatusCast;
+use App\Casts\ProductTypeCast;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\ProductIndexResource;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\FilterGroup;
 use App\Models\Product;
@@ -113,6 +116,21 @@ class ProductController extends Controller
     }
 
 
+
+    public function getAllSimpleProducts()
+    {
+        $products = Product::with([
+            'media' => fn($query) => $query->where('collection_name','displayImage')
+        ])
+            ->where('type',ProductTypeCast::SIMPLE)
+            ->where('status',ModelStatusCast::PUBLISHED)
+            ->paginate();
+
+        return ProductIndexResource::collection($products);
+    }
+
+
+
     /**
      * Display the specified resource.
      */
@@ -170,6 +188,15 @@ class ProductController extends Controller
 
 
 
+    public function topSuggestProduct(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $products = Product::with([
+            'media' => fn($query) => $query->where('collection_name','displayImage')
+        ])
+            ->where('type',ProductTypeCast::SIMPLE)->limit(20)->get();
+
+        return ProductIndexResource::collection($products);
+    }
 
 
 

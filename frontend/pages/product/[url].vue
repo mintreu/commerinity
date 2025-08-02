@@ -58,8 +58,7 @@
           </section>
 
 
-
-<!--          Product Filter Options With Variant-->
+          <!-- Product Filter Options With Variant -->
 
           <!-- Variant Product: child variant, pull variants from parent -->
           <section v-if="product.hasParent" class="p-4">
@@ -73,12 +72,12 @@
                   :key="'parent-' + filterName"
               >
                 <!-- Filter Name -->
-                <div class="font-semibold border p-2 bg-gray-100">
+                <div class="font-semibold border p-2 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                   {{ filterName }}
                 </div>
 
                 <!-- Filter Options -->
-                <div class="border p-2 flex flex-wrap gap-2">
+                <div class="border p-2 flex flex-wrap gap-2 dark:border-gray-700">
                   <div
                       v-for="option in [...new Set(
             product.parent?.variants?.flatMap(v =>
@@ -88,7 +87,7 @@
             ) || []
           )]"
                       :key="'parent-' + filterName + '-' + option"
-                      class="cursor-pointer px-3 py-1 border rounded text-sm hover:bg-blue-100"
+                      class="cursor-pointer px-3 py-1 border rounded text-sm hover:bg-blue-100 dark:hover:bg-blue-900 dark:border-gray-600 dark:text-white"
                       :class="{
             'bg-blue-500 text-white': isActiveOption(filterName, option)
           }"
@@ -101,41 +100,35 @@
             </div>
           </section>
 
-
           <!-- Configurable Product -->
           <section v-else-if="product.type === 'Configurable'" class="p-4">
+            <div class="grid grid-cols-2 gap-4">
+              <template
+                  v-for="filterName in [...new Set(product.variants.flatMap(v => v.filter_option.map(opt => opt.filter.name)))]"
+                  :key="filterName"
+              >
+                <!-- Filter Name -->
+                <div class="font-semibold border p-2 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                  {{ filterName }}
+                </div>
 
-            <!--          Currently Work For Only Configurable Products-->
-<!--            <section v-if="product.variants" class="p-4">-->
-              <div class="grid grid-cols-2 gap-4">
-                <template
-                    v-for="filterName in [...new Set(product.variants.flatMap(v => v.filter_option.map(opt => opt.filter.name)))]"
-                    :key="filterName"
-                >
-                  <!-- Filter Name -->
-                  <div class="font-semibold border p-2 bg-gray-100">
-                    {{ filterName }}
-                  </div>
-
-                  <!-- Unique Clickable Options -->
-                  <div class="border p-2 flex flex-wrap gap-2">
-                    <div
-                        v-for="option in [...new Set(product.variants.flatMap(v =>
+                <!-- Unique Clickable Options -->
+                <div class="border p-2 flex flex-wrap gap-2 dark:border-gray-700">
+                  <div
+                      v-for="option in [...new Set(product.variants.flatMap(v =>
             v.filter_option
               .filter(opt => opt.filter.name === filterName)
               .map(opt => opt.value)
           ))]"
-                        :key="filterName + '-' + option"
-                        class="cursor-pointer px-3 py-1 border rounded hover:bg-blue-100 text-sm"
-                        @click="handleOptionClick(filterName, option)"
-                    >
-                      {{ option }}
-                    </div>
+                      :key="filterName + '-' + option"
+                      class="cursor-pointer px-3 py-1 border rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-sm dark:border-gray-600 dark:text-white"
+                      @click="handleOptionClick(filterName, option)"
+                  >
+                    {{ option }}
                   </div>
-                </template>
-              </div>
-<!--            </section>-->
-
+                </div>
+              </template>
+            </div>
           </section>
 
           <!-- Simple Product -->
@@ -147,8 +140,13 @@
       )]"
                   :key="'simple-' + filterName"
               >
-                <div class="font-semibold border p-2 bg-gray-100">{{ filterName }}</div>
-                <div class="border p-2 flex flex-wrap gap-2">
+                <!-- Filter Name -->
+                <div class="font-semibold border p-2 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                  {{ filterName }}
+                </div>
+
+                <!-- Filter Options -->
+                <div class="border p-2 flex flex-wrap gap-2 dark:border-gray-700">
                   <div
                       v-for="option in [...new Set(
             product.filter_option
@@ -156,7 +154,7 @@
               .map(opt => opt.value) || []
           )]"
                       :key="'simple-' + filterName + '-' + option"
-                      class="cursor-pointer px-3 py-1 border rounded hover:bg-blue-100 text-sm"
+                      class="cursor-pointer px-3 py-1 border rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-sm dark:border-gray-600 dark:text-white"
                       @click="handleOptionClick(filterName, option)"
                   >
                     {{ option }}
@@ -166,9 +164,7 @@
             </div>
           </section>
 
-
-          <!--         ./ Product Filter Options With Variant-->
-
+          <!-- ./ Product Filter Options With Variant -->
 
 
 

@@ -1,0 +1,93 @@
+{
+    "name": "mintreu/laravel-product-catalogue",
+    "description": "This is my package laravel-product-catalogue",
+    "keywords": [
+        "mintreu",
+        "laravel",
+        "laravel-product-catalogue"
+    ],
+    "homepage": "https://github.com/mintreu/laravel-product-catalogue",
+    "support": {
+        "issues": "https://github.com/mintreu/laravel-product-catalogue/issues",
+        "source": "https://github.com/mintreu/laravel-product-catalogue"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Krishanu",
+            "email": "36711704+krishzzi@users.noreply.github.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "filament/filament": "^3.0",
+        "spatie/laravel-package-tools": "^1.15.0",
+        "mintreu/laravel-money": "dev-main",
+        "awcodes/filament-tiptap-editor": "^3.5",
+        "awcodes/shout": "^2.1",
+        "codewithdennis/filament-select-tree": "^3.1",
+        "filament/spatie-laravel-media-library-plugin": "^3.3",
+        "icetalker/filament-table-repeater": "^1.4",
+        "staudenmeir/laravel-adjacency-list": "^1.25"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "nunomaduro/collision": "^8.6",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^8.0",
+        "pestphp/pest": "^2.1",
+        "pestphp/pest-plugin-arch": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "spatie/laravel-ray": "^1.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mintreu\\LaravelProductCatalogue\\": "src/",
+            "Mintreu\\LaravelProductCatalogue\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mintreu\\LaravelProductCatalogue\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mintreu\\LaravelProductCatalogue\\LaravelProductCatalogueServiceProvider"
+            ],
+            "aliases": {
+                "LaravelProductCatalogue": "Mintreu\\LaravelProductCatalogue\\Facades\\LaravelProductCatalogue"
+            }
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../laravel-money",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

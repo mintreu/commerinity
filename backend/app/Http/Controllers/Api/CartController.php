@@ -3,20 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartResource;
+use App\Services\CartService\Cart;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
 class CartController extends Controller
 {
+
+
+    public function ensureGuestCartCredential(Request $request)
+    {
+        $cart = new Cart($request->user());
+        $cart->capture($request);
+        return $cart->ensureGuestCredential();
+    }
+
+
+
     // 1. Get Cart
     public function index(Request $request)
     {
-        if ($request->user()) {
-            $items = $request->user()->cartItems()->with('product')->get();
-            return response()->json($items);
+        $cart = new Cart($request->user());
+        if (!$request->user())
+        {
+            $cart->capture($request);
         }
 
-        return response()->json(session('guest_cart', []));
+        return CartResource::make($cart->getMeta());
     }
 
     // 2. Add Product
@@ -24,52 +38,39 @@ class CartController extends Controller
     {
         $quantity = (int) $request->input('quantity', 1);
 
-        if ($request->user()) {
-            $user = $request->user();
-            $item = $user->cartItems()->firstOrNew(['product_id' => $product->id]);
-            $item->quantity += $quantity;
-            $item->save();
-
-            return response()->json(['message' => 'Product added to user cart']);
-        }
-
-        $cart = session()->get('guest_cart', []);
-        $found = false;
-
-        foreach ($cart as &$item) {
-            if ($item['sku'] === $product->sku) {
-                $item['quantity'] += $quantity;
-                $found = true;
-                break;
-            }
-        }
-
-        if (!$found) {
-            $cart[] = ['sku' => $product->sku, 'name' => $product->name, 'price' => $product->price, 'quantity' => $quantity];
-        }
-
-        session(['guest_cart' => $cart]);
-
-        return response()->json(['message' => 'Product added to guest cart']);
+        $cart = new Cart($request->user());
+        $cart->capture($request);
+        $cart->add($product,$quantity);
+        return CartResource::make($cart->getMeta());
     }
+
+    public function updateProduct(Request $request, Product $product)
+    {
+        $quantity = (int) $request->input('quantity', 1);
+
+        $cart = new Cart($request->user());
+        $cart->capture($request);
+        $cart->update($product,$quantity);
+        return CartResource::make($cart->getMeta());
+    }
+
+
+
+
+
 
     // 3. Remove Product
     public function removeProduct(Request $request, Product $product)
     {
-        if ($request->user()) {
-            $request->user()->cartItems()->where('product_id', $product->id)->delete();
-            return response()->json(['message' => 'Product removed from user cart']);
-        }
+        $cart = new Cart($request->user());
+        $cart->capture($request);
+        $cart->delete($product);
 
-        $cart = session()->get('guest_cart', []);
-        $cart = array_filter($cart, fn($item) => $item['sku'] !== $product->sku);
-        session(['guest_cart' => array_values($cart)]);
-
-        return response()->json(['message' => 'Product removed from guest cart']);
+        return CartResource::make($cart->getMeta());
     }
 
     // 4. Clear Entire Cart
-    public function clearCart(Request $request)
+    public function clearCart(Request $request): \Illuminate\Http\JsonResponse
     {
         if ($request->user()) {
             $request->user()->cartItems()->delete();
@@ -81,7 +82,7 @@ class CartController extends Controller
     }
 
     // 5. Merge Guest Cart After Login/Register
-    public function mergeGuestCart(Request $request)
+    public function mergeGuestCart(Request $request): \Illuminate\Http\JsonResponse
     {
         $guestCart = session('guest_cart', []);
         $user = $request->user();

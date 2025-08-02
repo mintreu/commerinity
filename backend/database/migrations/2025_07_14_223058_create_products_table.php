@@ -31,8 +31,16 @@ return new class extends Migration
             // Configurable Product
             $table->foreignId('parent_id')->nullable()->constrained('products')->cascadeOnUpdate()->nullOnDelete();
 
+            $table->decimal('width', 12, 2)->nullable();
+            $table->decimal('height', 12, 2)->nullable();
+            $table->decimal('length', 12, 2)->nullable();
+            $table->decimal('weight', 12, 2)->nullable();
+
             $table->string('status')->default(\App\Casts\ModelStatusCast::DRAFT->value);
             $table->text('status_feedback')->nullable();
+
+
+
             $table->integer('view_count')->default(0);
             $table->json('meta_data')->nullable();
             $table->timestamps();

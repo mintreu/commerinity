@@ -76,7 +76,7 @@
               class="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50"
           >
             <NuxtLink
-                to="/auth/profile"
+                to="/dashboard/auth/profile"
                 class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               Profile

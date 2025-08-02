@@ -19,19 +19,27 @@ class DatabaseSeeder extends Seeder
            AdminSeeder::class,
             FilterSeeder::class,
             CategorySeeder::class,
-          //  ProductSeeder::class,
+            ProductSeeder::class,
+            ProviderSeeder::class,
         ]);
 
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+//        User::factory()->create([
+//            'name' => 'Test User',
+//            'email' => 'test@example.com',
+//        ]);
 
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'demouser@example.com',
         ]);
+
+        User::factory()->create([
+            'name' => 'Krishanu Bhattacharya',
+            'email' => 'test@example.com',
+            'mobile' => '9800777600'
+        ]);
+
     }
 }

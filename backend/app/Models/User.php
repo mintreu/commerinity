@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Casts\AuthTypeCast;
 use App\Casts\ModelStatusCast;
+use App\Models\Traits\Cart\HasCartOwner;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -23,7 +24,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships;
+    use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships,HasCartOwner;
 
     /**
      * The attributes that are mass assignable.
@@ -42,7 +43,9 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
         'status_feedback',
         'bio',
         'gender',
-        'dob'
+        'dob',
+        'email_verified_at',
+        'mobile_verified_at'
     ];
 
 

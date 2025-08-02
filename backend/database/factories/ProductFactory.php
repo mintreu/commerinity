@@ -36,8 +36,9 @@ class ProductFactory extends Factory
             'price' => fake()->numberBetween(100, 10000),
             'reward_point' => fake()->randomFloat(2, 0, 100),
             'is_returnable' => fake()->boolean(),
-       //     'status' => fake()->randomElement(array_map(fn($case) => $case->value, ProductStatusCast::cases())),
-           'view_count' => fake()->numberBetween(0, 1000),
+            'min_quantity' => fake()->randomElement([1, 2, 3]),
+            'max_quantity' => fake()->randomElement([3, 6, 10, 20]),
+            'view_count' => fake()->numberBetween(0, 1000),
             'meta_data' => [
                 'meta_title' => fake()->sentence(6, true),
                 'meta_description' => fake()->paragraph(2, true),

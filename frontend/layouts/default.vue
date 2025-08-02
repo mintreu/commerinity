@@ -30,7 +30,7 @@
               <img v-if="user" :src="user.avatar" alt="avatar" class="w-8 h-8 rounded-full" />
             </button>
             <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-700 shadow-lg rounded-md overflow-hidden z-50">
-              <NuxtLink to="/auth/profile" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Profile</NuxtLink>
+              <NuxtLink to="/dashboard/auth/profile" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Profile</NuxtLink>
               <NuxtLink to="/dashboard" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Dashboard</NuxtLink>
               <button @click.prevent="logoutUser" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
             </div>
@@ -105,6 +105,7 @@
           <NuxtLink to="/blog" class="flex items-center gap-2 hover:underline" @click="sidebarOpen = false">
             <Icon name="heroicons-outline:document-text" class="w-5 h-5" /> Blog
           </NuxtLink>
+
           <NuxtLink v-if="isLoggedIn" to="/dashboard" class="flex items-center gap-2 hover:underline" @click="sidebarOpen = false">
             <Icon name="heroicons-outline:chart-bar" class="w-5 h-5" /> Dashboard
           </NuxtLink>

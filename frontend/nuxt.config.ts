@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   //   domains: ['localhost', '127.0.0.1'],
   // },
 
-  modules: ['@nuxt/icon', '@qirolab/nuxt-sanctum-authentication'],
+  modules: ['@nuxt/icon', '@qirolab/nuxt-sanctum-authentication', '@nuxtjs/google-fonts'],
   laravelSanctum: {
     // Replace with your Laravel API URL
     apiUrl: 'http://localhost:8000',
@@ -27,6 +27,20 @@ export default defineNuxtConfig({
       logout:"/api/logout",
     },
 
+  },
+
+
+  googleFonts: {
+    families: {
+      Roboto: [400, 500, 700], // Use weights you actually need
+    },
+    base64: true,
+    display: 'swap',
+    preconnect: true,
+    preload: true,
+    useStylesheet: true,
+    download: true,       // You can set to true to self-host
+    inject: true,
   },
 
 

@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Casts\ModelStatusCast;
 use App\Casts\ProductTypeCast;
+use App\Models\Traits\Cart\HasCartable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
@@ -17,7 +19,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 class Product extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
-    use HasFactory,HasRecursiveRelationships,InteractsWithMedia;
+    use HasFactory,HasRecursiveRelationships,InteractsWithMedia,HasCartable;
 
 
     protected $fillable = [
@@ -35,8 +37,13 @@ class Product extends Model implements HasMedia
         'price',
         'reward_point',
         'min_quantity',
+        'max_quantity',
 //        'wholesale_unit_quantity',
         'is_returnable',
+        'width',
+        'height',
+        'length',
+        'weight',
         'status',
         'status_feedback',
         'view_count',
@@ -44,7 +51,7 @@ class Product extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'price' => 'integer',
+        'price' => LaravelMoneyCast::class,
         'reward_point' => 'float',
         'is_returnable' => 'boolean',
         'view_count' => 'integer',

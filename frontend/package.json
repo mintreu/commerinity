@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/google-fonts": "^3.2.0",
     "@qirolab/nuxt-sanctum-authentication": "^0.1.15",
     "d3": "^7.9.0",
     "d3-org-chart": "^3.1.1",

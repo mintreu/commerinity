@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
+use App\Casts\AuthTypeCast;
+use App\Casts\ModelStatusCast;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -128,30 +132,56 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'nullable|email|unique:users,email',
-            'mobile'  => 'nullable|digits:10|unique:users,mobile',
+            'email'    => 'bail|nullable|email|unique:users,email',
+            'mobile'  => 'bail|nullable|digits:10|unique:users,mobile',
             'gender'   => 'required|in:male,female,other',
             'dob'      => 'required|date|before:today',
             'password' => 'required|string|min:6',
             'type'     => 'required|in:email,mobile',
+            'referral' => 'nullable|string|unique:users,referral_code',
+            'otp'       => 'nullable|string'
         ]);
 
         $email = $request->type === 'email'  ? $request->email   : null;
         $contact = $request->type === 'mobile' ? $request->mobile : null;
 
-        $user = User::create([
+        $validateField = [];
+        if ($request->otp)
+        {
+            $validateField = [
+                $request->type.'_verified_at' => now()
+            ];
+        }
+
+
+
+        $credential = array_merge([
             'name'     => $request->name,
             'email'    => $email,
             'mobile'  => $contact,
             'gender'   => $request->gender,
             'dob'      => $request->dob,
             'password' => bcrypt($request->password),
-        ]);
+            'type'      => AuthTypeCast::REGULAR,
+            'status'    => ModelStatusCast::DRAFT,
+        ],$validateField);
+
+
+        if ($request->referral)
+        {
+            $parentUser = User::firstWhere('referral_code',$request->referral);
+            $user = $parentUser->children()->create($credential);
+        }else{
+            $user = User::create($credential);
+        }
+
+
+
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Registration complete',
-            'user'    => $user,
+            'user'    => UserResource::make($user),
         ]);
     }
 
@@ -162,42 +192,78 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        // Step 1: Validate the request
+        // Step 1: Validate request input (basic shape)
         $validated = $request->validate([
-            'email'    => ['bail', 'nullable', 'email'],
-            'mobile'   => ['bail', 'nullable', 'string'],
-            'password' => ['required', 'string'],
-            'remember' => ['sometimes', 'boolean'],
+            'email'         => ['bail', 'nullable', 'email','exists:users,email'],
+            'mobile'        => ['bail', 'nullable', 'string','exists:users,mobile'],
+            'password'      => ['bail', 'nullable', 'string'],
+            'validated_otp' => ['bail', 'nullable', 'boolean'],
+            'remember'      => ['bail', 'sometimes', 'boolean'],
         ]);
 
-        // Step 2: Determine login field
-        $loginField = null;
-        if (empty($validated['mobile']) && empty($validated['email']))
+        if (empty($validated['email']) && empty($validated['mobile'])) {
+            throw ValidationException::withMessages([
+                'email_or_mobile' => ['Either email or mobile number is required.'],
+            ]);
+        }
+
+        $method = !isset($validated['email']) ? 'mobile': 'email';
+        $identifier = $validated[$method];
+
+        // Email Case
+        if ($method == 'email' && !isset($validated['password']))
         {
             throw ValidationException::withMessages([
-                'email_or_mobile' => ['Either email or mobile is required.'],
+                'password' => ['Password is required for email login.'],
             ]);
         }
-        $loginField = !empty($validated['mobile']) ? 'mobile' : 'email';
 
-        // Step 3: Attempt login
-        $credentials = [
-            $loginField => $validated[$loginField],
-            'password'  => $validated['password'],
-        ];
 
-        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+        // Mobile Case With Password
+        if ($method == 'mobile' && !isset($validated['validated_otp']) && !isset($validated['password']))
+        {
             throw ValidationException::withMessages([
-                $loginField => ['The provided credentials are incorrect.'],
+                'validated_otp_or_password' => ['Either otp verification or password is required.'],
             ]);
         }
+        if (!isset($validated['validated_otp']))
+        {
+            $credentials = [
+              $method => $identifier,
+              'password' => $validated['password'],
+            ];
+            if (!Auth::attempt($credentials, $validated['remember'])) {
+                throw ValidationException::withMessages([
+                    $method => ['The provided credentials are incorrect.'],
+                ]);
+            }
+        }else{
+            $user = User::firstWhere($method,$identifier);
 
-        // Step 4: Regenerate session & return response
+            if (!$user)
+            {
+                throw ValidationException::withMessages([
+                    $method => ['The provided credentials are incorrect.'],
+                ]);
+            }
+
+            Auth::login($user,$validated['remember']);
+            if (! Auth::check()) {
+                throw ValidationException::withMessages([
+                    $method => ['Unable to log you in.'],
+                ]);
+            }
+
+        }
+
+
+
+        // Step 6: Success — regenerate session
         $request->session()->regenerate();
 
         return response()->json([
             'message' => 'Login successful',
-            'data'    => auth()->user(),
+            'data'    => UserResource::make(auth()->user()),
         ]);
     }
 
@@ -222,6 +288,62 @@ class AuthController extends Controller
             'message' => 'No user found! make sure you login your account and then try to logout',
         ]);
     }
+
+
+
+
+//    Profile Related
+
+
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+        $user->clearMediaCollection('avatarImage');
+        $user->addMediaFromRequest('avatar')->toMediaCollection('avatarImage');
+
+        return response()->json([
+            'message' => 'Avatar updated successfully',
+            'avatar' => $user->getAvatarAttribute(),
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name'  => 'required|string|min:3|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($validated);
+
+        return response()->json(['message' => 'Profile updated']);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Invalid current password'], 403);
+        }
+
+        $user->update(['password' => $request->new_password]);
+
+        return response()->json(['message' => 'Password updated']);
+    }
+
+
 
 
 }
