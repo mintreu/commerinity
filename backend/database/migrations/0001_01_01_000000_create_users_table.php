@@ -38,7 +38,7 @@ return new class extends Migration
             $table->nullableMorphs('originator'); // Record Created By Model (company recruited Advisor job related
 
             $table->text('bio')->nullable();
-            $table->string('gender')->nullable();
+            $table->string('gender')->default(\Mintreu\Toolkit\Casts\GenderCast::OTHER->value);
             $table->date('dob')->nullable();
 
             $table->string('type')
@@ -46,13 +46,30 @@ return new class extends Migration
                 ->index('users_type_index');
 
             $table->string('status')
-                ->default(\App\Casts\ModelStatusCast::DRAFT->value)
+                ->default(\App\Casts\AuthStatusCast::DRAFT->value)
                 ->index('users_status_index');
 
             $table->text('status_feedback')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
+
+
+        Schema::create('user_mapping', function (Blueprint $table) {
+            $table->unsignedBigInteger('ancestor_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('depth'); // 0 = self, 1 = direct parent, etc.
+
+            $table->primary(['ancestor_id', 'user_id']);
+
+            $table->foreign('ancestor_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+
+            $table->index('depth');
+        });
+
+
+
 
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

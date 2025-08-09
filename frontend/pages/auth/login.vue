@@ -70,11 +70,26 @@
               <p v-else class="text-green-600 text-sm mt-3 text-center">✅ OTP Verified Successfully!</p>
             </div>
           </div>
-          <div v-else>
-            <input v-model="form.password" type="password" required placeholder="••••••••"
-                   class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-            <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+
+          <div v-else class="relative">
+            <input
+                v-model="form.password"
+                :type="showPassword ? 'text' : 'password'"
+                required
+                placeholder="••••••••"
+                class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white pr-10"
+            />
+            <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white"
+                tabindex="-1"
+            >
+              <Icon :name="showPassword ? 'heroicons:eye-slash' : 'heroicons:eye'" class="w-5 h-5" />
+            </button>
           </div>
+          <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+
         </div>
 
         <!-- Options -->
@@ -105,11 +120,24 @@
           <input v-model="form.email" type="email" required placeholder="you@example.com"
                  class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-          <input v-model="form.password" type="password" required placeholder="••••••••"
-                 class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
+        <div class="relative">
+          <input
+              v-model="form.password"
+              :type="showPassword ? 'text' : 'password'"
+              required
+              placeholder="••••••••"
+              class="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white pr-10"
+          />
+          <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white"
+              tabindex="-1"
+          >
+            <Icon :name="showPassword ? 'heroicons:eye-slash' : 'heroicons:eye'" class="w-5 h-5" />
+          </button>
         </div>
+
         <div class="flex text-sm text-gray-700 dark:text-gray-300">
           <label><input type="checkbox" v-model="form.remember" class="mr-2" />Remember me</label>
         </div>
@@ -145,7 +173,8 @@ import { useSanctumFetch, useSanctum } from '#imports'
 const router = useRouter()
 const config = useRuntimeConfig()
 const { login } = useSanctum()
-
+const { isLoggedIn } = useSanctum()
+const showPassword = ref(false)
 const loginMode = ref<'mobile' | 'email'>('mobile')
 const useOtp = ref(false)
 const otpSent = ref(false)
@@ -161,6 +190,13 @@ const form = ref({ mobile: '', email: '', password: '', remember: false })
 
 const activeTab = 'px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-semibold'
 const inactiveTab = 'px-4 py-2 text-gray-500 hover:text-blue-600'
+
+
+onMounted(() => {
+  if (isLoggedIn.value) {
+    router.push('/dashboard')
+  }
+})
 
 function switchMode(mode: 'mobile' | 'email') {
   loginMode.value = mode

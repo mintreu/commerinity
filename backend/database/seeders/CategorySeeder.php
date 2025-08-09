@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Mintreu\LaravelCategory\Models\Category;
 
 class CategorySeeder extends Seeder
 {

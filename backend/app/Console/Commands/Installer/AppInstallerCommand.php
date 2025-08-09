@@ -28,6 +28,7 @@ class AppInstallerCommand extends Command
         $this->info('Installing application...');
         $this->call('key:generate');
         $this->call('migrate:fresh');
+        $this->call('laravel-geokit:seed');
         $this->call('db:seed');
         //$this->call('shield:install');
         $this->call('optimize:clear');

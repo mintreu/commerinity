@@ -5,34 +5,27 @@ use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-    //return UserResource::make();
-})->middleware('auth:sanctum');
+//Route::get('/user', function (Request $request) {
+//    return $request->user();
+//    //return UserResource::make();
+//})->middleware('auth:sanctum');
 
 
-//Token Based [ future plan for tenant type]
-
-Route::post('/tokens/create',[AuthController::class,'storeToken'])->middleware(['guest']);
-
-Route::post('/tokens/delete',[AuthController::class,'destroyToken'])->middleware(['auth:sanctum']);
-
-// sanctum cookie based [currently used]
-
-Route::post('login',[AuthController::class,'login']);
-Route::post('logout',[AuthController::class,'logout']);
-Route::post('/auth/has_contact',[AuthController::class,'checkContactExistence']);
-Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);
-Route::post('/auth/verify-otp',[AuthController::class,'verifyOtp']);
-Route::post('register',[AuthController::class,'register']);
-Route::post('reset_password',[AuthController::class,'resetPassword']);
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/user/avatar', [AuthController::class, 'updateAvatar']);
-    Route::post('/user/profile', [AuthController::class, 'updateProfile']);
-    Route::post('/user/password', [AuthController::class, 'updatePassword']);
-});
+
+
+Route::prefix('/user')->middleware('auth:sanctum')->group(base_path('routes/apis/user/user.php'));
+Route::prefix('/')->group(base_path('routes/apis/user/auth.php'));
+
+
+//ADDRESS API
+
+// Event
+Route::prefix('geo')->group(base_path('routes/apis/geo-location.php'));
+
+
+
 
 
 Route::prefix('categories')->group(function (){
@@ -67,3 +60,21 @@ Route::prefix('cart')->group(function () {
 Route::prefix('provider')->group(function (){
    Route::get('/payment',[\App\Http\Controllers\Api\ProviderController::class,'getPaymentProviders']);
 });
+
+
+Route::prefix('recruitment')->group(function (){
+   Route::get('/',[\App\Http\Controllers\Api\RecruitmentController::class,'index']);
+   Route::get('{naukri:url}',[\App\Http\Controllers\Api\RecruitmentController::class,'show']);
+   Route::post('{naukri:url}/apply',[\App\Http\Controllers\Api\RecruitmentController::class,'apply']);
+});
+
+
+// Lifecycle
+
+Route::prefix('lifecycle')->group(function (){
+   Route::get('/timeline',[\App\Http\Controllers\Api\LifecycleController::class,'getTimeline']);
+   Route::get('/stages',[\App\Http\Controllers\Api\LifecycleController::class,'getAllStages']);
+   Route::get('/stage/{stage:url}',[\App\Http\Controllers\Api\LifecycleController::class,'getStage']);
+   Route::get('/level/{level:url}',[\App\Http\Controllers\Api\LifecycleController::class,'getLevel']);
+});
+

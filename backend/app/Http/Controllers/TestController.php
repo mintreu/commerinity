@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Casts\ModelStatusCast;
-use App\Casts\ProductTypeCast;
-use App\Models\Product;
-use Illuminate\Http\Request;
+use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class TestController extends Controller
 {

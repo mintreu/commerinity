@@ -3,16 +3,16 @@
 namespace App\Backup;
 
 use App\Casts\ModelStatusCast;
-use App\Filament\Resources\ProductResource;
-use App\Models\FilterGroup;
 use Filament\Actions;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Forms;
-use Filament\Forms\Form;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\Str;
+use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
+use ProductResource;
 
 class BackupEditProduct extends EditRecord
 {
@@ -31,7 +31,7 @@ class BackupEditProduct extends EditRecord
     {
         $relationManagers = [];
         if ($this->record->type == 'configurable') {
-            $relationManagers[] = ProductResource\RelationManagers\VariantsRelationManager::class;
+            $relationManagers[] = \ProductResource\RelationManagers\VariantsRelationManager::class;
         }
 
         return $relationManagers;

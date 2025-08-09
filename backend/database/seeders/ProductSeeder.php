@@ -2,13 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Casts\ModelStatusCast;
-use App\Casts\ProductTypeCast;
-use App\Models\Category;
-use App\Models\FilterGroup;
-use App\Models\Product;
-use App\Services\ProductService\ProductCreationService;
+
 use Illuminate\Database\Seeder;
+use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
+
+use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
+use Mintreu\LaravelProductCatalogue\Models\Product;
+use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
+use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class ProductSeeder extends Seeder
 {
@@ -35,7 +37,7 @@ class ProductSeeder extends Seeder
 
             $productData = Product::factory()->raw([
                 'type' => ProductTypeCast::CONFIGURABLE,
-                'status' => ModelStatusCast::PUBLISHED->value,
+                'status' => PublishableStatusCast::PUBLISHED->value,
                 'filter_group_id' => $filterGroup->id,
                 'filter_options' => $this->mapFilterOptions($filterGroup, $type),
             ]);

@@ -7,12 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Category\CategoryIndexResource;
 use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Product\ProductIndexResource;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductTier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelProductCatalogue\Models\Product;
+use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class CategoryController extends Controller
 {
@@ -78,7 +78,7 @@ class CategoryController extends Controller
                     ->where('category_mappings.categorized_type', Product::class);
             })
             ->join('product_tiers', 'products.id', '=', 'product_tiers.product_id')
-            ->where('products.status', ModelStatusCast::PUBLISHED->value)
+            ->where('products.status', PublishableStatusCast::PUBLISHED->value)
             //->where('products.parent_id', null)
             ->whereIn('category_mappings.category_id', $allRelevantCategoryIds)
             ->where('product_tiers.in_stock', true)

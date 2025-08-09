@@ -2,15 +2,15 @@
 
 namespace App\Services\CartService;
 
-use App\Models\Product;
-use App\Models\User;
 use App\Models\Cart;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class CartService
 {

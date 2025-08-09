@@ -1,6 +1,6 @@
 <template>
   <div class="p-8">
-    <RegisterForm redirectTo="/welcome" />
+    <RegisterForm redirectTo="/dashboard" />
   </div>
 </template>
 <script setup lang="ts">

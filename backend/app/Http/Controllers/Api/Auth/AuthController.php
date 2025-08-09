@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Casts\AuthStatusCast;
 use App\Casts\AuthTypeCast;
 use App\Casts\ModelStatusCast;
 use App\Http\Controllers\Controller;
@@ -163,7 +164,7 @@ class AuthController extends Controller
             'dob'      => $request->dob,
             'password' => bcrypt($request->password),
             'type'      => AuthTypeCast::REGULAR,
-            'status'    => ModelStatusCast::DRAFT,
+            'status'    => AuthStatusCast::DRAFT,
         ],$validateField);
 
 
@@ -292,56 +293,6 @@ class AuthController extends Controller
 
 
 
-//    Profile Related
-
-
-    public function updateAvatar(Request $request)
-    {
-        $request->validate([
-            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-        ]);
-
-        $user = $request->user();
-        $user->clearMediaCollection('avatarImage');
-        $user->addMediaFromRequest('avatar')->toMediaCollection('avatarImage');
-
-        return response()->json([
-            'message' => 'Avatar updated successfully',
-            'avatar' => $user->getAvatarAttribute(),
-        ]);
-    }
-
-    public function updateProfile(Request $request)
-    {
-        $user = $request->user();
-
-        $validated = $request->validate([
-            'name'  => 'required|string|min:3|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-        ]);
-
-        $user->update($validated);
-
-        return response()->json(['message' => 'Profile updated']);
-    }
-
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => 'required|string',
-            'new_password' => ['required', 'confirmed', Password::defaults()],
-        ]);
-
-        $user = $request->user();
-
-        if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Invalid current password'], 403);
-        }
-
-        $user->update(['password' => $request->new_password]);
-
-        return response()->json(['message' => 'Password updated']);
-    }
 
 
 

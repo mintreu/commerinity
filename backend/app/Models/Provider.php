@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\ProductTypeCast;
 use App\Casts\ProviderTypeCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

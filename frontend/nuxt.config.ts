@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     // Replace with your Laravel API URL
     apiUrl: 'http://localhost:8000',
     authMode: 'cookie',
+    userResponseWrapperKey: 'data',
     sanctumEndpoints: {
       csrf:"/sanctum/csrf-cookie",
       login:"/api/login",

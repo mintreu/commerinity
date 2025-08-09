@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits\Cart;
 
-use App\Models\Cart\Cart;
+use App\Models\Cart;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 

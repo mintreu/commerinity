@@ -19,8 +19,12 @@
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.10",
         "laravel/tinker": "^2.10.1",
+        "mintreu/laravel-category": "dev-main",
+        "mintreu/laravel-geokit": "dev-main",
         "mintreu/laravel-money": "dev-main",
+        "mintreu/laravel-naukri-manager": "dev-main",
         "mintreu/laravel-product-catalogue": "dev-main",
+        "mintreu/toolkit": "dev-main",
         "owenvoke/blade-fontawesome": "^2.9",
         "saade/filament-adjacency-list": "^3.2",
         "staudenmeir/laravel-adjacency-list": "^1.25"
@@ -90,6 +94,34 @@
     "repositories": [
         {
             "type": "path",
+            "url": "packages/mintreu/laravel-money",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/toolkit",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-category",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-geokit",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
             "url": "packages/mintreu/laravel-product-catalogue",
             "options": {
                 "symlink": true
@@ -97,7 +129,7 @@
         },
         {
             "type": "path",
-            "url": "packages/mintreu/laravel-money",
+            "url": "packages/mintreu/laravel-naukri-manager",
             "options": {
                 "symlink": true
             }

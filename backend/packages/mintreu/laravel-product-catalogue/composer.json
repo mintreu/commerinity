@@ -24,6 +24,9 @@
         "filament/filament": "^3.0",
         "spatie/laravel-package-tools": "^1.15.0",
         "mintreu/laravel-money": "dev-main",
+        "mintreu/laravel-geokit": "dev-main",
+        "mintreu/laravel-category": "dev-main",
+        "mintreu/toolkit": "dev-main",
         "awcodes/filament-tiptap-editor": "^3.5",
         "awcodes/shout": "^2.1",
         "codewithdennis/filament-select-tree": "^3.1",
@@ -82,7 +85,28 @@
     "repositories": [
         {
             "type": "path",
+            "url": "../toolkit",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../laravel-category",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
             "url": "../laravel-money",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../laravel-geokit",
             "options": {
                 "symlink": true
             }

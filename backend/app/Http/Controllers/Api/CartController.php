@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
 use App\Services\CartService\Cart;
 use Illuminate\Http\Request;
-use App\Models\Product;
+use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class CartController extends Controller
 {

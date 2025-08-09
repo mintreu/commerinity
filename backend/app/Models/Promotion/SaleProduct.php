@@ -2,9 +2,9 @@
 
 namespace App\Models\Promotion;
 
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class SaleProduct extends Model
 {

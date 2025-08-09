@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Filter;
-use App\Models\FilterGroup;
 use Exception;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Mintreu\LaravelProductCatalogue\Models\Filter;
+use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 
 class FilterSeeder extends Seeder
 {

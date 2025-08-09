@@ -1,126 +1,186 @@
 <template>
   <div class="max-w-4xl mx-auto px-4 py-16 text-gray-800 dark:text-gray-200">
+    <!-- Loader (before data loaded) -->
+    <div v-if="!loaded" class="text-center py-24">
+      <div class="h-12 w-12 mx-auto animate-spin rounded-full border-4 border-blue-500 border-t-transparent dark:border-blue-400 dark:border-t-transparent"></div>
+    </div>
+
     <!-- Job Found -->
-    <div v-if="job" class="space-y-10">
+    <div v-else-if="job" class="space-y-10">
       <!-- Header -->
-      <div>
-        <h1 class="text-4xl font-bold">{{ job.title }}</h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">
-          {{ job.location }} | {{ job.team }}
+      <div class="text-center space-y-2">
+        <h1 class="text-4xl font-bold">{{ job.name }}</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          📍 {{ job.location }} &nbsp; | &nbsp; 🧩 {{ job.role }} &nbsp; | &nbsp; 🕒 {{ job.type }}
         </p>
       </div>
 
-      <!-- Job Description -->
+      <!-- Meta Info -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+        <p><strong>Open Date:</strong> {{ job.open_date }}</p>
+        <p><strong>Close Date:</strong> {{ job.close_date }}</p>
+        <p><strong>Vacancies:</strong> {{ job.vacancy }}</p>
+        <p v-if="job.is_payable"><strong>Fees:</strong> ₹{{ job.fees }}</p>
+      </div>
+
+      <!-- Job Thumbnail -->
+      <div>
+        <img
+          :src="job.thumbnail"
+          :alt="job.name"
+          class="w-full h-64 object-cover rounded-xl shadow"
+        />
+      </div>
+
+      <!-- Description -->
       <div class="space-y-4 text-base leading-relaxed">
-        <div v-for="para in parsedDescription" :key="para" class="whitespace-pre-line">
+        <div
+          v-for="(para, index) in parsedDescription"
+          :key="index"
+          class="whitespace-pre-line"
+        >
           {{ para }}
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="text-center flex flex-col sm:flex-row justify-center gap-4">
+        <!-- Apply Now -->
         <NuxtLink
-            :to="`/career/${job.url}/apply`"
-            class="bg-blue-600 text-white px-6 py-3 rounded text-lg hover:bg-blue-700 inline-flex items-center gap-2 justify-center"
+          :to="`/career/${job.url}/apply`"
+          class="bg-blue-600 text-white px-6 py-3 rounded text-lg hover:bg-blue-700 inline-flex items-center gap-2 justify-center"
         >
           <Icon name="mdi:send" /> Apply Now
         </NuxtLink>
 
-
+        <!-- Download ZIP -->
         <a
-            v-if="job.pdf"
-            :href="job.pdf"
-            target="_blank"
-            rel="noopener"
-            class="bg-gray-100 dark:bg-gray-800 text-blue-600 border border-blue-600 px-6 py-3 rounded text-lg hover:bg-blue-50 dark:hover:bg-gray-700 inline-flex items-center gap-2 justify-center"
+          v-if="isZip"
+          :href="pdfList[0]"
+          target="_blank"
+          rel="noopener"
+          class="bg-gray-100 dark:bg-gray-800 text-blue-600 border border-blue-600 px-6 py-3 rounded text-lg hover:bg-blue-50 dark:hover:bg-gray-700 inline-flex items-center gap-2 justify-center"
         >
-          <Icon name="mdi:file-download" /> Download PDF
+          <Icon name="mdi:archive" /> Download ZIP
         </a>
+      </div>
+
+      <!-- PDF Previews -->
+      <div v-if="!isZip && pdfList.length" class="grid sm:grid-cols-2 gap-4 mt-8">
+        <div
+          v-for="(pdfUrl, index) in pdfList"
+          :key="index"
+          class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-gray-900"
+        >
+          <div class="relative h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            <Icon name="mdi:file-pdf-box" class="text-red-500 text-6xl" />
+          </div>
+          <div class="p-4 flex justify-between items-center">
+            <p class="text-sm truncate text-gray-700 dark:text-gray-300">
+              {{ getPdfName(pdfUrl, index) }}
+            </p>
+
+            <a
+  :href="pdfUrl"
+  target="_blank"
+  rel="noopener"
+  class="text-blue-600 hover:underline text-sm flex items-center gap-1 transition-all duration-200 hover:translate-x-1 hover:text-blue-700"
+>
+  <Icon name="mdi:file-download" class="text-base transition-transform duration-200" />
+  Download
+</a>
+
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Not Found -->
     <div v-else class="text-center py-24">
       <h2 class="text-2xl font-semibold mb-2">Job not found</h2>
-      <NuxtLink to="/career" class="text-blue-600 hover:underline">
-        ← Back to Careers
-      </NuxtLink>
+      <NuxtLink to="/career" class="text-blue-600 hover:underline">← Back to Careers</NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { useSanctumFetch, useRuntimeConfig } from '#imports'
+
+// Global loading animation
+const loading = useState('pageLoading', () => false)
+loading.value = true
+
+const job = ref<Job | null>(null)
+const loaded = ref(false) // ✅ New flag to control display after fetch
 
 const route = useRoute()
+const config = useRuntimeConfig()
 
-// Inline job data with optional PDF URLs
-const jobs = [
-  {
-    id: 'frontend-dev',
-    url: 'frontend-developer',
-    title: 'Frontend Developer',
-    location: 'Remote / Kolkata',
-    team: 'Engineering',
-    summary: 'Craft modern UIs with Nuxt & Tailwind.',
-    pdf: '/pdfs/frontend-developer.pdf',
-    description: `
-As a Frontend Developer, you'll help build and scale modern web applications using Nuxt 3 and TailwindCSS.
+// Type definition
+interface Job {
+  name: string
+  url: string
+  role: string
+  type: string
+  location: string
+  thumbnail: string
+  pdf?: string | string[]
+  description: string
+  vacancy: number
+  open_date: string
+  close_date: string
+  is_payable: boolean
+  fees?: string
+}
 
-Responsibilities:
-- Develop responsive and performant UIs
-- Collaborate with designers and backend engineers
-- Write scalable, maintainable Vue components
+// Description parsing
+const parsedDescription = computed(() =>
+  job.value?.description?.trim().split(/\n{2,}/) || []
+)
 
-Requirements:
-- Vue 3 / Nuxt 3
-- TailwindCSS
-- REST APIs / Git
-    `
-  },
-  {
-    id: 'backend-engineer',
-    url: 'backend-engineer',
-    title: 'Backend Engineer',
-    location: 'Remote / Bengaluru',
-    team: 'Engineering',
-    summary: 'Design scalable Node.js services.',
-    // No PDF for this one
-    description: `
-You'll help architect and scale backend systems that power real-time features and critical APIs.
-
-Requirements:
-- Node.js, PostgreSQL
-- Redis, Docker, CI/CD
-    `
-  },
-  {
-    id: 'product-designer',
-    url: 'product-designer',
-    title: 'Product Designer',
-    location: 'Remote / Mumbai',
-    team: 'Design',
-    summary: 'Shape elegant, usable interfaces.',
-    pdf: '/pdfs/product-designer.pdf',
-    description: `
-You'll lead product design from concept to launch, focusing on usability, accessibility, and simplicity.
-
-Requirements:
-- Figma, prototyping, UX research
-- Design systems, responsive layouts
-    `
+onMounted(async () => {
+  try {
+    const apiUrl = `${config.public.apiBase}/recruitment/${route.params.url}`
+    const response = await useSanctumFetch(apiUrl)
+    job.value = response?.data || null
+  } catch (error) {
+    console.error('Error fetching job:', error)
+    job.value = null
+  } finally {
+    loaded.value = true        // ✅ Mark fetch complete
+    loading.value = false      // ✅ Stop global loading
   }
-]
-
-// Find job from URL param
-const job = jobs.find(j => j.url === route.params.url)
-
-// Parse description into paragraphs
-const parsedDescription = computed(() => {
-  return job?.description.trim().split('\n\n') || []
 })
+
+const pdfList = computed(() => {
+  if (!job.value?.pdf) return []
+  if (Array.isArray(job.value.pdf)) return job.value.pdf
+  if (typeof job.value.pdf === 'string') return [job.value.pdf]
+  return []
+})
+
+const isZip = computed(() => {
+  return pdfList.value.length === 1 && pdfList.value[0].endsWith('.zip')
+})
+
+
+const getPdfName = (url: string, index: number): string => {
+  try {
+    const decodedUrl = decodeURIComponent(url)
+    const parts = decodedUrl.split('/').pop()?.split('#')[0].split('?')[0]
+    const name = parts?.replace(/\.pdf$/i, '')?.trim()
+    return name || `Document ${index + 1}`
+  } catch {
+    return `Document ${index + 1}`
+  }
+}
+
+
+
 </script>
 
 <style scoped>
+/* Optional styles can go here */
 </style>

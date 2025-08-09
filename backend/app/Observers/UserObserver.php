@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\User;
+use App\Notifications\GoodbyeNotification;
+use App\Notifications\WelcomeNotification;
 
 class UserObserver
 {
@@ -11,7 +13,10 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        //
+        // Send welcome notification for users created with verified email (social login)
+        if ($user->hasVerifiedEmail() || ! is_null($user->mobile_verified_at)) {
+            $user->notify(new WelcomeNotification);
+        }
     }
 
     /**
@@ -27,7 +32,7 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
-        //
+        $user->notify(new GoodbyeNotification);
     }
 
     /**

@@ -387,11 +387,14 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useSanctum, useSanctumFetch, useRuntimeConfig, useCookie } from '#imports'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 const mobileFilterOpen = ref(false)
 
 const route = useRoute()
+const { isLoggedIn } = useSanctum()
+const config = useRuntimeConfig()
 const categoryUrl = route.params.url as string
 
 // Data containers
@@ -407,7 +410,7 @@ const selectedSort = ref<any>(null)
 // Fetch category + top/latest/all products in one API call
 const fetchCategory = async (page = 1, sortKey = '') => {
   try {
-    const res = await fetch(`http://localhost:8000/api/categories/${categoryUrl}?page=${page}&sort=${sortKey}`)
+    const res = await useSanctumFetch(`${config.public.apiBase}/categories/${categoryUrl}?page=${page}&sort=${sortKey}`)
     const json = await res.json()
     category.value = json.data || {}
     topProducts.value = json.top_products || []

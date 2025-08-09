@@ -91,8 +91,9 @@
 
       </aside>
 
+
       <!-- Checkout Form -->
-      <section class="w-full md:w-1/3 border border-gray-300 dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-800">
+      <section v-if="isLoggedIn" class="w-full md:w-1/3 border border-gray-300 dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-800">
         <form @submit.prevent="submitOrder" class="space-y-6">
           <!-- Billing -->
           <fieldset class="border rounded-md p-4 border-gray-300 dark:border-gray-600">
@@ -165,6 +166,19 @@
           <button type="submit" class="btn-primary w-full">Submit Order</button>
         </form>
       </section>
+
+      <!-- Show Register Form For Guest For Proceed to Checkout-->
+      <section v-else class="w-full md:w-1/3 h-full border border-gray-300 dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-800">
+        <RegisterFormComponent redirectTo="/cart" />
+        <button
+            disabled
+            class=" w-full bg-gray-300 text-gray-500 cursor-not-allowed px-4 py-2 rounded font-semibold dark:bg-gray-700 dark:text-gray-400"
+        >
+          Checkout
+        </button>
+
+      </section>
+
     </div>
   </div>
 </template>
@@ -176,6 +190,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useSanctum, useSanctumFetch, useRuntimeConfig, useCookie } from '#imports'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
+import RegisterFormComponent from "~/components/RegisterFormComponent.vue";
 
 const { isLoggedIn } = useSanctum()
 const config = useRuntimeConfig()

@@ -36,7 +36,7 @@ return new class extends Migration
             $table->decimal('length', 12, 2)->nullable();
             $table->decimal('weight', 12, 2)->nullable();
 
-            $table->string('status')->default(\App\Casts\ModelStatusCast::DRAFT->value);
+            $table->string('status')->default(\Mintreu\Toolkit\Casts\PublishableStatusCast::DRAFT->value);
             $table->text('status_feedback')->nullable();
 
 

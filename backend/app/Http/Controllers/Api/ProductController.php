@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 
-use App\Casts\ModelStatusCast;
-use App\Casts\ProductTypeCast;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductIndexResource;
 use App\Http\Resources\Product\ProductResource;
-use App\Models\FilterGroup;
-use App\Models\Product;
 use App\Scopes\CategoryScope;
 use App\Scopes\FilterScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
+use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
+use Mintreu\LaravelProductCatalogue\Models\Product;
+use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class ProductController extends Controller
 {
@@ -123,7 +123,7 @@ class ProductController extends Controller
             'media' => fn($query) => $query->where('collection_name','displayImage')
         ])
             ->where('type',ProductTypeCast::SIMPLE)
-            ->where('status',ModelStatusCast::PUBLISHED)
+            ->where('status',PublishableStatusCast::PUBLISHED)
             ->paginate();
 
         return ProductIndexResource::collection($products);
