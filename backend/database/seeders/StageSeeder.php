@@ -36,23 +36,48 @@ class StageSeeder extends Seeder
             'max_team_members' => 780,
             'desc' => fake()->paragraph,
             'status' => true,
-            'benefits' => ["Team Building" => "Active","Sponshorship" => "Active","Shopping Benefits" => "DeActive"],
-            'accessibility' => ["Team Building" => "Active","Sponshorship" => "Active","Shopping Benefits" => "DeActive"],
+            'benefits' => [
+                "Team Building" => "DeActive",
+                "Sponsorship" => "DeActive",
+                "Shopping Benefits" => "Active", // Always active
+                "Affiliate Commissions" => "DeActive",
+                "Exclusive Tools" => "DeActive",
+                "Network Growth" => "DeActive",
+                "Early Access Features" => "DeActive",
+                "Premium Support" => "DeActive",
+                "Career Opportunities" => "DeActive",
+            ],
+            'accessibility' => [
+                "Team Building" => "DeActive",
+                "Sponsorship" => "DeActive",
+                "Shopping Benefits" => "Active",
+                "Affiliate Commissions" => "DeActive",
+                "Exclusive Tools" => "DeActive",
+                "Network Growth" => "DeActive",
+                "Early Access Features" => "DeActive",
+                "Premium Support" => "DeActive",
+                "Career Opportunities" => "DeActive",
+            ],
 
 
         ]);
 
+
+
+
+
         $levelNames = ['Bronze', 'Silver', 'Gold', 'Diamond'];
 
-        for ($x = 1; $x <= 4; $x++) {
+        for ($x = 1; $x <= config('app.matrix',4); $x++) {
             $levelName = $levelNames[($x - 1) % count($levelNames)]; // Cycle through names
 
             $level = $plan->levels()->create([
                 'name' => ucfirst($planName) . ' ' . $levelName,
                 'url' => Str::slug($planName . ' ' . $levelName),
-//                'team_member_limit' => 5 ** $x,
-//                'joining_bonus' => (4 - $x) == 0 ? 0.5 : (4 - $x),
+                'team_member_limit' => 5 ** $x,
+                'joining_bonus' => (4 - $x) == 0 ? 0.5 : (4 - $x),
                 'status' => true,
+                'validate_years' => max(1, min($x, 3))
                 // Adjust other attributes as needed
             ]);
         }

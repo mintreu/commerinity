@@ -77,11 +77,10 @@ class Product extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('displayImage')
-            //->useFallbackUrl(asset('images/placeholder/user_placeholder.png'));
-            ->useFallbackUrl('https://i.pravatar.cc/300');
+            ->useFallbackUrl('https://placehold.co/600x400?text=Display\nImage')
+        ;
         $this->addMediaCollection('bannerImage')
-            //->useFallbackUrl(asset('images/placeholder/user_placeholder.png'));
-            ->useFallbackUrl('https://placehold.co/400x1200');
+            ->useFallbackUrl('https://placehold.co/600x400?text=Banner\nImage');
     }
 
 
@@ -109,12 +108,6 @@ class Product extends Model implements HasMedia
     /**
      * Get the variants of this product
      */
-//    public function variants(): HasMany
-//    {
-//        return $this->hasMany(Product::class, 'parent_id');
-//    }
-
-
     public function variants():HasMany
     {
         return $this->hasMany(static::class, 'parent_id','id');

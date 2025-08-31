@@ -1,9 +1,9 @@
 <?php
 
-namespace Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\Pages;
+namespace Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource;
 
 class CreateFilterGroup extends CreateRecord
 {

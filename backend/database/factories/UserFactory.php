@@ -52,7 +52,7 @@ class UserFactory extends Factory
                 ->keys()
                 ->random(),
 
-            'referral_code' => Str::uuid(),
+//            'referral_code' => Str::uuid(),
 
             // Realistic dob: between 18 and 60 years ago
             'dob' => $this->faker->dateTimeBetween('-60 years', '-18 years')->format('Y-m-d'),
@@ -69,4 +69,14 @@ class UserFactory extends Factory
             'mobile_verified_at' => null,
         ]);
     }
+
+
+    public function noMobile():static
+    {
+        return $this->state(fn (array $attributes) => [
+            'mobile' => null,
+        ]);
+    }
+
+
 }

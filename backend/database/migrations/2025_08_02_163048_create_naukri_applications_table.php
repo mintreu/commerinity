@@ -16,11 +16,7 @@ return new class extends Migration
             $table->string('uuid')->unique();
 
             // Applicant Profile
-            $table->string('name');
-            $table->string('mobile');
-            $table->string('email')->nullable();
-            $table->string('gender');
-            $table->date('dob');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('guardian_name');
 
 
@@ -29,7 +25,7 @@ return new class extends Migration
             // Form Related
             $table->json('educations')->nullable();
             $table->json('skills')->nullable();
-            $table->json('experience')->nullable();
+            $table->json('experiences')->nullable();
 
             // Reference By
             $table->string('reference_name')->nullable();
@@ -38,8 +34,9 @@ return new class extends Migration
             $table->dateTime('submitted_at')->nullable();
 
             $table->foreignId('naukri_id')->nullable()->constrained('naukris')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('address_id')->nullable()->constrained('addresses')->cascadeOnUpdate()->nullOnDelete();
 
-            $table->string('status')->default('pending');
+            $table->string('status')->default(\App\Casts\NaukriApplicationStatusCast::AWAITING_PAYMENT->value);
             $table->text('status_feedback')->nullable();
 
             $table->timestamps();

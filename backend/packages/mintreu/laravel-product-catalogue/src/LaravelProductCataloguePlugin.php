@@ -47,7 +47,7 @@ class LaravelProductCataloguePlugin implements Plugin
             $panel
                 ->resources([
                     ProductResource::class,
-                    CategoryResource::class,
+
                     FilterGroupResource::class,
                     FilterResource::class
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('amount')->default(0);
 
             $table->boolean('is_paid')->default(false);
-            $table->timestamp('expires_at')->nullable();
+            $table->timestamp('expire_at')->nullable();
             $table->timestamp('checkout_expires_at')->nullable();
 
 

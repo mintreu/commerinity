@@ -1,6 +1,6 @@
 <?php
 
-namespace Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\RelationManagers;
+namespace Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;

@@ -20,33 +20,37 @@
         }
     ],
     "require": {
-        "php": "^8.3",
-        "filament/filament": "^3.0",
-        "spatie/laravel-package-tools": "^1.15.0",
-        "mintreu/laravel-money": "dev-main",
-        "mintreu/laravel-geokit": "dev-main",
-        "mintreu/laravel-category": "dev-main",
-        "mintreu/toolkit": "dev-main",
-        "awcodes/filament-tiptap-editor": "^3.5",
+        "php": "^8.2",
+        "awcodes/filament-table-repeater": "^3.1",
+        "awcodes/filament-tiptap-editor": "^3.0",
         "awcodes/shout": "^2.1",
         "codewithdennis/filament-select-tree": "^3.1",
+        "filament/filament": "^3.0",
         "filament/spatie-laravel-media-library-plugin": "^3.3",
-        "icetalker/filament-table-repeater": "^1.4",
+        "illuminate/contracts": "*",
+        "mintreu/laravel-category": "dev-main",
+        "mintreu/laravel-geokit": "dev-main",
+        "mintreu/laravel-money": "dev-main",
+        "mintreu/toolkit": "dev-main",
+        "spatie/laravel-package-tools": "^1.15.0",
         "staudenmeir/laravel-adjacency-list": "^1.25"
     },
+
     "require-dev": {
-        "laravel/pint": "^1.13",
-        "nunomaduro/collision": "^8.6",
-        "nunomaduro/larastan": "^2.0.1",
-        "orchestra/testbench": "^8.0",
-        "pestphp/pest": "^2.1",
-        "pestphp/pest-plugin-arch": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0",
-        "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0",
-        "spatie/laravel-ray": "^1.26"
+        "laravel/pint": "^1.14",
+        "nunomaduro/collision": "^8.8",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^10.0.0||^9.0.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "spatie/laravel-ray": "^1.35"
     },
+
+
     "autoload": {
         "psr-4": {
             "Mintreu\\LaravelProductCatalogue\\": "src/",

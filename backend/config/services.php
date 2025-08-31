@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+
+
+    'google' => [
+        'stateless'=>true,
+        'client_id' => env('GOOGLE_CLIENT'),
+        'client_secret' => env('GOOGLE_SECRET'),
+        'redirect' => env('GOOGLE_CALLBACK'),
+        'maps_api_key' => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+
+
 ];

@@ -2,7 +2,7 @@
   <div class="p-6 max-w-3xl mx-auto space-y-10">
     <!-- Page Title -->
     <div class="flex items-center gap-3">
-      <NuxtIcon name="mdi-plus-box" class="text-blue-600 dark:text-blue-400 text-2xl" />
+      <Icon name="mdi-plus-box" class="text-blue-600 dark:text-blue-400 text-2xl" />
       <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Create New Support Ticket</h1>
     </div>
 
@@ -66,7 +66,7 @@
             class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
             :disabled="!form.title || !form.description"
         >
-          <NuxtIcon name="mdi-send" class="inline-block mr-2 -mt-1" />
+          <Icon name="mdi-send" class="inline-block mr-2 -mt-1" />
           Submit Ticket
         </button>
       </div>
@@ -75,7 +75,7 @@
     <!-- FAQ / CTA Section -->
     <div class="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
       <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
-        <NuxtIcon name="mdi-frequently-asked-questions" class="text-xl text-blue-500" />
+        <Icon name="mdi-frequently-asked-questions" class="text-xl text-blue-500" />
         Frequently Asked Questions
       </h2>
       <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300 list-disc list-inside">
@@ -87,7 +87,7 @@
       <div class="mt-4">
         <NuxtLink to="/dashboard/faq">
           <button class="text-sm px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-            <NuxtIcon name="mdi-book-open-page-variant" class="inline-block mr-2 -mt-1" />
+            <Icon name="mdi-book-open-page-variant" class="inline-block mr-2 -mt-1" />
             Browse Help Center
           </button>
         </NuxtLink>

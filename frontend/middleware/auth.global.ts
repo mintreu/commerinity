@@ -1,4 +1,6 @@
 // middleware/auth.ts
+// noinspection JSUnusedGlobalSymbols
+
 import { defineNuxtRouteMiddleware, navigateTo } from 'nuxt/app'
 import { useSanctum } from '#imports'
 

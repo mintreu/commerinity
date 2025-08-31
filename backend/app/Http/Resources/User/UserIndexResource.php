@@ -17,6 +17,7 @@ class UserIndexResource extends JsonResource
         return [
             //'id' => $this->id,
             'name' => $this->name,
+            'uuid'  => $this->uuid,
             'email' => $this->email,
             'mobile' => $this->mobile,
             'email_verified' => !is_null($this->email_verified_at),
@@ -30,7 +31,8 @@ class UserIndexResource extends JsonResource
             'status' => $this->status->getLabel(),
             'status_feedback' => $this->status_feedback,
             'avatar' => $this->getFirstMediaUrl('avatarImage'),
-
+            'hasLevel' => !is_null($this->level_id),
+            'level_id' => $this->level_id
         ];
     }
 }

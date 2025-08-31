@@ -52,7 +52,7 @@ class Kyc extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('aadhaarImage'); // from public dir
+        $this->addMediaCollection('aadhaarImage')->useFallbackUrl('https://placehold.co/400x1200');; // from public dir
         $this->addMediaCollection('panImage');
         $this->addMediaCollection('gstImage');
     }

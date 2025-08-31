@@ -21,7 +21,7 @@ class Cart extends CartService
      *
      * @return array
      */
-    public function getMeta(): array
+    public function getMeta(bool $formatted = true): array
     {
         // Eager load cartable with media to avoid N+1 problem
         $this->cartItems = $this->items();
@@ -32,9 +32,9 @@ class Cart extends CartService
 
 
         return [
-            'summary'  => $this->calculateCart(),
+            'summary'  => $this->calculateCart($formatted),
             'customer' => $this->getCustomerMeta(),
-            'items'    => $this->formatItems(),
+            'items'    => $this->formatItems($formatted),
             'error'    => $this->error,
         ];
     }
@@ -71,7 +71,7 @@ class Cart extends CartService
      *
      * @return array
      */
-    private function calculateCart(): array
+    private function calculateCart(bool $formatted = true): array
     {
         $subTotal = new LaravelMoney();
         $tax = new LaravelMoney();
@@ -92,13 +92,14 @@ class Cart extends CartService
         $total->add($subTotal)->add($tax)->subtract($discount);
 
         return [
-            'sub_total'       => $subTotal->formatted(),
-            'tax'             => $tax->formatted(),
+            'sub_total'       => $formatted ? $subTotal->formatted() : $subTotal,
+            'tax'             => $formatted ? $tax->formatted() : $tax,
             'tax_percentage'  => 0,
-            'discount'        => $discount->formatted(),
+            'discount'        => $formatted ?$discount->formatted() : $discount,
             'coupon_applied'  => false,
             'coupon_code'     => null,
-            'total'           => $total->formatted(),
+            'total'           => $formatted ? $total->formatted() : $total,
+            'quantity'        =>   $this->cartItems?->sum('quantity') ?? 0
         ];
     }
 
@@ -107,18 +108,24 @@ class Cart extends CartService
      *
      * @return array
      */
-    private function formatItems(): array
+    private function formatItems(bool $formatted = true): array
     {
         if (is_null($this->cartItems))
         {
             return [];
         }
 
-        return $this->cartItems->map(function (\App\Models\Cart $item) {
+        return $this->cartItems->map(function (\App\Models\Cart $item) use($formatted) {
             $cartable = $item->cartable;
 
+            $subTotal = LaravelMoney::make($cartable->price)->multiplyOnce($item->quantity);
+            $tax = new LaravelMoney();
+            $discount = new LaravelMoney();
+            $total = new LaravelMoney();
+
+            $total = $cartable ? $total->addOnce($subTotal) : $total;
+
             return [
-//                'id'         => $item->id,
                 'product_id' => $cartable?->id,
                 'product'    => [
                     'name'      => $cartable?->name,
@@ -130,10 +137,13 @@ class Cart extends CartService
                     'price'     => $cartable ? LaravelMoney::make($cartable->price)->formatted() : null,
                     'thumbnail' => $cartable?->getFirstMediaUrl('displayImage') ?: null,
                 ],
-                'quantity'   => $item->quantity,
-                'total'      => $cartable
-                    ? LaravelMoney::make($cartable->price)->multiplyOnce($item->quantity)->formatted()
-                    : null,
+                'summary' => [
+                    'quantity'   => $item->quantity,
+                    'sub_total' => $formatted ? $subTotal->formatted() : $subTotal,
+                    'discount'  => $formatted ? $discount->formatted() : $discount,
+                    'tax'       => $formatted ? $tax->formatted() : $tax,
+                    'total'      => $formatted ? $total->formatted() : $total,
+                ],
             ];
         })->toArray();
     }

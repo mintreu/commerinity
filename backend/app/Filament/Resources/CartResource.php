@@ -18,7 +18,6 @@ class CartResource extends Resource
     protected static ?string $model = Cart::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'ShopLine';
 
     public static function form(Form $form): Form
     {
@@ -39,6 +38,10 @@ class CartResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('ownerable_id')
                     ->numeric(),
+                Forms\Components\TextInput::make('guest_id')
+                    ->maxLength(255),
+                Forms\Components\Toggle::make('is_guest')
+                    ->required(),
             ]);
     }
 
@@ -46,22 +49,24 @@ class CartResource extends Resource
     {
         return $table
             ->columns([
+
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('cartable.media')
+                    ->collection('displayImage')
+                    ->label('Thumbnail')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('cartable.name')
+                    ->label('Product Name')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('quantity')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('discount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('cartable_type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('cartable_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('ownerable_type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('ownerable_id')
-                    ->numeric()
-                    ->sortable(),
+
+                Tables\Columns\IconColumn::make('is_guest')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

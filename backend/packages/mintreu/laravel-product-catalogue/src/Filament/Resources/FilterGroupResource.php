@@ -7,7 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\RelationManagers\FiltersRelationManager;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\RelationManagers\FiltersRelationManager;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 
 class FilterGroupResource extends Resource
@@ -66,10 +66,10 @@ class FilterGroupResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\Pages\ListFilterGroups::route('/'),
-            'create' => \Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\Pages\CreateFilterGroup::route('/create'),
-            'view' => \Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\Pages\ViewFilterGroup::route('/{record}'),
-            'edit' => \Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\Pages\EditFilterGroup::route('/{record}/edit'),
+            'index' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages\ListFilterGroups::route('/'),
+            'create' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages\CreateFilterGroup::route('/create'),
+            'view' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages\ViewFilterGroup::route('/{record}'),
+            'edit' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages\EditFilterGroup::route('/{record}/edit'),
         ];
     }
 }

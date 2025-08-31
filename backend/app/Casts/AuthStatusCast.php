@@ -15,13 +15,13 @@ enum AuthStatusCast: string implements HasColor, HasIcon, HasLabel
 
     // Core states
     case PENDING      = 'pending';
-    case ACTIVE       = 'active';
+    case ACTIVE       = 'active';   // for regular user
     case SUSPENDED    = 'suspended';
     case INACTIVE     = 'inactive';
     case BANNED       = 'banned';
 
     // Subscription / Program status
-    case SUBSCRIBED   = 'subscribed';
+    case SUBSCRIBED   = 'subscribed';   // for member user
     case UNSUBSCRIBED = 'unsubscribed';
 
     public function getLabel(): ?string

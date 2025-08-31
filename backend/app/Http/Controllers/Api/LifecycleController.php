@@ -13,10 +13,14 @@ class LifecycleController extends Controller
 {
 
 
-    public function getTimeline()
+    public function getTimeline(Request $request)
     {
-        $allAvailableStages = Stage::with('levels')->where('status',true)->latest('id')->get();
+        $allAvailableStages = Stage::with([
+            'levels' => fn($query) => $query->orderBy('id', 'desc')
+        ])->where('status',true)->latest('id')->get();
+        $user = $request->user();
         return StageResource::collection($allAvailableStages);
+
     }
 
 
@@ -33,10 +37,24 @@ class LifecycleController extends Controller
         return StageResource::make($stage);
     }
 
-    public function getLevel(Level $level)
+    public function getLevel(Level $level): LevelResource
     {
         return LevelResource::make($level);
     }
+
+
+
+    public function getUserSubscribableStageAndLevel(Request $request): StageResource
+    {
+        $user = $request->user();
+
+        $stage = $user->getNextLifecycleStage();
+
+
+        return StageResource::make($stage);
+    }
+
+
 
 
 

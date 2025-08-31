@@ -4,9 +4,33 @@ namespace Mintreu\LaravelCategory;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
 
 class LaravelCategoryPlugin implements Plugin
 {
+
+    protected bool $hasAuthorResource = false;
+
+    public function authorResource(bool $condition = true): static
+    {
+        // This is the setter method, where the user's preference is
+        // stored in a property on the plugin object.
+        $this->hasAuthorResource = $condition;
+
+        // The plugin object is returned from the setter method to
+        // allow fluent chaining of configuration options.
+        return $this;
+    }
+
+    public function hasAuthorResource(Panel $panel): bool
+    {
+        // This is the getter method, where the user's preference
+        // is retrieved from the plugin property.
+        $this->hasAuthorResource = $panel->getId() == 'admin';
+        return $this->hasAuthorResource;
+    }
+
+
     public function getId(): string
     {
         return 'laravel-category';
@@ -14,7 +38,13 @@ class LaravelCategoryPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel
+            ->resources([
+                CategoryResource::class,
+            ])
+            ->pages([
+
+            ]);
     }
 
     public function boot(Panel $panel): void

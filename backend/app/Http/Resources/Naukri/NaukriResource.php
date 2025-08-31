@@ -4,6 +4,7 @@ namespace App\Http\Resources\Naukri;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Mintreu\LaravelMoney\LaravelMoney;
 
 class NaukriResource extends NaukriIndexResource
 {
@@ -20,7 +21,7 @@ class NaukriResource extends NaukriIndexResource
             'open_date'     => optional($this->open_date)->format('d/m/Y'),
             'close_date'    => optional($this->close_date)->format('d/m/Y'),
             'is_payable'    => $this->is_payable,
-            'fees'          => $this->fees,
+            'fees'          => LaravelMoney::format($this->fees ?? 0),
 
         ]);
     }

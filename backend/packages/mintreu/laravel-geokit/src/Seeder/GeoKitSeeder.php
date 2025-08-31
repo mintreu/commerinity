@@ -41,6 +41,10 @@ class GeoKitSeeder extends Seeder
 
 
 
+
+
+
+
     protected function seedNow(object $countryData): void
     {
         $statesData = $countryData->states ?? null;
@@ -116,50 +120,6 @@ class GeoKitSeeder extends Seeder
 
 
 
-
-
-//    protected function seedNow(object $countryData)
-//    {
-//        $statesData = $countryData['states'] ?? [];
-//        unset($countryData['states']);
-//
-//        // Insert or update the country
-//        $country = Country::updateOrCreate(
-//            [
-//                'iso_code_2' => $countryData['iso_code_2'],
-//                'iso_code_3' => $countryData['iso_code_3'],
-//            ],
-//            $countryData
-//        );
-//
-//        // Seed states for each country
-//
-//        // Seed states for each country
-//        foreach ($statesData as $stateData) {
-//
-//            $stateCities = $stateData['cities'];
-//            unset($stateData['cities']);
-//            unset($stateData['latitude']);
-//            unset($stateData['longitude']);
-//            $newState = $country->states()->updateOrCreate(
-//                [
-//                    'code' => $stateData['code'],
-//                ],
-//                $stateData
-//            );
-//
-//
-//            foreach ($stateCities as $block) {
-//                $newState->blocks()->create([
-//                    'name' => $name = ucwords(Str::lower($block['name'])),
-//                    'url' => Str::slug($name),
-//                    'district_name' => ucwords(Str::lower($block['district_name'])),
-//                    'latitude' => $block['latitude'],
-//                    'longitude' => $block['longitude'],
-//                ]);
-//            }
-//        }
-//    }
 
 
 

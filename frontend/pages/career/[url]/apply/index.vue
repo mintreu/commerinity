@@ -1,452 +1,553 @@
 <template>
-  <div class="max-w-4xl mx-auto px-4 py-16 text-gray-800 dark:text-gray-200">
+  <div class="max-w-4xl mx-auto px-4 py-12 sm:py-16 text-gray-800 dark:text-gray-200">
+    <!-- ✅ Global Loader -->
+    <GlobalLoader/>
 
-    <section v-if="isLoggedIn">
-      <div v-if="job">
-        <h1 class="text-3xl font-bold mb-8">Apply for {{ job.title }}</h1>
+    <div>
+      <!-- ❌ Guest User -->
+      <section v-if="!isLoggedIn" class="text-center py-16 sm:py-24">
+        <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-6 sm:p-8 rounded shadow">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+            Login Required
+          </h2>
+          <p class="mb-6 text-gray-600 dark:text-gray-300">
+            You need to be logged in to apply for this job. Please log in or register to continue.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <NuxtLink
+                to="/auth/login"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded text-sm"
+            >
+              Login
+            </NuxtLink>
+            <NuxtLink
+                to="/auth/register"
+                class="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-2 rounded text-sm"
+            >
+              Register
+            </NuxtLink>
+          </div>
+        </div>
+      </section>
 
-        <!-- Application Form -->
-        <form @submit.prevent="openReviewModal" class="space-y-10">
+      <!-- ✅ Auth User -->
+      <section v-else class="w-full mx-auto container dark:text-white  dark:bg-gray-800 px-5 py-10 dark:shadow-blue-500 dark:shadow-xl rounded-xl">
+        <div v-if="job" class="w-full">
+          <div class="full text-center mx-auto  mb-8">
+            <h1 class="text-lg font-semibold">
+              Apply for
+            </h1>
+            <h2 class="text-2xl sm:text-3xl font-bold">
+              {{ job.name }}
+            </h2>
+          </div>
 
-          <!-- Personal Information -->
-          <fieldset class="border p-6 rounded-md">
-            <legend class="text-xl font-semibold mb-4">Personal Information</legend>
+          <!-- ========================= -->
+          <!-- Job Application Form -->
+          <!-- ========================= -->
+          <form class="space-y-8" @submit.prevent="finalSubmit">
+            <!-- Profile Details -->
+            <fieldset class="border rounded-2xl p-4 sm:p-6 flex flex-col gap-4">
+              <legend class="px-2 text-lg font-semibold">
+                Profile Details
+              </legend>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+              <div class="w-full">
                 <label class="block font-medium mb-1">Full Name *</label>
-                <input v-model="form.name" type="text" class="input" placeholder="Enter your full name" required />
+                <input v-model="form.name" type="text" class="input ring-2 ring-gray-700" placeholder="Enter your full name" required
+                       disabled/>
               </div>
 
-              <div>
-                <label class="block font-medium mb-1">Email *</label>
-                <input v-model="form.email" type="email" class="input" placeholder="example@email.com" required />
+              <div class="w-full">
+                <label class="block font-medium mb-1">Guardian / Parent Name *</label>
+                <input v-model="form.guardian_name" type="text" class="input" placeholder="Father or Mother name"
+                       required/>
               </div>
 
-              <div>
-                <label class="block font-medium mb-1">Mobile *</label>
-                <input v-model="form.mobile" type="tel" class="input" placeholder="10-digit mobile number" required />
+
+              <div class="flex flex-col md:flex-row gap-3 w-full">
+                <div class="w-full">
+                  <label class="block font-medium mb-1">Email *</label>
+                  <input v-model="form.email" type="email" class="input ring-2 ring-gray-700" placeholder="example@email.com" required
+                         disabled/>
+                </div>
+
+                <div class="w-full">
+                  <label class="block font-medium mb-1">Mobile *</label>
+                  <input v-model="form.mobile" type="tel" class="input ring-2 ring-gray-700" placeholder="10-digit mobile number" required
+                         disabled/>
+                </div>
               </div>
 
-              <div>
-                <label class="block font-medium mb-1">Gender *</label>
-                <select v-model="form.gender" class="input" required>
-                  <option disabled value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+              <div class="flex flex-col md:flex-row gap-3 w-full">
+
+                <div class="w-full">
+                  <label class="block font-medium mb-1">Gender *</label>
+                  <select v-model="form.gender" class="input ring-2 ring-gray-700" required disabled>
+                    <option disabled value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="w-full">
+                  <label class="block font-medium mb-1">Date of Birth *</label>
+                  <input v-model="form.dob" type="date" class="input ring-2 ring-gray-700" required disabled/>
+                </div>
+              </div>
+
+              <!--CTA-->
+              <div class="flex flex-row gap-4 ">
+                <div class="grow"></div>
+                <NuxtLink
+                    to="/dashboard/my-account"
+                    class="flex items-center gap-1 text-sm text-blue-600
+                    hover:text-blue-700 dark:hover:text-green-400
+                    transition transform hover:scale-110"
+                >
+                  <Icon name="solar:pen-new-square-outline" class="w-4 h-4"/>
+                  Change Info
+                </NuxtLink>
+              </div>
+
+
+            </fieldset>
+
+            <!-- Address Details -->
+            <fieldset class="border rounded-2xl p-4 sm:p-6">
+              <legend class="px-2 text-lg font-semibold">
+                Address Details
+              </legend>
+              <!-- 👉 Input fields will go here -->
+              <div class="w-full">
+                <label class="block font-medium mb-1">Select Address *</label>
+                <select v-model="form.address_uuid" class="input " required>
+                  <option disabled value="">Select Address</option>
+                  <option
+                      v-for="addr in sortedUserAddresses"
+                      :key="addr.uuid"
+                      :value="addr.uuid"
+                  >
+                    {{ addr.address_1 }} ({{ addr.postal_code }})
+                  </option>
                 </select>
               </div>
-
-              <div>
-                <label class="block font-medium mb-1">Date of Birth *</label>
-                <input v-model="form.dob" type="date" class="input" required />
+              <!--CTA-->
+              <div class="flex flex-row gap-4 mt-2">
+                <div class="grow"></div>
+                <NuxtLink
+                    to="/dashboard/my-account"
+                    class="flex items-center gap-1 text-sm text-blue-600
+                    hover:text-blue-700 dark:hover:text-green-400
+                    transition transform hover:scale-110"
+                >
+                  <Icon name="solar:pen-new-square-outline" class="w-4 h-4"/>
+                  Change Info
+                </NuxtLink>
               </div>
 
-              <div>
-                <label class="block font-medium mb-1">Guardian / Parent Name *</label>
-                <input v-model="form.guardian_name" type="text" class="input" placeholder="Father or Mother name" required />
-              </div>
-            </div>
-          </fieldset>
+            </fieldset>
 
-          <!-- Address -->
-          <fieldset class="border p-6 rounded-md">
-            <legend class="text-xl font-semibold mb-4">Present Address</legend>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input v-model="form.address_1" type="text" class="input" placeholder="Street address *" required />
-              <input v-model="form.landmark" type="text" class="input" placeholder="Landmark (optional)" />
-              <input v-model="form.village" type="text" class="input" placeholder="Village/Town *" required />
-              <input v-model="form.block" type="text" class="input" placeholder="Block (optional)" />
-              <input v-model="form.city" type="text" class="input" placeholder="City / District *" required />
-              <input v-model="form.state_code" type="text" class="input" placeholder="State *" required />
-              <input v-model="form.postal_code" type="text" class="input" placeholder="Postal Code *" required />
-            </div>
-          </fieldset>
-
-          <!-- Education -->
-          <fieldset class="border p-6 rounded-md">
-            <legend class="text-xl font-semibold mb-4">Educational Qualifications</legend>
-
-            <div v-for="(edu, index) in form.educations" :key="index" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <select v-model="edu.degree" class="input" required>
-                <option value="">Select Degree</option>
-                <option v-for="d in degrees" :key="d" :value="d">{{ d }}</option>
-              </select>
-              <input type="text" v-model="edu.institution" placeholder="Institution" class="input" required />
-              <input type="number" v-model="edu.year" placeholder="Year of Completion" class="input" required />
-            </div>
-            <button type="button" @click="addEducation" class="text-blue-600 hover:underline mt-2">+ Add Qualification</button>
-          </fieldset>
-
-          <!-- Skills -->
-          <fieldset class="border p-6 rounded-md">
-            <legend class="text-xl font-semibold mb-4">Skills</legend>
-
-            <div v-for="(skill, index) in form.skills" :key="index" class="mb-4 space-y-2">
-              <input type="text" v-model="skill.skill" placeholder="Skill Name" class="input w-full" required />
-              <textarea v-model="skill.description" rows="2" placeholder="Skill Description" class="input w-full" required />
-            </div>
-            <button type="button" @click="addSkill" class="text-blue-600 hover:underline mt-2">+ Add Skill</button>
-          </fieldset>
-
-          <!-- Other Experience -->
-          <div>
-            <label class="block font-medium mb-1">Company Name (optional)</label>
-            <input v-model="form.company_name" type="text" placeholder="Company Name" class="input w-full" />
-          </div>
-
-          <div>
-            <label class="block font-medium mb-1">Experience (optional)</label>
-            <textarea v-model="form.experience" rows="3" placeholder="Describe your experience..." class="input w-full" />
-          </div>
-
-          <!-- Preferences -->
-          <div class="flex flex-col sm:flex-row gap-6">
-            <label class="flex items-center gap-2">
-              <input type="checkbox" v-model="form.relocation" /> Willing to Relocate
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="checkbox" v-model="form.traveling" /> Willing to Travel
-            </label>
-          </div>
-
-          <!-- Reference -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block font-medium mb-1">Reference Name (optional)</label>
-              <input type="text" v-model="form.reference_name" placeholder="Reference Name" class="input w-full" />
-            </div>
-            <div>
-              <label class="block font-medium mb-1">Reference Contact (optional)</label>
-              <input type="text" v-model="form.reference_contact" placeholder="Reference Contact" class="input w-full" />
-            </div>
-          </div>
-
-          <!-- Submit -->
-          <div class="text-center mt-8">
-            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded text-lg hover:bg-blue-700">
-              Continue to Review
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Not Found -->
-      <div v-else class="text-center py-24">
-        <h2 class="text-2xl font-semibold mb-2">Job not found</h2>
-        <NuxtLink to="/career" class="text-blue-600 hover:underline">← Back to Careers</NuxtLink>
-      </div>
-
-
-      <!-- Review Modal -->
-      <!-- Fullscreen Scrollable Modal with Collapsible Sections -->
-      <div v-if="showModal" class="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
-        <div class="bg-white dark:bg-gray-900 w-full h-full flex flex-col">
-
-          <!-- Header -->
-          <div class="flex justify-between items-center px-6 py-4 border-b border-gray-300 dark:border-gray-700">
-            <h2 class="text-xl font-bold">Review Your Application</h2>
-            <button @click="showModal = false" class="text-3xl text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 leading-none">
-              &times;
-            </button>
-          </div>
-
-          <!-- Scrollable Content -->
-          <div class="flex-1 overflow-y-auto p-6 space-y-4">
-
-
-            <details open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">👤 Personal Information</summary>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                <div><label class="font-medium">Full Name:</label> <div>{{ form.name }}</div></div>
-                <div><label class="font-medium">Email:</label> <div>{{ form.email }}</div></div>
-                <div><label class="font-medium">Mobile:</label> <div>{{ form.mobile }}</div></div>
-                <div><label class="font-medium">Gender:</label> <div>{{ form.gender }}</div></div>
-                <div><label class="font-medium">DOB:</label> <div>{{ form.dob }}</div></div>
-                <div><label class="font-medium">Guardian:</label> <div>{{ form.guardian_name }}</div></div>
-              </div>
-            </details>
-
-            <details open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">🏠 Present Address</summary>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                <div><label class="font-medium">Street:</label> <div>{{ form.address_1 }}</div></div>
-                <div><label class="font-medium">Landmark:</label> <div>{{ form.landmark }}</div></div>
-                <div><label class="font-medium">Village:</label> <div>{{ form.village }}</div></div>
-                <div><label class="font-medium">Block:</label> <div>{{ form.block }}</div></div>
-                <div><label class="font-medium">City:</label> <div>{{ form.city }}</div></div>
-                <div><label class="font-medium">State:</label> <div>{{ form.state_code }}</div></div>
-                <div><label class="font-medium">Postal Code:</label> <div>{{ form.postal_code }}</div></div>
-              </div>
-            </details>
-
-            <details open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">🎓 Education</summary>
-              <div class="space-y-2 mt-3">
-                <div v-for="(edu, index) in form.educations" :key="index">
-                  <p><strong>{{ edu.degree }}</strong> – {{ edu.institution }} ({{ edu.year }})</p>
+            <!-- Skills -->
+            <fieldset class="border rounded-2xl p-4 sm:p-6">
+              <legend class="px-2 text-lg font-semibold">
+                Skill Details
+              </legend>
+              <div v-for="(skill, index) in form.skills" :key="index" class="w-full">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <input type="text" v-model="skill.skill" placeholder="Skill Name" class="input w-full"  required/>
+                  <textarea v-model="skill.description" rows="2" placeholder="Skill Description" class="input md:col-span-2"
+                            required/>
                 </div>
               </div>
-            </details>
 
-            <details open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">🧠 Skills</summary>
-              <div class="space-y-2 mt-3">
-                <div v-for="(skill, index) in form.skills" :key="index">
-                  <p><strong>{{ skill.skill }}</strong></p>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ skill.description }}</p>
+              <div class="flex flex-row gap-3 mt-2">
+                <div class="grow"></div>
+                <button type="button" @click="addSkill" class="text-blue-600 hover:cursor-pointer hover:font-semibold ">+ Add Skill</button>
+                <button type="button" @click="removeSkill" class="p-1 text-red-600 hover:cursor-pointer hover:font-semibold">
+                  − Remove Last
+                </button>
+              </div>
+
+            </fieldset>
+
+            <!-- Education -->
+            <fieldset class="border rounded-2xl p-4 sm:p-6">
+              <legend class="px-2 text-lg font-semibold">
+                Education Details
+              </legend>
+              <div v-for="(edu, index) in form.educations" :key="index"
+                   class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <select v-model="edu.degree" class="input" required>
+                  <option value="">Select Degree</option>
+                  <option v-for="d in degrees" :key="d" :value="d">{{ d }}</option>
+                </select>
+                <input type="text" v-model="edu.institution" placeholder="Institution" class="input" required/>
+                <input type="number" v-model="edu.year" placeholder="Year of Completion" class="input" required/>
+              </div>
+              <div class="flex flex-row gap-3  mt-2">
+                <div class="grow"></div>
+                <button type="button" @click="addEducation" class="text-blue-600 hover:cursor-pointer hover:font-semibold">+ Add
+                  Qualification
+                </button>
+                <button type="button" @click="removeEducation" class="p-1 text-red-600 hover:cursor-pointer hover:font-semibold">
+                  − Remove Last
+                </button>
+              </div>
+            </fieldset>
+
+            <!-- Experience -->
+            <fieldset class="border rounded-2xl p-4 sm:p-6">
+              <legend class="px-2 text-lg font-semibold">
+                Experiences You Have Any (optional)
+              </legend>
+              <!-- Checkbox Toggle -->
+              <div class="mb-4">
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" v-model="hasExperience"/>
+                  <span>I have experience</span>
+                </label>
+              </div>
+              <!-- Only show if checked -->
+              <div v-if="hasExperience">
+                <div v-for="(experience, index) in form.experiences" :key="index" class="mb-4 space-y-2">
+                  <div>
+                    <label class="block font-medium mb-1">Company Name</label>
+                    <input v-model="experience.company_name" type="text" placeholder="Company Name"
+                           class="input w-full"/>
+                  </div>
+
+                  <div class="flex flex-col md:flex-row gap-3 w-full">
+
+                    <div class="w-full">
+                      <label class="block font-medium mb-1">Start From</label>
+                      <input v-model="experience.start" type="date" class="input" required/>
+                    </div>
+                    <div class="w-full">
+                      <label class="block font-medium mb-1">End Upto</label>
+                      <input v-model="experience.end" type="date" class="input" required/>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-medium mb-1">Experience </label>
+                    <textarea v-model="experience.experience" rows="3" placeholder="Describe your experience..."
+                              class="input w-full"/>
+                  </div>
+                </div>
+                <div class="flex flex-row gap-3 mt-2">
+                  <div class="grow"></div>
+                  <button type="button" @click="addExperience" class="p-1 text-blue-600 hover:cursor-pointer hover:font-semibold ">+ Add
+                    Experience
+                  </button>
+                  <button type="button" @click="removeExperience" class="p-1 text-red-600 hover:cursor-pointer hover:font-semibold">
+                    − Remove Last
+                  </button>
                 </div>
               </div>
-            </details>
+            </fieldset>
 
-            <details v-if="form.company_name || form.experience" open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">💼 Other Experience</summary>
-              <div class="mt-3">
-                <p v-if="form.company_name"><strong>Company:</strong> {{ form.company_name }}</p>
-                <p v-if="form.experience"><strong>Experience:</strong> {{ form.experience }}</p>
+            <!-- Agreement -->
+            <fieldset class="border rounded-2xl p-4 sm:p-6">
+              <legend class="px-2 text-lg font-semibold">
+                Agreement & Preferences
+              </legend>
+
+              <div class="mb-2">
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" v-model="form.relocation" />
+                  Willing to Relocate
+                </label>
               </div>
-            </details>
 
-            <details open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">⚙️ Preferences</summary>
-              <div class="mt-3">
-                <p><strong>Willing to Relocate:</strong> {{ form.relocation ? 'Yes' : 'No' }}</p>
-                <p><strong>Willing to Travel:</strong> {{ form.traveling ? 'Yes' : 'No' }}</p>
+              <div class="mb-2">
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" v-model="form.agree_terms" />
+                  I agree with the Terms & Conditions
+                </label>
               </div>
-            </details>
 
-            <details v-if="form.reference_name || form.reference_contact" open class="border rounded-md p-4">
-              <summary class="font-semibold cursor-pointer">📇 Reference</summary>
-              <div class="mt-3">
-                <p><strong>Name:</strong> {{ form.reference_name }}</p>
-                <p><strong>Contact:</strong> {{ form.reference_contact }}</p>
+              <div class="mb-2">
+                <label class="block font-medium mb-1">Reference Name (optional)</label>
+                <input
+                    type="text"
+                    v-model="form.reference_name"
+                    placeholder="Reference Name"
+                    class="input w-full"
+                />
               </div>
-            </details>
 
-            <div v-if="job?.is_payable" class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 text-sm p-3 rounded mt-3">
-              ⚠️ This job requires a small application fee. You’ll be redirected to payment after submission.
-            </div>
-          </div>
+              <div>
+                <label class="block font-medium mb-1">Reference Contact (optional)</label>
+                <input
+                    type="text"
+                    v-model="form.reference_contact"
+                    placeholder="Reference Contact"
+                    class="input w-full"
+                />
+              </div>
+            </fieldset>
 
-          <!-- Footer Buttons -->
-          <div class="flex flex-col md:flex-row justify-between items-center gap-4 px-6 py-4 border-t border-gray-300 dark:border-gray-700">
-            <label class="flex items-center gap-2 text-sm">
-              <input type="checkbox" v-model="agreed" />
-              I confirm all above information is accurate.
-            </label>
 
-            <div class="flex gap-3">
-              <button @click="showModal = false" class="text-blue-600 hover:underline text-sm">Edit</button>
+            <!-- Submit Button -->
+            <!-- Submit Button -->
+            <div class="pt-4 w-full flex flex-col items-center">
               <button
-                  :disabled="!agreed"
-                  @click="finalSubmit"
-                  class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 disabled:opacity-50 text-sm"
+                  type="submit"
+                  class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-2xl"
               >
-                Submit Application
+    <span v-if="!job.is_payable">
+      Submit Application
+    </span>
+                <span v-else>
+      Submit Application &amp; Proceed with Payment ({{ job.fees }})
+    </span>
               </button>
+
+              <!-- Note about fees -->
+              <p v-if="job.is_payable" class="mt-2 text-sm text-gray-600 text-center">
+                An application fee of <strong>{{ job.fees }}</strong> is required.
+                This fee is non-refundable.
+              </p>
             </div>
-          </div>
+
+
+          </form>
         </div>
-      </div>
-
-      <!-- Modal -->
-
-
-
-      <!-- Demo Payment Modal -->
-      <div v-if="showDemoPayModal" class="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
-        <div class="bg-white dark:bg-gray-900 w-full max-w-md p-6 rounded shadow-lg text-center">
-          <h2 class="text-2xl font-bold mb-4">💳 Demo Payment</h2>
-          <p class="mb-6 text-gray-700 dark:text-gray-300">
-            This is a temporary screen. You would be redirected to payment gateway here.
-          </p>
-          <button
-              @click="redirectToConfirm"
-              class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded text-lg"
-          >
-            Proceed & Confirm Application
-          </button>
-        </div>
-      </div>
-
-
-    </section>
-
-
-    <section v-else class="text-center py-24">
-      <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded shadow">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Login Required</h2>
-        <p class="mb-6 text-gray-600 dark:text-gray-300">
-          You need to be logged in to apply for this job. Please log in or register to continue.
-        </p>
-        <div class="flex justify-center gap-4">
-          <NuxtLink
-              to="/auth/login"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded text-sm"
-          >
-            Login
-          </NuxtLink>
-          <NuxtLink
-              to="/auth/register"
-              class="border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-2 rounded text-sm"
-          >
-            Register
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
-
-
-
-
-
-
+      </section>
+    </div>
   </div>
 </template>
 
 
-
-
 <script setup lang="ts">
-import {ref, reactive, onMounted} from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useSanctum, useSanctumFetch, useRuntimeConfig, useCookie,useCurrentUser } from '#imports'
+import {ref, reactive, onMounted} from "vue"
+import {useRoute} from "vue-router"
+import {
+  useSanctum,
+  useSanctumFetch,
+  useRuntimeConfig,
+  useCurrentUser,
+} from "#imports"
+
+// ✅ Global loader
+const isLoading = useState("pageLoading", () => false)
+isLoading.value = true
+
 const route = useRoute()
-const router = useRouter()
-
-
-
-// Global loading animation
-const loading = useState('pageLoading', () => false)
-loading.value = true
-
-interface User {
-  id: number;
-  email: string;
-  name: string;
-  mobile: string;
-  gender:string;
-  dob: string;
-}
-
-const user = useCurrentUser<User>();
-const { isLoggedIn } = useSanctum()
-const config = useRuntimeConfig()
-
+const toast = useToast()
 const job = ref<Job | null>(null)
 
-onMounted(async () => {
-  try {
-    const apiUrl = `${config.public.apiBase}/recruitment/${route.params.url}`
-    const response = await useSanctumFetch(apiUrl)
-    job.value = response?.data || null
+interface Job {
+  name: string
+  url: string
+  role: string
+  type: string
+  location: string
+  thumbnail: string
+  pdf?: string | string[]
+  description: string
+  vacancy: number
+  open_date: string
+  close_date: string
+  is_payable: boolean
+  fees?: string
+}
 
-    // ✅ Auto-fill user data into form
-    if (isLoggedIn.value && user.value) {
-      form.name = user.value.name || ''
-      form.email = user.value.email || ''
-      form.mobile = user.value.mobile || ''
-      form.gender = user.value.gender || ''
-      form.dob = user.value.dob || ''
-    }
+interface User {
+  id: number
+  email: string
+  name: string
+  mobile: string
+  gender: string
+  dob: string
+}
 
-
-  } catch (error) {
-    console.error('Error fetching job:', error)
-    job.value = null
-  } finally {
-    loaded.value = true        // ✅ Mark fetch complete
-    loading.value = false      // ✅ Stop global loading
-  }
-})
-
-
+const user = useCurrentUser<User>()
+const {isLoggedIn} = useSanctum()
+const config = useRuntimeConfig()
+const hasExperience = ref(false)
 const degrees = [
   'Class-8', 'Class-9', 'Class-10', 'Class-12',
   'Diploma', 'Bachelor', 'Master', 'Other'
 ]
 
+// ✅ Form model
 const form = reactive({
-  name: '',
-  email: '',
-  mobile: '',
-  gender: '',
-  dob: '',
-  guardian_name: '',
+  name: "",
+  email: "",
+  mobile: "",
+  gender: "",
+  dob: "",
 
-  address_1: '',
-  landmark: '',
-  village: '',
-  block: '',
-  city: '',
-  state_code: '',
-  postal_code: '',
+  guardian_name: "",
+  address_uuid: "",
 
-  educations: [
-    { degree: '', institution: '', year: '' }
-  ],
-  skills: [
-    { skill: '', description: '' }
-  ],
+  educations: [{degree: "", institution: "", year: ""}],
+  skills: [{skill: "", description: ""}],
 
-  company_name: '',
-  experience: '',
+  company_name: "",
+  experiences: [{company_name: "", start: "", end: "", experience: ""}],
   relocation: false,
-  traveling: false,
+  agree_terms: false,
 
-  reference_name: '',
-  reference_contact: '',
+  reference_name: "",
+  reference_contact: "",
 })
 
-const showModal = ref(false)
-const showDemoPayModal = ref(false)
-const agreed = ref(false)
+// ---------------------------
+// Fetch Job
+// ---------------------------
+async function fetchJob() {
+  try {
+    const apiUrl = `${config.public.apiBase}/recruitment/${route.params.url}`
+    const response = await useSanctumFetch(apiUrl)
+    job.value = response?.data || null
+  } catch (error) {
+    // console.error("❌ Error fetching job:", error)
+    toast.error({
+      title: 'Error',
+      message: '❌ Error fetching job',
+      timeout: 3000,
+      position: 'topRight',
+    })
+    job.value = null
+  }
+}
 
+const userAddresses = ref<any[]>([])
+
+// Computed → sort by priority ascending
+const sortedUserAddresses = computed(() => {
+  return [...(userAddresses.value || [])].sort((a, b) => a.priority - b.priority)
+})
+
+// Fetch user addresses
+async function fetchUserAddress() {
+  try {
+    const apiUrl = `${config.public.apiBase}/user/address-all`
+    const response = await useSanctumFetch(apiUrl)
+    userAddresses.value = response?.data || []
+
+    // Auto-select default HOME address
+    const defaultHome = userAddresses.value.find(
+        (a) =>
+            (a.type?.toLowerCase() === "home") &&
+            a.default === true
+    )
+    if (defaultHome) {
+      form.address_uuid = defaultHome.uuid
+    }
+  } catch (error) {
+    toast.error({
+      title: 'Error',
+      message: '❌ Error fetching addresses',
+      timeout: 3000,
+      position: 'topRight',
+    })
+    userAddresses.value = []
+  }
+}
+
+// ---------------------------
+// Populate Form with User Data
+// ---------------------------
+function populateFormWithUser() {
+  if (isLoggedIn.value && user.value) {
+    form.name = user.value.name || ""
+    form.email = user.value.email || ""
+    form.mobile = user.value.mobile || ""
+    form.gender = user.value.gender || ""
+    form.dob = user.value.dob || ""
+  }
+}
+
+// ---------------------------
+// Init Page
+// ---------------------------
+async function initializePage() {
+  try {
+    await fetchJob()
+    await fetchUserAddress()
+    populateFormWithUser()
+  } catch (error) {
+    toast.error({
+      title: 'Error',
+      message: '❌ Error during initialization',
+      timeout: 3000,
+      position: 'topRight',
+    })
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(async () => {
+  await initializePage()
+})
+
+
+
+// Form Actions
 const addEducation = () => {
   form.educations.push({ degree: '', institution: '', year: '' })
 }
+const removeEducation = () => {
+  if (form.educations.length > 1) {
+    form.educations.pop()
+  } else {
+    toast.error({
+      title: 'Error',
+      message: '⚠️ At least one education is required',
+      timeout: 3000,
+      position: 'topRight',
+    })
+  }
+}
+
 const addSkill = () => {
   form.skills.push({ skill: '', description: '' })
 }
-
-const openReviewModal = () => {
-  if (!form.name || !form.email || !form.mobile || !form.gender || !form.dob) {
-    alert('Please fill all required fields before review.')
-    return
+const removeSkill = () => {
+  if (form.skills.length > 1) {
+    form.skills.pop()
+  } else {
+    toast.error({
+      title: 'Error',
+      message: '⚠️ At least one skill is required',
+      timeout: 3000,
+      position: 'topRight',
+    })
   }
-  showModal.value = true
 }
 
-// const finalSubmit = () => {
-//   showModal.value = false
-//   console.log('Application data:', { job_id: job?.id, ...form })
-//
-//   if (job?.is_payable) {
-//     showDemoPayModal.value = true
-//   } else {
-//     redirectToConfirm()
-//   }
-// }
+const addExperience = () => {
+  form.experiences.push({ company_name: "", start: "", end: "", experience: "" })
+}
+const removeExperience = () => {
+  if (form.experiences.length > 1) {
+    form.experiences.pop()
+  } else {
+    toast.error({
+      title: 'Error',
+      message: '⚠️ At least one experience is required',
+      timeout: 3000,
+      position: 'topRight',
+    })
+  }
+}
 
 
 
+// Form Sumission
 const finalSubmit = async () => {
-  showModal.value = false
-
   const payload = {
-    job_id: job?.id,
+    job_uuid: job?.uuid,
     ...form,
   }
 
   try {
-    // If job is payable, skip submit for now and show demo payment
-    if (job?.is_payable) {
-      showDemoPayModal.value = true
-      return
-    }
-
     // ✅ POST to API
     const apiUrl = `${config.public.apiBase}/recruitment/${route.params.url}/apply`
     const response = await useSanctumFetch(apiUrl, {
@@ -454,36 +555,31 @@ const finalSubmit = async () => {
       body: payload,
     })
 
+    console.log(response)
     // Optional: handle success
-    console.log('Form submitted successfully:', response)
-
-    redirectToConfirm()
+    // console.log('Form submitted successfully:', response)
+    toast.success({
+      title: 'Error',
+      message: 'Form submitted successfully.',
+      timeout: 3000,
+      position: 'topRight',
+    })
 
   } catch (err) {
-    console.error('Form submission failed:', err)
-    alert('Something went wrong. Please try again.')
+    // console.error('Form submission failed:', err)
+    toast.error({
+      title: 'Error',
+      message: 'Something went wrong. Please try again.',
+      timeout: 3000,
+      position: 'topRight',
+    })
   }
+
+
 }
 
 
-
-
-const redirectToConfirm = () => {
-  const uuid = Math.random().toString(36).substring(2, 10).toUpperCase()
-
-  router.push({
-    path: `/career/${route.params.url}/apply/confirm`,
-    query: {
-      uuid,
-      name: form.name,
-      email: form.email,
-      mobile: form.mobile,
-    }
-  })
-}
 </script>
-
-
 
 
 <style scoped>

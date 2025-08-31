@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mintreu\Toolkit\Traits\HasRecordNavigator;
 
 class Level extends Model
 {
     /** @use HasFactory<\Database\Factories\Lifecycle\LevelFactory> */
-    use HasFactory;
+    use HasFactory,HasRecordNavigator;
 
 
 
@@ -20,6 +21,7 @@ class Level extends Model
         'url',
         'team_member_limit',
         'stage_id',
+        'validate_years', // use for expire and re new level
         'joining_bonus', // percentage
         'status'
     ];
@@ -27,6 +29,7 @@ class Level extends Model
     protected function casts()
     {
         return [
+            'validate_years' => 'integer',
             'team_member_limit' => 'integer',
             'status' => 'boolean'
         ];

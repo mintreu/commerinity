@@ -2,11 +2,12 @@
 
 namespace Mintreu\LaravelProductCatalogue\Services;
 
-use App\Casts\ModelStatusCast;
+
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\LaravelProductCatalogue\Services\Support\HasProductSupport;
-use function PHPStan\dumpType;
+use Mintreu\Toolkit\Casts\PublishableStatusCast;
+
 
 class ProductCreationService
 {
@@ -58,7 +59,7 @@ class ProductCreationService
             'name' => $this->data['name'],
             'sku' => $this->data['sku'],
             'url' => $this->data['url'],
-            'status' =>  $this->data['status'] ?? ModelStatusCast::DRAFT,
+            'status' =>  $this->data['status'] ?? PublishableStatusCast::DRAFT,
             'type' => $case->value,
             'filter_group_id' => $this->data['filter_group_id'],
         ]));

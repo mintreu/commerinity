@@ -18,8 +18,7 @@ class BlockResource extends JsonResource
             'name' => $this->name,
             'url'  => $this->url,
             'district'  => $this->district_name,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude
+
         ];
     }
 }

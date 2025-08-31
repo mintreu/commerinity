@@ -2,8 +2,8 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources;
 
-use App\Filament\Resources\FilterResource\Pages;
-use App\Filament\Resources\FilterResource\RelationManagers;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\RelationManagers;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

@@ -4,7 +4,7 @@
     <div class="flex-grow p-6 max-w-6xl w-full mx-auto space-y-10">
       <!-- Page Header -->
       <div class="flex items-center gap-3">
-        <NuxtIcon name="mdi-frequently-asked-questions" class="text-3xl text-blue-600 dark:text-blue-400" />
+        <Icon name="mdi-frequently-asked-questions" class="text-3xl text-blue-600 dark:text-blue-400" />
         <h1 class="text-3xl font-bold text-gray-800 dark:text-white">FAQs · Help Center</h1>
       </div>
 
@@ -35,7 +35,7 @@
               <span class="text-gray-800 dark:text-gray-100 font-medium leading-snug">
                 {{ index + 1 + (currentPage - 1) * pageSize }}. {{ faq.question }}
               </span>
-              <NuxtIcon :name="openIndex === index ? 'mdi-chevron-up' : 'mdi-chevron-down'" class="text-xl text-blue-600 dark:text-blue-400 mt-1" />
+              <Icon :name="openIndex === index ? 'mdi-chevron-up' : 'mdi-chevron-down'" class="text-xl text-blue-600 dark:text-blue-400 mt-1" />
             </button>
 
             <transition name="fade">
@@ -91,7 +91,7 @@
       </p>
       <NuxtLink to="/dashboard/helpdesk/create">
         <button class="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition">
-          <NuxtIcon name="mdi-lifebuoy" class="inline-block mr-1 -mt-1" />
+          <Icon name="mdi-lifebuoy" class="inline-block mr-1 -mt-1" />
           Submit a Ticket
         </button>
       </NuxtLink>

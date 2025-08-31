@@ -24,5 +24,21 @@ trait HasAddress
 
 
 
+    public function homeAddress(): MorphOne
+    {
+        return $this->address()->where('type',AddressTypeCast::HOME);
+    }
+
+
+    public function deliveryAddresses(): MorphMany
+    {
+        return $this->addresses()->where('type',AddressTypeCast::DELIVERY);
+    }
+
+    public function pickupAddresses(): MorphMany
+    {
+        return $this->addresses()->where('type',AddressTypeCast::DELIVERY);
+    }
+
 
 }

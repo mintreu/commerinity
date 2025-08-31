@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\PageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,12 +12,31 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 
+Route::prefix('user')->middleware('auth:sanctum')
+    ->group(function (){
+        Route::get('/',[\App\Http\Controllers\Api\Auth\SanctumUserController::class,'getUser']);
+    });
 
 
 
 
-Route::prefix('/user')->middleware('auth:sanctum')->group(base_path('routes/apis/user/user.php'));
+//Route::prefix('/user')->middleware('auth:sanctum')->group(base_path('routes/apis/user/user.php'));
+
+Route::prefix('account')->group(base_path('routes/apis/user/account.php'));
+
+
 Route::prefix('/')->group(base_path('routes/apis/user/auth.php'));
+
+
+// Pages Api
+//Route::prefix('pages')->group(function () {
+//    Route::get('/', [PageController::class, 'index']);       // GET /api/pages
+//    Route::post('read', [PageController::class, 'show']);    // GET /api/pages/{url}
+//});
+
+Route::get('pages',[PageController::class,'getPages']);
+
+
 
 
 //ADDRESS API
@@ -57,15 +77,45 @@ Route::prefix('cart')->group(function () {
 });
 
 
-Route::prefix('provider')->group(function (){
-   Route::get('/payment',[\App\Http\Controllers\Api\ProviderController::class,'getPaymentProviders']);
+Route::prefix('order')->middleware('auth:sanctum')->group(function (){
+
+    Route::get('all',[\App\Http\Controllers\Api\OrderController::class,'getAllOrderOfCustomer']);
+
+    Route::post('place',[\App\Http\Controllers\Api\OrderController::class,'placeOrder'])->name('order.placed');
+    Route::post('validate',[\App\Http\Controllers\Api\OrderController::class,'confirmOrder'])->name('order.validate');
+
+    Route::get('{order:uuid}/get',[\App\Http\Controllers\Api\OrderController::class,'getOrderDetail']);
+    Route::post('{order:uuid}canceled',[\App\Http\Controllers\Api\OrderController::class,'cancelOrder']);
+    Route::post('{order:uuid}return',[\App\Http\Controllers\Api\OrderController::class,'returnOrder']);
+    Route::post('{order:uuid}refund',[\App\Http\Controllers\Api\OrderController::class,'refundOrder']);
+
+
+});
+
+
+Route::prefix(config('laravel-transaction.callback.prefix', '_transaction'))
+    ->middleware(config('laravel-transaction.callback.middleware', []))
+    ->group(function (){
+   Route::get('/validate/{transaction:uuid}',[\App\Http\Controllers\Api\TransactionController::class,'confirmTransaction'])
+       ->name('transaction.validate');
+
+    Route::get('/failed/{transaction:uuid}',[\App\Http\Controllers\Api\TransactionController::class,'failureTransaction'])
+        ->name('transaction.failure');
+
+});
+
+
+
+Route::prefix('integration')->group(function (){
+   Route::get('/payment',[\App\Http\Controllers\Api\IntegrationController::class,'getPaymentIntegrations']);
 });
 
 
 Route::prefix('recruitment')->group(function (){
    Route::get('/',[\App\Http\Controllers\Api\RecruitmentController::class,'index']);
    Route::get('{naukri:url}',[\App\Http\Controllers\Api\RecruitmentController::class,'show']);
-   Route::post('{naukri:url}/apply',[\App\Http\Controllers\Api\RecruitmentController::class,'apply']);
+   Route::post('{naukri:url}/apply',[\App\Http\Controllers\Api\RecruitmentController::class,'apply'])->middleware('auth:sanctum');
+   Route::get('/user-application/all',[\App\Http\Controllers\Api\RecruitmentController::class,'getUserSubmittedApplications'])->middleware('auth:sanctum');
 });
 
 
@@ -76,5 +126,6 @@ Route::prefix('lifecycle')->group(function (){
    Route::get('/stages',[\App\Http\Controllers\Api\LifecycleController::class,'getAllStages']);
    Route::get('/stage/{stage:url}',[\App\Http\Controllers\Api\LifecycleController::class,'getStage']);
    Route::get('/level/{level:url}',[\App\Http\Controllers\Api\LifecycleController::class,'getLevel']);
+   Route::get('/subscribable',[\App\Http\Controllers\Api\LifecycleController::class,'getUserSubscribableStageAndLevel'])->middleware('auth:sanctum');
 });
 

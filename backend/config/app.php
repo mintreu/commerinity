@@ -124,4 +124,12 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    /*
+     * NETWORKING RELATED CONFIGURATION
+     *
+     */
+    'matrix' => env('NETWORK_MATRIX', 4),
+
+
 ];

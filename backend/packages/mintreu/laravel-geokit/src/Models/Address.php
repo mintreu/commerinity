@@ -10,10 +10,11 @@ use Illuminate\Support\Str;
 use Mintreu\LaravelGeokit\Casts\AddressTypeCast;
 use Mintreu\LaravelGeokit\Models\{Country, State, Block};
 use Illuminate\Database\Eloquent\Builder;
+use Mintreu\Toolkit\Traits\HasPackageModelFactory;
 
 class Address extends Model
 {
-    use HasFactory;
+    use HasPackageModelFactory;
 
     protected $fillable = [
         'uuid',
@@ -70,7 +71,7 @@ class Address extends Model
             }
 
             if (is_null($address->country_code)) {
-                $address->country_code = config('laravel-geokit.default_country', 'IN');
+                $address->country_code = config('laravel-geokit.default.country');
             }
         });
     }

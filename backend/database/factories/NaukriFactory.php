@@ -34,13 +34,16 @@ class NaukriFactory extends Factory
             'vacancy' => $this->faker->numberBetween(1, 100),
             'open_date' => $this->faker->dateTimeBetween('-30 days', 'now')->format('Y-m-d'),
             'close_date' => $this->faker->dateTimeBetween('now', '+60 days')->format('Y-m-d'),
-            'is_payable' => $this->faker->boolean(60),
-            'fees' => $this->faker->optional($weight = 0.6)->randomFloat(2, 199, 4999),
-            'status' => $this->faker->randomElement(
-                collect(PublishableStatusCast::cases())
-                    ->map(fn($case) => $case->value)
-                    ->toArray()
-            ),
+            'is_payable' => $isPayable = true,
+            //'is_payable' => $isPayable = $this->faker->boolean(60),
+            'fees' => $isPayable ? $this->faker->numberBetween(150, 550) : 0.00,
+            'status' => PublishableStatusCast::PUBLISHED,
+
+//            'status' => $this->faker->randomElement(
+//                collect(PublishableStatusCast::cases())
+//                    ->map(fn($case) => $case->value)
+//                    ->toArray()
+//            ),
         ];
     }
 }

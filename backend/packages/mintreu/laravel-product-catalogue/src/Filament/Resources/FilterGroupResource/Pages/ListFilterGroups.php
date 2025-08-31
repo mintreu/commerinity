@@ -1,10 +1,10 @@
 <?php
 
-namespace Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource\Pages;
+namespace Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Mintreu\LaravelProductCatalogue\FIlament\Resources\FilterGroupResource;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource;
 
 class ListFilterGroups extends ListRecords
 {

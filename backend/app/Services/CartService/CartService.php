@@ -15,7 +15,7 @@ use Mintreu\LaravelProductCatalogue\Models\Product;
 class CartService
 {
     protected bool $changed = false;
-    protected ?User $customer;
+    protected User|Model|null $customer;
     protected Request $request;
     protected ?string $error = null;
     protected array $meta = [];
@@ -29,7 +29,7 @@ class CartService
     protected bool $validToken = false;
     protected int $tokenTTL = 3600 * 24 * 7; // 7 days
 
-    public function __construct(?User $user = null)
+    public function __construct(User|Model|null $user = null)
     {
         $this->customer = $user;
     }
@@ -44,6 +44,11 @@ class CartService
         if ($this->guestId && $this->token) {
             $this->hasGuest = true;
             $this->validToken = $this->validateGuestToken($this->guestId, $this->token);
+        }
+
+        if (!is_null($this->customer) && $this->hasGuest && $this->validToken)
+        {
+            $this->mergeGuestCartToCustomer();
         }
 
         return $this;
@@ -85,6 +90,25 @@ class CartService
         Cache::put("guest_cart_token_{$guestId}", $token, $expiresAt);
     }
 
+
+    protected function mergeGuestCartToCustomer()
+    {
+        $this->items()->each(function (Cart $cart){
+           $cart->update([
+            'ownerable_type' => get_class($this->customer),
+             'ownerable_id' => $this->customer->id
+           ]);
+        });
+        if ($this->guestId)
+        {
+            Cache::forget("guest_cart_token_{$this->guestId}");
+        }
+
+    }
+
+
+
+
     public function items()
     {
         if ($this->customer) {
@@ -103,8 +127,9 @@ class CartService
 
     public function add(Model|Product $item, int $quantity): void
     {
-        $maxPerOrder = $item->max_per_order ?? 1;
+        $maxPerOrder = $item->max_quantity ?? 1;
         $approvedQuantity = min($quantity, $maxPerOrder);
+
 
         $query = Cart::query()
             ->where('cartable_type', get_class($item))

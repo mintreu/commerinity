@@ -9,6 +9,9 @@
         <slot />
       </main>
 
+      <!-- Mobile Bottom Nav -->
+      <BottomNavBar class="md:hidden" />
+
       <!-- Footer -->
       <footer class="bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-10 px-6 md:px-16 mt-12 transition-colors">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
@@ -89,6 +92,7 @@ import { ref, onMounted } from 'vue'
 // import DarkModeToggle from "~/components/ui/DarkModeToggle.vue";
 // import UserDropdown from "~/components/ui/UserDropdown.vue";
 import DefaultNavbar from "~/components/ui/Navbar/DefaultNavbar.vue";
+import BottomNavBar from "~/components/ui/BottomNavBar.vue";
 
 // interface User {
 //   name: string

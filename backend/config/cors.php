@@ -19,7 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+//        '*'
+        'http://localhost:3000',   // Nuxt dev
+        'https://vvindia.in',  // Production
+    ],
 
     'allowed_origins_patterns' => [],
 

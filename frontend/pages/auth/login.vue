@@ -167,10 +167,10 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter, useRuntimeConfig } from '#imports'
-import { useSanctumFetch, useSanctum } from '#imports'
+import { useRouter, useRuntimeConfig,  useSanctumFetch, useSanctum, useRoute } from '#imports'
 
 const router = useRouter()
+const route = useRoute()  // for redirect purpose
 const config = useRuntimeConfig()
 const { login } = useSanctum()
 const { isLoggedIn } = useSanctum()
@@ -294,7 +294,7 @@ async function handleMobileSubmit() {
   if (!useOtp.value) payload.password = form.value.password
   try {
     await login(payload)
-    router.push('/dashboard')
+    redirectAfterLogin()
   } catch (e: any) {
     const err = e?.data?.errors || {}
     errors.value.auth = err.mobile?.[0] || err.password?.[0] || e?.data?.message || 'Login failed'
@@ -309,7 +309,7 @@ async function handleEmailLogin() {
       password: form.value.password,
       remember: form.value.remember
     })
-    router.push('/dashboard')
+    redirectAfterLogin()
   } catch (e: any) {
     const err = e?.data?.errors || {}
     errors.value.auth = err.email?.[0] || err.password?.[0] || e?.data?.message || 'Login failed'
@@ -322,6 +322,21 @@ function onOtpInput(i: number) {
 function onOtpBackspace(i: number) {
   if (otp.value[i] === '' && i > 0) nextTick(() => otpRefs.value[i - 1]?.focus())
 }
+
+
+function redirectAfterLogin() {
+  let target = '/dashboard'
+  if (route.query.ref) {
+    try {
+      target = atob(route.query.ref as string)
+    } catch (e) {
+      console.error("Invalid ref param:", e)
+    }
+  }
+  router.push(target)
+}
+
+
 
 onBeforeUnmount(clearOtpCountdown)
 </script>

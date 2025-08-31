@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -38,7 +39,7 @@ class Naukri extends Model  implements  HasMedia
         'open_date' => 'date',
         'close_date' => 'date',
         'is_payable' => 'boolean',
-        'fees' => 'decimal:2',
+        'fees' => LaravelMoneyCast::class,
         'employment_type' => NaukriEmploymentTypeCast::class,
         'status' => PublishableStatusCast::class
     ];

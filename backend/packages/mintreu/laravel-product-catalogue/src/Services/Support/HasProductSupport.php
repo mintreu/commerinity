@@ -50,6 +50,7 @@ trait HasProductSupport
 
         // Handle both single filter options (variants) and multiple filter options (simple products)
         if (is_numeric(array_key_first($filterOptions))) {
+
             // Variant case: array of option IDs
             foreach ($filterOptions as $optionId) {
                 // Ensure we're working with just the ID

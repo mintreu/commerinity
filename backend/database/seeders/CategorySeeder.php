@@ -21,18 +21,11 @@ class CategorySeeder extends Seeder
             $parentCategory = Category::factory()->create([
                 'name' => $item->name,
                 'url' => Str::slug($item->name),
+                'status' => true,
             ]);
 
-            $displayImagePath = $this->getMediaFromStorage($item->url.'/display.jpeg');
-            if (file_exists($displayImagePath))
-            {
-                $parentCategory->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
-            }
-            $bannerImagePath = $this->getMediaFromStorage($item->url.'/banner.jpeg');
-            if (file_exists($bannerImagePath))
-            {
-                $parentCategory->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('displayImage');
-            }
+            $this->attachMediaFromStorage($parentCategory,'displayImage');
+            $this->attachMediaFromStorage($parentCategory,'bannerImage');
 
 
             if ($parentCategory && !empty($item->children))
@@ -44,19 +37,8 @@ class CategorySeeder extends Seeder
                         'url' => Str::slug($child->name),
                     ]));
 
-                    $displayImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/display.jpeg');
-                    if (file_exists($displayImagePath))
-                    {
-                        $childrenCategory->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
-                    }
-
-                    $bannerImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/banner.jpeg');
-                    if (file_exists($bannerImagePath))
-                    {
-                        $childrenCategory->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
-                    }
-
-
+                    $this->attachMediaFromStorage($childrenCategory,'displayImage');
+                    $this->attachMediaFromStorage($childrenCategory,'bannerImage');
 
 
                     if (!empty($child->children))
@@ -67,16 +49,8 @@ class CategorySeeder extends Seeder
                                 'name' => $subChild->name,
                                 'url' => Str::slug($subChild->name),
                             ]));
-                            $displayImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/'.$subChild->url.'/display.jpeg');
-                            if (file_exists($displayImagePath))
-                            {
-                                $subChildrenCategory->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
-                            }
-                            $bannerImagePath = $this->getMediaFromStorage($item->url.'/'.$child->url.'/'.$subChild->url.'/banner.jpeg');
-                            if (file_exists($bannerImagePath))
-                            {
-                                $subChildrenCategory->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
-                            }
+                            $this->attachMediaFromStorage($subChildrenCategory,'displayImage');
+                            $this->attachMediaFromStorage($subChildrenCategory,'bannerImage');
 
                         }
                     }
@@ -87,18 +61,20 @@ class CategorySeeder extends Seeder
         }
 
 
-//        Category::factory(10) // Parent Categories
-//         ->has( Category::factory()->count(5)
-//            //->hasProducts(5)
-//            ,'children')
-//         ->create();
     }
 
 
-    protected function getMediaFromStorage(string $path): string
+    protected function attachMediaFromStorage(Category $category,string $collectionName = 'displayImage'): void
     {
-        return storage_path('app/private/media/categories/'.$path);
+        $img = $collectionName === 'displayImage' ? 'display.jpeg' : 'banner.jpeg';
+        $displayImagePath = storage_path('app/private/media/categories/'.$category->url.'/'.$img);
+        if (file_exists($displayImagePath))
+        {
+            $category->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection($collectionName);
+        }
     }
+
+
 
 
 

@@ -2,7 +2,7 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
-use App\Casts\ModelStatusCast;
+
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\Grid;
@@ -15,6 +15,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
+use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class ViewProduct extends ViewRecord
 {
@@ -29,7 +30,7 @@ class ViewProduct extends ViewRecord
                 ->form([
                     Select::make('status')
                     ->options(
-                        collect(ModelStatusCast::cases())
+                        collect(PublishableStatusCast::cases())
                             ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])
                     )
                 ])->action(function ($data){

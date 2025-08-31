@@ -22,6 +22,7 @@ use DutchCodingCompany\FilamentSocialite\Provider;
 use Filament\Support\Colors;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Mintreu\LaravelCategory\LaravelCategoryPlugin;
 use Mintreu\LaravelProductCatalogue\LaravelProductCataloguePlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -44,7 +45,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->plugins([
+                LaravelCategoryPlugin::make(),
                 LaravelProductCataloguePlugin::make(),
+
 
                 // Filament Socialite
                 FilamentSocialitePlugin::make()

@@ -128,4 +128,8 @@ const { data, error } = await useFetch<ParentCategory[]>('http://localhost:8000/
 if (data.value) {
   categorySections.value = data.value
 }
+
+
+
+
 </script>

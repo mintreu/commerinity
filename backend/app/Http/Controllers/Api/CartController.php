@@ -25,10 +25,7 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $cart = new Cart($request->user());
-        if (!$request->user())
-        {
-            $cart->capture($request);
-        }
+        $cart->capture($request);
 
         return CartResource::make($cart->getMeta());
     }

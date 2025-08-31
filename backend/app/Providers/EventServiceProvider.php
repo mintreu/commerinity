@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
-use App\Observers\ProductTierObserver;
+use App\Events\User\UserNetworkSlotRequestedEvent;
+use App\Listeners\User\FindAvailableNetworkSlotForUser;
+use App\Models\User;
+use App\Observers\UserObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -12,6 +15,9 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         // You can define explicit events here if needed
+        UserNetworkSlotRequestedEvent::class => [
+            FindAvailableNetworkSlotForUser::class
+        ]
     ];
 
     /**
@@ -19,6 +25,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
     }
 
     /**

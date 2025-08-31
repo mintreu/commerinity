@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div class="w-full h-full">
     <!-- Place Cart Button -->
-    <CartButton />
+    <div class="mt-14 mr-5">
+      <CartCounter />
+    </div>
 
 
     <div v-if="pending" class="p-10 text-center text-gray-500 dark:text-gray-400">
@@ -174,12 +176,15 @@
 
           <!-- Add to Cart Button -->
           <div class="mt-6">
-            <button
-                @click="addToCart"
-                class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"
-            >
-              Add to Cart
-            </button>
+<!--            <button-->
+<!--                @click="addToCart"-->
+<!--                class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"-->
+<!--            >-->
+<!--              Add to Cart-->
+<!--            </button>-->
+
+            <AddToCartButton :sku="product.sku" :quantity="1" />
+
           </div>
 
 
@@ -205,12 +210,15 @@ import { ref, computed, watch } from 'vue'
 import { useRoute, useRuntimeConfig, useFetch } from '#imports'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
+import AddToCartButton from "~/components/cart/AddToCartButton.vue";
+import CartCounter from "~/components/cart/CartCounter.vue";
+
 
 const route = useRoute()
-const apiUrl = useRuntimeConfig().public.apiBase
+const config = useRuntimeConfig()
 
 const product = ref(null)
-const { data, pending, error } = await useFetch(`${apiUrl}/products/${route.params.url}`)
+const { data, pending, error } = await useFetch(`${config.public.apiBase}/products/${route.params.url}`)
 
 watch(data, (val) => console.log('Fetched data:', val), { immediate: true })
 watch(product, (val) => console.log('Product ref:', val), { immediate: true })
@@ -247,31 +255,31 @@ function isActiveOption(filterName, option) {
 }
 
 // Add to cart handler
-function addToCart() {
-  if (!product.value) return
-
-  fetch('/api/cart/add', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sku: product.value.sku,
-      quantity: 1
-    })
-  })
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to add to cart')
-        return res.json()
-      })
-      .then(() => {
-        console.log(`${product.value.name} added to cart`)
-        // Optionally replace with a toast/notification system
-        alert(`${product.value.name} added to cart`)
-      })
-      .catch((err) => {
-        console.error(err)
-        alert('Add to cart failed')
-      })
-}
+// function addToCart() {
+//   if (!product.value) return
+//
+//    const cartData = useFetch(`${config.public.apiBase}/cart/add`, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({
+//       sku: product.value.sku,
+//       quantity: 1
+//     })
+//   })
+//       .then((res) => {
+//         if (!res.ok) throw new Error('Failed to add to cart')
+//         return res.json()
+//       })
+//       .then(() => {
+//         console.log(`${product.value.name} added to cart`)
+//         // Optionally replace with a toast/notification system
+//         alert(`${product.value.name} added to cart`)
+//       })
+//       .catch((err) => {
+//         console.error(err)
+//         alert('Add to cart failed')
+//       })
+// }
 
 
 

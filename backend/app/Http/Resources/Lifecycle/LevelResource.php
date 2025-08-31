@@ -18,6 +18,8 @@ class LevelResource extends JsonResource
             'id' => $this->id,
             'name'  => $this->name,
             'url'   => $this->url,
+            'validate_years' => $this->validate_years,
+            'team_member_limit' => $this->team_member_limit
         ];
     }
 }

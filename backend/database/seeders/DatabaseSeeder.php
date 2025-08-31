@@ -18,11 +18,14 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             FilterSeeder::class,
             CategorySeeder::class,
-            ProductSeeder::class,
-            ProviderSeeder::class,
+            //ProductSeeder::class,
+            ProductDemoSeeder::class,
+            IntegrationSeeder::class,
             NaukriSeeder::class,
             StageSeeder::class,
+            PageSeeder::class,
             UserSeeder::class,
+
 
         ]);
 

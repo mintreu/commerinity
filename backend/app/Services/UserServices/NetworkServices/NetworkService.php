@@ -5,6 +5,7 @@ namespace App\Services\UserServices\NetworkServices;
 
 
 use App\Models\User;
+use App\Services\UserServices\NetworkServices\Support\ParentPredictor;
 
 class NetworkService
 {
@@ -17,15 +18,28 @@ class NetworkService
     }
 
 
-    public static function make(User $record)
+    public static function make(User $record): static
     {
         return new static($record);
     }
 
 
-    public function addToNetwork(User $newMember, ?User $sponsor)
+    public function addToNetwork(?User $sponsor = null): void
     {
-        // Logic to attach new member to tree
+        // Fix $newMember Parent Record
+        if (!is_null($this->record->parent_id))
+        {
+            $predictor = ParentPredictor::make($this->record,$sponsor);
+            $allowedSponsor = $predictor->getSponsor();
+            if ($allowedSponsor)
+            {
+                $this->record->update([
+                    'parent_id' => $allowedSponsor->id
+                ]);
+            }
+        }
+
+
     }
 
     public function calculateCommission()

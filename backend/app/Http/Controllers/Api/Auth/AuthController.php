@@ -5,20 +5,21 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Casts\AuthStatusCast;
 use App\Casts\AuthTypeCast;
 use App\Casts\ModelStatusCast;
+use App\Helpers\OtpManager;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
 
+    protected bool $demoOtpMode = true;
 
     /**
      * @throws ValidationException
@@ -83,17 +84,24 @@ class AuthController extends Controller
         $type = $request->type;
         $value = $request->value;
 
+
         // You can replace this logic to send SMS or email
-        $otp = '123456';
+        $otp = $this->demoOtpMode ? OtpManager::make()->generateDemoOtp("{$type}_{$value}") : OtpManager::make()->sendOtp($value,$type);
 
-        // Store in cache for 5 minutes
-        Cache::put("otp_{$type}_{$value}", $otp, now()->addMinutes(5));
+        $responseData = ['demo' => false];
+        if ($this->demoOtpMode)
+        {
+            $responseData = [
+                'otp' => $otp,
+                'demo' => true,
+            ];
+        }
 
-        return response()->json([
+        return response()->json(array_merge([
             'status' => 'success',
             'message' => 'OTP sent successfully',
             "note" => 'Otp will be expire after 5 minutes from now'
-        ]);
+        ],$responseData));
     }
 
     public function verifyOtp(Request $request): JsonResponse
@@ -108,9 +116,9 @@ class AuthController extends Controller
         $value = $request->value;
         $inputOtp = $request->otp;
 
-        $cachedOtp = Cache::get("otp_{$type}_{$value}");
+        $valid = $this->demoOtpMode ? OtpManager::make()->validateDemoOtp("{$type}_{$value}",$inputOtp) : OtpManager::make()->validateOtp($value,$inputOtp);
 
-        if (!$cachedOtp || $cachedOtp !== $inputOtp) {
+        if (!$valid) {
             return response()->json([
                 'valid' => false,
                 'message' => 'Invalid or expired OTP',
@@ -131,7 +139,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'bail|nullable|email|unique:users,email',
             'mobile'  => 'bail|nullable|digits:10|unique:users,mobile',
@@ -139,9 +147,10 @@ class AuthController extends Controller
             'dob'      => 'required|date|before:today',
             'password' => 'required|string|min:6',
             'type'     => 'required|in:email,mobile',
-            'referral' => 'nullable|string|unique:users,referral_code',
+            'referral' => 'nullable|string|exists:users,referral_code',
             'otp'       => 'nullable|string'
         ]);
+
 
         $email = $request->type === 'email'  ? $request->email   : null;
         $contact = $request->type === 'mobile' ? $request->mobile : null;
@@ -167,18 +176,19 @@ class AuthController extends Controller
             'status'    => AuthStatusCast::DRAFT,
         ],$validateField);
 
+        // Check For Parent
+        $parentUser = $request->referral
+            ? User::where('referral_code', $request->referral)
+                ->where('status', AuthStatusCast::SUBSCRIBED)
+                ->first()
+            : null;
 
-        if ($request->referral)
-        {
-            $parentUser = User::firstWhere('referral_code',$request->referral);
-            $user = $parentUser->children()->create($credential);
-        }else{
-            $user = User::create($credential);
-        }
+        // Create User
+        $user = $parentUser
+            ? $parentUser->children()->create($credential)
+            : User::create($credential);
 
-
-
-
+        // Return Response
         return response()->json([
             'status'  => 'success',
             'message' => 'Registration complete',

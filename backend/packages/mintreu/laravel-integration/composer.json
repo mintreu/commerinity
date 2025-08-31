@@ -1,0 +1,98 @@
+{
+    "name": "mintreu/laravel-integration",
+    "description": "This is my package laravel-integration",
+    "keywords": [
+        "mintreu",
+        "laravel",
+        "laravel-integration"
+    ],
+    "homepage": "https://github.com/mintreu/laravel-integration",
+    "support": {
+        "issues": "https://github.com/mintreu/laravel-integration/issues",
+        "source": "https://github.com/mintreu/laravel-integration"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Krishanu",
+            "email": "36711704+krishzzi@users.noreply.github.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^3.0",
+        "mintreu/laravel-money": "dev-main",
+        "mintreu/toolkit": "dev-main",
+        "razorpay/razorpay": "^2.9.1",
+        "spatie/laravel-package-tools": "^1.15.0",
+        "stripe/stripe-php": "^14.10"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^7.9",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^8.0",
+        "pestphp/pest": "^2.1",
+        "pestphp/pest-plugin-arch": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "spatie/laravel-ray": "^1.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mintreu\\LaravelIntegration\\": "src/",
+            "Mintreu\\LaravelIntegration\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mintreu\\LaravelIntegration\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true,
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mintreu\\LaravelIntegration\\LaravelIntegrationServiceProvider"
+            ],
+            "aliases": {
+                "LaravelIntegration": "Mintreu\\LaravelIntegration\\Facades\\LaravelIntegration"
+            }
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../toolkit",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../laravel-money",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

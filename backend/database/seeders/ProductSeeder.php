@@ -86,6 +86,10 @@ class ProductSeeder extends Seeder
         $this->attachCoreCategory($product, $category);
         $this->attachChildCategories($product, $category);
 
+
+        // attach media from parent
+
+
         $product->save();
     }
 
