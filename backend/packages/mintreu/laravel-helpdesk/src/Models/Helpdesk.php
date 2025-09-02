@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Mintreu\LaravelHelpdesk\Casts\HelpdeskPriorityCast;
 use Mintreu\LaravelHelpdesk\Casts\HelpdeskStatusCast;
+use Mintreu\Toolkit\Traits\HasUnique;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Helpdesk extends Model
+class Helpdesk extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\HelpdeskFactory> */
-    use HasFactory;
+    use HasFactory,HasUnique,InteractsWithMedia;
 
 
 
@@ -38,10 +41,27 @@ class Helpdesk extends Model
     ];
 
 
+
+    protected static function booted()
+    {
+        static::creating(function ($user){
+            $user->setUniqueCode('uuid',8,'TICKET-');
+        });
+        parent::booted();
+    }
+
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('ticketAttachment');
+
+    }
+
+
     /**
      * Polymorphic relation: who created the ticket
      */
-    public function author(): MorphTo
+    public function authorable(): MorphTo
     {
         return $this->morphTo('authorable');
     }

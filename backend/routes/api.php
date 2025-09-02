@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\SaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -129,3 +130,12 @@ Route::prefix('lifecycle')->group(function (){
    Route::get('/subscribable',[\App\Http\Controllers\Api\LifecycleController::class,'getUserSubscribableStageAndLevel'])->middleware('auth:sanctum');
 });
 
+// Promotion
+
+Route::prefix('sales')->group(function () {
+    Route::get('/', [SaleController::class, 'index'])->name('sales.index');
+//
+//    Route::get('/guest', [SaleController::class, 'guest'])->name('sales.guest');
+//    Route::get('/auth', [SaleController::class, 'authWithoutGroup'])->name('sales.auth');
+//    Route::get('/group', [SaleController::class, 'group'])->name('sales.group');
+});

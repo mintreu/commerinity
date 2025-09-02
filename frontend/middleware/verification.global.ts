@@ -13,7 +13,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     if (!user.value) return
 
     // ✅ Prevent infinite redirect: skip if already on verify-mobile page
-    const verifyMobilePath = '/dashboard/auth/verify-mobile'
+    const verifyMobilePath = '/dashboard/auth/my-mobile'
     if (!user.value.mobile || !user.value.mobile_verified) {
         if (to.path !== verifyMobilePath) {
             return navigateTo(verifyMobilePath)

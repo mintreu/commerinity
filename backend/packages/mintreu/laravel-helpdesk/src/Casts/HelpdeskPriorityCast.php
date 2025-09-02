@@ -26,10 +26,10 @@ enum HelpdeskPriorityCast: string implements HasColor, HasIcon, HasLabel
     public function getIcon(): ?string
     {
         return match($this) {
-            self::LOW => 'mdi:arrow-down-bold',
-            self::MEDIUM => 'mdi:arrow-right-bold',
-            self::HIGH => 'mdi:arrow-up-bold',
-            self::URGENT => 'mdi:alert-circle-outline',
+            self::LOW => 'heroicon-o-arrow-down',
+            self::MEDIUM => 'heroicon-o-arrow-right',
+            self::HIGH => 'heroicon-o-arrow-up',
+            self::URGENT => 'heroicon-o-arrow-trending-up',
         };
     }
 

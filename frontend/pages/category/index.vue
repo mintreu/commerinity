@@ -64,6 +64,30 @@
       </div>
     </section>
 
+
+    <!-- Top products -->
+    <ProductListSlider
+        label="Top Products"
+        url="/products/suggestions/get"
+        :cta="{ label: 'See All', url: '/products' }"
+    />
+
+    <!-- New arrivals with custom action -->
+    <ProductListSlider
+        label="New Arrivals"
+        url="/products/suggestions/get"
+        :cta="{ label: 'Refresh', action: () => console.log('refresh clicked') }"
+    />
+
+
+
+
+
+
+
+
+
+
     <!-- Testimonials -->
     <section class="py-12 px-4 md:px-12 bg-gray-50 dark:bg-gray-900">
       <h2 class="text-2xl font-bold mb-6">What Our Customers Say</h2>
@@ -103,6 +127,7 @@ import { ref } from 'vue'
 import { useFetch } from '#app'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
+import ProductListSlider from "~/components/sliders/ProductListSlider.vue";
 
 interface ChildCategory {
   name: string

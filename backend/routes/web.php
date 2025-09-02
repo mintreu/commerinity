@@ -7,7 +7,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('{url}', [WebPageController::class, 'show'])->name('web.pages.show');
+//Route::get('{url}', [WebPageController::class, 'show'])->name('web.pages.show');
 
 
 

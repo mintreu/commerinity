@@ -26,6 +26,19 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });
+
+
+        Schema::create('sale_targets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('sale_id')->constrained('sales')->cascadeOnUpdate()->cascadeOnDelete();
+
+            // polymorphic columns
+            $table->morphs('target'); // creates target_id and target_type
+
+            $table->timestamps();
+        });
+
+
     }
 
     /**
@@ -34,5 +47,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('sales');
+        Schema::dropIfExists('sale_targets');
     }
 };

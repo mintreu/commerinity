@@ -7,7 +7,8 @@ class PageResource extends PageIndexResource
     public function toArray($request)
     {
         return array_merge(parent::toArray($request), [
-            'content' => $this->content,
+            //'content' => $this->formatContent($this->content),
+            'content'   => $this->content,
             'template' => $this->template,
             'meta' => $this->meta,
             'sections' => $this->sections,
@@ -15,4 +16,13 @@ class PageResource extends PageIndexResource
             'custom_js' => $this->custom_js,
         ]);
     }
+
+
+
+    protected function formatContent(?string $content)
+    {
+        return '<div class="tiptap-prosemirror-wrapper">'.$content.'</div>';
+    }
+
+
 }

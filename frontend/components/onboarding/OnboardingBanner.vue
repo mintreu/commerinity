@@ -2,25 +2,27 @@
   <div
       v-if="showBanner"
       role="banner"
-      class="relative w-full bg-yellow-100 dark:bg-gray-900 rounded-lg shadow-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      class="relative w-full bg-yellow-100 dark:bg-gray-900 rounded-lg shadow-lg p-4 flex flex-col md:flex-row
+      justify-between items-start md:items-center gap-4  border-b-2 border-yellow-600 dark:border-gray-600"
   >
+
     <!-- Left: Current step + progress -->
-    <div class="flex-1 flex flex-col gap-2">
+    <div class="w-full md:w-fit flex-1 flex flex-col gap-2">
       <div class="flex items-center gap-3">
         <Icon
             :name="currentStep.completed ? 'mdi:check-circle' : currentStep.icon ?? 'mdi:circle-outline'"
             class="w-6 h-6 text-green-500 dark:text-green-400"
         />
-        <span class="font-medium text-gray-800 dark:text-yellow-200">
+        <span class="font-roboto text-gray-800 dark:text-yellow-200 ">
           {{ currentStep.label }}
         </span>
       </div>
 
       <!-- Progress bar + step count -->
-      <div class="flex items-center gap-2 mt-1">
+      <div class="flex items-center gap-2 mt-1 ">
         <div class="flex-1 bg-gray-300 dark:bg-gray-700 rounded h-2 overflow-hidden">
           <div
-              class="bg-green-500 h-2 rounded transition-all duration-500"
+              class="bg-green-500 h-2 rounded transition-all duration-500 animate-pulse "
               :style="{ width: progress + '%' }"
           ></div>
         </div>
@@ -31,11 +33,11 @@
     </div>
 
     <!-- Right: CTA -->
-    <div class="flex flex-col gap-2 items-end md:items-center">
+    <div class="flex flex-col gap-2 items-end md:items-center w-full md:w-fit ">
       <NuxtLink
           v-if="nextStep"
           :to="nextStep.path"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-1 transition-transform duration-200 hover:scale-105"
+          class="w-full md:w-fit justify-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-1 transition-transform duration-200 hover:scale-105"
       >
         <Icon name="mdi:arrow-right" class="w-4 h-4" /> Complete Step
       </NuxtLink>
@@ -71,6 +73,13 @@ const bannerClosed = ref(false)
 
 // Add a unique key for each step for proper validation
 const tourSteps = ref([
+  {
+    key: 'mobile',
+    label: 'Add your mobile number',
+    path: '/dashboard/account/edit',
+    completed: false,
+    icon: 'mdi-account'
+  },
   {
     key: 'profile',
     label: 'Complete your profile details (name, DOB, gender)',
@@ -109,6 +118,9 @@ async function loadProfile() {
     tourSteps.value = tourSteps.value.map(step => {
       let completed = false
       switch (step.key) {
+        case 'mobile':
+          completed = profileData.value?.mobile != null
+          break
         case 'profile':
           completed =
               Boolean(profileData.value?.name) &&

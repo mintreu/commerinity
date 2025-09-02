@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewPage extends ViewRecord
 {
     protected static string $resource = PageResource::class;
+    protected ?string $maxContentWidth = 'full';
 
     protected function getHeaderActions(): array
     {

@@ -4,7 +4,7 @@
 
       <!-- Title & Description -->
       <div class="p-6">
-        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Change Mobile Number</h2>
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Manage Your Mobile</h2>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
           Update your mobile number and verify it with OTP.
         </p>

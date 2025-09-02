@@ -17,24 +17,52 @@ class VoucherFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
-            'description' => $this->faker->sentence,
-            'starts_from' => now()->subDays(rand(1, 10)),
-            'ends_till' => now()->addDays(rand(5, 15)),
-            'status' => true,
-            'usage_per_customer' => rand(1, 5),
-            'coupon_usage_limit' => rand(10, 100),
-            'times_used' => rand(0, 9),
-            'condition_type' => (bool) rand(0, 1),
-            'conditions' => ['min_cart_total' => 50], // Example condition
-            'end_other_rules' => (bool) rand(0, 1),
-            'action_type' => 'fixed_discount', // or 'percentage_discount'
-            'discount_amount' => $this->faker->randomFloat(2, 5, 50),
-            'discount_quantity' => 1,
-            'discount_step' => '1',
-            'apply_to_shipping' => false,
-            'free_shipping' => false,
-            'sort_order' => rand(0, 10),
+            'name' => fake()->word,
+            'description' => fake()->sentence,
+            'starts_from' => now()->subDays(fake()->numberBetween(5, 15)),
+            'ends_till' => now()->addDays(20),
+            'status' => fake()->boolean,
+
+            'usage_per_customer' => fake()->numberBetween(2, 3),
+            'coupon_usage_limit' => fake()->numberBetween(5, 6),
+            'times_used' => 0,
+            'condition_type' => 1,
+            'end_other_rules' => fake()->boolean,
+            'action_type' => fake()->randomElement(array_flip(Voucher::ACTION_TYPES)),
+
+            'discount_amount' => fake()->numberBetween(2000, 6000),
+            'discount_quantity' => fake()->numberBetween(5, 6),
+            'discount_step' => 2,
+            'apply_to_shipping' => 0,
+            'free_shipping' => 1,
+            'sort_order' => 1,
+            'conditions' => $this->preSetConditions(),
+        ];
+    }
+
+    private function preSetConditions(): array
+    {
+        return [
+            [
+                'attribute' => 'cart|subTotal',
+                'value' => '500',
+                'operator' => '>',
+            ],
+            [
+                'attribute' => 'cart|totalQuantity',
+                'value' => '2',
+                'operator' => '>',
+            ],
+            [
+                'attribute' => 'cart_item|quantity',
+                'value' => '2',
+                'operator' => '==',
+            ],
+            [
+                'attribute' => 'product|quantity',
+                'value' => '1',
+                'operator' => '>',
+            ],
         ];
     }
 }

@@ -5,13 +5,16 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PageResource\Pages;
 use App\Filament\Resources\PageResource\RelationManagers;
 use App\Models\Page;
+use Awcodes\TableRepeater\Components\TableRepeater;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class PageResource extends Resource
 {
@@ -19,42 +22,141 @@ class PageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Tools';
+    protected static ?string $pluralLabel = 'WebPages';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('prefix')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('url')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('content')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('layout')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('default'),
-                Forms\Components\TextInput::make('template')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('meta'),
-                Forms\Components\TextInput::make('sections'),
-                Forms\Components\Textarea::make('custom_css')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('custom_js')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+
+                Forms\Components\Grid::make(3)
+                    ->columnSpanFull()
+                    ->schema([
+
+                        Forms\Components\Grid::make(1)
+                            ->columnSpan(2)
+                            ->schema([
+                                Forms\Components\Section::make('Page Detail')
+                                    ->description('Tell about the page')
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('title')
+                                            ->required()
+                                            ->maxLength(255),
+                                        TiptapEditor::make('content')
+                                            ->columnSpanFull(),
+                                    ]),
+
+
+                                Forms\Components\Builder::make('sections')
+                                    ->schema([
+                                        Forms\Components\Builder\Block::make('card')
+                                            ->schema([
+                                                Forms\Components\TextInput::make('Title'),
+                                                Forms\Components\Textarea::make('description')
+                                            ]),
+
+                                    ])->addable()->deletable()
+
+                            ]),
+
+
+
+
+                        Forms\Components\Grid::make(1)
+                            ->columnSpan(1)
+                            ->schema([
+                                Forms\Components\Section::make('Url Detail')
+                                    ->collapsible()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('slug')
+                                            ->required()
+                                            ->inlineLabel()
+                                            ->lazy()
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('prefix')
+                                            ->lazy()
+                                            ->inlineLabel()
+                                            ->maxLength(255),
+
+                                        Forms\Components\Placeholder::make('url_preview')
+                                            ->live()
+                                            ->label('Url : ')
+                                            ->inlineLabel()
+                                            ->visible(fn(Forms\Get $get) => $get('slug'))
+                                            ->content(function (Forms\Get $get,Forms\Set $set){
+                                                $prefix = $get('prefix');
+                                                $slug = $get('slug');
+                                                $link = null;
+                                                if ($slug)
+                                                {
+                                                    $link = config('app.client_url').'/'.$slug;
+                                                }
+
+                                                if ($prefix)
+                                                {
+                                                    $link = $link.'/'.$prefix;
+                                                }
+
+                                                if ($link)
+                                                {
+                                                    $set('url',$link);
+                                                }
+
+                                                return new HtmlString('
+                                                    <a target="_blank" class="underline text-mute" href="'.$link.'" >'.$link.'</a>
+                                                ');
+                                            }),
+
+                                        Forms\Components\TextInput::make('url')
+                                            ->required()
+                                            ->hidden()
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
+                                    ]),
+
+
+                                Forms\Components\Section::make('Configuration')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->schema([
+                                        Forms\Components\Toggle::make('status')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('order')
+                                            ->required()
+                                            ->numeric()
+                                            ->default(0),
+
+                                        Forms\Components\TextInput::make('layout')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->default('default'),
+                                        Forms\Components\TextInput::make('template')
+                                            ->maxLength(255),
+
+                                    ]),
+
+
+                                Forms\Components\Section::make('Header')
+                                    ->collapsible()
+                                    ->collapsed()
+                                    ->schema([
+                                        Forms\Components\KeyValue::make('meta')
+                                            ->columnSpanFull(),
+                                        Forms\Components\Textarea::make('custom_css')
+                                            ->columnSpanFull(),
+                                        Forms\Components\Textarea::make('custom_js')
+                                            ->columnSpanFull(),
+                                    ]),
+
+                            ]),
+
+                    ]),
+
+
+
+
+
             ]);
     }
 

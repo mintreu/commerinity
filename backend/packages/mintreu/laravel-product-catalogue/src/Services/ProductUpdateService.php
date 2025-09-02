@@ -60,6 +60,7 @@ class ProductUpdateService
         $this->product->update($fillables);
         // Update or Sync Filter Options
         $this->updateProductFilterOption();
+        return $this->product;
     }
 
     private function updateConfigurableProduct():Product
@@ -86,17 +87,35 @@ class ProductUpdateService
     }
 
 
+//    protected function updateProductFilterOption(): void
+//    {
+//        if ($this->product->type == ProductTypeCast::CONFIGURABLE)
+//        {
+//            $this->updateProductFilterOptionToParent();
+//        }else{
+//            $filterOptionIds = array_values($this->data['filter_options']);
+//            $this->product->filterOptions()->sync($filterOptionIds,['product_id' => $this->product->id]);
+//        }
+//
+//    }
+
+
     protected function updateProductFilterOption(): void
     {
-        if ($this->product->type == ProductTypeCast::CONFIGURABLE)
-        {
+        if ($this->product->type == ProductTypeCast::CONFIGURABLE) {
             $this->updateProductFilterOptionToParent();
-        }else{
-            $filterOptionIds = array_values($this->data['filter_options']);
-            $this->product->filterOptions()->sync($filterOptionIds);
-        }
+        } else {
+            // Build pivot array with filter_id
+            $pivotData = [];
+            foreach ($this->data['filter_options'] as $filterId => $filterOptionId) {
+                $pivotData[$filterOptionId] = ['filter_id' => $filterId];
+            }
 
+            // Sync with extra pivot data
+            $this->product->filterOptions()->sync($pivotData);
+        }
     }
+
 
 
     private function updateProductFilterOptionToParent(): void

@@ -15,6 +15,7 @@ class HelpDeskFaqResource extends Resource
     protected static ?string $model = HelpDeskFaq::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'HelpDesk';
 
     public static function form(Form $form): Form
     {

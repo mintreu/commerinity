@@ -23,8 +23,7 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
-
-
+        dd( config('laravel-store.sales'));
 
         $user = User::firstWhere('email','applicant@example.com');
 

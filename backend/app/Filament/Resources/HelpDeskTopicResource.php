@@ -15,6 +15,7 @@ class HelpDeskTopicResource extends Resource
     protected static ?string $model = HelpDeskTopic::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'HelpDesk';
 
     public static function form(Form $form): Form
     {
@@ -28,7 +29,8 @@ class HelpDeskTopicResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\IconColumn::make('ticketable')->default(false)->boolean()
             ])
             ->filters([
                 //

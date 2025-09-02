@@ -26,10 +26,10 @@ enum HelpdeskStatusCast: string implements HasColor, HasIcon, HasLabel
     public function getIcon(): ?string
     {
         return match($this) {
-            self::OPEN => 'mdi:email-outline',
-            self::PENDING => 'mdi:progress-clock',
-            self::RESOLVED => 'mdi:check-circle-outline',
-            self::CLOSED => 'mdi:close-circle-outline',
+            self::OPEN => 'heroicon-o-envelope-open',
+            self::PENDING => 'heroicon-o-clock',
+            self::RESOLVED => 'heroicon-o-check-circle',
+            self::CLOSED => 'heroicon-o-x-circle',
         };
     }
 

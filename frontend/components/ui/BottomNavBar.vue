@@ -45,6 +45,7 @@ const tabs = computed(() => {
     { name: 'home', to: '/dashboard', label: 'Home', icon: 'mdi:view-dashboard-outline' },
     { name: 'shop', to: '/category', label: 'Shop', icon: 'mdi:cart-outline' },
     { name: 'orders', to: '/dashboard/orders', label: 'Orders', icon: 'mdi:clipboard-list-outline' },
+    { name: 'wallet', to: '/dashboard/wallet', label: 'Wallet', icon: 'mdi:account-outline' },
     { name: 'account', to: '/dashboard/account', label: 'Account', icon: 'mdi:account-outline' },
   ]
 

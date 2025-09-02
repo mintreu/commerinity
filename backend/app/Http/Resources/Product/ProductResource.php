@@ -8,6 +8,7 @@ use App\Http\Resources\Filter\FilterOptionResource;
 use App\Http\Resources\Filter\FilterResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Mintreu\LaravelMoney\LaravelMoney;
 
 class ProductResource extends JsonResource
 {
@@ -24,13 +25,15 @@ class ProductResource extends JsonResource
             'sku' => $this->sku,
             'type' => $this->type->getLabel(),
             'hasParent' => !is_null($this->parent_id),
-            'price' => $this->price,
+            'price' => LaravelMoney::format($this->price),
             'short_description' => $this->short_description,
             'description' => $this->description,
             'reward_point' => $this->reward_point,
             'returnable' => $this->is_returnable,
+            'min_quantity' => $this->min_quantity,
+            'max_quantity' => $this->max_quantity,
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),
-            'banner' => $this->getFirstMediaUrl('bannerImage'),
+            'banner' => $this->getMedia('bannerImage')->map(fn($media) => $media->getFullUrl()),
             'meta' => $this->meta_data,
             'parent' => new ProductResource($this->whenLoaded('parent')),
 
@@ -38,7 +41,7 @@ class ProductResource extends JsonResource
 
 
             'filter_option' => $this->resourceCollectionWhenLoadedAndNotEmpty('filterOptions', FilterOptionResource::class),
-            'variants' => $this->resourceCollectionWhenLoadedAndNotEmpty('variants', ProductResource::class),
+            'variants' => $this->resourceCollectionWhenLoadedAndNotEmpty('variants', ProductIndexResource::class),
             'categories' => $this->resourceCollectionWhenLoadedAndNotEmpty('categories', CategoryIndexResource::class),
             'tiers' => $this->resourceCollectionWhenLoadedAndNotEmpty('tiers', ProductTireResource::class),
 

@@ -50,20 +50,20 @@ class UserSeeder extends Seeder
             'type'  => AuthTypeCast::REGULAR
         ]);
 
-        // Add Address
-        $address = Address::factory()->raw([
-           'type'           =>  AddressTypeCast::HOME,
-           'postal_code'    =>  '711401'
-        ]);
-        $demoUser->addresses()->create($address);
-
-        // Add Kyc
-        $demoUser->kyc()->create([
-            'aadhaar' => rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
-            'pan' => strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) .
-                rand(1000, 9999) .
-                strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 1))
-        ]);
+//        // Add Address
+//        $address = Address::factory()->raw([
+//           'type'           =>  AddressTypeCast::HOME,
+//           'postal_code'    =>  '711401'
+//        ]);
+//        $demoUser->addresses()->create($address);
+//
+//        // Add Kyc
+//        $demoUser->kyc()->create([
+//            'aadhaar' => rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
+//            'pan' => strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) .
+//                rand(1000, 9999) .
+//                strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 1))
+//        ]);
 
 
 
@@ -94,13 +94,13 @@ class UserSeeder extends Seeder
             'type'  => AuthTypeCast::APPLICANT
         ]);
 
-
-        // Add Address
-        $address = Address::factory()->raw([
-            'type'           =>  AddressTypeCast::HOME,
-            'postal_code'    =>  '711401'
-        ]);
-        $demoApplicant->addresses()->create($address);
+//
+//        // Add Address
+//        $address = Address::factory()->raw([
+//            'type'           =>  AddressTypeCast::HOME,
+//            'postal_code'    =>  '711401'
+//        ]);
+//        $demoApplicant->addresses()->create($address);
 
 
     }

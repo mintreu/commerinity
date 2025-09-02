@@ -20,7 +20,7 @@
                   :key="item.product_id"
                   class="flex items-center justify-between border-b pb-4 border-gray-200 dark:border-gray-700"
               >
-                <img :src="item.product.thumbnail" class="w-20 h-20 object-cover rounded" />
+                <NuxtImg :src="item.product.thumbnail" class="w-20 h-20 object-cover rounded" />
                 <div class="flex-1 px-4">
                   <h3 class="font-medium">{{ item.product.name }}</h3>
                   <p class="text-xs text-gray-500 dark:text-gray-400">{{ item.product.sku }}</p>

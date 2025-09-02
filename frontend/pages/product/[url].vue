@@ -1,287 +1,140 @@
 <template>
-  <div class="w-full h-full">
-    <!-- Place Cart Button -->
-    <div class="mt-14 mr-5">
-      <CartCounter />
-    </div>
+  <div class="w-full h-full mt-16 px-4 lg:px-20">
+
+    <!-- Loader -->
+    <GlobalLoader v-if="isLoading"/>
+
+    <div v-else>
+      <div class="mt-14 mr-5">
+        <CartCounter/>
+      </div>
+
+      <div v-if="product" class="max-w-7xl mx-auto px-5 py-8 h-full flex flex-col gap-4 bg-gray-400 dark:bg-gray-800 rounded-2xl">
+        <!-- Product View Body-->
+
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Media Preview-->
+          <div class="w-full md:w-2/5 px-3 ">
+            <ProductMediaSlider :media="product.banner"/>
+          </div>
+
+          <div class="grow">
+            <!-- Product Information -->
+            <h1 class="text-2xl md:text-6xl font-roboto font-semibold">{{ product.name }}</h1>
+            <small>SKU : {{ product.sku }}</small>
+            <!-- Category Details -->
+            <div v-if="product.categories" class="md:flex flex-row gap-3 my-1 hidden  ">
+              <span>Categories:</span>
+              <div v-for="category in product.categories" :key="category.url" class="flex flex-row gap-2">
+                <NuxtLink :to="`/category/${category.url}`">
+                  <span class="px-3 py-0.5 bg-gray-600 hover:bg-blue-600 rounded-2xl">{{ category.name }}</span>
+                </NuxtLink>
+              </div>
+            </div>
+            <hr>
+            <!-- Pricing Information -->
+            <h2 class="text-xl font-semibold my-3 flex flex-row items-center gap-2">Price : <span class="text-3xl">{{ product.price }}</span></h2>
+
+              <!-- Variants -->
+            <div v-if="product.parent" class="w-full">
+              <div v-if="product.parent.variants" class="w-full gap-3 flex flex-col ">
+                <h2 class="text-lg font-semibold ">Available Options :</h2>
+                  <div v-for="variant in product.parent.variants" :key="variant.url" class="w-full flex flex-row gap-3">
+                      <NuxtLink :to="`/product/${variant.url}`">
+                        <div>
+                          <NuxtImg
+                              loading="lazy"
+                              :src="variant.thumbnail"
+                              class="h-14 w-full object-contain rounded mb-4"
+                          />
+                        </div>
+                      </NuxtLink>
+                  </div>
+              </div>
+            </div>
+
+              <!-- Add To Cart Cta-->
+<!--            <AddToCartButton-->
+<!--                :sku="product.sku"-->
+<!--                :quantity="1"-->
+<!--                class="mt-2 w-96"-->
+<!--            />-->
 
 
-    <div v-if="pending" class="p-10 text-center text-gray-500 dark:text-gray-400">
-      Loading product…
-    </div>
-    <div v-else-if="error" class="p-10 text-center text-red-600 dark:text-red-400">
-      Failed to load product.
-    </div>
-    <div v-else-if="!product" class="p-10 text-center text-gray-500 dark:text-gray-400">
-      Product not found.
-    </div>
 
-    <div v-else class="container mx-auto px-4 py-10">
+            <AddToCartWithQuantitySelector
+                :sku="product.sku"
+                :min-quantity="product.min_quantity"
+                :max-quantity="product.max_quantity"
+                class="mt-2 w-96"
+            />
 
 
 
-      <div class="flex flex-col md:flex-row gap-12">
-        <!-- Image Gallery -->
-        <div class="w-full md:w-1/3">
-          <div v-if="images.length" class="overflow-hidden rounded-xl shadow-lg">
-            <Swiper :slides-per-view="1" :space-between="10" navigation pagination>
-              <SwiperSlide v-for="(img, i) in images" :key="i">
-                <img :src="img" class="w-full h-96 md:h-[600px] object-cover" alt="Product Image" />
-              </SwiperSlide>
-            </Swiper>
+            <!-- Product Short Description -->
+            <div v-if="product.short_description" class="w-full mt-2">
+              <h2 class="font-semibold text-xl">Overview :</h2>
+              <p v-html="product.short_description"></p>
+            </div>
+
+            <!-- ./Product Information -->
+
           </div>
         </div>
 
-        <!-- Info + Filter Section -->
-        <div class="w-full md:w-2/3">
-          <h2 class="text-3xl font-bold mb-4">{{ product.name }}</h2>
-
-          <!-- Product Variant Options Section -->
-          <!-- Variant Thumbnails Grid -->
-          <section v-if="(product.hasParent && product.parent?.variants) || (product.type === 'Configurable' && product.variants)" class="mb-6">
-            <div class="flex flex-wrap gap-4 justify-start">
-              <NuxtLink
-                  v-for="variant in product.hasParent ? product.parent.variants : product.variants"
-                  :key="variant.url"
-                  :to="'/product/' + variant.url"
-                  class="relative border rounded-lg overflow-hidden w-24 h-24 flex items-center justify-center transition-all"
-                  :class="{
-        'ring-2 ring-blue-500': product.url === variant.url,
-        'hover:ring-1 hover:ring-gray-400': product.url !== variant.url
-      }"
-              >
-                <img
-                    :src="variant.thumbnail || 'https://via.placeholder.com/100'"
-                    :alt="variant.name"
-                    class="object-cover w-full h-full"
-                />
-              </NuxtLink>
-            </div>
-          </section>
-
-
-          <!-- Product Filter Options With Variant -->
-
-          <!-- Variant Product: child variant, pull variants from parent -->
-          <section v-if="product.hasParent" class="p-4">
-            <div class="grid grid-cols-2 gap-4">
-              <template
-                  v-for="filterName in [...new Set(
-        product.parent?.variants?.flatMap(v =>
-          v.filter_option?.map(opt => opt.filter.name)
-        ) || []
-      )]"
-                  :key="'parent-' + filterName"
-              >
-                <!-- Filter Name -->
-                <div class="font-semibold border p-2 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-                  {{ filterName }}
-                </div>
-
-                <!-- Filter Options -->
-                <div class="border p-2 flex flex-wrap gap-2 dark:border-gray-700">
-                  <div
-                      v-for="option in [...new Set(
-            product.parent?.variants?.flatMap(v =>
-              v.filter_option
-                ?.filter(opt => opt.filter.name === filterName)
-                .map(opt => opt.value)
-            ) || []
-          )]"
-                      :key="'parent-' + filterName + '-' + option"
-                      class="cursor-pointer px-3 py-1 border rounded text-sm hover:bg-blue-100 dark:hover:bg-blue-900 dark:border-gray-600 dark:text-white"
-                      :class="{
-            'bg-blue-500 text-white': isActiveOption(filterName, option)
-          }"
-                      @click="handleOptionClick(filterName, option)"
-                  >
-                    {{ option }}
-                  </div>
-                </div>
-              </template>
-            </div>
-          </section>
-
-          <!-- Configurable Product -->
-          <section v-else-if="product.type === 'Configurable'" class="p-4">
-            <div class="grid grid-cols-2 gap-4">
-              <template
-                  v-for="filterName in [...new Set(product.variants.flatMap(v => v.filter_option.map(opt => opt.filter.name)))]"
-                  :key="filterName"
-              >
-                <!-- Filter Name -->
-                <div class="font-semibold border p-2 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-                  {{ filterName }}
-                </div>
-
-                <!-- Unique Clickable Options -->
-                <div class="border p-2 flex flex-wrap gap-2 dark:border-gray-700">
-                  <div
-                      v-for="option in [...new Set(product.variants.flatMap(v =>
-            v.filter_option
-              .filter(opt => opt.filter.name === filterName)
-              .map(opt => opt.value)
-          ))]"
-                      :key="filterName + '-' + option"
-                      class="cursor-pointer px-3 py-1 border rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-sm dark:border-gray-600 dark:text-white"
-                      @click="handleOptionClick(filterName, option)"
-                  >
-                    {{ option }}
-                  </div>
-                </div>
-              </template>
-            </div>
-          </section>
-
-          <!-- Simple Product -->
-          <section v-else-if="product.type === 'Simple'" class="p-4">
-            <div class="grid grid-cols-2 gap-4">
-              <template
-                  v-for="filterName in [...new Set(
-        product.filter_option?.map(opt => opt.filter.name) || []
-      )]"
-                  :key="'simple-' + filterName"
-              >
-                <!-- Filter Name -->
-                <div class="font-semibold border p-2 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-                  {{ filterName }}
-                </div>
-
-                <!-- Filter Options -->
-                <div class="border p-2 flex flex-wrap gap-2 dark:border-gray-700">
-                  <div
-                      v-for="option in [...new Set(
-            product.filter_option
-              ?.filter(opt => opt.filter.name === filterName)
-              .map(opt => opt.value) || []
-          )]"
-                      :key="'simple-' + filterName + '-' + option"
-                      class="cursor-pointer px-3 py-1 border rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-sm dark:border-gray-600 dark:text-white"
-                      @click="handleOptionClick(filterName, option)"
-                  >
-                    {{ option }}
-                  </div>
-                </div>
-              </template>
-            </div>
-          </section>
-
-          <!-- ./ Product Filter Options With Variant -->
-
-
-
-
-
-
-
-          <!-- Add to Cart Button -->
-          <div class="mt-6">
-<!--            <button-->
-<!--                @click="addToCart"-->
-<!--                class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200"-->
-<!--            >-->
-<!--              Add to Cart-->
-<!--            </button>-->
-
-            <AddToCartButton :sku="product.sku" :quantity="1" />
-
-          </div>
-
-
-
-
-
-
-
+        <div class="w-full">
+          <h2 class="font-semibold text-2xl">Description</h2>
+          <FilamentTipTapContent :text="product.description"/>
         </div>
+
+        <!-- ./Product View Body-->
+
       </div>
 
-      <!-- Description -->
-      <div class="mt-10">
-        <h3 class="text-lg font-bold mb-2">Description</h3>
-        <div v-html="product.description" class="prose prose-sm text-gray-700 dark:text-gray-300"></div>
-      </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { useRoute, useRuntimeConfig, useFetch } from '#imports'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import 'swiper/css'
-import AddToCartButton from "~/components/cart/AddToCartButton.vue";
 import CartCounter from "~/components/cart/CartCounter.vue";
-
+import GlobalLoader from "~/components/GlobalLoader.vue"
+import {onMounted, ref} from "vue";
+import {useRoute, useRuntimeConfig, useSanctumFetch} from "#imports";
+import ProductMediaSlider from "~/components/sliders/ProductMediaSlider.vue";
+import FilamentTipTapContent from "~/components/FilamentTipTapContent.vue";
+import {SwiperSlide} from "swiper/vue";
+import AddToCartButton from "~/components/cart/AddToCartButton.vue";
+import AddToCartWithQuantitySelector from "~/components/store/buttons/AddToCartWithQuantitySelector.vue";
 
 const route = useRoute()
 const config = useRuntimeConfig()
-
+const isLoading = useState('pageLoading', () => false)
 const product = ref(null)
-const { data, pending, error } = await useFetch(`${config.public.apiBase}/products/${route.params.url}`)
 
-watch(data, (val) => console.log('Fetched data:', val), { immediate: true })
-watch(product, (val) => console.log('Product ref:', val), { immediate: true })
-
-if (data.value && data.value.data) {
-  product.value = data.value.data
+async function fetchSuggestionProducts() {
+  try {
+    const res = await useSanctumFetch(`${config.public.apiBase}/products/${route.params.url}`, {
+      method: 'GET'
+    })
+    product.value = res?.data ?? []
+  } catch (error) {
+    console.error('[✘] Failed to load suggestion products', error)
+  }
 }
 
-// Computed images array
-const images = computed(() => {
-  const p = product.value
-  if (!p) return []
-  console.log('Computed product.images from banner:', p.banner)
-  const bannerArr = Array.isArray(p.banner) ? p.banner : p.banner ? [p.banner] : []
-  const result = [p.thumbnail, ...bannerArr].filter(Boolean)
-  console.log('Computed images:', result)
-  return result
+
+onMounted(async () => {
+
+  try {
+
+    await fetchSuggestionProducts()
+  } catch (e) {
+    console.error('Api fetch failed!', e)
+  } finally {
+    isLoading.value = false
+  }
 })
-
-watch(images, (imgs) => console.log('Images array:', imgs), { immediate: true })
-
-
-// Handle user clicking on a variant option
-function handleOptionClick(filterName, option) {
-  console.log('Clicked:', filterName, option)
-  // TODO: Add logic if needed to change variant or navigate
-}
-
-// Check if current variant has this option active
-function isActiveOption(filterName, option) {
-  return product.value?.filter_option?.some(
-      opt => opt.filter.name === filterName && opt.value === option
-  )
-}
-
-// Add to cart handler
-// function addToCart() {
-//   if (!product.value) return
-//
-//    const cartData = useFetch(`${config.public.apiBase}/cart/add`, {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({
-//       sku: product.value.sku,
-//       quantity: 1
-//     })
-//   })
-//       .then((res) => {
-//         if (!res.ok) throw new Error('Failed to add to cart')
-//         return res.json()
-//       })
-//       .then(() => {
-//         console.log(`${product.value.name} added to cart`)
-//         // Optionally replace with a toast/notification system
-//         alert(`${product.value.name} added to cart`)
-//       })
-//       .catch((err) => {
-//         console.error(err)
-//         alert('Add to cart failed')
-//       })
-// }
-
-
 
 
 </script>
