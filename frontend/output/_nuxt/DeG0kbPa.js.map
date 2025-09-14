@@ -1,0 +1,1 @@
+{"version":3,"file":"DeG0kbPa.js","sources":["../../../../virtual:public?%2Flogo.png"],"sourcesContent":["import { publicAssetsURL } from '#internal/nuxt/paths';export default publicAssetsURL(\"/logo.png\")"],"names":["_imports_0","publicAssetsURL"],"mappings":"0kBAAuD,MAAAA,EAAeC,EAAgB,WAAW"}
