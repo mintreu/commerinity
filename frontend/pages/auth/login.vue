@@ -337,6 +337,10 @@ function redirectAfterLogin() {
 }
 
 
+function loginWithGoogle() {
+  window.location.href = `${config.public.webBase}/auth/google/redirect`
+}
+
 
 onBeforeUnmount(clearOtpCountdown)
 </script>

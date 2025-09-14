@@ -6,15 +6,17 @@ use App\Casts\OrderStatusCast;
 use App\Models\Order\Order;
 use App\Services\CartService\Cart;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Mintreu\LaravelGeokit\Models\Address;
 use Mintreu\LaravelIntegration\LaravelIntegration;
 use Mintreu\LaravelIntegration\Support\ProviderOrder;
 use Mintreu\LaravelMoney\LaravelMoney;
+use Mintreu\LaravelTransaction\Models\Transaction;
 
 class OrderCreationService
 {
 
-    protected Model $customer;
+    protected ?Model $customer = null;
     protected Cart $cart;
     protected array $cartMeta;
     protected Address $shippingAddress;
@@ -23,24 +25,34 @@ class OrderCreationService
     protected ?string $provider = null;
 
     protected Order $order;
-
-
+    protected ?string $error = null;
+    protected ?Transaction $transaction = null;
 
     /**
-     * @param Model $customer
+     * @param Model|null $customer
      */
-    public function __construct(Model $customer)
+    public function __construct(?Model $customer = null)
     {
         $this->customer = $customer;
-        $this->cart = new Cart($this->customer);
-        $this->cartMeta = $this->cart->getMeta(false);
     }
 
 
-    public static function make(Model $customer): static
+    public static function make(?Model $customer = null): static
     {
         return new static($customer);
     }
+
+    protected function setError(string $error): void
+    {
+        $this->error = $error;
+    }
+
+    public function getError():?string
+    {
+        return $this->error;
+    }
+
+
 
     public function shippingAddress(Address $shippingAddress): static
     {
@@ -66,26 +78,59 @@ class OrderCreationService
         return $this;
     }
 
-    public function placeOrder(): static
+
+    protected function initilizeCart(Request $request)
     {
-        $this->order = $this->createOrder();
-        if ($this->order)
+
+        $this->cart = new Cart($this->customer);
+        $this->cart->capture($request);
+        $this->cartMeta = $this->cart->getMeta(false);
+    }
+
+
+
+
+    public function placeOrder(Request $request): static
+    {
+        $this->initilizeCart($request);
+        if ($this->cartMeta['summary']['quantity'])
         {
-            $this->createOrderPayment();
+            $this->order = $this->createOrder();
+
+            if ($this->order)
+            {
+                if ($this->order->transaction()->count())
+                {
+                    $this->order->load('transaction');
+                    $this->transaction = $this->order->transaction;
+                }else{
+                    $this->createOrderPayment();
+                }
+
+
+            }
+        }else{
+            $this->setError('no product found for order');
         }
-//
-//        $this->attachProductsToOrderProducts();
-//
-//        $this->cart->empty();
+
+
+
+        $this->attachProductsToOrderProducts();
+
+        $this->cart->empty();
 
         return $this;
     }
 
 
-    public function getCheckoutUrl()
+    public function getCheckoutUrl():?string
     {
 
-        dd($this,LaravelIntegration::payment($this->provider));
+        if(!is_null($this->transaction))
+        {
+            return route('checkout',['transaction' => $this->transaction->uuid]);
+        }
+        return null;
     }
 
 
@@ -93,8 +138,19 @@ class OrderCreationService
 
     protected function createOrder():Order
     {
+        $customer = $this->customer ? [
+            'name'      => $this->customer->name,
+            'email'     => $this->customer->email,
+            'mobile'    => $this->customer->mobile
+        ] : [
+            'name'      => $this->billingAddress->person_name,
+            'email'     => $this->billingAddress->person_email,
+            'mobile'    => $this->billingAddress->person_mobile
+        ];
 
-        return $this->customer->orders()->create([
+
+
+        $orderFillables = [
             'voucher' => $this->cartMeta['summary']['coupon_code'],
             'quantity' => $this->cartMeta['summary']['quantity'],
             'amount' => $this->cartMeta['summary']['total']->getValue(),
@@ -110,25 +166,38 @@ class OrderCreationService
             'billing_address_id' => $this->billingAddress->id,
             'shipping_address_id' => $this->shippingAddress->id,
             'is_cod' => $this->provider === 'cod-payment',
-        ]);
+            'has_guest' => is_null($this->customer),
+            'customer_name' => $customer['name'],
+            'customer_email'    => $customer['email'],
+            'customer_mobile'   => $customer['mobile']
+        ];
+
+        return !is_null($this->customer) ? $this->customer->orders()->create($orderFillables) : Order::create($orderFillables);
     }
 
 
 
     protected function createOrderPayment()
     {
-        $providerOrder = LaravelIntegration::payment()->order()->create(function (ProviderOrder $providerOrder){
-            $providerOrder
-                ->customer($this->customer)
-                ->amount($this->order->amount)
-                ->currency(LaravelMoney::defaultCurrency())
-                ->expireAfterDays(20)
-                ->receipt($this->order->uuid);
-        });
+        $customer = [
+            'name'      => $this->order->customer_name,
+            'email'     => $this->order->customer_email,
+            'mobile'    => $this->order->customer_mobile
+        ];
 
-        dd($providerOrder);
+        $successUrl = $this->customer ? config('app.client_url').'/dashboard/orders/'.$this->order->uuid : config('app.client_url').'/order/'.$this->order->uuid;
+        $failureUrl = $this->customer ? config('app.client_url').'/dashboard/orders/'.$this->order->uuid : config('app.client_url').'/order/'.$this->order->uuid ;
 
-        $this->order->transaction()->create([]);
+        $this->transaction = $this->order->createDebitTransaction(
+            customer: $customer,
+            redirect_success_url: $successUrl,
+            redirect_failure_url: $failureUrl,
+            wallet: $this->customer?->wallet,
+            purpose: 'Purchasing Products',
+            paymentProviderSlug: $this->provider,
+            expireAfterMinutes: 60
+        );
+
     }
 
 
@@ -141,9 +210,9 @@ class OrderCreationService
         {
             $this->order->orderProducts()->create([
                 'quantity' => $item['summary']['quantity'],
-                'amount' => $item['summary']['subTotal']->getValue(),
+                'amount' => $item['summary']['sub_total']->getValue(),
                 'discount' => $item['summary']['discount']->getValue(),
-                'tax' => $item['summary']['taxAmount']->getValue(),
+                'tax' => $item['summary']['tax']->getValue(),
                 'total' => $item['summary']['total']->getValue(),
                 'product_id' => $item['product_id'],
             ]);

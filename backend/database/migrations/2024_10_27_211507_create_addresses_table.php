@@ -23,9 +23,8 @@ return new class extends Migration
 
             $table->boolean('default')->default(false);
 
-            $table->string('village')->nullable()->index();
             $table->string('person_name')->nullable();
-            $table->string('person_email')->nullable();
+            $table->string('person_email')->nullable()->index();
             $table->string('person_mobile')->nullable();
             $table->string('alternate_contact')->nullable();
             $table->string('landmark')->nullable();

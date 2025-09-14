@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Naukri;
 
 use App\Http\Resources\Geo\AddressIndexResource;
+use App\Http\Resources\Transaction\TransactionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,6 +30,7 @@ class NaukriApplicaitonResource extends JsonResource
             'status_feedback'   => $this->status_feedback,
             'recruitment'   => NaukriIndexResource::make($this->whenLoaded('naukri')),
             'address'       => AddressIndexResource::make($this->whenLoaded('address')),
+            'transaction'   => TransactionResource::make($this->whenLoaded('transaction'))
 
 
         ];

@@ -87,7 +87,7 @@ return [
     'wallet' => [
 
         // Enable or disable wallet support
-        'status' => false,
+        'status' => true,
 
         // Wallet model class to be used (default: package Wallet model)
         'model'  => Mintreu\LaravelTransaction\Models\Wallet::class,

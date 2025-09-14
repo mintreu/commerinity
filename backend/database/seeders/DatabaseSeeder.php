@@ -26,8 +26,9 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             HelpDeskTopicSeeder::class,
             UserSeeder::class,
-            SaleSeeder::class
+            SaleSeeder::class,
 
+            HelpDeskTicketSeeder::class
 
         ]);
 

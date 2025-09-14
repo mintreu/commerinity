@@ -3,13 +3,9 @@
 namespace App\Models\Order;
 
 use App\Casts\OrderStatusCast;
-use Faker\Provider\Address;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelGeokit\Traits\HasOrderAddresses;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\LaravelTransaction\Traits\HasTransaction;
@@ -22,6 +18,7 @@ class Order extends Model
 
     protected string $billingAddressKey = 'billing_address_id';
     protected string $shippingAddressKey = 'shipping_address_id';
+    const string TRANSACTION_AMOUNT_VALUE = 'total';
 
 
     protected $fillable = [
@@ -43,6 +40,14 @@ class Order extends Model
         'shipping_is_billing',
         'billing_address_id',
         'shipping_address_id',
+
+        'has_guest',
+        'customer_name',
+        'customer_email',
+        'customer_mobile',
+
+
+
     ];
 
     protected $casts = [
@@ -52,6 +57,7 @@ class Order extends Model
         'tax' => LaravelMoneyCast::class,
         'total' => LaravelMoneyCast::class,
         'status' => OrderStatusCast::class,
+        'expire_at' => 'datetime',
     ];
 
     protected static function booted()
@@ -65,6 +71,11 @@ class Order extends Model
     public function customerable()
     {
         return $this->morphTo();
+    }
+
+    public function customer()
+    {
+        return $this->customerable();
     }
 
 

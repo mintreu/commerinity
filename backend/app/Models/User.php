@@ -26,6 +26,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;
+use Mintreu\LaravelTransaction\Traits\HasWallet;
 use Mintreu\Toolkit\Casts\GenderCast;
 use Mintreu\Toolkit\Contracts\Fingerprintable;
 use Mintreu\Toolkit\Traits\HasFingerprint;
@@ -39,7 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
         HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,
-        HasSupportTicket;
+        HasSupportTicket,HasWallet;
 
     /**
      * The attributes that are mass assignable.

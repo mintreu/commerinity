@@ -13,17 +13,22 @@ class LaravelMoneyService implements LaravelMoneyServiceContract
 
 
 
-    public function __construct(LaravelMoneyService|string|int|float $value = 0, ?string $currency = null)
+    public function __construct(LaravelMoneyService|string|int|float|null $value = 0, ?string $currency = null)
     {
 
         $baseValue = $this->extractBaseValue($value);
         $currency = self::resolveCurrency($currency);
 
+        if (is_null($baseValue))
+        {
+            $baseValue = 0.00;
+        }
+
         // Instantiate Laravel Money
         $this->laravelMoney = new CoreMoney($baseValue, $currency, true);
     }
 
-    public static function make(LaravelMoneyService|string|int|float $value = 0, ?string $currency = null):static
+    public static function make(LaravelMoneyService|string|int|float|null $value = 0, ?string $currency = null):static
     {
         return new static($value, $currency);
     }
@@ -101,7 +106,7 @@ class LaravelMoneyService implements LaravelMoneyServiceContract
      * Converted = false, when used when you pass 10000 and want use 100
      * Usage: Money::format(value:'10000',converted: false)
      */
-    public static function format(int|float|string $value = 0, ?string $currency = null, bool $converted = true): string
+    public static function format(int|float|string|null $value = 0, ?string $currency = null, bool $converted = true): string
     {
         if (!$converted)
         {

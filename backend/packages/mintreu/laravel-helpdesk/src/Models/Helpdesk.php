@@ -50,7 +50,10 @@ class Helpdesk extends Model implements HasMedia
         parent::booted();
     }
 
-
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('ticketAttachment');

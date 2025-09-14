@@ -4,9 +4,11 @@ namespace App\Listeners;
 
 
 use App\Models\Lifecycle\UserSubscription;
+use App\Models\NaukriApplication;
+use App\Models\Order\Order;
+use App\Services\OrderService\OrderConfirmService;
+use App\Services\RecruitmentService\RecruitmentConfirmationService;
 use App\Services\UserServices\MembershipSubscriptionService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Mintreu\LaravelTransaction\Events\TransactionConfirmed;
 
 class HandleTransactionConfirmed
@@ -32,6 +34,18 @@ class HandleTransactionConfirmed
         if ($transactionAbleRecord instanceof UserSubscription)
         {
             MembershipSubscriptionService::make($customer)->validate($transaction);
+        }
+
+        if ($transactionAbleRecord instanceof Order)
+        {
+            $orderConfirmService = OrderConfirmService::make($transactionAbleRecord,$transaction);
+            $orderConfirmService->confirm();
+
+        }
+
+        if ($transactionAbleRecord instanceof NaukriApplication)
+        {
+            RecruitmentConfirmationService::make($transactionAbleRecord)->validate($transaction);
         }
 
     }

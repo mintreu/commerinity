@@ -5,6 +5,7 @@ namespace App\Casts;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+
 enum KycTypeCast: string implements HasLabel, HasIcon, HasColor
 {
 

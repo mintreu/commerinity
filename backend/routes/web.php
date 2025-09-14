@@ -20,3 +20,6 @@ Route::get('/test',[\App\Http\Controllers\TestController::class,'index']);
  */
 
 Route::get('/checkout/{transaction:uuid}',\App\Livewire\Checkout\CheckoutHome::class)->name('checkout');
+
+
+Route::get('/auth/{provider}/redirect',[\App\Http\Controllers\Web\SocialLoginController::class,'attempt']);

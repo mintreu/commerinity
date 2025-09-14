@@ -28,88 +28,92 @@ trait HasTransaction
      * General method to create a transaction.
      */
     protected function createTransaction(
-        Model $customer,                  // required
-        TransactionTypeCast|string $type, // required
+        Model|array $customer,
+        TransactionTypeCast|string $type,
         string $redirect_success_url,
         string $redirect_failure_url,
-        ?Model $wallet = null,            // optional
-        ?string $purpose = null,          // optional
-        ?string $currency = null,         // optional
-        ?string $paymentProviderSlug = null, // optional
-        int $expireAfterMinutes = 20,     // optional with default
-        array $notes = []                // optional with default
+        ?Model $wallet = null,
+        ?string $purpose = null,
+        ?string $currency = null,
+        ?string $paymentProviderSlug = null,
+        int $expireAfterMinutes = 20,
+        array $notes = [],
+        null|int|float $amount = null
     ): ?Transaction {
         if ($type instanceof TransactionTypeCast) {
             $type = $type->value;
         }
 
-        return DB::transaction(function () use ($type, $customer,$redirect_success_url,$redirect_failure_url, $wallet, $purpose, $currency, $paymentProviderSlug, $expireAfterMinutes,$notes) {
-
+        return DB::transaction(function () use ($type, $customer, $redirect_success_url, $redirect_failure_url, $wallet, $purpose, $currency, $paymentProviderSlug, $expireAfterMinutes, $notes, $amount) {
 
             $paymentProvider = $paymentProviderSlug
                 ? LaravelIntegration::payment($paymentProviderSlug)
                 : LaravelIntegration::payment();
 
-            // Init Transaction Model
+            // Resolve amount with backward compatibility
+            $resolvedAmount = $amount ?? $this->resolveTransactionAmount();
+
             $transactionData = [
                 'uuid'      => $this->uuid,
                 'type'      => $type,
                 'purpose'   => $purpose,
+                'amount'    => $resolvedAmount,
                 'integration_id'    => $paymentProvider->getModel()->id,
                 'success_redirect_url' => $redirect_success_url,
                 'failure_redirect_url'  => $redirect_failure_url
             ];
 
-            // Attach wallet if integration is enabled
             if ($wallet && (config('laravel-transaction.wallet.status') ?? false)) {
                 $transactionData['wallet_id'] = $wallet->id;
             }
 
-            // Create transaction
             $transaction = $this->transaction()->create($transactionData);
 
 
-            // Create provider order
-            $providerData = $paymentProvider->order()->create(function (ProviderOrder $order) use ($customer, $currency,$notes,$expireAfterMinutes,$transaction) {
+            $providerData = $paymentProvider->order()->create(function (ProviderOrder $order) use ($customer, $currency, $notes, $expireAfterMinutes, $transaction, $resolvedAmount) {
                 $order->receipt($this->uuid)
                     ->currency($currency ?? LaravelMoney::defaultCurrency())
-                    ->amount($this->resolveTransactionAmount())
-                    ->customer($customer)
+                    ->amount($transaction->amount)
                     ->expireAfter($expireAfterMinutes)
-                    ->successUrl(route('transaction.validate',['transaction' => $transaction->uuid]))
-                    ->failureUrl(route('transaction.failure',['transaction' => $transaction->uuid]))
+                    ->successUrl(route('transaction.validate', ['transaction' => $transaction->uuid]))
+                    ->failureUrl(route('transaction.failure', ['transaction' => $transaction->uuid]))
                     ->notes($notes);
+
+                if (!is_array($customer) && $customer instanceof Model) {
+                    $order->customer($customer);
+                } elseif (is_array($customer)) {
+                    $order->customerName($customer['name'])
+                        ->customerEmail($customer['email'])
+                        ->customerMobile($customer['mobile']);
+                }
             });
 
             if (!isset($providerData['success']) || $providerData['success'] !== true) {
                 throw new RuntimeException($providerData['error'] ?? 'Unknown payment provider error.');
             }
 
-            // Base transaction payload
+
+
             $transactionUpdateData = array_merge([
                 'expire_at' => now()->addMinutes($expireAfterMinutes),
+                // optionally persist amount used for the transaction if your table has such a column
+               // 'amount' => $resolvedAmount,
             ], $providerData['data'] ?? []);
 
-
-
-            // Update transaction
             $transaction->update($transactionUpdateData);
             $transaction->refresh();
 
 
-            // Adjust wallet balance
+            // Adjust wallet balance using the resolved amount
             if ($wallet && isset($wallet->balance)) {
                 if ($type === TransactionTypeCast::DEBITED->value) {
-                    $wallet->decrement('balance', $this->amount);
+                    $wallet->decrement('balance', $resolvedAmount);
                 } elseif ($type === TransactionTypeCast::CREDITED->value) {
-                    $wallet->increment('balance', $this->amount);
+                    $wallet->increment('balance', $resolvedAmount);
                 }
-
-                // Fire event / notification after wallet change
                 Event::dispatch('wallet.updated', [$wallet, $transaction]);
             }
 
-            // Fire event / notification after transaction created
             Event::dispatch('transaction.created', [$transaction]);
 
             return $transaction;
@@ -117,14 +121,15 @@ trait HasTransaction
     }
 
     public function createDebitTransaction(
-        Model $customer,
+        Model|array $customer,
         string $redirect_success_url,
         string $redirect_failure_url,
         ?Model $wallet = null,
         ?string $purpose = null,
         ?string $currency = null,
         ?string $paymentProviderSlug = null,
-        int $expireAfterMinutes = 15
+        int $expireAfterMinutes = 15,
+        null|int|float $amount = null
     ): ?Transaction {
         return $this->createTransaction(
             $customer,
@@ -135,19 +140,22 @@ trait HasTransaction
             $purpose,
             $currency,
             $paymentProviderSlug,
-            $expireAfterMinutes
+            $expireAfterMinutes,
+            notes: [],
+            amount: $amount // pass through
         );
     }
 
     public function createCreditTransaction(
-        Model $customer,
+        Model|array $customer,
         string $redirect_success_url,
         string $redirect_failure_url,
         ?Model $wallet = null,
         ?string $purpose = null,
         ?string $currency = null,
         ?string $paymentProviderSlug = null,
-        int $expireAfterMinutes = 15
+        int $expireAfterMinutes = 15,
+        null|int|float $amount = null
     ): ?Transaction {
         return $this->createTransaction(
             $customer,
@@ -158,9 +166,12 @@ trait HasTransaction
             $purpose,
             $currency,
             $paymentProviderSlug,
-            $expireAfterMinutes
+            $expireAfterMinutes,
+            notes: [],
+            amount: $amount // pass through
         );
     }
+
 
 
     /**
@@ -236,7 +247,8 @@ trait HasTransaction
 
         // 2. Constant
         if (defined(static::class.'::TRANSACTION_AMOUNT_VALUE')) {
-            return constant(static::class.'::TRANSACTION_AMOUNT_VALUE');
+            $field = constant(static::class.'::TRANSACTION_AMOUNT_VALUE');
+            return $this->{$field};
         }
 
         // 3. Common attributes

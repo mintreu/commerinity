@@ -62,15 +62,65 @@ class Category extends Model implements HasMedia
     {
         return $this->hasMany('category_mapping','category_id','id');
     }
-    public function products(): MorphToMany
+    public function categorized(): MorphToMany
     {
+        $targetModel = config('laravel-category.categorized.models')[0] ?? null;
+
+
+        if (! $targetModel) {
+            throw new \RuntimeException(
+                "No Category categorized models defined in config/laravel-category.php"
+            );
+        }
+
+
+
         return $this->morphedByMany(
-            Product::class,  // Target model
+            $targetModel,  // Target model
             'categorized',               // Morph name (matches your migration)
             'category_mappings',         // Pivot table
             'category_id',               // Foreign key on pivot table pointing to this model
             'categorized_id'            // Morph ID for the Product model
         );
     }
+
+
+
+
+    public function __call($method, $parameters)
+    {
+        // If method is a known relation, return it dynamically
+        if ($relation = $this->resolveDynamicTargetRelation($method)) {
+            return $relation;
+        }
+
+        // Otherwise, fallback to parent __call
+        return parent::__call($method, $parameters);
+    }
+
+    protected function resolveDynamicTargetRelation(string $method): ?MorphToMany
+    {
+        // Config defined target models
+        $targets = config('laravel-category.categorized.models', []);
+        foreach ($targets as $class) {
+            $expected = \Illuminate\Support\Str::plural(strtolower(class_basename($class)));
+
+            if ($method === $expected) {
+                return $this->morphedByMany(
+                    $class,  // Target model
+                    'categorized',               // Morph name (matches your migration)
+                    'category_mappings',         // Pivot table
+                    'category_id',               // Foreign key on pivot table pointing to this model
+                    'categorized_id'
+                );
+            }
+        }
+
+        return null; // no dynamic relation found
+    }
+
+
+
+
 
 }

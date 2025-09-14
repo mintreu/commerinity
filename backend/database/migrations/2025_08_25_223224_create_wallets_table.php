@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Mintreu\LaravelTransaction\Casts\WalletStatusCast;
 
 return new class extends Migration
 {
@@ -13,6 +14,13 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique(); // explicit column name
+            $table->string('pin', 60); // store hashed PIN instead of raw 4 digits
+            $table->decimal('balance', 15, 2)->default(0.00)->index();
+            $table->morphs('walletable');
+            $table->unique(['walletable_id', 'walletable_type']);
+            $table->string('currency', 3)->default('INR'); // fixed currency for India
+            $table->string('status')->default(WalletStatusCast::ACTIVE);
             $table->timestamps();
         });
     }

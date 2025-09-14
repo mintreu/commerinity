@@ -136,6 +136,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+
         $product->load([
             //'filterGroup.filters.options',
             'media' => fn($query) => $query->where('collection_name','bannerImage'),
@@ -143,6 +144,11 @@ class ProductController extends Controller
 
             'tiers',
             'categories',
+            'sales' => fn($query) => $query
+                ->with('sale')
+                ->whereDate('starts_from', '<=', now())
+               // ->whereDate('ends_till', '>=', now())
+            ,
         ]);
 
         if (!is_null($product->parent_id))
@@ -157,6 +163,7 @@ class ProductController extends Controller
                 'variants.filterOptions.filter',
             ]);
         }
+
 
 
         // Load related products using siblingsAndSelf

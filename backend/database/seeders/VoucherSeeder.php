@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Lifecycle\Level;
-use App\Models\Promotion\Voucher;
-use App\Models\Promotion\VoucherCode;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Mintreu\LaravelCommerinity\Models\Voucher;
+use Mintreu\LaravelCommerinity\Models\VoucherCode;
 
 class VoucherSeeder extends Seeder
 {

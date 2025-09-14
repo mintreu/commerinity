@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
-use Mintreu\LaravelMoney\LaravelMoney;
 
 class Stage extends Model
 {

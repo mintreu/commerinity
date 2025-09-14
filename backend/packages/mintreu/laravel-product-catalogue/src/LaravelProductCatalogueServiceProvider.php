@@ -31,6 +31,7 @@ class LaravelProductCatalogueServiceProvider extends PackageServiceProvider
          */
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
+            ->hasConfigFile('laravel-product-catalogue')
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()

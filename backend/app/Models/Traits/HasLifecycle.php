@@ -4,7 +4,6 @@ namespace App\Models\Traits;
 
 use App\Models\Lifecycle\Stage;
 use Carbon\Carbon;
-use function PHPUnit\Framework\throwException;
 
 trait HasLifecycle
 {

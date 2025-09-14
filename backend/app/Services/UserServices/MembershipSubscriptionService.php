@@ -10,11 +10,7 @@ use App\Models\Lifecycle\UserSubscription;
 use App\Models\User;
 use App\Notifications\Subscription\SubscriptionConfirmationNotificaion;
 use App\Notifications\Subscription\SubscriptionFailedNotificaion;
-use App\Notifications\User\UserStatusChangeNotification;
 use App\Services\UserServices\NetworkServices\NetworkService;
-use Mintreu\LaravelIntegration\LaravelIntegration;
-use Mintreu\LaravelMoney\LaravelMoney;
-use Mintreu\LaravelTransaction\Casts\TransactionTypeCast;
 use Mintreu\LaravelTransaction\Models\Transaction;
 use Throwable;
 

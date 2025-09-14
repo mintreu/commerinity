@@ -3,10 +3,7 @@
 namespace App\Listeners\User;
 
 use App\Events\User\UserNetworkSlotRequestedEvent;
-use App\Models\User;
 use App\Services\UserServices\NetworkServices\NetworkService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class FindAvailableNetworkSlotForUser
 {

@@ -293,6 +293,13 @@ route
       g.link('/category', 'Categories').order(1)
       g.link('/dashboard/orders', 'My Orders').order(2)
     })
+    .group('Wallet','mdi:cart-outline',g => {
+      g.link('/dashboard/wallet','My Wallet').order(1)
+    })
+    .group('Career','mdi:briefcase-outline',g => {
+      g.link('/career','Vacancy').order(1)
+      g.link('/dashboard/career/applications','My Applications').order(1)
+    })
 
 const dynamicLinks = computed(() => {
   if (!user.value) return []
@@ -301,7 +308,7 @@ const dynamicLinks = computed(() => {
   const links: NavLinkOptions[] = []
 
 
-  if (type === 'applicant') links.push({ to: '/dashboard/career/applications', label: 'My Applications', order: 1, group: 'Career', icon: 'mdi:briefcase-outline' })
+  // if (type === 'applicant') links.push({ to: '/dashboard/career/applications', label: 'My Applications', order: 1, group: 'Career', icon: 'mdi:briefcase-outline' })
   if (type !== 'applicant') links.push({ to: '/dashboard/members', label: 'Members', order: 1, group: 'Community', icon: 'mdi:account-multiple-outline' })
   if (!u.level_id || u.status?.toLowerCase() !== 'subscribed') links.push({ to: '/dashboard/subscribe', label: 'Subscribe Now', order: 10, group: '', icon: 'mdi:star-outline' })
 

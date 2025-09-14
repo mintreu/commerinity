@@ -4,14 +4,12 @@ namespace App\Filament\Resources\Promotion;
 
 use App\Filament\Resources\Promotion\VoucherResource\Pages;
 use App\Filament\Resources\Promotion\VoucherResource\RelationManagers;
-use App\Models\Promotion\Voucher;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Mintreu\LaravelCommerinity\Models\Voucher;
 
 class VoucherResource extends Resource
 {

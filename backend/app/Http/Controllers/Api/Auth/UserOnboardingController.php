@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lifecycle\UserOnboardingRequest;
 use App\Services\UserServices\MembershipSubscriptionService;
-use Illuminate\Http\Request;
 
 class UserOnboardingController extends Controller
 {

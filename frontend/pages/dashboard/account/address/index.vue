@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useSanctumFetch, useRuntimeConfig } from '#imports'
+import { useSanctumFetch, useRuntimeConfig,useRoute  } from '#imports'
 
 definePageMeta({ layout: 'dashboard' })
 
@@ -40,9 +40,11 @@ const currentAddress = reactive<any>({
 
 // Validation errors
 const errors = reactive<Record<string, string>>({})
+const route = useRoute()
 
 // List of required fields (as requested)
 const requiredFields = [
+  'title',
   'type',
   'address_1',
   'landmark',
@@ -60,6 +62,9 @@ function isFieldValidSilent(field: string): boolean {
   const val = (currentAddress[field] ?? '').toString().trim()
 
   switch (field) {
+    case 'title':
+      if (!raw) errors.title = 'Title is required.'
+      break
     case 'type':
     case 'address_1':
     case 'landmark':
@@ -263,20 +268,18 @@ function openModal(mode: 'create' | 'edit' | 'view', address: any | null = null)
   clearErrors()
 
   if (address) {
-    // Normalize incoming address so fields are primitives (no objects)
     Object.assign(currentAddress, {
       ...address,
-      country: 'IN', // Always India
-      state_code: address.state?.code || address.state_code || (address.state && address.state.code) || '',
+      country: 'IN',
+      state_code: address.state?.code || address.state_code || '',
       city: address.city || '',
-      // normalize block: prefer block.url, else block_id, else block name, else empty string
       block_id: address.block?.url || address.block_id || address.block || '',
     })
   } else {
     Object.assign(currentAddress, {
-      uuid: '',
+      // uuid: '',
       title: '',
-      type: 'home',
+      type: '',  // keep blank initially
       person_name: '',
       person_email: '',
       person_mobile: '',
@@ -289,7 +292,14 @@ function openModal(mode: 'create' | 'edit' | 'view', address: any | null = null)
       village: '',
       country: 'IN',
     })
+
+    // ✅ Auto-fill from query string only in create mode
+    const queryType = (route.query.type || '').toString().toLowerCase()
+    if (queryType && typeBadges[queryType]) {
+      currentAddress.type = queryType
+    }
   }
+
   showModal.value = true
 }
 

@@ -14,6 +14,8 @@ class ViewHelpDesk extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+
+            Actions\Action::make('conversations')->url(fn() => self::$resource::getUrl('conversation',['record' => $this->record->uuid]))
         ];
     }
 }

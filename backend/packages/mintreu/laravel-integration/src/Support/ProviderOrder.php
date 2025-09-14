@@ -2,8 +2,10 @@
 
 namespace Mintreu\LaravelIntegration\Support;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Mintreu\Toolkit\Contracts\Fingerprintable;
 
 /**
@@ -13,20 +15,20 @@ use Mintreu\Toolkit\Contracts\Fingerprintable;
  */
 class ProviderOrder
 {
-    protected ?string $currency = null;
-    protected string|int|float|null $amount = null;
-    protected ?Model $customer = null;
-    protected ?string $receipt = null;
-    protected array $notes = [];
+    protected string|Closure|null $currency = null;
+    protected string|int|float|Closure|null $amount = null;
+    protected Model|Closure|null $customer = null;
+    protected string|Closure|null $receipt = null;
+    protected array|Closure $notes = [];
 
-    protected ?string $customerId = null;
-    protected ?string $customerName = null;
-    protected ?string $customerEmail = null;
-    protected ?string $customerMobile = null;
+    protected string|Closure|null $customerId = null;
+    protected string|Closure|null $customerName = null;
+    protected string|Closure|null $customerEmail = null;
+    protected string|Closure|null $customerMobile = null;
 
-    protected ?string $successUrl = null;
-    protected ?string $failureUrl = null;
-    protected ?Carbon $expireAt = null;
+    protected string|Closure|null $successUrl = null;
+    protected string|Closure|null $failureUrl = null;
+    protected Carbon|Closure|null $expireAt = null;
 
     /**
      * Optionally initialize ProviderOrder with data.
@@ -41,80 +43,85 @@ class ProviderOrder
     }
 
     // ---------------------------
+    // Helpers
+    // ---------------------------
+
+    protected function resolve(mixed $value): mixed
+    {
+        return $value instanceof Closure ? $value() : $value;
+    }
+
+    // ---------------------------
     // Builder methods (Fluent API)
     // ---------------------------
 
-    public function receipt(string $receipt): static
+    public function receipt(string|Closure $receipt): static
     {
         $this->receipt = $receipt;
         return $this;
     }
 
-    public function currency(string $currency): static
+    public function currency(string|Closure $currency): static
     {
         $this->currency = $currency;
         return $this;
     }
 
-    public function amount(float|int|string $amount): static
+    public function amount(float|int|string|Closure $amount): static
     {
-        // Normalize numeric strings into int/float where possible
-        if (is_numeric($amount)) {
-            $amount = $amount + 0; // cast to int/float
-        }
         $this->amount = $amount;
         return $this;
     }
 
-    public function customer(?Model $customer): static
+    public function customer(Model|Closure|null $customer): static
     {
         $this->customer = $customer;
         return $this;
     }
 
-    public function customerId(string $customerId): static
+    public function customerId(string|Closure $customerId): static
     {
         $this->customerId = $customerId;
         return $this;
     }
 
-    public function customerName(string $customerName): static
+    public function customerName(string|Closure $customerName): static
     {
         $this->customerName = $customerName;
         return $this;
     }
 
-    public function customerEmail(string $customerEmail): static
+    public function customerEmail(string|Closure $customerEmail): static
     {
         $this->customerEmail = $customerEmail;
         return $this;
     }
 
-    public function customerMobile(string $customerMobile): static
+    public function customerMobile(string|Closure $customerMobile): static
     {
         $this->customerMobile = $customerMobile;
         return $this;
     }
 
-    public function notes(array $notes): static
+    public function notes(array|Closure $notes): static
     {
         $this->notes = $notes;
         return $this;
     }
 
-    public function successUrl(string $url): static
+    public function successUrl(string|Closure $url): static
     {
         $this->successUrl = $url;
         return $this;
     }
 
-    public function failureUrl(string $url): static
+    public function failureUrl(string|Closure $url): static
     {
         $this->failureUrl = $url;
         return $this;
     }
 
-    public function expireAt(Carbon $expireAt): static
+    public function expireAt(Carbon|Closure $expireAt): static
     {
         $this->expireAt = $expireAt;
         return $this;
@@ -122,13 +129,13 @@ class ProviderOrder
 
     public function expireAfter(int $minutes): static
     {
-        $this->expireAt = now()->addMinutes($minutes);
+        $this->expireAt = fn() => now()->addMinutes($minutes);
         return $this;
     }
 
     public function expireAfterDays(int $days): static
     {
-        $this->expireAt = now()->addDays($days);
+        $this->expireAt = fn() => now()->addDays($days);
         return $this;
     }
 
@@ -138,27 +145,32 @@ class ProviderOrder
 
     public function getCurrency(): ?string
     {
-        return $this->currency;
+        return $this->resolve($this->currency);
     }
 
     public function getAmount(): float|int|string|null
     {
-        return $this->amount;
+        $value = $this->resolve($this->amount);
+        if (is_numeric($value)) {
+            return $value + 0; // normalize
+        }
+        return $value;
     }
 
     public function getReceipt(): ?string
     {
-        return $this->receipt;
+        return $this->resolve($this->receipt);
     }
 
     public function getNotes(): array
     {
-        return $this->notes;
+        return (array) $this->resolve($this->notes);
     }
 
     public function getCustomer(): ?Model
     {
-        return $this->customer;
+        $value = $this->resolve($this->customer);
+        return $value instanceof Model ? $value : null;
     }
 
     /**
@@ -170,50 +182,55 @@ class ProviderOrder
      */
     public function getCustomerId(): ?string
     {
-        if (!empty($this->customerId)) {
-            return $this->customerId;
+        $value = $this->resolve($this->customerId);
+
+        if (!empty($value)) {
+            return $value;
         }
 
-        if ($this->customer && $this->customer instanceof Fingerprintable) {
-            return $this->customer->fingerprint();
+        $customer = $this->getCustomer();
+        if ($customer && $customer instanceof Fingerprintable) {
+            return $customer->fingerprint();
         }
 
-        return null;
+        return Str::ulid();
     }
 
     public function getCustomerName(): ?string
     {
-        return $this->customerName ?? $this->customer?->name;
+        return $this->resolve($this->customerName) ?? $this->getCustomer()?->name;
     }
 
     public function getCustomerEmail(): ?string
     {
-        return $this->customerEmail ?? $this->customer?->email;
+        return $this->resolve($this->customerEmail) ?? $this->getCustomer()?->email;
     }
 
     public function getCustomerMobile(): ?string
     {
-        return $this->customerMobile ?? $this->customer?->mobile;
+        return $this->resolve($this->customerMobile) ?? $this->getCustomer()?->mobile;
     }
 
     public function getSuccessUrl(): ?string
     {
-        return $this->successUrl;
+        return $this->resolve($this->successUrl);
     }
 
     public function getFailureUrl(): ?string
     {
-        return $this->failureUrl;
+        return $this->resolve($this->failureUrl);
     }
 
     /**
      * Always return a Carbon instance.
-     * Defaults to now() + 15 minutes if not set.
+     * Defaults to now() + 20 minutes if not set.
      */
     public function getExpireAt(): Carbon
     {
-        return $this->expireAt instanceof Carbon
-            ? $this->expireAt
+        $value = $this->resolve($this->expireAt);
+
+        return $value instanceof Carbon
+            ? $value
             : now()->addMinutes(20);
     }
 

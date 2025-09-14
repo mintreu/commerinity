@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Promotion\SaleResource;
 use App\Models\Lifecycle\Level;
-use App\Models\Promotion\Sale;
 use Illuminate\Http\Request;
+use Mintreu\LaravelCommerinity\Models\Sale;
 
 class SaleController extends Controller
 {

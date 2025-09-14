@@ -33,6 +33,7 @@ class FilterSeeder extends Seeder
 
             $filter = Filter::updateOrCreate([
                 'name' => $data->display_name,
+                'type'  => $data->type,
                 'is_required' => $data->required
             ]);
             $finalAttributes->push($filter);

@@ -21,9 +21,8 @@ return new class extends Migration
             $table->unsignedInteger('discount_amount')->default(0);
             $table->unsignedInteger('sort_order')->default(0);
             $table->foreignId('product_id')->constrained('products')->cascadeOnUpdate()->cascadeOnDelete();
-//            $table->foreignId('plan_id')->constrained('plans')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('sale_id')->nullable()->constrained('sales')->cascadeOnUpdate()->cascadeOnDelete();
-
+            $table->nullableMorphs('target');
             $table->timestamps();
         });
     }

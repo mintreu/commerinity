@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Geo;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class CountryResource extends CountryIndexResource
 {

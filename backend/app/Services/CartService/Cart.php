@@ -127,6 +127,7 @@ class Cart extends CartService
 
             return [
                 'product_id' => $cartable?->id,
+                'quantity'   => $item->quantity,
                 'product'    => [
                     'name'      => $cartable?->name,
                     'url'      => $cartable?->url,

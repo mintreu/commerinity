@@ -4,7 +4,6 @@ namespace App\Services\CartService\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 trait HasGuestCartSupport

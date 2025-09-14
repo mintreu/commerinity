@@ -31,7 +31,6 @@ class AddressFactory extends Factory
             'alternate_contact' => '',
             'type'              => $type,
             'address_1'         => fake()->address(),
-            'village'           => 'Line Two',
             'landmark'          => '',
             'city'              => fake()->randomElement(['Delhi', 'Kolkata', 'Mumbai']),
             'postal_code'       => 700055,

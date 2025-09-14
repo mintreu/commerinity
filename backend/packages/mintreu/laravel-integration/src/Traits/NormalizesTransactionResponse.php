@@ -50,6 +50,7 @@ trait NormalizesTransactionResponse
                 'amount' => Arr::get($responseData, 'data.amount')
                     ?? Arr::get($responseData, 'amount')
                         ?? Arr::get($responseData, 'payment_amount')
+                        ?? Arr::get($responseData, 'data.order_amount')
                         ?? Arr::get($data, 'amount', 0),
 
                 // URLs

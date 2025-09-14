@@ -30,7 +30,7 @@ return new class extends Migration
 
             $table->unsignedInteger('times_used')->default(0);
             $table->foreignId('voucher_code_id')->constrained('voucher_codes')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->morphs('userable');
 
             $table->timestamps();
         });

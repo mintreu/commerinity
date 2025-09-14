@@ -23,6 +23,7 @@ class HelpDeskResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'HelpDesk';
+    protected static ?string $recordRouteKeyName = 'uuid';
 
     public static function form(Form $form): Form
     {
@@ -60,9 +61,11 @@ class HelpDeskResource extends Resource
     {
         return $table
             ->defaultGroup('status')
+            ->defaultGroup('topic.name')
+            ->modifyQueryUsing(fn($query) => $query->latest())
             ->columns([
                 Tables\Columns\TextColumn::make('topic.name')->badge(),
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')->limit(50),
                 Tables\Columns\TextColumn::make('authorable.name')->label('Author')->badge(),
                 Tables\Columns\TextColumn::make('priority')->badge(),
                 Tables\Columns\TextColumn::make('status')->badge(),
@@ -84,7 +87,7 @@ class HelpDeskResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+           // RelationManagers\ConversationsRelationManager::class
         ];
     }
 
@@ -95,6 +98,7 @@ class HelpDeskResource extends Resource
             'create' => Pages\CreateHelpDesk::route('/create'),
             'view' => Pages\ViewHelpDesk::route('/{record}'),
             'edit' => Pages\EditHelpDesk::route('/{record}/edit'),
+            'conversation' => Pages\ManageTicketConversations::route('/{record}/conversation'),
         ];
     }
 }

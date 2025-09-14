@@ -24,7 +24,7 @@ return new class extends Migration
             $table->unsignedInteger('coupon_usage_limit')->default(0);
             $table->unsignedInteger('times_used')->default(0);
 
-            $table->boolean('condition_type')->default(1);
+            $table->string('condition_type')->default(1);
             $table->json('conditions')->nullable();
             $table->boolean('end_other_rules')->default(0);
 
@@ -38,6 +38,18 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });
+
+
+
+        Schema::create('voucher_targets', function (Blueprint $table) {
+            $table->foreignId('voucher_id')->constrained('vouchers')->cascadeOnUpdate()->cascadeOnDelete();
+            // polymorphic columns
+            $table->morphs('target'); // creates target_id and target_type
+
+            $table->timestamps();
+        });
+
+
     }
 
     /**

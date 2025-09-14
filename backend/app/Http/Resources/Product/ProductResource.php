@@ -5,7 +5,8 @@ namespace App\Http\Resources\Product;
 use App\Http\Resources\Category\CategoryIndexResource;
 use App\Http\Resources\Filter\FilterGroupResource;
 use App\Http\Resources\Filter\FilterOptionResource;
-use App\Http\Resources\Filter\FilterResource;
+use App\Http\Resources\Promotion\SaleProductResource;
+use App\Http\Resources\Promotion\SaleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mintreu\LaravelMoney\LaravelMoney;
@@ -44,6 +45,7 @@ class ProductResource extends JsonResource
             'variants' => $this->resourceCollectionWhenLoadedAndNotEmpty('variants', ProductIndexResource::class),
             'categories' => $this->resourceCollectionWhenLoadedAndNotEmpty('categories', CategoryIndexResource::class),
             'tiers' => $this->resourceCollectionWhenLoadedAndNotEmpty('tiers', ProductTireResource::class),
+            'sales' => $this->resourceCollectionWhenLoadedAndNotEmpty('sales', SaleProductResource::class),
 
         ];
     }

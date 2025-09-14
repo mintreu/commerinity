@@ -57,7 +57,12 @@ class ProductDemoSeeder extends Seeder
             $this->addStock($product);
 
             // Add Category
-            $product->categories()->attach([$masalaCategory->id,$masalaCategory?->parent_id]);
+            $product->categories()->attach([
+                $masalaCategory->id => [
+                    'base_category' => $masalaCategory?->parent_id,
+                ],
+            ]);
+
 
 
 

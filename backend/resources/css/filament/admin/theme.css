@@ -2,4 +2,10 @@
 @import '../../../../vendor/awcodes/filament-table-repeater/resources/css/plugin.css';
 
 
+
+
 @config './tailwind.config.js';
+
+.table-repeater-header-column {
+    @apply dark:bg-gray-900 dark:text-white
+}

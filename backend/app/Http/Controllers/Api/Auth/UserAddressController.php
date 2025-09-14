@@ -7,8 +7,11 @@ use App\Http\Resources\Geo\AddressIndexResource;
 use App\Http\Resources\Geo\AddressResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Mintreu\LaravelGeokit\Casts\AddressTypeCast;
 use Mintreu\LaravelGeokit\Models\Address;
 use Mintreu\LaravelGeokit\Models\Block;
+use Illuminate\Validation\Rule;
+
 
 class UserAddressController extends Controller
 {
@@ -28,6 +31,12 @@ class UserAddressController extends Controller
         return AddressIndexResource::collection($user->addresses);
     }
 
+
+    public function show(Address $address): AddressResource
+    {
+        return new AddressResource($address->load(['block', 'state', 'country']));
+    }
+
     /**
      * Add a new user address
      */
@@ -35,7 +44,11 @@ class UserAddressController extends Controller
     {
         $validated = $request->validate([
             'title'         => 'required|string|max:255',
-            'type'          => 'required|string|in:home,work,other',
+            //'type'          => 'required|string|in:home,work,other',
+            'type'          => [
+                'required',
+                Rule::in(array_map(fn($case) => $case->value, AddressTypeCast::cases())),
+            ],
             'address_1'     => 'required|string',
             'landmark'      => 'required|string|max:255',
             'person_name'   => 'required|string|max:255',

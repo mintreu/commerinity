@@ -24,24 +24,30 @@ class RazorpayCheckout extends Component
 
     protected function getProviderConfig(): array
     {
+        // Normalize customer info
+        $transactionable = $this->transaction->transactionable;
+
+        $customerInfo = [
+            'name'    => $transactionable->name ?? $transactionable->customer_name,
+            'email'   => $transactionable->email ?? $transactionable->customer_email,
+            'contact' => $transactionable->mobile ?? $transactionable->customer_mobile,
+        ];
 
         return [
-            'key' => $this->transaction->integration->key ?? config('laravel-integration.providers.payment.razorpay.key'),
-            'amount' => $this->transaction->amount,
+            'key'         => $this->transaction->integration->key
+                ?? config('laravel-integration.providers.payment.razorpay.key'),
+            'amount'      => $this->transaction->amount,
+            'currency'    => LaravelMoney::defaultCurrency(),
+            'name'        => config('app.name'),
+            'description' => ($customerInfo['name'] ?? 'Customer') . ' Summary',
+            'image'       => '',
+            'order_id'    => $this->transaction->provider_gen_id,
+            'callback_url'=> $this->transaction->callback_url,
 
-            'currency' => LaravelMoney::defaultCurrency(),
-            'name' => config('app.name'),
-            'description' => $this->transaction->transactionable->name. ' Summary',
-            'image' => '',
-            'order_id' => $this->transaction->provider_gen_id,
-            'callback_url' => $this->transaction->callback_url,
+            // ✅ Reuse optimized customer info
+            'prefill'     => $customerInfo,
 
-            'prefill' => [
-                'name' => $this->transaction->transactionable->customer->name,
-                'email' => $this->transaction->transactionable->customer->email,
-                'contact' => $this->transaction->transactionable->customer?->mobile,
-            ],
-            'theme' => [
+            'theme'       => [
                 'color' => '#410254',
             ],
         ];

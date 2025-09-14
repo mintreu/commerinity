@@ -3,6 +3,7 @@
 namespace Mintreu\LaravelProductCatalogue\Models;
 
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -119,6 +120,55 @@ class Product extends Model implements HasMedia
         return $this->hasMany(ProductTier::class,'product_id','id');
     }
 
+
+
+
+
+
+
+    /**
+     * Relation: Sales for this product
+     */
+    public function sales(): HasMany
+    {
+        if (config('laravel-product-catalogue.sales.enabled')) {
+            return $this->hasMany(config('laravel-product-catalogue.sales.related_model'), 'product_id');
+        }
+
+        // Safe fallback: empty relation
+        return $this->hasMany(\Illuminate\Database\Eloquent\Model::class, 'id')
+            ->whereRaw('1 = 0');
+    }
+
+    /**
+     * Scope: Eager load sales
+     *
+     * Usage:
+     * Product::sales()->get();
+     */
+    public function scopeSales(Builder $query): Builder
+    {
+        if (!config('laravel-product-catalogue.sales.enabled')) {
+            return $query;
+        }
+
+        return $query->with('sales');
+    }
+
+    /**
+     * Scope: Only products that have sales
+     *
+     * Usage:
+     * Product::hasSales()->get();
+     */
+    public function scopeHasSales(Builder $query): Builder
+    {
+        if (!config('laravel-product-catalogue.sales.enabled')) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->whereHas('sales');
+    }
 
 
 }

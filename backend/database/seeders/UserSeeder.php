@@ -40,8 +40,6 @@ class UserSeeder extends Seeder
     private function createDemoUser()
     {
         $demoUser = User::factory()
-            ->unverified()
-            ->noMobile()
             ->create([
             'name' => 'Demo User',
             'email' => 'test@example.com',
@@ -50,13 +48,13 @@ class UserSeeder extends Seeder
             'type'  => AuthTypeCast::REGULAR
         ]);
 
-//        // Add Address
-//        $address = Address::factory()->raw([
-//           'type'           =>  AddressTypeCast::HOME,
-//           'postal_code'    =>  '711401'
-//        ]);
-//        $demoUser->addresses()->create($address);
-//
+        // Add Address
+        $address = Address::factory()->raw([
+           'type'           =>  AddressTypeCast::HOME,
+           'postal_code'    =>  '711401'
+        ]);
+        $demoUser->addresses()->create($address);
+
 //        // Add Kyc
 //        $demoUser->kyc()->create([
 //            'aadhaar' => rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
@@ -94,13 +92,13 @@ class UserSeeder extends Seeder
             'type'  => AuthTypeCast::APPLICANT
         ]);
 
-//
-//        // Add Address
-//        $address = Address::factory()->raw([
-//            'type'           =>  AddressTypeCast::HOME,
-//            'postal_code'    =>  '711401'
-//        ]);
-//        $demoApplicant->addresses()->create($address);
+
+        // Add Address
+        $address = Address::factory()->raw([
+            'type'           =>  AddressTypeCast::HOME,
+            'postal_code'    =>  '711401'
+        ]);
+        $demoApplicant->addresses()->create($address);
 
 
     }

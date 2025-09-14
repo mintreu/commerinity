@@ -29,4 +29,37 @@ class ShipRocketServiceProvider
         return 'shiprocket-shipping';
     }
 
+
+
+
+    public function order()
+    {
+        return new Actions\OrderAction($this->api);
+    }
+
+    public function courier()
+    {
+        return new Actions\CourierAction($this->api);
+    }
+
+    public function return()
+    {
+        return new Actions\ReturnAction($this->api);
+    }
+
+    public function shipment()
+    {
+        // TODO: Implement shipment() method.
+    }
+
+    public function tracking()
+    {
+        return new Actions\TrackingAction($this->api);
+    }
+
+
+
+
+
+
 }

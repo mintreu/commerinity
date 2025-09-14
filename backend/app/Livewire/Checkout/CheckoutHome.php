@@ -23,6 +23,8 @@ class CheckoutHome extends Component
         $this->transaction->load('integration');
 
         $this->integration = $this->transaction->integration;
+
+
         //abort_unless(is_null($this->integration),404);
         $this->analyzeTransactionAndProvider();
     }

@@ -1,141 +1,174 @@
 <?php
 
-use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\PageController;
-use App\Http\Controllers\Api\SaleController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\{Auth\AuthController,
+    Auth\SanctumUserController,
+    CategoryController,
+    HelpDeskController,
+    PageController,
+    SaleController,
+    WalletController,
+    ProductController,
+    CartController,
+    OrderController,
+    TransactionController,
+    IntegrationController,
+    RecruitmentController,
+    LifecycleController};
 
-//Route::get('/user', function (Request $request) {
-//    return $request->user();
-//    //return UserResource::make();
-//})->middleware('auth:sanctum');
+// ========================
+// 🔐 AUTH / ACCOUNT ROUTES
+// ========================
 
-
-Route::prefix('user')->middleware('auth:sanctum')
-    ->group(function (){
-        Route::get('/',[\App\Http\Controllers\Api\Auth\SanctumUserController::class,'getUser']);
-    });
-
-
-
-
-//Route::prefix('/user')->middleware('auth:sanctum')->group(base_path('routes/apis/user/user.php'));
-
-Route::prefix('account')->group(base_path('routes/apis/user/account.php'));
-
-
+// Auth (register, login, logout, forgot/reset password)
 Route::prefix('/')->group(base_path('routes/apis/user/auth.php'));
 
+// Account (profile, address, etc.)
+Route::prefix('account')->group(base_path('routes/apis/user/account.php'));
 
-// Pages Api
-//Route::prefix('pages')->group(function () {
-//    Route::get('/', [PageController::class, 'index']);       // GET /api/pages
-//    Route::post('read', [PageController::class, 'show']);    // GET /api/pages/{url}
-//});
+// Get authenticated user (Sanctum)
+Route::prefix('user')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [SanctumUserController::class, 'getUser']);
+});
 
-Route::get('pages',[PageController::class,'getPages']);
+// ========================
+// 💰 WALLET ROUTES
+// ========================
+Route::middleware('auth:sanctum')->prefix('wallet')->group(function () {
+    Route::get('/', [WalletController::class, 'show']);       // GET /wallet
+    Route::post('create', [WalletController::class, 'create']); // POST /wallet/create
+});
 
+// ========================
+// 📄 PAGES ROUTES
+// ========================
+Route::get('pages', [PageController::class, 'getPages']); // GET /pages
 
-
-
-//ADDRESS API
-
-// Event
+// ========================
+// 🌍 GEO LOCATION ROUTES
+// ========================
 Route::prefix('geo')->group(base_path('routes/apis/geo-location.php'));
 
-
-
-
-
-Route::prefix('categories')->group(function (){
-    Route::get('/', [CategoryController::class, 'index']);
-    Route::get('/with-products', [CategoryController::class, 'getParentCategoriesWithProducts']);
-    Route::get('{category:url}', [CategoryController::class, 'show']);
+// ========================
+// 🏷️ CATEGORY ROUTES
+// ========================
+Route::prefix('categories')->group(function () {
+    Route::get('/', [CategoryController::class, 'index']); // GET /categories
+    Route::get('/with-products', [CategoryController::class, 'getParentCategoriesWithProducts']); // GET /categories/with-products
+    Route::get('{category:url}', [CategoryController::class, 'show']); // GET /categories/{url}
 });
 
-
-Route::prefix('/products')->group(function (){
-    Route::get('filters/get', [\App\Http\Controllers\Api\ProductController::class, 'getFilterOptions']);
-    Route::get('sorts/get', [\App\Http\Controllers\Api\ProductController::class, 'getSortingOptions']);
-    Route::get('/',[\App\Http\Controllers\Api\ProductController::class,'getAllSimpleProducts']);
-    Route::get('{product:url}', [\App\Http\Controllers\Api\ProductController::class, 'show']);
-    Route::get('suggestions/get',[\App\Http\Controllers\Api\ProductController::class, 'topSuggestProduct']);
-
+// ========================
+// 📦 PRODUCT ROUTES
+// ========================
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'getAllSimpleProducts']); // GET /products
+    Route::get('filters/get', [ProductController::class, 'getFilterOptions']); // GET /products/filters/get
+    Route::get('sorts/get', [ProductController::class, 'getSortingOptions']); // GET /products/sorts/get
+    Route::get('suggestions/get', [ProductController::class, 'topSuggestProduct']); // GET /products/suggestions/get
+    Route::get('{product:url}', [ProductController::class, 'show']); // GET /products/{url}
 });
 
-
+// ========================
+// 🛒 CART ROUTES
+// ========================
 Route::prefix('cart')->group(function () {
-    Route::post('guest-credential', [\App\Http\Controllers\Api\CartController::class, 'ensureGuestCartCredential']); // only for guest
-    Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
-    Route::post('add/{product:sku}', [\App\Http\Controllers\Api\CartController::class, 'addProduct']);
-    Route::post('update/{product:sku}', [\App\Http\Controllers\Api\CartController::class, 'updateProduct']);
-    Route::delete('remove/{product:sku}', [\App\Http\Controllers\Api\CartController::class, 'removeProduct']);
-    Route::post('coupon/{voucher_code:code}',[\App\Http\Controllers\Api\CartController::class, 'applyCoupon']);
-    Route::post('clear', [\App\Http\Controllers\Api\CartController::class, 'clearCart']);
-    Route::post('merge', [\App\Http\Controllers\Api\CartController::class, 'mergeGuestCart'])->middleware('auth:sanctum');
+    Route::post('guest-credential', [CartController::class, 'ensureGuestCartCredential']); // POST /cart/guest-credential
+    Route::get('/', [CartController::class, 'index']); // GET /cart
+    Route::post('add/{product:sku}', [CartController::class, 'addProduct']); // POST /cart/add/{sku}
+    Route::post('update/{product:sku}', [CartController::class, 'updateProduct']); // POST /cart/update/{sku}
+    Route::delete('remove/{product:sku}', [CartController::class, 'removeProduct']); // DELETE /cart/remove/{sku}
+    Route::post('coupon/{voucher_code:code}', [CartController::class, 'applyCoupon']); // POST /cart/coupon/{code}
+    Route::post('clear', [CartController::class, 'clearCart']); // POST /cart/clear
+    Route::post('merge', [CartController::class, 'mergeGuestCart'])->middleware('auth:sanctum'); // POST /cart/merge
 });
 
+// ========================
+// 🧾 ORDER ROUTES
+// ========================
 
-Route::prefix('order')->middleware('auth:sanctum')->group(function (){
+// Guest order placement
+Route::post('order/place', [OrderController::class, 'placeOrder'])->name('order.placed');
 
-    Route::get('all',[\App\Http\Controllers\Api\OrderController::class,'getAllOrderOfCustomer']);
-
-    Route::post('place',[\App\Http\Controllers\Api\OrderController::class,'placeOrder'])->name('order.placed');
-    Route::post('validate',[\App\Http\Controllers\Api\OrderController::class,'confirmOrder'])->name('order.validate');
-
-    Route::get('{order:uuid}/get',[\App\Http\Controllers\Api\OrderController::class,'getOrderDetail']);
-    Route::post('{order:uuid}canceled',[\App\Http\Controllers\Api\OrderController::class,'cancelOrder']);
-    Route::post('{order:uuid}return',[\App\Http\Controllers\Api\OrderController::class,'returnOrder']);
-    Route::post('{order:uuid}refund',[\App\Http\Controllers\Api\OrderController::class,'refundOrder']);
-
-
+Route::prefix('orders')->group(function () {
+    Route::get('/', [OrderController::class, 'getAllOrders'])->name('orders.all'); // GET /orders
+    Route::get('{order:uuid}', [OrderController::class, 'getOrderDetail']); // GET /orders/{uuid}
+    Route::post('{order:uuid}/canceled', [OrderController::class, 'cancelOrder']); // POST /orders/{uuid}/canceled
+    Route::post('{order:uuid}/return', [OrderController::class, 'returnOrder']);   // POST /orders/{uuid}/return
+    Route::post('{order:uuid}/refund', [OrderController::class, 'refundOrder']);   // POST /orders/{uuid}/refund
 });
 
-
+// ========================
+// 💳 TRANSACTION ROUTES
+// ========================
 Route::prefix(config('laravel-transaction.callback.prefix', '_transaction'))
     ->middleware(config('laravel-transaction.callback.middleware', []))
-    ->group(function (){
-   Route::get('/validate/{transaction:uuid}',[\App\Http\Controllers\Api\TransactionController::class,'confirmTransaction'])
-       ->name('transaction.validate');
+    ->group(function () {
+        Route::get('/validate/{transaction:uuid}', [TransactionController::class, 'confirmTransaction'])->name('transaction.validate');
+        Route::get('/failed/{transaction:uuid}', [TransactionController::class, 'failureTransaction'])->name('transaction.failure');
+    });
 
-    Route::get('/failed/{transaction:uuid}',[\App\Http\Controllers\Api\TransactionController::class,'failureTransaction'])
-        ->name('transaction.failure');
-
+// ========================
+// 🔗 INTEGRATION ROUTES
+// ========================
+Route::prefix('integration')->group(function () {
+    Route::get('/payment', [IntegrationController::class, 'getPaymentIntegrations']); // GET /integration/payment
 });
 
-
-
-Route::prefix('integration')->group(function (){
-   Route::get('/payment',[\App\Http\Controllers\Api\IntegrationController::class,'getPaymentIntegrations']);
+// ========================
+// 👩‍💼 RECRUITMENT ROUTES
+// ========================
+Route::prefix('recruitment')->group(function () {
+    Route::get('/', [RecruitmentController::class, 'index']); // GET /recruitment
+    Route::get('{naukri:url}', [RecruitmentController::class, 'show']); // GET /recruitment/{url}
+    Route::post('{naukri:url}/apply', [RecruitmentController::class, 'apply'])->middleware('auth:sanctum'); // POST /recruitment/{url}/apply
 });
 
-
-Route::prefix('recruitment')->group(function (){
-   Route::get('/',[\App\Http\Controllers\Api\RecruitmentController::class,'index']);
-   Route::get('{naukri:url}',[\App\Http\Controllers\Api\RecruitmentController::class,'show']);
-   Route::post('{naukri:url}/apply',[\App\Http\Controllers\Api\RecruitmentController::class,'apply'])->middleware('auth:sanctum');
-   Route::get('/user-application/all',[\App\Http\Controllers\Api\RecruitmentController::class,'getUserSubmittedApplications'])->middleware('auth:sanctum');
+// ========================
+// 🔄 LIFECYCLE ROUTES
+// ========================
+Route::prefix('lifecycle')->group(function () {
+    Route::get('/timeline', [LifecycleController::class, 'getTimeline']); // GET /lifecycle/timeline
+    Route::get('/stages', [LifecycleController::class, 'getAllStages']); // GET /lifecycle/stages
+    Route::get('/stage/{stage:url}', [LifecycleController::class, 'getStage']); // GET /lifecycle/stage/{url}
+    Route::get('/level/{level:url}', [LifecycleController::class, 'getLevel']); // GET /lifecycle/level/{url}
+    Route::get('/subscribable', [LifecycleController::class, 'getUserSubscribableStageAndLevel'])->middleware('auth:sanctum'); // GET /lifecycle/subscribable
 });
 
-
-// Lifecycle
-
-Route::prefix('lifecycle')->group(function (){
-   Route::get('/timeline',[\App\Http\Controllers\Api\LifecycleController::class,'getTimeline']);
-   Route::get('/stages',[\App\Http\Controllers\Api\LifecycleController::class,'getAllStages']);
-   Route::get('/stage/{stage:url}',[\App\Http\Controllers\Api\LifecycleController::class,'getStage']);
-   Route::get('/level/{level:url}',[\App\Http\Controllers\Api\LifecycleController::class,'getLevel']);
-   Route::get('/subscribable',[\App\Http\Controllers\Api\LifecycleController::class,'getUserSubscribableStageAndLevel'])->middleware('auth:sanctum');
-});
-
-// Promotion
-
+// ========================
+// 🎉 SALES / PROMOTIONS ROUTES
+// ========================
 Route::prefix('sales')->group(function () {
-    Route::get('/', [SaleController::class, 'index'])->name('sales.index');
-//
-//    Route::get('/guest', [SaleController::class, 'guest'])->name('sales.guest');
-//    Route::get('/auth', [SaleController::class, 'authWithoutGroup'])->name('sales.auth');
-//    Route::get('/group', [SaleController::class, 'group'])->name('sales.group');
+    Route::get('/', [SaleController::class, 'index'])->name('sales.index'); // GET /sales
 });
+
+
+// ========================
+// 🎉 HelpDesk / Support ROUTES
+// ========================
+
+Route::prefix('helpdesk')->group(function () {
+    Route::get('topics/ticket', [HelpDeskController::class, 'getTicketTopics']);
+    Route::get('topics/faq', [HelpDeskController::class, 'getFaqTopics']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('tickets', [HelpDeskController::class, 'getAllTickets']);
+        Route::post('tickets', [HelpDeskController::class, 'storeTicket']);
+        Route::get('tickets/{helpdesk:uuid}', [HelpDeskController::class, 'viewTicket']);
+        Route::post('tickets/{helpdesk:uuid}/reply', [HelpDeskController::class, 'reply']);
+        Route::post('tickets/{helpdesk:uuid}/attachments', [HelpDeskController::class, 'uploadAttachment']);
+    });
+});
+
+
+// ========================
+// 🎉 Contact Us / Business Enquire Store Route
+// ========================
+
+
+Route::post('/contact/user', [\App\Http\Controllers\Api\InquiryController::class, 'storeUser']);
+Route::post('/contact/business', [\App\Http\Controllers\Api\InquiryController::class, 'storeBusiness']);
+
+
+
+

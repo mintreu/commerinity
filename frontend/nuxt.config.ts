@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://api.production.in',
+      webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'https://api.production.in',
       nodeEnv: process.env.NUXT_PUBLIC_NODE_ENV || 'production',
       sentry: {
         dsn: process.env.SENTRY_DSN_PUBLIC || '', // load from env for security

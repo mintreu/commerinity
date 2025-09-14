@@ -82,8 +82,15 @@ class HelpdeskTopic extends Model
     /**
      * Only tickable topics
      */
-    public function scopeTickable($query)
+    public function scopeTicketable($query)
     {
         return $query->where('tickable', true);
     }
+
+    public function scopeNonTicketable($query)
+    {
+        return $query->where('tickable', false);
+    }
+
+
 }

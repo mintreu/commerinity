@@ -26,7 +26,6 @@ class Address extends Model
         'alternate_contact',
         'type',
         'address_1',
-        'village',
         'landmark',
         'city',
         'block_id',

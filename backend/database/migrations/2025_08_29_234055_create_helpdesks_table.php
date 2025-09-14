@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid()->unique();   // use as ticket id
             $table->string('title');
-            $table->string('description');
+            $table->text('description');
             $table->string('priority');
             $table->foreignId('topic_id')->constrained('helpdesk_topics')->cascadeOnUpdate()->cascadeOnDelete();
             $table->morphs('authorable');

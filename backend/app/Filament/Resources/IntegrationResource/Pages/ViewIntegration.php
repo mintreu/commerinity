@@ -4,10 +4,10 @@ namespace App\Filament\Resources\IntegrationResource\Pages;
 
 use App\Filament\Resources\IntegrationResource;
 use Filament\Actions;
+use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Forms;
-use Filament\Forms\Form;
+
 class ViewIntegration extends ViewRecord
 {
     protected static string $resource = IntegrationResource::class;

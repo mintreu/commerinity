@@ -5,15 +5,17 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;
+use Mintreu\Toolkit\Traits\HasFingerprint;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Admin extends Authenticatable implements FilamentUser
+class Admin extends Authenticatable implements FilamentUser,HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasSupportTicket;
+    use HasFactory, Notifiable,HasSupportTicket,InteractsWithMedia,HasFingerprint;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +50,18 @@ class Admin extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+
+    protected $appends = ['avatar'];
+
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatarImage')
+            //->useFallbackUrl(asset('images/placeholder/user_placeholder.png'));
+            ->useFallbackUrl('https://i.pravatar.cc/'.random_int(250,600));
+
+    }
+
 
     /**
      * @param Panel $panel

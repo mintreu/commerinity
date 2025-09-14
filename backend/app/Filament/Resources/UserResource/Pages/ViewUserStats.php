@@ -2,21 +2,11 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Casts\AuthStatusCast;
-use App\Casts\AuthTypeCast;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Textarea;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewUserStats extends ViewRecord
 {

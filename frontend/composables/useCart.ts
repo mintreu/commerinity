@@ -1,7 +1,6 @@
 // composables/useCart.ts
 import { useSanctum, useSanctumFetch, useRuntimeConfig, useCookie } from '#imports'
 
-
 interface CartItem {
     product_id: number
     product: {
@@ -38,7 +37,14 @@ export const useCart = () => {
     // ✅ shared global state
     const cartData = useState<CartResponse>('cartData', () => ({
         items: [],
-        summary: { sub_total: '₹0.00', tax: '₹0.00', discount: '₹0.00', total: '₹0.00', quantity: 0, coupon_applied: false },
+        summary: {
+            sub_total: '₹0.00',
+            tax: '₹0.00',
+            discount: '₹0.00',
+            total: '₹0.00',
+            quantity: 0,
+            coupon_applied: false
+        },
         customer: {}
     }))
 
@@ -49,23 +55,31 @@ export const useCart = () => {
     const guestToken = useCookie('guest_token')
     const guestTokenExpires = useCookie('guest_token_expires')
 
-    const getGuestHeaders = () => {
+    // ✅ always returns proper HeadersInit
+    const getGuestHeaders = (): HeadersInit => {
         if (!isLoggedIn.value && guestId.value && guestToken.value) {
             return {
-                'x-guest-id': guestId.value,
-                'x-guest-token': guestToken.value
+                'x-guest-id': guestId.value as string,
+                'x-guest-token': guestToken.value as string
             }
         }
         return {}
     }
 
     async function validateOrInitGuest() {
-        const expired = guestTokenExpires.value && (Date.now() > new Date(guestTokenExpires.value).getTime())
+        const expired =
+            guestTokenExpires.value &&
+            Date.now() > new Date(guestTokenExpires.value).getTime()
         const missing = !guestId.value || !guestToken.value
+
         if (isLoggedIn.value) return
+
         if (expired || missing) {
             try {
-                const res = await useSanctumFetch(`${config.public.apiBase}/cart/guest-credential`, { method: 'POST' })
+                const res = await useSanctumFetch(
+                    `${config.public.apiBase}/cart/guest-credential`,
+                    { method: 'POST' }
+                )
                 const data = res?.data || {}
                 guestId.value = data.guest_id
                 guestToken.value = data.guest_token
@@ -95,11 +109,14 @@ export const useCart = () => {
 
     async function addToCart(sku: string, quantity = 1) {
         try {
-            const res = await useSanctumFetch(`${config.public.apiBase}/cart/add/${sku}`, {
-                method: 'POST',
-                headers: getGuestHeaders(),
-                body: { quantity }
-            })
+            const res = await useSanctumFetch(
+                `${config.public.apiBase}/cart/add/${sku}`,
+                {
+                    method: 'POST',
+                    headers: getGuestHeaders(),
+                    body: { quantity }
+                }
+            )
             cartData.value = res?.data || cartData.value
         } catch (e) {
             console.error('[Cart] Add error', e)
@@ -108,11 +125,14 @@ export const useCart = () => {
 
     async function updateCartItem(sku: string, quantity: number) {
         try {
-            const res = await useSanctumFetch(`${config.public.apiBase}/cart/update/${sku}`, {
-                method: 'POST',
-                headers: getGuestHeaders(),
-                body: { quantity }
-            })
+            const res = await useSanctumFetch(
+                `${config.public.apiBase}/cart/update/${sku}`,
+                {
+                    method: 'POST',
+                    headers: getGuestHeaders(),
+                    body: { quantity }
+                }
+            )
             cartData.value = res?.data || cartData.value
         } catch (e) {
             console.error('[Cart] Update error', e)
@@ -121,10 +141,13 @@ export const useCart = () => {
 
     async function removeItem(sku: string) {
         try {
-            const res = await useSanctumFetch(`${config.public.apiBase}/cart/remove/${sku}`, {
-                method: 'DELETE',
-                headers: getGuestHeaders()
-            })
+            const res = await useSanctumFetch(
+                `${config.public.apiBase}/cart/remove/${sku}`,
+                {
+                    method: 'DELETE',
+                    headers: getGuestHeaders()
+                }
+            )
             cartData.value = res?.data || cartData.value
         } catch (e) {
             console.error('[Cart] Remove error', e)
@@ -133,10 +156,13 @@ export const useCart = () => {
 
     async function applyCoupon(code: string) {
         try {
-            const res = await useSanctumFetch(`${config.public.apiBase}/cart/coupon/${code}`, {
-                method: 'POST',
-                headers: getGuestHeaders()
-            })
+            const res = await useSanctumFetch(
+                `${config.public.apiBase}/cart/coupon/${code}`,
+                {
+                    method: 'POST',
+                    headers: getGuestHeaders()
+                }
+            )
             cartData.value = res?.data || cartData.value
         } catch (e) {
             console.error('[Cart] Coupon error', e)

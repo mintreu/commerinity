@@ -61,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::get('/addresses', [UserAddressController::class, 'getUserAllAddress'])->name('account.addresses.index');
     Route::post('/addresses', [UserAddressController::class, 'addUserAddress'])->name('account.addresses.store');
+    Route::get('/addresses/{address:uuid}', [UserAddressController::class, 'show'])->name('account.addresses.show');
     Route::put('/addresses/{address:uuid}', [UserAddressController::class, 'updateUserAddress'])->name('account.addresses.update');
 
 
@@ -71,6 +72,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'getUserKyc']);
     Route::post('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'addUserKyc']);
     Route::post('/put',[\App\Http\Controllers\Api\Auth\UserKycController::class,'updateUserKyc']);
+
+
+
+    /**
+     * Prefix 'account'
+     * Full Prefix: /account/application
+     * Job Applications
+     */
+
+    Route::prefix('/applications')->group(function (){
+        Route::get('/', [\App\Http\Controllers\Api\Auth\JobApplicationController::class, 'index']);
+        Route::get('/{application:uuid}', [\App\Http\Controllers\Api\Auth\JobApplicationController::class, 'show']);
+    })->middleware('auth:sanctum');
+
+
+
 
 
 

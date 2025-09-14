@@ -18,10 +18,11 @@
         "laravel/telescope": "^5.10",
         "laravel/tinker": "^2.10.1",
         "mintreu/laravel-category": "dev-main",
+        "mintreu/laravel-commerinity": "dev-main",
         "mintreu/laravel-geokit": "dev-main",
+        "mintreu/laravel-helpdesk": "dev-main",
         "mintreu/laravel-money": "dev-main",
         "mintreu/laravel-naukri-manager": "dev-main",
-        "mintreu/laravel-helpdesk": "dev-main",
         "mintreu/laravel-penpress": "dev-main",
         "mintreu/laravel-product-catalogue": "dev-main",
         "mintreu/laravel-transaction": "dev-main",
@@ -160,6 +161,13 @@
         {
             "type": "path",
             "url": "packages/mintreu/laravel-transaction",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/mintreu/laravel-commerinity",
             "options": {
                 "symlink": true
             }

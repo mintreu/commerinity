@@ -32,6 +32,12 @@ return new class extends Migration
 
             $table->nullableMorphs('customerable');
 
+            // Guest Case
+            $table->boolean('has_guest')->default(false);
+            $table->string('customer_name')->nullable();
+            $table->string('customer_email')->nullable();
+            $table->string('customer_mobile')->nullable();
+
             // billing address
             $table->boolean('shipping_is_billing')->default(true);
             $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->onUpdate('cascade')->onDelete('cascade');

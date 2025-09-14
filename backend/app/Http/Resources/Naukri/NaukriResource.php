@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Naukri;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Mintreu\LaravelMoney\LaravelMoney;
 
 class NaukriResource extends NaukriIndexResource

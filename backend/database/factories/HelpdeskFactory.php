@@ -17,7 +17,8 @@ class HelpdeskFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->text,
+            'description'   => fake()->realText
         ];
     }
 }

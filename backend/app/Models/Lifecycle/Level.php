@@ -2,18 +2,19 @@
 
 namespace App\Models\Lifecycle;
 
-use App\Models\Traits\HasSales;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Mintreu\LaravelCommerinity\Traits\HasSaleAccess;
+use Mintreu\LaravelCommerinity\Traits\HasVoucherAccess;
 use Mintreu\Toolkit\Traits\HasRecordNavigator;
 
 class Level extends Model
 {
     /** @use HasFactory<\Database\Factories\Lifecycle\LevelFactory> */
-    use HasFactory,HasRecordNavigator,HasSales;
+    use HasFactory,HasRecordNavigator,HasSaleAccess,HasVoucherAccess;
 
 
 

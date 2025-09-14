@@ -29,7 +29,7 @@ class AppInstallerCommand extends Command
         $this->comment('-------------------------------------------');
         $this->comment('🚀 Starting application installation process');
         $this->comment('-------------------------------------------');
-
+        
         $this->info('Generating application key...');
         $this->call('key:generate');
 

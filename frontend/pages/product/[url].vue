@@ -9,7 +9,7 @@
         <CartCounter/>
       </div>
 
-      <div v-if="product" class="max-w-7xl mx-auto px-5 py-8 h-full flex flex-col gap-4 bg-gray-400 dark:bg-gray-800 rounded-2xl">
+      <div v-if="product" class="max-w-7xl mx-auto px-5 py-8 h-full flex flex-col gap-4 bg-gray-200 dark:bg-gray-800 rounded-2xl">
         <!-- Product View Body-->
 
         <div class="flex flex-col md:flex-row gap-4">
@@ -23,11 +23,11 @@
             <h1 class="text-2xl md:text-6xl font-roboto font-semibold">{{ product.name }}</h1>
             <small>SKU : {{ product.sku }}</small>
             <!-- Category Details -->
-            <div v-if="product.categories" class="md:flex flex-row gap-3 my-1 hidden  ">
+            <div v-if="product.categories" class="md:flex flex-row gap-2 my-1 hidden  ">
               <span>Categories:</span>
-              <div v-for="category in product.categories" :key="category.url" class="flex flex-row gap-2">
+              <div v-for="category in product.categories" :key="category.url" class="flex flex-row gap-1">
                 <NuxtLink :to="`/category/${category.url}`">
-                  <span class="px-3 py-0.5 bg-gray-600 hover:bg-blue-600 rounded-2xl">{{ category.name }}</span>
+                  <span class="px-3 py-0.5 bg-green-300 hover:bg-blue-600 hover:text-white rounded-xl shadow-md ">{{ category.name }}</span>
                 </NuxtLink>
               </div>
             </div>
@@ -53,7 +53,43 @@
               </div>
             </div>
 
-              <!-- Add To Cart Cta-->
+            <!-- Available Offers Sales -->
+            <div v-if="product.sales?.length" class="mt-6">
+              <h3 class="text-base font-semibold mb-3 text-gray-900 dark:text-gray-100">
+                Available Offers
+              </h3>
+
+              <ul class="space-y-3">
+                <li
+                    v-for="offer in product.sales"
+                    :key="offer.sale.uuid"
+                    class="flex items-start text-sm text-gray-700 dark:text-gray-300"
+                >
+                  <!-- Icon -->
+                  <Icon
+                      name="mdi:tag-outline"
+                      class="flex-shrink-0 w-5 h-5 text-green-600 dark:text-green-400 mt-0.5"
+                  />
+
+                  <!-- Offer text -->
+                  <span class="ml-2">
+        <span class="font-medium text-green-600 dark:text-green-400">
+          {{ formatOffer(offer) }}
+        </span>
+        <span class="ml-1 text-blue-600 dark:text-blue-400 cursor-pointer hover:underline">
+          T&amp;C
+        </span>
+      </span>
+                </li>
+              </ul>
+            </div>
+
+
+
+
+
+
+            <!-- Add To Cart Cta-->
 <!--            <AddToCartButton-->
 <!--                :sku="product.sku"-->
 <!--                :quantity="1"-->
@@ -112,7 +148,7 @@ const config = useRuntimeConfig()
 const isLoading = useState('pageLoading', () => false)
 const product = ref(null)
 
-async function fetchSuggestionProducts() {
+async function fetchProductDetail() {
   try {
     const res = await useSanctumFetch(`${config.public.apiBase}/products/${route.params.url}`, {
       method: 'GET'
@@ -124,17 +160,38 @@ async function fetchSuggestionProducts() {
 }
 
 
+
+
 onMounted(async () => {
 
   try {
 
-    await fetchSuggestionProducts()
+    await fetchProductDetail()
   } catch (e) {
     console.error('Api fetch failed!', e)
   } finally {
     isLoading.value = false
   }
 })
+
+
+// Function to format the offer based on discount_type
+const formatOffer = (offer) => {
+  if (!offer) return ""
+
+  // Determine discount amount to show
+  let discountAmount = offer.discount ?? ""
+
+  // Append % if discount type is percent
+  if (offer.discount_type === "by_percent" || offer.discount_type === "to_percent") {
+    discountAmount += "%"
+  }
+
+  // Build final offer string
+  return `${offer.sale.name} Offer ${discountAmount} off ${offer.sale.description}`
+}
+
+
 
 
 </script>

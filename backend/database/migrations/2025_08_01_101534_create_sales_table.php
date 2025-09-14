@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->string('uuid')->unique();
             $table->string('description')->nullable();
             $table->date('starts_from')->nullable();
             $table->date('ends_till')->nullable();

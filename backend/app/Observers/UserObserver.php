@@ -2,10 +2,8 @@
 
 namespace App\Observers;
 
-use App\Events\User\UserNetworkSlotRequestedEvent;
 use App\Models\User;
 use App\Notifications\GoodbyeNotification;
-use App\Notifications\WelcomeNotification;
 
 class UserObserver
 {

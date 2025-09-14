@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Lifecycle\Level;
-use App\Models\Promotion\Sale;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Mintreu\LaravelCommerinity\Models\Sale;
 
 class SaleSeeder extends Seeder
 {
@@ -16,16 +15,9 @@ class SaleSeeder extends Seeder
     {
         $targets = Level::all();
 
-//        $sales = Sale::factory()
-//            ->count(10)
-//            ->create()
-//            ->each(function (Sale $sale) use ($targets) {
-//                $sale->targets()->attach($targets->random());
-//            });
-
 
         Sale::factory()
-            ->count(10)
+            ->count(1)
             ->create()
             ->each(function (Sale $sale) use ($targets) {
                 // Attach 1–3 random levels to each sale

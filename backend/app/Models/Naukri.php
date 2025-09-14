@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Carbon;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 use Spatie\MediaLibrary\HasMedia;

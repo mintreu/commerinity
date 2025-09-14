@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Mintreu\LaravelGeokit\Models\Address;
+use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelTransaction\Traits\HasTransaction;
-use Mintreu\Toolkit\Casts\PublishableStatusCast;
 use Mintreu\Toolkit\Traits\HasUnique;
 
 class NaukriApplication extends Model
 {
     /** @use HasFactory<\Database\Factories\NaukriApplicationFactory> */
-    use HasFactory,HasUnique,HasTransaction;
+    use HasFactory,HasUnique,HasTransaction,HasAddress;
 
 
     protected $fillable = [
@@ -47,11 +47,16 @@ class NaukriApplication extends Model
 
     protected static function booted()
     {
-        static::creating(function ($user){
-            $user->setUniqueCode('uuid',12,now()->year);
-        });
-        parent::booted();
+        static::creating(fn ($form) =>
+            $form->setUniqueCode('uuid', 16, 'APP-' . now()->format('ym') . '-')
+        );
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
 
     public function naukri(): BelongsTo
     {
@@ -61,6 +66,11 @@ class NaukriApplication extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function customer()
+    {
+        return $this->user();
     }
 
 
