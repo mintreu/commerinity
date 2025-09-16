@@ -15,9 +15,8 @@ class UserIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            //'id' => $this->id,
-            'name' => $this->name,
             'uuid'  => $this->uuid,
+            'name' => $this->name,
             'email' => $this->email,
             'mobile' => $this->mobile,
             'email_verified' => !is_null($this->email_verified_at),
@@ -32,7 +31,8 @@ class UserIndexResource extends JsonResource
             'status_feedback' => $this->status_feedback,
             'avatar' => $this->getFirstMediaUrl('avatarImage'),
             'hasLevel' => !is_null($this->level_id),
-            'level_id' => $this->level_id
+            'level_id' => $this->level_id,
+            'onboarded' => $this->onboarded,
         ];
     }
 }

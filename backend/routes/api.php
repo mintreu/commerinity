@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\{Auth\AuthController,
     Auth\SanctumUserController,
+    BeneficiaryController,
     CategoryController,
     HelpDeskController,
     PageController,
@@ -34,9 +35,35 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 // ========================
 // 💰 WALLET ROUTES
 // ========================
-Route::middleware('auth:sanctum')->prefix('wallet')->group(function () {
-    Route::get('/', [WalletController::class, 'show']);       // GET /wallet
-    Route::post('create', [WalletController::class, 'create']); // POST /wallet/create
+Route::middleware('auth:sanctum')->group(function () {
+    // Wallet
+    Route::prefix('wallet')->group(function () {
+        Route::get('/', [WalletController::class, 'index']);             // GET /wallet
+        Route::post('create', [WalletController::class, 'create']);      // POST /wallet/create
+        Route::get('qr', [WalletController::class, 'qr']);               // GET /wallet/qr (base64 image)
+
+        // Money ops
+        Route::post('add-money', [WalletController::class, 'addMoney']); // POST /wallet/add-money
+        Route::post('withdraw', [WalletController::class, 'withdraw']);  // POST /wallet/withdraw
+        Route::post('send', [WalletController::class, 'send']);          // POST /wallet/send (P2P via wallet UUID)
+        Route::post('change-pin', [WalletController::class, 'changePin']); // POST /wallet/change-pin
+
+        // Transactions
+        Route::get('transactions', [WalletController::class, 'transactions']); // list with filters/pagination
+
+        // Optional: verify money-in callbacks (if using a payment provider)
+        Route::post('verify', [WalletController::class, 'verify'])->name('wallet.verify'); // POST /wallet/verify
+    });
+
+    // Beneficiaries (bank/upi)
+    Route::prefix('beneficiaries')->group(function () {
+        Route::get('/', [BeneficiaryController::class, 'index']);         // list
+        Route::post('/', [BeneficiaryController::class, 'store']);        // create
+        Route::get('{account:uuid}', [BeneficiaryController::class, 'show']);   // get one
+        Route::put('{account:uuid}', [BeneficiaryController::class, 'update']); // update
+        Route::delete('{account:uuid}', [BeneficiaryController::class, 'destroy']); // delete
+        Route::post('{account:uuid}/default', [BeneficiaryController::class, 'makeDefault']); // set default
+    });
 });
 
 // ========================

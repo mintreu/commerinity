@@ -23,9 +23,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Kirschbaum\Commentions\Contracts\Commenter;
 use Laravel\Sanctum\HasApiTokens;
 use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;
+use Mintreu\LaravelTransaction\Traits\HasBeneficiary;
 use Mintreu\LaravelTransaction\Traits\HasWallet;
 use Mintreu\Toolkit\Casts\GenderCast;
 use Mintreu\Toolkit\Contracts\Fingerprintable;
@@ -35,12 +37,12 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable
+class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable, Commenter
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
         HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,
-        HasSupportTicket,HasWallet;
+        HasSupportTicket,HasWallet,HasBeneficiary;
 
     /**
      * The attributes that are mass assignable.
@@ -62,7 +64,8 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
         'gender',
         'dob',
         'email_verified_at',
-        'mobile_verified_at'
+        'mobile_verified_at',
+        'onboarded'
     ];
 
 
@@ -91,6 +94,7 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
             'gender' => GenderCast::class,
             'type' => AuthTypeCast::class,
             'status' => AuthStatusCast::class,
+            'onboarded' => 'boolean'
         ];
     }
 

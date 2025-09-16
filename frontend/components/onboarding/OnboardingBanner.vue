@@ -2,10 +2,8 @@
   <div
       v-if="showBanner"
       role="banner"
-      class="relative w-full bg-yellow-100 dark:bg-gray-900 rounded-lg shadow-lg p-4 flex flex-col md:flex-row
-      justify-between items-start md:items-center gap-4  border-b-2 border-yellow-600 dark:border-gray-600"
+      class="relative w-full bg-yellow-100 dark:bg-gray-900 rounded-lg shadow-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-2 border-yellow-600 dark:border-gray-600"
   >
-
     <!-- Left: Current step + progress -->
     <div class="w-full md:w-fit flex-1 flex flex-col gap-2">
       <div class="flex items-center gap-3">
@@ -13,16 +11,16 @@
             :name="currentStep.completed ? 'mdi:check-circle' : currentStep.icon ?? 'mdi:circle-outline'"
             class="w-6 h-6 text-green-500 dark:text-green-400"
         />
-        <span class="font-roboto text-gray-800 dark:text-yellow-200 ">
+        <span class="font-roboto text-gray-800 dark:text-yellow-200">
           {{ currentStep.label }}
         </span>
       </div>
 
       <!-- Progress bar + step count -->
-      <div class="flex items-center gap-2 mt-1 ">
+      <div class="flex items-center gap-2 mt-1">
         <div class="flex-1 bg-gray-300 dark:bg-gray-700 rounded h-2 overflow-hidden">
           <div
-              class="bg-green-500 h-2 rounded transition-all duration-500 animate-pulse "
+              class="bg-green-500 h-2 rounded transition-all duration-500 animate-pulse"
               :style="{ width: progress + '%' }"
           ></div>
         </div>
@@ -33,7 +31,7 @@
     </div>
 
     <!-- Right: CTA -->
-    <div class="flex flex-col gap-2 items-end md:items-center w-full md:w-fit ">
+    <div class="flex flex-col gap-2 items-end md:items-center w-full md:w-fit">
       <NuxtLink
           v-if="nextStep"
           :to="nextStep.path"
@@ -64,56 +62,34 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useSanctumFetch, useRuntimeConfig } from '#imports'
+import { useSanctumFetch, useRuntimeConfig, useSanctum } from '#imports'
 import { Icon } from '#components'
 
 const config = useRuntimeConfig()
 const profileData = ref<any>(null)
 const bannerClosed = ref(false)
 
-// Add a unique key for each step for proper validation
+interface User {
+  onboarded: boolean
+  email_verified: boolean
+  mobile_verified: boolean
+}
+const { user } = useSanctum<User>()
+
+const isOnboarded = computed(() => user.value?.onboarded === true)
+
 const tourSteps = ref([
-  {
-    key: 'mobile',
-    label: 'Add your mobile number',
-    path: '/dashboard/account/edit',
-    completed: false,
-    icon: 'mdi-account'
-  },
-  {
-    key: 'profile',
-    label: 'Complete your profile details (name, DOB, gender)',
-    path: '/dashboard/account/edit',
-    completed: false,
-    icon: 'mdi-account'
-  },
-  {
-    key: 'address',
-    label: 'Add your home address for deliveries',
-    path: '/dashboard/account/address',
-    completed: false,
-    icon: 'mdi-home'
-  },
-  {
-    key: 'kyc',
-    label: 'Submit your KYC documents for verification',
-    path: '/dashboard/account/kyc',
-    completed: false,
-    icon: 'mdi-file-document'
-  },
-  {
-    key: 'subscription',
-    label: 'Choose a subscription plan to unlock features',
-    path: '/dashboard/subscribe',
-    completed: false,
-    icon: 'mdi-currency-usd'
-  },
+  { key: 'mobile',        label: 'Add your mobile number',                           path: '/dashboard/account/edit',   completed: false, icon: 'mdi-account' },
+  { key: 'profile',       label: 'Complete your profile details (name, DOB, gender)',path: '/dashboard/account/edit',   completed: false, icon: 'mdi-account' },
+  { key: 'address',       label: 'Add your home address for deliveries',             path: '/dashboard/account/address', completed: false, icon: 'mdi-home'    },
+  { key: 'kyc',           label: 'Submit your KYC documents for verification',       path: '/dashboard/account/kyc',     completed: false, icon: 'mdi-file-document' },
+  { key: 'subscription',  label: 'Choose a subscription plan to unlock features',    path: '/dashboard/subscribe',       completed: false, icon: 'mdi-currency-usd' },
 ])
 
 async function loadProfile() {
   try {
     const res = await useSanctumFetch(`${config.public.apiBase}/account/profile`)
-    profileData.value = res.data ?? res
+    profileData.value = res?.data ?? res
 
     tourSteps.value = tourSteps.value.map(step => {
       let completed = false
@@ -122,10 +98,7 @@ async function loadProfile() {
           completed = profileData.value?.mobile != null
           break
         case 'profile':
-          completed =
-              Boolean(profileData.value?.name) &&
-              Boolean(profileData.value?.dob) &&
-              Boolean(profileData.value?.gender)
+          completed = Boolean(profileData.value?.name) && Boolean(profileData.value?.dob) && Boolean(profileData.value?.gender)
           break
         case 'address':
           completed = profileData.value?.address?.type === 'HOME'
@@ -134,8 +107,7 @@ async function loadProfile() {
           completed = Boolean(profileData.value?.kyc)
           break
         case 'subscription':
-          completed =
-              Boolean(profileData.value?.hasLevel) || Boolean(profileData.value?.level_id)
+          completed = Boolean(profileData.value?.hasLevel) || Boolean(profileData.value?.level_id)
           break
       }
       return { ...step, completed }
@@ -145,15 +117,29 @@ async function loadProfile() {
   }
 }
 
-onMounted(loadProfile)
+// Only fetch when user is NOT onboarded and banner not closed
+onMounted(async () => {
+  if (!isOnboarded.value && !bannerClosed.value) {
+    await loadProfile()
+  }
+})
 
-// Reactive computed properties
+// Derived state
 const completedSteps = computed(() => tourSteps.value.filter(s => s.completed).length)
 const totalSteps = computed(() => tourSteps.value.length)
 const nextStep = computed(() => tourSteps.value.find(s => !s.completed))
-const currentStep = computed(() => nextStep.value ?? tourSteps.value[tourSteps.value.length-1])
+const currentStep = computed(() => nextStep.value ?? tourSteps.value[tourSteps.value.length - 1])
 const progress = computed(() => (completedSteps.value / totalSteps.value) * 100)
-const showBanner = computed(() => !bannerClosed.value && completedSteps.value < totalSteps.value)
+
+// Show banner only if:
+// - not permanently closed
+// - user is not onboarded
+// - and there are remaining steps (or we haven’t fetched yet)
+const showBanner = computed(() => {
+  if (isOnboarded.value) return false
+  if (bannerClosed.value) return false
+  return completedSteps.value < totalSteps.value
+})
 
 function closeBanner() {
   bannerClosed.value = true
@@ -161,7 +147,5 @@ function closeBanner() {
 </script>
 
 <style scoped>
-div[role='banner'] {
-  transition: all 0.3s ease;
-}
+div[role='banner'] { transition: all 0.3s ease; }
 </style>

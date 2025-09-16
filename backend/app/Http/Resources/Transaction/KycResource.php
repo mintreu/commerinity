@@ -14,8 +14,9 @@ class KycResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
-            'uuid'          => $this->uuid,
+//            'uuid'          => $this->uuid,
             'user_type'     => $this->user_type,
             'company_name'  => $this->company_name,
             'company_type'  => $this->company_type,

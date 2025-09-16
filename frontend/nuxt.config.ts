@@ -17,18 +17,18 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://api.production.in',
-      webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'https://api.production.in',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in/',
+      webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'https://panel.vvindia.in/',
       nodeEnv: process.env.NUXT_PUBLIC_NODE_ENV || 'production',
       sentry: {
         dsn: process.env.SENTRY_DSN_PUBLIC || '', // load from env for security
       },
       registrationMode: 'mobile',  // or 'email'
-      websiteName: 'Commernity',
-      companyName: 'Commernity Inc.',
-      supportEmail: 'support@commernity.com',
-      phoneNumber: '+91 98765 43210',
-      address: 'Commernity Inc., 7th Floor, Eco Space Business Park, New Town, Action Area II, Rajarhat, Kolkata, West Bengal 700156, India'
+      websiteName: process.env.NUXT_PUBLIC_APP_NAME || 'Commernity',
+      companyName: process.env.NUXT_PUBLIC_COMPANY_NAME ||'Commernity Inc.',
+      supportEmail: process.env.NUXT_PUBLIC_COMPANY_SUPPORT_MAIL ||'support@commernity.com',
+      phoneNumber: process.env.NUXT_PUBLIC_COMPANY_SUPPORT_PHONE ||'+91 98765 43210',
+      address: process.env.NUXT_PUBLIC_COMPANY_ADDRESS || 'Commernity Inc., 7th Floor, Eco Space Business Park, New Town, Action Area II, Rajarhat, Kolkata, West Bengal 700156, India'
     }
   },
   app: {
@@ -56,6 +56,23 @@ export default defineNuxtConfig({
     },
 
   },
+
+  qrcode: {
+    options: {
+      variant: 'pixelated',
+      // OR
+      variant: {
+        inner: 'circle',
+        marker: 'rounded',
+        pixel: 'rounded',
+      },
+      radius: 1,
+      blackColor: 'currentColor', // 'var(--ui-text-highlighted)' if you are using `@nuxt/ui` v3
+      whiteColor: 'transparent',  // 'var(--ui-bg)'
+    },
+  },
+
+
   // googleFonts: {
   //   families: {
   //     Roboto: [400, 500, 700], // Use weights you actually need

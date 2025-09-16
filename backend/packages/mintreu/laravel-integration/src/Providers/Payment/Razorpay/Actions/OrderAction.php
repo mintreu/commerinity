@@ -50,7 +50,6 @@ class OrderAction
 
         $data = OrderWrapper::make($data)->toArray();
 
-        //dd($data,$this->provider,$this->provider->getApi());
 
         // Create the order using Razorpay API
         $response = $this->provider->getApi()->order->create($data);

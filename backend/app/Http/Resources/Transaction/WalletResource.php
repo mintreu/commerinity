@@ -18,7 +18,9 @@ class WalletResource extends JsonResource
         return [
             'uuid'  => $this->uuid,
             'balance'   => LaravelMoney::format($this->balance ?? 0),
-            'transactions'   => $this->whenLoaded('transactions',TransactionResource::collection($this->transactions))
+            'qr'    => $this->getQRCode(),
+            'transactions'   => $this->whenLoaded('transactions',TransactionResource::collection($this->transactions)),
+            'beneficiary'   => $this->whenLoaded('beneficiary',BeneficiaryAccountResource::make($this->beneficiary))
         ];
     }
 }

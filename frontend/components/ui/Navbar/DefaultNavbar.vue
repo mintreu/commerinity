@@ -13,7 +13,7 @@
       >
         <NuxtImg src="/logo.png" loading="lazy" class="object-contain w-8 h-8" alt="Commernity" />
         <span class="text-primary-600 dark:text-primary-400 font-extrabold text-xl tracking-wide">
-          Commernity
+          {{ websiteName }}
         </span>
       </NuxtLink>
 
@@ -152,7 +152,8 @@ import { ref, computed } from 'vue'
 import { useSanctum } from '#imports'
 import DarkModeToggle from '~/components/ui/DarkModeToggle.vue'
 import UserDropdown from '~/components/ui/UserDropdown.vue'
-
+const config = useRuntimeConfig()
+const websiteName = config.public.websiteName
 interface User {
   name: string
   email: string

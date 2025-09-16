@@ -49,6 +49,20 @@ class IntegrationSeeder extends Seeder
             'default' => true,
         ]);
 
+        $cod =  Integration::create([
+            'name' => 'COD',
+            'url' => 'cash-payment',
+            'desc' => 'Cash Payment Gateway(COD)',
+            'type' => IntegrationTypeCast::PAYMENT,
+            'key'      => null,
+            'secret'   => null,
+            'logo_url'  => 'https://badges.razorpay.com/badge-light.png',
+            'status' => true,
+            'default' => false,
+        ]);
+
+
+
         $fast2Sms =  Integration::create([
             'name' => 'Fast2Sms',
             'url' => 'fast2sms-sms',

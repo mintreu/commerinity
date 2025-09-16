@@ -11,6 +11,8 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewUserStats extends ViewRecord
 {
     protected static string $resource = UserResource::class;
+    protected static ?string $navigationLabel = 'View Stats';
+    protected static ?string $title = 'View Statistics';
 
     protected function getHeaderActions(): array
     {
@@ -35,15 +37,15 @@ class ViewUserStats extends ViewRecord
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Shopping Rewards')
-                            ->schema([]),
-                        Tabs\Tab::make('Team Rewards')
-                            ->schema([]),
-                        Tabs\Tab::make('Business Rewards')
-                            ->schema([]),
-
-                        Tabs\Tab::make('System Rewards')
-                            ->schema([]),
+//                        Tabs\Tab::make('Shopping Rewards')
+//                            ->schema([]),
+//                        Tabs\Tab::make('Team Rewards')
+//                            ->schema([]),
+//                        Tabs\Tab::make('Business Rewards')
+//                            ->schema([]),
+//
+//                        Tabs\Tab::make('System Rewards')
+//                            ->schema([]),
 
 
                     ]),

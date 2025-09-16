@@ -67,11 +67,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     /**
+     *  Prefix 'account'
+     *  Full Prefix: /account/kyc
      * KYC
      */
     Route::get('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'getUserKyc']);
     Route::post('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'addUserKyc']);
-    Route::post('/put',[\App\Http\Controllers\Api\Auth\UserKycController::class,'updateUserKyc']);
+    Route::put('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'updateUserKyc']);
 
 
 
@@ -87,6 +89,13 @@ Route::middleware('auth:sanctum')->group(function () {
     })->middleware('auth:sanctum');
 
 
+    Route::prefix('stats')->group(function (){
+
+        Route::get('/',[\App\Http\Controllers\Api\Auth\UserStatsController::class,'index']);
+        Route::get('/minimal',[\App\Http\Controllers\Api\Auth\UserStatsController::class,'getMinimal']);
+        Route::get('/member/{user:uuid}',[\App\Http\Controllers\Api\Auth\UserStatsController::class,'getMemberStat']);
+
+    });
 
 
 

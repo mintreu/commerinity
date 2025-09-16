@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import DarkModeToggle from "~/components/ui/DarkModeToggle.vue"
 import UserDropdown from "~/components/ui/UserDropdown.vue"
-
+const config = useRuntimeConfig()
+const companyName = config.public.companyName
 defineProps<{ collapsed: boolean }>()
 const emit = defineEmits(['toggle-sidebar'])
 
@@ -19,7 +20,7 @@ function toggleSidebar() { emit('toggle-sidebar') }
       >
         <NuxtImg src="/logo.png" loading="lazy" class="object-contain" :class="collapsed ? 'w-8 h-8' : 'w-14 h-14'" alt="Commernity" />
         <span v-if="!collapsed" class="text-primary-600 dark:text-primary-400 font-extrabold text-xl tracking-wide">
-          Commernity
+          {{ companyName }}
         </span>
       </NuxtLink>
 

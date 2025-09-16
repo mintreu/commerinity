@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
         ]);
         $demoUser->addresses()->create($address);
 
-//        // Add Kyc
+        // Add Kyc
 //        $demoUser->kyc()->create([
 //            'aadhaar' => rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
 //            'pan' => strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 5)) .

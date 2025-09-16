@@ -13,6 +13,8 @@
         "dutchcodingcompany/filament-socialite": "^2.4",
         "filament/filament": "3.3",
         "filament/spatie-laravel-media-library-plugin": "^3.3",
+        "flowframe/laravel-trend": "^0.4.0",
+        "kirschbaum-development/commentions": "^0.6.6",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.10",
@@ -29,6 +31,7 @@
         "mintreu/toolkit": "dev-main",
         "owenvoke/blade-fontawesome": "^2.9",
         "saade/filament-adjacency-list": "^3.2",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "staudenmeir/laravel-adjacency-list": "^1.25",
         "stechstudio/filament-impersonate": "^3.16"
     },

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
 use App\Services\CartService\Cart;
 use Illuminate\Http\Request;
+use Mintreu\LaravelCommerinity\Models\VoucherCode;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class CartController extends Controller
@@ -97,4 +98,14 @@ class CartController extends Controller
 
         return response()->json(['message' => 'Guest cart merged successfully']);
     }
+
+
+
+    public function applyCoupon(VoucherCode $code,Request $request)
+    {
+
+    }
+
+
+
 }

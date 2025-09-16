@@ -2,6 +2,9 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\Cash;
 
+use Mintreu\LaravelIntegration\Providers\Payment\Cash\Actions\OrderAction;
+use Mintreu\LaravelIntegration\Providers\Payment\Cash\Actions\VerifyAction;
+
 class CashPaymentProvider
 {
 

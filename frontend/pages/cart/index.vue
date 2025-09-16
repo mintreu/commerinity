@@ -58,7 +58,7 @@
                   v-model="couponCode"
                   type="text"
                   placeholder="Enter coupon code"
-                  class="input flex-grow bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                  class="input flex-grow bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 p-2"
               />
               <button
                   @click="applyCoupon"

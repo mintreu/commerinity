@@ -73,6 +73,14 @@ return [
         |
         */
         'payment' => [
+            'cash' => [
+                'key'      => null,
+                'secret'   => null,
+                'webhook'  => null,
+                'api'      => null,
+                'dev'       => true,
+                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Cash\CashPaymentProvider::class,
+            ],
             'razorpay' => [
                 'key'      => env('RAZORPAY_KEY', ''),
                 'secret'   => env('RAZORPAY_SECRET', ''),

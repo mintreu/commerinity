@@ -165,11 +165,11 @@ class OrderCreationService
             'shipping_is_billing' => $this->shippingAddress->id == $this->billingAddress->id,
             'billing_address_id' => $this->billingAddress->id,
             'shipping_address_id' => $this->shippingAddress->id,
-            'is_cod' => $this->provider === 'cod-payment',
+            'is_cod' => $this->provider === 'cash-payment',
             'has_guest' => is_null($this->customer),
             'customer_name' => $customer['name'],
             'customer_email'    => $customer['email'],
-            'customer_mobile'   => $customer['mobile']
+            'customer_mobile'   => $customer['mobile'],
         ];
 
         return !is_null($this->customer) ? $this->customer->orders()->create($orderFillables) : Order::create($orderFillables);
