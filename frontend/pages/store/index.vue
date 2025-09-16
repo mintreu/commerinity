@@ -102,7 +102,7 @@ import { ref } from 'vue'
 import { useFetch } from '#app'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
-
+const config = useRuntimeConfig()
 interface ChildCategory {
   name: string
   url: string
@@ -120,7 +120,7 @@ interface ParentCategory {
 // Reactive parent + children data
 const categorySections = ref<ParentCategory[]>([])
 
-const { data, error } = await useFetch<ParentCategory[]>('http://localhost:8000/api/categories/with-products', {
+const { data, error } = await useFetch<ParentCategory[]>(`${config.public.apiBase}/categories/with-products`, {
   credentials: 'include',
 })
 
