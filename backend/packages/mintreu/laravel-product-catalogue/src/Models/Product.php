@@ -78,10 +78,11 @@ class Product extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('displayImage')
-            ->useFallbackUrl('https://placehold.co/600x400?text=Display\nImage')
+            //->useFallbackUrl('https://placehold.co/600x400?text=Display\nImage')
         ;
         $this->addMediaCollection('bannerImage')
-            ->useFallbackUrl('https://placehold.co/600x400?text=Banner\nImage');
+            //->useFallbackUrl('https://placehold.co/600x400?text=Banner\nImage')
+        ;
     }
 
 

@@ -185,8 +185,8 @@ class OrderCreationService
             'mobile'    => $this->order->customer_mobile
         ];
 
-        $successUrl = $this->customer ? config('app.client_url').'/dashboard/orders/'.$this->order->uuid : config('app.client_url').'/order/'.$this->order->uuid;
-        $failureUrl = $this->customer ? config('app.client_url').'/dashboard/orders/'.$this->order->uuid : config('app.client_url').'/order/'.$this->order->uuid ;
+        $successUrl = $this->customer ? config('app.client_url').'dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid;
+        $failureUrl = $this->customer ? config('app.client_url').'dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid ;
 
         $this->transaction = $this->order->createDebitTransaction(
             customer: $customer,

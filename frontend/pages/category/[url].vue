@@ -61,7 +61,7 @@
           <SwiperSlide v-for="child in category.children" :key="child.url">
             <NuxtLink :to="`/category/${child.url}`" class="block hover:no-underline">
               <div class="bg-gray-100 dark:bg-gray-900 p-4 w-48 md:w-full md:h-60 rounded-lg shadow hover:shadow-lg transition hover:border-2 border-gray-400">
-                <img :src="child.thumbnail" class="w-full h-32 object-cover rounded mb-4" />
+                <img :src="child.thumbnail" class="w-full h-32 object-cover rounded mb-4"  alt=""/>
                 <h3 class="text-lg font-semibold">{{ child.name }}</h3>
                 <p class="text-xs text-gray-500">{{ child.views }} views</p>
               </div>
@@ -87,10 +87,11 @@
           <SwiperSlide v-for="product in latestProducts" :key="product.url">
             <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">
               <NuxtLink :to="`/product/${product.url}`" class="block">
-                <NuxtImg
+                <img
                     loading="lazy"
                     :src="product.thumbnail"
                     class="h-[250px] w-full object-contain rounded mb-4"
+                    alt=""
                 />
                 <h3 class="font-semibold mb-1">{{ product.name }}</h3>
                 <p class="text-sm text-gray-500 mb-1">${{ product.price }}</p>
@@ -279,7 +280,7 @@
               <div v-for="product in allProducts" :key="product.url" class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-md transition">
                 <NuxtLink :to="`/product/${product.url}`">
                   <div class="w-full h-52 mx-auto rounded mb-4">
-                    <NuxtImg loading="lazy" :src="product.thumbnail" class="h-full w-full object-contain rounded mb-4" />
+                    <img loading="lazy" :src="product.thumbnail" class="h-full w-full object-contain rounded mb-4" alt="" />
                   </div>
                   <h3 class="font-semibold mb-1">{{ product.name }}</h3>
                   <p class="text-sm text-gray-500 mb-1">${{ product.price }}</p>
@@ -315,7 +316,7 @@
           <SwiperSlide v-for="product in topProducts" :key="product.url">
             <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">
               <NuxtLink :to="`/product/${product.url}`" class="block">
-                <NuxtImg loading="lazy" :src="product.thumbnail" class="h-[250px] w-full object-contain rounded mb-4" />
+                <img loading="lazy" :src="product.thumbnail" class="h-[250px] w-full object-contain rounded mb-4" alt="" />
                 <h3 class="font-semibold mb-1">{{ product.name }}</h3>
                 <p class="text-sm text-gray-500 mb-1">${{ product.price }}</p>
                 <p class="text-xs text-gray-400 mb-2">{{ product.short_description }}</p>
