@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Inquiry;
 use Illuminate\Http\Request;
+use Mintreu\LaravelHelpdesk\Models\Inquiry;
 
 class InquiryController extends Controller
 {

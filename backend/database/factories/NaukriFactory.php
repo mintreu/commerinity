@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Casts\NaukriEmploymentTypeCast;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Mintreu\LaravelNaukriManager\Casts\NaukriEmploymentTypeCast;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Naukri>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Mintreu\LaravelNaukriManager\Models\Naukri>
  */
 class NaukriFactory extends Factory
 {

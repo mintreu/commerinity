@@ -2,11 +2,10 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources;
 
-use App\Filament\Common\Schema\AdjacencySchema\HasAdjacencyFormSchema;
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
 use Filament\Resources\Resource;
+use Mintreu\LaravelCategory\Filament\Resources\CategoryResource\RelationManagers;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyFormSchema;
 
 class CategoryResource extends Resource
 {

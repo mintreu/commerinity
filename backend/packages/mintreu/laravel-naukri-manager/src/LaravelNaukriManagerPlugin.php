@@ -4,6 +4,8 @@ namespace Mintreu\LaravelNaukriManager;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource;
 
 class LaravelNaukriManagerPlugin implements Plugin
 {
@@ -14,7 +16,10 @@ class LaravelNaukriManagerPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->resources([
+            NaukriApplicationResource::class,
+            NaukriResource::class
+        ]);
     }
 
     public function boot(Panel $panel): void

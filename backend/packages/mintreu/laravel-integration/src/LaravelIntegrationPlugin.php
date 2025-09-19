@@ -4,6 +4,7 @@ namespace Mintreu\LaravelIntegration;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource;
 
 class LaravelIntegrationPlugin implements Plugin
 {
@@ -14,7 +15,9 @@ class LaravelIntegrationPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->resources([
+           IntegrationResource::class
+        ]);
     }
 
     public function boot(Panel $panel): void

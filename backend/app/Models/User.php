@@ -25,8 +25,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Kirschbaum\Commentions\Contracts\Commenter;
 use Laravel\Sanctum\HasApiTokens;
+use Mintreu\LaravelCommerinity\Traits\HasSaleAccess;
+use Mintreu\LaravelCommerinity\Traits\HasVoucherAccess;
 use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;
+use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Mintreu\LaravelTransaction\Traits\HasBeneficiary;
 use Mintreu\LaravelTransaction\Traits\HasWallet;
 use Mintreu\Toolkit\Casts\GenderCast;
@@ -42,7 +45,7 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
         HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,
-        HasSupportTicket,HasWallet,HasBeneficiary;
+        HasSupportTicket,HasWallet,HasBeneficiary,HasVoucherAccess;
 
     /**
      * The attributes that are mass assignable.

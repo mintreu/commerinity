@@ -101,10 +101,20 @@ class CartController extends Controller
 
 
 
-    public function applyCoupon(VoucherCode $code,Request $request)
+    public function applyCoupon(VoucherCode $voucher_code, Request $request)
     {
+        $cart = new Cart($request->user());
+        $cart->capture($request);
+        $cart->setCouponCode($voucher_code);
 
+        $error = $cart->getErrors();
+
+        return response()->json([
+            'success' => $error === null,
+            'errors'  => $error ?? null,
+        ]);
     }
+
 
 
 

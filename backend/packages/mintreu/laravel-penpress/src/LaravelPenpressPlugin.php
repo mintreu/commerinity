@@ -4,6 +4,7 @@ namespace Mintreu\LaravelPenpress;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Mintreu\LaravelPenpress\Filament\Resources\PageResource;
 
 class LaravelPenpressPlugin implements Plugin
 {
@@ -14,7 +15,9 @@ class LaravelPenpressPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->resources([
+           PageResource::class
+        ]);
     }
 
     public function boot(Panel $panel): void

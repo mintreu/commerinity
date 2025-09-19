@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Filament\Resources\IncentiveResource\Pages;
+
+use App\Filament\Resources\IncentiveResource;
+use Filament\Actions;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateIncentive extends CreateRecord
+{
+    protected static string $resource = IncentiveResource::class;
+}

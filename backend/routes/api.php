@@ -105,7 +105,7 @@ Route::prefix('cart')->group(function () {
     Route::post('add/{product:sku}', [CartController::class, 'addProduct']); // POST /cart/add/{sku}
     Route::post('update/{product:sku}', [CartController::class, 'updateProduct']); // POST /cart/update/{sku}
     Route::delete('remove/{product:sku}', [CartController::class, 'removeProduct']); // DELETE /cart/remove/{sku}
-    Route::post('coupon/{voucher_code:code}', [CartController::class, 'applyCoupon']); // POST /cart/coupon/{code}
+    Route::post('coupon/{voucher_code}', [CartController::class, 'applyCoupon']); // POST /cart/coupon/{code}
     Route::post('clear', [CartController::class, 'clearCart']); // POST /cart/clear
     Route::post('merge', [CartController::class, 'mergeGuestCart'])->middleware('auth:sanctum'); // POST /cart/merge
 });
@@ -116,13 +116,17 @@ Route::prefix('cart')->group(function () {
 
 // Guest order placement
 Route::post('order/place', [OrderController::class, 'placeOrder'])->name('order.placed');
+// Stats
+Route::get('order/insight',[OrderController::class,'getInsight']); // get user order trend data insight
 
 Route::prefix('orders')->group(function () {
+
     Route::get('/', [OrderController::class, 'getAllOrders'])->name('orders.all'); // GET /orders
     Route::get('{order:uuid}', [OrderController::class, 'getOrderDetail']); // GET /orders/{uuid}
     Route::post('{order:uuid}/canceled', [OrderController::class, 'cancelOrder']); // POST /orders/{uuid}/canceled
     Route::post('{order:uuid}/return', [OrderController::class, 'returnOrder']);   // POST /orders/{uuid}/return
     Route::post('{order:uuid}/refund', [OrderController::class, 'refundOrder']);   // POST /orders/{uuid}/refund
+
 });
 
 // ========================

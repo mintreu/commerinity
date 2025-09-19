@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Naukri;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Mintreu\LaravelNaukriManager\Models\Naukri;
 
 class NaukriSeeder extends Seeder
 {

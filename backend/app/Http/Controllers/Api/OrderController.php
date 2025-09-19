@@ -10,6 +10,8 @@ use App\Http\Resources\Order\OrderIndexResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Models\Order\Order;
 use App\Services\OrderService\OrderCreationService;
+use Flowframe\Trend\Trend;
+use Flowframe\Trend\TrendValue;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
@@ -151,6 +153,68 @@ class OrderController extends Controller
         });
     }
 
+
+
+    public function getInsight(Request $request)
+    {
+        $user   = $request->user();
+        $range  = $request->query('range', 'year');          // today|week|month|year
+        $metric = $request->query('metric', 'count');        // count|revenue
+        $status = $request->query('status');                 // array|string|null
+
+        // If no status provided, don’t filter by status at all
+        $statusArray = is_array($status) ? $status : (is_string($status) ? [$status] : []);
+
+        [$start, $end, $interval] = match ($range) {
+            'today' => [now()->startOfDay(), now()->endOfDay(), 'perHour'],
+            'week'  => [now()->startOfWeek(), now()->endOfWeek(), 'perDay'],
+            'month' => [now()->startOfMonth(), now()->endOfMonth(), 'perDay'],
+            default => [now()->startOfYear(), now()->endOfYear(), 'perMonth'],
+        };
+
+        $query = Order::query()
+            ->where('customerable_type', get_class($user))
+            ->where('customerable_id', $user->getKey());
+
+        if (!empty($statusArray)) {
+            $query->whereIn('status', $statusArray);
+        }
+
+        $builder = Trend::query($query)->between(start: $start, end: $end);
+
+        $builder = match ($interval) {
+            'perHour' => $builder->perHour(),
+            'perDay'  => $builder->perDay(),
+            default   => $builder->perMonth(),
+        };
+
+        $data = $metric === 'revenue'
+            ? $builder->sum('total')
+            : $builder->count();
+
+        $labels = $data->map(fn (TrendValue $v) => $v->date);
+        $values = $data->map(fn (TrendValue $v) => $v->aggregate);
+
+        return response()->json([
+            'data' => [
+                'datasets' => [
+                    [
+                        'label' => $metric === 'revenue' ? 'Revenue' : 'Orders',
+                        'data'  => $values,
+                    ],
+                ],
+                'labels' => $labels,
+                'meta' => [
+                    'range'    => $range,
+                    'metric'   => $metric,
+                    'status'   => $statusArray,
+                    'interval' => $interval,
+                    'start'    => $start->toISOString(),
+                    'end'      => $end->toISOString(),
+                ],
+            ],
+        ]);
+    }
 
 
 }

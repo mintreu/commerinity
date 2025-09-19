@@ -2,10 +2,10 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
-use App\Filament\Common\Schema\AdjacencySchema\HasAdjacencyFormSchema;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
+use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyFormSchema;
 
 class CreateCategory extends CreateRecord
 {

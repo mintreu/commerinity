@@ -79,12 +79,36 @@
           label="Revenue"
           value="$54,000"
       />
+
+
+
+
+      <OrdersTrendChart
+          title="My Orders Trend"
+          endpoint="order/insight"
+          type="line"
+          :show-markers="true"
+          value-label-formatter="{value}"
+          :status="['COMPLETED','CONFIRM']"
+      />
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useSanctum } from '#imports'
+import OrdersTrendChart from "~/components/charts/OrdersTrendChart.vue";
 
 const { user } = useSanctum()
 

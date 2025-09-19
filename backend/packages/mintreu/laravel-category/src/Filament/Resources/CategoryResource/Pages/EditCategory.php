@@ -2,11 +2,11 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
-use App\Filament\Common\Schema\AdjacencySchema\HasAdjacencyFormSchema;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
+use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyFormSchema;
 
 class EditCategory extends EditRecord
 {

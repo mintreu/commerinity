@@ -4,6 +4,10 @@ namespace Mintreu\LaravelHelpdesk;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskResource;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskTopicResource;
+use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource;
 
 class LaravelHelpdeskPlugin implements Plugin
 {
@@ -14,7 +18,12 @@ class LaravelHelpdeskPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->resources([
+           HelpDeskResource::class,
+            HelpDeskTopicResource::class,
+            HelpDeskFaqResource::class,
+            InquiryResource::class
+        ]);
     }
 
     public function boot(Panel $panel): void

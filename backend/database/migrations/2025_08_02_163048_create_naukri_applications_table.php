@@ -36,7 +36,7 @@ return new class extends Migration
             $table->foreignId('naukri_id')->nullable()->constrained('naukris')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId('address_id')->nullable()->constrained('addresses')->cascadeOnUpdate()->nullOnDelete();
 
-            $table->string('status')->default(\App\Casts\NaukriApplicationStatusCast::AWAITING_PAYMENT->value);
+            $table->string('status')->default(\Mintreu\LaravelNaukriManager\Casts\NaukriApplicationStatusCast::AWAITING_PAYMENT->value);
             $table->text('status_feedback')->nullable();
 
             $table->timestamps();

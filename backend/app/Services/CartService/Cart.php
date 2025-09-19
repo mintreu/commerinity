@@ -16,9 +16,11 @@ use Mintreu\LaravelMoney\LaravelMoney;
 class Cart extends CartService
 {
     protected ?Collection $cartItems = null;
+
     /**
      * Get full structured metadata for the cart.
      *
+     * @param bool $formatted
      * @return array
      */
     public function getMeta(bool $formatted = true): array
@@ -30,6 +32,8 @@ class Cart extends CartService
             $this->cartItems->loadMissing('cartable.media');
         }
 
+        $this->prepareMeta($formatted);
+
 
         return [
             'summary'  => $this->calculateCart($formatted),
@@ -38,6 +42,15 @@ class Cart extends CartService
             'error'    => $this->error,
         ];
     }
+
+
+    protected function prepareMeta(bool $formatted = true)
+    {
+        $bag = $this->cartItems->map(fn(\App\Models\Cart $item) => CartLineService::make($item)->getMeta($formatted));
+    }
+
+
+
 
     /**
      * Return structured customer identity data, supporting both guest and authenticated users.
@@ -69,10 +82,16 @@ class Cart extends CartService
     /**
      * Compute cart totals.
      *
+     * @param bool $formatted
      * @return array
      */
     private function calculateCart(bool $formatted = true): array
     {
+        if (!is_null($this->getCouponCode()) && !$this->validCoupon)
+        {
+            $this->setCouponCode($this->getCouponCode());
+        }
+
         $subTotal = new LaravelMoney();
         $tax = new LaravelMoney();
         $discount = new LaravelMoney();
@@ -96,8 +115,8 @@ class Cart extends CartService
             'tax'             => $formatted ? $tax->formatted() : $tax,
             'tax_percentage'  => 0,
             'discount'        => $formatted ?$discount->formatted() : $discount,
-            'coupon_applied'  => false,
-            'coupon_code'     => null,
+            'coupon_applied'  => $this->validCoupon,
+            'coupon_code'     => $this->getCouponCode(),
             'total'           => $formatted ? $total->formatted() : $total,
             'quantity'        =>   $this->cartItems?->sum('quantity') ?? 0
         ];
@@ -106,6 +125,7 @@ class Cart extends CartService
     /**
      * Format cart items for API.
      *
+     * @param bool $formatted
      * @return array
      */
     private function formatItems(bool $formatted = true): array

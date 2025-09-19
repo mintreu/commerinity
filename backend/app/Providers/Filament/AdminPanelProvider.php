@@ -22,7 +22,13 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use Mintreu\LaravelCategory\LaravelCategoryPlugin;
+use Mintreu\LaravelGeokit\LaravelGeokitPlugin;
+use Mintreu\LaravelHelpdesk\LaravelHelpdeskPlugin;
+use Mintreu\LaravelIntegration\LaravelIntegrationPlugin;
+use Mintreu\LaravelNaukriManager\LaravelNaukriManagerPlugin;
+use Mintreu\LaravelPenpress\LaravelPenpressPlugin;
 use Mintreu\LaravelProductCatalogue\LaravelProductCataloguePlugin;
+use Mintreu\LaravelTransaction\LaravelTransactionPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -35,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Orange,
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarFullyCollapsibleOnDesktop()
@@ -49,6 +55,12 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 LaravelCategoryPlugin::make(),
                 LaravelProductCataloguePlugin::make(),
+                LaravelGeokitPlugin::make(),
+                LaravelHelpdeskPlugin::make(),
+                LaravelTransactionPlugin::make(),
+                LaravelNaukriManagerPlugin::make(),
+                LaravelIntegrationPlugin::make(),
+                LaravelPenpressPlugin::make(),
 
 
                 // Filament Socialite

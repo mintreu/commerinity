@@ -4,8 +4,7 @@ namespace Database\Seeders;
 
 use Exception;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Page;
+use Mintreu\LaravelPenpress\Models\Page;
 
 class PageSeeder extends Seeder
 {

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PageIndexResource;
 use App\Http\Resources\PageResource;
-use App\Models\Page;
 use Illuminate\Http\Request;
+use Mintreu\LaravelPenpress\Models\Page;
 
 class PageController extends Controller
 {

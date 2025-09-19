@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Casts\ModelStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Category\CategoryIndexResource;
 use App\Http\Resources\Category\CategoryResource;
@@ -16,14 +15,13 @@ use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class CategoryController extends Controller
 {
-
     public function index()
     {
         $categories = Category::tree()
-            ->where('status',true)
-            ->where('is_visible_on_front',true)
+            ->where('status', true)
+            ->where('is_visible_on_front', true)
             ->with([
-                'media' => fn($query) => $query->where('collection_name','displayImage')
+                'media' => fn($query) => $query->where('collection_name', 'displayImage')
             ])
             ->limit(12)
             ->get()
@@ -31,8 +29,6 @@ class CategoryController extends Controller
 
         return CategoryIndexResource::collection($categories);
     }
-
-
 
     public function getParentCategoriesWithProducts(): JsonResponse
     {
@@ -58,36 +54,18 @@ class CategoryController extends Controller
 
         $allRelevantCategoryIds = collect($childToAllCategoryIds)->flatten()->unique()->toArray();
 
-//        $lowestPrices = Product::selectRaw('MIN(price) as min_price, category_mappings.category_id')
-//            ->join('category_mappings', fn($join) => $join
-//                ->on('products.id', '=', 'category_mappings.categorized_id')
-//                ->where('category_mappings.categorized_type', Product::class)
-//            )
-//            ->whereNull('products.parent_id')
-//            ->whereIn('category_mappings.category_id', $allRelevantCategoryIds)
-//            ->groupBy('category_mappings.category_id')
-//            ->pluck('min_price', 'category_mappings.category_id');
-
-
-
-
-
-        $lowestPrices =  DB::table('products')
+        $lowestPrices = DB::table('products')
             ->join('category_mappings', function ($join) {
                 $join->on('products.id', '=', 'category_mappings.categorized_id')
                     ->where('category_mappings.categorized_type', Product::class);
             })
             ->join('product_tiers', 'products.id', '=', 'product_tiers.product_id')
             ->where('products.status', PublishableStatusCast::PUBLISHED->value)
-            //->where('products.parent_id', null)
             ->whereIn('category_mappings.category_id', $allRelevantCategoryIds)
             ->where('product_tiers.in_stock', true)
             ->selectRaw('MIN(product_tiers.price) as min_price, category_mappings.category_id')
             ->groupBy('category_mappings.category_id')
             ->pluck('min_price', 'category_mappings.category_id');
-
-
-
 
         $response = $parentCategories
             ->map(function ($parent) use ($childToAllCategoryIds, $lowestPrices) {
@@ -116,19 +94,13 @@ class CategoryController extends Controller
                     ]
                     : null;
             })
-            ->filter() // Remove parents without any valid children
-            ->values(); // Re-index array
+            ->filter()
+            ->values();
 
         return response()->json($response);
     }
 
-
-
-
-
-
-
-
+    // UPDATED: apply filters/price/offer/in_stock/sort to "All Products"
     public function show(Request $request, Category $category): CategoryResource
     {
         $category->load([
@@ -137,31 +109,105 @@ class CategoryController extends Controller
             'children.media',
         ]);
 
-        // Get all related category IDs (self + descendants)
+        // All related category IDs (self + descendants)
         $categoryIds = $category->descendants->pluck('id')->push($category->id);
 
-        // Base product query builder (closure to reuse with modifications)
-        $baseProductQuery = function () use ($categoryIds) {
-            return Product::whereNull('parent_id')
-                ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
-                ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')]);
-        };
+        // Base query (only published parents in tree)
+        $query = Product::query()
+            ->whereNull('parent_id')
+            ->where('status', PublishableStatusCast::PUBLISHED->value)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')]);
 
-        // Top viewed products (max 20)
-        $topProducts = (clone $baseProductQuery())
+        // filters[FilterName][]=OptionValue (AND across filters, OR within values)
+        $filters = $request->input('filters', []);
+        if (is_array($filters)) {
+            foreach ($filters as $filterName => $values) {
+                $values = array_values(array_filter((array) $values, fn($v) => $v !== null && $v !== ''));
+                if (count($values) > 0) {
+                    $query->whereHas('filterOptions', function ($fo) use ($filterName, $values) {
+                        $fo->whereHas('filter', fn($f) => $f->where('name', $filterName))
+                            ->whereIn('value', $values);
+                    });
+                }
+            }
+        }
+
+        // price[min], price[max] on products.price (adjust if tier-based pricing is required)
+        $price = $request->input('price', []);
+        if (is_array($price)) {
+            if (isset($price['min']) && $price['min'] !== '') {
+                $query->where('price', '>=', (float)$price['min']);
+            }
+            if (isset($price['max']) && $price['max'] !== '') {
+                $query->where('price', '<=', (float)$price['max']);
+            }
+        }
+
+        // offer=1 => products that currently have sales started
+        if ($request->boolean('offer')) {
+            $query->whereHas('sales', fn($s) => $s->whereDate('starts_from', '<=', now()));
+        }
+
+        // in_stock=1 => products that have at least one in-stock tier
+        if ($request->boolean('in_stock')) {
+            $query->whereHas('tiers', fn($t) => $t->where('in_stock', true));
+        }
+
+        // Sorting
+        $sort = $request->input('sort', []);
+        $column = 'created_at';
+        $direction = 'desc';
+        if (is_array($sort) && !empty($sort)) {
+            $key = array_key_first($sort);
+            $dir = strtolower((string)($sort[$key] ?? 'desc'));
+            $direction = in_array($dir, ['asc', 'desc'], true) ? $dir : 'desc';
+
+            switch ($key) {
+                case 'popularity':
+                    $column = 'view_count';
+                    break;
+                case 'latest':
+                    $column = 'created_at';
+                    $direction = 'desc';
+                    break;
+                case 'pricelow2high':
+                    $column = 'price';
+                    $direction = 'asc';
+                    break;
+                case 'pricehigh2low':
+                    $column = 'price';
+                    $direction = 'desc';
+                    break;
+                default:
+                    $column = 'created_at';
+                    $direction = 'desc';
+            }
+        }
+
+        // Top viewed (unchanged / not filtered)
+        $topProducts = Product::query()
+            ->whereNull('parent_id')
+            ->where('status', PublishableStatusCast::PUBLISHED->value)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')])
             ->orderBy('view_count', 'desc')
             ->take(20)
             ->get();
 
-        // Latest products (max 20)
-        $latestProducts = (clone $baseProductQuery())
+        // Latest (unchanged / not filtered)
+        $latestProducts = Product::query()
+            ->whereNull('parent_id')
+            ->where('status', PublishableStatusCast::PUBLISHED->value)
+            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')])
             ->orderBy('created_at', 'desc')
             ->take(20)
             ->get();
 
-        // All products (paginated, 12 per page)
-        $allProducts = (clone $baseProductQuery())
-            ->orderBy('created_at', 'desc') // Optional: default sort
+        // All products with filters and sorting
+        $allProducts = (clone $query)
+            ->orderBy($column, $direction)
             ->paginate(15);
 
         return (new CategoryResource($category))->additional([
@@ -176,8 +222,4 @@ class CategoryController extends Controller
             ],
         ]);
     }
-
-
-
-
 }

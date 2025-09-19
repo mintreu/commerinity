@@ -2,13 +2,13 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
-use App\Filament\Common\Schema\AdjacencySchema\HasAdjacencyTableSchema;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
+use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyTableSchema;
 
 class ListCategories extends ListRecords
 {

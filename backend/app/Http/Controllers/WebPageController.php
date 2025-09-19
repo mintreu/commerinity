@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Page;
+use Mintreu\LaravelPenpress\Models\Page;
 
 class WebPageController extends Controller
 {

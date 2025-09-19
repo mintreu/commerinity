@@ -156,16 +156,29 @@ export const useCart = () => {
 
     async function applyCoupon(code: string) {
         try {
+            await validateOrInitGuest()
+            const safe = encodeURIComponent(String(code ?? '').trim())
+            if (!safe) return { success: false, error: 'Coupon required' }
+
             const res = await useSanctumFetch(
-                `${config.public.apiBase}/cart/coupon/${code}`,
+                `${config.public.apiBase}/cart/coupon/${safe}`,
                 {
                     method: 'POST',
-                    headers: getGuestHeaders()
+                    headers: getGuestHeaders(),
                 }
             )
-            cartData.value = res?.data || cartData.value
+
+            // Backend returns { success: boolean, errors: string|null } -> do NOT assign to cartData
+            const ok = !!res?.data?.success
+            if (ok) {
+                await fetchCart() // refresh cart totals/summary after applying coupon
+                return { success: true }
+            }
+
+            return { success: false, error: res?.data?.errors || 'Invalid or expired coupon' }
         } catch (e) {
             console.error('[Cart] Coupon error', e)
+            return { success: false, error: 'Failed to apply coupon' }
         }
     }
 

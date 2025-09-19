@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Naukri\NaukriApplicaitonResource;
-use App\Models\NaukriApplication;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 
 class JobApplicationController extends Controller
 {

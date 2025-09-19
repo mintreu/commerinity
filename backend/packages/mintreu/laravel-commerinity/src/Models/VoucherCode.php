@@ -33,6 +33,11 @@ class VoucherCode extends Model
         'ends_till' => 'date',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'code';
+    }
+
     public function voucher(): BelongsTo
     {
         return $this->belongsTo(Voucher::class);
@@ -44,17 +49,33 @@ class VoucherCode extends Model
         return $this->hasMany(Order::class, 'voucher_code', 'code');
     }
 
+
     public function usages()
     {
-        return $this->morphToMany(
-            related: config('auth.providers.users.model'), // configurable
+        return $this->morphedByMany(
+            related: config('auth.providers.users.model'), // your User model
             name: 'userable',
-            table: 'voucher_code_usages'
+            table: 'voucher_code_usages',
+            foreignPivotKey: 'voucher_code_id',
+            relatedPivotKey: 'userable_id'
         )
-            ->using(VoucherCodeUsage::class) // custom pivot
             ->withPivot('times_used')
             ->withTimestamps();
     }
+
+
+
+//    public function usages()
+//    {
+//        return $this->morphToMany(
+//            related: config('auth.providers.users.model'), // configurable
+//            name: 'userable',
+//            table: 'voucher_code_usages'
+//        )
+//            ->using(VoucherCodeUsage::class) // custom pivot
+//            ->withPivot('times_used')
+//            ->withTimestamps();
+//    }
 
     public function usageByUser(Model $user): int
     {

@@ -4,6 +4,9 @@ namespace Mintreu\LaravelTransaction;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource;
+use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource;
+use Mintreu\LaravelTransaction\Filament\Resources\WalletResource;
 
 class LaravelTransactionPlugin implements Plugin
 {
@@ -14,7 +17,11 @@ class LaravelTransactionPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->resources([
+           WalletResource::class,
+           TransactionResource::class,
+            BeneficiaryAccountResource::class
+        ]);
     }
 
     public function boot(Panel $panel): void

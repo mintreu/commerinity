@@ -2,8 +2,8 @@
 
 namespace App\Services\RecruitmentService;
 
-use App\Casts\NaukriApplicationStatusCast;
-use App\Models\NaukriApplication;
+use Mintreu\LaravelNaukriManager\Casts\NaukriApplicationStatusCast;
+use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Mintreu\LaravelTransaction\Models\Transaction;
 
 class RecruitmentConfirmationService

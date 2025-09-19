@@ -2,12 +2,9 @@
 
 namespace App\Services\RecruitmentService;
 
-use App\Models\Naukri;
-use App\Models\NaukriApplication;
 use App\Models\User;
-use Mintreu\LaravelIntegration\LaravelIntegration;
-use Mintreu\LaravelMoney\LaravelMoney;
-use Mintreu\LaravelTransaction\Casts\TransactionTypeCast;
+use Mintreu\LaravelNaukriManager\Models\Naukri;
+use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Mintreu\LaravelTransaction\Models\Transaction;
 
 class RecruitmentApplicationCreationService

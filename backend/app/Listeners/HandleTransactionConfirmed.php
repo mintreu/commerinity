@@ -4,11 +4,11 @@ namespace App\Listeners;
 
 
 use App\Models\Lifecycle\UserSubscription;
-use App\Models\NaukriApplication;
 use App\Models\Order\Order;
 use App\Services\OrderService\OrderConfirmService;
 use App\Services\RecruitmentService\RecruitmentConfirmationService;
 use App\Services\UserServices\MembershipSubscriptionService;
+use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Mintreu\LaravelTransaction\Events\TransactionConfirmed;
 
 class HandleTransactionConfirmed

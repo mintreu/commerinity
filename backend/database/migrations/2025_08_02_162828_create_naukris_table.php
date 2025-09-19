@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('role')->nullable(); // eg: engineer, design,
 
             $table->string('location')->nullable();
-            $table->string('employment_type')->default(\App\Casts\NaukriEmploymentTypeCast::INTERNSHIP->value);   //eg: 'Full-time', 'Part-time', 'Contract
+            $table->string('employment_type')->default(\Mintreu\LaravelNaukriManager\Casts\NaukriEmploymentTypeCast::INTERNSHIP->value);   //eg: 'Full-time', 'Part-time', 'Contract
 
             $table->integer('vacancy')->default(1);
             $table->date('open_date')->nullable();

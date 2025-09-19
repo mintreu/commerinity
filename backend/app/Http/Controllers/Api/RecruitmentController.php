@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Casts\NaukriApplicationStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruitment\ApplyRecruitmentRequest;
-use App\Http\Resources\Naukri\NaukriApplicaitonResource;
 use App\Http\Resources\Naukri\NaukriIndexResource;
 use App\Http\Resources\Naukri\NaukriResource;
-use App\Models\Naukri;
-use App\Models\NaukriApplication;
 use App\Services\RecruitmentService\RecruitmentApplicationCreationService;
 use App\Services\UserServices\ApplicationFeesService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Mintreu\LaravelNaukriManager\Casts\NaukriApplicationStatusCast;
+use Mintreu\LaravelNaukriManager\Models\Naukri;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class RecruitmentController extends Controller

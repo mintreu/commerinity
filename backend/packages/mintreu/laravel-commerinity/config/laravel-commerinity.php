@@ -80,4 +80,28 @@ return [
         ],
     ],
 
+
+
+
+
+    // New: cart configuration (read by CartService)
+    'cart' => [
+        'guest' => [
+            'header_id'          => 'x-guest-id',
+            'header_token'       => 'x-guest-token',
+            'token_cache_prefix' => 'guest_cart_token_',
+            // Token TTL (read as seconds in capture(); friendly days used by ensureGuestCredential)
+            'token_ttl_seconds'  => 60 * 60 * 24 * 7, // 7 days
+            'token_ttl_days'     => 15,
+        ],
+        'coupon' => [
+            'session_key' => 'cart.coupon', // applied coupon session key
+            'ttl_minutes' => 0,              // 0 = persist for session lifetime
+        ],
+        'limits' => [
+            'max_per_order_default' => 1,    // fallback if model doesn't define max_quantity
+        ],
+    ],
+
+
 ];

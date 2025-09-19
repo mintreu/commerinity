@@ -61,7 +61,7 @@
                   class="input flex-grow bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 p-2"
               />
               <button
-                  @click="applyCoupon"
+                  @click="onApplyCoupon"
                   class="bg-green-600 dark:bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
               >
                 Apply
@@ -373,6 +373,23 @@ async function fetchUserAddress() {
     toast.error({title: 'Error', message: '❌ Failed fetching addresses', timeout: 3000, position: 'topRight'})
   }
 }
+
+
+const onApplyCoupon = async () => {
+  const code = couponCode.value.trim()
+  if (!code) {
+    toast.error({ title: 'Coupon', message: 'Enter a coupon code', timeout: 2500 })
+    return
+  }
+  const { success, error } = await applyCoupon(code)
+  if (success) {
+    toast.success({ title: 'Coupon', message: 'Applied successfully', timeout: 2000 })
+    // cartData is already refreshed by the composable
+  } else {
+    toast.error({ title: 'Coupon', message: error || 'Invalid or expired coupon', timeout: 3000 })
+  }
+}
+
 
 // function onAddressSelect(type: 'billing' | 'shipping', uuid: string) {
 //   const addr = userAddresses.value.find(a => a.uuid === uuid)

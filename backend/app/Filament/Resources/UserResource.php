@@ -15,6 +15,7 @@ class UserResource extends Resource
     protected static ?string $recordRouteKeyName = 'referral_code';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Peoples';
 
     public static function form(Form $form): Form
     {

@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\NaukriApplication>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Mintreu\LaravelNaukriManager\Models\NaukriApplication>
  */
 class NaukriApplicationFactory extends Factory
 {
