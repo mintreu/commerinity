@@ -6,7 +6,7 @@
         class="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition"
     >
 
-      <NuxtImg :src="user.avatar" loading="lazy" class="w-8 h-8 rounded-full" :alt="user.name" />
+      <img :src="user.avatar" loading="lazy" class="w-8 h-8 rounded-full" :alt="user.name" />
       <span class="hidden sm:block font-medium text-sm text-gray-800 dark:text-white">
         {{ user.name }}
       </span>

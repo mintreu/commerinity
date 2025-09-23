@@ -2,23 +2,100 @@
   <div class="min-h-screen bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100 py-8 px-4 md:px-12">
     <GlobalLoader v-if="isLoading" />
 
-    <section v-else-if="error" class="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
-      <div class="text-red-600 dark:text-red-400 text-6xl mb-4">
-        <Icon name="mdi:alert-circle-outline" />
+    <section v-else-if="error" class="flex flex-col items-center justify-center min-h-[60vh] px-6">
+      <div class="max-w-md mx-auto text-center">
+
+        <!-- Error Icon with Animation -->
+        <div class="relative mb-8">
+          <div class="w-24 h-24 mx-auto bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-full flex items-center justify-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center animate-pulse">
+              <Icon name="mdi:store-alert" class="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <!-- Floating Elements -->
+          <div class="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full animate-bounce"></div>
+          <div class="absolute -bottom-1 -left-1 w-3 h-3 bg-orange-400 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="mb-8">
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
+            Oops! Something went wrong
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+            We're having trouble loading this page right now. Don't worry, it's not you - it's us!
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-500">
+            Our team has been notified and we're working to fix this issue.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-4">
+          <!-- Primary Action -->
+          <button
+              @click="refresh()"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+          >
+            <Icon name="mdi:refresh" class="w-4 h-4" />
+            Try Again
+          </button>
+
+          <!-- Secondary Actions -->
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <NuxtLink
+                to="/"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <Icon name="mdi:home" class="w-4 h-4" />
+              Go Home
+            </NuxtLink>
+
+            <NuxtLink
+                to="/categories"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+            >
+              <Icon name="mdi:view-grid" class="w-4 h-4" />
+              Browse Categories
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+            <a
+                href="/contact"
+                class="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              <Icon name="mdi:headset" class="w-4 h-4" />
+              Contact Support
+            </a>
+            <a
+                href="/help"
+                class="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              <Icon name="mdi:help-circle" class="w-4 h-4" />
+              Help Center
+            </a>
+          </div>
+
+          <!-- Status Indicator -->
+          <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            All systems operational • We're on it!
+          </div>
+        </div>
+
       </div>
-      <h2 class="text-2xl font-bold mb-2 text-red-700 dark:text-red-300">Category Unavailable</h2>
-      <p class="text-sm text-gray-600 dark:text-gray-300 max-w-md mx-auto mb-4">
-        We couldn’t load this category at the moment, please try again later.
-      </p>
-      <p class="text-xs text-gray-500 dark:text-gray-400 mb-6">
-        <strong>Error:</strong> {{ (error as any)?.message || 'Unknown error' }}
-      </p>
-      <NuxtLink to="/category">
-        <button class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow">
-          Browse Other Categories
-        </button>
-      </NuxtLink>
+
+      <!-- Background Decoration -->
+      <div class="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-30"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-purple-100 dark:bg-purple-900/20 rounded-full blur-3xl opacity-30"></div>
+      </div>
     </section>
+
 
     <template v-else>
       <!-- Banner -->

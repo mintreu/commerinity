@@ -1,15 +1,11 @@
 <script setup lang="ts">
-
-import Products from "~/pages/store/products.vue";
+definePageMeta({
+  middleware: () => {
+    return navigateTo('/store')
+  }
+})
 </script>
 
 <template>
-  <div class="mt-16">
-    <h1> All Produts</h1>
-  </div>
-
+  <!-- nothing needed, user will be redirected -->
 </template>
-
-<style scoped>
-
-</style>
