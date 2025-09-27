@@ -54,7 +54,7 @@ class Transaction extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'amount'        => LaravelMoneyCast::class,
+       // 'amount'        => LaravelMoneyCast::class,
         'verified'      => 'boolean',
         'metadata'      => 'array',
         'type'          => TransactionTypeCast::class,

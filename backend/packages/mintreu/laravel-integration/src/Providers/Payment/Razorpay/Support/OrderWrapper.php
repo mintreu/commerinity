@@ -31,15 +31,36 @@ class OrderWrapper
         return $this->orderData instanceof ProviderOrder ? $this->orderSchema() : $this->orderData;
     }
 
+//    private function orderSchema(): array
+//    {
+//        return [
+//            'currency' => $this->orderData->getCurrency(),
+//            'amount'   => $this->orderData->getAmount(),
+//            'receipt'  => $this->orderData->getReceipt(),
+//            'notes'    => $this->orderData->getNotes()
+//        ];
+//    }
+
+
+
     private function orderSchema(): array
     {
+        $amount = $this->orderData->getAmount();
+
+        // agar float/decimal hua toh round karke integer banao
+        if (!is_int($amount)) {
+            $amount = (int) round($amount * 100); // Razorpay ke liye paise/cents
+        }
+
         return [
             'currency' => $this->orderData->getCurrency(),
-            'amount'   => $this->orderData->getAmount(),
+            'amount'   => $amount,
             'receipt'  => $this->orderData->getReceipt(),
-            'notes'    => $this->orderData->getNotes()
+            'notes'    => $this->orderData->getNotes(),
         ];
     }
+
+
 
 
 }

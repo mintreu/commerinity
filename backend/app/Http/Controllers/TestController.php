@@ -26,16 +26,16 @@ class TestController extends Controller
     {
 
 
-       $newProductData = Product::factory()->raw();
-
-       $newProduct = ProductCreationService::make($newProductData)->create();
-
-       // Update
-        $updateService = ProductUpdateService::make($newProduct)->update([
-
-        ]);
-
-
+//       $newProductData = Product::factory()->raw();
+//
+//       $newProduct = ProductCreationService::make($newProductData)->create();
+//
+//       // Update
+//        $updateService = ProductUpdateService::make($newProduct)->update([
+//
+//        ]);
+//
+//
 
 
 
@@ -50,8 +50,20 @@ class TestController extends Controller
 
 //        dd( config('laravel-store.sales'));
 //
-//        $user = User::firstWhere('email','applicant@example.com');
-//
+        $user = User::firstWhere('email','applicant@example.com');
+
+        dd(LaravelIntegration::payment('razorpay-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
+            $order
+                ->currency('INR')
+                ->amount(10.34)
+                ->customer($user)
+                ->receipt('asfd'.Str::random(3))
+                ->successUrl(url('/payment/confirm'))
+                ->failureUrl(url('/payment/failure'))
+                ->expireAfter(20)
+                ->notes([]);
+        }));
+
 //        dd(LaravelIntegration::payment('cash-free-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
 //            $order
 //                ->currency('INR')
@@ -78,12 +90,12 @@ class TestController extends Controller
 //       // dd(LaravelIntegration::payment()->getModel());
 //
 //        // Note: LaravelIntegration  er vitar payment , payout, sms, shipping, booking sob alada alada provider ache
-//        $orderData = LaravelIntegration::payment()->order()->create([
-//            'receipt' => '123', 'amount' => 100, 'currency' => 'INR',
-//            'notes'=> array('key1'=> 'value3','key2'=> 'value2')
-//        ]);
-////        dd($orderData);
-//
+        $orderData = LaravelIntegration::payment()->order()->create([
+            'receipt' => '123', 'amount' => 100, 'currency' => 'INR',
+            'notes'=> array('key1'=> 'value3','key2'=> 'value2')
+        ]);
+        dd($orderData);
+
 //
 //
 //

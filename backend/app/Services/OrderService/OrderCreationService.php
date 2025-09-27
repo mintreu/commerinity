@@ -116,7 +116,7 @@ class OrderCreationService
             $this->setError('no product found for order');
         }
 
-        dd($this);
+
 
 
         $this->attachProductsToOrderProducts();
