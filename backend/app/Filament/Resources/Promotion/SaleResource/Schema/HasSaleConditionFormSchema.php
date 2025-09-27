@@ -34,7 +34,14 @@ trait HasSaleConditionFormSchema
                             Forms\Components\Select::make('attribute')
                                 ->label(__('Choose Attribute'))
                                 ->options([])
-                                ->options(fn() =>$this->conditions->pluck('label', 'key')->toArray())
+                                //->options(fn() =>$this->conditions?->pluck('label', 'key')->toArray())
+                                ->options(function (){
+                                    if ($this->conditions)
+                                    {
+                                        return $this->conditions->pluck('label', 'key')->toArray();
+                                    }
+                                    return [];
+                                })
                                 ->placeholder(__('Select an attribute'))
                                 ->columnSpan(function ($state) {
                                     return empty($state) ? 3 : 1;

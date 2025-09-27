@@ -62,6 +62,7 @@ class ProductCreationService
             'status' =>  $this->data['status'] ?? PublishableStatusCast::DRAFT,
             'type' => $case->value,
             'filter_group_id' => $this->data['filter_group_id'],
+            'min_quantity' => $this->data['min_quantity'] ?? 1,
         ]));
 
 

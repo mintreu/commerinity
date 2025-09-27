@@ -16,24 +16,29 @@ class HelpDeskTicketSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::find(1);
+        $user = User::first();
+        if (! $user) {
+            $user = User::factory()->create();
+        }
         $topic = HelpdeskTopic::where('tickable',true)->first();
 
-        $user->tickets()->create([
-            'title' => fake()->text,
-            'description'   => fake()->realText,
-            'topic_id'  => $topic->id,
-            'priority'  => HelpdeskPriorityCast::MEDIUM,
-            'status' => HelpdeskStatusCast::OPEN,
-        ]);
+        if($topic) {
+            $user->tickets()->create([
+                'title' => fake()->text,
+                'description'   => fake()->realText,
+                'topic_id'  => $topic->id,
+                'priority'  => HelpdeskPriorityCast::MEDIUM,
+                'status' => HelpdeskStatusCast::OPEN,
+            ]);
 
-        $user->tickets()->create([
-            'title' => fake()->text,
-            'description'   => fake()->realText,
-            'topic_id'  => $topic->id,
-            'priority'  => HelpdeskPriorityCast::HIGH,
-            'status' => HelpdeskStatusCast::OPEN,
-        ]);
+            $user->tickets()->create([
+                'title' => fake()->text,
+                'description'   => fake()->realText,
+                'topic_id'  => $topic->id,
+                'priority'  => HelpdeskPriorityCast::HIGH,
+                'status' => HelpdeskStatusCast::OPEN,
+            ]);
+        }
 
     }
 }

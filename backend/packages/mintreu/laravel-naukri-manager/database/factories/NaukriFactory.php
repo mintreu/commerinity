@@ -1,10 +1,11 @@
 <?php
 
-namespace Database\Factories;
+namespace Mintreu\LaravelNaukriManager\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Mintreu\LaravelNaukriManager\Casts\NaukriEmploymentTypeCast;
+use Mintreu\LaravelNaukriManager\Models\Naukri;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 /**
@@ -12,6 +13,8 @@ use Mintreu\Toolkit\Casts\PublishableStatusCast;
  */
 class NaukriFactory extends Factory
 {
+
+    protected $model = Naukri::class;
     /**
      * Define the model's default state.
      *

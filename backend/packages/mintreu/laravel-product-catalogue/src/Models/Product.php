@@ -3,6 +3,7 @@
 namespace Mintreu\LaravelProductCatalogue\Models;
 
 
+use App\Models\ProductEngagement;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,7 +79,7 @@ class Product extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('displayImage')
-            //->useFallbackUrl('https://placehold.co/600x400?text=Display\nImage')
+            ->useFallbackUrl('https://placehold.co/800x300?text=Image\nNot Found')
         ;
         $this->addMediaCollection('bannerImage')
             //->useFallbackUrl('https://placehold.co/600x400?text=Banner\nImage')
@@ -95,7 +96,7 @@ class Product extends Model implements HasMedia
 
     public function filterOptions(): BelongsToMany
     {
-        return $this->belongsToMany(FilterOption::class, 'product_filter_options', 'product_id', 'filter_option_id');
+        return $this->belongsToMany(FilterOption::class, 'product_filter_options', 'product_id', 'filter_option_id')->withPivot('filter_id');
     }
 
     /**
@@ -169,6 +170,12 @@ class Product extends Model implements HasMedia
         }
 
         return $query->whereHas('sales');
+    }
+
+
+    public function engagement()
+    {
+        return $this->hasMany(ProductEngagement::class,'product_id');
     }
 
 

@@ -21,7 +21,8 @@ class SaleResource extends JsonResource
             'description'   => $this->description,
             'discount'  => in_array($this->action_type,['to_fixed','by_fixed']) ?  LaravelMoney::format($this->discount_amount) : $this->discount_amount,
             'condition' => $this->conditions,
-            'discount_type' => $this->action_type
+            'discount_type' => $this->action_type,
+            'products' => SaleProductResource::collection($this->whenLoaded('sale_products'))
         ];
     }
 

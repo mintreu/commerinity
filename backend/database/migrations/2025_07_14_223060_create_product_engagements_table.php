@@ -24,7 +24,8 @@ return new class extends Migration
 
             $table->unsignedTinyInteger('rating')->nullable(); // 1-5
             $table->text('review')->nullable();
-            $table->boolean('wishlisted')->default(false);
+
+            $table->integer('helpful_votes')->default(0);
 
             $table->timestamps();
 

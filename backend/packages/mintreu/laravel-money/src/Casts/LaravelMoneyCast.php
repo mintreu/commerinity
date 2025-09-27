@@ -25,6 +25,7 @@ class LaravelMoneyCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
+        return $value;
         // Transform the float into an integer for storage.
         return round(floatval($value) * 100);
     }

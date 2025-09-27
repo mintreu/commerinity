@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Helpers\OtpManager;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\UserIndexResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
 class UserAccountController extends Controller
@@ -77,7 +79,9 @@ class UserAccountController extends Controller
         $user->save();
 
         return response()->json([
-            'message' => 'Password updated successfully.'
+            'success' => true,
+            'message' => 'Password updated successfully.',
+            'user'    => UserIndexResource::make($user->fresh()),
         ]);
     }
 
@@ -108,8 +112,9 @@ class UserAccountController extends Controller
             OtpManager::make()->destroyOtp($credential, true);
 
             return response()->json([
+                'success' => true,
                 'message' => ucfirst($validated['type']) . ' updated successfully.',
-                'user'    => $user->fresh(),
+                'user'    => UserIndexResource::make($user->fresh()),
             ]);
         }
 
@@ -124,7 +129,90 @@ class UserAccountController extends Controller
 
 
 
+    /**
+     * Export user data to email
+     */
+    public function exportData(Request $request)
+    {
+        $user = $request->user();
 
+        // Check if user has verified email
+        if (!$user->email || !$user->email_verified_at) {
+            return response()->json([
+                'message' => 'A verified email address is required to export your data.'
+            ], 422);
+        }
+
+        try {
+            // Dispatch job to generate and email the data export
+            ExportUserDataJob::dispatch($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data export initiated successfully. You will receive an email with your data within 5-10 minutes.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to initiate data export. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete user account with OTP verification
+     */
+    public function deleteAccount(Request $request)
+    {
+        $validated = $request->validate([
+            'mobile' => 'required|string|max:10',
+            'otp'    => 'required|string|size:6',
+        ]);
+
+        $user = $request->user();
+
+        // Verify mobile number matches
+        if ($user->mobile !== $validated['mobile']) {
+            return response()->json([
+                'message' => 'Mobile number does not match your account.'
+            ], 422);
+        }
+
+        // Validate OTP
+        $isValid = OtpManager::make()->validateDemoOtp($validated['mobile'], $validated['otp']);
+
+        if (!$isValid) {
+            return response()->json([
+                'message' => 'Invalid OTP. Please try again.'
+            ], 422);
+        }
+
+        try {
+            // Clean up OTP
+            OtpManager::make()->destroyOtp($validated['mobile'], true);
+
+            // Log the deletion for compliance
+             Log::info('Account deletion initiated', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'user_mobile' => $user->mobile,
+                'deleted_at' => now(),
+            ]);
+
+            // Delete user account
+            // Note: Consider soft deletion for compliance requirements
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Your account has been permanently deleted.',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete account. Please try again.'
+            ], 500);
+        }
+    }
 
 
 }

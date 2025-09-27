@@ -26,7 +26,7 @@ class Kyc extends Model implements HasMedia
         'pan',
         'aadhaar',
         'utility_bills',
-        'kyc',
+
         'kycable_type',
         'kycable_id',
     ];

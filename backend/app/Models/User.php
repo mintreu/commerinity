@@ -11,6 +11,7 @@ use App\Models\Traits\Cart\HasCartOwner;
 use App\Models\Traits\HasKyc;
 use App\Models\Traits\HasLifecycle;
 use App\Models\Traits\HasOrder;
+use App\Models\Traits\HasProductEngagement;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -45,7 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
         HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,
-        HasSupportTicket,HasWallet,HasBeneficiary,HasVoucherAccess;
+        HasSupportTicket,HasWallet,HasBeneficiary,HasVoucherAccess,HasProductEngagement;
 
     /**
      * The attributes that are mass assignable.

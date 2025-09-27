@@ -32,7 +32,7 @@ class Cart extends CartService
             $this->cartItems->loadMissing('cartable.media');
         }
 
-        $this->prepareMeta($formatted);
+       // $this->prepareMeta($formatted);
 
 
         return [

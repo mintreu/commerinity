@@ -19,12 +19,12 @@ class ProductEngagement extends Model
         'authorable_type',
         'rating',
         'review',
-        'wishlisted',
+        'helpful_votes',
     ];
 
     protected $casts = [
-        'wishlisted' => 'boolean',
         'rating' => 'integer',
+        'helpful_votes' => 'integer',
     ];
 
     public function authorable(): MorphTo
@@ -34,7 +34,7 @@ class ProductEngagement extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class,'product_id');
     }
 
     public function scopeTopLevel(Builder $query): Builder

@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\LaravelNaukriManager\Casts\NaukriEmploymentTypeCast;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
+use Mintreu\Toolkit\Traits\HasPackageModelFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Naukri extends Model  implements  HasMedia
 {
-    /** @use HasFactory<\Database\Factories\NaukriFactory> */
-    use HasFactory,InteractsWithMedia;
+    /** @use HasFactory<\Mintreu\LaravelNaukriManager\Database\Factories\NaukriFactory> */
+    use HasPackageModelFactory,InteractsWithMedia;
 
 
     protected $fillable = [

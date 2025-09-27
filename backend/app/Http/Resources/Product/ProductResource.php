@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mintreu\LaravelMoney\LaravelMoney;
 
-class ProductResource extends JsonResource
+class ProductResource extends ProductIndexResource
 {
     /**
      * Transform the resource into an array.
@@ -20,19 +20,13 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'name' => $this->name,
-            'url' => $this->url,
-            'sku' => $this->sku,
+        return array_merge(parent::toArray($request),[
+
             'type' => $this->type->getLabel(),
             'hasParent' => !is_null($this->parent_id),
-            'price' => LaravelMoney::format($this->price),
             'short_description' => $this->short_description,
             'description' => $this->description,
             'reward_point' => $this->reward_point,
-            'returnable' => $this->is_returnable,
-            'min_quantity' => $this->min_quantity,
-            'max_quantity' => $this->max_quantity,
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),
             'banner' => $this->getMedia('bannerImage')->map(fn($media) => $media->getFullUrl()),
             'meta' => $this->meta_data,
@@ -47,7 +41,7 @@ class ProductResource extends JsonResource
             'tiers' => $this->resourceCollectionWhenLoadedAndNotEmpty('tiers', ProductTireResource::class),
             'sales' => $this->resourceCollectionWhenLoadedAndNotEmpty('sales', SaleProductResource::class),
 
-        ];
+        ]);
     }
 
 

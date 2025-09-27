@@ -1,401 +1,731 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100 py-8 px-4 md:px-12">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 overflow-x-hidden">
+
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">
+      <div ref="orb1" class="category-orb-1 absolute top-20 left-20 w-80 h-80 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 blur-3xl will-change-transform"></div>
+      <div ref="orb2" class="category-orb-2 absolute bottom-20 right-20 w-72 h-72 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-15 blur-3xl will-change-transform"></div>
+      <div ref="orb3" class="category-orb-3 absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-10 blur-2xl will-change-transform"></div>
+
+      <!-- Shopping Particles -->
+      <div class="category-particles">
+        <div v-for="(particle, index) in particles" :key="`particle-${index}`"
+             class="particle absolute rounded-full opacity-60 animate-bounce will-change-transform"
+             :class="particle.class"
+             :style="particle.style">
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Loader -->
     <GlobalLoader v-if="isLoading" />
 
-    <section v-else-if="error" class="flex flex-col items-center justify-center min-h-[60vh] px-6">
-      <div class="max-w-md mx-auto text-center">
-
-        <!-- Error Icon with Animation -->
-        <div class="relative mb-8">
-          <div class="w-24 h-24 mx-auto bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-full flex items-center justify-center">
+    <!-- Error State -->
+    <section v-else-if="error" class="flex flex-col items-center justify-center min-h-[80vh] px-6 relative z-10">
+      <div class="max-w-lg mx-auto text-center">
+        <!-- Enhanced Error Icon -->
+        <div class="error-icon-container relative mb-8">
+          <div class="w-24 h-24 mx-auto bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-full flex items-center justify-center shadow-2xl">
             <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center animate-pulse">
               <Icon name="mdi:store-alert" class="w-8 h-8 text-white" />
             </div>
           </div>
-          <!-- Floating Elements -->
+          <!-- Animated Elements -->
           <div class="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full animate-bounce"></div>
           <div class="absolute -bottom-1 -left-1 w-3 h-3 bg-orange-400 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
         </div>
 
-        <!-- Error Message -->
-        <div class="mb-8">
-          <h2 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
-            Oops! Something went wrong
+        <!-- Error Content -->
+        <div class="error-content bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/50 dark:border-gray-700/50">
+          <h2 class="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mb-4">
+            Category Not Found
           </h2>
-          <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-            We're having trouble loading this page right now. Don't worry, it's not you - it's us!
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+            We couldn't find this category. It might have been moved or doesn't exist anymore.
           </p>
-          <p class="text-sm text-gray-500 dark:text-gray-500">
-            Our team has been notified and we're working to fix this issue.
-          </p>
-        </div>
 
-        <!-- Action Buttons -->
-        <div class="space-y-4">
-          <!-- Primary Action -->
-          <button
-              @click="refresh()"
-              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-          >
-            <Icon name="mdi:refresh" class="w-4 h-4" />
-            Try Again
-          </button>
-
-          <!-- Secondary Actions -->
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <NuxtLink
-                to="/"
-                class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+                @click="refresh()"
+                class="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 group"
             >
-              <Icon name="mdi:home" class="w-4 h-4" />
-              Go Home
-            </NuxtLink>
+              <Icon name="mdi:refresh" class="inline w-5 h-5 mr-3 group-hover:animate-spin" />
+              Try Again
+            </button>
 
             <NuxtLink
-                to="/categories"
-                class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                to="/store"
+                class="px-8 py-4 bg-white/10 backdrop-blur-md text-blue-600 dark:text-blue-400 font-bold rounded-2xl border-2 border-blue-200 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 transform hover:scale-105 group"
             >
-              <Icon name="mdi:view-grid" class="w-4 h-4" />
-              Browse Categories
+              <Icon name="mdi:store" class="inline w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+              Browse Store
             </NuxtLink>
           </div>
         </div>
-
-        <!-- Help Section -->
-        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-center gap-6 text-sm text-gray-500 dark:text-gray-400">
-            <a
-                href="/contact"
-                class="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              <Icon name="mdi:headset" class="w-4 h-4" />
-              Contact Support
-            </a>
-            <a
-                href="/help"
-                class="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              <Icon name="mdi:help-circle" class="w-4 h-4" />
-              Help Center
-            </a>
-          </div>
-
-          <!-- Status Indicator -->
-          <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            All systems operational • We're on it!
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Background Decoration -->
-      <div class="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-3xl opacity-30"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-purple-100 dark:bg-purple-900/20 rounded-full blur-3xl opacity-30"></div>
       </div>
     </section>
 
-
+    <!-- Main Content -->
     <template v-else>
-      <!-- Banner -->
-      <section class="text-center mb-6">
-        <div
-            class="relative py-16 px-6 bg-center bg-cover bg-no-repeat rounded-xl overflow-hidden h-96"
-            :style="category.banner ? `background-image: url(${category.banner})` : ''"
-        >
-          <div class="absolute inset-0 bg-black/30"></div>
-          <div class="relative z-10">
-            <div class="inline-block mb-4">
-              <img :src="category.thumbnail" alt="Thumbnail" class="w-32 h-32 rounded-full object-cover mx-auto border-4 border-white shadow" />
+      <!-- Enhanced Hero Banner -->
+      <section class="hero-banner relative overflow-hidden mb-12">
+        <div class="relative h-96 lg:h-[500px]">
+          <!-- Background Image with Overlay -->
+          <div
+              class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              :style="category.banner ? `background-image: url(${category.banner})` : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)'"
+          >
+            <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60"></div>
+          </div>
+
+          <!-- Hero Content -->
+          <div class="hero-content relative z-10 h-full flex items-center justify-center px-6">
+            <div class="text-center text-white max-w-4xl mx-auto">
+              <!-- Category Icon/Thumbnail -->
+              <div class="category-icon-container mb-8">
+                <div class="relative inline-block">
+                  <div class="w-32 h-32 lg:w-40 lg:h-40 mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm">
+                    <img
+                        :src="category.thumbnail"
+                        :alt="category.name"
+                        class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <!-- Icon rings -->
+                  <div class="absolute inset-0 rounded-3xl border-4 border-white/30 animate-ping"></div>
+                  <div class="absolute -inset-4 rounded-3xl border-2 border-white/20 animate-ping" style="animation-delay: 0.5s;"></div>
+                </div>
+              </div>
+
+              <!-- Category Info -->
+              <div class="category-info">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-black mb-6 leading-tight">
+                  <span class="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                    {{ category.name }}
+                  </span>
+                </h1>
+
+                <p class="text-xl lg:text-2xl text-blue-100 mb-8 opacity-90 max-w-2xl mx-auto leading-relaxed">
+                  Discover curated items with premium quality and unbeatable deals
+                </p>
+
+                <!-- Stats -->
+                <div class="category-stats flex flex-wrap justify-center gap-6 lg:gap-8">
+                  <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-6 py-4 border border-white/20">
+                    <div class="text-2xl font-black">{{ formatNumber(category.views || 0) }}+</div>
+                    <div class="text-sm opacity-80">Views</div>
+                  </div>
+                  <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-6 py-4 border border-white/20">
+                    <div class="text-2xl font-black">{{ allProducts.length }}+</div>
+                    <div class="text-sm opacity-80">Products</div>
+                  </div>
+                  <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-6 py-4 border border-white/20">
+                    <div class="text-2xl font-black">{{ category.children?.length || 0 }}</div>
+                    <div class="text-sm opacity-80">Categories</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h1 class="text-3xl font-bold capitalize mb-2 text-white">{{ category.name }}</h1>
-            <p class="text-sm text-gray-200">{{ category.views }} views</p>
+          </div>
+
+          <!-- Scroll Indicator -->
+          <div class="scroll-indicator absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+            <div class="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center backdrop-blur-sm">
+              <div class="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Description -->
-      <section class="text-center mb-10 max-w-2xl mx-auto">
-        <p class="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-          Discover curated items in <strong>{{ category.name }}</strong>; filters auto-apply, persist in the URL, and stay checked after refresh or navigation.
-        </p>
+      <!-- Breadcrumbs -->
+      <section class="breadcrumbs-section px-6 lg:px-12 mb-8">
+        <div class="max-w-7xl mx-auto">
+          <nav class="breadcrumbs bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl px-6 py-4 shadow-lg border border-white/50 dark:border-gray-700/50">
+            <ol class="flex items-center space-x-2 text-sm">
+              <li>
+                <NuxtLink to="/store" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium">
+                  <Icon name="mdi:home" class="inline w-4 h-4 mr-1" />
+                  Store
+                </NuxtLink>
+              </li>
+              <li class="text-gray-400">/</li>
+              <li>
+                <NuxtLink to="/categories" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium">
+                  Categories
+                </NuxtLink>
+              </li>
+              <li class="text-gray-400">/</li>
+              <li class="text-gray-900 dark:text-white font-semibold">{{ category.name }}</li>
+            </ol>
+          </nav>
+        </div>
       </section>
 
-      <!-- Subcategories -->
-      <section v-if="category.children?.length" class="mb-10">
-        <h2 class="text-2xl font-bold mb-6">Subcategories</h2>
-        <Swiper
-            :slides-per-view="1"
-            :space-between="20"
-            :breakpoints="{ 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 4 }, 1280: { slidesPerView: 6 } }"
-            class="my-6"
-        >
-          <SwiperSlide v-for="child in category.children" :key="child.url">
-            <NuxtLink :to="`/category/${child.url}`" class="block hover:no-underline">
-              <div class="bg-gray-100 dark:bg-gray-900 p-4 w-48 md:w-full md:h-60 rounded-lg shadow hover:shadow-lg transition hover:border-2 border-gray-400">
-                <img :src="child.thumbnail" class="w-full h-32 object-cover rounded mb-4" alt="" />
-                <h3 class="text-lg font-semibold">{{ child.name }}</h3>
-                <p class="text-xs text-gray-500">{{ child.views }} views</p>
+      <!-- Subcategories Section -->
+      <section v-if="category.children?.length" class="subcategories-section px-6 lg:px-12 mb-16">
+        <div class="max-w-7xl mx-auto">
+          <div class="section-header text-center mb-12">
+            <div class="header-badge inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-200 dark:border-purple-800 backdrop-blur-sm mb-6">
+              <Icon name="mdi:view-grid" class="w-5 h-5 mr-3 text-purple-600 dark:text-purple-400" />
+              <span class="font-semibold text-purple-700 dark:text-purple-300">Subcategories</span>
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-4">
+              Explore <span class="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">{{ category.name }}</span>
+            </h2>
+
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Discover specialized products across {{ category.children.length }} different subcategories
+            </p>
+          </div>
+
+          <div class="subcategories-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            <NuxtLink
+                v-for="child in category.children"
+                :key="child.url"
+                :to="`/category/${child.url}`"
+                class="subcategory-card group"
+            >
+              <div class="subcategory-item bg-white dark:bg-gray-700 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-2 border border-gray-200 dark:border-gray-600 relative overflow-hidden">
+                <!-- Gradient Border Effect -->
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
+
+                <!-- Image Container -->
+                <div class="image-container aspect-square mb-4 overflow-hidden rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-500 relative">
+                  <img
+                      :src="child.thumbnail"
+                      :alt="child.name"
+                      class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700"
+                      loading="lazy"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="subcategory-content text-center">
+                  <h3 class="font-bold text-sm lg:text-base text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
+                    {{ child.name }}
+                  </h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    {{ formatNumber(child.views || 0) }} views
+                  </p>
+                  <div class="subcategory-arrow opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 mt-2">
+                    <Icon name="mdi:arrow-right" class="w-4 h-4 mx-auto text-purple-600 dark:text-purple-400" />
+                  </div>
+                </div>
               </div>
             </NuxtLink>
-          </SwiperSlide>
-        </Swiper>
+          </div>
+        </div>
       </section>
 
-      <div class="flex flex-row gap-6 items-center w-full my-4">
-        <span class="grow"></span>
-        <CartCounter />
+      <!-- Cart Counter -->
+      <div class="cart-counter-section px-6 lg:px-12 mb-8">
+        <div class="max-w-7xl mx-auto flex justify-end">
+          <div class="cart-counter-container bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 dark:border-gray-700/50">
+            <CartCounter />
+          </div>
+        </div>
       </div>
 
-      <!-- Main -->
-      <section class="mb-16 mt-2 w-full">
-        <div class="flex flex-col md:flex-row gap-6">
-          <!-- Sidebar -->
-          <aside class="w-full md:w-1/4 space-y-4 md:sticky md:top-6 self-start">
-            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow">
-              <div class="flex items-center justify-between">
-                <h2 class="text-xl font-bold">Filters</h2>
-                <button v-if="hasAnyFilter" @click="clearAll" class="text-xs text-blue-600 underline">Clear all</button>
-              </div>
+      <!-- Main Products Section -->
+      <section class="products-section px-6 lg:px-12 mb-16">
+        <div class="max-w-7xl mx-auto">
+          <div class="flex flex-col lg:flex-row gap-8">
 
-              <div class="md:hidden flex justify-between items-center mt-2 mb-2">
-                <button @click="mobileFilterOpen = !mobileFilterOpen" class="flex items-center gap-2 text-blue-600 font-medium">
-                  <Icon name="mdi:filter-variant" class="w-5 h-5" />
-                  <span>{{ mobileFilterOpen ? 'Hide' : 'Show' }}</span>
-                </button>
-              </div>
-
-              <div :class="{'hidden': !mobileFilterOpen, 'block': mobileFilterOpen, 'md:block': true}">
-                <!-- Price -->
-                <details class="mb-3 group" open>
-                  <summary class="cursor-pointer flex items-center justify-between py-2 text-sm font-semibold uppercase">
-                    <span>Price</span>
-                    <Icon name="mdi:chevron-down" class="transition-transform group-open:rotate-180" />
-                  </summary>
-                  <div class="mt-2">
-                    <div class="flex items-center gap-2">
-                      <input type="number" inputmode="numeric" min="0" v-model.number="priceMin" placeholder="Min" class="w-1/2 px-2 py-1 rounded border text-sm bg-white dark:bg-gray-950" />
-                      <span class="text-sm">to</span>
-                      <input type="number" inputmode="numeric" min="0" v-model.number="priceMax" placeholder="Max" class="w-1/2 px-2 py-1 rounded border text-sm bg-white dark:bg-gray-950" />
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 mt-2">
-                      <button @click="quickPrice(0, 500)" class="text-xs px-2 py-1 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">Under ₹500</button>
-                      <button @click="quickPrice(500, 2000)" class="text-xs px-2 py-1 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">₹500–₹2,000</button>
-                      <button @click="quickPrice(2000, null)" class="text-xs px-2 py-1 rounded border hover:bg-gray-50 dark:hover:bg-gray-800">₹2,000+</button>
-                    </div>
+            <!-- Enhanced Sidebar -->
+            <aside class="filters-sidebar lg:w-1/4">
+              <div class="filters-container bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 dark:border-gray-700/50 sticky top-6 overflow-hidden">
+                <!-- Filters Header -->
+                <div class="filters-header p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold flex items-center">
+                      <Icon name="mdi:filter-variant" class="w-6 h-6 mr-3" />
+                      Filters
+                    </h2>
+                    <button
+                        v-if="hasAnyFilter"
+                        @click="clearAll"
+                        class="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full backdrop-blur-sm transition-colors duration-200"
+                    >
+                      Clear All
+                    </button>
                   </div>
-                </details>
 
-                <!-- Offer & Availability -->
-                <details class="mb-3 group" open>
-                  <summary class="cursor-pointer flex items-center justify-between py-2 text-sm font-semibold uppercase">
-                    <span>Offer & Availability</span>
-                    <Icon name="mdi:chevron-down" class="transition-transform group-open:rotate-180" />
-                  </summary>
-                  <div class="space-y-2 mt-2">
-                    <label class="flex items-center gap-2 text-sm">
-                      <input type="checkbox" :checked="onOffer" @change="toggleFlag('offer', ($event.target as HTMLInputElement).checked)" />
-                      <span>On offer</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm">
-                      <input type="checkbox" :checked="inStockOnly" @change="toggleFlag('in_stock', ($event.target as HTMLInputElement).checked)" />
-                      <span>In stock</span>
-                    </label>
-                  </div>
-                </details>
+                  <!-- Mobile Filter Toggle -->
+                  <button
+                      @click="mobileFilterOpen = !mobileFilterOpen"
+                      class="lg:hidden w-full mt-4 flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 py-3 rounded-2xl backdrop-blur-sm transition-colors duration-200"
+                  >
+                    <Icon name="mdi:tune" class="w-5 h-5" />
+                    <span>{{ mobileFilterOpen ? 'Hide Filters' : 'Show Filters' }}</span>
+                  </button>
+                </div>
 
-                <!-- Dynamic filter groups -->
-                <template v-for="(filters, groupName) in filterGroups" :key="groupName">
-                  <details class="mb-3 group" open>
-                    <summary class="cursor-pointer flex items-center justify-between py-2 text-sm font-semibold uppercase">
-                      <span>{{ groupName }}</span>
-                      <Icon name="mdi:chevron-down" class="transition-transform group-open:rotate-180" />
-                    </summary>
+                <!-- Filters Content -->
+                <div :class="{'hidden lg:block': !mobileFilterOpen, 'block': mobileFilterOpen}" class="filters-content p-6 space-y-6">
 
-                    <div class="mt-1">
-                      <div v-for="(optionsMap, filterName) in filters" :key="`${groupName}:${filterName}`" class="mb-3">
-                        <div class="flex items-center justify-between">
-                          <p class="text-xs font-medium">{{ filterName }}</p>
+                  <!-- Price Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header mb-4">
+                      <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center">
+                        <Icon name="mdi:currency-inr" class="w-5 h-5 mr-2 text-green-600 dark:text-green-400" />
+                        Price Range
+                      </h3>
+                    </div>
+
+                    <div class="price-inputs mb-4">
+                      <div class="flex items-center gap-3">
+                        <div class="relative flex-1">
                           <input
-                              v-if="shouldShowSearch(filterName, optionsMap)"
-                              v-model="optionSearch[filterName]"
-                              type="text"
-                              placeholder="Search"
-                              class="ml-2 px-2 py-1 text-xs rounded border bg-white dark:bg-gray-950"
+                              type="number"
+                              inputmode="numeric"
+                              min="0"
+                              v-model.number="priceMin"
+                              placeholder="Min"
+                              class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
                           />
                         </div>
-
-                        <!-- Color swatches -->
-                        <div v-if="isColorFilter(filterName)" class="mt-2 grid grid-cols-6 gap-2">
-                          <button
-                              v-for="(label, value) in filteredOptions(filterName, optionsMap)"
-                              :key="`${filterName}:${value}`"
-                              class="relative w-8 h-8 rounded border overflow-hidden"
-                              :title="label"
-                              @click="toggleColor(filterName, String(value))"
-                          >
-                            <span class="absolute inset-0" :style="{ backgroundColor: parseColor(value, label) }"></span>
-                            <span v-if="isChecked(filterName, String(value))" class="absolute inset-0 ring-2 ring-blue-500 rounded pointer-events-none"></span>
-                          </button>
-                        </div>
-
-                        <!-- Generic checkbox list -->
-                        <div v-else class="mt-2 space-y-1 max-h-48 overflow-y-auto pr-1">
-                          <label
-                              v-for="(label, value) in filteredOptions(filterName, optionsMap)"
-                              :key="`${filterName}:${value}`"
-                              class="flex items-center justify-between gap-2 text-sm rounded px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-800"
-                          >
-                            <div class="flex items-center gap-2">
-                              <input
-                                  type="checkbox"
-                                  :value="value"
-                                  :checked="isChecked(filterName, String(value))"
-                                  @change="onFilterToggle(filterName, String(value), ($event.target as HTMLInputElement).checked)"
-                                  class="accent-blue-600"
-                              />
-                              <span class="truncate">{{ label }}</span>
-                            </div>
-                          </label>
+                        <span class="text-gray-500 dark:text-gray-400 font-medium">to</span>
+                        <div class="relative flex-1">
+                          <input
+                              type="number"
+                              inputmode="numeric"
+                              min="0"
+                              v-model.number="priceMax"
+                              placeholder="Max"
+                              class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                          />
                         </div>
                       </div>
                     </div>
-                  </details>
-                </template>
-              </div>
-            </div>
-          </aside>
 
-          <!-- Products -->
-          <div class="w-full md:w-3/4">
-            <!-- Applied chips -->
-            <div v-if="hasAnyFilter" class="flex flex-wrap items-center gap-2 mb-3">
-              <span class="text-sm text-gray-600 dark:text-gray-300 mr-1">Applied:</span>
-              <template v-for="(values, fname) in selectedFilters" :key="`chip:${fname}`">
-                <span
-                    v-for="val in values"
-                    :key="`chip:${fname}:${val}`"
-                    class="inline-flex items-center gap-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 px-2 py-1 rounded border border-blue-200 dark:border-blue-800"
-                >
-                  <span class="truncate">{{ fname }}: {{ val }}</span>
-                  <button @click="removeOne(fname, String(val))" class="hover:text-red-600" aria-label="Remove">✕</button>
-                </span>
-              </template>
-              <template v-if="priceMin != null || priceMax != null">
-                <span class="inline-flex items-center gap-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 px-2 py-1 rounded border border-blue-200 dark:border-blue-800">
-                  <span>Price: {{ priceMin ?? 0 }}{{ priceMax != null ? `–${priceMax}` : '+' }}</span>
-                  <button @click="clearPrice" class="hover:text-red-600" aria-label="Remove">✕</button>
-                </span>
-              </template>
-              <template v-if="onOffer">
-                <span class="inline-flex items-center gap-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 px-2 py-1 rounded border border-blue-200 dark:border-blue-800">
-                  <span>On offer</span>
-                  <button @click="setFlag('offer', false)" class="hover:text-red-600" aria-label="Remove">✕</button>
-                </span>
-              </template>
-              <template v-if="inStockOnly">
-                <span class="inline-flex items-center gap-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 px-2 py-1 rounded border border-blue-200 dark:border-blue-800">
-                  <span>In stock</span>
-                  <button @click="setFlag('in_stock', false)" class="hover:text-red-600" aria-label="Remove">✕</button>
-                </span>
-              </template>
-              <button @click="clearAll" class="ml-auto text-xs text-blue-600 underline">Clear all</button>
-            </div>
-
-            <div class="flex justify-between items-center mb-4 gap-3">
-              <h1 class="text-xl font-semibold">{{ category.name }} Products</h1>
-              <div class="relative w-full md:w-auto">
-                <label class="sr-only" for="sort">Sort By</label>
-                <select
-                    id="sort"
-                    v-model="selectedSortName"
-                    class="border border-gray-300 dark:border-gray-700 rounded px-4 py-2 text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-sm"
-                >
-                  <option v-for="sort in sortOptions" :key="sort.name" :value="sort.name">
-                    {{ sort.name.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase() }}
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div v-for="product in allProducts" :key="product.url" class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-md transition">
-                <NuxtLink :to="`/product/${product.url}`">
-                  <div class="w-full h-52 mx-auto rounded mb-4">
-                    <img loading="lazy" :src="product.thumbnail" class="h-full w-full object-contain rounded mb-4" alt="" />
+                    <!-- Quick Price Buttons -->
+                    <div class="quick-price-buttons grid grid-cols-2 gap-2">
+                      <button @click="quickPrice(0, 500)" class="price-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-colors duration-200">Under ₹500</button>
+                      <button @click="quickPrice(500, 2000)" class="price-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-colors duration-200">₹500–₹2K</button>
+                      <button @click="quickPrice(2000, 5000)" class="price-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-colors duration-200">₹2K–₹5K</button>
+                      <button @click="quickPrice(5000, null)" class="price-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-colors duration-200">₹5K+</button>
+                    </div>
                   </div>
-                  <h3 class="font-semibold mb-1">{{ product.name }}</h3>
-                  <p class="text-sm text-gray-500 mb-1">₹{{ product.price }}</p>
-                  <p class="text-xs text-gray-400 mb-2">{{ product.short_description }}</p>
-                </NuxtLink>
-                <AddToCartButton :sku="product.sku" :quantity="1" class="mt-2 w-full" />
+
+                  <!-- Availability Filters -->
+                  <div class="filter-group">
+                    <div class="filter-header mb-4">
+                      <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center">
+                        <Icon name="mdi:package-variant" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
+                        Availability
+                      </h3>
+                    </div>
+
+                    <div class="availability-options space-y-3">
+                      <label class="availability-option flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            :checked="onOffer"
+                            @change="toggleFlag('offer', ($event.target as HTMLInputElement).checked)"
+                            class="w-5 h-5 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <div class="flex items-center">
+                          <Icon name="mdi:tag" class="w-4 h-4 text-red-500 mr-2" />
+                          <span class="text-gray-900 dark:text-white font-medium">On Sale</span>
+                        </div>
+                      </label>
+
+                      <label class="availability-option flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            :checked="inStockOnly"
+                            @change="toggleFlag('in_stock', ($event.target as HTMLInputElement).checked)"
+                            class="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <div class="flex items-center">
+                          <Icon name="mdi:check-circle" class="w-4 h-4 text-green-500 mr-2" />
+                          <span class="text-gray-900 dark:text-white font-medium">In Stock</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Filter Groups -->
+                  <template v-for="(filters, groupName) in filterGroups" :key="groupName">
+                    <div class="filter-group">
+                      <div class="filter-header mb-4">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center">
+                          <Icon name="mdi:tune" class="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
+                          {{ groupName }}
+                        </h3>
+                      </div>
+
+                      <div class="filter-options space-y-4">
+                        <div v-for="(optionsMap, filterName) in filters" :key="`${groupName}:${filterName}`">
+                          <!-- Search Input -->
+                          <div v-if="shouldShowSearch(filterName, optionsMap)" class="search-input mb-3">
+                            <div class="relative">
+                              <Icon name="mdi:magnify" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                              <input
+                                  v-model="optionSearch[filterName]"
+                                  type="text"
+                                  :placeholder="`Search ${filterName}...`"
+                                  class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 transition-colors duration-200"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- Filter Label -->
+                          <div class="filter-label mb-2">
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">{{ filterName }}</h4>
+                          </div>
+
+                          <!-- Color Swatches -->
+                          <div v-if="isColorFilter(filterName)" class="color-swatches grid grid-cols-6 gap-2">
+                            <button
+                                v-for="(label, value) in filteredOptions(filterName, optionsMap)"
+                                :key="`${filterName}:${value}`"
+                                class="color-swatch w-10 h-10 rounded-xl border-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                                :class="isChecked(filterName, String(value)) ? 'border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-300 dark:border-gray-600'"
+                                :title="label"
+                                @click="toggleColor(filterName, String(value))"
+                            >
+                              <span class="block w-full h-full" :style="{ backgroundColor: parseColor(value, label) }"></span>
+                            </button>
+                          </div>
+
+                          <!-- Generic Options -->
+                          <div v-else class="filter-options-list max-h-48 overflow-y-auto space-y-2">
+                            <label
+                                v-for="(label, value) in filteredOptions(filterName, optionsMap)"
+                                :key="`${filterName}:${value}`"
+                                class="filter-option flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                            >
+                              <div class="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    :value="value"
+                                    :checked="isChecked(filterName, String(value))"
+                                    @change="onFilterToggle(filterName, String(value), ($event.target as HTMLInputElement).checked)"
+                                    class="w-5 h-5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                />
+                                <span class="text-gray-900 dark:text-white font-medium truncate">{{ label }}</span>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Products Content -->
+            <div class="products-content lg:w-3/4">
+
+              <!-- Applied Filters Chips -->
+              <div v-if="hasAnyFilter" class="applied-filters mb-6">
+                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-white/50 dark:border-gray-700/50">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 mr-2">Active Filters:</span>
+
+                    <!-- Filter Chips -->
+                    <template v-for="(values, fname) in selectedFilters" :key="`chip:${fname}`">
+                      <span
+                          v-for="val in values"
+                          :key="`chip:${fname}:${val}`"
+                          class="filter-chip inline-flex items-center gap-2 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-3 py-2 rounded-full border border-blue-200 dark:border-blue-700"
+                      >
+                        <span class="truncate">{{ fname }}: {{ val }}</span>
+                        <button @click="removeOne(fname, String(val))" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                          <Icon name="mdi:close" class="w-4 h-4" />
+                        </button>
+                      </span>
+                    </template>
+
+                    <!-- Price Chip -->
+                    <template v-if="priceMin != null || priceMax != null">
+                      <span class="filter-chip inline-flex items-center gap-2 text-sm bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-3 py-2 rounded-full border border-green-200 dark:border-green-700">
+                        <span>₹{{ priceMin || 0 }}{{ priceMax != null ? `–₹${priceMax}` : '+' }}</span>
+                        <button @click="clearPrice" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                          <Icon name="mdi:close" class="w-4 h-4" />
+                        </button>
+                      </span>
+                    </template>
+
+                    <!-- Offer/Stock Chips -->
+                    <template v-if="onOffer">
+                      <span class="filter-chip inline-flex items-center gap-2 text-sm bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 px-3 py-2 rounded-full border border-red-200 dark:border-red-700">
+                        <span>On Sale</span>
+                        <button @click="setFlag('offer', false)" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                          <Icon name="mdi:close" class="w-4 h-4" />
+                        </button>
+                      </span>
+                    </template>
+
+                    <template v-if="inStockOnly">
+                      <span class="filter-chip inline-flex items-center gap-2 text-sm bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 px-3 py-2 rounded-full border border-emerald-200 dark:border-emerald-700">
+                        <span>In Stock</span>
+                        <button @click="setFlag('in_stock', false)" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                          <Icon name="mdi:close" class="w-4 h-4" />
+                        </button>
+                      </span>
+                    </template>
+
+                    <!-- Clear All Button -->
+                    <button @click="clearAll" class="ml-auto text-sm text-red-600 hover:text-red-800 font-semibold">
+                      Clear All
+                    </button>
+                  </div>
+                </div>
               </div>
 
+              <!-- Products Header -->
+              <div class="products-header mb-6">
+                <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-white/50 dark:border-gray-700/50">
+                  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="products-title">
+                      <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-white">
+                        {{ category.name }} Products
+                      </h1>
+                      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {{ pagination.total || allProducts.length }} products found
+                      </p>
+                    </div>
 
+                    <div class="sort-dropdown">
+                      <div class="relative">
+                        <label class="sr-only" for="sort">Sort By</label>
+                        <select
+                            id="sort"
+                            v-model="selectedSortName"
+                            class="sort-select pl-4 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors duration-200 appearance-none cursor-pointer"
+                        >
+                          <option v-for="sort in sortOptions" :key="sort.name" :value="sort.name">
+                            {{ formatSortName(sort.name) }}
+                          </option>
+                        </select>
+                        <Icon name="mdi:chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            </div>
+              <!-- Products Grid -->
+              <div class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                <div
+                    v-for="product in allProducts"
+                    :key="product.url"
+                    class="product-card group bg-white dark:bg-gray-700 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 border border-gray-200 dark:border-gray-600 relative"
+                >
+                  <!-- Gradient Border Effect -->
+                  <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
 
-            <!-- Pagination -->
-            <div class="text-center mt-8">
-              <button
-                  @click="nextPage"
-                  :disabled="pagination.current_page >= pagination.last_page || paging"
-                  class="px-6 py-2 border rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-50"
-              >
-                <span v-if="paging">Loading...</span>
-                <span v-else>Load More</span>
-              </button>
+                  <!-- Product Link -->
+                  <NuxtLink :to="`/product/${product.url}`" class="block">
+                    <!-- Image Container -->
+                    <div class="product-image relative aspect-square bg-gray-100 dark:bg-gray-600 overflow-hidden">
+                      <img
+                          loading="lazy"
+                          :src="product.thumbnail"
+                          :alt="product.name"
+                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+
+                      <!-- Sale Badge -->
+                      <div v-if="product.on_sale" class="sale-badge absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                        SALE
+                      </div>
+
+                      <!-- Stock Badge -->
+                      <div v-if="product.stock_status === 'low'" class="stock-badge absolute top-3 right-3 bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
+                        Low Stock
+                      </div>
+
+                      <!-- Quick Actions Overlay -->
+                      <div class="quick-actions absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div class="quick-actions-buttons flex gap-3">
+                          <button class="quick-action-btn w-12 h-12 bg-white/90 text-gray-900 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200">
+                            <Icon name="mdi:eye" class="w-5 h-5" />
+                          </button>
+                          <button class="quick-action-btn w-12 h-12 bg-white/90 text-gray-900 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200">
+                            <Icon name="mdi:heart-outline" class="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="product-info p-4">
+                      <h3 class="product-name font-bold text-lg text-gray-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                        {{ product.name }}
+                      </h3>
+
+                      <p class="product-description text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                        {{ product.short_description }}
+                      </p>
+
+                      <!-- Price -->
+                      <div class="product-pricing mb-4">
+                        <div class="flex items-center gap-2">
+                          <span class="current-price text-2xl font-black text-green-600 dark:text-green-400">
+                            ₹{{ formatPrice(product.price) }}
+                          </span>
+                          <span v-if="product.original_price && product.original_price > product.price" class="original-price text-sm text-gray-500 dark:text-gray-400 line-through">
+                            ₹{{ formatPrice(product.original_price) }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </NuxtLink>
+
+                  <!-- Add to Cart Button -->
+                  <div class="product-actions p-4 pt-0">
+                    <AddToCartButton
+                        :sku="product.sku"
+                        :quantity="1"
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Load More / Pagination -->
+              <div class="load-more text-center">
+                <button
+                    @click="nextPage"
+                    :disabled="pagination.current_page >= pagination.last_page || paging"
+                    class="load-more-btn px-12 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  <span v-if="paging" class="flex items-center gap-3">
+                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Loading More Products...
+                  </span>
+                  <span v-else class="flex items-center gap-3">
+                    <Icon name="mdi:plus" class="w-5 h-5" />
+                    Load More Products
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <!-- Top Products -->
-        <section v-if="topProducts.length" class="mt-16">
-          <h2 class="text-2xl font-bold mb-6">Top Products</h2>
-          <Swiper
-              :slides-per-view="1"
-              :space-between="20"
-              :breakpoints="{ 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 4 }, 1280: { slidesPerView: 6 } }"
-              class="my-6"
-          >
-            <SwiperSlide v-for="product in topProducts" :key="product.url">
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">
-                <NuxtLink :to="`/product/${product.url}`" class="block">
-                  <img loading="lazy" :src="product.thumbnail" class="h-[250px] w-full object-contain rounded mb-4" alt="" />
-                  <h3 class="font-semibold mb-1">{{ product.name }}</h3>
-                  <p class="text-sm text-gray-500 mb-1">₹{{ product.price }}</p>
-                  <p class="text-xs text-gray-400 mb-2">{{ product.short_description }}</p>
-                </NuxtLink>
-                <AddToCartButton :sku="product.sku" :quantity="1" class="mt-2 w-full" />
+      <!-- Top Products Section -->
+      <section v-if="topProducts.length" class="top-products-section px-6 lg:px-12 mb-16 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 py-20">
+        <div class="max-w-7xl mx-auto">
+          <div class="section-header text-center mb-12">
+            <div class="header-badge inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-200 dark:border-yellow-800 backdrop-blur-sm mb-6">
+              <Icon name="mdi:star" class="w-5 h-5 mr-3 text-yellow-600 dark:text-yellow-400" />
+              <span class="font-semibold text-yellow-700 dark:text-yellow-300">Top Rated</span>
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-4">
+              Top Products in <span class="bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent">{{ category.name }}</span>
+            </h2>
+
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Discover our most popular and highest-rated products in this category
+            </p>
+          </div>
+
+          <div class="top-products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div
+                v-for="product in topProducts"
+                :key="product.url"
+                class="top-product-card group bg-white dark:bg-gray-700 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 border border-gray-200 dark:border-gray-600 relative"
+            >
+              <!-- Top Product Badge -->
+              <div class="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
+                <Icon name="mdi:crown" class="inline w-3 h-3 mr-1" />
+                TOP
               </div>
-            </SwiperSlide>
-          </Swiper>
-        </section>
+
+              <NuxtLink :to="`/product/${product.url}`" class="block">
+                <div class="product-image relative aspect-square bg-gray-100 dark:bg-gray-600 overflow-hidden">
+                  <img
+                      loading="lazy"
+                      :src="product.thumbnail"
+                      :alt="product.name"
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                </div>
+
+                <div class="product-info p-4">
+                  <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors duration-300">
+                    {{ product.name }}
+                  </h3>
+
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                    {{ product.short_description }}
+                  </p>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-2xl font-black text-green-600 dark:text-green-400">
+                      ₹{{ formatPrice(product.price) }}
+                    </span>
+
+                    <div class="flex items-center gap-1 text-yellow-500">
+                      <Icon name="mdi:star" class="w-4 h-4" />
+                      <span class="text-sm font-bold">{{ (Math.random() * 2 + 3).toFixed(1) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </NuxtLink>
+
+              <div class="product-actions p-4 pt-0">
+                <AddToCartButton
+                    :sku="product.sku"
+                    :quantity="1"
+                    class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, computed } from 'vue'
+import { ref, reactive, onMounted, watch, computed, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSanctum, useSanctumFetch, useRuntimeConfig } from '#imports'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import 'swiper/css'
 import GlobalLoader from "~/components/GlobalLoader.vue"
 import AddToCartButton from "~/components/cart/AddToCartButton.vue"
-import ProductCardComponent from "~/components/card/ProductCardComponent.vue";
+import CartCounter from "~/components/cart/CartCounter.vue"
 
-const mobileFilterOpen = ref(false)
-const paging = ref(false)
+// GSAP imports (client-side only)
+let gsap: any = null
+let ScrollTrigger: any = null
+
+if (process.client) {
+  import('gsap').then(({ default: gsapModule }) => {
+    gsap = gsapModule
+    import('gsap/ScrollTrigger').then(({ ScrollTrigger: ScrollTriggerModule }) => {
+      ScrollTrigger = ScrollTriggerModule
+      gsap.registerPlugin(ScrollTrigger)
+    })
+  })
+}
+
+// Composables
 const route = useRoute()
 const router = useRouter()
 const { isLoggedIn } = useSanctum()
 const config = useRuntimeConfig()
-const categoryUrl = computed(() => route.params.url as string)
 
+// Refs for animations
+const orb1 = ref<HTMLElement>()
+const orb2 = ref<HTMLElement>()
+const orb3 = ref<HTMLElement>()
+
+// Reactive state
+const categoryUrl = computed(() => route.params.url as string)
+const mobileFilterOpen = ref(false)
+const paging = ref(false)
 const isLoading = useState('pageLoading', () => false)
 const error = ref<any>(null)
 const category = ref<any>({})
@@ -404,6 +734,7 @@ const latestProducts = ref<any[]>([])
 const allProducts = ref<any[]>([])
 const pagination = ref({ current_page: 1, last_page: 1, total: 0, per_page: 12 })
 
+// Filtering state
 const filterGroups = ref<Record<string, Record<string, Record<string, string>>>>({})
 const selectedFilters = reactive<Record<string, string[]>>({})
 const optionSearch = reactive<Record<string, string>>({})
@@ -411,20 +742,55 @@ const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
 const onOffer = ref<boolean>(false)
 const inStockOnly = ref<boolean>(false)
+
+// Sorting state
 type SortOption = { name: string; value: string; direction: 'asc' | 'desc' }
 const sortOptions = ref<SortOption[]>([])
 const selectedSortName = ref<string>('latest')
 
-const selectedSort = computed<SortOption | null>(() => sortOptions.value.find(s => s.name === selectedSortName.value) || null)
-
-// Track last fetched page to decide append vs replace
+// Track fetched pages
 const lastFetchedPage = ref<number>(1)
 
-function isColorFilter(name: string) {
+// Animated particles
+const particles = [
+  { class: 'w-4 h-4 bg-blue-400', style: 'top: 15%; left: 10%; animation-delay: 0s;' },
+  { class: 'w-3 h-3 bg-purple-400', style: 'top: 25%; right: 15%; animation-delay: 1.5s;' },
+  { class: 'w-5 h-5 bg-emerald-400', style: 'bottom: 20%; left: 20%; animation-delay: 3s;' },
+  { class: 'w-3 h-3 bg-pink-400', style: 'bottom: 30%; right: 25%; animation-delay: 4.5s;' }
+]
+
+// Computed properties
+const selectedSort = computed<SortOption | null>(() =>
+    sortOptions.value.find(s => s.name === selectedSortName.value) || null
+)
+
+const hasAnyFilter = computed(() => {
+  const any = Object.values(selectedFilters).some(arr => arr?.length)
+  return any || priceMin.value != null || priceMax.value != null || onOffer.value || inStockOnly.value
+})
+
+// Utility functions
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
+  return num.toString()
+}
+
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('en-IN').format(price)
+}
+
+const formatSortName = (name: string): string => {
+  return name.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()
+}
+
+// Filter helper functions
+const isColorFilter = (name: string) => {
   const n = name.toLowerCase()
   return n === 'color' || n === 'colour'
 }
-function parseColor(value: string, label: string) {
+
+const parseColor = (value: string, label: string) => {
   const v = String(value || '').trim()
   const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i
   if (hex.test(v)) return v
@@ -432,23 +798,33 @@ function parseColor(value: string, label: string) {
   return label
 }
 
-function shouldShowSearch(filterName: string, opt: Record<string, string>) {
+const shouldShowSearch = (filterName: string, opt: Record<string, string>) => {
   return ['Brand', 'Spice Type'].includes(filterName) && Object.keys(opt || {}).length > 8
 }
-function filteredOptions(filterName: string, opt: Record<string, string>) {
+
+const filteredOptions = (filterName: string, opt: Record<string, string>) => {
   const q = (optionSearch[filterName] || '').toLowerCase()
   if (!q) return opt
   const out: Record<string, string> = {}
-  for (const [val, label] of Object.entries(opt)) if (String(val).toLowerCase().includes(q) || String(label).toLowerCase().includes(q)) out[val] = label
+  for (const [val, label] of Object.entries(opt)) {
+    if (String(val).toLowerCase().includes(q) || String(label).toLowerCase().includes(q)) {
+      out[val] = label
+    }
+  }
   return out
 }
-function isChecked(fname: string, val: string) { return (selectedFilters[fname] || []).includes(val) }
 
-// Build desired query from state
-function buildQueryObject(page: number) {
+const isChecked = (fname: string, val: string) => {
+  return (selectedFilters[fname] || []).includes(val)
+}
+
+// Query building and comparison
+const buildQueryObject = (page: number) => {
   const q: Record<string, any> = { page }
   if (selectedSort.value) q[`sort[${selectedSort.value.name}]`] = selectedSort.value.direction
-  for (const [fname, values] of Object.entries(selectedFilters)) if (values?.length) q[`filters[${fname}][]`] = values
+  for (const [fname, values] of Object.entries(selectedFilters)) {
+    if (values?.length) q[`filters[${fname}][]`] = values
+  }
   if (priceMin.value != null) q['price[min]'] = priceMin.value
   if (priceMax.value != null) q['price[max]'] = priceMax.value
   if (onOffer.value) q['offer'] = 1
@@ -456,8 +832,7 @@ function buildQueryObject(page: number) {
   return q
 }
 
-// Compare two queries shallowly (array order-insensitive)
-function isSameQuery(a: any, b: any) {
+const isSameQuery = (a: any, b: any) => {
   const ak = Object.keys(a || {})
   const bk = Object.keys(b || {})
   if (ak.length !== bk.length) return false
@@ -467,36 +842,36 @@ function isSameQuery(a: any, b: any) {
       const aa = Array.isArray(av) ? av.map(String).sort() : []
       const bb = Array.isArray(bv) ? bv.map(String).sort() : []
       if (aa.length !== bb.length) return false
-      for (let i=0;i<aa.length;i++) if (aa[i] !== bb[i]) return false
+      for (let i = 0; i < aa.length; i++) {
+        if (aa[i] !== bb[i]) return false
+      }
     } else if (String(av) !== String(bv)) return false
   }
   return true
 }
 
-// Push URL and refetch if nothing changed (guarantee request)
-async function pushQuery(page = 1) {
+// URL and API functions
+const pushQuery = async (page = 1) => {
   const desired = buildQueryObject(page)
   const current = route.query
   const changed = !isSameQuery(current, desired)
   if (changed) {
     await router.replace({ query: desired })
-    // route watcher will hydrate and fetch
   } else {
-    // Force fetch if router didn't change (safety net)
     hydrateFromRoute()
     const append = page > (lastFetchedPage.value || 1)
     await fetchCategory(page, append)
   }
 }
 
-// Hydrate from URL
-function hydrateFromRoute() {
-  // sort
+const hydrateFromRoute = () => {
+  // Hydrate sort
   for (const [k, v] of Object.entries(route.query)) {
     const sm = k.match(/^sort\[(.+)\]$/)
     if (sm && typeof v === 'string') selectedSortName.value = sm[1]
   }
-  // filters
+
+  // Hydrate filters
   const fresh: Record<string, string[]> = {}
   for (const [k, v] of Object.entries(route.query)) {
     const fm = k.match(/^filters\[(.+)\](\[\])?$/)
@@ -504,30 +879,42 @@ function hydrateFromRoute() {
   }
   for (const key of Object.keys(selectedFilters)) delete selectedFilters[key]
   for (const [k, arr] of Object.entries(fresh)) selectedFilters[k] = arr
-  // price/flags
-  const pm = route.query['price[min]']; const px = route.query['price[max]']
+
+  // Hydrate price/flags
+  const pm = route.query['price[min]']
+  const px = route.query['price[max]']
   priceMin.value = pm != null ? Number(pm) : null
   priceMax.value = px != null ? Number(px) : null
   onOffer.value = route.query.offer != null ? String(route.query.offer) === '1' : false
   inStockOnly.value = route.query.in_stock != null ? String(route.query.in_stock) === '1' : false
 }
 
-async function fetchSortOptions() {
-  const res = await useSanctumFetch(`${config.public.apiBase}/products/sorts/get`)
-  sortOptions.value = (res || []) as SortOption[]
-  const def = sortOptions.value.find(s => s.name === 'latest') || sortOptions.value[0]
-  if (def) selectedSortName.value = def.name
+// API calls
+const fetchSortOptions = async () => {
+  try {
+    const res = await useSanctumFetch(`${config.public.apiBase}/products/sorts/get`)
+    sortOptions.value = (res || []) as SortOption[]
+    const def = sortOptions.value.find(s => s.name === 'latest') || sortOptions.value[0]
+    if (def) selectedSortName.value = def.name
+  } catch (e) {
+    console.error('Failed to fetch sort options:', e)
+  }
 }
 
-async function fetchFilterOptions() {
-  const res = await useSanctumFetch(`${config.public.apiBase}/products/filters/get?category=${encodeURIComponent(categoryUrl.value)}`)
-  filterGroups.value = (res || {}) as Record<string, Record<string, Record<string, string>>>
+const fetchFilterOptions = async () => {
+  try {
+    const res = await useSanctumFetch(`${config.public.apiBase}/products/filters/get?category=${encodeURIComponent(categoryUrl.value)}`)
+    filterGroups.value = (res || {}) as Record<string, Record<string, Record<string, string>>>
+  } catch (e) {
+    console.error('Failed to fetch filter options:', e)
+  }
 }
 
-async function fetchCategory(page = 1, append = false) {
+const fetchCategory = async (page = 1, append = false) => {
   isLoading.value = !append
   if (append) paging.value = true
   error.value = null
+
   try {
     const params = new URLSearchParams()
     for (const [k, v] of Object.entries(route.query)) {
@@ -535,6 +922,7 @@ async function fetchCategory(page = 1, append = false) {
       else params.set(k, String(v))
     }
     if (!params.has('page')) params.set('page', String(page))
+
     const url = `${config.public.apiBase}/categories/${categoryUrl.value}?${params.toString()}`
     const res = await useSanctumFetch(url)
 
@@ -552,20 +940,15 @@ async function fetchCategory(page = 1, append = false) {
     lastFetchedPage.value = Number(res?.pagination?.current_page || page || 1)
   } catch (e: any) {
     error.value = e
+    console.error('Failed to fetch category:', e)
   } finally {
     isLoading.value = false
     paging.value = false
   }
 }
 
-// Derived
-const hasAnyFilter = computed(() => {
-  const any = Object.values(selectedFilters).some(arr => arr?.length)
-  return any || priceMin.value != null || priceMax.value != null || onOffer.value || inStockOnly.value
-})
-
-// UI actions -> URL (then route watcher fetches, or fallback forces fetch)
-function onFilterToggle(fname: string, value: string, checked: boolean) {
+// UI action handlers
+const onFilterToggle = (fname: string, value: string, checked: boolean) => {
   const curr = selectedFilters[fname] ? [...selectedFilters[fname]] : []
   const idx = curr.indexOf(value)
   if (checked && idx === -1) curr.push(value)
@@ -573,41 +956,143 @@ function onFilterToggle(fname: string, value: string, checked: boolean) {
   selectedFilters[fname] = curr
   pushQuery(1)
 }
-function toggleColor(fname: string, value: string) {
+
+const toggleColor = (fname: string, value: string) => {
   const curr = selectedFilters[fname] ? [...selectedFilters[fname]] : []
   const idx = curr.indexOf(value)
-  if (idx === -1) curr.push(value); else curr.splice(idx, 1)
+  if (idx === -1) curr.push(value)
+  else curr.splice(idx, 1)
   selectedFilters[fname] = curr
   pushQuery(1)
 }
-function removeOne(fname: string, value: string) {
+
+const removeOne = (fname: string, value: string) => {
   if (!selectedFilters[fname]) return
   selectedFilters[fname] = selectedFilters[fname].filter(v => v !== value)
   if (selectedFilters[fname].length === 0) delete selectedFilters[fname]
   pushQuery(1)
 }
-function clearPrice() { priceMin.value = null; priceMax.value = null; pushQuery(1) }
-function clearAll() {
+
+const clearPrice = () => {
+  priceMin.value = null
+  priceMax.value = null
+  pushQuery(1)
+}
+
+const clearAll = () => {
   for (const k of Object.keys(selectedFilters)) delete selectedFilters[k]
-  priceMin.value = null; priceMax.value = null; onOffer.value = false; inStockOnly.value = false
+  priceMin.value = null
+  priceMax.value = null
+  onOffer.value = false
+  inStockOnly.value = false
   pushQuery(1)
 }
-function quickPrice(min: number | null, max: number | null) { priceMin.value = min; priceMax.value = max; pushQuery(1) }
-function toggleFlag(flag: 'offer'|'in_stock', v: boolean) {
-  if (flag==='offer') onOffer.value = v; else inStockOnly.value = v
+
+const quickPrice = (min: number | null, max: number | null) => {
+  priceMin.value = min
+  priceMax.value = max
   pushQuery(1)
 }
-function setFlag(flag: 'offer'|'in_stock', v: boolean) { toggleFlag(flag, v) }
-function nextPage() {
+
+const toggleFlag = (flag: 'offer' | 'in_stock', v: boolean) => {
+  if (flag === 'offer') onOffer.value = v
+  else inStockOnly.value = v
+  pushQuery(1)
+}
+
+const setFlag = (flag: 'offer' | 'in_stock', v: boolean) => {
+  toggleFlag(flag, v)
+}
+
+const nextPage = () => {
   const next = Math.min((pagination.value.current_page || 1) + 1, pagination.value.last_page || 1)
   pushQuery(next)
 }
 
-// Watch route.fullPath so any query change triggers rehydrate+fetch
+const refresh = () => {
+  window.location.reload()
+}
+
+// GSAP animations
+const initializeAnimations = () => {
+  if (!process.client || !gsap) return
+
+  // Floating orbs animation
+  if (orb1.value) {
+    gsap.to(orb1.value, {
+      y: -40,
+      rotation: 15,
+      duration: 8,
+      ease: 'power2.inOut',
+      yoyo: true,
+      repeat: -1
+    })
+  }
+
+  if (orb2.value) {
+    gsap.to(orb2.value, {
+      y: 30,
+      rotation: -12,
+      duration: 10,
+      ease: 'power2.inOut',
+      yoyo: true,
+      repeat: -1
+    })
+  }
+
+  if (orb3.value) {
+    gsap.to(orb3.value, {
+      y: -25,
+      rotation: 20,
+      duration: 6,
+      ease: 'power2.inOut',
+      yoyo: true,
+      repeat: -1
+    })
+  }
+
+  // Product cards entrance animation
+  if (ScrollTrigger) {
+    gsap.fromTo('.product-card',
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: 'back.out(1.7)',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: '.products-grid',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+    )
+
+    // Subcategory cards animation
+    gsap.fromTo('.subcategory-card',
+        { y: 30, opacity: 0, scale: 0.9 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: 'back.out(1.7)',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: '.subcategories-grid',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+    )
+  }
+}
+
+// Watchers
 watch(
     () => route.fullPath,
     async (cur, prev) => {
-      // refresh filter options when category URL changes
       if (!prev || (prev.split('?')[0] !== cur.split('?')[0])) {
         await fetchFilterOptions()
         lastFetchedPage.value = 1
@@ -620,12 +1105,180 @@ watch(
     { immediate: true }
 )
 
-// Sort -> URL (which triggers fetch)
 watch(selectedSortName, () => pushQuery(1))
 
-// Boot: fetch sort options and initial filter options
+// Lifecycle
 onMounted(async () => {
   await fetchSortOptions()
   await fetchFilterOptions()
+
+  // Initialize animations after content loads
+  setTimeout(() => {
+    initializeAnimations()
+  }, 100)
+})
+
+onUnmounted(() => {
+  if (process.client && ScrollTrigger) {
+    ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
+  }
+})
+
+// SEO
+useSeoMeta({
+  title: computed(() => `${category.value.name || 'Category'} - Premium Products`),
+  description: computed(() => `Discover amazing ${category.value.name || 'products'} with great deals and fast delivery. Shop now for the best selection.`),
 })
 </script>
+
+<style scoped>
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Enhanced product card effects */
+.product-card {
+  position: relative;
+}
+
+.product-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+  border-radius: 1.5rem;
+  mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.product-card:hover::before {
+  opacity: 1;
+}
+
+/* Subcategory card effects */
+.subcategory-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.subcategory-item:hover::after {
+  transform: scaleX(1);
+}
+
+/* Filter animations */
+.filter-chip {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Particle animations */
+.particle {
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+/* Loading button animation */
+.load-more-btn:disabled {
+  background: linear-gradient(45deg, #d1d5db, #9ca3af) !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 1024px) {
+  .category-orb-2 {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+
+  .category-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .subcategories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .category-orb-1, .category-orb-3 {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .particles {
+    display: none;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .product-card,
+  .subcategory-card {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Focus states for accessibility */
+.product-card:focus-visible,
+.subcategory-card:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+</style>

@@ -50,6 +50,8 @@ trait HasTransaction
                 ? LaravelIntegration::payment($paymentProviderSlug)
                 : LaravelIntegration::payment();
 
+
+
             // Resolve amount with backward compatibility
             $resolvedAmount = $amount ?? $this->resolveTransactionAmount();
 
@@ -67,8 +69,12 @@ trait HasTransaction
                 $transactionData['wallet_id'] = $wallet->id;
             }
 
+
+
+
             $transaction = $this->transaction()->create($transactionData);
 
+            dd($transaction->amount,$transactionData);
 
             $providerData = $paymentProvider->order()->create(function (ProviderOrder $order) use ($customer, $currency, $notes, $expireAfterMinutes, $transaction, $resolvedAmount) {
                 $order->receipt($this->uuid)
@@ -87,6 +93,9 @@ trait HasTransaction
                         ->customerMobile($customer['mobile']);
                 }
             });
+
+
+            dd($providerData);
 
             if (!isset($providerData['success']) || $providerData['success'] !== true) {
                 throw new RuntimeException($providerData['error'] ?? 'Unknown payment provider error.');

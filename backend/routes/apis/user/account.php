@@ -44,6 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::put('/password', [UserAccountController::class, 'updatePassword'])->name('account.password.update');
 
+
+    Route::post('/export-data', [UserAccountController::class, 'exportData']);
+    Route::delete('/delete', [UserAccountController::class, 'deleteAccount']);
+
+
+
     /**
      * prefix ('/account'))
      * Onboarding

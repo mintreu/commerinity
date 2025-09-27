@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
 
-    protected bool $demoOtpMode = false;
+    protected bool $demoOtpMode = true;
 
     /**
      * @throws ValidationException

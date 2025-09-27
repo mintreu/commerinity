@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('conditions')->nullable();
             $table->boolean('end_other_rules')->default(false);
             $table->string('action_type')->nullable();
-            $table->unsignedInteger('discount_amount')->default(0);
+            $table->integer('discount_amount')->default(0);
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });

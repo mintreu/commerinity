@@ -27,6 +27,10 @@ class ViewProduct extends ViewRecord
             Actions\EditAction::make(),
 
             Actions\Action::make('status_changer')
+                ->fillForm([
+                    'status' => $this->record->status,
+                    'status_feedback' => $this->record->status_feedback
+                ])
                 ->form([
                     Select::make('status')
                     ->options(

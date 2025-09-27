@@ -6,9 +6,8 @@ use App\Filament\Resources\Promotion\SaleResource\Pages;
 use App\Filament\Resources\Promotion\SaleResource\RelationManagers;
 use Filament\Forms;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Mintreu\LaravelCommerinity\Models\Sale;
+use Mintreu\Toolkit\Forms\Components\MoneyInput;
 
 class SaleResource extends Resource
 {
@@ -76,7 +75,37 @@ class SaleResource extends Resource
                         'by_percent' => 'Percentage of Product Price',
                         'by_fixed' => 'Fixed Amount',
                     ])->required()->label('Discount Type'),
-                    Forms\Components\TextInput::make('discount_amount')->label('Discount Amount')->required()->placeholder('Enter Discount'),
+//                    Forms\Components\TextInput::make('discount_amount')
+//                        ->label('Discount Amount')
+//                        ->integer()
+//                        ->minValue(1)
+//                        ->required()
+//                        ->lazy()
+//                        ->prefix('₹')
+//                        ->dehydrateStateUsing(fn ($state) => $state ? (int) ($state * 100) : null)
+//                        ->formatStateUsing(fn ($state) => $state ? $state / 100 : null)
+//                        ->placeholder('Enter Discount'),
+
+//                    Forms\Components\TextInput::make('discount_amount')
+//                        ->label('Discount Amount')
+//                        ->numeric() // Changed from ->integer() to ->numeric()
+//                        ->step(0.01) // Allow decimal steps
+//                        ->minValue(0.01)
+//                        ->required()
+//                        ->lazy()
+//                        ->prefix('₹')
+//                        ->inputMode('decimal') // Better mobile experience
+//                        //->dehydrateStateUsing(fn ($state) => $state ? round(floatval($state) * 100) : null)
+//                        ->dehydrateStateUsing(fn ($state) => $state ? (int) ($state * 100) : null)
+//                        ->formatStateUsing(fn ($state) => $state ? number_format($state / 100, 2, '.', '') : null)
+//                        ->placeholder('Enter Discount (e.g., 51.25)')
+//                        ->helperText('Enter amount in rupees. Decimals allowed.'),
+
+                    MoneyInput::make('discount_amount')
+                        ->label('Discount Amount')
+                        ->placeholder('Enter Discount (e.g., 51.25)')
+                        ->helperText('Enter amount in rupees. Decimals allowed.'),
+
 
                     Forms\Components\Select::make('end_other_rules')->options([
                         0 => 'No',

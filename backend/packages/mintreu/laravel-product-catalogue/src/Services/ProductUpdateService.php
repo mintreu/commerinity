@@ -48,7 +48,7 @@ class ProductUpdateService
             };
         }catch (\Throwable $t)
         {
-            dd($t->getMessage(),$t->getLine(),$t->getFile(),$t->getTraceAsString());
+            throw $t;
         }
     }
 
@@ -83,6 +83,8 @@ class ProductUpdateService
             // Update or Sync Filter Options
             $this->updateProductFilterOption();
         }
+
+        return $this->product;
 
     }
 
@@ -120,14 +122,13 @@ class ProductUpdateService
 
     private function updateProductFilterOptionToParent(): void
     {
-        $ids = [];
+        $pivotData = [];
         foreach ($this->data['filter_options'] as $filterId => $optionIds) {
             foreach ($optionIds as $optionId) {
-                $ids[] = $optionId;
+                $pivotData[$optionId] = ['filter_id' => $filterId];
             }
         }
-        $filterOptionIds = array_values($ids);
-        $this->product->filterOptions()->sync($filterOptionIds);
+        $this->product->filterOptions()->sync($pivotData);
 
     }
 
@@ -177,10 +178,6 @@ class ProductUpdateService
             $signature = implode('-', collect($variant['filter_option_ids'])->sort()->values()->all());
             return [$signature => $variant];
         });
-
-
-        dd($newOptionIds,$existingOptionIds,$this->data['filter_options'],$existingSignatures,$newSignatures);
-
 
         // 5. Delete outdated variants
         $toDelete = $existingSignatures->keys()->diff($newSignatures->keys());

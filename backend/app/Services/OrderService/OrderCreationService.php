@@ -85,6 +85,7 @@ class OrderCreationService
         $this->cart = new Cart($this->customer);
         $this->cart->capture($request);
         $this->cartMeta = $this->cart->getMeta(false);
+
     }
 
 
@@ -92,7 +93,9 @@ class OrderCreationService
 
     public function placeOrder(Request $request): static
     {
+
         $this->initilizeCart($request);
+
         if ($this->cartMeta['summary']['quantity'])
         {
             $this->order = $this->createOrder();
@@ -113,6 +116,7 @@ class OrderCreationService
             $this->setError('no product found for order');
         }
 
+        dd($this);
 
 
         $this->attachProductsToOrderProducts();
@@ -125,6 +129,7 @@ class OrderCreationService
 
     public function getCheckoutUrl():?string
     {
+
 
         if(!is_null($this->transaction))
         {
@@ -179,14 +184,18 @@ class OrderCreationService
 
     protected function createOrderPayment()
     {
+
         $customer = [
             'name'      => $this->order->customer_name,
             'email'     => $this->order->customer_email,
             'mobile'    => $this->order->customer_mobile
         ];
 
+
         $successUrl = $this->customer ? config('app.client_url').'dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid;
         $failureUrl = $this->customer ? config('app.client_url').'dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid ;
+
+
 
         $this->transaction = $this->order->createDebitTransaction(
             customer: $customer,

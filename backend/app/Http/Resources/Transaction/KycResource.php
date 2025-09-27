@@ -17,7 +17,7 @@ class KycResource extends JsonResource
 
         return [
 //            'uuid'          => $this->uuid,
-            'user_type'     => $this->user_type,
+            'user_type'     => $this->user_type->getLabel(),
             'company_name'  => $this->company_name,
             'company_type'  => $this->company_type,
             'has_tax'       => (bool) $this->has_tax,

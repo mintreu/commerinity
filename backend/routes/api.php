@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\{Auth\AuthController,
     Auth\SanctumUserController,
     BeneficiaryController,
     CategoryController,
+    FlashDealController,
     HelpDeskController,
     PageController,
     SaleController,
@@ -94,7 +95,32 @@ Route::prefix('products')->group(function () {
     Route::get('sorts/get', [ProductController::class, 'getSortingOptions']); // GET /products/sorts/get
     Route::get('suggestions/get', [ProductController::class, 'topSuggestProduct']); // GET /products/suggestions/get
     Route::get('{product:url}', [ProductController::class, 'show']); // GET /products/{url}
+
+
 });
+
+Route::prefix('product')->group(function (){
+    // Comments Engagements
+    Route::get('engagements/{product:url}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'index']);
+    Route::post('engagement/{product:url}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'store'])->middleware(['auth:sanctum']);
+    Route::put('engagement/{product_engagement}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'update'])->middleware(['auth:sanctum']);
+    Route::delete('engagement/{product_engagement}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'destroy'])->middleware(['auth:sanctum']);
+    Route::post('engagement/{product_engagement}/helpfull', [\App\Http\Controllers\Api\ProductEngagementController::class, 'helpFullEngagement'])->middleware(['auth:sanctum']);
+});
+
+
+
+// ========================
+// 🔥 FLASH DEALS ROUTES
+// ========================
+Route::prefix('flash-deals')->group(function () {
+    Route::get('/', [FlashDealController::class, 'index']); // GET /flash-deals
+    Route::get('/stats', [FlashDealController::class, 'getStats']); // GET /flash-deals/stats
+    Route::get('/categories', [FlashDealController::class, 'getCategories']); // GET /flash-deals/categories
+});
+
+
+
 
 // ========================
 // 🛒 CART ROUTES

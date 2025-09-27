@@ -81,6 +81,7 @@ class OrderController extends Controller
     {
 
 
+
         $validated = $request->validated();
         $user = $request->user();
 
@@ -133,6 +134,7 @@ class OrderController extends Controller
                     ->shippingAddress($deliveryAddress);
             }
 
+
             // Process checkout
             $checkoutUrl = $orderService
                 ->paymentProvider($validated['payment_provider'])
@@ -141,6 +143,7 @@ class OrderController extends Controller
                 ->getCheckoutUrl();
 
             $error = $orderService->getError();
+
 
 
             return response()->json([

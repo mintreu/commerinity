@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Casts\AuthTypeCast;
+use App\Casts\KycTypeCast;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\KycResource;
 use App\Http\Resources\User\UserIndexResource;
@@ -31,19 +33,6 @@ class UserKycController extends Controller
     public function addUserKyc(Request $request)
     {
 
-//        $validate = $request->validate([
-//            'aadhaar'       => ['required', 'regex:/^\d{12}$/'],
-//            'pan'           => ['nullable', 'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/'],
-//            'has_tax'       => ['required', 'in:0,1'],
-//            'gst'           => ['nullable', 'regex:/^[0-9A-Z]{15}$/'],
-//            'utility_bills' => ['nullable'],
-//            'aadhaar_file'  => ['nullable', 'file', 'mimes:jpeg,png', 'max:5120'],
-//            'pan_file'      => ['nullable', 'file', 'mimes:jpeg,png', 'max:5120'],
-//            'gst_file'      => ['nullable', 'file', 'mimes:jpeg,png', 'max:5120'],
-//        ]);
-
-
-
         $user = $request->user();
 
         $data = $this->validatePayload($request);
@@ -51,12 +40,10 @@ class UserKycController extends Controller
         // utility_bills from JSON string or array
         $utility = $this->normalizeUtilityBills($request->input('utility_bills'));
 
-
-
         return DB::transaction(function () use ($user, $data, $request, $utility) {
             /** @var Kyc $kyc */
             $kyc = $user->kyc()->create([
-                'user_type'     => $user->type ?? 'regular',
+                'user_type'     => $data['has_tax'] ? KycTypeCast::BUSINESS :KycTypeCast::INDIVIDUAL,
                 'company_name'  => $request->input('company_name'),
                 'company_type'  => $request->input('company_type'),
                 'has_tax'       => $data['has_tax'],
@@ -111,7 +98,7 @@ class UserKycController extends Controller
         return DB::transaction(function () use ($user, $request, $validated, $utility) {
             /** @var Kyc $kyc */
             $kyc = $user->kyc()->firstOrCreate([], [
-                'user_type' => $user->type ?? 'regular',
+                'user_type' => $validated['has_tax'] ? KycTypeCast::BUSINESS :KycTypeCast::INDIVIDUAL,
             ]);
 
             // Only update provided fields

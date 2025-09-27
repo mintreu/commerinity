@@ -101,6 +101,133 @@ class CategoryController extends Controller
     }
 
     // UPDATED: apply filters/price/offer/in_stock/sort to "All Products"
+//    public function show(Request $request, Category $category): CategoryResource
+//    {
+//        $category->load([
+//            'descendants',
+//            'children',
+//            'children.media',
+//        ]);
+//
+//        // All related category IDs (self + descendants)
+//        $categoryIds = $category->descendants->pluck('id')->push($category->id);
+//
+//        // Base query (only published parents in tree)
+//        $query = Product::query()
+//            ->whereNull('parent_id')
+//            ->where('status', PublishableStatusCast::PUBLISHED->value)
+//            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+//            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')]);
+//
+//        // filters[FilterName][]=OptionValue (AND across filters, OR within values)
+//        $filters = $request->input('filters', []);
+//        if (is_array($filters)) {
+//            foreach ($filters as $filterName => $values) {
+//                $values = array_values(array_filter((array) $values, fn($v) => $v !== null && $v !== ''));
+//                if (count($values) > 0) {
+//                    $query->whereHas('filterOptions', function ($fo) use ($filterName, $values) {
+//                        $fo->whereHas('filter', fn($f) => $f->where('name', $filterName))
+//                            ->whereIn('value', $values);
+//                    });
+//                }
+//            }
+//        }
+//
+//        // price[min], price[max] on products.price (adjust if tier-based pricing is required)
+//        $price = $request->input('price', []);
+//        if (is_array($price)) {
+//            if (isset($price['min']) && $price['min'] !== '') {
+//                $query->where('price', '>=', (float)$price['min']);
+//            }
+//            if (isset($price['max']) && $price['max'] !== '') {
+//                $query->where('price', '<=', (float)$price['max']);
+//            }
+//        }
+//
+//        // offer=1 => products that currently have sales started
+//        if ($request->boolean('offer')) {
+//            $query->whereHas('sales', fn($s) => $s->whereDate('starts_from', '<=', now()));
+//        }
+//
+//        // in_stock=1 => products that have at least one in-stock tier
+//        if ($request->boolean('in_stock')) {
+//            $query->whereHas('tiers', fn($t) => $t->where('in_stock', true));
+//        }
+//
+//        // Sorting
+//        $sort = $request->input('sort', []);
+//        $column = 'created_at';
+//        $direction = 'desc';
+//        if (is_array($sort) && !empty($sort)) {
+//            $key = array_key_first($sort);
+//            $dir = strtolower((string)($sort[$key] ?? 'desc'));
+//            $direction = in_array($dir, ['asc', 'desc'], true) ? $dir : 'desc';
+//
+//            switch ($key) {
+//                case 'popularity':
+//                    $column = 'view_count';
+//                    break;
+//                case 'latest':
+//                    $column = 'created_at';
+//                    $direction = 'desc';
+//                    break;
+//                case 'pricelow2high':
+//                    $column = 'price';
+//                    $direction = 'asc';
+//                    break;
+//                case 'pricehigh2low':
+//                    $column = 'price';
+//                    $direction = 'desc';
+//                    break;
+//                default:
+//                    $column = 'created_at';
+//                    $direction = 'desc';
+//            }
+//        }
+//
+//        // Top viewed (unchanged / not filtered)
+//        $topProducts = Product::query()
+//            ->whereNull('parent_id')
+//            ->where('status', PublishableStatusCast::PUBLISHED->value)
+//            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+//            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')])
+//            ->orderBy('view_count', 'desc')
+//            ->take(20)
+//            ->get();
+//
+//        // Latest (unchanged / not filtered)
+//        $latestProducts = Product::query()
+//            ->whereNull('parent_id')
+//            ->where('status', PublishableStatusCast::PUBLISHED->value)
+//            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+//            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')])
+//            ->orderBy('created_at', 'desc')
+//            ->take(20)
+//            ->get();
+//
+//        // All products with filters and sorting
+//        $allProducts = (clone $query)
+//            ->orderBy($column, $direction)
+//            ->paginate(15);
+//
+//        return (new CategoryResource($category))->additional([
+//            'top_products'    => ProductIndexResource::collection($topProducts),
+//            'latest_products' => ProductIndexResource::collection($latestProducts),
+//            'all_products'    => ProductIndexResource::collection($allProducts),
+//            'pagination'      => [
+//                'current_page' => $allProducts->currentPage(),
+//                'last_page'    => $allProducts->lastPage(),
+//                'total'        => $allProducts->total(),
+//                'per_page'     => $allProducts->perPage(),
+//            ],
+//        ]);
+//    }
+
+
+
+
+
+
     public function show(Request $request, Category $category): CategoryResource
     {
         $category->load([
@@ -112,14 +239,24 @@ class CategoryController extends Controller
         // All related category IDs (self + descendants)
         $categoryIds = $category->descendants->pluck('id')->push($category->id);
 
-        // Base query (only published parents in tree)
+        // Base query with active sales data
         $query = Product::query()
             ->whereNull('parent_id')
             ->where('status', PublishableStatusCast::PUBLISHED->value)
             ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
-            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')]);
+            ->with([
+                'media' => fn($q) => $q->where('collection_name', 'displayImage'),
+                'sales' => function ($query) {
+                    // Filter for active sales only
+                    $query->whereDate('starts_from', '<=', now())
+                        ->where(function ($q) {
+                            $q->whereNull('ends_till')
+                                ->orWhereDate('ends_till', '>=', now());
+                        });
+                }
+            ]);
 
-        // filters[FilterName][]=OptionValue (AND across filters, OR within values)
+        // Enhanced filters with FilterName[]=OptionValue (AND across filters, OR within values)
         $filters = $request->input('filters', []);
         if (is_array($filters)) {
             foreach ($filters as $filterName => $values) {
@@ -133,20 +270,71 @@ class CategoryController extends Controller
             }
         }
 
-        // price[min], price[max] on products.price (adjust if tier-based pricing is required)
+        // Enhanced price filtering - checks both regular price and active sale price
         $price = $request->input('price', []);
         if (is_array($price)) {
             if (isset($price['min']) && $price['min'] !== '') {
-                $query->where('price', '>=', (float)$price['min']);
+                $minPrice = (float)$price['min'];
+                $query->where(function ($q) use ($minPrice) {
+                    // Check if product has active sale price >= min
+                    $q->whereHas('sales', function ($salesQuery) use ($minPrice) {
+                        $salesQuery->whereDate('starts_from', '<=', now())
+                            ->where(function ($dateQuery) {
+                                $dateQuery->whereNull('ends_till')
+                                    ->orWhereDate('ends_till', '>=', now());
+                            })
+                            ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(sale_price, "$.amount")) AS DECIMAL(10,2)) >= ?', [$minPrice]);
+                    })
+                        // OR regular price >= min (if no active sale)
+                        ->orWhere(function ($regularQuery) use ($minPrice) {
+                            $regularQuery->whereDoesntHave('sales', function ($noSaleQuery) {
+                                $noSaleQuery->whereDate('starts_from', '<=', now())
+                                    ->where(function ($dateQuery) {
+                                        $dateQuery->whereNull('ends_till')
+                                            ->orWhereDate('ends_till', '>=', now());
+                                    });
+                            })
+                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(price, "$.amount")) AS DECIMAL(10,2)) >= ?', [$minPrice]);
+                        });
+                });
             }
+
             if (isset($price['max']) && $price['max'] !== '') {
-                $query->where('price', '<=', (float)$price['max']);
+                $maxPrice = (float)$price['max'];
+                $query->where(function ($q) use ($maxPrice) {
+                    // Check if product has active sale price <= max
+                    $q->whereHas('sales', function ($salesQuery) use ($maxPrice) {
+                        $salesQuery->whereDate('starts_from', '<=', now())
+                            ->where(function ($dateQuery) {
+                                $dateQuery->whereNull('ends_till')
+                                    ->orWhereDate('ends_till', '>=', now());
+                            })
+                            ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(sale_price, "$.amount")) AS DECIMAL(10,2)) <= ?', [$maxPrice]);
+                    })
+                        // OR regular price <= max (if no active sale)
+                        ->orWhere(function ($regularQuery) use ($maxPrice) {
+                            $regularQuery->whereDoesntHave('sales', function ($noSaleQuery) {
+                                $noSaleQuery->whereDate('starts_from', '<=', now())
+                                    ->where(function ($dateQuery) {
+                                        $dateQuery->whereNull('ends_till')
+                                            ->orWhereDate('ends_till', '>=', now());
+                                    });
+                            })
+                                ->whereRaw('CAST(JSON_UNQUOTE(JSON_EXTRACT(price, "$.amount")) AS DECIMAL(10,2)) <= ?', [$maxPrice]);
+                        });
+                });
             }
         }
 
-        // offer=1 => products that currently have sales started
+        // offer=1 => products that currently have active sales
         if ($request->boolean('offer')) {
-            $query->whereHas('sales', fn($s) => $s->whereDate('starts_from', '<=', now()));
+            $query->whereHas('sales', function ($s) {
+                $s->whereDate('starts_from', '<=', now())
+                    ->where(function ($q) {
+                        $q->whereNull('ends_till')
+                            ->orWhereDate('ends_till', '>=', now());
+                    });
+            });
         }
 
         // in_stock=1 => products that have at least one in-stock tier
@@ -154,10 +342,12 @@ class CategoryController extends Controller
             $query->whereHas('tiers', fn($t) => $t->where('in_stock', true));
         }
 
-        // Sorting
+        // Enhanced sorting with sale price consideration
         $sort = $request->input('sort', []);
         $column = 'created_at';
         $direction = 'desc';
+        $customSort = false;
+
         if (is_array($sort) && !empty($sort)) {
             $key = array_key_first($sort);
             $dir = strtolower((string)($sort[$key] ?? 'desc'));
@@ -172,12 +362,48 @@ class CategoryController extends Controller
                     $direction = 'desc';
                     break;
                 case 'pricelow2high':
-                    $column = 'price';
-                    $direction = 'asc';
+                    $customSort = true;
+                    $query->orderByRaw("
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1 FROM sale_products sp
+                            WHERE sp.product_id = products.id
+                            AND sp.starts_from <= NOW()
+                            AND (sp.ends_till IS NULL OR sp.ends_till >= NOW())
+                        ) THEN (
+                            SELECT CAST(JSON_UNQUOTE(JSON_EXTRACT(sp.sale_price, '$.amount')) AS DECIMAL(10,2))
+                            FROM sale_products sp
+                            WHERE sp.product_id = products.id
+                            AND sp.starts_from <= NOW()
+                            AND (sp.ends_till IS NULL OR sp.ends_till >= NOW())
+                            ORDER BY sp.starts_from DESC
+                            LIMIT 1
+                        )
+                        ELSE CAST(JSON_UNQUOTE(JSON_EXTRACT(products.price, '$.amount')) AS DECIMAL(10,2))
+                    END ASC
+                ");
                     break;
                 case 'pricehigh2low':
-                    $column = 'price';
-                    $direction = 'desc';
+                    $customSort = true;
+                    $query->orderByRaw("
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1 FROM sale_products sp
+                            WHERE sp.product_id = products.id
+                            AND sp.starts_from <= NOW()
+                            AND (sp.ends_till IS NULL OR sp.ends_till >= NOW())
+                        ) THEN (
+                            SELECT CAST(JSON_UNQUOTE(JSON_EXTRACT(sp.sale_price, '$.amount')) AS DECIMAL(10,2))
+                            FROM sale_products sp
+                            WHERE sp.product_id = products.id
+                            AND sp.starts_from <= NOW()
+                            AND (sp.ends_till IS NULL OR sp.ends_till >= NOW())
+                            ORDER BY sp.starts_from DESC
+                            LIMIT 1
+                        )
+                        ELSE CAST(JSON_UNQUOTE(JSON_EXTRACT(products.price, '$.amount')) AS DECIMAL(10,2))
+                    END DESC
+                ");
                     break;
                 default:
                     $column = 'created_at';
@@ -185,30 +411,43 @@ class CategoryController extends Controller
             }
         }
 
-        // Top viewed (unchanged / not filtered)
-        $topProducts = Product::query()
-            ->whereNull('parent_id')
-            ->where('status', PublishableStatusCast::PUBLISHED->value)
-            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
-            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')])
+        // Enhanced base queries with sale prices
+        $baseQueryWithSales = function () use ($categoryIds) {
+            return Product::query()
+                ->whereNull('parent_id')
+                ->where('status', PublishableStatusCast::PUBLISHED->value)
+                ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
+                ->with([
+                    'media' => fn($q) => $q->where('collection_name', 'displayImage'),
+                    'sales' => function ($query) {
+                        $query->whereDate('starts_from', '<=', now())
+                            ->where(function ($q) {
+                                $q->whereNull('ends_till')
+                                    ->orWhereDate('ends_till', '>=', now());
+                            });
+                    }
+                ]);
+        };
+
+        // Top viewed products (unchanged but with sale data)
+        $topProducts = $baseQueryWithSales()
             ->orderBy('view_count', 'desc')
             ->take(20)
             ->get();
 
-        // Latest (unchanged / not filtered)
-        $latestProducts = Product::query()
-            ->whereNull('parent_id')
-            ->where('status', PublishableStatusCast::PUBLISHED->value)
-            ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
-            ->with(['media' => fn($q) => $q->where('collection_name', 'displayImage')])
+        // Latest products (unchanged but with sale data)
+        $latestProducts = $baseQueryWithSales()
             ->orderBy('created_at', 'desc')
             ->take(20)
             ->get();
 
+        // Apply sorting if not custom
+        if (!$customSort) {
+            $query->orderBy($column, $direction);
+        }
+
         // All products with filters and sorting
-        $allProducts = (clone $query)
-            ->orderBy($column, $direction)
-            ->paginate(15);
+        $allProducts = $query->paginate(15);
 
         return (new CategoryResource($category))->additional([
             'top_products'    => ProductIndexResource::collection($topProducts),
@@ -222,4 +461,15 @@ class CategoryController extends Controller
             ],
         ]);
     }
+
+
+
+
+
+
+
+
+
+
+
 }

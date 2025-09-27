@@ -38,6 +38,7 @@ class ListCategories extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query) => $query->latest())
             ->columns($this->getAdjacencyTableColumns())
             ->filters($this->getAdjacencyTableFilters())
             ->actions($this->getAdjacencyTableActions())

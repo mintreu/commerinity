@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Cashfree\Cashfree;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mintreu\LaravelCategory\Models\Category;
@@ -13,6 +13,8 @@ use Mintreu\LaravelIntegration\LaravelIntegration;
 use Mintreu\LaravelIntegration\Support\Fetcher\Fetch;
 use Mintreu\LaravelIntegration\Support\OrderBuilder\ProviderOrder;
 use Mintreu\LaravelProductCatalogue\Models\Product;
+use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
+use Mintreu\LaravelProductCatalogue\Services\ProductUpdateService;
 
 
 class TestController extends Controller
@@ -24,7 +26,15 @@ class TestController extends Controller
     {
 
 
-        dd(LaravelIntegration::make());
+       $newProductData = Product::factory()->raw();
+
+       $newProduct = ProductCreationService::make($newProductData)->create();
+
+       // Update
+        $updateService = ProductUpdateService::make($newProduct)->update([
+
+        ]);
+
 
 
 
@@ -64,26 +74,26 @@ class TestController extends Controller
 
 
 
-
-       // dd(LaravelIntegration::payment()->getModel());
-
-        // Note: LaravelIntegration  er vitar payment , payout, sms, shipping, booking sob alada alada provider ache
-        $orderData = LaravelIntegration::payment()->order()->create([
-            'receipt' => '123', 'amount' => 100, 'currency' => 'INR',
-            'notes'=> array('key1'=> 'value3','key2'=> 'value2')
-        ]);
-//        dd($orderData);
-
-
-
-
-        Fetch::make()->get('',function (){
-
-        });
-
-        Fetch::make()->get('',[]);
-
-
+//
+//       // dd(LaravelIntegration::payment()->getModel());
+//
+//        // Note: LaravelIntegration  er vitar payment , payout, sms, shipping, booking sob alada alada provider ache
+//        $orderData = LaravelIntegration::payment()->order()->create([
+//            'receipt' => '123', 'amount' => 100, 'currency' => 'INR',
+//            'notes'=> array('key1'=> 'value3','key2'=> 'value2')
+//        ]);
+////        dd($orderData);
+//
+//
+//
+//
+//        Fetch::make()->get('',function (){
+//
+//        });
+//
+//        Fetch::make()->get('',[]);
+//
+//
 
 
 

@@ -232,8 +232,24 @@ class SaleManager
     public function calculate(Sale $sale, Product $product)
     {
 
+
+
         $price = isset($product->price) && ! empty($product->price) ? $product->price : $sale->discount_amount;
         $price = LaravelMoney::make($price);
+
+//        dd([
+//            'Sale' => [
+//                'discount_amount' => $sale->discount_amount,
+//                'price_raw'       => $sale->getRawOriginal('discount_amount'),
+//            ],
+//            'Product' => [
+//                'price'     => $product->price,
+//                'price_raw' => $product->getRawOriginal('price'),
+//            ],
+//        ]);
+
+
+
         return match ($sale->action_type->value) {
             'to_fixed' => min($sale->discount_amount, $price),
             'to_percent' => $price->multiplyOnce($sale->discount_amount->divideOnce(100)->getValue())->getAmount(),

@@ -13,7 +13,7 @@ use Mintreu\Toolkit\Traits\HasUnique;
 
 class NaukriApplication extends Model
 {
-    /** @use HasFactory<\Database\Factories\NaukriApplicationFactory> */
+    /** @use HasFactory<\Mintreu\LaravelNaukriManager\Database\Factories\NaukriApplicationFactory> */
     use HasFactory,HasUnique,HasTransaction,HasAddress;
 
 

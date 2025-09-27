@@ -17,8 +17,8 @@ return new class extends Migration
             $table->datetime('ends_till')->nullable();
             $table->boolean('end_other_rules')->default(false);
             $table->string('action_type')->nullable();
-            $table->unsignedInteger('sale_price')->default(0);
-            $table->unsignedInteger('discount_amount')->default(0);
+            $table->integer('sale_price')->default(0);
+            $table->integer('discount_amount')->default(0);
             $table->unsignedInteger('sort_order')->default(0);
             $table->foreignId('product_id')->constrained('products')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('sale_id')->nullable()->constrained('sales')->cascadeOnUpdate()->cascadeOnDelete();

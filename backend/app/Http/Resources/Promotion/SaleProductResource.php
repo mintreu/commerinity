@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Promotion;
 
+use App\Http\Resources\Category\CategoryIndexResource;
+use App\Http\Resources\Product\ProductIndexResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Mintreu\LaravelMoney\LaravelMoney;
@@ -22,6 +24,8 @@ class SaleProductResource extends JsonResource
             'discount'  => in_array($this->action_type,['to_fixed','by_fixed']) ?  LaravelMoney::format($this->discount_amount) : $this->discount_amount,
             'discount_type' => $this->action_type,
             'sale'     => $this->resourceCollectionWhenLoadedAndNotEmpty('sale',SaleResource::class),
+            'product'     => $this->resourceCollectionWhenLoadedAndNotEmpty('product',ProductIndexResource::class),
+            'categories' => $this->resourceCollectionWhenLoadedAndNotEmpty('product.categories', CategoryIndexResource::class),
         ];
     }
 

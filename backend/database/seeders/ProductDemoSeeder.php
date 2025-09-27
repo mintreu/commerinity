@@ -89,21 +89,6 @@ class ProductDemoSeeder extends Seeder
     }
 
 
-//    protected function attachMediaFilesFromParent(Product $parent,Product $product)
-//    {
-//        // Add Media
-//        $displayImagePath = $parent->getFirstMediaUrl('displayImage');
-//        if (!is_null($displayImagePath))
-//        {
-//            $product->addMediaFromUrl($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
-//        }
-//        $bannerImagePath = $parent->getFirstMediaUrl('bannerImage');
-//        if (!is_null($bannerImagePath))
-//        {
-//            $product->addMediaFromUrl($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
-//        }
-//    }
-
 
 
     protected function attachMediaFilesFromParent(Product $parent, Product $product): void

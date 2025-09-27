@@ -1,15 +1,17 @@
+<!--components/ProductComment.vue-->
+
 <template>
   <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
 
-    <!-- Comments Header -->
+    <!-- Reviews Header -->
     <div class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <Icon name="mdi:comment-text-outline" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"/>
+          <Icon name="mdi:star-outline" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"/>
           <div>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white">Customer Reviews</h2>
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              {{ totalComments }} {{ totalComments === 1 ? 'review' : 'reviews' }}
+              {{ totalReviews }} {{ totalReviews === 1 ? 'review' : 'reviews' }}
             </p>
           </div>
         </div>
@@ -20,7 +22,7 @@
       </div>
     </div>
 
-    <!-- Comment Form Section - Only for Logged In Users -->
+    <!-- Review Form Section - Only for Logged In Users -->
     <div v-if="isLoggedIn" class="p-6 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-start gap-4">
         <!-- User Avatar -->
@@ -30,25 +32,25 @@
           </div>
         </div>
 
-        <!-- Comment Form -->
+        <!-- Review Form -->
         <div class="flex-1 space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Share your experience with this product
             </label>
             <textarea
-                v-model="newComment.text"
-                :disabled="isSubmittingComment"
+                v-model="newReview.text"
+                :disabled="isSubmittingReview"
                 rows="4"
                 placeholder="Write your review here... Share details about quality, delivery, value for money, etc."
                 class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white resize-none transition-all duration-200"
-                :class="newComment.text.length > 500 ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''"
+                :class="newReview.text.length > 500 ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''"
             ></textarea>
             <div class="flex justify-between items-center mt-2">
               <div class="text-xs text-gray-500 dark:text-gray-400">
-                {{ newComment.text.length }}/500 characters
+                {{ newReview.text.length }}/500 characters
               </div>
-              <div v-if="newComment.text.length > 500" class="text-xs text-red-500">
+              <div v-if="newReview.text.length > 500" class="text-xs text-red-500">
                 Please keep your review under 500 characters
               </div>
             </div>
@@ -62,9 +64,9 @@
                   v-for="star in 5"
                   :key="star"
                   @click="setRating(star)"
-                  :disabled="isSubmittingComment"
+                  :disabled="isSubmittingReview"
                   class="text-2xl transition-colors duration-200 focus:outline-none"
-                  :class="star <= newComment.rating
+                  :class="star <= newReview.rating
                     ? 'text-yellow-400 hover:text-yellow-500'
                     : 'text-gray-300 hover:text-yellow-300 dark:text-gray-600 dark:hover:text-yellow-400'"
               >
@@ -72,19 +74,19 @@
               </button>
             </div>
             <span class="text-sm text-gray-600 dark:text-gray-400">
-              {{ newComment.rating > 0 ? `${newComment.rating} star${newComment.rating > 1 ? 's' : ''}` : 'Select rating' }}
+              {{ newReview.rating > 0 ? `${newReview.rating} star${newReview.rating > 1 ? 's' : ''}` : 'Select rating' }}
             </span>
           </div>
 
           <!-- Submit Button -->
           <div class="flex justify-end">
             <button
-                @click="submitComment"
-                :disabled="!canSubmitComment || isSubmittingComment"
+                @click="submitReview"
+                :disabled="!canSubmitReview || isSubmittingReview"
                 class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center gap-2"
             >
               <Icon
-                  v-if="isSubmittingComment"
+                  v-if="isSubmittingReview"
                   name="mdi:loading"
                   class="w-4 h-4 animate-spin"
               />
@@ -93,14 +95,14 @@
                   name="mdi:send"
                   class="w-4 h-4"
               />
-              {{ isSubmittingComment ? 'Posting...' : 'Post Review' }}
+              {{ isSubmittingReview ? 'Posting...' : 'Post Review' }}
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Guest User - Login to Comment Banner -->
+    <!-- Guest User - Login to Review Banner -->
     <div v-else class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -120,10 +122,10 @@
       </div>
     </div>
 
-    <!-- Comments List - Show Top 5 -->
+    <!-- Reviews List -->
     <div class="divide-y divide-gray-200 dark:divide-gray-700">
       <!-- Loading State -->
-      <div v-if="isLoadingComments" class="p-6">
+      <div v-if="isLoadingReviews" class="p-6">
         <div class="space-y-4">
           <div v-for="i in 3" :key="i" class="flex gap-4 animate-pulse">
             <div class="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
@@ -136,27 +138,27 @@
         </div>
       </div>
 
-      <!-- Top 5 Comments -->
-      <div v-else-if="displayComments.length > 0">
+      <!-- Reviews -->
+      <div v-else-if="displayReviews.length > 0">
         <div
-            v-for="comment in topComments"
-            :key="comment.id"
+            v-for="review in topReviews"
+            :key="review.id"
             class="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
         >
           <div class="flex gap-4">
             <!-- User Avatar -->
             <div class="flex-shrink-0">
               <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-green-600 flex items-center justify-center text-white font-semibold text-sm">
-                {{ comment.user_name?.charAt(0).toUpperCase() || 'A' }}
+                {{ review.author_name?.charAt(0).toUpperCase() || 'A' }}
               </div>
             </div>
 
-            <!-- Comment Content -->
+            <!-- Review Content -->
             <div class="flex-1 min-w-0">
               <!-- User Info & Rating -->
               <div class="flex items-center gap-3 mb-2">
                 <h4 class="font-medium text-gray-900 dark:text-white">
-                  {{ comment.user_name || 'Anonymous' }}
+                  {{ review.author_name || 'Anonymous' }}
                 </h4>
                 <div class="flex items-center gap-1">
                   <div class="flex">
@@ -164,41 +166,38 @@
                         v-for="star in 5"
                         :key="star"
                         class="text-sm"
-                        :class="star <= comment.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'"
+                        :class="star <= review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'"
                     >
                       ★
                     </span>
                   </div>
                   <span class="text-sm text-gray-600 dark:text-gray-400">
-                    ({{ comment.rating }}/5)
+                    ({{ review.rating }}/5)
                   </span>
                 </div>
                 <span class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ formatCommentDate(comment.created_at) }}
+                  {{ formatReviewDate(review.created_at) }}
                 </span>
               </div>
 
-              <!-- Comment Text -->
+              <!-- Review Text -->
               <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {{ comment.comment }}
+                {{ review.review }}
               </p>
 
               <!-- Helpful Actions -->
               <div class="flex items-center gap-4 mt-3">
                 <button
-                    @click="toggleHelpful(comment)"
-                    :disabled="!isLoggedIn"
+                    @click="toggleHelpful(review)"
+                    :disabled="!isLoggedIn || isTogglingHelpful[review.id]"
                     class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Icon name="mdi:thumb-up-outline" class="w-4 h-4"/>
-                  <span>Helpful ({{ comment.helpful_count || 0 }})</span>
-                </button>
-                <button
-                    :disabled="!isLoggedIn"
-                    class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Icon name="mdi:reply" class="w-4 h-4"/>
-                  <span>Reply</span>
+                  <Icon
+                      :name="isTogglingHelpful[review.id] ? 'mdi:loading' : 'mdi:thumb-up-outline'"
+                      class="w-4 h-4"
+                      :class="isTogglingHelpful[review.id] ? 'animate-spin' : ''"
+                  />
+                  <span>Helpful ({{ review.helpful_count || 0 }})</span>
                 </button>
               </div>
             </div>
@@ -206,10 +205,10 @@
         </div>
       </div>
 
-      <!-- No Comments State -->
+      <!-- No Reviews State -->
       <div v-else class="p-12 text-center">
         <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Icon name="mdi:comment-outline" class="w-8 h-8 text-gray-400"/>
+          <Icon name="mdi:star-outline" class="w-8 h-8 text-gray-400"/>
         </div>
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           No reviews yet
@@ -220,14 +219,14 @@
       </div>
     </div>
 
-    <!-- View All Comments Button - Show when comments > 5 -->
-    <div v-if="displayComments.length > 5" class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+    <!-- View All Reviews Button -->
+    <div v-if="displayReviews.length > 5" class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
       <button
-          @click="openAllCommentsModal"
+          @click="openAllReviewsModal"
           class="w-full px-4 py-3 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
       >
-        <Icon name="mdi:comment-multiple" class="w-4 h-4"/>
-        View All {{ displayComments.length }} Reviews
+        <Icon name="mdi:star-box-multiple" class="w-4 h-4"/>
+        View All {{ displayReviews.length }} Reviews
       </button>
     </div>
 
@@ -262,7 +261,7 @@
       </div>
     </Transition>
 
-    <!-- Full Screen Comments Modal -->
+    <!-- Full Screen Reviews Modal -->
     <Teleport to="body">
       <Transition
           enter-active-class="transition ease-out duration-200"
@@ -272,9 +271,9 @@
           leave-from-class="opacity-100"
           leave-to-class="opacity-0"
       >
-        <div v-if="showAllCommentsModal" class="fixed inset-0 z-50 overflow-hidden">
+        <div v-if="showAllReviewsModal" class="fixed inset-0 z-50 overflow-hidden">
           <!-- Backdrop -->
-          <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" @click="closeAllCommentsModal"></div>
+          <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" @click="closeAllReviewsModal"></div>
 
           <!-- Modal Content -->
           <div class="fixed inset-0 overflow-hidden">
@@ -287,22 +286,22 @@
                   leave-from-class="opacity-100 transform scale-100"
                   leave-to-class="opacity-0 transform scale-95"
               >
-                <div v-if="showAllCommentsModal" class="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+                <div v-if="showAllReviewsModal" class="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
 
                   <!-- Modal Header -->
                   <div class="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-3">
-                        <Icon name="mdi:comment-multiple" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"/>
+                        <Icon name="mdi:star-box-multiple" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"/>
                         <div>
                           <h2 class="text-xl font-bold text-gray-900 dark:text-white">All Customer Reviews</h2>
                           <p class="text-sm text-gray-600 dark:text-gray-400">
-                            {{ displayComments.length }} reviews • {{ averageRating.toFixed(1) }} average rating
+                            {{ displayReviews.length }} reviews • {{ averageRating.toFixed(1) }} average rating
                           </p>
                         </div>
                       </div>
                       <button
-                          @click="closeAllCommentsModal"
+                          @click="closeAllReviewsModal"
                           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
                       >
                         <Icon name="mdi:close" class="w-6 h-6 text-gray-500 dark:text-gray-400"/>
@@ -310,27 +309,27 @@
                     </div>
                   </div>
 
-                  <!-- Modal Content - All Comments -->
+                  <!-- Modal Content - All Reviews -->
                   <div class="overflow-y-auto max-h-[calc(90vh-120px)] divide-y divide-gray-200 dark:divide-gray-700">
                     <div
-                        v-for="comment in displayComments"
-                        :key="comment.id"
+                        v-for="review in displayReviews"
+                        :key="review.id"
                         class="p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200"
                     >
                       <div class="flex gap-4">
                         <!-- User Avatar -->
                         <div class="flex-shrink-0">
                           <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-green-600 flex items-center justify-center text-white font-semibold">
-                            {{ comment.user_name?.charAt(0).toUpperCase() || 'A' }}
+                            {{ review.author_name?.charAt(0).toUpperCase() || 'A' }}
                           </div>
                         </div>
 
-                        <!-- Comment Content -->
+                        <!-- Review Content -->
                         <div class="flex-1 min-w-0">
                           <!-- User Info & Rating -->
                           <div class="flex items-center gap-3 mb-3">
                             <h4 class="font-semibold text-gray-900 dark:text-white">
-                              {{ comment.user_name || 'Anonymous' }}
+                              {{ review.author_name || 'Anonymous' }}
                             </h4>
                             <div class="flex items-center gap-1">
                               <div class="flex">
@@ -338,41 +337,38 @@
                                     v-for="star in 5"
                                     :key="star"
                                     class="text-lg"
-                                    :class="star <= comment.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'"
+                                    :class="star <= review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'"
                                 >
                                   ★
                                 </span>
                               </div>
                               <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">
-                                ({{ comment.rating }}/5)
+                                ({{ review.rating }}/5)
                               </span>
                             </div>
                             <span class="text-sm text-gray-500 dark:text-gray-400">
-                              {{ formatCommentDate(comment.created_at) }}
+                              {{ formatReviewDate(review.created_at) }}
                             </span>
                           </div>
 
-                          <!-- Comment Text -->
+                          <!-- Review Text -->
                           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-                            {{ comment.comment }}
+                            {{ review.review }}
                           </p>
 
                           <!-- Helpful Actions -->
                           <div class="flex items-center gap-6">
                             <button
-                                @click="toggleHelpful(comment)"
-                                :disabled="!isLoggedIn"
+                                @click="toggleHelpful(review)"
+                                :disabled="!isLoggedIn || isTogglingHelpful[review.id]"
                                 class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <Icon name="mdi:thumb-up-outline" class="w-4 h-4"/>
-                              <span>Helpful ({{ comment.helpful_count || 0 }})</span>
-                            </button>
-                            <button
-                                :disabled="!isLoggedIn"
-                                class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <Icon name="mdi:reply" class="w-4 h-4"/>
-                              <span>Reply</span>
+                              <Icon
+                                  :name="isTogglingHelpful[review.id] ? 'mdi:loading' : 'mdi:thumb-up-outline'"
+                                  class="w-4 h-4"
+                                  :class="isTogglingHelpful[review.id] ? 'animate-spin' : ''"
+                              />
+                              <span>Helpful ({{ review.helpful_count || 0 }})</span>
                             </button>
                           </div>
                         </div>
@@ -380,18 +376,18 @@
                     </div>
 
                     <!-- Load More in Modal -->
-                    <div v-if="hasMoreComments" class="p-6 text-center border-t border-gray-200 dark:border-gray-700">
+                    <div v-if="hasMoreReviews" class="p-6 text-center border-t border-gray-200 dark:border-gray-700">
                       <button
-                          @click="loadMoreComments"
-                          :disabled="isLoadingMoreComments"
+                          @click="loadMoreReviews"
+                          :disabled="isLoadingMoreReviews"
                           class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 disabled:opacity-50 flex items-center gap-2 mx-auto"
                       >
                         <Icon
-                            v-if="isLoadingMoreComments"
+                            v-if="isLoadingMoreReviews"
                             name="mdi:loading"
                             class="w-4 h-4 animate-spin"
                         />
-                        {{ isLoadingMoreComments ? 'Loading...' : 'Load More Reviews' }}
+                        {{ isLoadingMoreReviews ? 'Loading...' : 'Load More Reviews' }}
                       </button>
                     </div>
                   </div>
@@ -400,10 +396,10 @@
                   <div class="sticky bottom-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
                     <div class="flex justify-between items-center">
                       <p class="text-sm text-gray-600 dark:text-gray-400">
-                        Showing {{ displayComments.length }} of {{ totalComments }} reviews
+                        Showing {{ displayReviews.length }} of {{ totalReviews }} reviews
                       </p>
                       <button
-                          @click="closeAllCommentsModal"
+                          @click="closeAllReviewsModal"
                           class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium transition-colors duration-200"
                       >
                         Close
@@ -423,7 +419,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRuntimeConfig, useSanctum, useSanctumFetch } from '#imports'
 
 // Sanctum composable for authentication
@@ -431,17 +427,9 @@ const { isLoggedIn, user } = useSanctum()
 
 // Props
 const props = defineProps({
-  productId: {
-    type: [String, Number],
+  url: {
+    type: String,
     required: true
-  },
-  initialComments: {
-    type: Array,
-    default: () => []
-  },
-  autoLoad: {
-    type: Boolean,
-    default: true
   }
 })
 
@@ -451,118 +439,129 @@ const config = useRuntimeConfig()
 const currentPath = computed(() => route.fullPath)
 
 // State
-const comments = ref([...props.initialComments])
-const isLoadingComments = ref(false)
-const isSubmittingComment = ref(false)
-const isLoadingMoreComments = ref(false)
-const hasMoreComments = ref(true)
-const commentsPage = ref(1)
+const reviews = ref([])
+const isLoadingReviews = ref(false)
+const isSubmittingReview = ref(false)
+const isLoadingMoreReviews = ref(false)
+const hasMoreReviews = ref(true)
+const reviewsPage = ref(1)
 const message = ref({ text: '', type: 'success' })
-const showAllCommentsModal = ref(false)
+const showAllReviewsModal = ref(false)
+const isTogglingHelpful = ref({}) // Track loading state per review
 
-// New Comment State
-const newComment = ref({
+// New Review State
+const newReview = ref({
   text: '',
   rating: 0
 })
 
 // Computed Properties
-const canSubmitComment = computed(() => {
+const canSubmitReview = computed(() => {
   return isLoggedIn.value &&
-      newComment.value.text.trim().length > 0 &&
-      newComment.value.text.length <= 500 &&
-      newComment.value.rating > 0
+      newReview.value.text.trim().length >= 10 &&
+      newReview.value.text.length <= 500 &&
+      newReview.value.rating > 0
 })
 
-const displayComments = computed(() => {
-  return [...comments.value].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+const displayReviews = computed(() => {
+  return [...reviews.value].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 })
 
-const topComments = computed(() => {
-  return displayComments.value.slice(0, 5)
+const topReviews = computed(() => {
+  return displayReviews.value.slice(0, 5)
 })
 
-const totalComments = computed(() => {
-  return comments.value.length
+const totalReviews = computed(() => {
+  return reviews.value.length
 })
 
 const averageRating = computed(() => {
-  if (comments.value.length === 0) return 0
-  const sum = comments.value.reduce((acc, comment) => acc + comment.rating, 0)
-  return sum / comments.value.length
+  if (reviews.value.length === 0) return 0
+  const sum = reviews.value.reduce((acc, review) => acc + review.rating, 0)
+  return sum / reviews.value.length
 })
 
 // Methods
 const setRating = (rating) => {
-  if (!isSubmittingComment.value) {
-    newComment.value.rating = rating
+  if (!isSubmittingReview.value) {
+    newReview.value.rating = rating
   }
 }
 
-const openAllCommentsModal = () => {
-  showAllCommentsModal.value = true
+const openAllReviewsModal = () => {
+  showAllReviewsModal.value = true
   document.body.style.overflow = 'hidden'
 }
 
-const closeAllCommentsModal = () => {
-  showAllCommentsModal.value = false
+const closeAllReviewsModal = () => {
+  showAllReviewsModal.value = false
   document.body.style.overflow = 'auto'
 }
 
-async function fetchComments() {
-  if (!props.productId) return
+async function fetchReviews() {
+  if (!props.url) return
 
   try {
-    isLoadingComments.value = true
+    isLoadingReviews.value = true
 
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/${props.productId}/comments`, {
+    // Updated to match your API route: /product/engagements/{product:url}
+    const response = await useSanctumFetch(`${config.public.apiBase}/product/engagements/${props.url}`, {
       method: 'GET',
       query: { page: 1, per_page: 10 }
     })
 
-    if (res?.data) {
-      comments.value = res.data
-      hasMoreComments.value = res?.has_more || false
-      commentsPage.value = 1
+    // Handle Laravel Resource Collection response
+    if (response?.data) {
+      reviews.value = response.data
+      // Check for pagination meta
+      hasMoreReviews.value = response?.meta?.has_more_pages || false
+      reviewsPage.value = 1
     }
   } catch (error) {
-    console.error('[✘] Failed to load comments', error)
-    showMessage('Failed to load comments. Please try again.', 'error')
+    console.error('[✘] Failed to load reviews', error)
+    showMessage('Failed to load reviews. Please try again.', 'error')
   } finally {
-    isLoadingComments.value = false
+    isLoadingReviews.value = false
   }
 }
 
-async function submitComment() {
-  if (!canSubmitComment.value || isSubmittingComment.value) return
+async function submitReview() {
+  if (!canSubmitReview.value || isSubmittingReview.value) return
 
   try {
-    isSubmittingComment.value = true
+    isSubmittingReview.value = true
 
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/${props.productId}/comments`, {
+    // Updated to match your API route: /product/engagement/{product:url}
+    const response = await useSanctumFetch(`${config.public.apiBase}/product/engagement/${props.url}`, {
       method: 'POST',
       body: {
-        comment: newComment.value.text.trim(),
-        rating: newComment.value.rating
+        review: newReview.value.text.trim(),
+        rating: newReview.value.rating
       }
     })
 
-    if (res?.success) {
-      // Add new comment to the beginning of the list
-      const newCommentData = {
-        id: res.data.id || Date.now(),
-        comment: newComment.value.text.trim(),
-        rating: newComment.value.rating,
-        user_name: user.value?.name || 'You',
+    // Handle both Resource response and error response
+    if (response?.data || response?.review) {
+      // Extract data from Resource response
+      const responseData = response.data || response
+
+      // Add new review to the beginning of the list
+      const newReviewData = {
+        id: responseData.id || Date.now(),
+        review: newReview.value.text.trim(),
+        rating: newReview.value.rating,
+        author_name: responseData.author?.name || user.value?.name || 'You',
+        author_type: responseData.author?.type || 'User',
         helpful_count: 0,
-        created_at: new Date().toISOString(),
-        ...res.data
+        created_at: responseData.created_at || new Date().toISOString(),
+        updated_at: responseData.updated_at || new Date().toISOString(),
+        ...responseData
       }
 
-      comments.value.unshift(newCommentData)
+      reviews.value.unshift(newReviewData)
 
       // Reset form
-      newComment.value = {
+      newReview.value = {
         text: '',
         rating: 0
       }
@@ -570,69 +569,93 @@ async function submitComment() {
       showMessage('Review posted successfully! Thank you for sharing your experience.', 'success')
     }
   } catch (error) {
-    console.error('[✘] Failed to submit comment', error)
-    showMessage('Failed to post review. Please try again.', 'error')
+    console.error('[✘] Failed to submit review', error)
+
+    // Handle validation error (422) specifically
+    if (error?.response?.status === 422 && error?.response?.data?.message) {
+      showMessage(error.response.data.message, 'error')
+    } else {
+      showMessage('Failed to post review. Please try again.', 'error')
+    }
   } finally {
-    isSubmittingComment.value = false
+    isSubmittingReview.value = false
   }
 }
 
-async function loadMoreComments() {
-  if (!hasMoreComments.value || isLoadingMoreComments.value) return
+async function loadMoreReviews() {
+  if (!hasMoreReviews.value || isLoadingMoreReviews.value) return
 
   try {
-    isLoadingMoreComments.value = true
-    commentsPage.value++
+    isLoadingMoreReviews.value = true
+    reviewsPage.value++
 
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/${props.productId}/comments`, {
+    const response = await useSanctumFetch(`${config.public.apiBase}/product/engagements/${props.url}`, {
       method: 'GET',
-      query: { page: commentsPage.value, per_page: 10 }
+      query: { page: reviewsPage.value, per_page: 10 }
     })
 
-    if (res?.data) {
-      comments.value.push(...res.data)
-      hasMoreComments.value = res?.has_more || false
+    if (response?.data) {
+      reviews.value.push(...response.data)
+      hasMoreReviews.value = response?.meta?.has_more_pages || false
     }
   } catch (error) {
-    console.error('[✘] Failed to load more comments', error)
-    showMessage('Failed to load more comments. Please try again.', 'error')
-    commentsPage.value-- // Revert page increment on error
+    console.error('[✘] Failed to load more reviews', error)
+    showMessage('Failed to load more reviews. Please try again.', 'error')
+    reviewsPage.value-- // Revert page increment on error
   } finally {
-    isLoadingMoreComments.value = false
+    isLoadingMoreReviews.value = false
   }
 }
 
-async function toggleHelpful(comment) {
-  if (!isLoggedIn.value) return
+async function toggleHelpful(review) {
+  if (!isLoggedIn.value || isTogglingHelpful.value[review.id]) return
 
   try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/comments/${comment.id}/helpful`, {
+    isTogglingHelpful.value[review.id] = true
+
+    // Updated to match your API route: /product/engagement/{product_engagement}/helpfull
+    const response = await useSanctumFetch(`${config.public.apiBase}/product/engagement/${review.id}/helpfull`, {
       method: 'POST'
     })
 
-    if (res?.success) {
-      const index = comments.value.findIndex(c => c.id === comment.id)
+    if (response?.success) {
+      // Update helpful count from response or increment locally
+      const index = reviews.value.findIndex(r => r.id === review.id)
       if (index !== -1) {
-        comments.value[index].helpful_count = res.helpful_count || (comment.helpful_count || 0) + 1
+        reviews.value[index].helpful_count = response.helpful_count || (review.helpful_count || 0) + 1
       }
+
+      showMessage(response.message || 'Review marked as helpful!', 'success')
     }
   } catch (error) {
     console.error('[✘] Failed to toggle helpful', error)
-    showMessage('Failed to mark as helpful. Please try again.', 'error')
+
+    // Handle specific error messages
+    if (error?.response?.status === 422 && error?.response?.data?.message) {
+      showMessage(error.response.data.message, 'error')
+    } else {
+      showMessage('Failed to mark as helpful. Please try again.', 'error')
+    }
+  } finally {
+    isTogglingHelpful.value[review.id] = false
   }
 }
 
-function formatCommentDate(dateString) {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffTime = Math.abs(now - date)
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+function formatReviewDate(dateString) {
+  try {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now - date)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 1) return '1 day ago'
-  if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`
-  if (diffDays < 365) return `${Math.ceil(diffDays / 30)} months ago`
-  return `${Math.ceil(diffDays / 365)} years ago`
+    if (diffDays === 1) return '1 day ago'
+    if (diffDays < 7) return `${diffDays} days ago`
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`
+    if (diffDays < 365) return `${Math.ceil(diffDays / 30)} months ago`
+    return `${Math.ceil(diffDays / 365)} years ago`
+  } catch (error) {
+    return 'Recently'
+  }
 }
 
 function showMessage(text, type = 'success') {
@@ -651,29 +674,29 @@ onUnmounted(() => {
   document.body.style.overflow = 'auto'
 })
 
-// Lifecycle
+// Lifecycle - Auto-load reviews on mount
 onMounted(() => {
-  if (props.autoLoad && !props.initialComments.length) {
-    fetchComments()
+  if (props.url) {
+    fetchReviews()
   }
 })
 
-// Watch for product ID changes
-watch(() => props.productId, () => {
-  if (props.autoLoad) {
-    comments.value = [] // Clear existing comments
-    fetchComments()
+// Watch for URL changes and reload reviews
+watch(() => props.url, (newUrl) => {
+  if (newUrl) {
+    reviews.value = [] // Clear existing reviews
+    fetchReviews()
   }
-})
+}, { immediate: false })
 
 // Expose methods for parent component
 defineExpose({
-  fetchComments,
-  submitComment,
-  loadMoreComments,
-  refresh: fetchComments,
-  openModal: openAllCommentsModal,
-  closeModal: closeAllCommentsModal
+  fetchReviews,
+  submitReview,
+  loadMoreReviews,
+  refresh: fetchReviews,
+  openModal: openAllReviewsModal,
+  closeModal: closeAllReviewsModal
 })
 </script>
 

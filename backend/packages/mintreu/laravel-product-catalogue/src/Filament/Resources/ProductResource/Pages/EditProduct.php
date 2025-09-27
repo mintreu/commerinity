@@ -18,6 +18,7 @@ use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Services\ProductUpdateService;
+use Mintreu\Toolkit\Forms\Components\MoneyInput;
 
 class EditProduct extends EditRecord
 {
@@ -160,9 +161,17 @@ class EditProduct extends EditRecord
                             ->columns()
                             ->schema([
                                 // Price, special price, tax class, cost, discount logic
-                                Forms\Components\TextInput::make('price')
-                                    ->numeric()
-                                    ->prefix(LaravelMoney::getCurrencySymbol()),
+//                                Forms\Components\TextInput::make('price')
+//                                    ->numeric()
+//                                    ->prefix(LaravelMoney::getCurrencySymbol()),
+
+                                MoneyInput::make('price')
+                                    ->label('Price')
+                                    ->placeholder('Enter Price (e.g., 51.25)')
+                                    ->prefix(LaravelMoney::getCurrencySymbol())
+                                    ->helperText('Enter amount in rupees. Decimals allowed.'),
+
+
                                 Forms\Components\TextInput::make('reward_point')
                                     ->required()
                                     ->numeric()

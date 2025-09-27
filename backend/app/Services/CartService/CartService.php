@@ -143,42 +143,50 @@ class CartService
 
     public function add(Model|Product $item, int $quantity): void
     {
-        $defaultMax = (int) config('laravel-commerinity.cart.limits.max_per_order_default', 1);
-        $maxPerOrder = $item->max_quantity ?? $defaultMax;
-        $approvedQuantity = min($quantity, $maxPerOrder);
-
-        $query = Cart::query()
-            ->where('cartable_type', get_class($item))
-            ->where('cartable_id', $item->id);
-
-        if ($this->customer) {
-            $query->where('ownerable_type', get_class($this->customer))
-                ->where('ownerable_id', $this->customer->id);
-        } elseif ($this->hasGuest && $this->validToken) {
-            $query->where('is_guest', true)
-                ->where('guest_id', $this->guestId)
-                ->where('guest_token', $this->token);
-        } else {
+        if (is_null($this->customer) && !$this->hasGuest)
+        {
             $this->setError('cart credential not validated!');
+        }else{
+            $defaultMax = (int) config('laravel-commerinity.cart.limits.max_per_order_default', 1);
+            $maxPerOrder = $item->max_quantity ?? $defaultMax;
+            $approvedQuantity = min($quantity, $maxPerOrder);
+
+            $query = Cart::query()
+                ->where('cartable_type', get_class($item))
+                ->where('cartable_id', $item->id);
+
+
+
+            if ($this->customer) {
+                $query->where('ownerable_type', get_class($this->customer))
+                    ->where('ownerable_id', $this->customer->id);
+            } elseif ($this->hasGuest && $this->validToken) {
+                $query->where('is_guest', true)
+                    ->where('guest_id', $this->guestId)
+                    ->where('guest_token', $this->token);
+            }
+
+            $existing = $query->first();
+
+            if ($existing) {
+                $newQty = min($existing->quantity + $quantity, $maxPerOrder);
+                $existing->update(['quantity' => $newQty]);
+            } else {
+                Cart::create([
+                    'cartable_id'    => $item->id,
+                    'cartable_type'  => get_class($item),
+                    'quantity'       => $approvedQuantity,
+                    'ownerable_type' => $this->customer ? get_class($this->customer) : null,
+                    'ownerable_id'   => $this->customer?->id,
+                    'is_guest'       => !$this->customer,
+                    'guest_id'       => $this->guestId,
+                    'guest_token'    => $this->token,
+                ]);
+            }
         }
 
-        $existing = $query->first();
 
-        if ($existing) {
-            $newQty = min($existing->quantity + $quantity, $maxPerOrder);
-            $existing->update(['quantity' => $newQty]);
-        } else {
-            Cart::create([
-                'cartable_id'    => $item->id,
-                'cartable_type'  => get_class($item),
-                'quantity'       => $approvedQuantity,
-                'ownerable_type' => $this->customer ? get_class($this->customer) : null,
-                'ownerable_id'   => $this->customer?->id,
-                'is_guest'       => !$this->customer,
-                'guest_id'       => $this->guestId,
-                'guest_token'    => $this->token,
-            ]);
-        }
+
     }
 
     public function update(Model|Product $item, int $quantity): void
