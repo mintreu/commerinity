@@ -2,8 +2,10 @@
 
 namespace App\Models\Traits;
 
+use App\Models\ProductEngagement;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use App\Models\ProductEngagement; // Update this path when you move to package
+
+// Update this path when you move to package
 
 trait HasProductEngagement
 {

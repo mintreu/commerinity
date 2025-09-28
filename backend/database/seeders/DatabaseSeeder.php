@@ -17,11 +17,18 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call([
-            GeoKitSeeder::class,            AdminSeeder::class,
+            GeoKitSeeder::class,
+
+            AdminSeeder::class,
             FilterSeeder::class,
             CategorySeeder::class,
+
+            // MasterDemoProductSeeder::class,
+
             //ProductSeeder::class,
             ProductDemoSeeder::class,
+
+
             IntegrationSeeder::class,
             NaukriSeeder::class,
             StageSeeder::class,

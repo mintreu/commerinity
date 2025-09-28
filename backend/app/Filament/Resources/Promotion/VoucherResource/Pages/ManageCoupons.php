@@ -3,14 +3,11 @@
 namespace App\Filament\Resources\Promotion\VoucherResource\Pages;
 
 use App\Filament\Resources\Promotion\VoucherResource;
-use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ManageCoupons extends ManageRelatedRecords
 {

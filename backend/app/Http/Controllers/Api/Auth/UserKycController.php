@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Casts\AuthTypeCast;
 use App\Casts\KycTypeCast;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\KycResource;
-use App\Http\Resources\User\UserIndexResource;
-use App\Http\Resources\User\UserResource;
 use App\Models\Transaction\Kyc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

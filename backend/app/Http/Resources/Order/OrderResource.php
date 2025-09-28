@@ -3,10 +3,8 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Geo\AddressResource;
-use App\Http\Resources\Product\ProductIndexResource;
 use App\Http\Resources\Transaction\TransactionResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\Toolkit\Traits\HasResourceSupport;
 

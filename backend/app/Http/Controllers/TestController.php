@@ -3,18 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Mintreu\LaravelCategory\Models\Category;
-use Mintreu\LaravelCommerinity\Models\Sale;
-use Mintreu\LaravelCommerinity\Support\VoucherManager;
 use Mintreu\LaravelIntegration\LaravelIntegration;
-use Mintreu\LaravelIntegration\Support\Fetcher\Fetch;
 use Mintreu\LaravelIntegration\Support\OrderBuilder\ProviderOrder;
-use Mintreu\LaravelProductCatalogue\Models\Product;
-use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
-use Mintreu\LaravelProductCatalogue\Services\ProductUpdateService;
 
 
 class TestController extends Controller

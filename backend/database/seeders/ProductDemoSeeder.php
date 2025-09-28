@@ -19,12 +19,27 @@ class ProductDemoSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed Grocery Masala
         $demoMasalaProducts = $this->getFromStorage('private/data/products/demo-products.json');
         $masalaCategory = Category::firstWhere('url','spices-masalas');
         $masalaFilterGroup = FilterGroup::with('filters.options')->where('name','Spices & Masala')->first();
 
+        $this->startSeedingProducts($demoMasalaProducts,$masalaFilterGroup,$masalaCategory);
 
-        foreach ($demoMasalaProducts as $productInfo)
+
+
+
+
+
+    }
+
+
+
+
+
+    public function startSeedingProducts($productList,$filterGroup,$parentCategory)
+    {
+        foreach ($productList as $productInfo)
         {
 
 
@@ -35,8 +50,8 @@ class ProductDemoSeeder extends Seeder
                 'price' => $productInfo->price,
                 'type' => ProductTypeCast::CONFIGURABLE,
                 'status' => PublishableStatusCast::PUBLISHED->value,
-                'filter_group_id' => $masalaFilterGroup->id,
-                'filter_options' => $this->mapFilterOptions($masalaFilterGroup, ProductTypeCast::SIMPLE->value),
+                'filter_group_id' => $filterGroup->id,
+                'filter_options' => $this->mapFilterOptions($filterGroup, ProductTypeCast::SIMPLE->value),
             ]);
 
 
@@ -44,9 +59,9 @@ class ProductDemoSeeder extends Seeder
 
 
             // Add Media
-           $this->attachMediaFiles($product);
+            $this->attachMediaFiles($product);
 
-           $product->load('variants');
+            $product->load('variants');
             $product->variants()->each(function ($variant) use($product){
                 $this->attachMediaFilesFromParent($product,$variant);
                 //Update Status
@@ -58,8 +73,8 @@ class ProductDemoSeeder extends Seeder
 
             // Add Category
             $product->categories()->attach([
-                $masalaCategory->id => [
-                    'base_category' => $masalaCategory?->parent_id,
+                $parentCategory->id => [
+                    'base_category' => $parentCategory?->parent_id,
                 ],
             ]);
 
@@ -68,9 +83,27 @@ class ProductDemoSeeder extends Seeder
 
         }
 
-
-
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     protected function attachMediaFiles(Product $product)

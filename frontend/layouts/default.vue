@@ -1,323 +1,245 @@
 <template>
-  <div class="layout-container min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950 transition-all duration-500">
-
-    <!-- Background Effects -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">
+  <div
+      class="layout-container min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950 transition-all duration-500"
+      :class="{ 'has-sidebar': layoutConfig.sidebar.show }"
+  >
+    <!-- Background Effects (Conditional) -->
+    <div
+        v-if="layoutConfig.background.effects"
+        class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform"
+    >
       <!-- Floating Orbs -->
-      <div ref="layoutOrb1" class="layout-orb-1 absolute -top-20 -left-20 w-80 h-80 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl opacity-60 will-change-transform"></div>
-      <div ref="layoutOrb2" class="layout-orb-2 absolute -bottom-20 -right-20 w-72 h-72 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl opacity-70 will-change-transform"></div>
+      <div
+          ref="layoutOrb1"
+          class="layout-orb-1 absolute -top-20 -left-20 w-80 h-80 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl opacity-60 will-change-transform"
+      />
+      <div
+          ref="layoutOrb2"
+          class="layout-orb-2 absolute -bottom-20 -right-20 w-72 h-72 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl opacity-70 will-change-transform"
+      />
 
-      <!-- Subtle Particles -->
-      <div class="layout-particles">
-        <div v-for="(particle, index) in particles" :key="`layout-particle-${index}`"
-             class="particle absolute rounded-full opacity-30 animate-pulse will-change-transform"
-             :class="particle.class"
-             :style="particle.style">
-        </div>
+      <!-- Subtle Particles (Conditional) -->
+      <div v-if="layoutConfig.background.particles" class="layout-particles">
+        <div
+            v-for="(particle, index) in particles"
+            :key="`layout-particle-${index}`"
+            class="particle absolute rounded-full opacity-30 animate-pulse will-change-transform"
+            :class="particle.class"
+            :style="particle.style"
+        />
       </div>
     </div>
 
-    <!-- Navbar -->
-    <header class="navbar-container relative z-50" ref="navbarContainer">
-      <DefaultNavbar />
-    </header>
+    <!-- Main Layout Container -->
+    <div class="layout-main flex min-h-screen flex-col">
+      <!-- Navbar (Conditional) -->
+      <header
+          v-if="layoutConfig.navbar.show"
+          class="navbar-container relative z-50"
+          :class="layoutConfig.navbar.class"
+          ref="navbarContainer"
+      >
+        <component
+            :is="layoutConfig.navbar.component"
+            v-bind="layoutConfig.navbar.props"
+        />
+      </header>
 
-    <!-- Main Content -->
-    <main
-        id="main-content"
-        aria-label="Main content"
-        class="main-content relative z-10 flex-1 transition-all duration-300"
-        ref="mainContent"
-    >
-      <slot />
-    </main>
+      <!-- Content Area with Optional Sidebar -->
+      <div class="content-area flex flex-1">
+        <!-- Sidebar (Conditional) -->
+        <aside
+            v-if="layoutConfig.sidebar.show"
+            class="sidebar-container"
+            :class="[
+            layoutConfig.sidebar.class,
+            layoutConfig.sidebar.position === 'right' ? 'order-2' : 'order-1'
+          ]"
+            ref="sidebarContainer"
+        >
+          <component
+              :is="layoutConfig.sidebar.component"
+              v-bind="layoutConfig.sidebar.props"
+          />
+        </aside>
 
-    <!-- Mobile Bottom Navigation -->
-    <nav class="bottom-nav-container md:hidden" ref="bottomNavContainer">
-      <BottomNavBar class="fixed inset-x-0 bottom-0 z-40 border-t border-white/20 bg-white/90 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 dark:border-gray-800/50 dark:bg-gray-900/90 dark:supports-[backdrop-filter]:bg-gray-900/70 shadow-2xl" />
-    </nav>
+        <!-- Main Content -->
+        <main
+            id="main-content"
+            aria-label="Main content"
+            class="main-content flex-1 relative z-10 transition-all duration-300"
+            :class="[
+            layoutConfig.main.class,
+            layoutConfig.sidebar.show ? (layoutConfig.sidebar.position === 'right' ? 'order-1' : 'order-2') : ''
+          ]"
+            ref="mainContent"
+        >
+          <slot />
+        </main>
+      </div>
 
-    <!-- Enhanced Footer -->
-    <footer
-        role="contentinfo"
-        class="footer-container relative mt-20 border-t border-white/30 dark:border-gray-800/50"
-        ref="footerContainer"
-    >
-      <div class="footer-background bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
-        <!-- Footer Content -->
-        <div class="footer-content px-6 py-16 md:px-20">
-          <div class="mx-auto max-w-7xl">
+      <!-- Footer (Conditional) -->
+      <footer
+          v-if="layoutConfig.footer.show"
+          role="contentinfo"
+          class="footer-container relative border-t border-white/30 dark:border-gray-800/50"
+          :class="[layoutConfig.footer.class, { 'mt-20': layoutConfig.footer.marginTop }]"
+          ref="footerContainer"
+      >
+        <div class="footer-background bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
+          <!-- Footer Content -->
+          <div class="footer-content px-6 py-16 md:px-20">
+            <div class="mx-auto max-w-7xl">
 
-            <!-- Main Footer Grid -->
-            <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+              <!-- Main Footer Grid -->
+              <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
 
-              <!-- Brand Section -->
-              <section aria-labelledby="footer-brand" class="footer-brand" ref="footerBrand">
-                <div class="brand-header mb-6">
-                  <div class="flex items-center gap-3 mb-4">
-                    <div class="brand-icon w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                      <Icon name="mdi:store" class="w-6 h-6 text-white" />
+                <!-- Brand Section -->
+                <section aria-labelledby="footer-brand" class="footer-brand" ref="footerBrand">
+                  <div class="brand-header mb-6">
+                    <div class="flex items-center gap-3 mb-4">
+                      <div class="brand-icon w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <Icon name="mdi:store" class="w-6 h-6 text-white" />
+                      </div>
+                      <h3 id="footer-brand" class="text-2xl font-black text-gray-900 dark:text-white">
+                        {{ siteConfig.name }}
+                      </h3>
                     </div>
-                    <h3 id="footer-brand" class="text-2xl font-black text-gray-900 dark:text-white">
-                      {{ websiteName }}
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
+                      {{ siteConfig.description }}
+                    </p>
+                  </div>
+
+                  <!-- Social Links -->
+                  <nav aria-label="Social media" class="social-links">
+                    <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-4">Follow Us</h4>
+                    <ul class="flex items-center gap-3">
+                      <li v-for="social in siteConfig.social" :key="social.name">
+                        <a
+                            :href="social.url"
+                            :aria-label="social.name"
+                            class="social-link w-10 h-10 text-white rounded-xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg focus:outline-none focus-visible:ring-2"
+                            :class="social.class"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                          <Icon :name="social.icon" class="h-4 w-4" />
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </section>
+
+                <!-- Dynamic Footer Sections -->
+                <nav
+                    v-for="section in layoutConfig.footer.sections"
+                    :key="section.id"
+                    :aria-labelledby="`footer-${section.id}`"
+                    class="footer-section"
+                >
+                  <div class="section-header mb-6">
+                    <h3 :id="`footer-${section.id}`" class="text-lg font-black text-gray-900 dark:text-white flex items-center">
+                      <Icon :name="section.icon" class="w-5 h-5 mr-2" :class="section.iconClass" />
+                      {{ section.title }}
                     </h3>
                   </div>
-                  <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">
-                    Your premier destination for quality products and exceptional service. Bringing everything you love under one roof.
-                  </p>
-                </div>
-
-                <!-- Social Links -->
-                <nav aria-label="Social media" class="social-links">
-                  <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-4">Follow Us</h4>
-                  <ul class="flex items-center gap-3">
-                    <li>
-                      <a
-                          href="#"
-                          aria-label="Facebook"
-                          class="social-link w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  <ul class="space-y-3 text-sm">
+                    <li v-for="link in section.links" :key="link.url">
+                      <NuxtLink
+                          :to="link.url"
+                          :external="link.external"
+                          class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md p-1"
+                          :class="link.hoverClass || 'hover:text-blue-600 dark:hover:text-blue-400'"
                       >
-                        <Icon name="uil:facebook-f" class="h-4 w-4" />
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                          href="#"
-                          aria-label="Instagram"
-                          class="social-link w-10 h-10 bg-gradient-to-r from-pink-600 to-rose-700 hover:from-pink-700 hover:to-rose-800 text-white rounded-xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500"
-                      >
-                        <Icon name="uil:instagram" class="h-4 w-4" />
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                          href="#"
-                          aria-label="Twitter"
-                          class="social-link w-10 h-10 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white rounded-xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
-                      >
-                        <Icon name="uil:twitter" class="h-4 w-4" />
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                          href="#"
-                          aria-label="LinkedIn"
-                          class="social-link w-10 h-10 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white rounded-xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
-                      >
-                        <Icon name="uil:linkedin" class="h-4 w-4" />
-                      </a>
+                        <Icon :name="link.icon" class="w-4 h-4" />
+                        {{ link.title }}
+                      </NuxtLink>
                     </li>
                   </ul>
                 </nav>
-              </section>
-
-              <!-- Categories -->
-              <nav aria-labelledby="footer-categories" class="footer-section" ref="footerCategories">
-                <div class="section-header mb-6">
-                  <h3 id="footer-categories" class="text-lg font-black text-gray-900 dark:text-white flex items-center">
-                    <Icon name="mdi:format-list-bulleted" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                    Categories
-                  </h3>
-                </div>
-                <ul class="space-y-3 text-sm">
-                  <li>
-                    <NuxtLink
-                        to="/category/electronics"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:laptop" class="w-4 h-4" />
-                      Electronics
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/category/fashion"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:tshirt-crew" class="w-4 h-4" />
-                      Fashion
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/category/home"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:home" class="w-4 h-4" />
-                      Home & Living
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/category/beauty"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:lipstick" class="w-4 h-4" />
-                      Beauty
-                    </NuxtLink>
-                  </li>
-                </ul>
-              </nav>
-
-              <!-- Support -->
-              <nav aria-labelledby="footer-support" class="footer-section" ref="footerSupport">
-                <div class="section-header mb-6">
-                  <h3 id="footer-support" class="text-lg font-black text-gray-900 dark:text-white flex items-center">
-                    <Icon name="mdi:headset" class="w-5 h-5 mr-2 text-green-600 dark:text-green-400" />
-                    Support
-                  </h3>
-                </div>
-                <ul class="space-y-3 text-sm">
-                  <li>
-                    <NuxtLink
-                        to="/help"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:help-circle" class="w-4 h-4" />
-                      Help Center
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/return-refund"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:package-variant-closed" class="w-4 h-4" />
-                      Return & Refund
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/shipping"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:truck-fast" class="w-4 h-4" />
-                      Shipping Info
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/contact"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:email" class="w-4 h-4" />
-                      Contact Us
-                    </NuxtLink>
-                  </li>
-                </ul>
-              </nav>
-
-              <!-- Information -->
-              <nav aria-labelledby="footer-info" class="footer-section" ref="footerInfo">
-                <div class="section-header mb-6">
-                  <h3 id="footer-info" class="text-lg font-black text-gray-900 dark:text-white flex items-center">
-                    <Icon name="mdi:information" class="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" />
-                    Information
-                  </h3>
-                </div>
-                <ul class="space-y-3 text-sm">
-                  <li>
-                    <NuxtLink
-                        to="/about"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:information-outline" class="w-4 h-4" />
-                      About Us
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/privacy"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:shield-account" class="w-4 h-4" />
-                      Privacy Policy
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/terms"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:file-document" class="w-4 h-4" />
-                      Terms & Conditions
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink
-                        to="/career"
-                        class="footer-link flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md p-1"
-                    >
-                      <Icon name="mdi:briefcase" class="w-4 h-4" />
-                      Careers
-                    </NuxtLink>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-
-            <!-- Newsletter Subscription -->
-            <div class="newsletter-section mt-16 pt-12 border-t border-gray-200 dark:border-gray-700" ref="newsletterSection">
-              <div class="max-w-2xl mx-auto text-center">
-                <div class="newsletter-header mb-6">
-                  <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Stay Updated</h3>
-                  <p class="text-gray-600 dark:text-gray-300">Subscribe to our newsletter for the latest products, offers, and updates.</p>
-                </div>
-                <form class="newsletter-form flex flex-col sm:flex-row gap-4 max-w-md mx-auto" @submit.prevent="subscribeNewsletter">
-                  <input
-                      v-model="newsletterEmail"
-                      type="email"
-                      placeholder="Enter your email address"
-                      class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                      required
-                  />
-                  <button
-                      type="submit"
-                      :disabled="subscribing"
-                      class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-                  >
-                    <Icon v-if="subscribing" name="mdi:loading" class="w-4 h-4 animate-spin" />
-                    <Icon v-else name="mdi:send" class="w-4 h-4" />
-                    <span>{{ subscribing ? 'Subscribing...' : 'Subscribe' }}</span>
-                  </button>
-                </form>
               </div>
-            </div>
 
-            <!-- Footer Bottom -->
-            <div class="footer-bottom mt-12 pt-8 border-t border-gray-200 dark:border-gray-700" ref="footerBottom">
-              <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="copyright text-center md:text-left">
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    &copy; {{ currentYear }} <strong class="text-gray-900 dark:text-white">{{ websiteName }}</strong>. All rights reserved.
-                  </p>
+              <!-- Newsletter Subscription (Conditional) -->
+              <div
+                  v-if="layoutConfig.footer.newsletter"
+                  class="newsletter-section mt-16 pt-12 border-t border-gray-200 dark:border-gray-700"
+                  ref="newsletterSection"
+              >
+                <div class="max-w-2xl mx-auto text-center">
+                  <div class="newsletter-header mb-6">
+                    <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">Stay Updated</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Subscribe to our newsletter for the latest products, offers, and updates.</p>
+                  </div>
+                  <form class="newsletter-form flex flex-col sm:flex-row gap-4 max-w-md mx-auto" @submit.prevent="subscribeNewsletter">
+                    <input
+                        v-model="newsletterEmail"
+                        type="email"
+                        placeholder="Enter your email address"
+                        class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        required
+                    />
+                    <button
+                        type="submit"
+                        :disabled="subscribing"
+                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                    >
+                      <Icon v-if="subscribing" name="mdi:loading" class="w-4 h-4 animate-spin" />
+                      <Icon v-else name="mdi:send" class="w-4 h-4" />
+                      <span>{{ subscribing ? 'Subscribing...' : 'Subscribe' }}</span>
+                    </button>
+                  </form>
                 </div>
-                <div class="footer-badges flex items-center gap-4">
-                  <div class="badge flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-full text-xs font-semibold">
-                    <Icon name="mdi:shield-check" class="w-3 h-3" />
-                    Secure
+              </div>
+
+              <!-- Footer Bottom -->
+              <div class="footer-bottom mt-12 pt-8 border-t border-gray-200 dark:border-gray-700" ref="footerBottom">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div class="copyright text-center md:text-left">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      &copy; {{ currentYear }} <strong class="text-gray-900 dark:text-white">{{ siteConfig.name }}</strong>. All rights reserved.
+                    </p>
                   </div>
-                  <div class="badge flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-xs font-semibold">
-                    <Icon name="mdi:truck-fast" class="w-3 h-3" />
-                    Fast Delivery
-                  </div>
-                  <div class="badge flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400 rounded-full text-xs font-semibold">
-                    <Icon name="mdi:heart" class="w-3 h-3" />
-                    24/7 Support
+                  <div class="footer-badges flex items-center gap-4">
+                    <div
+                        v-for="badge in siteConfig.badges"
+                        :key="badge.text"
+                        class="badge flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-300 hover:transform hover:-translate-y-1"
+                        :class="badge.class"
+                    >
+                      <Icon :name="badge.icon" class="w-3 h-3" />
+                      {{ badge.text }}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
 
-    <!-- Scroll to Top Button -->
+    <!-- Mobile Bottom Navigation (Conditional) -->
+    <nav
+        v-if="layoutConfig.bottomNav.show"
+        class="bottom-nav-container md:hidden"
+        :class="layoutConfig.bottomNav.class"
+        ref="bottomNavContainer"
+    >
+      <component
+          :is="layoutConfig.bottomNav.component"
+          v-bind="layoutConfig.bottomNav.props"
+          class="fixed inset-x-0 bottom-0 z-40 border-t border-white/20 bg-white/90 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 dark:border-gray-800/50 dark:bg-gray-900/90 dark:supports-[backdrop-filter]:bg-gray-900/70 shadow-2xl"
+      />
+    </nav>
+
+    <!-- Scroll to Top Button (Conditional) -->
     <button
+        v-if="layoutConfig.scrollTop.show"
         v-show="showScrollTop"
         @click="scrollToTop"
-        class="scroll-top fixed bottom-24 md:bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-110 flex items-center justify-center z-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        class="scroll-top fixed z-30 w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-110 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        :class="layoutConfig.scrollTop.class"
+        :style="layoutConfig.scrollTop.position"
         aria-label="Scroll to top"
         ref="scrollTopButton"
     >
@@ -325,12 +247,15 @@
     </button>
 
     <!-- Teleports Container -->
-    <div id="teleports"></div>
+    <div id="teleports" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import type { LayoutConfig, SiteConfig } from '~/types/layout'
+
+// Import default components
 import DefaultNavbar from '~/components/ui/Navbar/DefaultNavbar.vue'
 import BottomNavBar from '~/components/ui/BottomNavBar.vue'
 
@@ -348,20 +273,18 @@ if (process.client) {
   })
 }
 
-// Configuration
+// Configuration and Route
+const route = useRoute()
 const config = useRuntimeConfig()
-const websiteName = config.public.websiteName
 
 // Refs for animations
 const layoutOrb1 = ref<HTMLElement>()
 const layoutOrb2 = ref<HTMLElement>()
 const navbarContainer = ref<HTMLElement>()
 const mainContent = ref<HTMLElement>()
+const sidebarContainer = ref<HTMLElement>()
 const footerContainer = ref<HTMLElement>()
 const footerBrand = ref<HTMLElement>()
-const footerCategories = ref<HTMLElement>()
-const footerSupport = ref<HTMLElement>()
-const footerInfo = ref<HTMLElement>()
 const newsletterSection = ref<HTMLElement>()
 const footerBottom = ref<HTMLElement>()
 const bottomNavContainer = ref<HTMLElement>()
@@ -373,7 +296,112 @@ const newsletterEmail = ref('')
 const subscribing = ref(false)
 let gsapContext: any = null
 
-// Computed
+// Default layout configuration
+const defaultLayoutConfig: LayoutConfig = {
+  navbar: {
+    show: true,
+    component: DefaultNavbar,
+    class: '',
+    props: {}
+  },
+  sidebar: {
+    show: false,
+    component: null,
+    class: 'w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700',
+    position: 'left',
+    props: {}
+  },
+  main: {
+    class: 'transition-all duration-300'
+  },
+  footer: {
+    show: true,
+    class: '',
+    marginTop: true,
+    newsletter: true,
+    sections: [
+      {
+        id: 'categories',
+        title: 'Categories',
+        icon: 'mdi:format-list-bulleted',
+        iconClass: 'text-blue-600 dark:text-blue-400',
+        links: [
+          { title: 'Electronics', url: '/category/electronics', icon: 'mdi:laptop', hoverClass: 'hover:text-blue-600 dark:hover:text-blue-400' },
+          { title: 'Fashion', url: '/category/fashion', icon: 'mdi:tshirt-crew', hoverClass: 'hover:text-purple-600 dark:hover:text-purple-400' },
+          { title: 'Home & Kitchen', url: '/category/home-kitchen', icon: 'mdi:home', hoverClass: 'hover:text-green-600 dark:hover:text-green-400' },
+          { title: 'Beauty', url: '/category/beauty-health', icon: 'mdi:lipstick', hoverClass: 'hover:text-pink-600 dark:hover:text-pink-400' }
+        ]
+      },
+      {
+        id: 'support',
+        title: 'Support',
+        icon: 'mdi:headset',
+        iconClass: 'text-green-600 dark:text-green-400',
+        links: [
+          { title: 'Help Center', url: '/help', icon: 'mdi:help-circle' },
+          { title: 'Return & Refund', url: '/return-refund', icon: 'mdi:package-variant-closed' },
+          { title: 'Shipping Info', url: '/shipping', icon: 'mdi:truck-fast' },
+          { title: 'Contact Us', url: '/contact', icon: 'mdi:email' }
+        ]
+      },
+      {
+        id: 'information',
+        title: 'Information',
+        icon: 'mdi:information',
+        iconClass: 'text-indigo-600 dark:text-indigo-400',
+        links: [
+          { title: 'About Us', url: '/about', icon: 'mdi:information-outline' },
+          { title: 'Privacy Policy', url: '/privacy', icon: 'mdi:shield-account' },
+          { title: 'Terms & Conditions', url: '/terms', icon: 'mdi:file-document' },
+          { title: 'Careers', url: '/career', icon: 'mdi:briefcase' }
+        ]
+      }
+    ]
+  },
+  bottomNav: {
+    show: true,
+    component: BottomNavBar,
+    class: '',
+    props: {}
+  },
+  scrollTop: {
+    show: true,
+    class: '',
+    position: 'bottom: 6rem; right: 2rem;'
+  },
+  background: {
+    effects: true,
+    particles: true
+  }
+}
+
+// Site configuration
+const siteConfig: SiteConfig = {
+  name: config.public.websiteName || 'Premium Store',
+  description: 'Your premier destination for quality products and exceptional service. Bringing everything you love under one roof.',
+  social: [
+    { name: 'Facebook', url: '#', icon: 'uil:facebook-f', class: 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus-visible:ring-blue-500' },
+    { name: 'Instagram', url: '#', icon: 'uil:instagram', class: 'bg-gradient-to-r from-pink-600 to-rose-700 hover:from-pink-700 hover:to-rose-800 focus-visible:ring-pink-500' },
+    { name: 'Twitter', url: '#', icon: 'uil:twitter', class: 'bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 focus-visible:ring-sky-500' },
+    { name: 'LinkedIn', url: '#', icon: 'uil:linkedin', class: 'bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 focus-visible:ring-blue-700' }
+  ],
+  badges: [
+    { text: 'Secure', icon: 'mdi:shield-check', class: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' },
+    { text: 'Fast Delivery', icon: 'mdi:truck-fast', class: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' },
+    { text: '24/7 Support', icon: 'mdi:heart', class: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400' }
+  ]
+}
+
+// ✅ CORRECTED: Get layout configuration using standard Nuxt approach
+const layoutConfig = computed(() => {
+  // Get the custom config from layoutConfig meta property
+  const pageConfig = route.meta.layoutConfig as Partial<LayoutConfig> || {}
+
+  // Deep merge with defaults
+  return mergeDeep(defaultLayoutConfig, pageConfig)
+})
+
+// Computed properties
 const currentYear = computed(() => new Date().getFullYear())
 
 // Animated particles
@@ -385,6 +413,31 @@ const particles = [
   { class: 'w-2 h-2 bg-indigo-400', style: 'top: 50%; left: 8%; animation-delay: 4s; animation-duration: 4.5s;' }
 ]
 
+// Deep merge function
+function mergeDeep(target: any, source: any): any {
+  const output = { ...target }
+
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] })
+        } else {
+          output[key] = mergeDeep(target[key], source[key])
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] })
+      }
+    })
+  }
+
+  return output
+}
+
+function isObject(item: any): boolean {
+  return item && typeof item === 'object' && !Array.isArray(item)
+}
+
 // Methods
 const subscribeNewsletter = async () => {
   if (!newsletterEmail.value.trim()) return
@@ -392,15 +445,9 @@ const subscribeNewsletter = async () => {
   subscribing.value = true
 
   try {
-    // Simulate newsletter subscription
     await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // Show success feedback (you can integrate with your toast system)
     console.log('Newsletter subscription successful:', newsletterEmail.value)
     newsletterEmail.value = ''
-
-    // Here you would integrate with your actual newsletter service
-
   } catch (error) {
     console.error('Newsletter subscription failed:', error)
   } finally {
@@ -418,7 +465,7 @@ const handleScroll = () => {
 
 // GSAP animations
 const initializeAnimations = () => {
-  if (!process.client || !gsap) return
+  if (!process.client || !gsap || !layoutConfig.value.background.effects) return
 
   gsapContext = gsap.context(() => {
     // Floating orbs animation
@@ -444,29 +491,30 @@ const initializeAnimations = () => {
       })
     }
 
-    // Footer animations
-    if (ScrollTrigger && footerContainer.value) {
-      // Footer sections staggered animation
-      const footerSections = [footerBrand.value, footerCategories.value, footerSupport.value, footerInfo.value]
+    // Footer animations (if footer is shown)
+    if (ScrollTrigger && footerContainer.value && layoutConfig.value.footer.show) {
+      const footerSections = footerContainer.value.querySelectorAll('.footer-section, .footer-brand')
 
-      gsap.fromTo(footerSections.filter(Boolean),
-          { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: 'back.out(1.7)',
-            scrollTrigger: {
-              trigger: footerContainer.value,
-              start: 'top 80%',
-              toggleActions: 'play none none reverse'
+      if (footerSections.length) {
+        gsap.fromTo(Array.from(footerSections),
+            { y: 30, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: 'back.out(1.7)',
+              scrollTrigger: {
+                trigger: footerContainer.value,
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+              }
             }
-          }
-      )
+        )
+      }
 
       // Newsletter section animation
-      if (newsletterSection.value) {
+      if (newsletterSection.value && layoutConfig.value.footer.newsletter) {
         gsap.fromTo(newsletterSection.value,
             { y: 40, opacity: 0 },
             {
@@ -503,7 +551,7 @@ const initializeAnimations = () => {
     }
 
     // Scroll to top button animation
-    if (scrollTopButton.value) {
+    if (scrollTopButton.value && layoutConfig.value.scrollTop.show) {
       gsap.set(scrollTopButton.value, { scale: 0 })
 
       const showTopButton = () => {
@@ -526,10 +574,23 @@ const initializeAnimations = () => {
   })
 }
 
+// Reinitialize animations when layout config changes
+watch(layoutConfig, () => {
+  if (gsapContext) {
+    gsapContext.kill()
+  }
+
+  setTimeout(() => {
+    initializeAnimations()
+  }, 100)
+}, { deep: true })
+
 // Lifecycle
 onMounted(() => {
   // Add scroll listener
-  window.addEventListener('scroll', handleScroll, { passive: true })
+  if (layoutConfig.value.scrollTop.show) {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+  }
 
   // Initialize animations after a short delay
   setTimeout(() => {
@@ -552,6 +613,9 @@ onUnmounted(() => {
   }
 })
 </script>
+
+
+
 
 <style scoped>
 /* Performance optimizations */

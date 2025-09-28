@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\CustomerOrderRequest;
-use App\Http\Requests\Order\GuestOrderRequest;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\OrderIndexResource;
 use App\Http\Resources\Order\OrderResource;
@@ -17,12 +15,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Mintreu\LaravelGeokit\Casts\AddressTypeCast;
 use Mintreu\LaravelGeokit\Models\Address;
-
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
-
 
 
 class OrderController extends Controller

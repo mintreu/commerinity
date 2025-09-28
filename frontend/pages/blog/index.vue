@@ -132,6 +132,11 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
+const toast = useToast()
+
+toast.success('Hello World!')
+
+
 interface Post {
   id: number
   title: string

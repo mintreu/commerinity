@@ -8,9 +8,6 @@ use App\Services\CartService\Cart;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Mintreu\LaravelGeokit\Models\Address;
-use Mintreu\LaravelIntegration\LaravelIntegration;
-use Mintreu\LaravelIntegration\Support\ProviderOrder;
-use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Models\Transaction;
 
 class OrderCreationService

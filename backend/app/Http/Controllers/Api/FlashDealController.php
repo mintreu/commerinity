@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\FlashDeal\FlashDealResource;
 use App\Http\Resources\Promotion\SaleResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
+use Mintreu\LaravelCategory\Models\Category;
 use Mintreu\LaravelCommerinity\Models\Sale;
 use Mintreu\LaravelCommerinity\Models\SaleProduct;
 use Mintreu\LaravelProductCatalogue\Models\Product;
-use Mintreu\LaravelCategory\Models\Category;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class FlashDealController extends Controller
 {

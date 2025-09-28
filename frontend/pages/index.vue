@@ -25,8 +25,8 @@
           </h1>
 
           <p class="hero-subtitle text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto text-gray-600 dark:text-gray-300 font-medium">
-            The ultimate platform combining <span class="font-bold text-purple-600 dark:text-purple-400">MLM</span>,
-            <span class="font-bold text-blue-600 dark:text-blue-400">Jobs</span>,
+            The ultimate platform combining <span class="font-bold text-purple-600 dark:text-purple-400">Affiliation</span>,
+            <span class="font-bold text-blue-600 dark:text-blue-400">jobs</span>,
             <span class="font-bold text-pink-600 dark:text-pink-400">eCommerce</span>, and
             <span class="font-bold text-emerald-600 dark:text-emerald-400">Marketing</span>
             in one powerful ecosystem.
@@ -40,14 +40,14 @@
 
             <button class="cta-secondary group px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 backdrop-blur-sm">
               <Icon name="mdi:play-circle" class="inline w-5 h-5 mr-2 group-hover:text-purple-600 transition-colors duration-300" />
-              Watch Demo
+              Learn More
             </button>
           </div>
 
           <!-- Trust Indicators -->
           <div class="hero-stats pt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl mx-auto">
             <div class="text-center">
-              <div class="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 counter" data-target="50000">0</div>
+              <div class="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 counter" data-target="15">0</div>
               <div class="text-sm text-gray-600 dark:text-gray-400">Happy Users</div>
             </div>
             <div class="text-center">
@@ -288,7 +288,7 @@
 
         <div id="enhanced-stats" class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div class="stat-item text-center transform hover:scale-110 transition-transform duration-300">
-            <div class="stat-number text-4xl sm:text-6xl font-black text-white counter mb-2" data-target="50000">0</div>
+            <div class="stat-number text-4xl sm:text-6xl font-black text-white counter mb-2" data-target="15">0</div>
             <div class="text-lg font-medium text-yellow-200">Active Users</div>
             <div class="text-sm text-white/80">Growing Daily</div>
           </div>
@@ -303,7 +303,7 @@
             <div class="text-sm text-white/80">And Growing</div>
           </div>
           <div class="stat-item text-center transform hover:scale-110 transition-transform duration-300">
-            <div class="stat-number text-4xl sm:text-6xl font-black text-white counter" data-target="150">0</div>
+            <div class="stat-number text-4xl sm:text-6xl font-black text-white counter" data-target="2">0</div>
             <div class="text-lg font-medium text-yellow-200">Countries</div>
             <div class="text-sm text-white/80">Worldwide</div>
           </div>

@@ -17,9 +17,6 @@
       </div>
     </div>
 
-    <!-- Custom Toast Component -->
-    <Toast ref="toastRef" />
-
     <!-- Main Content -->
     <div class="relative z-10 px-4 lg:px-20 py-16">
 
@@ -374,9 +371,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
-import { useToast } from '~/composables/useToast'
-import Toast from '~/components/ui/Toast.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 // GSAP imports (client-side only)
 let gsap: any = null
@@ -392,9 +387,11 @@ if (process.client) {
   })
 }
 
+// ✅ FIXED: Use the correct toast composable
+const toast = useToast()
+
 // Composables
 const { public: { apiBase, supportEmail, companyName, phoneNumber, address } } = useRuntimeConfig()
-const { toast, setToastInstance } = useToast()
 
 // Refs for animations
 const orb1 = ref<HTMLElement>()
@@ -403,7 +400,6 @@ const orb3 = ref<HTMLElement>()
 const contactHeader = ref<HTMLElement>()
 const contactInfo = ref<HTMLElement>()
 const contactForms = ref<HTMLElement>()
-const toastRef = ref<any>()
 
 // State
 const formType = ref<'user' | 'business'>('user')
@@ -474,10 +470,14 @@ function validateBusiness() {
   return Object.keys(e).length === 0
 }
 
-// Form submitters
+// ✅ FIXED: Form submitters with correct toast usage
 async function submitUser() {
   if (!validateUser()) {
-    toast.error({ title: 'Validation Error', message: 'Please correct the highlighted fields.', timeout: 3000 })
+    toast.error({
+      title: 'Validation Error',
+      message: 'Please correct the highlighted fields.',
+      timeout: 3000
+    })
     return
   }
 
@@ -533,7 +533,11 @@ async function submitUser() {
 
 async function submitBusiness() {
   if (!validateBusiness()) {
-    toast.error({ title: 'Validation Error', message: 'Please correct the highlighted fields.', timeout: 3000 })
+    toast.error({
+      title: 'Validation Error',
+      message: 'Please correct the highlighted fields.',
+      timeout: 3000
+    })
     return
   }
 
@@ -676,13 +680,7 @@ const initializeAnimations = () => {
 }
 
 // Lifecycle
-onMounted(async () => {
-  // Set up toast instance
-  await nextTick()
-  if (toastRef.value) {
-    setToastInstance(toastRef.value)
-  }
-
+onMounted(() => {
   // Initialize animations
   setTimeout(() => {
     initializeAnimations()
@@ -707,6 +705,7 @@ useSeoMeta({
 </script>
 
 <style scoped>
+/* All your existing styles remain the same */
 /* Performance optimizations */
 .will-change-transform {
   will-change: transform;

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\VoucherCodeResource\Pages;
 
-use App\Filament\Resources\Promotion\VoucherResource;
 use App\Filament\Resources\VoucherCodeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;

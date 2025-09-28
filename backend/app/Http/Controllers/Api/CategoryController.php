@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
@@ -243,6 +244,7 @@ class CategoryController extends Controller
         $query = Product::query()
             ->whereNull('parent_id')
             ->where('status', PublishableStatusCast::PUBLISHED->value)
+            ->where('type',ProductTypeCast::CONFIGURABLE->value)
             ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
             ->with([
                 'media' => fn($q) => $q->where('collection_name', 'displayImage'),

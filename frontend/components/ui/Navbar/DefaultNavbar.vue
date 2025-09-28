@@ -442,6 +442,7 @@ const baseLinks = [
   { to: '/', label: 'Home', icon: 'mdi:home', color: 'blue' },
   { to: '/store', label: 'Store', icon: 'mdi:store', color: 'purple' },
   { to: '/categories', label: 'Categories', icon: 'mdi:grid', color: 'green' },
+  { to: '/career', label: 'Career', icon: 'mdi:briefcase', color: 'teal' },
   { to: '/blog', label: 'Blog', icon: 'mdi:post', color: 'orange' },
   { to: '/about', label: 'About', icon: 'mdi:information', color: 'indigo' }
 ]

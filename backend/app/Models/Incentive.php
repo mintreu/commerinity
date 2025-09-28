@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Casts\IncentiveTypeCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use App\Casts\IncentiveTypeCast;
 use Mintreu\LaravelTransaction\Models\Transaction;
 
 class Incentive extends Model

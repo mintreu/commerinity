@@ -6,10 +6,7 @@ use App\Http\Resources\Category\CategoryIndexResource;
 use App\Http\Resources\Filter\FilterGroupResource;
 use App\Http\Resources\Filter\FilterOptionResource;
 use App\Http\Resources\Promotion\SaleProductResource;
-use App\Http\Resources\Promotion\SaleResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Mintreu\LaravelMoney\LaravelMoney;
 
 class ProductResource extends ProductIndexResource
 {

@@ -10,7 +10,6 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/image": "^1.11.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@qirolab/nuxt-sanctum-authentication": "^0.1.15",
     "@sentry/nuxt": "^10.4.0",
@@ -20,10 +19,8 @@
     "d3-org-chart": "^3.1.1",
     "echarts": "^6.0.0",
     "gsap": "^3.13.0",
-    "izitoast": "^1.4.0",
     "nuxt": "^3.17.6",
     "nuxt-echarts": "^1.0.0",
-    "nuxt-toast": "^1.1.4",
     "swiper": "^11.2.10",
     "vue": "^3.5.17",
     "vue-advanced-cropper": "^2.8.9",

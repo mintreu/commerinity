@@ -26,7 +26,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Kirschbaum\Commentions\Contracts\Commenter;
 use Laravel\Sanctum\HasApiTokens;
-use Mintreu\LaravelCommerinity\Traits\HasSaleAccess;
 use Mintreu\LaravelCommerinity\Traits\HasVoucherAccess;
 use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;

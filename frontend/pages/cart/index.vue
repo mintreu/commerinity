@@ -643,7 +643,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useSanctum, useSanctumFetch, useRuntimeConfig } from '#imports'
 import { useCart } from '~/composables/useCart'
-import { useToast } from '~/composables/useToast'
+import { useCustomToast } from '~/composables/useCustomToast'
 import AddToCartButton from '~/components/cart/AddToCartButton.vue'
 import GlobalLoader from '~/components/GlobalLoader.vue'
 import GuestCartForm from '~/components/cart/GuestCartForm.vue'
@@ -652,7 +652,7 @@ import Toast from '~/components/ui/Toast.vue'
 // Composables
 const { isLoggedIn } = useSanctum()
 const config = useRuntimeConfig()
-const { toast, setToastInstance } = useToast()
+const { toast, setToastInstance } = useCustomToast()
 const { cartData, updateCartItem, removeItem, applyCoupon, fetchCart } = useCart()
 
 // Refs for animations

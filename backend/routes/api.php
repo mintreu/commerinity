@@ -99,6 +99,11 @@ Route::prefix('products')->group(function () {
 
 });
 
+
+//Route::prefix('products')->group(base_path('routes/apis/products.php'));
+
+
+
 Route::prefix('product')->group(function (){
     // Comments Engagements
     Route::get('engagements/{product:url}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'index']);

@@ -61,7 +61,7 @@ useSeoMeta({
   keywords: 'online store, shopping, deals, fast delivery, premium products, categories, e-commerce'
 })
 
-// Add structured data using useHead instead
+// Add structured data
 useHead({
   script: [
     {
@@ -73,29 +73,23 @@ useHead({
         description: 'Your one-stop shop for premium products with fast delivery',
         url: `${config.public.siteUrl || ''}/store`,
         image: `${config.public.siteUrl || ''}/images/store-logo.jpg`,
-        telephone: '+1-800-STORE-01',
+        telephone: '+91-800-STORE-01',
         address: {
           '@type': 'PostalAddress',
           streetAddress: '123 Shopping Street',
-          addressLocality: 'Commerce City',
-          postalCode: '12345',
-          addressCountry: 'US'
+          addressLocality: 'Mumbai',
+          postalCode: '400001',
+          addressCountry: 'IN'
         },
         geo: {
           '@type': 'GeoCoordinates',
-          latitude: '40.7128',
-          longitude: '-74.0060'
+          latitude: '19.0760',
+          longitude: '72.8777'
         },
         openingHoursSpecification: {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
+            'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
           ],
           opens: '00:00',
           closes: '23:59'

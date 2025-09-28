@@ -152,7 +152,7 @@
                       <div class="price-info">
                         <div class="current-price flex items-center gap-3 mb-2">
                           <h2 class="text-4xl lg:text-5xl font-black text-green-600 dark:text-green-400">
-                            ₹{{ formatPrice(product.price) }}
+                            {{ product.price }}
                           </h2>
                           <span v-if="product.reward_point" class="reward-points px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl text-sm font-bold shadow-lg">
                             +{{ Math.round(product.reward_point) }} pts

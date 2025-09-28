@@ -6,6 +6,14 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'auth'
+  layout: 'default',           // Nuxt's standard layout property
+  layoutConfig: {              // Our custom config property
+    navbar: { show: false },
+    footer: { show: false },
+    bottomNav: { show: false },
+    scrollTop: { show: false },
+    background: { effects: false, particles: false }
+  }
 })
+
 </script>

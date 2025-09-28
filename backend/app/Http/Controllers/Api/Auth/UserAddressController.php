@@ -7,10 +7,10 @@ use App\Http\Resources\Geo\AddressIndexResource;
 use App\Http\Resources\Geo\AddressResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Mintreu\LaravelGeokit\Casts\AddressTypeCast;
 use Mintreu\LaravelGeokit\Models\Address;
 use Mintreu\LaravelGeokit\Models\Block;
-use Illuminate\Validation\Rule;
 
 
 class UserAddressController extends Controller

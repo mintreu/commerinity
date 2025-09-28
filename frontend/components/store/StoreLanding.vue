@@ -77,7 +77,7 @@
                         class="hero-btn-secondary group px-12 py-6 bg-white/10 backdrop-blur-md text-white font-bold text-xl rounded-2xl border-2 border-white/30 hover:bg-white/20 transition-all duration-300 transform hover:scale-105"
                     >
                       <Icon name="mdi:play-circle" class="inline w-6 h-6 mr-3 group-hover:animate-pulse" />
-                      Watch Demo
+                      Learn More
                     </button>
                   </div>
                 </div>

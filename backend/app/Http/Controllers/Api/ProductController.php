@@ -8,13 +8,9 @@ use App\Http\Resources\Product\ProductResource;
 use App\Scopes\CategoryScope;
 use App\Scopes\FilterScope;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
-use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
-use Mintreu\LaravelCategory\Models\Category;
 
 class ProductController extends Controller
 {

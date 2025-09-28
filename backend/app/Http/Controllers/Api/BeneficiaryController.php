@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\BeneficiaryAccountResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Mintreu\LaravelTransaction\Casts\BeneficiaryAccountStatusCast;
 use Mintreu\LaravelTransaction\Models\BeneficiaryAccount;
 

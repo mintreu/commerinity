@@ -2,7 +2,7 @@
 
 namespace App\Services\CartService;
 
-use \App\Models\Cart as CartModel;
+use App\Models\Cart as CartModel;
 use Illuminate\Database\Eloquent\Model;
 
 class CartLineService

@@ -5,19 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Http\Resources\Transaction\WalletResource;
-use App\Http\Resources\Transaction\BeneficiaryAccountResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Casts\WalletStatusCast;
 use Mintreu\LaravelTransaction\Models\Wallet;
-use Mintreu\LaravelTransaction\Models\Transaction;
-use Mintreu\LaravelTransaction\Models\BeneficiaryAccount;
 
 class WalletController extends Controller
 {

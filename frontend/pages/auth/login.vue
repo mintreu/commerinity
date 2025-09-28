@@ -21,17 +21,32 @@
 
       <div class="relative z-10 max-w-lg">
         <!-- Brand Logo & Name -->
-<!--        <div class="flex items-center gap-4 mb-12">-->
-<!--          <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl transform transition-transform hover:scale-105 duration-300">-->
-<!--            <Icon name="mdi:shopping" class="w-8 h-8 text-white" />-->
-<!--          </div>-->
-<!--          <div>-->
-<!--            <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-600 to-indigo-600 dark:from-white dark:via-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">-->
-<!--              {{ companyName }}-->
-<!--            </h1>-->
-<!--            <p class="text-slate-600 dark:text-slate-400 font-medium">Your Shopping Destination</p>-->
-<!--          </div>-->
-<!--        </div>-->
+        <NuxtLink to="/" class="flex items-center gap-4 mb-12">
+          <!--          <div class="logo-wrapper relative">-->
+          <!--            <div class="logo-glow absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>-->
+          <!--            <div class="logo-bg relative w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">-->
+          <!--              <img src="/logo.png" loading="lazy" class="object-contain w-8 h-8 filter brightness-0 invert" alt="Logo" />-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <img
+              src="/logo.png"
+              loading="lazy"
+              class="object-contain w-12 h-12"
+              alt="Logo"
+          />
+          <div>
+            <h1
+                class="text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-600 to-indigo-600
+             dark:from-white dark:via-blue-400 dark:to-indigo-400 bg-clip-text text-transparent"
+            >
+              {{ companyName }}
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 font-medium">
+              Your Shopping Destination
+            </p>
+          </div>
+        </NuxtLink>
+
 
         <!-- Main Heading -->
         <h2 class="text-5xl xl:text-6xl font-bold mb-8 leading-tight">
@@ -531,10 +546,19 @@ if (process.client) {
   })
 }
 
-// Meta
+// ✅ UPDATED: Use default layout with navbar and footer disabled
+// Alternative approach - layout object with name
 definePageMeta({
-  layout: 'auth'
+  layout: 'default',           // Nuxt's standard layout property
+  layoutConfig: {              // Our custom config property
+    navbar: { show: false },
+    footer: { show: false },
+    bottomNav: { show: false },
+    scrollTop: { show: false },
+    background: { effects: false, particles: false }
+  }
 })
+
 
 // Composables
 const router = useRouter()
