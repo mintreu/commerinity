@@ -46,6 +46,7 @@ class EditSale extends EditRecord
     {
         $this->saleManager = $this->saleManager ?? SaleManager::make();
         $this->saleManager->reindexSaleableProducts();
+        $this->redirect(self::$resource::getUrl('edit',['record' => $this->record->getRouteKey()]));
     }
 
     public function form(Form $form): Form

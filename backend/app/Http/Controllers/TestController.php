@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\UserAlertDatabaseNotification;
+use App\Notifications\Welcome\WelcomeDatabaseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Mintreu\LaravelCommerinity\Models\Sale;
 use Mintreu\LaravelIntegration\LaravelIntegration;
 use Mintreu\LaravelIntegration\Support\OrderBuilder\ProviderOrder;
+use Mintreu\LaravelMoney\LaravelMoney;
+
+use Mintreu\LaravelMoney\Money;
+use Mintreu\LaravelProductCatalogue\Models\Product;
+use Money\Currency;
 
 
 class TestController extends Controller
@@ -16,6 +24,33 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
+
+
+        $sale = Sale::find(1);
+
+        dd($sale->discount_amount,LaravelMoney::format($sale->discount_amount));
+
+
+
+
+        $product = Product::find(1);
+
+        dd([
+           LaravelMoney::make($product->price)->formatted(),
+            LaravelMoney::format(16.36)
+
+        ]);
+
+
+
+
+
+
+
+        $user = User::firstWhere('email','test@example.com');
+
+        $user->notify(new UserAlertDatabaseNotification($user,'welcome'));
+
 
 
 //       $newProductData = Product::factory()->raw();
@@ -29,6 +64,7 @@ class TestController extends Controller
 //
 //
 
+        dd('stop');
 
 
 

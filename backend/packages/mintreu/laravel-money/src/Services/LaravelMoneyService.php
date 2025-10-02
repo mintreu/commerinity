@@ -2,147 +2,234 @@
 
 namespace Mintreu\LaravelMoney\Services;
 
-use Akaunting\Money\Currency;
-use Akaunting\Money\Money as CoreMoney;
-use Mintreu\LaravelMoney\Contracts\LaravelMoneyServiceContract;
-use Mintreu\LaravelMoney\LaravelMoney;
+use Money\Currencies\ISOCurrencies;
+use Money\Currency;
+use Money\Formatter\IntlMoneyFormatter;
+use Money\Money;
+use NumberFormatter;
+use function PHPUnit\Framework\stringContains;
 
-class LaravelMoneyService implements LaravelMoneyServiceContract
+class LaravelMoneyService
 {
-    protected CoreMoney $laravelMoney;
 
+    private Money $money;
+    private Currency $currency;
+    private $formatter;
 
-
-    public function __construct(LaravelMoneyService|string|int|float|null $value = 0, ?string $currency = null)
+     /**
+      * @param LaravelMoneyService|Money|string|int|float|null $amount
+      * @param string|null $currency
+      */
+    public function __construct(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null)
     {
-
-        $baseValue = $this->extractBaseValue($value);
-        $currency = self::resolveCurrency($currency);
-
-        if (is_null($baseValue))
-        {
-            $baseValue = 0.00;
-        }
-
-        // Instantiate Laravel Money
-        $this->laravelMoney = new CoreMoney($baseValue, $currency, true);
+        $amount = $this->resolveInputAmount($amount);
+        $this->currency = new Currency($currency ?? self::defaultCurrency());
+        $this->money = new Money($amount, $this->currency);
     }
 
-    public static function make(LaravelMoneyService|string|int|float|null $value = 0, ?string $currency = null):static
+    public static function make(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null)
     {
-        return new static($value, $currency);
+        return new static($amount,$currency);
     }
 
-    public function sameAs(LaravelMoney|string|int $value, ?string $currency = null): bool
+    public static function defaultCurrency(): string
     {
-        $givenValue = self::isMoney($value) ? $value : LaravelMoney::make($value,$currency);
-
-        return $this->laravelMoney->equals($givenValue->laravelMoney);
-    }
-
-    public function compare(LaravelMoney|string|int $value, ?string $currency = null): int
-    {
-        $givenValue = self::isMoney($value) ? $value : LaravelMoney::make($value,$currency);
-
-        return $this->laravelMoney->compare($givenValue->laravelMoney);
-    }
-
-    public function currency(): Currency
-    {
-        return $this->laravelMoney->getCurrency();
+        return config('laravel-money.currency');
     }
 
     public function getCurrency(): Currency
     {
-        return $this->currency();
+        return $this->money->getCurrency();
     }
-
     public function getCurrencyCode(): string
     {
-        return $this->currency()->getCurrency();
+        return $this->getCurrency()->getCode();
     }
-
-    public function amount(): float|int
+    public function getAmount(): string
     {
-        return $this->laravelMoney->getAmount();
-    }
-
-    public function getAmount(): float|int
-    {
-        return $this->laravelMoney->getAmount();
-    }
-
-    public function formatted(): string
-    {
-        return $this->laravelMoney->format();
-    }
-
-    public function forHuman(): string
-    {
-        return $this->laravelMoney->formatForHumans();
-    }
-
-    public function getValue(): float
-    {
-        return $this->laravelMoney->getValue();
-    }
-
-    public function get(): self
-    {
-        return clone $this;
-    }
-
-    public static function resolveCurrency(?string $currency = null): Currency
-    {
-        return new Currency($currency ?? config('laravel-money.currency'));
+        return $this->money->getAmount();
     }
 
 
-    /**
-     * @param int|float|string $value
-     * @param string|null $currency
-     * @param bool $converted
-     * @return string
-     * Converted = false, when used when you pass 10000 and want use 100
-     * Usage: Money::format(value:'10000',converted: false)
-     */
-    public static function format(int|float|string|null $value = 0, ?string $currency = null, bool $converted = true): string
+    public function formatted(string $locale = 'en_IN')
     {
-        if (!$converted)
+        $this->resolveFormatter($locale);
+        return $this->formatter->format($this->money);
+    }
+
+
+    public function __toString(): string
+    {
+        return $this->formatted();
+    }
+
+
+    public static function format(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null,string $locale = 'en_IN')
+    {
+        $instance = self::make($amount,$currency);
+        return $instance->formatted($locale);
+    }
+
+
+
+
+
+
+
+     // ========================================
+     // ARITHMETIC - MUTABLE
+     // ========================================
+
+    public function add(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null): static
+    {
+        $givenMoney = self::make($amount,$currency)->money;
+        $this->money->add($givenMoney);
+        return $this;
+    }
+
+    public function plus(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null): LaravelMoneyService|static
+    {
+        $givenMoney = self::make($amount,$currency)->money;
+        $newInstance = clone $this;
+        $newInstance->money->add($givenMoney);
+        return $newInstance;
+    }
+
+
+    public function subtract(LaravelMoneyService|Money|string|int|float|null $amount = 0,?string $currency = null): static
+    {
+        $givenMoney = self::make($amount,$currency)->money;
+        $this->money->subtract($givenMoney);
+        return $this;
+    }
+
+    public function minus(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null): LaravelMoneyService|static
+    {
+        $givenMoney = self::make($amount,$currency)->money;
+        $newInstance = clone $this;
+        $newInstance->money->subtract($givenMoney);
+        return $newInstance;
+    }
+
+
+    public function multiply(LaravelMoneyService|Money|string|int|float $factor = 0, ?string $currency = null): static
+    {
+        $givenMoney = self::make($factor,$currency);
+        $factor = $givenMoney->getAmount();
+        $this->money = $this->money->multiply($factor);
+        return $this;
+    }
+
+    public function times(LaravelMoneyService|Money|string|int|float $factor = 0, ?string $currency = null): LaravelMoneyService|static
+    {
+        $givenMoney = self::make($factor,$currency);
+        $factor = $givenMoney->getAmount();
+        $newInstance = clone $this;
+        $newInstance->money = $newInstance->money->multiply($factor);
+        return $newInstance;
+    }
+
+
+    public function divide(LaravelMoneyService|Money|string|int|float $factor = 0, ?string $currency = null): static
+    {
+        $givenMoney = self::make($factor,$currency);
+        $factor = $givenMoney->getAmount();
+        $this->money = $this->money->divide($factor);
+        return $this;
+    }
+
+    public function dividedBy(LaravelMoneyService|Money|string|int|float $factor = 0, ?string $currency = null): LaravelMoneyService|static
+    {
+        $givenMoney = self::make($factor,$currency);
+        $factor = $givenMoney->getAmount();
+        $newInstance = clone $this;
+        $newInstance->money = $newInstance->money->divide($factor);
+        return $newInstance;
+    }
+
+
+
+
+    // ========================================
+    // COMPARISONS (UNCHANGED - ALREADY SAFE)
+    // ========================================
+
+    public function equals(self $other): bool
+    {
+        return $this->money->equals($other->money);
+    }
+
+    public function sameAs(self $other): bool
+    {
+        return $this->equals($other);
+    }
+
+    public function greaterThan(self $other): bool
+    {
+        return $this->money->greaterThan($other->money);
+    }
+
+    public function lessThan(self $other): bool
+    {
+        return $this->money->lessThan($other->money);
+    }
+
+    public function compare(self $other): int
+    {
+        return $this->money->compare($other->money);
+    }
+
+    public function isZero(): bool
+    {
+        return $this->money->isZero();
+    }
+
+    public function isPositive(): bool
+    {
+        return $this->money->isPositive();
+    }
+
+    public function isNegative(): bool
+    {
+        return $this->money->isNegative();
+    }
+
+
+
+
+    // PRIVATE FUNCTIONS
+
+    private function resolveInputAmount(LaravelMoneyService|Money|string|int|float|null $amount):int
+    {
+        if (is_float($amount))
         {
-            $value = self::normalizeValue($value,true);
-        }
-        return LaravelMoney::make($value,$currency)->formatted();
-    }
-
-    public static function isMoney($object): bool
-    {
-        return $object instanceof self;
-    }
-
-    private function extractBaseValue($value)
-    {
-        if ($value instanceof self || $value instanceof CoreMoney) {
-            return $value->getValue();
+            $amount = $amount * 100;
         }
 
-        return is_float($value) ? (float) $value : $value;
-    }
-
-
-    private static function normalizeValue(int|float|string $value = 0,bool $convert = false)
-    {
-        // Convert string to float or int
-        if (is_string($value)) {
-            if (ctype_digit($value)) {
-                $value = (int) $value; // Convert numeric string to int
-            } else {
-                $value = (float) $value; // Convert to float if contains decimals
+        if (is_string($amount)) {
+            $trimmed = trim($amount);
+            if ($trimmed === '') {
+                return 0;
             }
+            $amount = str_contains($trimmed,'.') ? (float) $trimmed * 100 : (float) $trimmed;
         }
 
-        return $convert ? $value / 100 : $value;
+        if ($amount instanceof LaravelMoneyService || $amount instanceof Money)
+        {
+            return $amount->getAmount();
+        }
+
+        return $amount ?? 0;
     }
+
+
+    private function resolveFormatter(string $locale = 'en_IN'): void
+    {
+        $this->formatter = new IntlMoneyFormatter(
+            new NumberFormatter($locale, NumberFormatter::CURRENCY),new ISOCurrencies()
+        );
+    }
+
 
 
 }

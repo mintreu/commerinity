@@ -25,6 +25,9 @@ class DistributorPanelProvider extends PanelProvider
         return $panel
             ->id('distributor')
             ->path('distributor')
+            ->authGuard('distributor')
+            ->login()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])

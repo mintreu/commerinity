@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -26,6 +27,25 @@ class ProductDemoSeeder extends Seeder
 
         $this->startSeedingProducts($demoMasalaProducts,$masalaFilterGroup,$masalaCategory);
 
+        $topTenCategory = Category::where('url', '!=', 'spices-masalas')
+            ->take(10)
+            ->get();
+
+        $topThreeFilterGroup = FilterGroup::with('filters.options')
+            ->where('name', '!=', 'Spices & Masala')
+            ->take(3)
+            ->get();
+
+        foreach ($topTenCategory as $category) {
+            $productData = Product::factory(5)->raw(); // no need for collect()
+            $this->startSeedingProducts(
+                $productData,
+                $topThreeFilterGroup->random(),
+                $category
+            );
+        }
+
+
 
 
 
@@ -43,11 +63,16 @@ class ProductDemoSeeder extends Seeder
         {
 
 
+            // Handle array vs object
+            $name = is_array($productInfo) ? $productInfo['name'] : $productInfo->name;
+            $url  = is_array($productInfo) ? $productInfo['url']  : $productInfo->url;
+            $sku  = is_array($productInfo) ? $productInfo['sku']  : $productInfo->sku;
+
             $productData = Product::factory()->raw([
-                'name' => $productInfo->name,
-                'url'   => $productInfo->url,
-                'sku'   => $productInfo->sku,
-                'price' => $productInfo->price,
+                'name' => $name,
+                'url'   => $url,
+                'sku'   => $sku,
+                'price' => fake()->randomElement([12050,15000,8000,45000]),
                 'type' => ProductTypeCast::CONFIGURABLE,
                 'status' => PublishableStatusCast::PUBLISHED->value,
                 'filter_group_id' => $filterGroup->id,
@@ -74,9 +99,26 @@ class ProductDemoSeeder extends Seeder
             // Add Category
             $product->categories()->attach([
                 $parentCategory->id => [
-                    'base_category' => $parentCategory?->parent_id,
+                    'base_category' => $parentCategory?->parent_id ?? $parentCategory->id,
                 ],
             ]);
+
+
+            // Engagement
+            $author = User::firstWhere('email','test@example.com');
+            if ($author)
+            {
+                $newEngagement = $author->productEngagements()->create([
+                    'product_id' => $product->id,
+                    'review' => fake()->text,
+                    'rating' => fake()->randomElement([0,1,2,3,4,5]),
+                    'helpful_votes' => fake()->randomElement([true,false]),
+                ]);
+
+                // WishList
+                $newWishList = $author->addToWishlist($product->id);
+
+            }
 
 
 
@@ -175,7 +217,7 @@ class ProductDemoSeeder extends Seeder
                 'sold_quantity' => 0,
                 'min_quantity' => 1,
                 'max_quantity' => 10,
-                'price' => fake()->randomElement([50, 100, 150, 200]),
+                'price' => fake()->randomElement([12050,15000,8000,45000]),
             ]);
         }
     }

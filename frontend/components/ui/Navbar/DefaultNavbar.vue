@@ -86,14 +86,16 @@
           </button>
 
           <!-- Notifications -->
-          <button
-              class="notification-btn relative w-10 h-10 bg-gray-100 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 text-gray-600 dark:text-gray-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-              aria-label="Notifications"
-          >
-            <Icon name="mdi:bell-outline" class="w-5 h-5" />
-            <!-- Notification Badge -->
-            <div class="notification-badge absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>
-          </button>
+<!--          <button-->
+<!--              class="notification-btn relative w-10 h-10 bg-gray-100 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 text-gray-600 dark:text-gray-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"-->
+<!--              aria-label="Notifications"-->
+<!--          >-->
+<!--            <Icon name="mdi:bell-outline" class="w-5 h-5" />-->
+<!--            &lt;!&ndash; Notification Badge &ndash;&gt;-->
+<!--            <div class="notification-badge absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>-->
+<!--          </button>-->
+
+          <NotificationDropdown />
 
           <!-- Dark Mode Toggle -->
           <DarkModeToggle />
@@ -391,6 +393,7 @@ import { useSanctum } from '#imports'
 import DarkModeToggle from '~/components/ui/DarkModeToggle.vue'
 import UserDropdown from '~/components/ui/UserDropdown.vue'
 import SearchModal from '~/components/ui/SearchModal.vue'
+import NotificationDropdown from "~/components/ui/NotificationDropdown.vue";
 
 // GSAP imports (client-side only)
 let gsap: any = null

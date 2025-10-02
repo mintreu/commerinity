@@ -37,7 +37,7 @@ class ListSales extends ListRecords
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('discount_amount')
-                    ->money(LaravelMoney::defaultCurrency())
+                    ->money(LaravelMoney::defaultCurrency(),100)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('action_type')
                     ->badge()

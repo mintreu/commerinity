@@ -31,8 +31,8 @@ class SaleProduct extends Model
     ];
 
     protected $casts = [
-        'sale_price'      => LaravelMoneyCast::class,
-        'discount_amount' => LaravelMoneyCast::class,
+       // 'sale_price'      => LaravelMoneyCast::class,
+       // 'discount_amount' => LaravelMoneyCast::class,
         'starts_from'     => 'datetime',
         'ends_till'       => 'datetime',
         'action_type'     => SaleActionTypeCast::class

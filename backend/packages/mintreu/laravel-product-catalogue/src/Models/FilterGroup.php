@@ -20,4 +20,10 @@ class FilterGroup extends Model
         return $this->belongsToMany(Filter::class, 'filter_group_mappings', 'filter_group_id', 'filter_id');
     }
 
+
+    public function products()
+    {
+        return $this->hasMany(Product::class,'filter_group_id');
+    }
+
 }

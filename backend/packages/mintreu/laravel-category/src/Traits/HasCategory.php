@@ -15,7 +15,7 @@ trait HasCategory
             'category_mappings',         // Pivot table
             'categorized_id',            // Foreign key on pivot pointing to this model
             'category_id'                // Foreign key for Category
-        );
+        )->withPivot('base_category');
     }
 
 }

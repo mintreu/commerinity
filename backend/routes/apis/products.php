@@ -5,5 +5,10 @@ use Illuminate\Support\Facades\Route;
 
 // Prefix: products
 
-Route::get('/',[\App\Http\Controllers\Api\Product\ProductDisplayController::class,'index'])->name('api.product.index');
+Route::controller(\App\Http\Controllers\Api\Product\ProductDisplayController::class)
+    ->prefix('products')
+    ->group(function (){
+       Route::get('/','index');
+    });
+
 

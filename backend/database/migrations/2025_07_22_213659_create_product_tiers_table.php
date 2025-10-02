@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('max_quantity')->nullable();
             $table->unsignedInteger('wholesale_unit_quantity')->nullable();
 
-            $table->decimal('price', 10, 2);
+            $table->unsignedBigInteger('price')->default(0);
 
             // Auto-updating stock fields
             $table->unsignedInteger('init_quantity');

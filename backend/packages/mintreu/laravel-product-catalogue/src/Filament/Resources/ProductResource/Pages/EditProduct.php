@@ -13,12 +13,13 @@ use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\HtmlString;
+use Mintreu\LaravelMoney\Filament\Forms\Components\MoneyInput;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Services\ProductUpdateService;
-use Mintreu\Toolkit\Forms\Components\MoneyInput;
+
 
 class EditProduct extends EditRecord
 {
@@ -167,8 +168,8 @@ class EditProduct extends EditRecord
 
                                 MoneyInput::make('price')
                                     ->label('Price')
-                                    ->placeholder('Enter Price (e.g., 51.25)')
-                                    ->prefix(LaravelMoney::getCurrencySymbol())
+                                    ->placeholder('Enter Price (e.g., 10025)')
+                                    ->prefix(LaravelMoney::defaultCurrency())
                                     ->helperText('Enter amount in rupees. Decimals allowed.'),
 
 

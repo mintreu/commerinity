@@ -20,8 +20,11 @@ class DatabaseSeeder extends Seeder
             GeoKitSeeder::class,
 
             AdminSeeder::class,
+            StageSeeder::class,
             FilterSeeder::class,
             CategorySeeder::class,
+
+            UserSeeder::class,
 
             // MasterDemoProductSeeder::class,
 
@@ -31,10 +34,10 @@ class DatabaseSeeder extends Seeder
 
             IntegrationSeeder::class,
             NaukriSeeder::class,
-            StageSeeder::class,
+
             PageSeeder::class,
             HelpDeskTopicSeeder::class,
-            UserSeeder::class,
+
             SaleSeeder::class,
 
             HelpDeskTicketSeeder::class

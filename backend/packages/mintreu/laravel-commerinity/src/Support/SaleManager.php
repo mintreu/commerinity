@@ -2,12 +2,13 @@
 
 namespace Mintreu\LaravelCommerinity\Support;
 
-
 use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelCommerinity\Casts\SaleActionTypeCast;
 use Mintreu\LaravelCommerinity\Models\Sale;
 use Mintreu\LaravelCommerinity\Models\SaleProduct;
 use Mintreu\LaravelMoney\LaravelMoney;
@@ -18,13 +19,9 @@ use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class SaleManager
 {
-
     protected array $category;
-
     protected array|\Illuminate\Database\Eloquent\Collection $filter;
-
     protected bool $showOperators = false;
-
     protected $filterGroup;
 
     public function __construct()
@@ -32,10 +29,7 @@ class SaleManager
         $this->category = Category::with('children', 'parent')->where('status', true)->pluck('name', 'id')->toArray();
         $this->filterGroup = FilterGroup::all()->pluck('name', 'id')->toArray();
         $this->filter = Filter::with('options')->has('options')->get();
-
     }
-
-
 
     public static function make(): static
     {
@@ -63,8 +57,6 @@ class SaleManager
         };
     }
 
-    // Filler
-
     public function getCondition(): Collection
     {
         $collection = collect([[
@@ -77,12 +69,8 @@ class SaleManager
             return $conditions->merge($item['children']);
         });
 
-
-
         return $conditions[0];
     }
-
-
 
     private function getChildren(): Collection
     {
@@ -103,7 +91,6 @@ class SaleManager
             ],
         ]);
 
-
         return $result->merge($this->getStaticfilters());
     }
 
@@ -112,8 +99,6 @@ class SaleManager
         $attrBag = [];
         $allFilters = $this->filter;
         foreach ($allFilters as $filter) {
-           // dump($filter);
-
             $key = 'filter|'.$filter->name;
             $attrBag[] = [
                 'key' => Str::lower($key),
@@ -127,22 +112,39 @@ class SaleManager
         return $attrBag;
     }
 
-
-
-    // Product Based
-
     public function reindexSaleableProducts(): void
     {
         $this->cleanIndex();
     }
 
+    // FIXED: Better cleanup approach
     private function cleanIndex(): void
     {
-        $allSales = Sale::where('starts_from', '<=', Carbon::now()->format('Y-m-d'))->orWhereNull('starts_from')->orWhere('ends_till', '>=', Carbon::now()->format('Y-m-d'))->orWhereNull('ends_till')->orderBy('sort_order', 'asc')->where('status', 1)->get();
-        foreach ($allSales as $sale) {
-            $this->insertSaleProduct($sale);
-        }
-        // send notification
+        DB::transaction(function () {
+            // Step 1: Clear all expired sale products globally
+            SaleProduct::whereDate('ends_till', '<', now())->delete();
+
+            // Step 2: Get active sales
+            $allSales = Sale::with('targets')
+                ->where(function ($q) {
+                    $q->where('starts_from', '<=', Carbon::now()->format('Y-m-d'))
+                        ->orWhereNull('starts_from');
+                })
+                ->where(function ($q) {
+                    $q->where('ends_till', '>=', Carbon::now()->format('Y-m-d'))
+                        ->orWhereNull('ends_till');
+                })
+                ->where('status', 1)
+                ->orderBy('sort_order', 'asc')
+                ->get();
+
+            // Step 3: Process each sale individually
+            foreach ($allSales as $sale) {
+                $this->insertSaleProduct($sale);
+            }
+        });
+
+        // Send notification
         Notification::make()
             ->title('Reindexing Product Sales successfully')
             ->success()
@@ -150,22 +152,27 @@ class SaleManager
             ->send();
     }
 
+    // FIXED: Clean existing sale products before refilling
     private function insertSaleProduct(Sale $sale, $product = null): void
     {
+        // STEP 1: Clean existing sale products for this specific sale
+        $this->cleanExistingSaleProducts($sale);
 
+        // STEP 2: Generate new sale products
         $rows = [];
         $productIds = $this->getMatchingProductIds($sale, $product);
-
         $startsFrom = $sale->starts_from ? Carbon::createFromTimeString($sale->starts_from.' 00:00:01') : null;
         $endsTill = $sale->ends_till ? Carbon::createFromTimeString($sale->ends_till.' 23:59:59') : null;
 
-        $productCollection = Product::whereIn('id', $productIds)->get();
-
+        // FIXED: Eager load tiers to prevent N+1 queries
+        $productCollection = Product::with(['tiers' => function ($q) {
+            $q->where('in_stock', true)->orderBy('price');
+        }])->whereIn('id', $productIds)->get();
 
         foreach ($productCollection as $product) {
+            $calculated = $this->calculate($sale, $product);
 
-            if ($sale->targets->count())
-            {
+            if ($sale->targets->count()) {
                 // Prepare Group Sale
                 foreach ($sale->targets as $target) {
                     $rows[] = [
@@ -176,15 +183,14 @@ class SaleManager
                         'target_type'      => get_class($target),
                         'target_id'        => $target->getKey(),
                         'discount_amount'  => $sale->discount_amount,
-                        'sale_price'       => $this->calculate($sale, $product),
+                        'sale_price'       => $calculated,
                         'action_type'      => $sale->action_type,
                         'end_other_rules'  => $sale->end_other_rules,
                         'sort_order'       => $sale->sort_order,
                     ];
                 }
-            }else{
+            } else {
                 // Prepare Normal Sale
-
                 $rows[] = [
                     'starts_from'      => $startsFrom,
                     'ends_till'        => $endsTill,
@@ -193,69 +199,96 @@ class SaleManager
                     'target_type'      => null,
                     'target_id'        => null,
                     'discount_amount'  => $sale->discount_amount,
-                    'sale_price'       => $this->calculate($sale, $product),
+                    'sale_price'       => $calculated,
                     'action_type'      => $sale->action_type,
                     'end_other_rules'  => $sale->end_other_rules,
                     'sort_order'       => $sale->sort_order,
                 ];
-
             }
-
         }
 
-        // Ready For Insert/Update CatalogRule Product with Discounted
+        // STEP 3: Insert new sale products
         $this->storeRecord($rows);
+    }
+
+    // NEW: Clean existing sale products for a specific sale
+    private function cleanExistingSaleProducts(Sale $sale): void
+    {
+        SaleProduct::where('sale_id', $sale->id)->delete();
     }
 
     protected function storeRecord(array $data)
     {
+        if (empty($data)) {
+            return;
+        }
 
-
-        SaleProduct::upsert(
-            $data,
-            ['sale_id', 'product_id', 'target_type', 'target_id'], // Unique keys
-            [
-                'starts_from',
-                'ends_till',
-                'discount_amount',
-                'action_type',
-                'end_other_rules',
-                'sort_order',
-                'sale_price',
-            ]
-        );
+        // Since we cleaned existing products, we can use insert instead of upsert for better performance
+        SaleProduct::insert($data);
 
         Notification::make()->success()->title('product sale info updated')->send();
     }
 
-
+    // FIXED: Now uses tier-aware pricing
+    // FIXED: Proper calculation with correct discount handling
     public function calculate(Sale $sale, Product $product)
     {
+        $saleActionType = $sale->action_type->value;
+
+        // FIXED: Use effective price (tier or product price) instead of just product price
+        $effectivePrice = $this->getEffectivePrice($product);
+
+        // Handle discount based on action type
+        if (in_array($saleActionType, [SaleActionTypeCast::TO_PERCENT->value, SaleActionTypeCast::BY_PERCENT->value])) {
+            // For percentage: discount_amount is stored as percentage (e.g., 10 for 10%)
+            $discountPercentage = $sale->discount_amount; // 10 for 10%
+
+            return match ($saleActionType) {
+                'to_percent' => intval(($effectivePrice * $discountPercentage) / 100), // ₹450 × 10% = ₹45
+                'by_percent' => intval($effectivePrice * (1 - ($discountPercentage / 100))), // ₹450 × (1 - 0.10) = ₹405
+            };
+        } else {
+            // For fixed: discount_amount is stored in paisa (e.g., 1000 for ₹10.00)
+            $discountAmount = $sale->discount_amount; // Already in paisa
+
+            return match ($saleActionType) {
+                'to_fixed' => min($discountAmount, $effectivePrice), // min(₹0.10, ₹450) = ₹0.10
+                'by_fixed' => max(0, $effectivePrice - $discountAmount), // ₹450 - ₹0.10 = ₹449.90
+            };
+        }
+    }
 
 
+    // NEW: Get effective price considering tiers (matches your ProductDisplayController logic)
+    private function getEffectivePrice(Product $product): int
+    {
+        // Check if product has loaded tiers (from eager loading)
+        if ($product->relationLoaded('tiers')) {
+            $cheapestTier = $product->tiers->first(); // Already sorted by price ASC
+            return $cheapestTier ? $cheapestTier->price : $product->price;
+        }
 
-        $price = isset($product->price) && ! empty($product->price) ? $product->price : $sale->discount_amount;
-        $price = LaravelMoney::make($price);
+        // Fallback: Query if not eager loaded
+        $cheapestTier = $product->tiers()
+            ->where('in_stock', true)
+            ->orderBy('price')
+            ->first();
 
-//        dd([
-//            'Sale' => [
-//                'discount_amount' => $sale->discount_amount,
-//                'price_raw'       => $sale->getRawOriginal('discount_amount'),
-//            ],
-//            'Product' => [
-//                'price'     => $product->price,
-//                'price_raw' => $product->getRawOriginal('price'),
-//            ],
-//        ]);
+        return $cheapestTier ? $cheapestTier->price : $product->price;
+    }
 
+    // NEW: Method to reindex a single sale (useful for when updating individual sales)
+    public function reindexSingleSale(Sale $sale): void
+    {
+        DB::transaction(function () use ($sale) {
+            $this->insertSaleProduct($sale);
+        });
 
-
-        return match ($sale->action_type->value) {
-            'to_fixed' => min($sale->discount_amount, $price),
-            'to_percent' => $price->multiplyOnce($sale->discount_amount->divideOnce(100)->getValue())->getAmount(),
-            'by_fixed' => max(0, $price->subtract($sale->discount_amount)->getAmount()),
-            'by_percent' => $price->multiplyOnce((new LaravelMoney(100))->subtract(LaravelMoney::make($sale->discount_amount)->divideOnce(100))->getValue())->getAmount(),
-        };
+        Notification::make()
+            ->title("Sale '{$sale->name}' reindexed successfully")
+            ->success()
+            ->seconds(5)
+            ->send();
     }
 
     private function getMatchingProductIds(Sale $sale, mixed $product): array
@@ -287,7 +320,6 @@ class SaleManager
         foreach ($conditionList as $condition) {
             // First Check Condition Format & Value
             if (! empty($condition['attribute']) && ! empty($condition['operator']) && ! empty($condition['value'])) {
-
                 $key = $condition['attribute'];
                 $chunks = explode('|', $condition['attribute']);
 
@@ -313,7 +345,6 @@ class SaleManager
                         'value' => $condition['value'],
                     ];
                 }
-
             }
         }
 
@@ -332,32 +363,51 @@ class SaleManager
         return $allCatProducts;
     }
 
+    // ENHANCED: Better performance and tier handling
     private function resolveQueryableProducts(Sale $sale, array $bag): array
     {
         $allQueryProducts = [];
-        $availableColumns = Product::find(1)->first()->getFillable();
-
+        $availableColumns = Product::first()?->getFillable() ?? [];
 
         if (! empty($bag['att'])) {
             $query = Product::latest()->where('status', PublishableStatusCast::PUBLISHED);
-            foreach ($bag['att'] as $item) {
-                if (in_array($item['column'], $availableColumns)) {
-                    if ($sale->condition_type) {
-                        $query = $query->where($item['column'], $item['operator'], $item['value']);
 
+            foreach ($bag['att'] as $item) {
+                // Handle "price" column separately - ENHANCED with better tier logic
+                if ($item['column'] === 'price') {
+                    if ($sale->condition_type) {
+                        // AND logic
+                        $query->where(function ($q) use ($item) {
+                            $q->where('price', $item['operator'], $item['value'])
+                                ->orWhereHas('tiers', function ($tq) use ($item) {
+                                    $tq->where('in_stock', true)
+                                        ->where('price', $item['operator'], $item['value']);
+                                });
+                        });
                     } else {
-                        $query = $query->orWhere($item['column'], $item['operator'], $item['value']);
+                        // OR logic
+                        $query->orWhere(function ($q) use ($item) {
+                            $q->where('price', $item['operator'], $item['value'])
+                                ->orWhereHas('tiers', function ($tq) use ($item) {
+                                    $tq->where('in_stock', true)
+                                        ->where('price', $item['operator'], $item['value']);
+                                });
+                        });
+                    }
+                }
+                // Handle other product columns
+                elseif (in_array($item['column'], $availableColumns)) {
+                    if ($sale->condition_type) {
+                        $query->where($item['column'], $item['operator'], $item['value']);
+                    } else {
+                        $query->orWhere($item['column'], $item['operator'], $item['value']);
                     }
                 }
             }
-            $allQueryProducts = $query->get()->pluck('id')->flip()->toArray();
+
+            $allQueryProducts = $query->pluck('id')->unique()->toArray();
         }
 
         return $allQueryProducts;
     }
-
-
-
-
-
 }

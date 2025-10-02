@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Promotion\SaleResource\Schema;
 
 use Filament\Forms;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
+use Mintreu\LaravelMoney\Filament\Forms\Components\MoneyInput;
 
 trait HasSaleConditionFormSchema
 {
@@ -105,6 +106,7 @@ trait HasSaleConditionFormSchema
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
+                'number', 'price' => MoneyInput::make('value')->dehydrateStateUsing(fn($state) => $state),
                 default => Forms\Components\TextInput::make('value')
                     ->type(function () use ($attribute) {
                         return $attribute['options'] ?? 'text';

@@ -77,6 +77,12 @@ Route::get('pages', [PageController::class, 'getPages']); // GET /pages
 // ========================
 Route::prefix('geo')->group(base_path('routes/apis/geo-location.php'));
 
+//Route::group(base_path('routes/apis/products.php'));
+
+// Load extra route files
+require base_path('routes/apis/products.php');
+
+
 // ========================
 // 🏷️ CATEGORY ROUTES
 // ========================
@@ -89,18 +95,18 @@ Route::prefix('categories')->group(function () {
 // ========================
 // 📦 PRODUCT ROUTES
 // ========================
-Route::prefix('products')->group(function () {
-    Route::get('/', [ProductController::class, 'getAllSimpleProducts']); // GET /products
-    Route::get('filters/get', [ProductController::class, 'getFilterOptions']); // GET /products/filters/get
-    Route::get('sorts/get', [ProductController::class, 'getSortingOptions']); // GET /products/sorts/get
-    Route::get('suggestions/get', [ProductController::class, 'topSuggestProduct']); // GET /products/suggestions/get
-    Route::get('{product:url}', [ProductController::class, 'show']); // GET /products/{url}
+//Route::prefix('products')->group(function () {
+//    Route::get('/', [ProductController::class, 'getAllSimpleProducts']); // GET /products
+//    Route::get('filters/get', [ProductController::class, 'getFilterOptions']); // GET /products/filters/get
+//    Route::get('sorts/get', [ProductController::class, 'getSortingOptions']); // GET /products/sorts/get
+//    Route::get('suggestions/get', [ProductController::class, 'topSuggestProduct']); // GET /products/suggestions/get
+//    Route::get('{product:url}', [ProductController::class, 'show']); // GET /products/{url}
+//
+//
+//});
 
 
-});
 
-
-//Route::prefix('products')->group(base_path('routes/apis/products.php'));
 
 
 

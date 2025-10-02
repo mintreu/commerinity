@@ -56,7 +56,7 @@ class ProductEngagementController extends Controller
             'product_id' => $product->id,
             'review' => $validated['review'],
             'rating' => $validated['rating'],
-            'wishlisted' => false,
+//            'wishlisted' => false,
         ]);
 
         return ProductEngagementResource::make($newEngagement->load('authorable'));
@@ -143,7 +143,7 @@ class ProductEngagementController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Review marked as helpful!',
-                'helpful_count' => $engagement->helpful_votes
+                'helpful_votes' => $engagement->helpful_votes
             ], 200);
 
         } catch (\Exception $e) {

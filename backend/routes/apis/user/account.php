@@ -104,6 +104,35 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
+    /**
+     *  Authenticated user notification APIs
+     *  Prefix: /account/notifications
+     */
+    Route::prefix('account/notifications')
+        ->middleware('auth:sanctum')
+        ->controller(\App\Http\Controllers\Api\Auth\UserNotificationController::class)
+        ->group(function () {
+            Route::get('/',            'index');                 // list   (query ?limit=&include_read=1)
+            Route::post('{id}/read',   'markAsRead');            // mark one read
+            Route::post('{id}/unread', 'markAsUnread');          // mark one unread
+            Route::post('mark-all-read', 'markAllRead');         // mark all read
+            Route::delete('{id}',      'destroy');               // delete one
+            Route::delete('clear-all', 'clearAll');              // delete all
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 });

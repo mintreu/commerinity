@@ -70,7 +70,7 @@ watch(() => props.url, fetchProducts)
       <SwiperSlide v-for="product in items" :key="product.url">
         <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">
           <NuxtLink :to="`/product/${product.url}`" class="block">
-            <NuxtImg
+            <img
                 loading="lazy"
                 :src="product.thumbnail"
                 class="h-[250px] w-full object-contain rounded mb-4"

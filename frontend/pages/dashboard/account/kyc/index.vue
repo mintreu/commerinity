@@ -3,51 +3,68 @@
   <GlobalLoader v-if="isLoading" />
 
   <!-- Page Wrapper -->
-  <div v-else class="kyc-page min-h-screen w-full bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-blue-950/30 dark:to-purple-950/30">
+  <div v-else class="min-h-screen w-full bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-950 dark:via-blue-950/30 dark:to-purple-950/30">
+
     <!-- Background Effects -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
-      <div ref="pageOrb1" class="absolute -top-20 -right-20 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl opacity-60"></div>
-      <div ref="pageOrb2" class="absolute -bottom-20 -left-20 w-80 h-80 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl opacity-70"></div>
+      <div ref="pageOrb1" class="absolute -top-20 -right-20 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl opacity-60 animate-float"></div>
+      <div ref="pageOrb2" class="absolute -bottom-20 -left-20 w-80 h-80 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl opacity-70 animate-float-reverse"></div>
     </div>
 
     <div class="relative z-10 mx-auto w-full max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8 py-6 md:py-10">
+
+      <!-- ✅ Breadcrumb -->
+      <nav class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-6 animate-slideInDown" aria-label="Breadcrumb">
+        <NuxtLink to="/dashboard" class="flex items-center hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+          <Icon name="mdi:view-dashboard" class="w-4 h-4 mr-1" />
+          Dashboard
+        </NuxtLink>
+        <Icon name="mdi:chevron-right" class="w-4 h-4" />
+        <NuxtLink to="/dashboard/account" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+          Account
+        </NuxtLink>
+        <Icon name="mdi:chevron-right" class="w-4 h-4" />
+        <span class="text-gray-900 dark:text-white font-semibold">KYC</span>
+      </nav>
+
       <!-- Enhanced Card Shell -->
-      <div class="w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl ring-1 ring-gray-200/50 dark:ring-gray-700/50 transition-all duration-300 hover:shadow-3xl" ref="mainCard">
+      <div ref="mainCard" class="w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl ring-1 ring-gray-200/50 dark:ring-gray-700/50 transition-all duration-300 hover:shadow-3xl">
 
         <!-- Enhanced Header -->
-        <div class="header-section relative overflow-hidden">
-          <!-- Header Background -->
+        <div class="relative overflow-hidden rounded-t-2xl">
           <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5 dark:from-blue-400/10 dark:via-purple-400/10 dark:to-pink-400/10"></div>
 
           <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 md:p-8 border-b border-gray-200/50 dark:border-gray-700/50">
-            <div class="header-content">
+            <div class="flex-1">
               <!-- Status Badge -->
               <div class="flex items-center gap-3 mb-3">
-                <div class="status-badge px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
-                     :class="hasExistingKyc ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'">
+                <div class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200"
+                     :class="hasExistingKyc
+                       ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                       : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'">
                   {{ hasExistingKyc ? 'KYC Active' : 'KYC Pending' }}
                 </div>
-                <div class="verification-level text-xs text-gray-500 dark:text-gray-400">
+                <div class="text-xs text-gray-500 dark:text-gray-400">
                   Verification Level: {{ hasExistingKyc ? 'Complete' : 'Incomplete' }}
                 </div>
               </div>
 
-              <h1 class="page-title text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-2">
+              <h1 class="text-2xl sm:text-3xl font-black mb-2 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
                 {{ hasExistingKyc ? 'Update KYC Record' : 'Complete KYC Verification' }}
               </h1>
-              <p class="page-description text-gray-600 dark:text-gray-400 max-w-2xl">
+              <p class="text-gray-600 dark:text-gray-400 max-w-2xl">
                 Secure your account with government-issued identification. Aadhaar and PAN with clear images are required.
                 GST and utility bills are optional for enhanced verification.
               </p>
             </div>
 
             <!-- Enhanced Actions -->
-            <div class="header-actions flex items-center gap-3">
+            <div class="flex items-center gap-3">
               <button
                   v-if="hasExistingKyc && !isEditing"
                   type="button"
-                  class="action-btn action-btn-primary"
                   @click="enableEdit"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                   aria-label="Edit KYC"
               >
                 <Icon name="mdi:pencil" class="w-4 h-4" />
@@ -57,20 +74,18 @@
               <template v-if="isEditing">
                 <button
                     type="button"
-                    class="action-btn action-btn-secondary"
                     @click="cancelEdit"
-                    aria-label="Cancel editing"
                     :disabled="processing"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Icon name="mdi:close" class="w-4 h-4" />
                   Cancel
                 </button>
                 <button
                     type="button"
-                    class="action-btn action-btn-success"
                     @click="submitIfValid"
                     :disabled="processing"
-                    aria-label="Save KYC"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Icon v-if="processing" name="mdi:loading" class="w-4 h-4 animate-spin" />
                   <Icon v-else name="mdi:check" class="w-4 h-4" />
@@ -81,489 +96,648 @@
           </div>
         </div>
 
-        <!-- Enhanced Form -->
-        <form @submit.prevent="handleSubmit" class="kyc-form p-6 md:p-8 space-y-8" enctype="multipart/form-data" ref="kycForm">
+        <!-- ✅ NEW: Vertical Tabs Layout -->
+        <div class="flex flex-col lg:flex-row min-h-[600px]">
 
-          <!-- Enhanced Tabs -->
-          <div class="tabs-container">
-            <div class="tabs-wrapper flex flex-wrap gap-2 mb-6" role="tablist" aria-label="KYC sections">
-              <button
-                  v-for="t in tabs"
-                  :key="t.key"
-                  role="tab"
-                  type="button"
-                  class="tab-button"
-                  :class="getTabClasses(t.key)"
-                  :aria-selected="activeTab === t.key"
-                  :aria-controls="`panel-${t.key}`"
-                  :id="`tab-${t.key}`"
-                  @click="activeTab = t.key"
-              >
-                <Icon :name="t.icon" class="w-5 h-5" />
-                <span class="font-semibold">{{ t.label }}</span>
-                <div v-if="getTabStatus(t.key)" class="tab-status" :class="getTabStatusClasses(t.key)">
-                  <Icon :name="getTabStatus(t.key) === 'complete' ? 'mdi:check-circle' : 'mdi:alert-circle'" class="w-4 h-4" />
+          <!-- ✅ Vertical Sidebar Tabs -->
+          <div class="w-full lg:w-80 bg-gradient-to-br from-gray-50/80 to-gray-100/80 dark:from-gray-800/80 dark:to-gray-900/80 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 backdrop-blur-sm">
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <Icon name="mdi:format-list-checks" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                KYC Sections
+              </h3>
+
+              <div class="space-y-3" role="tablist" aria-label="KYC sections">
+                <button
+                    v-for="t in tabs"
+                    :key="t.key"
+                    role="tab"
+                    type="button"
+                    :class="[
+                      'w-full flex items-center gap-3 p-3 rounded-xl font-medium transition-all duration-200 text-left relative group',
+                      activeTab === t.key
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                        : 'bg-white/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-600 hover:text-blue-700 dark:hover:text-blue-300 hover:scale-102'
+                    ]"
+                    :aria-selected="activeTab === t.key"
+                    :aria-controls="`panel-${t.key}`"
+                    :id="`tab-${t.key}`"
+                    @click="activeTab = t.key"
+                >
+                  <div class="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200"
+                       :class="activeTab === t.key
+                         ? 'bg-white/20 text-white'
+                         : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 group-hover:bg-blue-100 dark:group-hover:bg-gray-500'">
+                    <Icon :name="t.icon" class="w-5 h-5" />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-sm">{{ t.label }}</div>
+                    <div class="text-xs opacity-75">{{ getTabDescription(t.key) }}</div>
+                  </div>
+                  <div v-if="getTabStatus(t.key)"
+                       class="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200"
+                       :class="getTabStatus(t.key) === 'complete'
+                         ? 'bg-green-500 text-white'
+                         : 'bg-yellow-500 text-white'">
+                    <Icon :name="getTabStatus(t.key) === 'complete' ? 'mdi:check' : 'mdi:alert'" class="w-3 h-3" />
+                  </div>
+                </button>
+              </div>
+
+              <!-- Progress Summary -->
+              <div class="mt-6 p-4 bg-white/70 dark:bg-gray-700/70 rounded-xl border border-gray-200/50 dark:border-gray-600/50 backdrop-blur-sm">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Progress</span>
+                  <span class="text-sm font-bold text-gray-900 dark:text-white">{{ progressPercentage }}%</span>
                 </div>
-              </button>
-            </div>
-
-            <!-- Tab Descriptions -->
-            <div class="tab-description p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50 mb-6">
-              <Icon :name="getActiveTabIcon()" class="w-5 h-5 text-blue-600 dark:text-blue-400 mb-2" />
-              <p class="text-sm text-gray-600 dark:text-gray-400">{{ getActiveTabDescription() }}</p>
+                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500 ease-out transform origin-left animate-progress"
+                       :style="{ width: `${progressPercentage}%` }"></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {{ completedSections }}/{{ tabs.length }} sections completed
+                </p>
+              </div>
             </div>
           </div>
 
-          <!-- Aadhaar Section -->
-          <section
-              v-show="activeTab === 'aadhaar'"
-              role="tabpanel"
-              :id="'panel-aadhaar'"
-              aria-labelledby="tab-aadhaar"
-              class="form-section"
-          >
-            <div class="section-header">
-              <div class="section-icon bg-gradient-to-br from-blue-500 to-indigo-600">
-                <Icon name="mdi:card-account-details" class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 class="section-title">Aadhaar Verification</h2>
-                <p class="section-subtitle">Government-issued unique identification</p>
-              </div>
-              <div class="section-badge section-badge-required">Required</div>
-            </div>
+          <!-- Main Form Content -->
+          <div class="flex-1">
+            <form @submit.prevent="handleSubmit" class="p-6 md:p-8 space-y-8" enctype="multipart/form-data" ref="kycForm">
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <!-- Aadhaar Input -->
-              <div class="form-group">
-                <label class="form-label">Aadhaar Number</label>
-                <div class="input-wrapper">
-                  <input
-                      v-model="form.aadhaar"
-                      @input="clearError('aadhaar')"
-                      maxlength="12"
-                      inputmode="numeric"
-                      placeholder="Enter 12-digit Aadhaar number"
-                      :class="getInputClasses(errors.aadhaar)"
-                      :disabled="!isEditing"
-                  />
-                  <Icon name="mdi:card-account-details" class="input-icon" />
-                </div>
-                <p class="form-hint">Enter without spaces or special characters</p>
-                <p v-if="errors.aadhaar" class="form-error">{{ errors.aadhaar }}</p>
-                <p v-if="form.aadhaar && !errors.aadhaar" class="form-success">
-                  <Icon name="mdi:check-circle" class="w-4 h-4" />
-                  Masked: {{ maskedAadhaar }}
-                </p>
-              </div>
-
-              <!-- Aadhaar Upload -->
-              <div class="form-group">
-                <label class="form-label">Aadhaar Document</label>
-                <div class="upload-container">
-                  <div
-                      class="upload-zone"
-                      :class="{ 'upload-zone--drag': aadhaarDragOver, 'upload-zone--disabled': !isEditing }"
-                      @dragover.prevent="onDragOver('aadhaar')"
-                      @dragleave.prevent="onDragLeave('aadhaar')"
-                      @drop.prevent="onDrop($event, 'aadhaar')"
-                  >
-                    <input
-                        class="sr-only"
-                        id="aadhaar_file"
-                        name="aadhaar_file"
-                        type="file"
-                        accept="image/*,application/pdf"
-                        :disabled="!isEditing"
-                        @change="onFileChange($event, 'aadhaar')"
-                    />
-                    <label for="aadhaar_file" class="upload-label">
-                      <Icon name="mdi:cloud-upload" class="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
-                      <span class="upload-text">Drop your file here or click to browse</span>
-                      <span class="upload-hint">JPG, PNG, PDF up to 10MB</span>
-                    </label>
-
-                    <!-- Upload Progress -->
-                    <div v-if="uploadProgress.aadhaar > 0" class="upload-progress">
-                      <div class="progress-bar" :style="{ width: uploadProgress.aadhaar + '%' }"></div>
-                    </div>
-
-                    <!-- Preview -->
-                    <div v-if="preview.aadhaar" class="upload-preview group">
-                      <img :src="preview.aadhaar" class="preview-image" alt="Aadhaar preview" />
-                      <div class="preview-overlay">
-                        <button
-                            type="button"
-                            @click="removePreview('aadhaar')"
-                            class="preview-remove"
-                            :disabled="!isEditing"
-                        >
-                          <Icon name="mdi:close" class="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
+              <!-- ✅ Aadhaar Section -->
+              <section
+                  v-show="activeTab === 'aadhaar'"
+                  role="tabpanel"
+                  :id="'panel-aadhaar'"
+                  aria-labelledby="tab-aadhaar"
+                  class="space-y-6 animate-fadeIn"
+              >
+                <div class="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
+                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Icon name="mdi:card-account-details" class="w-6 h-6 text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Aadhaar Verification</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Government-issued unique identification</p>
+                  </div>
+                  <div class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-full text-xs font-bold uppercase tracking-wider">
+                    Required
                   </div>
                 </div>
-                <p class="form-hint">Ensure text is clear and readable</p>
-              </div>
-            </div>
-          </section>
 
-          <!-- PAN Section -->
-          <section
-              v-show="activeTab === 'pan'"
-              role="tabpanel"
-              :id="'panel-pan'"
-              aria-labelledby="tab-pan"
-              class="form-section"
-          >
-            <div class="section-header">
-              <div class="section-icon bg-gradient-to-br from-purple-500 to-pink-600">
-                <Icon name="mdi:credit-card" class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 class="section-title">PAN Verification</h2>
-                <p class="section-subtitle">Permanent Account Number for tax purposes</p>
-              </div>
-              <div class="section-badge section-badge-required">Required</div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <!-- PAN Input -->
-              <div class="form-group">
-                <label class="form-label">PAN Number</label>
-                <div class="input-wrapper">
-                  <input
-                      v-model="form.pan"
-                      @input="form.pan = form.pan.toUpperCase(); clearError('pan')"
-                      maxlength="10"
-                      placeholder="Enter PAN (e.g. ABCDE1234F)"
-                      :class="getInputClasses(errors.pan)"
-                      :disabled="!isEditing"
-                  />
-                  <Icon name="mdi:credit-card" class="input-icon" />
-                </div>
-                <p class="form-hint">10 characters: 5 letters + 4 digits + 1 letter</p>
-                <p v-if="errors.pan" class="form-error">{{ errors.pan }}</p>
-                <p v-if="form.pan && !errors.pan" class="form-success">
-                  <Icon name="mdi:check-circle" class="w-4 h-4" />
-                  Masked: {{ maskedPan }}
-                </p>
-              </div>
-
-              <!-- PAN Upload -->
-              <div class="form-group">
-                <label class="form-label">PAN Document</label>
-                <div class="upload-container">
-                  <div
-                      class="upload-zone"
-                      :class="{ 'upload-zone--drag': panDragOver, 'upload-zone--disabled': !isEditing }"
-                      @dragover.prevent="onDragOver('pan')"
-                      @dragleave.prevent="onDragLeave('pan')"
-                      @drop.prevent="onDrop($event, 'pan')"
-                  >
-                    <input
-                        class="sr-only"
-                        id="pan_file"
-                        name="pan_file"
-                        type="file"
-                        accept="image/*,application/pdf"
-                        :disabled="!isEditing"
-                        @change="onFileChange($event, 'pan')"
-                    />
-                    <label for="pan_file" class="upload-label">
-                      <Icon name="mdi:cloud-upload" class="w-8 h-8 text-purple-600 dark:text-purple-400 mb-2" />
-                      <span class="upload-text">Drop your file here or click to browse</span>
-                      <span class="upload-hint">JPG, PNG, PDF up to 10MB</span>
-                    </label>
-
-                    <div v-if="uploadProgress.pan > 0" class="upload-progress">
-                      <div class="progress-bar" :style="{ width: uploadProgress.pan + '%' }"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <!-- ✅ Aadhaar Input with Masking -->
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Aadhaar Number</label>
+                    <div class="relative">
+                      <input
+                          v-model="aadhaarDisplayValue"
+                          @input="handleAadhaarInput"
+                          @blur="handleAadhaarBlur"
+                          @focus="handleAadhaarFocus"
+                          maxlength="14"
+                          inputmode="numeric"
+                          placeholder="Enter 12-digit Aadhaar number"
+                          :disabled="!isEditing"
+                          :class="[
+                            'w-full pl-4 pr-10 py-3 border rounded-xl font-medium transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500',
+                            errors.aadhaar
+                              ? 'border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-300'
+                              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                            !isEditing && 'opacity-60 cursor-not-allowed'
+                          ]"
+                      />
+                      <Icon name="mdi:card-account-details" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     </div>
-
-                    <div v-if="preview.pan" class="upload-preview group">
-                      <img :src="preview.pan" class="preview-image" alt="PAN preview" />
-                      <div class="preview-overlay">
-                        <button
-                            type="button"
-                            @click="removePreview('pan')"
-                            class="preview-remove"
-                            :disabled="!isEditing"
-                        >
-                          <Icon name="mdi:close" class="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Enter without spaces or special characters</p>
+                    <p v-if="errors.aadhaar" class="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                      <Icon name="mdi:alert-circle" class="w-4 h-4" />
+                      {{ errors.aadhaar }}
+                    </p>
+                    <p v-if="form.aadhaar && !errors.aadhaar" class="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <Icon name="mdi:check-circle" class="w-4 h-4" />
+                      Verified: {{ maskedAadhaar }}
+                    </p>
                   </div>
-                </div>
-                <p class="form-hint">Ensure card details are clearly visible</p>
-              </div>
-            </div>
-          </section>
 
-          <!-- GST Section -->
-          <section
-              v-show="activeTab === 'gst'"
-              role="tabpanel"
-              :id="'panel-gst'"
-              aria-labelledby="tab-gst"
-              class="form-section"
-          >
-            <div class="section-header">
-              <div class="section-icon bg-gradient-to-br from-green-500 to-emerald-600">
-                <Icon name="mdi:receipt" class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 class="section-title">GST Registration</h2>
-                <p class="section-subtitle">Goods and Services Tax registration</p>
-              </div>
-              <div class="section-badge section-badge-optional">Optional</div>
-            </div>
-
-            <div class="space-y-6">
-              <!-- GST Toggle -->
-              <div class="toggle-container">
-                <label class="toggle-wrapper">
-                  <input
-                      type="checkbox"
-                      v-model="form.hasTax"
-                      class="sr-only peer"
-                      :disabled="!isEditing"
-                  />
-                  <div class="toggle-switch peer-checked:bg-blue-600">
-                    <div class="toggle-slider peer-checked:translate-x-6"></div>
-                  </div>
-                  <span class="toggle-label">This business has GST registration</span>
-                </label>
-              </div>
-
-              <!-- GST Fields (when enabled) -->
-              <div v-if="form.hasTax" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- GST Input -->
-                <div class="form-group">
-                  <label class="form-label">GSTIN Number</label>
-                  <div class="input-wrapper">
-                    <input
-                        v-model="form.gst"
-                        @input="form.gst = form.gst.toUpperCase(); clearError('gst')"
-                        maxlength="15"
-                        placeholder="Enter 15-character GSTIN"
-                        :class="getInputClasses(errors.gst)"
-                        :disabled="!isEditing"
-                    />
-                    <Icon name="mdi:receipt" class="input-icon" />
-                  </div>
-                  <p class="form-hint">15 alphanumeric characters</p>
-                  <p v-if="errors.gst" class="form-error">{{ errors.gst }}</p>
-                  <p v-if="form.gst && !errors.gst" class="form-success">
-                    <Icon name="mdi:check-circle" class="w-4 h-4" />
-                    Masked: {{ maskedGst }}
-                  </p>
-                </div>
-
-                <!-- GST Upload -->
-                <div class="form-group">
-                  <label class="form-label">GST Certificate</label>
-                  <div class="upload-container">
+                  <!-- ✅ Aadhaar Upload -->
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Aadhaar Document</label>
                     <div
-                        class="upload-zone"
-                        :class="{ 'upload-zone--drag': gstDragOver, 'upload-zone--disabled': !isEditing }"
-                        @dragover.prevent="onDragOver('gst')"
-                        @dragleave.prevent="onDragLeave('gst')"
-                        @drop.prevent="onDrop($event, 'gst')"
+                        :class="[
+                          'relative border-2 border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer',
+                          aadhaarDragOver
+                            ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-105'
+                            : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500',
+                          !isEditing && 'opacity-50 cursor-not-allowed',
+                          preview.aadhaar && 'bg-gray-50 dark:bg-gray-800'
+                        ]"
+                        @dragover.prevent="onDragOver('aadhaar')"
+                        @dragleave.prevent="onDragLeave('aadhaar')"
+                        @drop.prevent="onDrop($event, 'aadhaar')"
                     >
                       <input
                           class="sr-only"
-                          id="gst_file"
-                          name="gst_file"
+                          id="aadhaar_file"
+                          name="aadhaar_file"
                           type="file"
                           accept="image/*,application/pdf"
                           :disabled="!isEditing"
-                          @change="onFileChange($event, 'gst')"
+                          @change="onFileChange($event, 'aadhaar')"
                       />
-                      <label for="gst_file" class="upload-label">
-                        <Icon name="mdi:cloud-upload" class="w-8 h-8 text-green-600 dark:text-green-400 mb-2" />
-                        <span class="upload-text">Drop your file here or click to browse</span>
-                        <span class="upload-hint">JPG, PNG, PDF up to 10MB</span>
-                      </label>
 
-                      <div v-if="uploadProgress.gst > 0" class="upload-progress">
-                        <div class="progress-bar" :style="{ width: uploadProgress.gst + '%' }"></div>
+                      <div v-if="!preview.aadhaar" class="text-center">
+                        <label for="aadhaar_file" class="cursor-pointer">
+                          <Icon name="mdi:cloud-upload" class="w-12 h-12 text-blue-500 dark:text-blue-400 mx-auto mb-4 animate-bounce" />
+                          <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Drop your file here or click to browse
+                          </div>
+                          <div class="text-xs text-gray-500 dark:text-gray-400">
+                            JPG, PNG, PDF up to 10MB
+                          </div>
+                        </label>
                       </div>
 
-                      <div v-if="preview.gst" class="upload-preview group">
-                        <img :src="preview.gst" class="preview-image" alt="GST preview" />
-                        <div class="preview-overlay">
+                      <!-- Upload Progress -->
+                      <div v-if="uploadProgress.aadhaar > 0 && uploadProgress.aadhaar < 100" class="absolute bottom-0 left-0 right-0 bg-gray-200 dark:bg-gray-600 rounded-b-xl overflow-hidden">
+                        <div class="h-1 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ease-out animate-pulse"
+                             :style="{ width: uploadProgress.aadhaar + '%' }"></div>
+                      </div>
+
+                      <!-- Preview -->
+                      <div v-if="preview.aadhaar" class="relative group">
+                        <img :src="preview.aadhaar" class="w-full h-32 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105" alt="Aadhaar preview" />
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
                           <button
                               type="button"
-                              @click="removePreview('gst')"
-                              class="preview-remove"
+                              @click="removePreview('aadhaar')"
                               :disabled="!isEditing"
+                              class="p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
                           >
-                            <Icon name="mdi:close" class="w-4 h-4" />
+                            <Icon name="mdi:delete" class="w-4 h-4" />
                           </button>
                         </div>
                       </div>
                     </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Ensure text is clear and readable</p>
                   </div>
-                  <p class="form-hint">Upload GST registration certificate</p>
                 </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          <!-- Utilities Section -->
-          <section
-              v-show="activeTab === 'utilities'"
-              role="tabpanel"
-              :id="'panel-utilities'"
-              aria-labelledby="tab-utilities"
-              class="form-section"
-          >
-            <div class="section-header">
-              <div class="section-icon bg-gradient-to-br from-orange-500 to-red-600">
-                <Icon name="mdi:home-lightning-bolt" class="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 class="section-title">Utility Bills</h2>
-                <p class="section-subtitle">Additional verification documents</p>
-              </div>
-              <div class="section-badge section-badge-optional">Optional</div>
-            </div>
+              <!-- ✅ PAN Section -->
+              <section
+                  v-show="activeTab === 'pan'"
+                  role="tabpanel"
+                  :id="'panel-pan'"
+                  aria-labelledby="tab-pan"
+                  class="space-y-6 animate-fadeIn"
+              >
+                <div class="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-200/50 dark:border-purple-700/50">
+                  <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Icon name="mdi:credit-card" class="w-6 h-6 text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">PAN Verification</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Permanent Account Number for tax purposes</p>
+                  </div>
+                  <div class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-full text-xs font-bold uppercase tracking-wider">
+                    Required
+                  </div>
+                </div>
 
-            <div class="utilities-container space-y-4">
-              <!-- Utility Rows -->
-              <template v-for="(row, idx) in form.utility_bills" :key="row.id">
-                <div class="utility-row">
-                  <div class="utility-content">
-                    <div class="utility-type">
-                      <label class="form-label-sm">Utility Type</label>
-                      <select
-                          v-model="row.type"
-                          @change="onUtilityTypeChange(idx)"
-                          :class="getInputClasses(errors[`utility_${idx}`])"
-                          :disabled="!isEditing"
-                      >
-                        <option value="">Select type</option>
-                        <option v-for="opt in availableUtilityOptions(idx)" :key="opt.value" :value="opt.value">
-                          {{ opt.label }}
-                        </option>
-                      </select>
-                    </div>
-
-                    <div class="utility-identifier">
-                      <label class="form-label-sm">Account/Consumer Number</label>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <!-- ✅ PAN Input with Masking -->
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">PAN Number</label>
+                    <div class="relative">
                       <input
-                          v-model="row.identifier"
-                          type="text"
-                          placeholder="Enter account number"
-                          :class="getInputClasses(errors[`utility_${idx}`])"
+                          v-model="panDisplayValue"
+                          @input="handlePanInput"
+                          @blur="handlePanBlur"
+                          @focus="handlePanFocus"
+                          maxlength="10"
+                          placeholder="Enter PAN (e.g. ABCDE1234F)"
+                          :disabled="!isEditing"
+                          style="text-transform: uppercase"
+                          :class="[
+                            'w-full pl-4 pr-10 py-3 border rounded-xl font-medium transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 uppercase',
+                            errors.pan
+                              ? 'border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-300'
+                              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                            !isEditing && 'opacity-60 cursor-not-allowed'
+                          ]"
+                      />
+                      <Icon name="mdi:credit-card" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">10 characters: 5 letters + 4 digits + 1 letter</p>
+                    <p v-if="errors.pan" class="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                      <Icon name="mdi:alert-circle" class="w-4 h-4" />
+                      {{ errors.pan }}
+                    </p>
+                    <p v-if="form.pan && !errors.pan" class="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <Icon name="mdi:check-circle" class="w-4 h-4" />
+                      Verified: {{ maskedPan }}
+                    </p>
+                  </div>
+
+                  <!-- PAN Upload -->
+                  <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">PAN Document</label>
+                    <div
+                        :class="[
+                          'relative border-2 border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer',
+                          panDragOver
+                            ? 'border-purple-400 bg-purple-50 dark:bg-purple-900/20 scale-105'
+                            : 'border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500',
+                          !isEditing && 'opacity-50 cursor-not-allowed',
+                          preview.pan && 'bg-gray-50 dark:bg-gray-800'
+                        ]"
+                        @dragover.prevent="onDragOver('pan')"
+                        @dragleave.prevent="onDragLeave('pan')"
+                        @drop.prevent="onDrop($event, 'pan')"
+                    >
+                      <input
+                          class="sr-only"
+                          id="pan_file"
+                          name="pan_file"
+                          type="file"
+                          accept="image/*,application/pdf"
+                          :disabled="!isEditing"
+                          @change="onFileChange($event, 'pan')"
+                      />
+
+                      <div v-if="!preview.pan" class="text-center">
+                        <label for="pan_file" class="cursor-pointer">
+                          <Icon name="mdi:cloud-upload" class="w-12 h-12 text-purple-500 dark:text-purple-400 mx-auto mb-4 animate-bounce" />
+                          <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Drop your file here or click to browse
+                          </div>
+                          <div class="text-xs text-gray-500 dark:text-gray-400">
+                            JPG, PNG, PDF up to 10MB
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Upload Progress -->
+                      <div v-if="uploadProgress.pan > 0 && uploadProgress.pan < 100" class="absolute bottom-0 left-0 right-0 bg-gray-200 dark:bg-gray-600 rounded-b-xl overflow-hidden">
+                        <div class="h-1 bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300 ease-out animate-pulse"
+                             :style="{ width: uploadProgress.pan + '%' }"></div>
+                      </div>
+
+                      <!-- Preview -->
+                      <div v-if="preview.pan" class="relative group">
+                        <img :src="preview.pan" class="w-full h-32 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105" alt="PAN preview" />
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                          <button
+                              type="button"
+                              @click="removePreview('pan')"
+                              :disabled="!isEditing"
+                              class="p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
+                          >
+                            <Icon name="mdi:delete" class="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Ensure card details are clearly visible</p>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ✅ GST Section -->
+              <section
+                  v-show="activeTab === 'gst'"
+                  role="tabpanel"
+                  :id="'panel-gst'"
+                  aria-labelledby="tab-gst"
+                  class="space-y-6 animate-fadeIn"
+              >
+                <div class="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200/50 dark:border-green-700/50">
+                  <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Icon name="mdi:receipt" class="w-6 h-6 text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">GST Registration</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Goods and Services Tax registration</p>
+                  </div>
+                  <div class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider">
+                    Optional
+                  </div>
+                </div>
+
+                <!-- GST Toggle -->
+                <div class="p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
+                  <label class="flex items-center gap-4 cursor-pointer">
+                    <div class="relative">
+                      <input
+                          type="checkbox"
+                          v-model="form.hasTax"
+                          class="sr-only peer"
                           :disabled="!isEditing"
                       />
+                      <div class="w-14 h-8 bg-gray-200 dark:bg-gray-600 rounded-full transition-all duration-200 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-500 peer-checked:shadow-lg">
+                        <div class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-200 peer-checked:translate-x-6"></div>
+                      </div>
+                    </div>
+                    <span class="font-semibold text-gray-700 dark:text-gray-300">This business has GST registration</span>
+                  </label>
+                </div>
+
+                <!-- GST Fields (when enabled) -->
+                <Transition
+                    enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="opacity-0 transform scale-95"
+                    enter-to-class="opacity-100 transform scale-100"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    leave-from-class="opacity-100 transform scale-100"
+                    leave-to-class="opacity-0 transform scale-95"
+                >
+                  <div v-if="form.hasTax" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- ✅ GST Input with Masking -->
+                    <div class="space-y-2">
+                      <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">GSTIN Number</label>
+                      <div class="relative">
+                        <input
+                            v-model="gstDisplayValue"
+                            @input="handleGstInput"
+                            @blur="handleGstBlur"
+                            @focus="handleGstFocus"
+                            maxlength="15"
+                            placeholder="Enter 15-character GSTIN"
+                            :disabled="!isEditing"
+                            style="text-transform: uppercase"
+                            :class="[
+                              'w-full pl-4 pr-10 py-3 border rounded-xl font-medium transition-all duration-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 uppercase',
+                              errors.gst
+                                ? 'border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-300'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                              !isEditing && 'opacity-60 cursor-not-allowed'
+                            ]"
+                        />
+                        <Icon name="mdi:receipt" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      </div>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">15 alphanumeric characters</p>
+                      <p v-if="errors.gst" class="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                        <Icon name="mdi:alert-circle" class="w-4 h-4" />
+                        {{ errors.gst }}
+                      </p>
+                      <p v-if="form.gst && !errors.gst" class="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                        <Icon name="mdi:check-circle" class="w-4 h-4" />
+                        Verified: {{ maskedGst }}
+                      </p>
                     </div>
 
-                    <div class="utility-actions">
-                      <button
-                          type="button"
-                          @click="removeUtility(idx)"
-                          class="action-btn action-btn-danger action-btn-sm"
-                          :disabled="!isEditing"
+                    <!-- GST Upload -->
+                    <div class="space-y-2">
+                      <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">GST Certificate</label>
+                      <div
+                          :class="[
+                            'relative border-2 border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer',
+                            gstDragOver
+                              ? 'border-green-400 bg-green-50 dark:bg-green-900/20 scale-105'
+                              : 'border-gray-300 dark:border-gray-600 hover:border-green-400 dark:hover:border-green-500',
+                            !isEditing && 'opacity-50 cursor-not-allowed',
+                            preview.gst && 'bg-gray-50 dark:bg-gray-800'
+                          ]"
+                          @dragover.prevent="onDragOver('gst')"
+                          @dragleave.prevent="onDragLeave('gst')"
+                          @drop.prevent="onDrop($event, 'gst')"
                       >
-                        <Icon name="mdi:delete" class="w-4 h-4" />
-                      </button>
+                        <input
+                            class="sr-only"
+                            id="gst_file"
+                            name="gst_file"
+                            type="file"
+                            accept="image/*,application/pdf"
+                            :disabled="!isEditing"
+                            @change="onFileChange($event, 'gst')"
+                        />
+
+                        <div v-if="!preview.gst" class="text-center">
+                          <label for="gst_file" class="cursor-pointer">
+                            <Icon name="mdi:cloud-upload" class="w-12 h-12 text-green-500 dark:text-green-400 mx-auto mb-4 animate-bounce" />
+                            <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              Drop your file here or click to browse
+                            </div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">
+                              JPG, PNG, PDF up to 10MB
+                            </div>
+                          </label>
+                        </div>
+
+                        <!-- Upload Progress -->
+                        <div v-if="uploadProgress.gst > 0 && uploadProgress.gst < 100" class="absolute bottom-0 left-0 right-0 bg-gray-200 dark:bg-gray-600 rounded-b-xl overflow-hidden">
+                          <div class="h-1 bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300 ease-out animate-pulse"
+                               :style="{ width: uploadProgress.gst + '%' }"></div>
+                        </div>
+
+                        <!-- Preview -->
+                        <div v-if="preview.gst" class="relative group">
+                          <img :src="preview.gst" class="w-full h-32 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105" alt="GST preview" />
+                          <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                            <button
+                                type="button"
+                                @click="removePreview('gst')"
+                                :disabled="!isEditing"
+                                class="p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-all duration-200 transform hover:scale-110 disabled:opacity-50"
+                            >
+                              <Icon name="mdi:delete" class="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">Upload GST registration certificate</p>
                     </div>
                   </div>
-                  <p v-if="errors[`utility_${idx}`]" class="form-error">{{ errors[`utility_${idx}`] }}</p>
-                </div>
-              </template>
+                </Transition>
+              </section>
 
-              <!-- Add Utility Button -->
-              <div class="add-utility">
-                <button
-                    type="button"
-                    @click="addUtility"
-                    :disabled="!isEditing || form.utility_bills.length >= utilityOptions.length"
-                    class="action-btn action-btn-outline"
-                >
-                  <Icon name="mdi:plus" class="w-4 h-4" />
-                  Add Utility Bill
-                </button>
-                <p v-if="utilityAddHint" class="form-hint mt-2">{{ utilityAddHint }}</p>
-              </div>
-            </div>
-          </section>
-
-          <!-- Form Actions -->
-          <div class="form-actions pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
-            <div class="flex items-center justify-between">
-              <div class="action-info">
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                  <Icon name="mdi:information" class="w-4 h-4 inline mr-1" />
-                  Aadhaar and PAN documents are mandatory for verification
-                </p>
-                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                  GST and utility bills are optional and enhance your verification level
-                </p>
-              </div>
-
-              <button
-                  type="submit"
-                  class="action-btn action-btn-primary action-btn-lg"
-                  :disabled="processing || !isEditing"
+              <!-- ✅ Utilities Section -->
+              <section
+                  v-show="activeTab === 'utilities'"
+                  role="tabpanel"
+                  :id="'panel-utilities'"
+                  aria-labelledby="tab-utilities"
+                  class="space-y-6 animate-fadeIn"
               >
-                <Icon v-if="processing" name="mdi:loading" class="w-5 h-5 animate-spin" />
-                <Icon v-else name="mdi:shield-check" class="w-5 h-5" />
-                <span>{{ processing ? 'Submitting...' : 'Submit KYC' }}</span>
-              </button>
-            </div>
+                <div class="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl border border-orange-200/50 dark:border-orange-700/50">
+                  <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Icon name="mdi:home-lightning-bolt" class="w-6 h-6 text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Utility Bills</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Additional verification documents</p>
+                  </div>
+                  <div class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider">
+                    Optional
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <!-- Utility Rows -->
+                  <TransitionGroup
+                      name="list"
+                      tag="div"
+                      class="space-y-4"
+                  >
+                    <div
+                        v-for="(row, idx) in form.utility_bills"
+                        :key="row.id"
+                        class="p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm transition-all duration-200 hover:shadow-md"
+                    >
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Utility Type</label>
+                          <select
+                              v-model="row.type"
+                              @change="onUtilityTypeChange(idx)"
+                              :disabled="!isEditing"
+                              :class="[
+                                'w-full px-3 py-2 border rounded-lg text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500',
+                                errors[`utility_${idx}`]
+                                  ? 'border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20'
+                                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                                !isEditing && 'opacity-60 cursor-not-allowed'
+                              ]"
+                          >
+                            <option value="">Select type</option>
+                            <option v-for="opt in availableUtilityOptions(idx)" :key="opt.value" :value="opt.value">
+                              {{ opt.label }}
+                            </option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Account/Consumer Number</label>
+                          <input
+                              v-model="row.identifier"
+                              type="text"
+                              placeholder="Enter account number"
+                              :disabled="!isEditing"
+                              :class="[
+                                'w-full px-3 py-2 border rounded-lg text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500',
+                                errors[`utility_${idx}`]
+                                  ? 'border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20'
+                                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                                !isEditing && 'opacity-60 cursor-not-allowed'
+                              ]"
+                          />
+                        </div>
+
+                        <div class="flex items-end">
+                          <button
+                              type="button"
+                              @click="removeUtility(idx)"
+                              :disabled="!isEditing"
+                              class="w-full md:w-auto px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          >
+                            <Icon name="mdi:delete" class="w-4 h-4" />
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                      <p v-if="errors[`utility_${idx}`]" class="text-sm text-red-600 dark:text-red-400 mt-2 flex items-center gap-1">
+                        <Icon name="mdi:alert-circle" class="w-4 h-4" />
+                        {{ errors[`utility_${idx}`] }}
+                      </p>
+                    </div>
+                  </TransitionGroup>
+
+                  <!-- Add Utility Button -->
+                  <div class="text-center">
+                    <button
+                        type="button"
+                        @click="addUtility"
+                        :disabled="!isEditing || form.utility_bills.length >= utilityOptions.length"
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                      <Icon name="mdi:plus" class="w-5 h-5" />
+                      Add Utility Bill
+                    </button>
+                    <p v-if="utilityAddHint" class="text-xs text-gray-500 dark:text-gray-400 mt-2">{{ utilityAddHint }}</p>
+                  </div>
+                </div>
+              </section>
+
+              <!-- ✅ Form Actions -->
+              <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+                <div class="text-center md:text-left">
+                  <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center justify-center md:justify-start gap-1">
+                    <Icon name="mdi:information" class="w-4 h-4" />
+                    Aadhaar and PAN documents are mandatory for verification
+                  </p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    GST and utility bills are optional and enhance your verification level
+                  </p>
+                </div>
+
+                <button
+                    type="submit"
+                    :disabled="processing || !isEditing"
+                    class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white font-bold text-lg rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  <Icon v-if="processing" name="mdi:loading" class="w-6 h-6 animate-spin" />
+                  <Icon v-else name="mdi:shield-check" class="w-6 h-6" />
+                  <span>{{ processing ? 'Submitting...' : 'Submit KYC' }}</span>
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
 
     <!-- Enhanced Create KYC Modal -->
-    <transition name="modal">
-      <div v-if="createModalOpen" class="modal-overlay" @click="createModalOpen = false">
-        <div class="modal-container" @click.stop>
-          <div class="modal-header">
-            <div class="modal-icon">
-              <Icon name="mdi:shield-plus" class="w-8 h-8 text-blue-600 dark:text-blue-400" />
+    <Transition
+        enter-active-class="transition-all duration-300 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition-all duration-200 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+    >
+      <div v-if="createModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" @click="createModalOpen = false">
+        <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 transform transition-all duration-300" @click.stop>
+          <div class="flex items-center gap-4 p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg animate-pulse">
+              <Icon name="mdi:shield-plus" class="w-8 h-8 text-white" />
             </div>
             <div>
-              <h3 class="modal-title">Complete KYC Verification</h3>
-              <p class="modal-subtitle">Secure your account with identity verification</p>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white">Complete KYC Verification</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Secure your account with identity verification</p>
             </div>
           </div>
 
-          <div class="modal-body">
-            <div class="kyc-benefits">
-              <div class="benefit-item">
+          <div class="p-6">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 text-sm">
                 <Icon name="mdi:shield-check" class="w-5 h-5 text-green-600" />
-                <span>Enhanced account security</span>
+                <span class="text-gray-700 dark:text-gray-300">Enhanced account security</span>
               </div>
-              <div class="benefit-item">
+              <div class="flex items-center gap-3 text-sm">
                 <Icon name="mdi:bank" class="w-5 h-5 text-blue-600" />
-                <span>Access to all financial features</span>
+                <span class="text-gray-700 dark:text-gray-300">Access to all financial features</span>
               </div>
-              <div class="benefit-item">
+              <div class="flex items-center gap-3 text-sm">
                 <Icon name="mdi:account-check" class="w-5 h-5 text-purple-600" />
-                <span>Verified account badge</span>
+                <span class="text-gray-700 dark:text-gray-300">Verified account badge</span>
               </div>
             </div>
           </div>
 
-          <div class="modal-actions">
+          <div class="flex items-center gap-3 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-b-2xl">
             <button
                 type="button"
-                class="action-btn action-btn-secondary"
                 @click="createModalOpen = false"
+                class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 font-semibold rounded-lg transition-colors duration-200"
             >
               Maybe Later
             </button>
             <button
                 type="button"
-                class="action-btn action-btn-primary"
                 @click="goToCreateForm"
+                class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
             >
               <Icon name="mdi:shield-plus" class="w-4 h-4" />
               Start Verification
@@ -571,10 +745,7 @@
           </div>
         </div>
       </div>
-    </transition>
-
-    <!-- Custom Toast System -->
-    <CustomToast />
+    </Transition>
   </div>
 </template>
 
@@ -582,7 +753,6 @@
 import { ref, reactive, computed, onMounted, onUnmounted, toRaw, onBeforeUnmount } from 'vue'
 import { useSanctumFetch, useRuntimeConfig } from '#imports'
 import GlobalLoader from '~/components/GlobalLoader.vue'
-import CustomToast from '~/components/ui/Toast.vue'
 
 definePageMeta({ layout: 'dashboard' })
 
@@ -595,32 +765,8 @@ if (process.client) {
   })
 }
 
-/* Custom Toast System */
-const toasts = ref<Array<{
-  id: number
-  type: 'success' | 'error' | 'info' | 'warning'
-  title: string
-  message: string
-  duration?: number
-}>>([])
-
-let toastId = 1
-
-const showToast = (type: 'success' | 'error' | 'info' | 'warning', title: string, message: string, duration = 5000) => {
-  const id = toastId++
-  toasts.value.push({ id, type, title, message, duration })
-
-  setTimeout(() => {
-    removeToast(id)
-  }, duration)
-}
-
-const removeToast = (id: number) => {
-  const index = toasts.value.findIndex(t => t.id === id)
-  if (index > -1) {
-    toasts.value.splice(index, 1)
-  }
-}
+// ✅ Use proper toast system
+const toast = useToast()
 
 /* Loading */
 const isLoading = useState('pageLoading', () => true)
@@ -673,6 +819,14 @@ const form = reactive({
   utility_bills: [] as Array<{ id: number, type: string, identifier: string }>,
 })
 
+/* ✅ Display values for inputs (with masking) */
+const aadhaarDisplayValue = ref('')
+const panDisplayValue = ref('')
+const gstDisplayValue = ref('')
+const isAadhaarFocused = ref(false)
+const isPanFocused = ref(false)
+const isGstFocused = ref(false)
+
 /* Snapshot */
 let initialSnapshot: any = null
 
@@ -694,6 +848,68 @@ const uploadProgress = reactive({ aadhaar: 0, pan: 0, gst: 0 })
 const aadhaarDragOver = ref(false)
 const panDragOver = ref(false)
 const gstDragOver = ref(false)
+
+/* ✅ Input Masking Functions */
+function formatAadhaar(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 12)
+  if (digits.length <= 4) return digits
+  if (digits.length <= 8) return `${digits.slice(0, 4)}-${digits.slice(4)}`
+  return `${digits.slice(0, 4)}-${digits.slice(4, 8)}-${digits.slice(8)}`
+}
+
+function handleAadhaarInput(e: Event) {
+  const target = e.target as HTMLInputElement
+  const rawValue = target.value.replace(/\D/g, '')
+  form.aadhaar = rawValue
+  aadhaarDisplayValue.value = isAadhaarFocused.value ? rawValue : formatAadhaar(rawValue)
+  clearError('aadhaar')
+}
+
+function handleAadhaarFocus() {
+  isAadhaarFocused.value = true
+  aadhaarDisplayValue.value = form.aadhaar
+}
+
+function handleAadhaarBlur() {
+  isAadhaarFocused.value = false
+  aadhaarDisplayValue.value = formatAadhaar(form.aadhaar)
+}
+
+function handlePanInput(e: Event) {
+  const target = e.target as HTMLInputElement
+  const value = target.value.toUpperCase().slice(0, 10)
+  form.pan = value
+  panDisplayValue.value = value
+  clearError('pan')
+}
+
+function handlePanFocus() {
+  isPanFocused.value = true
+  panDisplayValue.value = form.pan
+}
+
+function handlePanBlur() {
+  isPanFocused.value = false
+  panDisplayValue.value = form.pan
+}
+
+function handleGstInput(e: Event) {
+  const target = e.target as HTMLInputElement
+  const value = target.value.toUpperCase().slice(0, 15)
+  form.gst = value
+  gstDisplayValue.value = value
+  clearError('gst')
+}
+
+function handleGstFocus() {
+  isGstFocused.value = true
+  gstDisplayValue.value = form.gst
+}
+
+function handleGstBlur() {
+  isGstFocused.value = false
+  gstDisplayValue.value = form.gst
+}
 
 /* Drag & drop handlers */
 function onDragOver(type: 'aadhaar'|'pan'|'gst') {
@@ -818,6 +1034,12 @@ async function loadExisting() {
       form.pan = (k.pan || '').toUpperCase()
       form.hasTax = !!k.has_tax
       form.gst = (k.gst || '').toUpperCase()
+
+      // Set display values
+      aadhaarDisplayValue.value = formatAadhaar(form.aadhaar)
+      panDisplayValue.value = form.pan
+      gstDisplayValue.value = form.gst
+
       if (k.aadhaarImage) {
         safeRevoke(preview.aadhaar)
         preview.aadhaar = k.aadhaarImage
@@ -839,15 +1061,13 @@ async function loadExisting() {
         utilityIdCounter = form.utility_bills.length + 1
       }
       initialSnapshot = deepCloneForm()
-      // Don't enable editing automatically for existing KYC
     } else {
-      // No existing KYC - automatically enable editing for new users
       isEditing.value = true
       createModalOpen.value = true
     }
   } catch (e) {
     console.error('loadExisting KYC error', e)
-    showToast('error', 'Load Error', 'Failed to load existing KYC data')
+    toast.error('Load Error', 'Failed to load existing KYC data')
   } finally {
     isLoading.value = false
   }
@@ -867,6 +1087,20 @@ const maskedPan = computed(() => {
 const maskedGst = computed(() => {
   const v = (form.gst || '').toUpperCase().trim()
   return v.length === 15 ? `${v.slice(0,4)}${'•'.repeat(7)}${v.slice(11)}` : (v || '—')
+})
+
+/* ✅ Progress tracking */
+const completedSections = computed(() => {
+  let completed = 0
+  if (form.aadhaar && preview.aadhaar) completed++
+  if (form.pan && preview.pan) completed++
+  if (!form.hasTax || (form.gst && preview.gst)) completed++
+  if (form.utility_bills.length > 0) completed++
+  return completed
+})
+
+const progressPercentage = computed(() => {
+  return Math.round((completedSections.value / tabs.length) * 100)
 })
 
 /* Validation */
@@ -967,17 +1201,6 @@ function validateAll() {
 }
 
 /* UI helpers */
-function getInputClasses(error = '') {
-  const baseClasses = 'form-input w-full'
-  return error ? `${baseClasses} form-input--error` : baseClasses
-}
-
-function getTabClasses(tabKey: string) {
-  const baseClasses = 'tab-button'
-  const isActive = activeTab.value === tabKey
-  return isActive ? `${baseClasses} tab-button--active` : baseClasses
-}
-
 function getTabStatus(tabKey: string): 'complete' | 'incomplete' | null {
   switch (tabKey) {
     case 'aadhaar':
@@ -993,31 +1216,21 @@ function getTabStatus(tabKey: string): 'complete' | 'incomplete' | null {
   }
 }
 
-function getTabStatusClasses(tabKey: string) {
-  const status = getTabStatus(tabKey)
-  if (!status) return ''
-  return status === 'complete' ? 'tab-status--complete' : 'tab-status--incomplete'
-}
-
-function getActiveTabIcon() {
-  const tab = tabs.find(t => t.key === activeTab.value)
-  return tab?.icon || 'mdi:information'
-}
-
-function getActiveTabDescription() {
+function getTabDescription(tabKey: string) {
   const descriptions = {
-    aadhaar: 'Enter your 12-digit Aadhaar number and upload a clear image or PDF document.',
-    pan: 'Enter your PAN in uppercase format and upload a clear image or PDF document.',
-    gst: 'Toggle GST registration. If enabled, provide your 15-character GSTIN and certificate.',
-    utilities: 'Add utility bill identifiers for additional verification (no documents needed).'
+    aadhaar: 'Required document',
+    pan: 'Required document',
+    gst: 'Optional registration',
+    utilities: 'Optional verification'
   }
-  return descriptions[activeTab.value] || ''
+  return descriptions[tabKey] || ''
 }
 
 /* Edit controls */
 function enableEdit() {
   isEditing.value = true
   Object.keys(errors).forEach(k => delete errors[k])
+  toast.info('Edit Mode Enabled', 'You can now modify your KYC information')
 }
 
 function cancelEdit() {
@@ -1026,6 +1239,7 @@ function cancelEdit() {
   form.panFile = null
   form.gstFile = null
   isEditing.value = false
+  toast.info('Changes Cancelled', 'All changes have been reverted')
 }
 
 function submitIfValid() {
@@ -1036,7 +1250,7 @@ function submitIfValid() {
 async function handleSubmit() {
   if (!isEditing.value) return
   if (!validateAll()) {
-    showToast('error', 'Validation Error', 'Please fix the highlighted errors before submitting.')
+    toast.error('Validation Error', 'Please fix the highlighted errors before submitting.')
     return
   }
 
@@ -1056,30 +1270,23 @@ async function handleSubmit() {
         .map(b => ({ type: b.type, value: b.identifier.trim() }))
     payload.append('utility_bills', JSON.stringify(utilityPayload))
 
-    // FIXED: Proper method handling - no _method field for FormData
     const isUpdate = hasExistingKyc.value
-    const method = isUpdate ? 'PUT' : 'POST'
-
-    // For PUT requests with FormData, we need to add _method field
     if (isUpdate) {
       payload.append('_method', 'PUT')
     }
 
     const url = `${config.public.apiBase}/account/kyc`
-
-    // Always use POST for FormData with files, Laravel will handle _method override
     const res = await useSanctumFetch(url, {
-      method: 'POST', // Always POST for FormData with files
+      method: 'POST',
       body: payload,
       headers: {
         'Accept': 'application/json',
-        // Don't set Content-Type, let browser set it for FormData
       }
     })
 
     const ok = res?.data?.success || res?.success || (res?.status === 'ok') || res?.message?.includes('success')
     if (ok) {
-      showToast('success', 'Success!', `KYC ${isUpdate ? 'updated' : 'created'} successfully.`)
+      toast.success('Success!', `KYC ${isUpdate ? 'updated' : 'created'} successfully.`)
       await loadExisting()
       initialSnapshot = deepCloneForm()
       isEditing.value = false
@@ -1091,23 +1298,25 @@ async function handleSubmit() {
         Object.entries(serverErrors).forEach(([k, v]) => {
           errors[k] = Array.isArray(v) ? (v as any).join(', ') : (v as any)
         })
-        showToast('error', 'Validation Failed', 'Server validation failed. Please check highlighted fields.')
+        toast.error('Validation Failed', 'Server validation failed. Please check highlighted fields.')
       } else {
         const message = res?.data?.message || res?.message || 'Unable to submit KYC. Please try again.'
-        showToast('error', 'Submission Failed', message)
+        toast.error('Submission Failed', message)
       }
     }
   } catch (err: any) {
     console.error('Submit error:', err)
-    showToast('error', 'Error', err?.message || 'An error occurred during submission')
+    toast.error('Error', err?.message || 'An error occurred during submission')
   } finally {
     processing.value = false
   }
 }
+
 /* Modal controls */
 function goToCreateForm() {
   createModalOpen.value = false
   isEditing.value = true
+  toast.success('Welcome!', 'Please fill in your details to complete verification')
 }
 
 /* Snapshot helpers */
@@ -1141,6 +1350,11 @@ function applySnapshot(s: any) {
   preview.aadhaar = s.preview?.aadhaar || ''
   preview.pan = s.preview?.pan || ''
   preview.gst = s.preview?.gst || ''
+
+  // Update display values
+  aadhaarDisplayValue.value = formatAadhaar(form.aadhaar)
+  panDisplayValue.value = form.pan
+  gstDisplayValue.value = form.gst
 }
 
 /* Animations */
@@ -1202,638 +1416,135 @@ onUnmounted(() => {
     gsapContext.kill()
   }
 })
-
-// Provide toast functions globally
-provide('showToast', showToast)
-provide('toasts', toasts)
-provide('removeToast', removeToast)
 </script>
 
 <style scoped>
-/* Same as before - all the existing styles remain */
-/* Page Styles */
-.kyc-page {
-  min-height: 100vh;
-  position: relative;
+/* ✅ Custom animations that can't be done with Tailwind */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Header Section */
-.header-section {
-  position: relative;
-  border-radius: 1rem 1rem 0 0;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.page-title {
-  background: linear-gradient(135deg, #1f2937 0%, #3b82f6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
 }
 
-.status-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-5deg);
+  }
 }
 
-/* Action Buttons */
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  transform-origin: center;
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
-.action-btn:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.animate-slideInDown {
+  animation: slideInDown 0.6s ease-out;
 }
 
-.action-btn:active {
-  transform: scale(0.98);
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
 }
 
-.action-btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  color: white;
+.animate-float {
+  animation: float 20s infinite ease-in-out;
 }
 
-.action-btn-primary:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+.animate-float-reverse {
+  animation: float-reverse 25s infinite ease-in-out;
 }
 
-.action-btn-secondary {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+.animate-progress {
+  animation: progress 0.5s ease-out;
 }
 
-.action-btn-secondary:hover {
-  background-color: #e5e7eb;
+/* Custom hover scale utilities */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
 }
 
-.action-btn-success {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-}
-
-.action-btn-success:hover {
-  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-}
-
-.action-btn-danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-}
-
-.action-btn-danger:hover {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-}
-
-.action-btn-outline {
-  background: transparent;
-  color: #6b7280;
-  border: 2px dashed #d1d5db;
-}
-
-.action-btn-outline:hover {
-  color: #3b82f6;
-  border-color: #3b82f6;
-}
-
-.action-btn-sm {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-}
-
-.action-btn-lg {
-  padding: 0.75rem 1.5rem;
-  font-size: 1.125rem;
-}
-
-/* Tabs */
-.tabs-container {
-  position: relative;
-}
-
-.tab-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: 1px solid #e5e7eb;
-  background-color: #f9fafb;
-  color: #6b7280;
-}
-
-.tab-button:hover {
-  background-color: #f3f4f6;
-  transform: translateY(-2px);
-}
-
-.tab-button--active {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  color: white;
-  border-color: transparent;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.tab-status {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-}
-
-.tab-status--complete {
-  background-color: #10b981;
-  color: white;
-}
-
-.tab-status--incomplete {
-  background-color: #f59e0b;
-  color: white;
-}
-
-/* Form Sections */
-.form-section {
-  background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(249,250,251,0.5) 100%);
-  border-radius: 1rem;
-  padding: 2rem;
-  border: 1px solid rgba(229, 231, 235, 0.5);
-  backdrop-filter: blur(10px);
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
-}
-
-.section-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-center: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.section-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #111827;
-}
-
-.section-subtitle {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
-}
-
-.section-badge {
-  margin-left: auto;
-  padding: 0.375rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.section-badge-required {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.section-badge-optional {
-  background-color: #dbeafe;
-  color: #2563eb;
-}
-
-/* Form Groups */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.form-label {
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-}
-
-.form-label-sm {
-  font-weight: 600;
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-.input-wrapper {
-  position: relative;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  padding-right: 2.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid #d1d5db;
-  background-color: white;
-  color: #111827;
-  font-size: 0.875rem;
+/* List transition animations */
+.list-enter-active,
+.list-leave-active {
   transition: all 0.3s ease;
 }
 
-.form-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-input--error {
-  border-color: #ef4444;
-}
-
-.form-input--error:focus {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-.input-icon {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #9ca3af;
-}
-
-.form-hint {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.form-error {
-  font-size: 0.75rem;
-  color: #ef4444;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.form-success {
-  font-size: 0.75rem;
-  color: #10b981;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-/* Upload Zones */
-.upload-zone {
-  position: relative;
-  width: 100%;
-  min-height: 12rem;
-  border: 2px dashed #d1d5db;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-.upload-zone--drag {
-  border-color: #3b82f6;
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-}
-
-.upload-zone--disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.upload-label {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  text-align: center;
-  padding: 1.5rem;
-}
-
-.upload-text {
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.25rem;
-}
-
-.upload-hint {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.upload-progress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 0.5rem;
-  background-color: #e5e7eb;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-  transition: width 0.3s ease;
-}
-
-.upload-preview {
-  position: absolute;
-  inset: 0;
-}
-
-.preview-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 1rem;
-}
-
-.preview-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+.list-enter-from,
+.list-leave-to {
   opacity: 0;
-  transition: opacity 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transform: translateX(-20px);
 }
 
-.group:hover .preview-overlay {
-  opacity: 1;
-}
-
-.preview-remove {
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: #ef4444;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.preview-remove:hover {
-  background-color: #dc2626;
-  transform: scale(1.1);
-}
-
-/* Toggle Switch */
-.toggle-container {
-  padding: 1rem;
-  background-color: #f9fafb;
-  border-radius: 0.75rem;
-}
-
-.toggle-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-}
-
-.toggle-switch {
-  position: relative;
-  width: 2.75rem;
-  height: 1.5rem;
-  background-color: #d1d5db;
-  border-radius: 9999px;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-slider {
-  position: absolute;
-  top: 0.125rem;
-  left: 0.125rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: white;
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.list-move {
   transition: transform 0.3s ease;
 }
 
-.toggle-label {
-  font-weight: 600;
-  color: #374151;
+/* Focus ring for accessibility */
+.focus\:ring-2:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
-/* Utilities */
-.utility-row {
-  padding: 1rem;
-  background-color: white;
-  border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.utility-content {
-  display: grid;
-  grid-template-columns: 1fr 2fr auto;
-  gap: 1rem;
-  align-items: end;
-}
-
-@media (max-width: 768px) {
-  .utility-content {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+/* Remove default transitions for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-}
-
-.modal-container {
-  width: 100%;
-  max-width: 32rem;
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-icon {
-  width: 4rem;
-  height: 4rem;
-  background: linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #111827;
-}
-
-.modal-subtitle {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.kyc-benefits {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.benefit-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.modal-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  background-color: #f9fafb;
-}
-
-/* Transitions */
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  .form-section {
-    background: linear-gradient(135deg, rgba(17,24,39,0.5) 0%, rgba(31,41,55,0.5) 100%);
-    border-color: rgba(75, 85, 99, 0.5);
-  }
-
-  .section-title {
-    color: white;
-  }
-
-  .form-input {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: white;
-  }
-
-  .upload-zone {
-    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-    border-color: #6b7280;
-  }
-
-  .modal-container {
-    background-color: #1f2937;
-    border-color: #374151;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-gradient-to-r {
+    background: currentColor !important;
   }
 }
 
-/* Form Actions */
-.form-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-@media (min-width: 1024px) {
-  .form-actions {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-lg;
 }
 
-.action-info p {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .form-actions {
-    align-items: stretch;
-  }
-
-  .action-btn-lg {
-    width: 100%;
-    justify-content: center;
-  }
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500;
 }
 </style>

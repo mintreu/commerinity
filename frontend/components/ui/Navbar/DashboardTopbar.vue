@@ -64,7 +64,7 @@
         <div class="logo-wrapper relative">
           <div class="logo-glow absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
           <div class="logo-bg relative w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:shadow-xl">
-            <NuxtImg
+            <img
                 src="/logo.png"
                 loading="lazy"
                 class="object-contain w-6 h-6 filter brightness-0 invert transition-transform duration-300 group-hover:scale-110"

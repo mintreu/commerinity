@@ -35,7 +35,7 @@ class Sale extends Model
 
     protected $casts = [
         'conditions' => 'array',
-        'discount_amount' => LaravelMoneyCast::class,
+        //'discount_amount' => LaravelMoneyCast::class,
         'action_type'   => SaleActionTypeCast::class
     ];
 

@@ -6,6 +6,7 @@ use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\FontWeight;
+use Mintreu\LaravelMoney\Filament\Tables\Columns\MoneyColumn;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
@@ -87,10 +88,7 @@ class ListProducts extends ListRecords
 
                             Tables\Columns\Layout\Split::make([
 
-                                Tables\Columns\TextColumn::make('price')
-                                    ->default(0)
-                                    ->money(LaravelMoney::getCurrencySymbol())
-                                    ->badge(),
+                                MoneyColumn::make('price'),
 
                                 Tables\Columns\TextColumn::make('reward_point')
                                     ->numeric()

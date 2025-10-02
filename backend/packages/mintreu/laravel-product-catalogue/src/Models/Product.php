@@ -4,12 +4,14 @@ namespace Mintreu\LaravelProductCatalogue\Models;
 
 
 use App\Models\ProductEngagement;
+use App\Models\ProductWishlist;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Mintreu\LaravelCategory\Traits\HasCategory;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
@@ -56,7 +58,7 @@ class Product extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'price' => LaravelMoneyCast::class,
+        //'price' => LaravelMoneyCast::class,
         'reward_point' => 'float',
         'is_returnable' => 'boolean',
         'view_count' => 'integer',
@@ -123,6 +125,10 @@ class Product extends Model implements HasMedia
     }
 
 
+    public function cheapestTier(): HasOne
+    {
+        return $this->hasOne(ProductTier::class)->orderBy('price');
+    }
 
 
 
@@ -173,9 +179,14 @@ class Product extends Model implements HasMedia
     }
 
 
-    public function engagement()
+    public function engagements()
     {
         return $this->hasMany(ProductEngagement::class,'product_id');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(ProductWishlist::class,'product_id');
     }
 
 

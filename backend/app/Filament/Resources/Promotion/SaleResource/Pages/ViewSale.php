@@ -9,6 +9,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
+use Mintreu\LaravelMoney\Filament\Infolists\Components\MoneyEntry;
 use Mintreu\LaravelMoney\LaravelMoney;
 
 class ViewSale extends ViewRecord
@@ -51,7 +52,11 @@ class ViewSale extends ViewRecord
                     ->schema([
                         Infolists\Components\TextEntry::make('name'),
                         Infolists\Components\IconEntry::make('status')->boolean(),
-                        Infolists\Components\TextEntry::make('discount_amount')->money(LaravelMoney::defaultCurrency()),
+                        Infolists\Components\TextEntry::make('discount_amount')
+                            ->label('Discount Percentage')
+                            ->formatStateUsing(fn($state) => $state/100)
+                            ->suffix('%'),
+                        MoneyEntry::make('discount_amount')
                     ]),
 
                 Infolists\Components\Section::make('Description')

@@ -23,7 +23,7 @@ class ProductTier extends Model
 
     protected $casts = [
         'in_stock' => 'boolean',
-        'price' => 'float',
+//        'price' => 'float',
     ];
 
     /*

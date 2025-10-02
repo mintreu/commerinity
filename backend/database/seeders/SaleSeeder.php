@@ -18,7 +18,9 @@ class SaleSeeder extends Seeder
 
         Sale::factory()
             ->count(1)
-            ->create()
+            ->create([
+                'discount_amount' => 1000
+            ])
             ->each(function (Sale $sale) use ($targets) {
                 // Attach 1–3 random levels to each sale
                 $randomTargets = $targets->random(rand(1, min(3, $targets->count())));

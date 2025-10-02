@@ -218,7 +218,7 @@
                 <!-- Job Image -->
                 <div class="relative h-48 overflow-hidden">
                   <NuxtLink :to="`/career/${job.url}`">
-                    <NuxtImg
+                    <img
                         :src="job.thumbnail"
                         :alt="job.title"
                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"

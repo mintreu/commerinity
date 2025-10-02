@@ -16,7 +16,7 @@
           :class="{ 'justify-center': collapsed }"
           aria-label="Homepage"
       >
-        <NuxtImg src="/logo.png" loading="lazy" class="object-contain"  :class="collapsed ? 'w-8 h-8' : 'w-14 h-14'" alt="Commernity" />
+        <img src="/logo.png" loading="lazy" class="object-contain"  :class="collapsed ? 'w-8 h-8' : 'w-14 h-14'" alt="Commernity" />
         <span v-if="!collapsed" class="text-primary-600 dark:text-primary-400 font-extrabold text-xl tracking-wide">
           Commernity
         </span>
@@ -197,7 +197,7 @@
         :class="{ hidden: collapsed, flex: !collapsed }"
         class="border-t border-gray-200 dark:border-gray-800 px-4 py-4 items-center gap-3 transition-all"
     >
-      <NuxtImg
+      <img
           :src="user.avatar"
           alt="Avatar"
           class="w-10 h-10 rounded-full object-cover select-none"

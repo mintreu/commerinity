@@ -23,7 +23,9 @@
         "php": "^8.1",
         "akaunting/laravel-money": "^6.0",
         "filament/filament": "^3.0",
-        "spatie/laravel-package-tools": "^1.15.0"
+        "moneyphp/money": "^4.7",
+        "spatie/laravel-package-tools": "^1.15.0",
+        "ext-intl": "*"
     },
     "require-dev": {
         "laravel/pint": "^1.0",

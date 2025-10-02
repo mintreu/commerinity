@@ -13,6 +13,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
+use Mintreu\LaravelMoney\Filament\Infolists\Components\MoneyEntry;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
@@ -157,6 +158,13 @@ class ViewProduct extends ViewRecord
                                     ->heading('Price')
                                     ->description('pricing details for the product')
                                     ->schema([
+
+                                        MoneyEntry::make('price')
+                                            ->helperText('product base price')
+
+
+
+
 //                                        TextEntry::make('price')
 //                                            ->label('Base Price')
 //                                            ->formatStateUsing(fn($state) => '$' . number_format($state, 2))

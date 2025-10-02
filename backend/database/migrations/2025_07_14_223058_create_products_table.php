@@ -22,7 +22,8 @@ return new class extends Migration
             $table->nullableMorphs('tenant');
             $table->text('description')->nullable();
             $table->text('short_description')->nullable();
-            $table->integer('price')->default(0);
+            $table->unsignedBigInteger('price')->default(0);
+
             $table->integer('min_quantity')->default(1);
             $table->integer('max_quantity')->nullable();
 

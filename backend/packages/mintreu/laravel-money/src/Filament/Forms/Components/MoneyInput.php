@@ -1,9 +1,10 @@
 <?php
 
-namespace Mintreu\Toolkit\Forms\Components;
+namespace Mintreu\LaravelMoney\Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\TextInput;
+use Mintreu\LaravelMoney\LaravelMoney;
 
 class MoneyInput extends TextInput
 {
@@ -24,7 +25,12 @@ class MoneyInput extends TextInput
             ->prefix($this->getCurrency())
             ->inputMode('decimal')
             ->dehydrateStateUsing(fn ($state) => $state ? (int) ($state * $this->getStorageMultiplier()) : null)
-            ->formatStateUsing(fn ($state) => $state ? number_format($state / $this->getStorageMultiplier(), 2, '.', '') : null);
+            //->formatStateUsing(fn ($state) => $state ? number_format($state / $this->getStorageMultiplier(), 2, '.', '') : null)
+            ->hint(fn($state) => LaravelMoney::format($state))
+//            ->hint(function ($state){
+//                dump($state,LaravelMoney::format($state));
+//            })
+        ;
 
         // Auto-apply required if enabled
         if ($this->getAutoRequired()) {
