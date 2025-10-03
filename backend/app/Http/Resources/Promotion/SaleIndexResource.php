@@ -22,7 +22,6 @@ class SaleIndexResource extends JsonResource
             'sale_price' => LaravelMoney::format($this->sale_price),
             'discount'  => LaravelMoney::format($this->discount_amount),
             'ends_till'  => $this->ends_till, // fixed typo
-
             // Remaining time in human-readable format
             'remaining'  => $this->ends_till
                 ? Carbon::parse($this->ends_till)->diffForHumans(now(), [
@@ -31,6 +30,10 @@ class SaleIndexResource extends JsonResource
                     'syntax' => Carbon::DIFF_RELATIVE_TO_NOW, // "in 2d" not "2d ago"
                 ])
                 : null,
+
+            'action_type' => $this->action_type->value,
+
+
 
         ];
     }
