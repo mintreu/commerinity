@@ -40,7 +40,11 @@ class DatabaseSeeder extends Seeder
 
             SaleSeeder::class,
 
-            HelpDeskTicketSeeder::class
+            HelpDeskTicketSeeder::class,
+
+            PostSeeder::class,
+
+            TaxCodeSeeder::class
 
         ]);
 

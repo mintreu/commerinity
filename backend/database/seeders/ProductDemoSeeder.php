@@ -27,23 +27,23 @@ class ProductDemoSeeder extends Seeder
 
         $this->startSeedingProducts($demoMasalaProducts,$masalaFilterGroup,$masalaCategory);
 
-        $topTenCategory = Category::where('url', '!=', 'spices-masalas')
-            ->take(10)
-            ->get();
-
-        $topThreeFilterGroup = FilterGroup::with('filters.options')
-            ->where('name', '!=', 'Spices & Masala')
-            ->take(3)
-            ->get();
-
-        foreach ($topTenCategory as $category) {
-            $productData = Product::factory(5)->raw(); // no need for collect()
-            $this->startSeedingProducts(
-                $productData,
-                $topThreeFilterGroup->random(),
-                $category
-            );
-        }
+//        $topTenCategory = Category::where('url', '!=', 'spices-masalas')
+//            ->take(10)
+//            ->get();
+//
+//        $topThreeFilterGroup = FilterGroup::with('filters.options')
+//            ->where('name', '!=', 'Spices & Masala')
+//            ->take(3)
+//            ->get();
+//
+//        foreach ($topTenCategory as $category) {
+//            $productData = Product::factory(5)->raw(); // no need for collect()
+//            $this->startSeedingProducts(
+//                $productData,
+//                $topThreeFilterGroup->random(),
+//                $category
+//            );
+//        }
 
 
 

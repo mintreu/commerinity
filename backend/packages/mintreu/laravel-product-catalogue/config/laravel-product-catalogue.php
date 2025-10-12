@@ -21,6 +21,11 @@
 
 return [
 
+    'tax' => [
+      'model' => \App\Models\TaxCode::class,
+      'foreign_key' => 'tax_code_id'
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Enable / Disable Sales Feature

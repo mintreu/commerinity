@@ -17,11 +17,8 @@ return new class extends Migration
             $table->string('url')->unique();
             $table->text('desc')->nullable();
 
-//            $table->float('base_price', 10, 2, true)->default(0.00);
-//            $table->float('discount', 10, 2, true)->default(0.00);
-//            $table->integer('tax_percentage')->default(0);
-//            $table->float('tax_amount', 10, 2, true)->default(0.00);
-            $table->float('price', 10, 2, true)->default(0.00);
+            $table->unsignedBigInteger('price')->default(0);
+
 
             // For Cart Quantity Range*************************************
             $table->integer('min_per_order')->default(1);

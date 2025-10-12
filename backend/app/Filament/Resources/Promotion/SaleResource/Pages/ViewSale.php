@@ -10,7 +10,6 @@ use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
 use Mintreu\LaravelMoney\Filament\Infolists\Components\MoneyEntry;
-use Mintreu\LaravelMoney\LaravelMoney;
 
 class ViewSale extends ViewRecord
 {

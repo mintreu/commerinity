@@ -4,20 +4,36 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
-use App\Services\CartService\Cart;
 use Illuminate\Http\Request;
 use Mintreu\LaravelCommerinity\Models\VoucherCode;
+use Mintreu\LaravelCommerinity\Services\CartService\Cart;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class CartController extends Controller
 {
 
 
-    public function ensureGuestCartCredential(Request $request)
+    public function ensureGuestCartCredential(Request $request): \Illuminate\Http\JsonResponse
     {
         $cart = new Cart($request->user());
         $cart->capture($request);
         return $cart->ensureGuestCredential();
+    }
+
+    public function validateGuestCartCredential(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $cart = new Cart($request->user());
+        $cart->capture($request);
+        $valid = $cart->validateGuestToken(
+            guestId: $request->header(config('laravel-commerinity.cart.guest.header_id', 'x-guest-id')),
+            token: $request->header(config('laravel-commerinity.cart.guest.header_token', 'x-guest-token'))
+        );
+        return response()->json([
+           'data' => [
+            'status' => $valid,
+            'error' => $valid ? 'validate' :'wrong credential!'
+           ]
+        ]);
     }
 
 
@@ -25,6 +41,7 @@ class CartController extends Controller
     // 1. Get Cart
     public function index(Request $request)
     {
+
         $cart = new Cart($request->user());
         $cart->capture($request);
 

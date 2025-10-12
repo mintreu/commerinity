@@ -1,269 +1,143 @@
 <template>
   <transition name="banner-slide" appear>
-    <div
-        v-if="showBanner"
-        role="banner"
-        class="onboarding-banner relative w-full overflow-hidden"
-        ref="bannerRef"
-    >
-      <!-- Enhanced Background -->
-      <div class="banner-background absolute inset-0">
-        <!-- Gradient Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/95 via-purple-500/95 to-pink-500/95"></div>
+    <div v-if="showBanner" role="banner" class="banner" ref="bannerRef">
 
-        <!-- Animated Particles -->
-        <div class="particles-container absolute inset-0 overflow-hidden">
-          <div
-              v-for="i in 12"
-              :key="i"
-              class="particle"
-              :style="getParticleStyle(i)"
-              ref="particles"
-          ></div>
-        </div>
-
-        <!-- Glow Effects -->
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 blur-xl"></div>
-
-        <!-- Border Glow -->
-        <div class="absolute inset-0 border border-white/20 rounded-2xl"></div>
-      </div>
+      <!-- Simplified Background -->
+      <div class="banner-bg"></div>
 
       <!-- Main Content -->
-      <div class="banner-content relative z-10 p-6">
-        <div class="content-wrapper flex flex-col lg:flex-row items-start lg:items-center gap-6">
+      <div class="banner-content">
+        <div class="content-grid">
 
-          <!-- Left Section: Progress & Current Step -->
-          <div class="progress-section flex-1 min-w-0">
-            <div class="progress-header flex items-center gap-4 mb-4">
+          <!-- Progress Section -->
+          <div class="progress-section">
+
+            <!-- Progress Ring & Info -->
+            <div class="progress-header">
               <!-- Progress Ring -->
-              <div class="progress-ring-container relative">
-                <svg class="progress-ring w-16 h-16 transform -rotate-90" viewBox="0 0 60 60">
+              <div class="progress-ring-wrap">
+                <svg class="progress-ring" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="26" stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="none" />
                   <circle
-                      cx="30"
-                      cy="30"
-                      r="26"
-                      stroke="rgba(255, 255, 255, 0.2)"
-                      stroke-width="4"
-                      fill="none"
-                  />
-                  <circle
-                      cx="30"
-                      cy="30"
-                      r="26"
-                      stroke="url(#progressGradient)"
+                      cx="30" cy="30" r="26"
+                      stroke="url(#grad)"
                       stroke-width="4"
                       fill="none"
                       stroke-linecap="round"
                       :stroke-dasharray="circumference"
                       :stroke-dashoffset="strokeDashoffset"
-                      class="progress-circle transition-all duration-1000 ease-out"
+                      class="progress-circle"
                   />
                   <defs>
-                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
-                      <stop offset="100%" style="stop-color:#06d6a0;stop-opacity:1" />
+                    <linearGradient id="grad">
+                      <stop offset="0%" stop-color="#10b981"/>
+                      <stop offset="100%" stop-color="#06d6a0"/>
                     </linearGradient>
                   </defs>
                 </svg>
-
-                <!-- Center Progress Text -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="text-center">
-                    <div class="text-lg font-bold text-white">{{ Math.round(progress) }}%</div>
-                    <div class="text-xs text-white/80">Complete</div>
-                  </div>
+                <div class="progress-text">
+                  <div class="progress-percent">{{ Math.round(progress) }}%</div>
+                  <div class="progress-label">Complete</div>
                 </div>
               </div>
 
               <!-- Step Info -->
-              <div class="step-info flex-1 min-w-0">
-                <div class="step-header flex items-center gap-3 mb-2">
-                  <div class="step-icon" :class="getStepIconClass()">
-                    <Icon
-                        :name="currentStep.completed ? 'mdi:check-circle' : currentStep.icon"
-                        class="w-5 h-5 text-white"
-                    />
+              <div class="step-info">
+                <div class="step-header">
+                  <div class="step-icon" :class="currentStep.completed ? 'completed' : 'pending'">
+                    <Icon :name="currentStep.completed ? 'mdi:check-circle' : currentStep.icon" class="w-5 h-5" />
                   </div>
-                  <div class="step-status">
-                    <div class="step-badge" :class="currentStep.completed ? 'step-badge-completed' : 'step-badge-pending'">
-                      {{ currentStep.completed ? 'Completed' : 'Pending' }}
-                    </div>
+                  <div class="step-badge" :class="currentStep.completed ? 'completed' : 'pending'">
+                    {{ currentStep.completed ? 'Completed' : 'Pending' }}
                   </div>
                 </div>
-
-                <h3 class="step-title text-xl font-bold text-white mb-1">
-                  {{ currentStep.label }}
-                </h3>
-
-                <p class="step-description text-white/80 text-sm">
-                  {{ getStepDescription(currentStep.key) }}
-                </p>
+                <h3 class="step-title">{{ currentStep.label }}</h3>
+                <p class="step-desc">{{ getStepDescription(currentStep.key) }}</p>
               </div>
             </div>
 
-            <!-- Enhanced Progress Bar -->
+            <!-- Progress Bar -->
             <div class="progress-bar-section">
-              <div class="progress-stats flex items-center justify-between mb-2">
-                <span class="text-sm font-semibold text-white/90">
-                  Step {{ completedSteps + 1 }} of {{ totalSteps }}
-                </span>
-                <span class="text-sm text-white/80">
-                  {{ completedSteps }}/{{ totalSteps }} completed
-                </span>
+              <div class="progress-stats">
+                <span>Step {{ completedSteps + 1 }} of {{ totalSteps }}</span>
+                <span>{{ completedSteps }}/{{ totalSteps }} completed</span>
               </div>
-
-              <div class="progress-bar-container relative">
-                <div class="progress-bar-track bg-white/20 rounded-full h-3 overflow-hidden">
-                  <div
-                      class="progress-bar-fill h-full rounded-full transition-all duration-1000 ease-out"
-                      :style="{ width: progress + '%' }"
-                  ></div>
-                </div>
-
-                <!-- Step Markers -->
-                <div class="step-markers absolute inset-0 flex items-center justify-between px-1">
-                  <div
-                      v-for="(step, index) in tourSteps"
-                      :key="step.key"
-                      class="step-marker"
-                      :class="step.completed ? 'step-marker-completed' : 'step-marker-pending'"
-                      :title="step.label"
-                  >
-                    <Icon
-                        :name="step.completed ? 'mdi:check' : 'mdi:circle'"
-                        class="w-3 h-3"
-                    />
-                  </div>
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" :style="{ width: progress + '%' }"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Right Section: Actions -->
-          <div class="actions-section flex-shrink-0">
-            <div class="actions-wrapper flex flex-col sm:flex-row lg:flex-col gap-3">
+          <!-- Actions Section -->
+          <div class="actions-section">
+            <NuxtLink
+                :to="nextStep ? nextStep.path : '/terms'"
+                class="btn-primary"
+                @click="trackOnboardingStep"
+            >
+              <Icon :name="nextStep ? 'mdi:arrow-right-circle' : 'mdi:star-circle'" class="w-5 h-5" />
+              <span>{{ nextStep ? 'Continue Setup' : 'Complete Onboarding' }}</span>
+            </NuxtLink>
 
-              <!-- Primary Action -->
-              <component
-                  :is="nextStep ? 'NuxtLink' : 'NuxtLink'"
-                  :to="nextStep ? nextStep.path : '/terms'"
-                  class="action-btn action-btn-primary group"
-                  @click="trackOnboardingStep"
-              >
-                <div class="btn-content">
-                  <Icon
-                      :name="nextStep ? 'mdi:arrow-right-circle' : 'mdi:star-circle'"
-                      class="w-5 h-5 transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <span class="btn-text">
-                    {{ nextStep ? 'Continue Setup' : 'Complete Onboarding' }}
-                  </span>
-                </div>
-                <div class="btn-shimmer"></div>
-              </component>
-
-              <!-- Secondary Actions -->
-              <div class="secondary-actions flex gap-2">
-                <!-- Skip Step (only if not last step) -->
-                <button
-                    v-if="nextStep && completedSteps > 0"
-                    @click="skipCurrentStep"
-                    class="action-btn action-btn-secondary"
-                    title="Skip this step"
-                >
-                  <Icon name="mdi:skip-next" class="w-4 h-4" />
-                  <span class="sr-only">Skip</span>
-                </button>
-
-                <!-- Minimize Banner -->
-                <button
-                    @click="minimizeBanner"
-                    class="action-btn action-btn-secondary"
-                    title="Minimize banner"
-                >
-                  <Icon name="mdi:minus" class="w-4 h-4" />
-                  <span class="sr-only">Minimize</span>
-                </button>
-
-                <!-- Close Banner (only when completed or last step) -->
-                <button
-                    v-if="!nextStep || completedSteps === totalSteps"
-                    @click="closeBanner"
-                    class="action-btn action-btn-secondary"
-                    title="Close banner"
-                >
-                  <Icon name="mdi:close" class="w-4 h-4" />
-                  <span class="sr-only">Close</span>
-                </button>
-              </div>
+            <div class="btn-group">
+              <button v-if="nextStep && completedSteps > 0" @click="skipCurrentStep" class="btn-icon" title="Skip">
+                <Icon name="mdi:skip-next" class="w-4 h-4" />
+              </button>
+              <button @click="minimizeBanner" class="btn-icon" title="Minimize">
+                <Icon name="mdi:minus" class="w-4 h-4" />
+              </button>
+              <button v-if="!nextStep || completedSteps === totalSteps" @click="closeBanner" class="btn-icon" title="Close">
+                <Icon name="mdi:close" class="w-4 h-4" />
+              </button>
             </div>
 
             <!-- Completion Message -->
-            <div v-if="!nextStep" class="completion-message mt-4 p-3 bg-white/10 rounded-lg backdrop-blur-sm">
-              <div class="flex items-center gap-2 text-white">
-                <Icon name="mdi:party-popper" class="w-5 h-5" />
-                <span class="text-sm font-semibold">Congratulations! 🎉</span>
+            <div v-if="!nextStep" class="completion-msg">
+              <Icon name="mdi:party-popper" class="w-5 h-5" />
+              <div>
+                <div class="completion-title">Congratulations! 🎉</div>
+                <p class="completion-text">You've completed your profile setup!</p>
               </div>
-              <p class="text-xs text-white/80 mt-1">
-                You've completed your profile setup. Ready to explore all features!
-              </p>
             </div>
           </div>
         </div>
 
-        <!-- Steps Preview (Minimized State) -->
-        <div v-if="isMinimized" class="steps-preview mt-4 pt-4 border-t border-white/20">
-          <div class="steps-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-            <button
-                v-for="step in tourSteps"
-                :key="step.key"
-                @click="goToStep(step)"
-                class="step-preview-item"
-                :class="step.completed ? 'step-preview-completed' : 'step-preview-pending'"
-                :title="step.label"
-            >
-              <Icon :name="step.icon" class="w-4 h-4" />
-              <span class="text-xs truncate">{{ getStepShortLabel(step.key) }}</span>
-            </button>
-          </div>
+        <!-- Steps Preview (Minimized) -->
+        <div v-if="isMinimized" class="steps-preview">
+          <button
+              v-for="step in tourSteps"
+              :key="step.key"
+              @click="goToStep(step)"
+              class="step-preview"
+              :class="step.completed ? 'completed' : 'pending'"
+              :title="step.label"
+          >
+            <Icon :name="step.icon" class="w-4 h-4" />
+            <span>{{ getStepShortLabel(step.key) }}</span>
+          </button>
         </div>
       </div>
 
-      <!-- Celebration Effects -->
-      <div v-if="showCelebration" class="celebration-overlay absolute inset-0 pointer-events-none">
-        <div
-            v-for="i in 20"
-            :key="`confetti-${i}`"
-            class="confetti"
-            :style="getConfettiStyle(i)"
-        ></div>
+      <!-- Celebration -->
+      <div v-if="showCelebration" class="celebration">
+        <div v-for="i in 15" :key="i" class="confetti" :style="getConfettiStyle(i)"></div>
       </div>
     </div>
   </transition>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useSanctumFetch, useRuntimeConfig, useSanctum } from '#imports'
 
-// GSAP imports (client-side only)
-let gsap: any = null
-
-if (process.client) {
-  import('gsap').then(({ default: gsapModule }) => {
-    gsap = gsapModule
-  })
-}
-
-// Props & Emits
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'minimize'): void
   (e: 'step-completed', step: string): void
 }>()
 
-// Composables
 const config = useRuntimeConfig()
 const { $toast } = useNuxtApp()
 
@@ -280,51 +154,16 @@ const bannerClosed = ref(false)
 const isMinimized = ref(false)
 const showCelebration = ref(false)
 const isLoading = ref(true)
-
-// Refs
 const bannerRef = ref<HTMLElement>()
-const particles = ref<HTMLElement[]>([])
-
-let gsapContext: any = null
 let celebrationTimeout: number | null = null
 
-// Configuration
+// Steps
 const tourSteps = ref([
-  {
-    key: 'mobile',
-    label: 'Add your mobile number',
-    path: '/dashboard/account/edit',
-    completed: false,
-    icon: 'mdi:phone-plus'
-  },
-  {
-    key: 'profile',
-    label: 'Complete your profile details',
-    path: '/dashboard/account/edit',
-    completed: false,
-    icon: 'mdi:account-edit'
-  },
-  {
-    key: 'address',
-    label: 'Add your home address',
-    path: '/dashboard/account/address',
-    completed: false,
-    icon: 'mdi:home-plus'
-  },
-  {
-    key: 'kyc',
-    label: 'Submit your KYC documents',
-    path: '/dashboard/account/kyc',
-    completed: false,
-    icon: 'mdi:file-document-check'
-  },
-  {
-    key: 'subscription',
-    label: 'Choose a subscription plan',
-    path: '/dashboard/subscribe',
-    completed: false,
-    icon: 'mdi:crown-circle'
-  },
+  { key: 'mobile', label: 'Add your mobile number', path: '/dashboard/account/edit', completed: false, icon: 'mdi:phone-plus' },
+  { key: 'profile', label: 'Complete your profile details', path: '/dashboard/account/edit', completed: false, icon: 'mdi:account-edit' },
+  { key: 'address', label: 'Add your home address', path: '/dashboard/account/address', completed: false, icon: 'mdi:home-plus' },
+  { key: 'kyc', label: 'Submit your KYC documents', path: '/dashboard/account/kyc', completed: false, icon: 'mdi:file-document-check' },
+  { key: 'subscription', label: 'Choose a subscription plan', path: '/dashboard/subscribe', completed: false, icon: 'mdi:crown-circle' }
 ])
 
 // Computed
@@ -334,72 +173,32 @@ const totalSteps = computed(() => tourSteps.value.length)
 const nextStep = computed(() => tourSteps.value.find(s => !s.completed))
 const currentStep = computed(() => nextStep.value ?? tourSteps.value[tourSteps.value.length - 1])
 const progress = computed(() => (completedSteps.value / totalSteps.value) * 100)
-
-// Progress circle calculations
 const circumference = computed(() => 2 * Math.PI * 26)
-const strokeDashoffset = computed(() => {
-  const progressDecimal = progress.value / 100
-  return circumference.value - (progressDecimal * circumference.value)
-})
-
-const showBanner = computed(() => {
-  if (isOnboarded.value) return false
-  if (bannerClosed.value) return false
-  if (isLoading.value) return false
-  return completedSteps.value < totalSteps.value
-})
+const strokeDashoffset = computed(() => circumference.value - ((progress.value / 100) * circumference.value))
+const showBanner = computed(() => !isOnboarded.value && !bannerClosed.value && !isLoading.value && completedSteps.value < totalSteps.value)
 
 // Methods
-function getStepDescription(stepKey: string) {
-  const descriptions = {
+function getStepDescription(key: string) {
+  const desc = {
     mobile: 'Add and verify your mobile number for account security',
     profile: 'Complete your name, date of birth, and gender information',
     address: 'Add your home address for faster delivery and billing',
     kyc: 'Upload required documents for account verification',
     subscription: 'Unlock premium features with a subscription plan'
   }
-  return descriptions[stepKey as keyof typeof descriptions] || 'Complete this step to continue'
+  return desc[key as keyof typeof desc] || 'Complete this step to continue'
 }
 
-function getStepShortLabel(stepKey: string) {
-  const labels = {
-    mobile: 'Mobile',
-    profile: 'Profile',
-    address: 'Address',
-    kyc: 'KYC',
-    subscription: 'Plan'
-  }
-  return labels[stepKey as keyof typeof labels] || stepKey
+function getStepShortLabel(key: string) {
+  const labels = { mobile: 'Mobile', profile: 'Profile', address: 'Address', kyc: 'KYC', subscription: 'Plan' }
+  return labels[key as keyof typeof labels] || key
 }
 
-function getStepIconClass() {
-  return currentStep.value.completed
-      ? 'step-icon-completed'
-      : 'step-icon-pending'
-}
-
-function getParticleStyle(index: number) {
-  const delay = index * 0.2
-  const duration = 3 + (index % 3)
-  const size = 2 + (index % 3)
-
-  return {
-    left: `${10 + (index * 8) % 80}%`,
-    top: `${20 + (index * 12) % 60}%`,
-    width: `${size}px`,
-    height: `${size}px`,
-    animationDelay: `${delay}s`,
-    animationDuration: `${duration}s`
-  }
-}
-
-function getConfettiStyle(index: number) {
+function getConfettiStyle(i: number) {
   const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444']
-  const color = colors[index % colors.length]
-
   return {
     left: `${Math.random() * 100}%`,
-    backgroundColor: color,
+    backgroundColor: colors[i % colors.length],
     animationDelay: `${Math.random() * 2}s`,
     animationDuration: `${2 + Math.random() * 2}s`
   }
@@ -411,35 +210,20 @@ async function loadProfile() {
     const res = await useSanctumFetch(`${config.public.apiBase}/account/profile`)
     profileData.value = res?.data ?? res
 
-    // Update step completion status
     tourSteps.value = tourSteps.value.map(step => {
       let completed = false
       switch (step.key) {
-        case 'mobile':
-          completed = Boolean(profileData.value?.mobile)
-          break
-        case 'profile':
-          completed = Boolean(profileData.value?.name) &&
-              Boolean(profileData.value?.dob) &&
-              Boolean(profileData.value?.gender)
-          break
-        case 'address':
-          completed = profileData.value?.address?.type === 'HOME'
-          break
-        case 'kyc':
-          completed = Boolean(profileData.value?.kyc)
-          break
-        case 'subscription':
-          completed = Boolean(profileData.value?.hasLevel) || Boolean(profileData.value?.level_id)
-          break
+        case 'mobile': completed = Boolean(profileData.value?.mobile); break
+        case 'profile': completed = Boolean(profileData.value?.name) && Boolean(profileData.value?.dob) && Boolean(profileData.value?.gender); break
+        case 'address': completed = profileData.value?.address?.type === 'HOME'; break
+        case 'kyc': completed = Boolean(profileData.value?.kyc); break
+        case 'subscription': completed = Boolean(profileData.value?.hasLevel) || Boolean(profileData.value?.level_id); break
       }
       return { ...step, completed }
     })
   } catch (err) {
     console.error('Failed to load profile', err)
-    if ($toast && $toast.error) {
-      $toast.error('Error', 'Failed to load onboarding progress')
-    }
+    if ($toast?.error) $toast.error('Error', 'Failed to load onboarding progress')
   } finally {
     isLoading.value = false
   }
@@ -457,205 +241,147 @@ function minimizeBanner() {
 
 function skipCurrentStep() {
   if (!nextStep.value) return
-
-  // Mark current step as completed (skipped)
   const stepIndex = tourSteps.value.findIndex(s => s.key === nextStep.value!.key)
   if (stepIndex !== -1) {
     tourSteps.value[stepIndex].completed = true
     emit('step-completed', nextStep.value.key)
-
-    if ($toast && $toast.info) {
-      $toast.info('Skipped', `${nextStep.value.label} has been skipped`)
-    }
-
-    // Check if all steps completed
-    if (completedSteps.value === totalSteps.value) {
-      triggerCelebration()
-    }
+    if ($toast?.info) $toast.info('Skipped', `${nextStep.value.label} has been skipped`)
+    if (completedSteps.value === totalSteps.value) triggerCelebration()
   }
 }
 
 function goToStep(step: any) {
-  if (step.path) {
-    navigateTo(step.path)
-  }
+  if (step.path) navigateTo(step.path)
 }
 
 function trackOnboardingStep() {
-  // Track analytics here
-  if (nextStep.value) {
-    emit('step-completed', nextStep.value.key)
-  }
+  if (nextStep.value) emit('step-completed', nextStep.value.key)
 }
 
 function triggerCelebration() {
   showCelebration.value = true
-
-  if (celebrationTimeout) {
-    clearTimeout(celebrationTimeout)
-  }
-
-  celebrationTimeout = setTimeout(() => {
-    showCelebration.value = false
-  }, 3000)
+  if (celebrationTimeout) clearTimeout(celebrationTimeout)
+  celebrationTimeout = setTimeout(() => { showCelebration.value = false }, 3000)
 }
 
-function initializeAnimations() {
-  if (!process.client || !gsap) return
-
-  gsapContext = gsap.context(() => {
-    // Banner entrance animation
-    if (bannerRef.value) {
-      gsap.fromTo(bannerRef.value,
-          { y: -100, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.7)' }
-      )
-    }
-
-    // Particle animations
-    if (particles.value.length > 0) {
-      particles.value.forEach((particle, index) => {
-        gsap.to(particle, {
-          y: -20,
-          opacity: 0.8,
-          duration: 2 + (index % 3),
-          repeat: -1,
-          yoyo: true,
-          ease: 'power2.inOut',
-          delay: index * 0.2
-        })
-      })
-    }
-
-    // Progress ring animation
-    const progressRing = bannerRef.value?.querySelector('.progress-circle')
-    if (progressRing) {
-      gsap.fromTo(progressRing,
-          { strokeDashoffset: circumference.value },
-          {
-            strokeDashoffset: strokeDashoffset.value,
-            duration: 2,
-            ease: 'power2.out',
-            delay: 0.5
-          }
-      )
-    }
-  })
-}
-
-// Watchers
 watch(() => completedSteps.value, (newVal, oldVal) => {
   if (newVal > oldVal && newVal === totalSteps.value) {
-    nextTick(() => {
-      triggerCelebration()
-    })
+    nextTick(() => triggerCelebration())
   }
 })
 
-// Lifecycle
 onMounted(async () => {
-  if (!isOnboarded.value && !bannerClosed.value) {
-    await loadProfile()
-
-    nextTick(() => {
-      setTimeout(initializeAnimations, 100)
-    })
-  }
+  if (!isOnboarded.value && !bannerClosed.value) await loadProfile()
 })
 
 onUnmounted(() => {
-  if (gsapContext) {
-    gsapContext.kill()
-  }
-
-  if (celebrationTimeout) {
-    clearTimeout(celebrationTimeout)
-  }
+  if (celebrationTimeout) clearTimeout(celebrationTimeout)
 })
 </script>
 
 <style scoped>
-/* Banner Layout */
-.onboarding-banner {
+/* Banner */
+.banner {
   position: relative;
   border-radius: 1.5rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   margin-bottom: 2rem;
+  overflow: hidden;
 }
 
-.banner-background {
-  border-radius: 1.5rem;
-}
-
-.particles-container {
-  pointer-events: none;
-}
-
-.particle {
+.banner-bg {
   position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  animation: float infinite ease-in-out;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translateY(-10px) scale(1.1);
-    opacity: 1;
-  }
+  inset: 0;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  opacity: 0.95;
+  border-radius: 1.5rem;
 }
 
 .banner-content {
   position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  z-index: 10;
+  padding: 1.5rem;
 }
 
-.content-wrapper {
-  align-items: stretch;
+/* Content Grid */
+.content-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
 }
 
 @media (min-width: 1024px) {
-  .content-wrapper {
+  .content-grid {
+    grid-template-columns: 1fr auto;
     align-items: center;
   }
 }
 
 /* Progress Section */
-.progress-section {
-  min-width: 0;
-}
-
 .progress-header {
-  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-direction: column;
 }
 
 @media (min-width: 640px) {
   .progress-header {
+    flex-direction: row;
     align-items: center;
   }
 }
 
-.progress-ring-container {
+.progress-ring-wrap {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
   flex-shrink: 0;
 }
 
 .progress-ring {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
 .progress-circle {
   transition: stroke-dashoffset 1s ease-out;
 }
 
+.progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-percent {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.8);
+}
+
 .step-info {
+  flex: 1;
   min-width: 0;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .step-icon {
@@ -665,17 +391,16 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.step-icon-completed {
+.step-icon.completed {
   background: linear-gradient(135deg, #10b981, #059669);
 }
 
-.step-icon-pending {
-  background: rgba(255, 255, 255, 0.2);
+.step-icon.pending {
+  background: rgba(255,255,255,0.2);
 }
 
 .step-badge {
@@ -684,210 +409,178 @@ onUnmounted(() => {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.step-badge-completed {
-  background: rgba(16, 185, 129, 0.2);
+.step-badge.completed {
+  background: rgba(16,185,129,0.2);
   color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(16,185,129,0.3);
 }
 
-.step-badge-pending {
-  background: rgba(255, 255, 255, 0.2);
+.step-badge.pending {
+  background: rgba(255,255,255,0.2);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255,255,255,0.3);
 }
 
 .step-title {
-  line-height: 1.2;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
 }
 
-.step-description {
-  line-height: 1.4;
+.step-desc {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.8);
 }
 
 /* Progress Bar */
-.progress-bar-container {
-  position: relative;
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar-track {
+  height: 0.75rem;
+  background: rgba(255,255,255,0.2);
+  border-radius: 9999px;
+  overflow: hidden;
 }
 
 .progress-bar-fill {
+  height: 100%;
   background: linear-gradient(90deg, #10b981, #06d6a0);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  border-radius: 9999px;
+  transition: width 1s ease-out;
+  box-shadow: 0 0 10px rgba(16,185,129,0.5);
 }
 
-.step-markers {
-  pointer-events: none;
-}
-
-.step-marker {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.step-marker-completed {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
-}
-
-.step-marker-pending {
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
-}
-
-/* Actions Section */
+/* Actions */
 .actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   flex-shrink: 0;
 }
 
-.actions-wrapper {
-  align-items: stretch;
-}
-
-@media (min-width: 640px) {
-  .actions-wrapper {
-    align-items: center;
-  }
-}
-
-@media (min-width: 1024px) {
-  .actions-wrapper {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-/* Action Buttons */
-.action-btn {
-  position: relative;
+.btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
+  background: white;
+  color: #1f2937;
   border-radius: 0.75rem;
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s;
   text-decoration: none;
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.action-btn-primary {
-  background: linear-gradient(135deg, #ffffff, #f8fafc);
-  color: #1f2937;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   min-width: 12rem;
 }
 
-.action-btn-primary:hover {
+.btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
-.action-btn-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem;
-  min-width: 2.5rem;
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn-icon {
   width: 2.5rem;
   height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
-.action-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
+.btn-icon:hover {
+  background: rgba(255,255,255,0.3);
   transform: scale(1.05);
 }
 
-.btn-content {
-  position: relative;
-  z-index: 10;
+.completion-msg {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 0.75rem;
+  color: white;
 }
 
-.btn-shimmer {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s ease;
+.completion-title {
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
-.action-btn-primary:hover .btn-shimmer {
-  left: 100%;
+.completion-text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.8);
+  margin-top: 0.25rem;
 }
 
-.secondary-actions {
-  flex-shrink: 0;
-}
-
-/* Completion Message */
-.completion-message {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Steps Preview (Minimized) */
+/* Steps Preview */
 .steps-preview {
-  animation: slideDown 0.3s ease-out;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (min-width: 640px) {
+  .steps-preview {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
-.step-preview-item {
+.step-preview {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
   padding: 0.5rem;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  transition: all 0.2s ease;
   font-size: 0.75rem;
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
-.step-preview-item:hover {
-  background: rgba(255, 255, 255, 0.2);
+.step-preview:hover {
+  background: rgba(255,255,255,0.2);
   transform: scale(1.05);
 }
 
-.step-preview-completed {
-  background: rgba(16, 185, 129, 0.3);
-  border-color: rgba(16, 185, 129, 0.5);
+.step-preview.completed {
+  background: rgba(16,185,129,0.3);
+  border-color: rgba(16,185,129,0.5);
 }
 
-.step-preview-pending {
-  opacity: 0.7;
-}
-
-/* Celebration Effects */
-.celebration-overlay {
+/* Celebration */
+.celebration {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
 }
 
@@ -895,18 +588,12 @@ onUnmounted(() => {
   position: absolute;
   width: 8px;
   height: 8px;
-  animation: confettiFall linear infinite;
+  animation: fall linear infinite;
 }
 
-@keyframes confettiFall {
-  0% {
-    transform: translateY(-100vh) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
+@keyframes fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
 
 /* Transitions */
@@ -918,95 +605,39 @@ onUnmounted(() => {
   transition: all 0.3s ease-in;
 }
 
-.banner-slide-enter-from {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
+.banner-slide-enter-from,
 .banner-slide-leave-to {
   transform: translateY(-100%);
   opacity: 0;
 }
 
-/* Responsive Design */
-@media (max-width: 1023px) {
-  .progress-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .step-info {
-    width: 100%;
-  }
-
-  .actions-wrapper {
-    width: 100%;
-  }
-
-  .action-btn-primary {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
+/* Responsive */
 @media (max-width: 639px) {
   .banner-content {
     padding: 1rem;
   }
-
-  .content-wrapper {
-    gap: 1.5rem;
-  }
-
-  .progress-ring {
-    width: 3.5rem;
-    height: 3.5rem;
-  }
-
   .step-title {
     font-size: 1.125rem;
   }
-
-  .steps-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .secondary-actions {
-    justify-content: center;
-  }
 }
 
-/* Accessibility */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .particle,
-  .progress-circle,
-  .confetti {
+  .confetti,
+  .progress-circle {
     animation: none !important;
   }
-
-  .action-btn:hover {
+  .btn-primary:hover,
+  .btn-icon:hover {
     transform: none;
   }
 }
 
-/* Focus States */
-.action-btn:focus-visible,
-.step-preview-item:focus-visible {
-  outline: 2px solid #ffffff;
+/* Focus */
+.btn-primary:focus-visible,
+.btn-icon:focus-visible,
+.step-preview:focus-visible {
+  outline: 2px solid white;
   outline-offset: 2px;
-}
-
-/* Screen Reader Only */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 </style>

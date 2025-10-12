@@ -3,8 +3,10 @@
 namespace Mintreu\LaravelProductCatalogue\Models;
 
 
+use App\Models\Order\OrderProduct;
 use App\Models\ProductEngagement;
 use App\Models\ProductWishlist;
+use App\Models\TaxCode;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +36,7 @@ class Product extends Model implements HasMedia
         'parent_id',
         'sku',
         'url',
+        'hsn',
         'type',
         'filter_group_id',
 //        'category_id',
@@ -55,6 +58,9 @@ class Product extends Model implements HasMedia
         'status_feedback',
         'view_count',
         'meta_data',
+        'tax_code_id',
+        'is_tax_inclusive',
+        'is_exempted',
     ];
 
     protected $casts = [
@@ -187,6 +193,18 @@ class Product extends Model implements HasMedia
     public function wishlists()
     {
         return $this->hasMany(ProductWishlist::class,'product_id');
+    }
+
+
+    public function orders()
+    {
+        return $this->hasMany(OrderProduct::class,'product_id');
+    }
+
+
+    public function tax_code(): BelongsTo
+    {
+        return $this->belongsTo(config('laravel-product-catalogue.tax.model'),config('laravel-product-catalogue.tax.foreign_key'));
     }
 
 

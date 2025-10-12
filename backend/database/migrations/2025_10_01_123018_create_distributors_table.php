@@ -13,6 +13,25 @@ return new class extends Migration
     {
         Schema::create('distributors', function (Blueprint $table) {
             $table->id();
+            $table->uuid();
+            $table->string('name');
+
+            $table->string('email')->nullable();
+            $table->unique('email', 'users_email_unique');
+
+            $table->timestamp('email_verified_at')->nullable();
+
+            $table->string('mobile')->nullable();
+            $table->unique('mobile', 'users_mobile_unique');
+
+            $table->timestamp('mobile_verified_at')->nullable();
+            $table->string('password');
+
+            $table->string('status')
+                ->default(\App\Casts\AuthStatusCast::DRAFT->value)
+                ->index('users_status_index');
+
+
             $table->timestamps();
         });
     }

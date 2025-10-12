@@ -68,13 +68,13 @@
                 :key="filter.key"
                 @click="setFilter(filter.key)"
                 :class="[
-                  'px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap',
+                  'px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-1',
                   currentFilter === filter.key
                     ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                 ]"
             >
-              <Icon :name="filter.icon" class="w-4 h-4 mr-1" />
+              <Icon :name="filter.icon" class="w-4 h-4" />
               {{ filter.label }}
               <span v-if="filter.count !== undefined" class="ml-1 text-xs opacity-75">({{ filter.count }})</span>
             </button>
@@ -273,9 +273,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onUnmounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { useRuntimeConfig, useSanctumFetch } from '#imports'
+import { useRuntimeConfig, useSanctumFetch, useSanctum } from '#imports'
 
 /* ——— Types ——— */
 interface Notification {
@@ -304,6 +304,7 @@ interface NotificationMeta {
 const config = useRuntimeConfig()
 const router = useRouter()
 const toast = useToast()
+const { isLoggedIn } = useSanctum()
 
 /* ——— State ——— */
 const isOpen = ref(false)
@@ -336,6 +337,7 @@ const buttonClasses = computed(() => ({
   'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg': isOpen.value
 }))
 
+// ✅ OPTIMIZED: Static filter tabs
 const filterTabs = computed(() => [
   { key: 'all', label: 'All', icon: 'mdi:bell', count: totalCount.value },
   { key: 'unread', label: 'Unread', icon: 'mdi:bell-badge', count: unreadCount.value },
@@ -343,57 +345,61 @@ const filterTabs = computed(() => [
   { key: 'week', label: 'This Week', icon: 'mdi:calendar-week' }
 ])
 
-/* ——— Helper Functions ——— */
+/* ——— ✅ OPTIMIZED: Memoized Helper Functions ——— */
+const iconMap: Record<string, string> = {
+  info: 'mdi:information',
+  success: 'mdi:check-circle',
+  warning: 'mdi:alert',
+  error: 'mdi:alert-circle',
+  order: 'mdi:shopping',
+  payment: 'mdi:credit-card',
+  system: 'mdi:cog'
+}
+
+const iconClassMap: Record<string, string> = {
+  info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+  success: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+  warning: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
+  error: 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
+  order: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+  payment: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
+  system: 'bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-400'
+}
+
+const typeClassMap: Record<string, string> = {
+  info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+  success: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+  warning: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
+  error: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+  order: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
+  payment: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
+  system: 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300'
+}
+
+const typeLabelMap: Record<string, string> = {
+  info: 'Info',
+  success: 'Success',
+  warning: 'Warning',
+  error: 'Error',
+  order: 'Order',
+  payment: 'Payment',
+  system: 'System'
+}
+
 function getNotificationIcon(type: string): string {
-  const iconMap: Record<string, string> = {
-    info: 'mdi:information',
-    success: 'mdi:check-circle',
-    warning: 'mdi:alert',
-    error: 'mdi:alert-circle',
-    order: 'mdi:shopping',
-    payment: 'mdi:credit-card',
-    system: 'mdi:cog'
-  }
   return iconMap[type] || 'mdi:bell'
 }
 
 function getNotificationIconClasses(type: string): string {
-  const classMap: Record<string, string> = {
-    info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-    success: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
-    warning: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
-    error: 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
-    order: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
-    payment: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
-    system: 'bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-400'
-  }
-  return classMap[type] || classMap.info
+  return iconClassMap[type] || iconClassMap.info
 }
 
 function getNotificationTypeClasses(type: string): string {
-  const classMap: Record<string, string> = {
-    info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-    success: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-    warning: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
-    error: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-    order: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
-    payment: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
-    system: 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300'
-  }
-  return classMap[type] || classMap.info
+  return typeClassMap[type] || typeClassMap.info
 }
 
 function formatNotificationType(type: string): string {
-  const labelMap: Record<string, string> = {
-    info: 'Info',
-    success: 'Success',
-    warning: 'Warning',
-    error: 'Error',
-    order: 'Order',
-    payment: 'Payment',
-    system: 'System'
-  }
-  return labelMap[type] || 'Info'
+  return typeLabelMap[type] || 'Info'
 }
 
 function formatTime(dateString: string): string {
@@ -443,6 +449,12 @@ function togglePanel() {
 }
 
 async function openPanel() {
+  if (!isLoggedIn.value) {
+    toast.warning('Login Required', 'Please login to view notifications')
+    router.push('/auth/login')
+    return
+  }
+
   isOpen.value = true
   await fetchNotifications(true)
 
@@ -472,8 +484,10 @@ function handleEscapeKey(event: KeyboardEvent) {
   }
 }
 
-/* ——— ✅ FIXED API Functions - Using Your Pattern ——— */
+/* ——— API Functions ——— */
 const fetchNotifications = async (reset = false) => {
+  if (!isLoggedIn.value) return
+
   try {
     isLoading.value = true
 
@@ -489,7 +503,7 @@ const fetchNotifications = async (reset = false) => {
       filter: currentFilter.value
     })
 
-    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications?${params}`, {
+    const res = await useSanctumFetch(`/api/account/notifications?${params}`, {
       method: 'GET'
     })
 
@@ -500,38 +514,50 @@ const fetchNotifications = async (reset = false) => {
         notifications.value.push(...res.data)
       }
 
-      meta.value = res.meta || {
-        current_page: 1,
-        last_page: 1,
-        per_page: 15,
-        total: res.data?.length || 0,
-        has_more: false,
-        unread_count: res.data?.filter((n: Notification) => !n.read_at).length || 0
+      if (res.meta) {
+        meta.value = {
+          current_page: res.meta.current_page || 1,
+          last_page: res.meta.last_page || 1,
+          per_page: res.meta.per_page || 15,
+          total: res.meta.total || 0,
+          has_more: res.meta.current_page < res.meta.last_page,
+          unread_count: res.meta.unread_count || 0
+        }
+      } else {
+        meta.value.total = res.data.length
+        meta.value.unread_count = res.data.filter((n: Notification) => !n.read_at).length
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('[✘] Failed to fetch notifications', error)
-    toast.error('Error', 'Failed to load notifications')
+
+    if (error?.statusCode !== 401) {
+      toast.error({ title: 'Error', message: 'Failed to load notifications' })
+    }
   } finally {
     isLoading.value = false
   }
 }
 
 const loadMoreNotifications = async () => {
-  if (!hasMoreNotifications.value || isLoading.value) return
+  if (!hasMoreNotifications.value || isLoading.value || !isLoggedIn.value) return
 
   currentPage.value += 1
   await fetchNotifications(false)
 }
 
 const refreshNotifications = async () => {
+  if (!isLoggedIn.value) return
+
   await fetchNotifications(true)
-  toast.success('Refreshed', 'Notifications updated')
+  toast.success({ title: 'Refreshed', message: 'Notifications updated' })
 }
 
 const markAsRead = async (notificationId: string) => {
+  if (!isLoggedIn.value) return
+
   try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications/${notificationId}/read`, {
+    const res = await useSanctumFetch(`/api/account/notifications/${notificationId}/read`, {
       method: 'POST'
     })
 
@@ -543,17 +569,19 @@ const markAsRead = async (notificationId: string) => {
       }
 
       activeMenuId.value = null
-      toast.success('Success', 'Notification marked as read')
+      toast.success({ title: 'Success', message: 'Notification marked as read' })
     }
   } catch (error) {
     console.error('[✘] Failed to mark notification as read', error)
-    toast.error('Error', 'Failed to mark notification as read')
+    toast.error({ title: 'Error', message: 'Failed to mark notification as read' })
   }
 }
 
 const markAsUnread = async (notificationId: string) => {
+  if (!isLoggedIn.value) return
+
   try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications/${notificationId}/unread`, {
+    const res = await useSanctumFetch(`/api/account/notifications/${notificationId}/unread`, {
       method: 'POST'
     })
 
@@ -565,18 +593,20 @@ const markAsUnread = async (notificationId: string) => {
       }
 
       activeMenuId.value = null
-      toast.success('Success', 'Notification marked as unread')
+      toast.success({ title: 'Success', message: 'Notification marked as unread' })
     }
   } catch (error) {
     console.error('[✘] Failed to mark notification as unread', error)
-    toast.error('Error', 'Failed to mark notification as unread')
+    toast.error({ title: 'Error', message: 'Failed to mark notification as unread' })
   }
 }
 
 const markAllAsRead = async () => {
+  if (!isLoggedIn.value) return
+
   try {
     isLoading.value = true
-    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications/mark-all-read`, {
+    const res = await useSanctumFetch(`/api/account/notifications/mark-all-read`, {
       method: 'POST'
     })
 
@@ -588,19 +618,21 @@ const markAllAsRead = async () => {
       })
 
       meta.value.unread_count = 0
-      toast.success('Success', 'All notifications marked as read')
+      toast.success({ title: 'Success', message: 'All notifications marked as read' })
     }
   } catch (error) {
     console.error('[✘] Failed to mark all notifications as read', error)
-    toast.error('Error', 'Failed to mark all notifications as read')
+    toast.error({ title: 'Error', message: 'Failed to mark all notifications as read' })
   } finally {
     isLoading.value = false
   }
 }
 
 const deleteNotification = async (notificationId: string) => {
+  if (!isLoggedIn.value) return
+
   try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications/${notificationId}`, {
+    const res = await useSanctumFetch(`/api/account/notifications/${notificationId}`, {
       method: 'DELETE'
     })
 
@@ -617,22 +649,24 @@ const deleteNotification = async (notificationId: string) => {
       }
 
       activeMenuId.value = null
-      toast.success('Success', 'Notification deleted')
+      toast.success({ title: 'Success', message: 'Notification deleted' })
     }
   } catch (error) {
     console.error('[✘] Failed to delete notification', error)
-    toast.error('Error', 'Failed to delete notification')
+    toast.error({ title: 'Error', message: 'Failed to delete notification' })
   }
 }
 
 const confirmClearAll = async () => {
+  if (!isLoggedIn.value) return
+
   if (!confirm('Are you sure you want to clear all notifications? This action cannot be undone.')) {
     return
   }
 
   try {
     isLoading.value = true
-    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications/clear-all`, {
+    const res = await useSanctumFetch(`/api/account/notifications/clear-all`, {
       method: 'DELETE'
     })
 
@@ -641,11 +675,11 @@ const confirmClearAll = async () => {
       meta.value.total = 0
       meta.value.unread_count = 0
 
-      toast.success('Success', 'All notifications cleared')
+      toast.success({ title: 'Success', message: 'All notifications cleared' })
     }
   } catch (error) {
     console.error('[✘] Failed to clear all notifications', error)
-    toast.error('Error', 'Failed to clear all notifications')
+    toast.error({ title: 'Error', message: 'Failed to clear all notifications' })
   } finally {
     isLoading.value = false
   }
@@ -662,14 +696,12 @@ function handleNotificationClick(notification: Notification) {
 
 function viewNotification(notification: Notification) {
   if (notification.url) {
-    // Mark as read if not already
     if (!notification.read_at) {
       markAsRead(notification.id)
     }
 
     closePanel()
 
-    // Navigate to the notification URL
     if (notification.url.startsWith('http')) {
       window.open(notification.url, '_blank')
     } else {
@@ -691,14 +723,18 @@ function setFilter(filter: string) {
 }
 
 /* ——— Lifecycle ——— */
-onMounted(() => {
-  // Fetch initial notifications
-  fetchNotifications(true)
-})
-
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
   document.removeEventListener('keydown', handleEscapeKey)
+})
+
+// Watch for login status changes
+watch(isLoggedIn, (newValue) => {
+  if (!newValue) {
+    notifications.value = []
+    meta.value.unread_count = 0
+    closePanel()
+  }
 })
 </script>
 

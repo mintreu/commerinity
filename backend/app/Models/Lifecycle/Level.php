@@ -37,6 +37,10 @@ class Level extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'url';
+    }
 
     public function stage(): BelongsTo
     {

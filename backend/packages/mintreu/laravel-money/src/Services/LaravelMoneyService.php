@@ -82,8 +82,8 @@ class LaravelMoneyService
 
     public function add(LaravelMoneyService|Money|string|int|float|null $amount = 0, ?string $currency = null): static
     {
-        $givenMoney = self::make($amount,$currency)->money;
-        $this->money->add($givenMoney);
+        $givenMoney =  self::make($amount,$currency)->money;
+        $this->money = $this->money->add($givenMoney);
         return $this;
     }
 
@@ -91,7 +91,7 @@ class LaravelMoneyService
     {
         $givenMoney = self::make($amount,$currency)->money;
         $newInstance = clone $this;
-        $newInstance->money->add($givenMoney);
+        $newInstance->money = $newInstance->money->add($givenMoney);
         return $newInstance;
     }
 
@@ -99,7 +99,7 @@ class LaravelMoneyService
     public function subtract(LaravelMoneyService|Money|string|int|float|null $amount = 0,?string $currency = null): static
     {
         $givenMoney = self::make($amount,$currency)->money;
-        $this->money->subtract($givenMoney);
+        $this->money = $this->money->subtract($givenMoney);
         return $this;
     }
 
@@ -107,7 +107,7 @@ class LaravelMoneyService
     {
         $givenMoney = self::make($amount,$currency)->money;
         $newInstance = clone $this;
-        $newInstance->money->subtract($givenMoney);
+        $newInstance->money = $newInstance->money->subtract($givenMoney);
         return $newInstance;
     }
 
@@ -169,9 +169,19 @@ class LaravelMoneyService
         return $this->money->greaterThan($other->money);
     }
 
+    public function greaterThanOrEqual(self $other)
+    {
+        return $this->money->greaterThanOrEqual($other->money);
+    }
+
     public function lessThan(self $other): bool
     {
         return $this->money->lessThan($other->money);
+    }
+
+    public function lessThanOrEqual(self $other)
+    {
+        return $this->money->lessThanOrEqual($other->money);
     }
 
     public function compare(self $other): int

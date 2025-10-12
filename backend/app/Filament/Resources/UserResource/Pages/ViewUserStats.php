@@ -4,7 +4,9 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -37,6 +39,17 @@ class ViewUserStats extends ViewRecord
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
+                        Tabs\Tab::make('Team Rewards')
+                            ->schema([
+                                RepeatableEntry::make('children')
+                                    ->schema([
+
+                                        TextEntry::make('name'),
+                                    ]),
+                            ]),
+
+
+
 //                        Tabs\Tab::make('Shopping Rewards')
 //                            ->schema([]),
 //                        Tabs\Tab::make('Team Rewards')

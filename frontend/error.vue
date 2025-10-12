@@ -4,7 +4,6 @@ import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useRuntimeConfig } from '#app'
 import { gsap } from 'gsap'
-import * as Sentry from '@sentry/nuxt'
 
 // Type for incoming error prop
 import type { NuxtError } from '#app'
@@ -29,17 +28,32 @@ const stack = computed(() => {
   return props.error?.stack ?? props.error?.meta?.stack ?? (typeof props.error === 'string' ? props.error : '')
 })
 
-function sendErrorToSentry(include404 = false) {
+// ✅ Send error to backend API
+async function logErrorToBackend(include404 = false) {
   if (statusCode.value === 404 && !include404) return
-  Sentry.captureException(new Error(`[${statusCode.value}] ${message.value}`), {
-    extra: {
-      statusCode: statusCode.value,
-      message: message.value,
-      stack: stack.value,
-      url: window.location.href,
-      route: route.fullPath,
-    }
-  })
+
+  // Only log in production
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn('Error logging disabled in dev mode')
+    return
+  }
+
+  try {
+    await $fetch(`${config.public.apiBase}/log-error`, {
+      method: 'POST',
+      body: {
+        statusCode: statusCode.value,
+        message: message.value,
+        stack: stack.value,
+        url: window.location.href,
+        route: route.fullPath,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+      }
+    })
+  } catch (error) {
+    console.error('Failed to log error to backend:', error)
+  }
 }
 
 onMounted(() => {
@@ -52,8 +66,9 @@ onMounted(() => {
     ease: 'power2.out'
   })
 
+  // ✅ Auto-log error on page load (except 404s)
   if (!isDev) {
-    sendErrorToSentry(false)
+    logErrorToBackend(false)
   }
 })
 
@@ -66,7 +81,11 @@ function tryBack() {
 
 async function copyError() {
   try {
-    const payload = JSON.stringify({ statusCode: statusCode.value, message: message.value, stack: stack.value }, null, 2)
+    const payload = JSON.stringify({
+      statusCode: statusCode.value,
+      message: message.value,
+      stack: stack.value
+    }, null, 2)
     await navigator.clipboard.writeText(payload)
     copied.value = true
     setTimeout(() => (copied.value = false), 2000)
@@ -76,7 +95,8 @@ async function copyError() {
 }
 
 function reportIssue() {
-  sendErrorToSentry(true)
+  // ✅ Log error (including 404s when manually reported)
+  logErrorToBackend(true)
 
   const subject = encodeURIComponent(`Error report: ${statusCode.value} - ${message.value}`)
   const body = encodeURIComponent(

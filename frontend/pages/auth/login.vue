@@ -1,6 +1,6 @@
 <template>
   <!-- Desktop: Side-by-side layout, Mobile: Stacked layout -->
-  <div class="min-h-screen w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-900 dark:to-purple-900 flex relative overflow-hidden">
+  <div class="min-h-screen w-full  bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-900 dark:to-purple-900 flex relative overflow-hidden">
 
     <!-- Floating Background Elements (Global) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
@@ -454,23 +454,23 @@
           </form>
 
           <!-- Divider -->
-          <div class="relative my-8">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-slate-200 dark:border-slate-700"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-              <span class="px-4 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400">Quick Login</span>
-            </div>
-          </div>
+<!--          <div class="relative my-8">-->
+<!--            <div class="absolute inset-0 flex items-center">-->
+<!--              <div class="w-full border-t border-slate-200 dark:border-slate-700"></div>-->
+<!--            </div>-->
+<!--            <div class="relative flex justify-center text-sm">-->
+<!--              <span class="px-4 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400">Quick Login</span>-->
+<!--            </div>-->
+<!--          </div>-->
 
           <!-- Social Login -->
-          <button
-              @click="loginWithGoogle"
-              class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg group"
-          >
-            <Icon name="logos:google-icon" class="w-5 h-5 group-hover:scale-110 transition-transform" />
-            <span>Continue with Google</span>
-          </button>
+<!--          <button-->
+<!--              @click="loginWithGoogle"-->
+<!--              class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg group"-->
+<!--          >-->
+<!--            <Icon name="logos:google-icon" class="w-5 h-5 group-hover:scale-110 transition-transform" />-->
+<!--            <span>Continue with Google</span>-->
+<!--          </button>-->
 
           <!-- Guest Shopping Option -->
           <div class="mt-6 p-4 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-700/50 dark:to-slate-600/50 rounded-xl border border-slate-200/60 dark:border-slate-600/60 text-center">

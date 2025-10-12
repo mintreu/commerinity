@@ -114,14 +114,8 @@ return [
                 'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Paytm\PaytmPaymentProvider::class,
             ],
 
-            // ✅ Cash on Delivery (manual provider)
-            'cod' => [
-                'key'      => null,
-                'secret'   => null,
-                'webhook'  => null,
-                'manual'   => true, // custom flag to indicate no API calls needed
-                'provider' => \App\Integrations\Payment\CODPaymentProvider::class,
-            ],
+
+
 
 
         ],

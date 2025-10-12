@@ -1,25 +1,20 @@
 <template>
-  <div class="dashboard-layout min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950 transition-all duration-500">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950">
 
     <!-- Background Effects -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">
-      <!-- Floating Orbs -->
-      <div ref="dashboardOrb1" class="dashboard-orb-1 absolute -top-20 -left-20 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl opacity-60 will-change-transform"></div>
-      <div ref="dashboardOrb2" class="dashboard-orb-2 absolute -bottom-20 -right-20 w-80 h-80 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl opacity-70 will-change-transform"></div>
-
-      <!-- Grid Pattern -->
-      <div class="dashboard-grid absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
-           style="background-image: radial-gradient(circle, #3b82f6 1px, transparent 1px); background-size: 50px 50px;"></div>
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+      <div ref="orb1" class="orb absolute -top-20 -left-20 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl opacity-60"></div>
+      <div ref="orb2" class="orb absolute -bottom-20 -right-20 w-80 h-80 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl opacity-70"></div>
+      <div class="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]" style="background-image:radial-gradient(circle,#3b82f6 1px,transparent 1px);background-size:50px 50px"></div>
     </div>
 
     <!-- Dashboard Container -->
-    <div class="dashboard-container relative z-10 flex min-h-screen">
+    <div class="relative z-10 flex min-h-screen">
 
       <!-- Desktop Sidebar -->
       <aside
-          class="dashboard-sidebar hidden md:block fixed left-0 top-0 h-full z-30 transition-all duration-300 ease-in-out"
+          class="hidden md:block fixed left-0 top-0 h-full z-30 transition-all duration-300"
           :class="collapsed ? 'w-20' : 'w-64'"
-          ref="desktopSidebar"
       >
         <DashboardSidebar
             :collapsed="collapsed"
@@ -31,12 +26,12 @@
 
       <!-- Main Content Area -->
       <div
-          class="dashboard-main flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out"
+          class="flex-1 flex flex-col min-h-screen transition-all duration-300"
           :class="collapsed ? 'md:ml-20' : 'md:ml-64'"
       >
 
-        <!-- Full-Width Top Bar -->
-        <header class="dashboard-topbar sticky top-0 z-40 w-full" ref="dashboardTopbar">
+        <!-- Top Bar -->
+        <header class="sticky top-0 z-40 w-full">
           <DashboardTopbar
               :collapsed="collapsed"
               :mobileOpen="mobileOpen"
@@ -46,37 +41,32 @@
         </header>
 
         <!-- Onboarding Banner -->
-        <div v-if="showOnboarding" class="onboarding-section" ref="onboardingSection">
+        <div v-if="showOnboarding">
           <OnboardingBanner @close="showOnboarding = false" />
         </div>
 
-        <!-- Main Content -->
-        <main class="dashboard-content flex-1 overflow-y-auto" ref="dashboardContent">
-          <div class="content-wrapper p-4 md:p-8">
-            <div class="content-container max-w-full mx-auto">
-              <!-- Content slot with fade transition -->
-              <transition name="content-fade" mode="out-in">
-                <slot />
-              </transition>
-            </div>
+        <!-- Main Content - ✅ FIXED: No Transition wrapper -->
+        <main class="flex-1 overflow-y-auto custom-scrollbar">
+          <div class="p-4 md:p-8">
+            <slot />
           </div>
         </main>
 
         <!-- Footer -->
-        <footer class="dashboard-footer mt-auto p-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-800/50">
-          <div class="footer-content max-w-full mx-auto">
+        <footer class="mt-auto p-6 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-800/50">
+          <div class="max-w-full mx-auto">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div class="footer-info text-sm text-gray-600 dark:text-gray-400">
-                <p>&copy; {{ currentYear }} {{ websiteName }}. All rights reserved.</p>
-              </div>
-              <div class="footer-links flex items-center gap-6">
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                &copy; {{ currentYear }} {{ websiteName }}. All rights reserved.
+              </p>
+              <div class="flex items-center gap-6">
                 <NuxtLink to="/privacy" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Privacy
                 </NuxtLink>
                 <NuxtLink to="/terms" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Terms
                 </NuxtLink>
-                <NuxtLink to="/support" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <NuxtLink to="/dashboard/helpdesk" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Support
                 </NuxtLink>
               </div>
@@ -87,20 +77,19 @@
     </div>
 
     <!-- Mobile Sidebar Overlay -->
-    <transition name="mobile-overlay">
+    <transition name="fade">
       <div
           v-if="mobileOpen"
           @click="closeMobileSidebar"
-          class="mobile-sidebar-overlay fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
-      ></div>
+          class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
+      />
     </transition>
 
     <!-- Mobile Sidebar -->
-    <transition name="mobile-sidebar">
+    <transition name="slide">
       <aside
           v-if="mobileOpen"
-          class="mobile-sidebar-drawer fixed top-0 left-0 h-full w-80 max-w-[85vw] z-[70] md:hidden"
-          ref="mobileSidebar"
+          class="fixed top-0 left-0 h-full w-80 max-w-[85vw] z-[70] md:hidden"
       >
         <DashboardSidebar
             :collapsed="false"
@@ -111,30 +100,20 @@
       </aside>
     </transition>
 
-    <!-- Enhanced Mobile Bottom Navigation -->
-    <nav class="mobile-bottom-nav md:hidden">
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden">
       <BottomNavBar />
     </nav>
 
     <!-- Loading Overlay -->
-    <transition name="loading-overlay">
-      <div v-if="isLoading" class="loading-overlay fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-[100] flex items-center justify-center">
-        <div class="loading-content flex flex-col items-center gap-4">
-          <div class="loading-spinner w-12 h-12 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
+    <transition name="fade">
+      <div v-if="isLoading" class="fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-[100] flex items-center justify-center">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-12 h-12 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
           <p class="text-gray-600 dark:text-gray-400 font-semibold">Loading...</p>
         </div>
       </div>
     </transition>
-
-    <!-- Performance Monitoring (Development Only) -->
-    <div v-if="isDevelopment" class="dev-tools fixed bottom-4 left-4 z-[90] opacity-50 hover:opacity-100 transition-opacity">
-      <div class="dev-info bg-black/80 text-white text-xs p-2 rounded">
-        <div>Collapsed: {{ collapsed }}</div>
-        <div>Mobile: {{ isMobile }}</div>
-        <div>Mobile Open: {{ mobileOpen }}</div>
-        <div>Screen: {{ screenSize }}</div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -146,71 +125,46 @@ import DashboardTopbar from '~/components/ui/Navbar/DashboardTopbar.vue'
 import BottomNavBar from '~/components/ui/BottomNavBar.vue'
 import OnboardingBanner from '~/components/onboarding/OnboardingBanner.vue'
 
-// GSAP imports (client-side only)
+// ✅ Optimized GSAP
 let gsap: any = null
-
-if (process.client) {
-  import('gsap').then(({ default: gsapModule }) => {
-    gsap = gsapModule
-  })
-}
+let gsapContext: any = null
 
 // Composables
 const route = useRoute()
 const config = useRuntimeConfig()
 const websiteName = config.public.websiteName
 
-// State Management
+// State
 const collapsed = ref(false)
 const mobileOpen = ref(false)
 const isMobile = ref(false)
 const isLoading = ref(false)
-const showOnboarding = ref(true)
-const screenSize = ref({ width: 0, height: 0 })
+const showOnboarding = ref(false) // ✅ Changed to false by default
 
-// Refs for animations
-const dashboardOrb1 = ref<HTMLElement>()
-const dashboardOrb2 = ref<HTMLElement>()
-const desktopSidebar = ref<HTMLElement>()
-const dashboardTopbar = ref<HTMLElement>()
-const onboardingSection = ref<HTMLElement>()
-const dashboardContent = ref<HTMLElement>()
-const mobileSidebar = ref<HTMLElement>()
+// Refs for GSAP
+const orb1 = ref<HTMLElement>()
+const orb2 = ref<HTMLElement>()
 
-let gsapContext: any = null
-let resizeTimeout: number | null = null
+let resizeTimeout: NodeJS.Timeout | null = null
 
-// Computed Properties
+// Computed
 const currentYear = computed(() => new Date().getFullYear())
 
-const isDevelopment = computed(() => {
-  return process.client && process.env.NODE_ENV === 'development'
-})
-
-// Responsive Handler
+// ✅ Debounced Responsive Handler
 function handleResize() {
-  if (resizeTimeout) {
-    clearTimeout(resizeTimeout)
-  }
+  if (resizeTimeout) clearTimeout(resizeTimeout)
 
   resizeTimeout = setTimeout(() => {
-    if (process.client) {
-      const newIsMobile = window.innerWidth < 768
-      screenSize.value = {
-        width: window.innerWidth,
-        height: window.innerHeight
-      }
+    if (!process.client) return
 
-      if (isMobile.value !== newIsMobile) {
-        isMobile.value = newIsMobile
-
-        // Close mobile sidebar when switching to desktop
-        if (!newIsMobile && mobileOpen.value) {
-          mobileOpen.value = false
-        }
+    const newIsMobile = window.innerWidth < 768
+    if (isMobile.value !== newIsMobile) {
+      isMobile.value = newIsMobile
+      if (!newIsMobile && mobileOpen.value) {
+        mobileOpen.value = false
       }
     }
-  }, 100)
+  }, 150)
 }
 
 // Sidebar Controls
@@ -225,8 +179,6 @@ function toggleSidebar() {
 
 function toggleMobileSidebar() {
   mobileOpen.value = !mobileOpen.value
-
-  // Add haptic feedback
   if (process.client && 'vibrate' in navigator) {
     navigator.vibrate(50)
   }
@@ -240,9 +192,9 @@ function closeMobileSidebar() {
 function saveCollapsedState() {
   if (process.client) {
     try {
-      localStorage.setItem('dashboard-sidebar-collapsed', collapsed.value.toString())
-    } catch (error) {
-      console.warn('Could not save sidebar state:', error)
+      localStorage.setItem('dashboard-sidebar-collapsed', String(collapsed.value))
+    } catch (e) {
+      console.warn('Could not save sidebar state')
     }
   }
 }
@@ -254,147 +206,101 @@ function loadCollapsedState() {
       if (saved !== null) {
         collapsed.value = saved === 'true'
       }
-    } catch (error) {
-      console.warn('Could not load sidebar state:', error)
+    } catch (e) {
+      console.warn('Could not load sidebar state')
     }
   }
 }
 
-// Animations
-function initializeAnimations() {
-  if (!process.client || !gsap) return
+// ✅ OPTIMIZED GSAP
+async function initGSAP() {
+  if (!process.client || gsap) return
 
-  gsapContext = gsap.context(() => {
-    // Floating orbs animation
-    if (dashboardOrb1.value && dashboardOrb2.value) {
-      gsap.to(dashboardOrb1.value, {
-        x: 100,
-        y: 50,
-        rotation: 180,
-        duration: 20,
-        repeat: -1,
-        yoyo: true,
-        ease: 'none'
-      })
+  try {
+    const gsapModule = await import('gsap')
+    gsap = gsapModule.default
 
-      gsap.to(dashboardOrb2.value, {
-        x: -80,
-        y: -60,
-        rotation: -120,
-        duration: 25,
-        repeat: -1,
-        yoyo: true,
-        ease: 'none'
-      })
-    }
+    gsapContext = gsap.context(() => {
+      if (orb1.value) {
+        gsap.to(orb1.value, {
+          x: 80,
+          y: 40,
+          rotation: 180,
+          duration: 30,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          force3D: true
+        })
+      }
 
-    // Entrance animations
-    const elements = [
-      desktopSidebar.value,
-      dashboardTopbar.value,
-      dashboardContent.value
-    ].filter(Boolean)
-
-    if (elements.length > 0) {
-      gsap.fromTo(elements,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: 'power2.out'
-          }
-      )
-    }
-  })
+      if (orb2.value) {
+        gsap.to(orb2.value, {
+          x: -60,
+          y: -50,
+          rotation: -120,
+          duration: 35,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          force3D: true
+        })
+      }
+    })
+  } catch (error) {
+    console.warn('GSAP failed to load')
+  }
 }
 
-// Route Change Handler
+// ✅ Route Change Handler - Fixed
 function handleRouteChange() {
-  // Close mobile sidebar on route change
   if (mobileOpen.value) {
     mobileOpen.value = false
   }
-
-  // Add loading state for smooth transitions
-  isLoading.value = true
-
-  nextTick(() => {
-    setTimeout(() => {
-      isLoading.value = false
-    }, 300)
-  })
 }
 
 // Watchers
 watch(() => route.path, handleRouteChange)
 
 // Keyboard Shortcuts
-function handleKeydown(event: KeyboardEvent) {
-  // Toggle sidebar with Ctrl/Cmd + B
-  if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
-    event.preventDefault()
+function handleKeydown(e: KeyboardEvent) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+    e.preventDefault()
     toggleSidebar()
   }
 
-  // Close mobile sidebar with Escape
-  if (event.key === 'Escape' && mobileOpen.value) {
-    event.preventDefault()
+  if (e.key === 'Escape' && mobileOpen.value) {
+    e.preventDefault()
     closeMobileSidebar()
-  }
-}
-
-// Initialize client-side functionality
-function initializeClientSide() {
-  if (process.client) {
-    // Set initial mobile state
-    isMobile.value = window.innerWidth < 768
-    screenSize.value = {
-      width: window.innerWidth,
-      height: window.innerHeight
-    }
-
-    // Add event listeners
-    window.addEventListener('resize', handleResize, { passive: true })
-    document.addEventListener('keydown', handleKeydown)
-
-    // Load saved preferences
-    loadCollapsedState()
-
-    // Initialize animations
-    setTimeout(() => {
-      initializeAnimations()
-    }, 100)
-  }
-}
-
-// Cleanup function
-function cleanup() {
-  if (process.client) {
-    window.removeEventListener('resize', handleResize)
-    document.removeEventListener('keydown', handleKeydown)
-
-    if (resizeTimeout) {
-      clearTimeout(resizeTimeout)
-    }
-  }
-
-  if (gsapContext) {
-    gsapContext.kill()
   }
 }
 
 // Lifecycle
 onMounted(() => {
-  initializeClientSide()
+  if (!process.client) return
+
+  isMobile.value = window.innerWidth < 768
+  loadCollapsedState()
+
+  window.addEventListener('resize', handleResize, { passive: true })
+  document.addEventListener('keydown', handleKeydown)
+
+  requestAnimationFrame(() => {
+    initGSAP()
+  })
 })
 
 onUnmounted(() => {
-  cleanup()
+  if (!process.client) return
+
+  window.removeEventListener('resize', handleResize)
+  document.removeEventListener('keydown', handleKeydown)
+
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  if (gsapContext) gsapContext.kill()
 })
 
-// SEO and Meta
+// SEO
 useHead({
   bodyAttrs: {
     class: 'dashboard-page'
@@ -403,211 +309,67 @@ useHead({
 </script>
 
 <style scoped>
-/* Performance optimizations */
-.will-change-transform {
-  will-change: transform;
-}
-
-/* Dashboard Layout */
-.dashboard-layout {
-  min-height: 100vh;
-  min-height: 100dvh; /* For better mobile support */
-}
-
-.dashboard-container {
-  min-height: inherit;
-}
-
-/* Background Effects */
-.dashboard-orb-1,
-.dashboard-orb-2 {
-  will-change: transform;
-}
-
-/* Sidebar */
-.dashboard-sidebar {
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Main Content */
-.dashboard-main {
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-width: 0; /* Prevent flex item from overflowing */
-}
-
-.dashboard-topbar {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.dashboard-content {
-  min-height: calc(100vh - 80px); /* Adjust based on topbar height */
-}
-
-.content-wrapper {
-  min-height: 100%;
-}
-
-/* Footer */
-.dashboard-footer {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* Mobile Sidebar */
-.mobile-sidebar-drawer {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
 /* Transitions */
-.mobile-overlay-enter-active,
-.mobile-overlay-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.3s ease;
 }
-
-.mobile-overlay-enter-from,
-.mobile-overlay-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
-.mobile-sidebar-enter-active,
-.mobile-sidebar-leave-active {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.mobile-sidebar-enter-from,
-.mobile-sidebar-leave-to {
+.slide-enter-from,
+.slide-leave-to {
   transform: translateX(-100%);
 }
 
-.content-fade-enter-active,
-.content-fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.content-fade-enter-from,
-.content-fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.loading-overlay-enter-active,
-.loading-overlay-leave-active {
-  transition: all 0.3s ease;
-}
-
-.loading-overlay-enter-from,
-.loading-overlay-leave-to {
-  opacity: 0;
-}
-
-/* Development Tools */
-.dev-tools {
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
-}
-
-.dev-info {
-  min-width: 120px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* Responsive Design */
-@media (max-width: 767px) {
-  .dashboard-main {
-    margin-left: 0 !important;
-  }
-
-  .dashboard-content {
-    min-height: calc(100vh - 140px); /* Account for top bar and bottom nav */
-  }
-}
-
-@media (min-width: 768px) {
-  .mobile-bottom-nav {
-    display: none;
-  }
-}
-
-/* Dark mode enhancements */
-@media (prefers-color-scheme: dark) {
-  .dashboard-footer {
-    background: rgba(17, 24, 39, 0.5);
-  }
-}
-
-/* Smooth scrolling */
-.dashboard-content {
+/* Custom Scrollbar */
+.custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgb(156 163 175 / 0.3) transparent;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
 }
 
-.dashboard-content::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
 
-.dashboard-content::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.dashboard-content::-webkit-scrollbar-thumb {
-  background-color: rgb(156 163 175 / 0.3);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
   border-radius: 4px;
 }
 
-.dashboard-content::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(107 114 128 / 0.5);
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.5);
 }
 
-/* Loading states */
-.loading-spinner {
-  animation: spin 1s linear infinite;
+/* Orbs */
+.orb {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Focus management */
-.dashboard-layout:focus-within .dashboard-content {
-  scroll-behavior: smooth;
-}
-
-/* Print styles */
-@media print {
-  .dashboard-sidebar,
-  .dashboard-topbar,
-  .mobile-bottom-nav,
-  .dashboard-footer,
-  .dev-tools {
-    display: none !important;
-  }
-
-  .dashboard-main {
-    margin: 0 !important;
-  }
-
-  .dashboard-content {
-    overflow: visible !important;
+/* Responsive */
+@media (max-width: 767px) {
+  .custom-scrollbar {
+    min-height: calc(100vh - 140px);
   }
 }
 
-/* Performance improvements */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-orb-1,
-  .dashboard-orb-2 {
+  .orb {
     animation: none !important;
   }
-
   * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

@@ -1,22 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{Auth\AuthController,
-    Auth\SanctumUserController,
+use App\Http\Controllers\Api\{Auth\SanctumUserController,
     BeneficiaryController,
+    CartController,
     CategoryController,
     FlashDealController,
     HelpDeskController,
-    PageController,
-    SaleController,
-    WalletController,
-    ProductController,
-    CartController,
-    OrderController,
-    TransactionController,
     IntegrationController,
+    LifecycleController,
+    OrderController,
+    PageController,
+    PostApiController,
     RecruitmentController,
-    LifecycleController};
+    SaleController,
+    TransactionController,
+    WalletController};
+use Illuminate\Support\Facades\Route;
 
 // ========================
 // 🔐 AUTH / ACCOUNT ROUTES
@@ -112,11 +111,14 @@ Route::prefix('categories')->group(function () {
 
 Route::prefix('product')->group(function (){
     // Comments Engagements
-    Route::get('engagements/{product:url}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'index']);
-    Route::post('engagement/{product:url}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'store'])->middleware(['auth:sanctum']);
-    Route::put('engagement/{product_engagement}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'update'])->middleware(['auth:sanctum']);
-    Route::delete('engagement/{product_engagement}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'destroy'])->middleware(['auth:sanctum']);
-    Route::post('engagement/{product_engagement}/helpfull', [\App\Http\Controllers\Api\ProductEngagementController::class, 'helpFullEngagement'])->middleware(['auth:sanctum']);
+    Route::get('engagements/{product:url}', [\App\Http\Controllers\Api\Product\ProductEngagementController::class, 'index']);
+    Route::post('engagement/{product:url}', [\App\Http\Controllers\Api\Product\ProductEngagementController::class, 'store'])->middleware(['auth:sanctum']);
+    Route::put('engagement/{product_engagement}', [\App\Http\Controllers\Api\Product\ProductEngagementController::class, 'update'])->middleware(['auth:sanctum']);
+    Route::delete('engagement/{product_engagement}', [\App\Http\Controllers\Api\Product\ProductEngagementController::class, 'destroy'])->middleware(['auth:sanctum']);
+    Route::post('engagement/{product_engagement}/helpfull', [\App\Http\Controllers\Api\Product\ProductEngagementController::class, 'helpFullEngagement'])->middleware(['auth:sanctum']);
+
+    Route::post('wishlist/{product:url}',[\App\Http\Controllers\Api\Product\ProductWishlistController::class,'addWishlist']);
+    Route::delete('wishlist/{product:url}',[\App\Http\Controllers\Api\Product\ProductWishlistController::class,'removeWishlist']);
 });
 
 
@@ -138,6 +140,7 @@ Route::prefix('flash-deals')->group(function () {
 // ========================
 Route::prefix('cart')->group(function () {
     Route::post('guest-credential', [CartController::class, 'ensureGuestCartCredential']); // POST /cart/guest-credential
+    Route::post('validate/guest-credential', [CartController::class, 'validateGuestCartCredential']); // POST /cart/guest-credential
     Route::get('/', [CartController::class, 'index']); // GET /cart
     Route::post('add/{product:sku}', [CartController::class, 'addProduct']); // POST /cart/add/{sku}
     Route::post('update/{product:sku}', [CartController::class, 'updateProduct']); // POST /cart/update/{sku}
@@ -239,4 +242,7 @@ Route::post('/contact/business', [\App\Http\Controllers\Api\InquiryController::c
 
 
 
-
+Route::prefix('blogs')->group(function () {
+    Route::get('/', [PostApiController::class, 'index'])->name('api.posts.index');
+    Route::get('/{post:url}', [PostApiController::class, 'show'])->name('api.posts.show');
+});

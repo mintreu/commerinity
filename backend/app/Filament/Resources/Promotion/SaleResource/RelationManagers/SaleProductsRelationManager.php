@@ -7,10 +7,6 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Mintreu\LaravelCommerinity\Casts\SaleActionTypeCast;
 use Mintreu\LaravelMoney\Filament\Tables\Columns\MoneyColumn;
 
 class SaleProductsRelationManager extends RelationManager

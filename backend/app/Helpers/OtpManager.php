@@ -2,8 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Mail\OtpMail;
+use App\Models\Distributor;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Mintreu\LaravelIntegration\LaravelIntegration;
 use Random\RandomException;
 
@@ -210,19 +214,17 @@ class OtpManager
      */
     private function sendOtpViaEmail(string $email, int $otp): bool
     {
-        $user = new class($email) {
-            public string $email;
-            public function __construct(string $email)
-            {
-                $this->email = $email;
-            }
-            public function routeNotificationForMail(): string
-            {
-                return $this->email;
-            }
-        };
+        // Try to find existing user or distributor
+        $existUser = User::firstWhere('email', $email)
+            ?? Distributor::firstWhere('email', $email);
 
-        $user->notify(new \App\Notifications\OtpNotification($otp));
+        if ($existUser) {
+            // ✅ Existing user or distributor — use Laravel Notification
+            $existUser->notify(new \App\Notifications\OtpNotification($otp));
+        } else {
+            // ✅ No existing user — send mail directly (for registration)
+            Mail::to($email)->send(new OtpMail($otp, 'registration'));
+        }
 
         return true;
     }

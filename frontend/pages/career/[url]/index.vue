@@ -98,7 +98,7 @@
       <section class="thumbnail-section py-20 px-6 bg-white dark:bg-gray-900 relative">
         <div class="max-w-4xl mx-auto">
           <div class="thumbnail-container relative rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-500">
-            <NuxtImg
+            <img
                 :src="job.thumbnail"
                 :alt="job.name"
                 class="w-full h-96 sm:h-[500px] object-cover"

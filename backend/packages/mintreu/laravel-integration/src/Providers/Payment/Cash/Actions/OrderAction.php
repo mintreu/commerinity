@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Mintreu\LaravelIntegration\Providers\Payment\Cash\CashPaymentProvider;
 use Mintreu\LaravelIntegration\Providers\Payment\Cash\Support\OrderWrapper;
 use Mintreu\LaravelIntegration\Support\ProviderOrder;
+use Mintreu\LaravelMoney\LaravelMoney;
 
 class OrderAction
 {
@@ -41,14 +42,14 @@ class OrderAction
             'data' => [
                 'checkout_type' => 'standard',
                 // Provider order id (multiple fallbacks)
-                'provider_gen_id' => Str::ulid(),
+                'provider_gen_id' => 'cash_'.Str::ulid(),
                 // Provider generated links
                 'provider_gen_link' => null,
                 'provider_gen_session' => null,
                 'provider_transaction_id' => '',
                 'provider_generated_sign' => '',
                 // Amount fallback chain
-                'amount' => $data['amount'],
+                'amount' => LaravelMoney::make($data['amount'])->getAmount(),
                 // URLs
                 'success_url' => '',
                 'failure_url' => '',

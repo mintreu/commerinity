@@ -5,7 +5,9 @@ namespace App\Services\UserServices\NetworkServices;
 
 
 use App\Models\User;
+use App\Services\UserServices\NetworkServices\Support\MemberTreeList;
 use App\Services\UserServices\NetworkServices\Support\ParentPredictor;
+use Illuminate\Database\Eloquent\Model;
 
 class NetworkService
 {
@@ -18,7 +20,7 @@ class NetworkService
     }
 
 
-    public static function make(User $record): static
+    public static function make(User|Model $record): static
     {
         return new static($record);
     }
@@ -41,6 +43,18 @@ class NetworkService
 
 
     }
+
+
+    public function getTree(): MemberTreeList
+    {
+        return MemberTreeList::make($this->record)
+            ->withDepth(5)        // Maximum 5 levels deep
+            ->withLimit(5);        // Maximum 5 children per node (5x5 matrix);
+    }
+
+
+
+
 
     public function calculateCommission()
     {

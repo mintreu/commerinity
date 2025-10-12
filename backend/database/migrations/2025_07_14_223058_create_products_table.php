@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name')->default('Unnamed Product');
             $table->string('sku')->unique();
             $table->string('url')->unique();
-            $table->string('type');
+            $table->string('hsn')->nullable();
+            $table->string('type')->nullable();
             $table->foreignId('filter_group_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->cascadeOnUpdate()->cascadeOnDelete();
             $table->nullableMorphs('tenant');

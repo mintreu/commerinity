@@ -6,19 +6,32 @@ export default defineNuxtConfig({
 
     css: ['~/assets/css/main.css'],
 
+    vite: {
+        optimizeDeps: {
+            include: ['lodash-es']
+        }
+    },
+    // ✅ PostCSS Configuration
+    postcss: {
+        plugins: {
+            tailwindcss: {},
+            autoprefixer: {},
+
+        },
+    },
+
     // ✅ Removed @nuxt/image module
     modules: [
         '@nuxt/icon',
         '@qirolab/nuxt-sanctum-authentication',
         '@nuxtjs/google-fonts',
-        '@sentry/nuxt/module',
         '@vite-pwa/nuxt',
         'nuxt-echarts'
     ],
 
     runtimeConfig: {
         // Private keys (only available on server-side)
-        sentryAuthToken: process.env.SENTRY_AUTH_TOKEN,
+        //sentryAuthToken: process.env.SENTRY_AUTH_TOKEN,
 
         // Public keys (exposed to client-side)
         public: {
@@ -44,17 +57,21 @@ export default defineNuxtConfig({
             titleTemplate: '%s | VVIndia',
             meta: [
                 { name: 'description', content: 'VVIndia is a unified platform for shopping, blogging, and more.' },
-                { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+                // { name: 'viewport', content: 'width=device-width, initial-scale=1' },
                 { charset: 'utf-8' },
                 { name: 'format-detection', content: 'telephone=no' },
                 { name: 'theme-color', content: '#ffffff' },
-                { name: 'apple-mobile-web-app-capable', content: 'yes' },
-                { name: 'apple-mobile-web-app-status-bar-style', content: 'default' }
+                { name: 'mobile-web-app-capable', content: 'yes' },
+                { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+                { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes' },
             ],
             link: [
                 { rel: 'icon', type: 'image/png', href: '/logo.png' },
                 { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-                { rel: 'canonical', href: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com' }
+                { rel: 'canonical', href: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com' },
+                // Preconnect to API
+                { rel: 'preconnect', href: 'http://localhost:8000' },
+                { rel: 'dns-prefetch', href: 'http://localhost:8000' }
             ]
         }
     },
@@ -88,26 +105,12 @@ export default defineNuxtConfig({
         preload: true
     },
 
-    // ✅ Sentry Configuration
-    sentry: {
-        sourceMapsUploadOptions: {
-            org: process.env.SENTRY_ORG || 'your-org-slug',
-            project: process.env.SENTRY_PROJECT || 'your-project-slug',
-            authToken: process.env.SENTRY_AUTH_TOKEN,
-        },
-    },
     sourcemap: {
         server: false,
         client: process.env.NODE_ENV === 'development' ? true : 'hidden'
     },
 
-    // ✅ PostCSS Configuration
-    postcss: {
-        plugins: {
-            tailwindcss: {},
-            autoprefixer: {},
-        },
-    },
+
 
     // ✅ Build Configuration
     build: {

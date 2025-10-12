@@ -21,7 +21,7 @@ class CategoryIndexResource extends JsonResource
             'url' => $this->url,
             'views' => $this->view_count,
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),
-            'meta' => $this->meta_data
+            'meta' => $this->meta_data,
         ];
 
     }

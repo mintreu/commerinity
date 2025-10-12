@@ -3,8 +3,10 @@
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
 
+use App\Models\TaxCode;
 use Awcodes\Shout\Components\Shout;
 use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Actions;
 use Filament\Forms;
@@ -162,21 +164,109 @@ class EditProduct extends EditRecord
                             ->columns()
                             ->schema([
                                 // Price, special price, tax class, cost, discount logic
-//                                Forms\Components\TextInput::make('price')
-//                                    ->numeric()
-//                                    ->prefix(LaravelMoney::getCurrencySymbol()),
 
-                                MoneyInput::make('price')
-                                    ->label('Price')
-                                    ->placeholder('Enter Price (e.g., 10025)')
-                                    ->prefix(LaravelMoney::defaultCurrency())
-                                    ->helperText('Enter amount in rupees. Decimals allowed.'),
+                                Forms\Components\Grid::make(1)
+                                    ->columnSpan(1)
+                                    ->schema([
+                                        Forms\Components\Select::make('tax_code_id')
+                                            ->label('HSN Code')
+                                            ->relationship('tax_code','code')
+                                            ->live()
+                                            ->columnSpanFull()
+                                            ->required(),
+
+                                        Forms\Components\Toggle::make('is_tax_inclusive')->default(false),
+                                        Forms\Components\Toggle::make('is_exempted')->default(false),
 
 
-                                Forms\Components\TextInput::make('reward_point')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(0),
+
+
+                                        MoneyInput::make('price')
+                                            ->label('Price')
+                                            ->placeholder('Enter Price (e.g., 10025)')
+                                            ->prefix(LaravelMoney::defaultCurrency())
+                                            ->helperText('Enter amount in rupees. Decimals allowed.'),
+
+
+
+
+                                        Forms\Components\TextInput::make('reward_point')
+                                            ->required()
+                                            ->numeric()
+                                            ->default(0),
+
+                                    ]),
+
+
+
+
+
+
+                                Forms\Components\Placeholder::make('price_breakdown')
+                                    ->content(function (Get $get) {
+                                        if ($get('tax_code_id')) {
+                                            $model = config('laravel-product-catalogue.tax.model');
+                                            $taxCode = $model::find($get('tax_code_id'));
+
+                                            if (! $taxCode) {
+                                                return new HtmlString('<div class="p-4 border rounded-xl italic">Tax code not found.</div>');
+                                            }
+
+                                            $content = "
+                                                <div class='p-3 border rounded-xl text-sm leading-relaxed'>
+                                                    <div class='font-semibold text-base border-b pb-2 mb-3'>Tax Breakdown</div>
+                                                    <table class='w-full border-separate' style='border-spacing: 0 6px;'>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class='w-1/3 font-medium align-top'>HSN/SAC Code</td>
+                                                                <td class='align-top'>{$taxCode->code}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class='font-medium align-top'>Type</td>
+                                                                <td class='align-top'>{$taxCode->type->getLabel()}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class='font-medium align-top'>Description</td>
+                                                                <td class='align-top'>{$taxCode->description}</td>
+                                                            </tr>
+
+                                                            <tr><td colspan='2'><hr class='my-2'></td></tr>
+
+                                                            <tr>
+                                                                <td class='font-medium align-top'>CGST</td>
+                                                                <td class='align-top'>{$taxCode->cgst_rate}%</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class='font-medium align-top'>SGST</td>
+                                                                <td class='align-top'>{$taxCode->sgst_rate}%</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class='font-medium align-top'>IGST</td>
+                                                                <td class='align-top'>{$taxCode->igst_rate}%</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class='font-medium align-top'>CESS</td>
+                                                                <td class='align-top'>{$taxCode->cess_rate}%</td>
+                                                            </tr>
+
+                                                            <tr><td colspan='2'><hr class='my-2'></td></tr>
+
+                                                            <tr>
+                                                                <td class='font-medium align-top'>Status</td>
+                                                                <td class='align-top'>" . ($taxCode->is_active ? 'Active' : 'Inactive') . "</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            ";
+
+                                            return new HtmlString($content);
+                                        }
+
+                                        return new HtmlString('<div class="p-4 border rounded-xl italic">No tax code selected.</div>');
+                                    })
+                                    ->columnSpan(1),
+
 
                                 Forms\Components\TextInput::make('min_quantity')
                                     ->required()
@@ -187,6 +277,9 @@ class EditProduct extends EditRecord
                                     ->required()
                                     ->numeric()
                                     ->default(0),
+
+
+
 
 
                             ]),
@@ -222,20 +315,7 @@ class EditProduct extends EditRecord
 
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('SEO')
-                            ->schema([
-                                // Meta title, meta description, canonical URL, structured data
-                                TableRepeater::make('meta_data')
-                                    ->label(__('MetaData'))
-                                    ->collapsible()
-                                    ->reorderable()
-                                    ->columnSpanFull()
-                                    ->addActionLabel(__('Add To Meta'))
-                                    ->schema([
-                                        Forms\Components\TextInput::make('key'),
-                                        Forms\Components\TextInput::make('value'),
-                                    ]),
-                            ]),
+
 
                         Forms\Components\Tabs\Tab::make('Configuration')
                             ->schema([
@@ -261,7 +341,40 @@ class EditProduct extends EditRecord
                                 Forms\Components\Fieldset::make('Options')
                                     ->label(fn() => $this->record->type == ProductTypeCast::CONFIGURABLE ? 'Options' : 'Filter Options')
                                     ->columns(2)
-                                    ->schema(fn(Get $get) => $this->getFilterSchema($get('filter_group_id')))
+                                    ->schema(fn(Get $get) => $this->getFilterSchema($get('filter_group_id'))),
+
+
+                                SelectTree::make('categories')
+                                    ->lazy()
+                                    ->relationship('categories', 'name', 'parent_id', function ($query, Get $get) {
+                                        return $query->where('status', true);
+                                    }),
+
+
+
+                                Forms\Components\KeyValue::make('meta_data')
+                                    ->label(fn () => new HtmlString('Meta Data (SEO)'))
+                                    ->keyLabel('Key')
+                                    ->valueLabel('Value')
+                                    ->addActionLabel('Add Meta Item')
+                                    ->reorderable()
+                                    ->keyPlaceholder('Enter key...')
+                                    ->valuePlaceholder('Enter value...')
+                                    ->helperText('You can define key-value pairs for metadata.')
+                                    ->required(false)
+                                    ->columnSpanFull()
+                                    ->extraAttributes([
+                                        'class' => 'p-2',
+                                    ])
+                                    ->addable(true)
+                                    ->deletable(true)
+                                    ->reorderable(true)
+                                    ->default([])
+                                    ->columnSpanFull(),
+
+
+
+
                             ]),
 
                         Forms\Components\Tabs\Tab::make('Relations')

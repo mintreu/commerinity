@@ -15,38 +15,30 @@ class ProductIndexResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
-
+        $activeSale = $this->getActiveSale();
+        $effectivePrice = $this->getEffectivePrice();
 
         return [
             'name' => $this->name,
             'url' => $this->url,
             'sku' => $this->sku,
-            'short_description' => $this->short_description,
+            'short_description' => $this->whenNotNull($this->short_description),
             'price' => LaravelMoney::format($this->price),
-            'min_quantity' => $this->min_quantity,
-            'max_quantity' => $this->max_quantity,
-            'reward_point' => $this->reward_point,
-            'returnable' => $this->is_returnable,
+            'min_quantity' => $this->whenNotNull($this->min_quantity),
+            'max_quantity' => $this->whenNotNull($this->max_quantity),
+            'reward_point' => $this->whenNotNull($this->reward_point),
+            'returnable' => $this->whenNotNull($this->is_returnable),
             'views' => $this->view_count,
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),
-           // 'banner' => $this->getFirstMediaUrl('bannerImage'),
+            //'banner' => $this->getFirstMediaUrl('bannerImage'),
 
             'formatted' => [
-                'regular' => $this->price?->formatted ?? null,
-                'sale' => $activeSale?->sale_price?->formatted ?? null,
-                'effective' => $this->getEffectivePrice()?->formatted ?? null,
+                'regular'   => $this->price ? LaravelMoney::format($this->price) : null,
+                'sale'      => $activeSale?->sale_price ? LaravelMoney::format($activeSale->sale_price) : null,
+                'effective' => $effectivePrice ? LaravelMoney::format($effectivePrice) : null,
             ],
-
         ];
     }
-
-
-
-
-
-
-
 
     /**
      * Get the active sale (SaleProduct) for this product
@@ -67,7 +59,6 @@ class ProductIndexResource extends JsonResource
     protected function getEffectivePrice()
     {
         $activeSale = $this->getActiveSale();
-       // dd(LaravelMoney::format($activeSale->sale_price),$activeSale->sale_price,$activeSale->getRawOriginal('sale_price'));
         return $activeSale?->sale_price ?? $this->price;
     }
 
@@ -82,7 +73,9 @@ class ProductIndexResource extends JsonResource
             return null;
         }
 
-
+//        $regularPrice = (float) $this->price->getAmount();
+//        $salePrice = (float) $activeSale->sale_price->getAmount();
+//
 
         $regularPrice = (float) $this->price->getAmount();
         $salePrice = (float) $activeSale->sale_price->getAmount();
@@ -93,12 +86,4 @@ class ProductIndexResource extends JsonResource
 
         return round((($regularPrice - $salePrice) / $regularPrice) * 100, 2);
     }
-
-
-
-
-
-
-
-
 }

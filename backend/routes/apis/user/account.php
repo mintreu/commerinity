@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [SanctumUserController::class, 'getProfile'])->name('account.profile.show');
     Route::put('/profile', [UserAccountController::class, 'updateProfile'])->name('account.profile.update');
 
+
+
     /**
      * use bse api endpoint with prefix '/'
      * to send and validate 6 digit otp
@@ -74,8 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /**
      *  Prefix 'account'
-     *  Full Prefix: /account/kyc
-     * KYC
+     *  Full Prefix: /account/kyc     *
      */
     Route::get('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'getUserKyc']);
     Route::post('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'addUserKyc']);
@@ -103,21 +104,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+    // full api: account/tree
+    Route::get('/tree',[\App\Http\Controllers\Api\Auth\UserStatsController::class, 'getUserTree']);
+
 
     /**
      *  Authenticated user notification APIs
      *  Prefix: /account/notifications
      */
-    Route::prefix('account/notifications')
+    Route::prefix('/notifications')
         ->middleware('auth:sanctum')
-        ->controller(\App\Http\Controllers\Api\Auth\UserNotificationController::class)
         ->group(function () {
-            Route::get('/',            'index');                 // list   (query ?limit=&include_read=1)
-            Route::post('{id}/read',   'markAsRead');            // mark one read
-            Route::post('{id}/unread', 'markAsUnread');          // mark one unread
-            Route::post('mark-all-read', 'markAllRead');         // mark all read
-            Route::delete('{id}',      'destroy');               // delete one
-            Route::delete('clear-all', 'clearAll');              // delete all
+            Route::get('/',            [\App\Http\Controllers\Api\Auth\UserNotificationController::class,'index']);                 // list   (query ?limit=&include_read=1)
+            Route::post('{id}/read',   [\App\Http\Controllers\Api\Auth\UserNotificationController::class,'markAsRead']);            // mark one read
+            Route::post('{id}/unread', [\App\Http\Controllers\Api\Auth\UserNotificationController::class,'markAsUnread']);          // mark one unread
+            Route::post('mark-all-read', [\App\Http\Controllers\Api\Auth\UserNotificationController::class,'markAllRead']);         // mark all read
+            Route::delete('{id}',      [\App\Http\Controllers\Api\Auth\UserNotificationController::class,'destroy']);               // delete one
+            Route::delete('clear-all', [\App\Http\Controllers\Api\Auth\UserNotificationController::class,'clearAll']);              // delete all
         });
 
 

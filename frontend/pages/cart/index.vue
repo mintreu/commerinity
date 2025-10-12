@@ -643,17 +643,18 @@
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useSanctum, useSanctumFetch, useRuntimeConfig } from '#imports'
 import { useCart } from '~/composables/useCart'
-import { useCustomToast } from '~/composables/useCustomToast'
 import AddToCartButton from '~/components/cart/AddToCartButton.vue'
 import GlobalLoader from '~/components/GlobalLoader.vue'
 import GuestCartForm from '~/components/cart/GuestCartForm.vue'
-import Toast from '~/components/ui/Toast.vue'
 
 // Composables
 const { isLoggedIn } = useSanctum()
 const config = useRuntimeConfig()
-const { toast, setToastInstance } = useCustomToast()
+// const { toast, setToastInstance } = useToast()
 const { cartData, updateCartItem, removeItem, applyCoupon, fetchCart } = useCart()
+
+/* initialise reusable toast object */
+const toast = useToast()
 
 // Refs for animations
 const cartHeader = ref<HTMLElement>()
@@ -701,7 +702,7 @@ const onApplyCoupon = async () => {
   if (success) {
     toast.success({ title: 'Coupon', message: 'Applied successfully', timeout: 2000 })
   } else {
-    toast.error({ title: 'Coupon', message: error || 'Invalid or expired coupon', timeout: 3000 })
+    toast.error({ title: 'Coupon', message: error ?? 'Invalid or expired coupon', timeout: 3000 })
   }
 }
 
@@ -724,7 +725,7 @@ const fetchUserAddress = async () => {
       onAddressSelect('billing', defaultHome.uuid)
     }
   } catch (e) {
-    toast.error({ title: 'Error', message: '❌ Failed fetching addresses', timeout: 3000 })
+    toast.error({ title: 'Error', message: 'Failed fetching addresses', timeout: 3000 })
   }
 }
 
@@ -741,7 +742,7 @@ const onAddressSelect = async (type: 'billing' | 'shipping', uuid: string) => {
     checkoutForm[type].mobile = addr.person_mobile || ''
     checkoutForm[type].address = addr.uuid
   } catch (e) {
-    toast.error({ title: 'Error', message: '❌ Failed fetching address details', timeout: 3000 })
+    toast.error({ title: 'Error', message: 'Failed fetching addresses', timeout: 3000 })
   }
 }
 
@@ -780,16 +781,16 @@ const submitOrder = async () => {
       body: payload,
     })
     if (res?.data?.success) {
-      toast.success({ title: 'Order Placed', message: 'Redirecting to payment...', timeout: 2000 })
+      toast.success({ title: 'Order Placed', message: 'Redirecting…', timeout: 2000 })
       setTimeout(() => {
         window.location.href = res.data.checkout_url
       }, 1000)
     } else {
-      toast.error({ title: 'Order', message: res?.data?.message || 'Order submission failed', timeout: 3000 })
+      toast.error({ title: 'Order', message: res?.data?.message ?? 'Order submission failed', timeout: 3000 })
     }
   } catch (e) {
     console.error('Submit order failed', e)
-    toast.error({ title: 'Order', message: 'Something went wrong. Please try again.', timeout: 3000 })
+    toast.error({ title: 'Order', message: 'Something went wrong', timeout: 3000 })
   }
 }
 
@@ -855,9 +856,9 @@ onMounted(async () => {
   try {
     // Set up toast instance
     await nextTick()
-    if (toastRef.value) {
-      setToastInstance(toastRef.value)
-    }
+    // if (toastRef.value) {
+    //   setToastInstance(toastRef.value)
+    // }
 
     await fetchCart()
     await fetchSuggestionProducts()

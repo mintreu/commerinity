@@ -7,28 +7,22 @@
     <!-- Error State -->
     <section v-else-if="error" class="flex flex-col items-center justify-center min-h-[80vh] px-4 relative z-10">
       <div class="max-w-lg mx-auto text-center">
-        <!-- Enhanced Error Icon -->
         <div class="error-icon-container relative mb-8">
           <div class="w-24 h-24 mx-auto bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-full flex items-center justify-center shadow-2xl">
             <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center animate-pulse">
               <Icon name="mdi:store-alert" class="w-8 h-8 text-white" />
             </div>
           </div>
-          <!-- Animated Elements -->
-          <div class="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full animate-bounce"></div>
-          <div class="absolute -bottom-1 -left-1 w-3 h-3 bg-orange-400 rounded-full animate-bounce delay-500"></div>
         </div>
 
-        <!-- Error Content -->
         <div class="error-content bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/50 dark:border-slate-700/50">
           <h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4">
             Category Not Found
           </h2>
           <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-            We couldn't find this category. It might have been moved or doesn't exist anymore.
+            {{ error }}
           </p>
 
-          <!-- Action Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <button
                 @click="refresh()"
@@ -52,71 +46,46 @@
 
     <!-- Main Content -->
     <template v-else>
+
       <!-- Enhanced Hero Banner -->
       <section class="hero-banner relative overflow-hidden mb-8">
-        <div class="relative h-80 lg:h-96">
-          <!-- Background Image with Overlay -->
-          <div
-              class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              :style="category.banner ? `background-image: url(${category.banner})` : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)'"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60"></div>
+        <div class="relative h-64 lg:h-80">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+            <div class="absolute inset-0 bg-black/40"></div>
           </div>
 
-          <!-- Hero Content -->
           <div class="hero-content relative z-10 h-full flex items-center justify-center px-4">
             <div class="text-center text-white max-w-4xl mx-auto">
-              <!-- Category Icon/Thumbnail -->
-              <div class="category-icon-container mb-6">
-                <div class="relative inline-block">
-                  <div class="w-24 h-24 lg:w-32 lg:h-32 mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm">
-                    <img
-                        :src="category.thumbnail"
-                        :alt="category.name"
-                        class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <!-- Icon rings -->
-                  <div class="absolute inset-0 rounded-3xl border-4 border-white/30 animate-ping"></div>
-                  <div class="absolute -inset-4 rounded-3xl border-2 border-white/20 animate-ping delay-500"></div>
-                </div>
-              </div>
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
+                <span class="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+                  {{ categoryName }}
+                </span>
+              </h1>
 
-              <!-- Category Info -->
-              <div class="category-info">
-                <h1 class="text-3xl sm:text-4xl lg:text-6xl font-black mb-4 leading-tight">
-                  <span class="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
-                    {{ category.name }}
-                  </span>
-                </h1>
+              <p class="text-lg lg:text-xl text-blue-100 mb-6 opacity-90">
+                Discover curated products with premium quality
+              </p>
 
-                <p class="text-lg lg:text-xl text-blue-100 mb-6 opacity-90 max-w-2xl mx-auto leading-relaxed">
-                  Discover curated items with premium quality and unbeatable deals
-                </p>
-
-                <!-- Stats -->
-                <div class="category-stats flex flex-wrap justify-center gap-4 lg:gap-6">
-                  <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-3 border border-white/20">
-                    <div class="text-xl font-black">{{ formatNumber(category.views || 0) }}+</div>
-                    <div class="text-xs opacity-80">Views</div>
-                  </div>
-                  <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-3 border border-white/20">
-                    <div class="text-xl font-black">{{ allProducts.length }}+</div>
-                    <div class="text-xs opacity-80">Products</div>
-                  </div>
-                  <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-3 border border-white/20">
-                    <div class="text-xl font-black">{{ category.children?.length || 0 }}</div>
-                    <div class="text-xs opacity-80">Categories</div>
-                  </div>
+              <div class="category-stats flex flex-wrap justify-center gap-4 lg:gap-6">
+                <div class="stat-item bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-3 border border-white/20">
+                  <div class="text-xl font-black">{{ pagination.total || 0 }}</div>
+                  <div class="text-xs opacity-80">Products</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
+      <!-- Cart Counter -->
+      <div class="cart-counter-section px-4 lg:px-6 mb-6 w-full">
+        <div class="w-full mx-auto flex justify-end">
+          <div class="cart-counter-container bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 dark:border-slate-700/50">
+            <CartCounter />
+          </div>
+        </div>
+      </div>
       <!-- Breadcrumbs -->
-      <section class="breadcrumbs-section px-4 lg:px-6 mb-6">
+      <section class="breadcrumbs-section px-4 lg:px-6 mb-6 mt-2">
         <div class="max-w-7xl mx-auto">
           <nav class="breadcrumbs bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-2xl px-6 py-3 shadow-lg border border-white/50 dark:border-slate-700/50">
             <ol class="flex items-center space-x-2 text-sm">
@@ -133,90 +102,23 @@
                 </NuxtLink>
               </li>
               <li class="text-slate-400">/</li>
-              <li class="text-slate-900 dark:text-white font-semibold">{{ category.name }}</li>
+              <li class="text-slate-900 dark:text-white font-semibold">{{ categoryName }}</li>
             </ol>
           </nav>
         </div>
       </section>
 
-      <!-- Subcategories Section -->
-      <section v-if="category.children?.length" class="subcategories-section px-4 lg:px-6 mb-12">
-        <div class="max-w-7xl mx-auto">
-          <div class="section-header text-center mb-8">
-            <div class="header-badge inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-200 dark:border-purple-800 backdrop-blur-sm mb-4">
-              <Icon name="mdi:view-grid" class="w-4 h-4 mr-2 text-purple-600 dark:text-purple-400" />
-              <span class="font-semibold text-purple-700 dark:text-purple-300">Subcategories</span>
-            </div>
 
-            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-3">
-              Explore <span class="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">{{ category.name }}</span>
-            </h2>
-
-            <p class="text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              Discover specialized products across {{ category.children.length }} different subcategories
-            </p>
-          </div>
-
-          <!-- Fixed Height Subcategory Grid -->
-          <div class="subcategories-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 lg:gap-6">
-            <NuxtLink
-                v-for="child in category.children"
-                :key="child.url"
-                :to="`/category/${child.url}`"
-                class="subcategory-card group"
-            >
-              <div class="subcategory-item bg-white dark:bg-slate-700 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1 border border-slate-200 dark:border-slate-600 relative overflow-hidden h-40 flex flex-col justify-between">
-                <!-- Gradient Border Effect -->
-                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
-
-                <!-- Image Container - Fixed aspect ratio -->
-                <div class="image-container flex-1 mb-3 overflow-hidden rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-600 dark:to-slate-500 relative">
-                  <img
-                      :src="child.thumbnail"
-                      :alt="child.name"
-                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-
-                <!-- Content - Fixed height -->
-                <div class="subcategory-content text-center flex-shrink-0">
-                  <h3 class="font-bold text-xs lg:text-sm text-slate-900 dark:text-white mb-1 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300 leading-tight">
-                    {{ child.name }}
-                  </h3>
-                  <p class="text-xs text-slate-500 dark:text-slate-400">
-                    {{ formatNumber(child.views || 0) }} views
-                  </p>
-                </div>
-
-                <!-- Hover Arrow -->
-                <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
-                  <Icon name="mdi:arrow-right" class="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </NuxtLink>
-          </div>
-        </div>
-      </section>
-
-      <!-- Cart Counter -->
-      <div class="cart-counter-section px-4 lg:px-6 mb-6">
-        <div class="max-w-7xl mx-auto flex justify-end">
-          <div class="cart-counter-container bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 dark:border-slate-700/50">
-            <CartCounter />
-          </div>
-        </div>
-      </div>
 
       <!-- Main Products Section -->
       <section class="products-section px-4 lg:px-6 mb-12">
-        <div class="max-w-7xl mx-auto">
+        <div class="max-w-9xl mx-auto">
           <div class="flex flex-col xl:flex-row gap-6">
 
             <!-- Enhanced Sidebar -->
             <aside class="filters-sidebar xl:w-1/4">
               <div class="filters-container bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 dark:border-slate-700/50 sticky top-6 overflow-hidden">
+
                 <!-- Filters Header -->
                 <div class="filters-header p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                   <div class="flex items-center justify-between">
@@ -244,7 +146,24 @@
                 </div>
 
                 <!-- Filters Content -->
-                <div :class="{'hidden xl:block': !mobileFilterOpen, 'block': mobileFilterOpen}" class="filters-content p-4 space-y-4">
+                <div :class="{'hidden xl:block': !mobileFilterOpen, 'block': mobileFilterOpen}" class="filters-content p-4 space-y-4 max-h-[70vh] lg:max-h-screen overflow-y-auto">
+
+                  <!-- Search Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header mb-3">
+                      <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center">
+                        <Icon name="mdi:magnify" class="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
+                        Search
+                      </h3>
+                    </div>
+                    <input
+                        type="text"
+                        v-model="searchQuery"
+                        @input="debounceSearch"
+                        placeholder="Search products..."
+                        class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                    />
+                  </div>
 
                   <!-- Price Filter -->
                   <div class="filter-group">
@@ -257,27 +176,21 @@
 
                     <div class="price-inputs mb-3">
                       <div class="flex items-center gap-2">
-                        <div class="relative flex-1">
-                          <input
-                              type="number"
-                              inputmode="numeric"
-                              min="0"
-                              v-model.number="priceMin"
-                              placeholder="Min"
-                              class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-                          />
-                        </div>
+                        <input
+                            type="number"
+                            min="0"
+                            v-model.number="priceMin"
+                            placeholder="Min"
+                            class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                        />
                         <span class="text-slate-500 dark:text-slate-400 text-sm">to</span>
-                        <div class="relative flex-1">
-                          <input
-                              type="number"
-                              inputmode="numeric"
-                              min="0"
-                              v-model.number="priceMax"
-                              placeholder="Max"
-                              class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-                          />
-                        </div>
+                        <input
+                            type="number"
+                            min="0"
+                            v-model.number="priceMax"
+                            placeholder="Max"
+                            class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                        />
                       </div>
                     </div>
 
@@ -303,9 +216,8 @@
                       <label class="availability-option flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 cursor-pointer">
                         <input
                             type="checkbox"
-                            :checked="onOffer"
-                            @change="toggleFlag('offer', ($event.target as HTMLInputElement).checked)"
-                            class="w-4 h-4 text-red-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-slate-800 focus:ring-2"
+                            v-model="onOffer"
+                            class="w-4 h-4 text-red-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-red-500"
                         />
                         <div class="flex items-center">
                           <Icon name="mdi:tag" class="w-3 h-3 text-red-500 mr-1" />
@@ -316,9 +228,8 @@
                       <label class="availability-option flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 cursor-pointer">
                         <input
                             type="checkbox"
-                            :checked="inStockOnly"
-                            @change="toggleFlag('in_stock', ($event.target as HTMLInputElement).checked)"
-                            class="w-4 h-4 text-green-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-slate-800 focus:ring-2"
+                            v-model="inStockOnly"
+                            class="w-4 h-4 text-green-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-green-500"
                         />
                         <div class="flex items-center">
                           <Icon name="mdi:check-circle" class="w-3 h-3 text-green-500 mr-1" />
@@ -328,7 +239,33 @@
                     </div>
                   </div>
 
-                  <!-- Dynamic Filter Groups -->
+                  <!-- Rating Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header mb-3">
+                      <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center">
+                        <Icon name="mdi:star" class="w-4 h-4 mr-2 text-yellow-600 dark:text-yellow-400" />
+                        Minimum Rating
+                      </h3>
+                    </div>
+
+                    <div class="rating-options space-y-2">
+                      <button
+                          v-for="rating in [4, 3, 2, 1]"
+                          :key="rating"
+                          @click="minRating = minRating === rating ? null : rating"
+                          class="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200"
+                          :class="minRating === rating ? 'bg-yellow-100 dark:bg-yellow-900/30' : ''"
+                      >
+                        <div class="flex items-center">
+                          <Icon v-for="i in rating" :key="i" name="mdi:star" class="w-4 h-4 text-yellow-400" />
+                          <Icon v-for="i in (5 - rating)" :key="`empty-${i}`" name="mdi:star-outline" class="w-4 h-4 text-gray-300" />
+                        </div>
+                        <span class="text-sm text-slate-700 dark:text-slate-300">& Up</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Filter Groups (Restored) -->
                   <template v-for="(filters, groupName) in filterGroups" :key="groupName">
                     <div class="filter-group">
                       <div class="filter-header mb-3">
@@ -340,7 +277,8 @@
 
                       <div class="filter-options space-y-3">
                         <div v-for="(optionsMap, filterName) in filters" :key="`${groupName}:${filterName}`">
-                          <!-- Search Input -->
+
+                          <!-- Search Input for large option lists -->
                           <div v-if="shouldShowSearch(filterName, optionsMap)" class="search-input mb-2">
                             <div class="relative">
                               <Icon name="mdi:magnify" class="absolute left-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-slate-400" />
@@ -358,7 +296,7 @@
                             <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">{{ filterName }}</h4>
                           </div>
 
-                          <!-- Color Swatches -->
+                          <!-- Color Swatches (for color filters) -->
                           <div v-if="isColorFilter(filterName)" class="color-swatches grid grid-cols-6 gap-1">
                             <button
                                 v-for="(label, value) in filteredOptions(filterName, optionsMap)"
@@ -393,6 +331,7 @@
                       </div>
                     </div>
                   </template>
+
                 </div>
               </div>
             </aside>
@@ -406,15 +345,25 @@
                   <div class="flex flex-wrap items-center gap-2">
                     <span class="text-sm font-semibold text-slate-700 dark:text-slate-300 mr-2">Active Filters:</span>
 
+                    <!-- Search Chip -->
+                    <template v-if="searchQuery">
+                      <span class="filter-chip inline-flex items-center gap-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full border border-blue-200 dark:border-blue-700">
+                        <span>Search: {{ searchQuery }}</span>
+                        <button @click="searchQuery = ''" class="hover:text-red-600 transition-colors duration-200">
+                          <Icon name="mdi:close" class="w-3 h-3" />
+                        </button>
+                      </span>
+                    </template>
+
                     <!-- Filter Chips -->
                     <template v-for="(values, fname) in selectedFilters" :key="`chip:${fname}`">
                       <span
                           v-for="val in values"
                           :key="`chip:${fname}:${val}`"
-                          class="filter-chip inline-flex items-center gap-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full border border-blue-200 dark:border-blue-700"
+                          class="filter-chip inline-flex items-center gap-1 text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 px-2 py-1 rounded-full border border-purple-200 dark:border-purple-700"
                       >
                         <span class="truncate">{{ fname }}: {{ val }}</span>
-                        <button @click="removeOne(fname, String(val))" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                        <button @click="removeOne(fname, String(val))" class="hover:text-red-600 transition-colors duration-200">
                           <Icon name="mdi:close" class="w-3 h-3" />
                         </button>
                       </span>
@@ -424,7 +373,7 @@
                     <template v-if="priceMin != null || priceMax != null">
                       <span class="filter-chip inline-flex items-center gap-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-full border border-green-200 dark:border-green-700">
                         <span>₹{{ priceMin || 0 }}{{ priceMax != null ? `–₹${priceMax}` : '+' }}</span>
-                        <button @click="clearPrice" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                        <button @click="clearPrice" class="hover:text-red-600 transition-colors duration-200">
                           <Icon name="mdi:close" class="w-3 h-3" />
                         </button>
                       </span>
@@ -434,7 +383,7 @@
                     <template v-if="onOffer">
                       <span class="filter-chip inline-flex items-center gap-1 text-xs bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 px-2 py-1 rounded-full border border-red-200 dark:border-red-700">
                         <span>On Sale</span>
-                        <button @click="setFlag('offer', false)" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                        <button @click="onOffer = false" class="hover:text-red-600 transition-colors duration-200">
                           <Icon name="mdi:close" class="w-3 h-3" />
                         </button>
                       </span>
@@ -443,7 +392,17 @@
                     <template v-if="inStockOnly">
                       <span class="filter-chip inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 px-2 py-1 rounded-full border border-emerald-200 dark:border-emerald-700">
                         <span>In Stock</span>
-                        <button @click="setFlag('in_stock', false)" class="hover:text-red-600 transition-colors duration-200" aria-label="Remove">
+                        <button @click="inStockOnly = false" class="hover:text-red-600 transition-colors duration-200">
+                          <Icon name="mdi:close" class="w-3 h-3" />
+                        </button>
+                      </span>
+                    </template>
+
+                    <!-- Rating Chip -->
+                    <template v-if="minRating">
+                      <span class="filter-chip inline-flex items-center gap-1 text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full border border-yellow-200 dark:border-yellow-700">
+                        <span>{{ minRating }}+ Stars</span>
+                        <button @click="minRating = null" class="hover:text-red-600 transition-colors duration-200">
                           <Icon name="mdi:close" class="w-3 h-3" />
                         </button>
                       </span>
@@ -463,10 +422,10 @@
                   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div class="products-title">
                       <h1 class="text-xl lg:text-2xl font-black text-slate-900 dark:text-white">
-                        {{ category.name }} Products
+                        {{ categoryName }} Products
                       </h1>
                       <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                        {{ pagination.total || allProducts.length }} products found
+                        {{ pagination.total || 0 }} products found
                       </p>
                     </div>
 
@@ -475,11 +434,13 @@
                         <label class="sr-only" for="sort">Sort By</label>
                         <select
                             id="sort"
-                            v-model="selectedSortName"
+                            v-model="selectedSort"
                             class="sort-select pl-3 pr-8 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors duration-200 appearance-none cursor-pointer"
                         >
-                          <option v-for="sort in sortOptions" :key="sort.name" :value="sort.name">
-                            {{ formatSortName(sort.name) }}
+                          <option value="">Latest</option>
+                          <!-- Dynamic sort options from API -->
+                          <option v-for="sort in availableSorts" :key="`${sort.name}:${sort.direction}`" :value="`${sort.name}:${sort.direction}`">
+                            {{ formatSortLabel(sort.name, sort.direction) }}
                           </option>
                         </select>
                         <Icon name="mdi:chevron-down" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -490,94 +451,52 @@
               </div>
 
               <!-- Products Grid -->
-              <div class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                <div
-                    v-for="product in allProducts"
-                    :key="product.url"
-                    class="product-card group bg-white dark:bg-slate-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 border border-slate-200 dark:border-slate-600 relative"
-                >
-                  <!-- Gradient Border Effect -->
-                  <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
+              <div v-if="products.length > 0" class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                <ProductCard
+                    v-for="product in products"
+                    :key="product.sku"
+                    :product="product"
+                    :show-wishlist="true"
+                    @wishlist-toggle="handleWishlistToggle"
+                    @quick-view="handleQuickView"
+                    @add-to-cart-success="handleAddToCartSuccess"
+                    @add-to-cart-error="handleAddToCartError"
+                />
+              </div>
 
-                  <!-- Product Link -->
-                  <NuxtLink :to="`/product/${product.url}`" class="block">
-                    <!-- Image Container -->
-                    <div class="product-image relative aspect-square bg-slate-100 dark:bg-slate-600 overflow-hidden">
-                      <img
-                          loading="lazy"
-                          :src="product.thumbnail"
-                          :alt="product.name"
-                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-
-                      <!-- Sale Badge -->
-                      <div v-if="product.on_sale" class="sale-badge absolute top-2 left-2 bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                        SALE
-                      </div>
-
-                      <!-- Stock Badge -->
-                      <div v-if="product.stock_status === 'low'" class="stock-badge absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                        Low Stock
-                      </div>
-
-                      <!-- Quick Actions Overlay -->
-                      <div class="quick-actions absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <div class="quick-actions-buttons flex gap-2">
-                          <button class="quick-action-btn w-10 h-10 bg-white/90 text-slate-900 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200">
-                            <Icon name="mdi:eye" class="w-4 h-4" />
-                          </button>
-                          <button class="quick-action-btn w-10 h-10 bg-white/90 text-slate-900 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200">
-                            <Icon name="mdi:heart-outline" class="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Product Info -->
-                    <div class="product-info p-3">
-                      <h3 class="product-name font-bold text-base text-slate-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                        {{ product.name }}
-                      </h3>
-
-                      <p class="product-description text-sm text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">
-                        {{ product.short_description }}
-                      </p>
-
-                      <!-- Price -->
-                      <div class="product-pricing mb-3">
-                        <div class="flex items-center gap-2">
-                          <span class="current-price text-xl font-black text-green-600 dark:text-green-400">
-                            {{ product.price }}
-                          </span>
-                          <span v-if="product.original_price && product.original_price > product.price" class="original-price text-sm text-slate-500 dark:text-slate-400 line-through">
-                            {{ product.original_price }}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </NuxtLink>
-
-                  <!-- Add to Cart Button -->
-                  <div class="product-actions p-3 pt-0">
-                    <AddToCartButton
-                        :sku="product.sku"
-                        :quantity="1"
-                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105"
-                    />
-                  </div>
+              <!-- Empty State -->
+              <div v-else-if="!isLoading" class="text-center py-16">
+                <div class="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-8">
+                  <Icon name="mdi:package-variant-closed" class="w-16 h-16 text-gray-400 dark:text-gray-500" />
                 </div>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">No Products Found</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+                  {{ hasAnyFilter
+                    ? 'No products match your current filters. Try adjusting your search criteria.'
+                    : 'This category is currently empty. Check back later for new products.'
+                  }}
+                </p>
+                <button v-if="hasAnyFilter" @click="clearAll" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors duration-200">
+                  Clear All Filters
+                </button>
+              </div>
+
+              <!-- Loading State -->
+              <div v-if="paging" class="text-center py-8">
+                <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-600 dark:text-gray-400">Loading more products...</p>
               </div>
 
               <!-- Load More / Pagination -->
-              <div class="load-more text-center">
+              <div v-if="pagination.current_page < pagination.last_page" class="text-center">
                 <button
-                    @click="nextPage"
-                    :disabled="pagination.current_page >= pagination.last_page || paging"
-                    class="load-more-btn px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    @click="loadMore"
+                    :disabled="paging"
+                    class="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <span v-if="paging" class="flex items-center gap-2">
                     <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Loading More Products...
+                    Loading More...
                   </span>
                   <span v-else class="flex items-center gap-2">
                     <Icon name="mdi:plus" class="w-4 h-4" />
@@ -589,162 +508,77 @@
           </div>
         </div>
       </section>
-
-      <!-- Enhanced Top Products Section with Swiper -->
-      <section v-if="topProducts.length" class="top-products-section px-4 lg:px-6 mb-12 bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 py-16">
-        <div class="max-w-7xl mx-auto">
-          <div class="section-header text-center mb-8">
-            <!-- Tab Navigation for Future Sections -->
-            <div class="product-tabs flex justify-center mb-6">
-              <div class="tab-buttons bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-2xl p-2 shadow-lg border border-white/50 dark:border-slate-700/50">
-                <button
-                    @click="activeProductTab = 'top-rated'"
-                    :class="activeProductTab === 'top-rated' ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                    class="px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                >
-                  <Icon name="mdi:star" class="w-4 h-4 mr-2 inline" />
-                  Top Rated
-                </button>
-                <button
-                    @click="activeProductTab = 'best-selling'"
-                    :class="activeProductTab === 'best-selling' ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                    class="px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                >
-                  <Icon name="mdi:trending-up" class="w-4 h-4 mr-2 inline" />
-                  Best Selling
-                </button>
-                <button
-                    @click="activeProductTab = 'new-arrivals'"
-                    :class="activeProductTab === 'new-arrivals' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-                    class="px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                >
-                  <Icon name="mdi:new-box" class="w-4 h-4 mr-2 inline" />
-                  New Arrivals
-                </button>
-              </div>
-            </div>
-
-            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-3">
-              <span v-if="activeProductTab === 'top-rated'" class="bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent">Top Rated Products</span>
-              <span v-else-if="activeProductTab === 'best-selling'" class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">Best Selling Products</span>
-              <span v-else class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">New Arrivals</span>
-              in {{ category.name }}
-            </h2>
-
-            <p class="text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              <span v-if="activeProductTab === 'top-rated'">Discover our most popular and highest-rated products in this category</span>
-              <span v-else-if="activeProductTab === 'best-selling'">Check out the bestsellers that customers love most</span>
-              <span v-else>Explore the latest additions to our {{ category.name }} collection</span>
-            </p>
-          </div>
-
-          <!-- Swiper Product Display -->
-          <div class="products-swiper-container">
-            <Swiper
-                :modules="[SwiperAutoplay, SwiperNavigation, SwiperPagination]"
-                :slides-per-view="1"
-                :space-between="20"
-                :autoplay="{
-                delay: 4000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true
-              }"
-                :navigation="true"
-                :pagination="{
-                clickable: true,
-                dynamicBullets: true,
-              }"
-                :breakpoints="{
-                640: { slidesPerView: 2, spaceBetween: 20 },
-                768: { slidesPerView: 3, spaceBetween: 24 },
-                1024: { slidesPerView: 4, spaceBetween: 30 },
-              }"
-                class="products-swiper"
-            >
-              <SwiperSlide
-                  v-for="product in getCurrentTabProducts"
-                  :key="product.url"
-                  class="h-auto"
-              >
-                <div class="top-product-card group bg-white dark:bg-slate-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1 border border-slate-200 dark:border-slate-600 relative h-full">
-                  <!-- Tab-specific Badge -->
-                  <div v-if="activeProductTab === 'top-rated'" class="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg z-10">
-                    <Icon name="mdi:crown" class="inline w-3 h-3 mr-1" />
-                    TOP
-                  </div>
-                  <div v-else-if="activeProductTab === 'best-selling'" class="absolute top-3 left-3 bg-gradient-to-r from-green-400 to-emerald-400 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg z-10">
-                    <Icon name="mdi:fire" class="inline w-3 h-3 mr-1" />
-                    HOT
-                  </div>
-                  <div v-else class="absolute top-3 left-3 bg-gradient-to-r from-blue-400 to-purple-400 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg z-10">
-                    <Icon name="mdi:sparkles" class="inline w-3 h-3 mr-1" />
-                    NEW
-                  </div>
-
-                  <NuxtLink :to="`/product/${product.url}`" class="block h-full flex flex-col">
-                    <div class="product-image relative aspect-square bg-slate-100 dark:bg-slate-600 overflow-hidden flex-shrink-0">
-                      <img
-                          loading="lazy"
-                          :src="product.thumbnail"
-                          :alt="product.name"
-                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-
-                    <div class="product-info p-3 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 class="font-bold text-base text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors duration-300">
-                          {{ product.name }}
-                        </h3>
-
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">
-                          {{ product.short_description }}
-                        </p>
-                      </div>
-
-                      <div class="flex items-center justify-between mt-auto">
-                        <span class="text-xl font-black text-green-600 dark:text-green-400">
-                          {{ product.price }}
-                        </span>
-
-                        <div class="flex items-center gap-1 text-yellow-500">
-                          <Icon name="mdi:star" class="w-4 h-4" />
-                          <span class="text-sm font-bold">{{ (Math.random() * 2 + 3).toFixed(1) }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </NuxtLink>
-
-                  <div class="product-actions p-3 pt-0">
-                    <AddToCartButton
-                        :sku="product.sku"
-                        :quantity="1"
-                        :class="getTabButtonClass"
-                        class="w-full font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
-                    />
-                  </div>
-                </div>
-              </SwiperSlide>
-            </Swiper>
-          </div>
-        </div>
-      </section>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, computed, onUnmounted, nextTick } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSanctum, useSanctumFetch, useRuntimeConfig } from '#imports'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Autoplay, Navigation, Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
 import GlobalLoader from "~/components/GlobalLoader.vue"
-import AddToCartButton from "~/components/cart/AddToCartButton.vue"
+import ProductCard from "~/components/product/ProductCard.vue"
 import CartCounter from "~/components/cart/CartCounter.vue"
+
+// Types
+interface ProductSale {
+  sale_price: string
+  discount: string
+  ends_till: string
+  remaining: string
+  action_type: 'by_percent' | 'by_fixed' | 'to_percent' | 'to_fixed'
+}
+
+interface ProductTire {
+  min_quantity: number
+  max_quantity: number
+  wholesale_unit_quantity: number | null
+  price: string
+  stock: number
+  in_stock: boolean
+}
+
+interface ProductCategory {
+  name: string
+  url: string
+  views: number
+  thumbnail: string
+}
+
+interface Product {
+  name: string
+  url: string
+  sku: string
+  type: string
+  views: number
+  has_stock: boolean
+  rating: string
+  review: number
+  review_avg_helpful_votes: string
+  reward_point: number
+  is_wishlisted: number | null
+  price: string
+  sales: ProductSale[]
+  categories: ProductCategory[]
+  thumbnail: string
+  tire: ProductTire | null
+}
+
+interface PaginationMeta {
+  current_page: number
+  from: number
+  last_page: number
+  path: string
+  per_page: number
+  to: number
+  total: number
+}
+
+interface SortOption {
+  name: string
+  value: string
+  direction: string
+}
 
 // Composables
 const route = useRoute()
@@ -752,347 +586,373 @@ const router = useRouter()
 const { isLoggedIn } = useSanctum()
 const config = useRuntimeConfig()
 
-// Swiper modules
-const SwiperAutoplay = Autoplay
-const SwiperNavigation = Navigation
-const SwiperPagination = Pagination
-
-// Reactive state
+// State
 const categoryUrl = computed(() => route.params.url as string)
-const mobileFilterOpen = ref(false)
+const categoryName = computed(() => {
+  if (products.value.length > 0) {
+    return products.value[0]?.categories?.[0]?.name || categoryUrl.value
+  }
+  return categoryUrl.value
+})
+
+const isLoading = ref(false)
 const paging = ref(false)
-const isLoading = useState('pageLoading', () => false)
-const error = ref<any>(null)
-const category = ref<any>({})
-const topProducts = ref<any[]>([])
-const latestProducts = ref<any[]>([])
-const allProducts = ref<any[]>([])
-const pagination = ref({ current_page: 1, last_page: 1, total: 0, per_page: 12 })
+const error = ref<string | null>(null)
+const mobileFilterOpen = ref(false)
 
-// Product tabs state
-const activeProductTab = ref<'top-rated' | 'best-selling' | 'new-arrivals'>('top-rated')
+// Products and pagination
+const products = ref<Product[]>([])
+const pagination = ref<PaginationMeta>({
+  current_page: 1,
+  from: 1,
+  last_page: 1,
+  path: '',
+  per_page: 12,
+  to: 12,
+  total: 0
+})
 
-// Filtering state
+// Filter state
 const filterGroups = ref<Record<string, Record<string, Record<string, string>>>>({})
 const selectedFilters = reactive<Record<string, string[]>>({})
-const optionSearch = reactive<Record<string, string>>({})
+const searchQuery = ref('')
+const searchDebounce = ref<number | null>(null)
 const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
-const onOffer = ref<boolean>(false)
-const inStockOnly = ref<boolean>(false)
+const onOffer = ref(false)
+const inStockOnly = ref(false)
+const minRating = ref<number | null>(null)
+const selectedSort = ref('')
 
-// Sorting state
-type SortOption = { name: string; value: string; direction: 'asc' | 'desc' }
-const sortOptions = ref<SortOption[]>([])
-const selectedSortName = ref<string>('latest')
+// Sort state
+const availableSorts = ref<SortOption[]>([])
 
-// Track fetched pages
-const lastFetchedPage = ref<number>(1)
+// Option search state
+const optionSearch = reactive<Record<string, string>>({})
 
-// Computed properties
-const selectedSort = computed<SortOption | null>(() =>
-    sortOptions.value.find(s => s.name === selectedSortName.value) || null
-)
-
+// Computed
 const hasAnyFilter = computed(() => {
-  const any = Object.values(selectedFilters).some(arr => arr?.length)
-  return any || priceMin.value != null || priceMax.value != null || onOffer.value || inStockOnly.value
+  return searchQuery.value ||
+      Object.values(selectedFilters).some(arr => arr?.length) ||
+      priceMin.value != null ||
+      priceMax.value != null ||
+      onOffer.value ||
+      inStockOnly.value ||
+      minRating.value != null
 })
 
-const getCurrentTabProducts = computed(() => {
-  // For now, return topProducts for all tabs
-  // In future, you can have separate arrays for each tab
-  switch (activeProductTab.value) {
-    case 'best-selling':
-      return topProducts.value // Future: return bestSellingProducts.value
-    case 'new-arrivals':
-      return latestProducts.value // Future: return newArrivals.value
-    default:
-      return topProducts.value
-  }
-})
-
-const getTabButtonClass = computed(() => {
-  switch (activeProductTab.value) {
-    case 'best-selling':
-      return 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white hover:shadow-green-500/25'
-    case 'new-arrivals':
-      return 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white hover:shadow-blue-500/25'
-    default:
-      return 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white hover:shadow-yellow-500/25'
-  }
-})
-
-// Utility functions
-const formatNumber = (num: number): string => {
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-  return num.toString()
-}
-
-
-
-const formatSortName = (name: string): string => {
-  return name.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()
-}
-
-// Filter helper functions
-const isColorFilter = (name: string) => {
-  const n = name.toLowerCase()
-  return n === 'color' || n === 'colour'
-}
-
-const parseColor = (value: string, label: string) => {
-  const v = String(value || '').trim()
-  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i
-  if (hex.test(v)) return v
-  if (hex.test(label.trim())) return label.trim()
-  return label
-}
-
-const shouldShowSearch = (filterName: string, opt: Record<string, string>) => {
-  return ['Brand', 'Spice Type'].includes(filterName) && Object.keys(opt || {}).length > 8
-}
-
-const filteredOptions = (filterName: string, opt: Record<string, string>) => {
-  const q = (optionSearch[filterName] || '').toLowerCase()
-  if (!q) return opt
-  const out: Record<string, string> = {}
-  for (const [val, label] of Object.entries(opt)) {
-    if (String(val).toLowerCase().includes(q) || String(label).toLowerCase().includes(q)) {
-      out[val] = label
-    }
-  }
-  return out
-}
-
+// Filter utility methods
 const isChecked = (fname: string, val: string) => {
   return (selectedFilters[fname] || []).includes(val)
 }
 
-// Query building and comparison
-const buildQueryObject = (page: number) => {
-  const q: Record<string, any> = { page }
-  if (selectedSort.value) q[`sort[${selectedSort.value.name}]`] = selectedSort.value.direction
-  for (const [fname, values] of Object.entries(selectedFilters)) {
-    if (values?.length) q[`filters[${fname}][]`] = values
-  }
-  if (priceMin.value != null) q['price[min]'] = priceMin.value
-  if (priceMax.value != null) q['price[max]'] = priceMax.value
-  if (onOffer.value) q['offer'] = 1
-  if (inStockOnly.value) q['in_stock'] = 1
-  return q
-}
-
-const isSameQuery = (a: any, b: any) => {
-  const ak = Object.keys(a || {})
-  const bk = Object.keys(b || {})
-  if (ak.length !== bk.length) return false
-  for (const k of ak) {
-    const av = a[k], bv = b[k]
-    if (Array.isArray(av) || Array.isArray(bv)) {
-      const aa = Array.isArray(av) ? av.map(String).sort() : []
-      const bb = Array.isArray(bv) ? bv.map(String).sort() : []
-      if (aa.length !== bb.length) return false
-      for (let i = 0; i < aa.length; i++) {
-        if (aa[i] !== bb[i]) return false
-      }
-    } else if (String(av) !== String(bv)) return false
-  }
-  return true
-}
-
-// URL and API functions
-const pushQuery = async (page = 1) => {
-  const desired = buildQueryObject(page)
-  const current = route.query
-  const changed = !isSameQuery(current, desired)
-  if (changed) {
-    await router.replace({ query: desired })
-  } else {
-    hydrateFromRoute()
-    const append = page > (lastFetchedPage.value || 1)
-    await fetchCategory(page, append)
-  }
-}
-
-const hydrateFromRoute = () => {
-  // Hydrate sort
-  for (const [k, v] of Object.entries(route.query)) {
-    const sm = k.match(/^sort\[(.+)\]$/)
-    if (sm && typeof v === 'string') selectedSortName.value = sm[1]
-  }
-
-  // Hydrate filters
-  const fresh: Record<string, string[]> = {}
-  for (const [k, v] of Object.entries(route.query)) {
-    const fm = k.match(/^filters\[(.+)\](\[\])?$/)
-    if (fm) fresh[fm[1]] = (Array.isArray(v) ? v : [String(v)]).map(String)
-  }
-  for (const key of Object.keys(selectedFilters)) delete selectedFilters[key]
-  for (const [k, arr] of Object.entries(fresh)) selectedFilters[k] = arr
-
-  // Hydrate price/flags
-  const pm = route.query['price[min]']
-  const px = route.query['price[max]']
-  priceMin.value = pm != null ? Number(pm) : null
-  priceMax.value = px != null ? Number(px) : null
-  onOffer.value = route.query.offer != null ? String(route.query.offer) === '1' : false
-  inStockOnly.value = route.query.in_stock != null ? String(route.query.in_stock) === '1' : false
-}
-
-// API calls
-const fetchSortOptions = async () => {
-  try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/sorts/get`)
-    sortOptions.value = (res || []) as SortOption[]
-    const def = sortOptions.value.find(s => s.name === 'latest') || sortOptions.value[0]
-    if (def) selectedSortName.value = def.name
-  } catch (e) {
-    console.error('Failed to fetch sort options:', e)
-  }
-}
-
-const fetchFilterOptions = async () => {
-  try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/filters/get?category=${encodeURIComponent(categoryUrl.value)}`)
-    filterGroups.value = (res || {}) as Record<string, Record<string, Record<string, string>>>
-  } catch (e) {
-    console.error('Failed to fetch filter options:', e)
-  }
-}
-
-const fetchCategory = async (page = 1, append = false) => {
-  isLoading.value = !append
-  if (append) paging.value = true
-  error.value = null
-
-  try {
-    const params = new URLSearchParams()
-    for (const [k, v] of Object.entries(route.query)) {
-      if (Array.isArray(v)) v.forEach(val => params.append(k, String(val)))
-      else params.set(k, String(v))
-    }
-    if (!params.has('page')) params.set('page', String(page))
-
-    const url = `${config.public.apiBase}/categories/${categoryUrl.value}?${params.toString()}`
-    const res = await useSanctumFetch(url)
-
-    if (!append) {
-      category.value = res.data || {}
-      topProducts.value = res.top_products || []
-      latestProducts.value = res.latest_products || []
-      allProducts.value = res.all_products || []
-    } else {
-      const pageProducts = (res.all_products || []) as any[]
-      allProducts.value = allProducts.value.concat(pageProducts)
-    }
-
-    if (res.pagination) pagination.value = res.pagination
-    lastFetchedPage.value = Number(res?.pagination?.current_page || page || 1)
-  } catch (e: any) {
-    error.value = e
-    console.error('Failed to fetch category:', e)
-  } finally {
-    isLoading.value = false
-    paging.value = false
-  }
-}
-
-// UI action handlers
 const onFilterToggle = (fname: string, value: string, checked: boolean) => {
   const curr = selectedFilters[fname] ? [...selectedFilters[fname]] : []
   const idx = curr.indexOf(value)
+
   if (checked && idx === -1) curr.push(value)
   if (!checked && idx !== -1) curr.splice(idx, 1)
-  selectedFilters[fname] = curr
-  pushQuery(1)
-}
 
-const toggleColor = (fname: string, value: string) => {
-  const curr = selectedFilters[fname] ? [...selectedFilters[fname]] : []
-  const idx = curr.indexOf(value)
-  if (idx === -1) curr.push(value)
-  else curr.splice(idx, 1)
   selectedFilters[fname] = curr
-  pushQuery(1)
+  if (curr.length === 0) delete selectedFilters[fname]
+
+  fetchProducts(1)
 }
 
 const removeOne = (fname: string, value: string) => {
   if (!selectedFilters[fname]) return
   selectedFilters[fname] = selectedFilters[fname].filter(v => v !== value)
   if (selectedFilters[fname].length === 0) delete selectedFilters[fname]
-  pushQuery(1)
+  fetchProducts(1)
 }
 
+const shouldShowSearch = (filterName: string, optionsMap: Record<string, string>) => {
+  return Object.keys(optionsMap).length > 8
+}
+
+const isColorFilter = (filterName: string) => {
+  const colorKeywords = ['color', 'colour', 'shade', 'tint']
+  return colorKeywords.some(keyword => filterName.toLowerCase().includes(keyword))
+}
+
+const parseColor = (value: string | number, label: string) => {
+  // Try to parse color from value or label
+  const colorStr = String(label).toLowerCase()
+
+  // Basic color mapping
+  const colorMap: Record<string, string> = {
+    red: '#ef4444',
+    blue: '#3b82f6',
+    green: '#10b981',
+    yellow: '#f59e0b',
+    purple: '#8b5cf6',
+    pink: '#ec4899',
+    black: '#000000',
+    white: '#ffffff',
+    gray: '#6b7280',
+    grey: '#6b7280',
+    orange: '#f97316',
+    brown: '#92400e'
+  }
+
+  return colorMap[colorStr] || '#6b7280'
+}
+
+const toggleColor = (filterName: string, value: string) => {
+  const isCurrentlyChecked = isChecked(filterName, value)
+  onFilterToggle(filterName, value, !isCurrentlyChecked)
+}
+
+const filteredOptions = (filterName: string, optionsMap: Record<string, string>) => {
+  const search = optionSearch[filterName]?.toLowerCase() || ''
+  if (!search) return optionsMap
+
+  const filtered: Record<string, string> = {}
+  for (const [value, label] of Object.entries(optionsMap)) {
+    if (label.toLowerCase().includes(search) || value.toLowerCase().includes(search)) {
+      filtered[value] = label
+    }
+  }
+  return filtered
+}
+
+const formatSortLabel = (name: string, direction: string) => {
+  const labels: Record<string, string> = {
+    popularity: 'Most Popular',
+    latest: 'Latest',
+    pricelow2high: 'Price: Low to High',
+    pricehigh2low: 'Price: High to Low',
+    rating: 'Highest Rated',
+    name: direction === 'asc' ? 'Name A-Z' : 'Name Z-A'
+  }
+
+  return labels[name] || name
+}
+
+// Query building
+const buildQueryParams = (page = 1) => {
+  const params: Record<string, any> = {
+    categories: categoryUrl.value,
+    page
+  }
+
+  // Search
+  if (searchQuery.value) {
+    params.search = searchQuery.value
+  }
+
+  // Price range
+  if (priceMin.value != null) {
+    params['price[min]'] = priceMin.value
+  }
+  if (priceMax.value != null) {
+    params['price[max]'] = priceMax.value
+  }
+
+  // Boolean filters
+  if (onOffer.value) {
+    params.offer = 1
+  }
+  if (inStockOnly.value) {
+    params.in_stock = 1
+  }
+  if (minRating.value) {
+    params.min_rating = minRating.value
+  }
+
+  // Dynamic filters
+  for (const [filterName, values] of Object.entries(selectedFilters)) {
+    if (values?.length) {
+      params[`filters[${filterName}][]`] = values
+    }
+  }
+
+  // Sorting
+  if (selectedSort.value) {
+    const [field, direction] = selectedSort.value.split(':')
+    params[`sort[${field}]`] = direction || 'desc'
+  }
+
+  return params
+}
+
+// API calls
+const fetchFilters = async () => {
+  try {
+    const response = await useSanctumFetch(`${config.public.apiBase}/products/filters/get`, {
+      params: { category: categoryUrl.value },
+      credentials: 'include'
+    })
+
+    if (response) {
+      filterGroups.value = response
+    }
+  } catch (e: any) {
+    console.error('Failed to fetch filters:', e)
+  }
+}
+
+const fetchSorts = async () => {
+  try {
+    const response = await useSanctumFetch(`${config.public.apiBase}/products/sorts/get`, {
+      credentials: 'include'
+    })
+
+    if (response && Array.isArray(response)) {
+      availableSorts.value = response
+    }
+  } catch (e: any) {
+    console.error('Failed to fetch sorts:', e)
+  }
+}
+
+const fetchProducts = async (page = 1, append = false) => {
+  if (append) paging.value = true
+  else isLoading.value = true
+
+  error.value = null
+
+  try {
+    const params = buildQueryParams(page)
+    const response = await useSanctumFetch(`${config.public.apiBase}/products`, {
+      params,
+      credentials: 'include'
+    })
+
+    if (response?.data) {
+      if (append) {
+        products.value.push(...response.data)
+      } else {
+        products.value = response.data
+      }
+
+      if (response.meta) {
+        pagination.value = response.meta
+      }
+    }
+
+  } catch (e: any) {
+    console.error('Failed to fetch products:', e)
+    error.value = e.message || 'Failed to load products'
+  } finally {
+    isLoading.value = false
+    paging.value = false
+  }
+}
+
+// Filter methods
 const clearPrice = () => {
   priceMin.value = null
   priceMax.value = null
-  pushQuery(1)
+  fetchProducts(1)
 }
 
 const clearAll = () => {
+  // Clear all filters
   for (const k of Object.keys(selectedFilters)) delete selectedFilters[k]
+  searchQuery.value = ''
   priceMin.value = null
   priceMax.value = null
   onOffer.value = false
   inStockOnly.value = false
-  pushQuery(1)
+  minRating.value = null
+  selectedSort.value = ''
+
+  // Clear option searches
+  for (const k of Object.keys(optionSearch)) delete optionSearch[k]
+
+  fetchProducts(1)
 }
 
 const quickPrice = (min: number | null, max: number | null) => {
   priceMin.value = min
   priceMax.value = max
-  pushQuery(1)
+  fetchProducts(1)
 }
 
-const toggleFlag = (flag: 'offer' | 'in_stock', v: boolean) => {
-  if (flag === 'offer') onOffer.value = v
-  else inStockOnly.value = v
-  pushQuery(1)
+const debounceSearch = () => {
+  if (searchDebounce.value) clearTimeout(searchDebounce.value)
+  searchDebounce.value = setTimeout(() => {
+    fetchProducts(1)
+  }, 500)
 }
 
-const setFlag = (flag: 'offer' | 'in_stock', v: boolean) => {
-  toggleFlag(flag, v)
-}
-
-const nextPage = () => {
-  const next = Math.min((pagination.value.current_page || 1) + 1, pagination.value.last_page || 1)
-  pushQuery(next)
+const loadMore = () => {
+  const nextPage = pagination.value.current_page + 1
+  if (nextPage <= pagination.value.last_page) {
+    fetchProducts(nextPage, true)
+  }
 }
 
 const refresh = () => {
-  window.location.reload()
+  fetchProducts(1)
+}
+
+// Event handlers
+const handleWishlistToggle = (product: Product, newStatus: boolean) => {
+  console.log('Wishlist toggle for:', product.name, 'New status:', newStatus)
+  // Update local product state
+  const productIndex = products.value.findIndex(p => p.sku === product.sku)
+  if (productIndex !== -1) {
+    products.value[productIndex].is_wishlisted = newStatus ? 1 : 0
+  }
+}
+
+const handleQuickView = (product: Product) => {
+  console.log('Quick view for:', product.name)
+  // Implement quick view modal
+}
+
+const handleAddToCartSuccess = (product: Product) => {
+  console.log('Added to cart:', product.name)
+  // Show success notification
+}
+
+const handleAddToCartError = (error: any) => {
+  console.error('Add to cart error:', error)
+  // Show error notification
 }
 
 // Watchers
-watch(
-    () => route.fullPath,
-    async (cur, prev) => {
-      if (!prev || (prev.split('?')[0] !== cur.split('?')[0])) {
-        await fetchFilterOptions()
-        lastFetchedPage.value = 1
-      }
-      hydrateFromRoute()
-      const page = Number(route.query.page || 1)
-      const append = page > (lastFetchedPage.value || 1)
-      await fetchCategory(page, append)
-    },
-    { immediate: true }
-)
+watch([onOffer, inStockOnly], () => {
+  fetchProducts(1)
+})
 
-watch(selectedSortName, () => pushQuery(1))
+watch(minRating, () => {
+  fetchProducts(1)
+})
+
+watch(selectedSort, () => {
+  fetchProducts(1)
+})
+
+watch([priceMin, priceMax], () => {
+  if (searchDebounce.value) clearTimeout(searchDebounce.value)
+  searchDebounce.value = setTimeout(() => {
+    fetchProducts(1)
+  }, 800)
+})
 
 // Lifecycle
 onMounted(async () => {
-  await fetchSortOptions()
-  await fetchFilterOptions()
+  // Fetch filters and sorts in parallel with products
+  await Promise.all([
+    fetchProducts(1),
+    fetchFilters(),
+    fetchSorts()
+  ])
+})
+
+onUnmounted(() => {
+  if (searchDebounce.value) {
+    clearTimeout(searchDebounce.value)
+  }
 })
 
 // SEO
 useSeoMeta({
-  title: computed(() => `${category.value.name || 'Category'} - Premium Products`),
-  description: computed(() => `Discover amazing ${category.value.name || 'products'} with great deals and fast delivery. Shop now for the best selection.`),
+  title: computed(() => `${categoryName.value} - Premium Products`),
+  description: computed(() => `Discover amazing ${categoryName.value} products with great deals and fast delivery. Shop now for the best selection.`),
 })
 </script>
 
@@ -1105,42 +965,7 @@ useSeoMeta({
   overflow: hidden;
 }
 
-/* Custom Swiper styles */
-.products-swiper {
-  padding: 0 0 40px 0;
-}
-
-:deep(.swiper-pagination) {
-  position: static;
-  margin-top: 20px;
-}
-
-:deep(.swiper-pagination-bullet) {
-  background: #e2e8f0;
-  opacity: 1;
-}
-
-:deep(.swiper-pagination-bullet-active) {
-  background: linear-gradient(135deg, #f59e0b, #ea580c);
-}
-
-:deep(.swiper-button-next),
-:deep(.swiper-button-prev) {
-  background: white;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  color: #475569;
-}
-
-:deep(.swiper-button-next:after),
-:deep(.swiper-button-prev:after) {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Enhanced animations */
+/* Filter chip animation */
 .filter-chip {
   animation: slideInUp 0.3s ease-out;
 }
@@ -1156,16 +981,17 @@ useSeoMeta({
   }
 }
 
+/* Color swatch hover effects */
+.color-swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* Mobile responsiveness */
 @media (max-width: 1024px) {
   .hero-content h1 {
     font-size: 2rem;
     line-height: 1.2;
-  }
-
-  .subcategories-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
   }
 
   .products-grid {
@@ -1174,11 +1000,6 @@ useSeoMeta({
 }
 
 @media (max-width: 640px) {
-  .subcategories-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
   .products-grid {
     grid-template-columns: repeat(1, 1fr);
   }

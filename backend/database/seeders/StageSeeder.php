@@ -17,9 +17,9 @@ class StageSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->makePlanWithLevel('Fresher',200,true);
-        $this->makePlanWithLevel('Moderator',250);
-        $this->makePlanWithLevel('Expert',300);
+        $this->makePlanWithLevel('Fresher',20000,true);
+        $this->makePlanWithLevel('Moderator',25000);
+        $this->makePlanWithLevel('Expert',30000);
     }
 
 

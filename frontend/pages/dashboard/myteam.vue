@@ -1,255 +1,540 @@
 <template>
-  <div class="px-4 py-6 space-y-6">
-    <!-- Welcome Card -->
-    <div class="bg-blue-50 dark:bg-blue-900 border border-blue-300 dark:border-blue-700 p-4 rounded shadow">
-      <h3 class="text-lg font-semibold dark:text-white">Welcome, {{ loggedInUser.name }}</h3>
-      <p class="text-sm text-gray-600 dark:text-gray-300">
-        Your affiliate link:
-        <span
-            @click="copyAffiliateLink"
-            class="text-blue-600 dark:text-blue-300 cursor-pointer underline ml-1"
-        >
-          {{ loggedInUser.affiliateLink }}
-        </span>
-        <span v-if="copied" class="ml-2 text-green-500">Copied!</span>
-      </p>
-    </div>
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Header Section -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Community</h1>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Total Members: <span class="font-semibold text-indigo-600 dark:text-indigo-400">{{ totalMembers }}</span>
+            </p>
+          </div>
 
-    <!-- Header & Tabs -->
-    <div class="flex items-center justify-between border-b pb-2 dark:border-gray-600">
-      <h2 class="text-xl font-semibold dark:text-white">
-        Total Downline Members: {{ totalMembers }}
-      </h2>
-      <div class="flex space-x-2">
-        <button
-            @click="currentView = 'chart'"
-            :class="tabClass(currentView === 'chart')"
-        >
-          Org Chart
-        </button>
-        <button
-            @click="currentView = 'list'"
-            :class="tabClass(currentView === 'list')"
-        >
-          List View
-        </button>
+          <!-- View Toggle -->
+          <div class="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
+            <button
+                @click="currentView = 'chart'"
+                :class="viewButtonClass(currentView === 'chart')"
+            >
+              <Icon name="heroicons:chart-bar" class="w-4 h-4 sm:mr-2" />
+              <span class="hidden sm:inline">Chart</span>
+            </button>
+            <button
+                @click="currentView = 'list'"
+                :class="viewButtonClass(currentView === 'list')"
+            >
+              <Icon name="heroicons:list-bullet" class="w-4 h-4 sm:mr-2" />
+              <span class="hidden sm:inline">List</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Left Panel -->
-      <div class="md:col-span-2 space-y-4">
-        <!-- Org Chart -->
-        <div
-            v-if="currentView === 'chart'"
-            class="overflow-auto border bg-white dark:bg-gray-800 rounded shadow-md h-[600px]"
-        >
-          <div ref="chartRef" id="chart-container" class="min-w-[800px]"></div>
-        </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="grid grid-cols-1 gap-6">
 
-        <!-- List View -->
-        <div
-            v-if="currentView === 'list'"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          <div
-              v-for="member in chartData"
-              :key="member.id"
-              @click="selectMember(member)"
-              class="cursor-pointer p-5 border rounded-lg hover:shadow-md transition-all bg-white dark:bg-gray-800 dark:text-white"
-          >
-            <div class="flex items-center gap-4">
-              <img :src="member.image" class="w-14 h-14 rounded-full object-cover" />
-              <div>
-                <div class="font-semibold text-lg">{{ member.name }} {{ member.lastName }}</div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">{{ member.position }}</div>
-                <div class="text-xs text-gray-400">{{ member.email }}</div>
+        <!-- Affiliate Link Card -->
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold mb-2">Your Referral Link</h3>
+              <div class="flex items-center gap-2 bg-white/20 backdrop-blur rounded-lg p-3">
+                <input
+                    :value="affiliateLink"
+                    readonly
+                    class="flex-1 bg-transparent border-none outline-none text-sm font-mono"
+                />
+                <button
+                    @click="copyLink"
+                    class="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition text-sm font-semibold"
+                >
+                  {{ copied ? 'Copied!' : 'Copy' }}
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Right Panel -->
-      <div class="border rounded shadow bg-white dark:bg-gray-900 dark:text-white p-4 min-h-[250px]">
-        <template v-if="selectedMember">
-          <div class="flex items-center gap-4 mb-4">
-            <img :src="selectedMember.image" class="w-16 h-16 rounded-full object-cover" />
-            <div>
-              <h3 class="text-lg font-semibold">
-                {{ selectedMember.name }} {{ selectedMember.lastName }}
-              </h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
-                {{ selectedMember.position }}
-              </p>
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Total Members</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ totalMembers }}</p>
+              </div>
+              <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
+                <Icon name="heroicons:users" class="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+              </div>
             </div>
           </div>
-          <div class="text-sm space-y-1">
-            <p><strong>Email:</strong> {{ selectedMember.email }}</p>
-            <p><strong>ID:</strong> {{ selectedMember.id }}</p>
-            <p><strong>Manager ID:</strong> {{ selectedMember.parentId || '—' }}</p>
+
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Active</p>
+                <p class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{{ stats.active }}</p>
+              </div>
+              <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <Icon name="heroicons:check-circle" class="w-6 h-6 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
           </div>
-        </template>
-        <template v-else>
-          <p class="text-gray-500 dark:text-gray-400">Select a member to view details.</p>
-        </template>
+
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Max Depth</p>
+                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{{ stats.maxDepth }}</p>
+              </div>
+              <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                <Icon name="heroicons:chart-bar-square" class="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Viewing</p>
+                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1 truncate">
+                  {{ currentUserName }}
+                </p>
+              </div>
+              <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                <Icon name="heroicons:eye" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 border border-gray-200 dark:border-gray-700">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                View Member's Network
+              </label>
+              <div class="flex gap-2">
+                <input
+                    v-model="filterReferralCode"
+                    type="text"
+                    placeholder="Enter referral code..."
+                    class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    @keyup.enter="applyFilter"
+                />
+                <button
+                    @click="applyFilter"
+                    :disabled="loading"
+                    class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition disabled:opacity-50"
+                >
+                  <Icon v-if="loading" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+                  <span v-else>Apply</span>
+                </button>
+                <button
+                    v-if="currentReferralCode"
+                    @click="resetFilter"
+                    class="px-6 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart View -->
+        <div v-if="currentView === 'chart'" class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Organization Chart</h3>
+          </div>
+          <div class="relative" style="min-height: 600px;">
+            <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+              <Icon name="heroicons:arrow-path" class="w-8 h-8 text-indigo-600 animate-spin" />
+            </div>
+            <div ref="chartRef" id="chart-container" class="overflow-auto"></div>
+          </div>
+        </div>
+
+        <!-- List View -->
+        <div v-if="currentView === 'list'" class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Members List</h3>
+          </div>
+
+          <div v-if="loading" class="p-8 text-center">
+            <Icon name="heroicons:arrow-path" class="w-8 h-8 text-indigo-600 animate-spin mx-auto" />
+          </div>
+
+          <div v-else class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-900">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Member</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Level</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Depth</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+              </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tr
+                  v-for="member in chartData"
+                  :key="member.userId"
+                  class="hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer"
+                  @click="selectMember(member)"
+              >
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img :src="member.image || getDefaultAvatar(member.name)" class="w-10 h-10 rounded-full" />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900 dark:text-white">{{ member.name }}</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400 font-mono">{{ member.referral_code }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400">
+                      {{ member.level }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  Level {{ member.depth }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span v-if="member.hasChildren" class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                      Active
+                    </span>
+                  <span v-else class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400">
+                      No Downline
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                  <button
+                      @click.stop="viewMemberNetwork(member.referral_code)"
+                      class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium"
+                  >
+                    View Network
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Right Drawer -->
+    <transition name="drawer">
+      <div
+          v-if="drawerOpen"
+          class="fixed inset-0 z-50 overflow-hidden"
+          @click="closeDrawer"
+      >
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+
+        <div
+            class="absolute inset-y-0 right-0 max-w-md w-full bg-white dark:bg-gray-800 shadow-xl flex flex-col"
+            @click.stop
+        >
+          <!-- Drawer Header -->
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-indigo-600 to-purple-600">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-white">Member Details</h3>
+              <button
+                  @click="closeDrawer"
+                  class="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition"
+              >
+                <Icon name="heroicons:x-mark" class="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Drawer Content -->
+          <div v-if="selectedMember" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Profile Card -->
+            <div class="text-center">
+              <img
+                  :src="selectedMember.image || getDefaultAvatar(selectedMember.name)"
+                  class="w-24 h-24 rounded-full mx-auto border-4 border-white dark:border-gray-700 shadow-lg"
+              />
+              <h4 class="mt-4 text-xl font-bold text-gray-900 dark:text-white">{{ selectedMember.name }}</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-mono mt-1">{{ selectedMember.referral_code }}</p>
+              <span class="inline-block mt-2 px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400">
+                {{ selectedMember.level }}
+              </span>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="space-y-4">
+              <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Email</span>
+                  <Icon name="heroicons:envelope" class="w-4 h-4 text-gray-400" />
+                </div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ selectedMember.email || 'N/A' }}</p>
+              </div>
+
+              <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Joined On</span>
+                  <Icon name="heroicons:calendar" class="w-4 h-4 text-gray-400" />
+                </div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ selectedMember.joinedOn }}</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+                  <Icon name="heroicons:chart-bar-square" class="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                  <p class="text-xs text-gray-600 dark:text-gray-400">Network Depth</p>
+                  <p class="text-lg font-bold text-gray-900 dark:text-white">Level {{ selectedMember.depth }}</p>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+                  <Icon name="heroicons:users" class="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <p class="text-xs text-gray-600 dark:text-gray-400">Downline</p>
+                  <p class="text-lg font-bold text-gray-900 dark:text-white">
+                    {{ selectedMember.hasChildren ? 'Active' : 'None' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-3">
+              <button
+                  @click="viewMemberNetwork(selectedMember.referral_code)"
+                  class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-medium transition"
+              >
+                <Icon name="heroicons:chart-bar" class="w-5 h-5" />
+                <span>View Their Network</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, nextTick, watch } from 'vue'
-definePageMeta({
-  layout: 'dashboard'
-})
-// Sample user
-const loggedInUser = {
-  name: 'John Doe',
-  affiliateLink: 'https://yourapp.com/ref/johndoe'
-}
+<script setup lang="ts">
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
+import {  useToast, useRuntimeConfig, useSanctumFetch, useSanctum } from '#imports'
 
-const copied = ref(false)
-const copyAffiliateLink = () => {
-  navigator.clipboard.writeText(loggedInUser.affiliateLink)
-  copied.value = true
-  setTimeout(() => (copied.value = false), 2000)
-}
+definePageMeta({
+  layout: 'dashboard',
+})
+
+const config = useRuntimeConfig()
+const toast = useToast()
+const {user} = useSanctum()
 
 // State
+const loading = ref(false)
+const chartData = ref<any[]>([])
 const currentView = ref('chart')
-const chartRef = ref(null)
-const chartData = ref([])
-const totalMembers = ref(0)
-const selectedMember = ref(null)
-const lastCenteredId = ref(null)
-const isDarkMode = ref(false)
+const selectedMember = ref<any>(null)
+const drawerOpen = ref(false)
+const chartRef = ref<HTMLElement | null>(null)
+const filterReferralCode = ref('')
+const currentReferralCode = ref('')
+const copied = ref(false)
 
-const tabClass = (isActive) =>
-    `px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-        isActive
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
-    }`
+let chartInstance: any = null
 
-const selectMember = (member) => {
+// Computed
+const totalMembers = computed(() => chartData.value.length)
+
+const stats = computed(() => ({
+  active: chartData.value.filter(m => m.hasChildren).length,
+  maxDepth: Math.max(...chartData.value.map(m => m.depth), 0)
+}))
+
+const currentUserName = computed(() => {
+  if (currentReferralCode.value) {
+    const member = chartData.value.find(m => m.referral_code === currentReferralCode.value)
+    return member?.name || 'Unknown'
+  }
+  return user.value?.name || 'You'
+})
+
+const affiliateLink = computed(() => {
+  const baseUrl = config.public.appUrl || 'https://yourapp.com'
+  const code = user.value?.referral_code || 'XXXXX'
+  return `${baseUrl}/register?ref=${code}`
+})
+
+// Methods
+const viewButtonClass = (isActive: boolean) => {
+  return isActive
+      ? 'px-4 py-2 bg-white dark:bg-gray-600 text-indigo-600 dark:text-white rounded-md font-medium shadow-sm transition'
+      : 'px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md font-medium transition'
+}
+
+const getDefaultAvatar = (name: string) => {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=80&background=6366F1&color=fff&bold=true`
+}
+
+const copyLink = async () => {
+  try {
+    await navigator.clipboard.writeText(affiliateLink.value)
+    copied.value = true
+    toast.success('Referral link copied!')
+    setTimeout(() => (copied.value = false), 2000)
+  } catch (e) {
+    toast.error('Failed to copy link')
+  }
+}
+
+const fetchTree = async (referralCode: string | null = null) => {
+  try {
+    loading.value = true
+    const url = referralCode
+        ? `${config.public.apiBase}/account/tree?referral_code=${referralCode}`
+        : `${config.public.apiBase}/account/tree`
+
+    const res: any = await useSanctumFetch(url, { method: 'GET' })
+
+    if (res?.status && res?.data) {
+      const parsedData = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
+      chartData.value = parsedData
+
+      if (chartData.value.length > 0 && !selectedMember.value) {
+        selectedMember.value = chartData.value[0]
+      }
+
+      await nextTick()
+      if (currentView.value === 'chart') {
+        initChart()
+      }
+    } else {
+      toast.warning('No data found for this member')
+      chartData.value = []
+    }
+  } catch (e: any) {
+    console.error('Failed to fetch tree:', e)
+    toast.error(e.message || 'Failed to load community data')
+    chartData.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+const applyFilter = () => {
+  if (filterReferralCode.value.trim()) {
+    currentReferralCode.value = filterReferralCode.value.trim()
+    fetchTree(currentReferralCode.value)
+  }
+}
+
+const resetFilter = () => {
+  filterReferralCode.value = ''
+  currentReferralCode.value = ''
+  fetchTree()
+}
+
+const viewMemberNetwork = (referralCode: string) => {
+  filterReferralCode.value = referralCode
+  currentReferralCode.value = referralCode
+  closeDrawer()
+  fetchTree(referralCode)
+}
+
+const selectMember = (member: any) => {
   selectedMember.value = member
-  lastCenteredId.value = member.id
-  if (currentView.value === 'chart') {
-    centerNodeById(member.id)
-  }
+  drawerOpen.value = true
 }
 
-const centerNodeById = async (id) => {
-  await nextTick()
-  if (chartInstance?.setCentered) {
-    chartInstance.setCentered(id).render()
-  }
+const closeDrawer = () => {
+  drawerOpen.value = false
 }
-
-let chartInstance = null
 
 const initChart = async () => {
-  if (!chartRef.value) return
+  if (!chartRef.value || chartData.value.length === 0) return
+
   const { OrgChart } = await import('d3-org-chart')
 
-  isDarkMode.value = document.documentElement.classList.contains('dark')
+  const isDark = document.documentElement.classList.contains('dark')
 
   chartInstance = new OrgChart()
       .container(chartRef.value)
       .data(chartData.value)
       .nodeHeight(() => 120)
-      .nodeWidth(() => 240)
+      .nodeWidth(() => 220)
       .childrenMargin(() => 50)
       .compactMarginBetween(() => 35)
       .compactMarginPair(() => 30)
       .neighbourMargin(() => 20)
-      .nodeContent((d) => {
+      .nodeContent((d: any) => {
         const user = d.data
-        const bg = isDarkMode.value ? '#1F2937' : '#ffffff'
-        const text = isDarkMode.value ? '#F9FAFB' : '#111827'
-        const subText = isDarkMode.value ? '#9CA3AF' : '#6B7280'
-        const border = isDarkMode.value ? '#374151' : '#D1D5DB'
+        const bg = isDark ? '#1F2937' : '#ffffff'
+        const text = isDark ? '#F9FAFB' : '#111827'
+        const border = isDark ? '#374151' : '#E5E7EB'
 
         return `
-        <div style="width:${d.width}px;height:${d.height}px;padding:10px;font-family:sans-serif;
-                    border-radius:8px;border:1px solid ${border};background:${bg};color:${text}">
-          <div style="display:flex;align-items:center;">
-            <img src="${user.image}" style="border-radius:50%;width:50px;height:50px;margin-right:10px;" />
-            <div>
-              <div style="font-weight:bold;font-size:16px;">${user.name} ${user.lastName}</div>
-              <div style="color:${subText};font-size:13px;">${user.position}</div>
-              <div style="color:${subText};font-size:12px;">${user.email}</div>
+        <div style="width:${d.width}px;height:${d.height}px;padding:10px;font-family:system-ui;
+                    border-radius:12px;border:1px solid ${border};background:${bg};color:${text};
+                    box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img src="${user.image || getDefaultAvatar(user.name)}"
+                 style="border-radius:50%;width:50px;height:50px;object-fit:cover;border:2px solid ${border};" />
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${user.name}</div>
+              <div style="color:#9CA3AF;font-size:11px;margin-top:2px;">${user.level}</div>
+              <div style="color:#9CA3AF;font-size:10px;font-family:monospace;margin-top:2px;">${user.referral_code}</div>
             </div>
           </div>
-        </div>`
+          ${user.depth > 0 ? `<div style="position:absolute;top:8px;right:8px;background:#EEF2FF;color:#4F46E5;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;">L${user.depth}</div>` : ''}
+        </div>
+      `
       })
-      .onNodeClick((d) => {
+      .onNodeClick((d: any) => {
         selectMember(d.data)
       })
 
   await nextTick()
   chartInstance.render()
-
-  if (lastCenteredId.value) {
-    chartInstance.setCentered(lastCenteredId.value).render()
-  }
 }
 
+// Lifecycle
 onMounted(async () => {
-  chartData.value = [
-    {
-      id: 100,
-      parentId: null,
-      name: 'Steven',
-      lastName: 'King',
-      position: 'Chief Operating Officer',
-      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait12.png',
-      email: 'SKING',
-    },
-    {
-      id: 101,
-      parentId: 100,
-      name: 'Neena',
-      lastName: 'Kochhar',
-      position: 'Administration VP',
-      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait85.png',
-      email: 'NKOCHHAR',
-    },
-    {
-      id: 102,
-      parentId: 100,
-      name: 'Lex',
-      lastName: 'De Haan',
-      position: 'Finance Manager',
-      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait7.png',
-      email: 'LDEHAAN',
-    }
-  ]
-
-  totalMembers.value = chartData.value.length
-  selectedMember.value = chartData.value[0]
-  lastCenteredId.value = selectedMember.value.id
-
-  await nextTick()
-  initChart()
+  await fetchTree()
 })
 
-// Re-render chart when returning to chart view
+// Watch view changes
 watch(currentView, async (newVal) => {
   if (newVal === 'chart') {
     await nextTick()
-    isDarkMode.value = document.documentElement.classList.contains('dark')
-    if (chartInstance) {
-      chartInstance.container(chartRef.value)
-      if (lastCenteredId.value) {
-        chartInstance.setCentered(lastCenteredId.value)
-      }
-      chartInstance.render()
-    } else {
+    if (chartData.value.length > 0) {
       initChart()
     }
   }
 })
 </script>
+
+<style scoped>
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: all 0.3s ease;
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-from .absolute.inset-y-0,
+.drawer-leave-to .absolute.inset-y-0 {
+  transform: translateX(100%);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+</style>

@@ -1,848 +1,1098 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 overflow-x-hidden">
-
-    <!-- Floating Background Elements -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">
-      <div ref="orb1" class="product-orb-1 absolute top-20 left-20 w-80 h-80 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 blur-3xl will-change-transform"></div>
-      <div ref="orb2" class="product-orb-2 absolute bottom-20 right-20 w-72 h-72 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-15 blur-3xl will-change-transform"></div>
-      <div ref="orb3" class="product-orb-3 absolute top-1/2 left-1/3 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-10 blur-2xl will-change-transform"></div>
-
-      <!-- Shopping Particles -->
-      <div class="product-particles">
-        <div v-for="(particle, index) in particles" :key="`particle-${index}`"
-             class="particle absolute rounded-full opacity-60 animate-bounce will-change-transform"
-             :class="particle.class"
-             :style="particle.style">
-        </div>
-      </div>
-    </div>
-
+  <div>
     <!-- Global Loader -->
     <GlobalLoader v-if="isLoading" />
 
-    <!-- Main Content -->
-    <div v-else class="relative z-10">
+    <!-- Error State -->
+    <section v-else-if="error" class="flex flex-col items-center justify-center min-h-[80vh] px-4">
+      <div class="max-w-lg mx-auto text-center">
+        <div class="error-icon-container relative mb-8">
+          <div class="w-24 h-24 mx-auto bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-full flex items-center justify-center shadow-2xl">
+            <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center animate-pulse">
+              <Icon name="mdi:package-variant-closed" class="w-8 h-8 text-white" />
+            </div>
+          </div>
+        </div>
 
-      <!-- Breadcrumbs & Cart Counter -->
-      <div class="breadcrumbs-section px-4 lg:px-20 pt-20 mb-8">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-          <!-- Breadcrumbs -->
-          <nav class="breadcrumbs bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl px-6 py-3 shadow-lg border border-white/50 dark:border-gray-700/50">
-            <ol class="flex items-center space-x-2 text-sm">
-              <li>
-                <NuxtLink to="/store" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium">
-                  <Icon name="mdi:home" class="inline w-4 h-4 mr-1" />
-                  Store
-                </NuxtLink>
-              </li>
-              <li class="text-gray-400">/</li>
-              <li v-if="product?.categories?.length">
-                <NuxtLink
-                    :to="`/category/${product.categories[0].url}`"
-                    class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
-                >
-                  {{ product.categories[0].name }}
-                </NuxtLink>
-              </li>
-              <li v-if="product?.categories?.length" class="text-gray-400">/</li>
-              <li class="text-gray-900 dark:text-white font-semibold truncate max-w-xs">
-                {{ product?.name || 'Product' }}
-              </li>
-            </ol>
-          </nav>
+        <div class="error-content bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/50 dark:border-slate-700/50">
+          <h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4">
+            Product Not Found
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            {{ error }}
+          </p>
 
-          <!-- Cart Counter -->
-          <div class="cart-counter-container bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 dark:border-gray-700/50">
-            <CartCounter />
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+                @click="refresh"
+                class="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 group"
+            >
+              <Icon name="mdi:refresh" class="inline w-5 h-5 mr-3 group-hover:animate-spin" />
+              Try Again
+            </button>
+
+            <NuxtLink
+                to="/store"
+                class="px-8 py-4 bg-white/10 backdrop-blur-md text-blue-600 dark:text-blue-400 font-bold rounded-2xl border-2 border-blue-200 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 transform hover:scale-105 group"
+            >
+              <Icon name="mdi:store" class="inline w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+              Browse Store
+            </NuxtLink>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Product Details Section -->
-      <div v-if="product" class="product-section px-4 lg:px-20 mb-16">
+    <!-- Main Product Content -->
+    <template v-else-if="product">
+
+      <!-- Breadcrumbs with max-w-9xl -->
+      <section class="breadcrumbs-section px-4 lg:px-6 py-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-b border-gray-200/30 dark:border-slate-700/30">
+        <div class="max-w-9xl mx-auto">
+          <nav class="flex items-center space-x-2 text-sm">
+            <NuxtLink to="/store" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium">
+              <Icon name="mdi:home" class="inline w-4 h-4 mr-1" />
+              Store
+            </NuxtLink>
+            <Icon name="mdi:chevron-right" class="w-4 h-4 text-slate-400" />
+
+            <template v-if="product.categories?.length">
+              <NuxtLink
+                  :to="`/category/${product.categories[0].url}`"
+                  class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium"
+              >
+                {{ product.categories[0].name }}
+              </NuxtLink>
+              <Icon name="mdi:chevron-right" class="w-4 h-4 text-slate-400" />
+            </template>
+
+            <span class="text-slate-900 dark:text-white font-semibold truncate">{{ product.name }}</span>
+          </nav>
+        </div>
+      </section>
+
+      <!-- Main Product Section -->
+      <section class="product-section px-4 lg:px-6 py-8">
         <div class="max-w-7xl mx-auto">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-            <!-- Left Side - Enhanced Image Slider -->
-            <div class="product-media-section" ref="mediaSection">
-              <ProductMediaSlider :media="product.banner" />
-
-              <!-- Product Trust Badges -->
-              <div class="trust-badges mt-6 grid grid-cols-3 gap-4" ref="trustBadges">
-                <div class="trust-badge bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-4 text-center shadow-lg border border-white/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
-                  <Icon name="mdi:shield-check" class="w-8 h-8 mx-auto mb-2 text-green-600 dark:text-green-400" />
-                  <span class="text-sm font-bold text-gray-900 dark:text-white">Verified</span>
-                  <span class="text-xs text-gray-600 dark:text-gray-400 block">Product</span>
-                </div>
-                <div class="trust-badge bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-4 text-center shadow-lg border border-white/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
-                  <Icon name="mdi:truck-fast" class="w-8 h-8 mx-auto mb-2 text-blue-600 dark:text-blue-400" />
-                  <span class="text-sm font-bold text-gray-900 dark:text-white">Free</span>
-                  <span class="text-xs text-gray-600 dark:text-gray-400 block">Delivery</span>
-                </div>
-                <div class="trust-badge bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-4 text-center shadow-lg border border-white/50 dark:border-gray-700/50 hover:scale-105 transition-all duration-300">
-                  <Icon name="mdi:refresh-circle" class="w-8 h-8 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
-                  <span class="text-sm font-bold text-gray-900 dark:text-white">Easy</span>
-                  <span class="text-xs text-gray-600 dark:text-gray-400 block">Returns</span>
-                </div>
-              </div>
+            <!-- Product Images (5 columns) -->
+            <div class="lg:col-span-5" ref="imageContainer">
+              <ProductMediaSlider
+                  :media="productMedia"
+                  thumb-position="left"
+              />
             </div>
 
-            <!-- Right Side - Enhanced Product Details -->
-            <div class="product-details-section" ref="detailsSection">
-              <div class="product-info bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/50 dark:border-gray-700/50">
+            <!-- Product Details (7 columns) -->
+            <div class="lg:col-span-7 space-y-6" ref="detailsContainer">
 
-                <!-- Product Title & Wishlist -->
-                <div class="product-header mb-8">
-                  <div class="flex items-start justify-between gap-6">
-                    <div class="product-title-section flex-1">
-                      <div class="product-badges mb-4">
-                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg">
-                          <Icon name="mdi:check-circle" class="w-4 h-4 mr-2" />
-                          In Stock
-                        </span>
+              <!-- Category Tags -->
+              <div v-if="product.categories?.length" class="category-tags" ref="categorySection">
+                <div class="flex flex-wrap gap-2">
+                  <NuxtLink
+                      v-for="category in product.categories"
+                      :key="category.url"
+                      :to="`/category/${category.url}`"
+                      class="category-tag px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium rounded-full border border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-800/30 dark:hover:to-indigo-800/30 transition-all duration-200 hover:scale-105 backdrop-blur-sm"
+                  >
+                    <Icon name="mdi:tag" class="w-3 h-3 inline mr-1" />
+                    {{ category.name }}
+                  </NuxtLink>
+                </div>
+              </div>
+
+              <!-- Product Header with Title and Wishlist -->
+              <div class="product-header" ref="productHeader">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1">
+                    <h1 class="text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-3 leading-tight">
+                      {{ product.name }}
+                    </h1>
+
+                    <div class="flex items-center gap-4 mb-4">
+                      <!-- Rating -->
+                      <div class="flex items-center gap-2">
+                        <div class="flex items-center bg-green-600 text-white px-2 py-1 rounded-md">
+                          <span class="text-sm font-bold">{{ averageRating.toFixed(1) }}</span>
+                          <Icon name="mdi:star" class="w-3 h-3 ml-1" />
+                        </div>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">({{ product.review_count || 0 }} reviews)</span>
                       </div>
 
-                      <h1 class="product-name text-3xl lg:text-4xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
-                        {{ product.name }}
-                      </h1>
-
-                      <div class="product-meta flex flex-wrap items-center gap-4 mb-6">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">
-                          <span class="font-semibold">SKU:</span> {{ product.sku }}
-                        </span>
-                        <div class="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
-                        <div class="flex items-center gap-1">
-                          <Icon name="mdi:star" class="w-4 h-4 text-yellow-400" />
-                          <span class="text-sm font-bold text-gray-900 dark:text-white">4.8</span>
-                          <span class="text-sm text-gray-600 dark:text-gray-400">({{ Math.floor(Math.random() * 500) + 50 }} reviews)</span>
-                        </div>
-                      </div>
-
-                      <!-- Product Attributes Tags -->
-                      <div v-if="product.filter_option && product.filter_option.length > 0" class="product-attributes mb-6">
-                        <div class="flex flex-wrap gap-2">
-                          <span
-                              v-for="filterOption in product.filter_option.slice(0, 5)"
-                              :key="filterOption.filter.name"
-                              class="attribute-tag px-3 py-1.5 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold border border-blue-200 dark:border-blue-700"
-                          >
-                            {{ filterOption.filter.name }}: {{ filterOption.swatch_value || filterOption.value }}
-                          </span>
-                          <span
-                              v-if="product.filter_option.length > 5"
-                              class="attribute-tag px-3 py-1.5 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-gray-300 rounded-full text-sm font-semibold"
-                          >
-                            +{{ product.filter_option.length - 5 }} more
-                          </span>
-                        </div>
+                      <!-- Views -->
+                      <div class="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                        <Icon name="mdi:eye" class="w-4 h-4" />
+                        <span>{{ product.views }} views</span>
                       </div>
                     </div>
 
-                    <!-- Enhanced Wishlist Button -->
-                    <button class="wishlist-btn group p-4 bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-gray-600 hover:scale-110 transition-all duration-300">
-                      <Icon name="mdi:heart-outline" class="w-8 h-8 text-gray-600 dark:text-gray-400 group-hover:text-red-500 transition-colors duration-300" />
+                    <p v-if="product.short_description" class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg mb-4">
+                      {{ product.short_description }}
+                    </p>
+                  </div>
+
+                  <!-- Wishlist Button -->
+                  <button
+                      @click="toggleWishlist"
+                      :disabled="wishlistLoading"
+                      class="wishlist-btn w-12 h-12 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-200 border border-gray-200 dark:border-slate-600"
+                      :class="{
+                        'text-red-500 bg-red-50/90 dark:bg-red-900/30 border-red-200 dark:border-red-700': isWishlisted,
+                        'text-gray-600 dark:text-gray-400': !isWishlisted,
+                        'cursor-not-allowed opacity-60': wishlistLoading
+                      }"
+                  >
+                    <Icon
+                        :name="wishlistLoading ? 'mdi:loading' : (isWishlisted ? 'mdi:heart' : 'mdi:heart-outline')"
+                        class="w-6 h-6"
+                        :class="wishlistLoading ? 'animate-spin' : ''"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <!-- Enhanced Price Section -->
+              <div class="price-section bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-slate-700/50" ref="priceSection">
+                <div class="flex items-baseline gap-4 mb-4">
+                  <!-- Sale Price -->
+                  <span v-if="hasSale" class="text-4xl lg:text-5xl font-black text-green-600 dark:text-green-400">
+                    {{ currentSalePrice }}
+                  </span>
+
+                  <!-- Regular Price -->
+                  <span
+                      class="font-bold"
+                      :class="hasSale
+                        ? 'text-xl text-gray-500 dark:text-gray-400 line-through'
+                        : 'text-4xl lg:text-5xl text-green-600 dark:text-green-400'"
+                  >
+                    {{ currentPrice }}
+                  </span>
+
+                  <!-- Discount Percentage -->
+                  <span v-if="hasSale && discountPercentage" class="text-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-4 py-2 rounded-full font-bold">
+                    {{ discountPercentage }}% OFF
+                  </span>
+                </div>
+
+                <!-- You Save Amount -->
+                <div v-if="hasSale" class="text-xl font-bold text-green-700 dark:text-green-300 mb-4">
+                  You Save: {{ savings }} ({{ discountPercentage }}%)
+                </div>
+
+                <!-- 🔥 Flipkart-style Collapsible Sales Offers Section -->
+                <div v-if="product.sales?.length" class="sales-offers-section" ref="salesSection">
+                  <div class="sales-header">
+                    <button
+                        @click="salesExpanded = !salesExpanded"
+                        class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/10 dark:to-pink-900/10 rounded-xl border border-red-200 dark:border-red-800/30 backdrop-blur-sm hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/20 dark:hover:to-pink-800/20 transition-all duration-200"
+                    >
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                          <Icon name="mdi:fire" class="w-4 h-4 text-white" />
+                        </div>
+                        <div class="text-left">
+                          <div class="font-bold text-red-700 dark:text-red-300">
+                            Available Offers ({{ product.sales.length }})
+                          </div>
+                          <div class="text-sm text-red-600 dark:text-red-400">
+                            {{ salesExpanded ? 'Click to collapse' : 'Click to view all offers' }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <!-- Best Offer Badge -->
+                        <div class="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
+                          SAVE UP TO {{ maxDiscount }}%
+                        </div>
+                        <Icon
+                            :name="salesExpanded ? 'mdi:chevron-up' : 'mdi:chevron-down'"
+                            class="w-5 h-5 text-red-600 dark:text-red-400 transition-transform duration-200"
+                            :class="salesExpanded ? 'rotate-180' : ''"
+                        />
+                      </div>
                     </button>
                   </div>
-                </div>
 
-                <!-- Enhanced Price & Rating -->
-                <div class="pricing-section mb-8">
-                  <div class="price-container bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                      <div class="price-info">
-                        <div class="current-price flex items-center gap-3 mb-2">
-                          <h2 class="text-4xl lg:text-5xl font-black text-green-600 dark:text-green-400">
-                            {{ product.price }}
-                          </h2>
-                          <span v-if="product.reward_point" class="reward-points px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl text-sm font-bold shadow-lg">
-                            +{{ Math.round(product.reward_point) }} pts
-                          </span>
-                        </div>
-                        <div class="price-details flex items-center gap-3">
-                          <span class="original-price text-lg text-gray-500 dark:text-gray-400 line-through">
-                            ₹{{ formatPrice(Math.floor(product.price * 1.3)) }}
-                          </span>
-                          <span class="discount-badge px-3 py-1 bg-red-500 text-white rounded-full text-sm font-bold">
-                            {{ Math.floor(((product.price * 1.3 - product.price) / (product.price * 1.3)) * 100) }}% OFF
-                          </span>
-                        </div>
-                      </div>
+                  <!-- Collapsible Sales List -->
+                  <Transition
+                      name="sales-collapse"
+                      enter-active-class="transition-all duration-300 ease-out"
+                      enter-from-class="max-h-0 opacity-0 transform scale-95"
+                      enter-to-class="max-h-screen opacity-100 transform scale-100"
+                      leave-active-class="transition-all duration-300 ease-in"
+                      leave-from-class="max-h-screen opacity-100 transform scale-100"
+                      leave-to-class="max-h-0 opacity-0 transform scale-95"
+                  >
+                    <div v-show="salesExpanded" class="sales-list mt-4 space-y-3 overflow-hidden">
+                      <div
+                          v-for="(sale, index) in product.sales"
+                          :key="index"
+                          class="sale-offer-card p-4 bg-white/90 dark:bg-slate-700/90 rounded-xl border border-red-200 dark:border-red-800/30 backdrop-blur-sm hover:border-red-300 dark:hover:border-red-700/50 transition-all duration-200 hover:scale-102"
+                      >
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                              <Icon name="mdi:tag" class="w-4 h-4 text-white" />
+                            </div>
+                            <div>
+                              <div class="font-bold text-red-700 dark:text-red-300 mb-1">
+                                {{ getSaleLabel(sale) }}
+                              </div>
+                              <div class="text-sm text-red-600 dark:text-red-400">
+                                Save {{ getSaleSavings(sale) }} on this purchase
+                              </div>
+                              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Final Price: <span class="font-semibold text-green-600 dark:text-green-400">{{ sale.sale_price }}</span>
+                              </div>
+                            </div>
+                          </div>
 
-                      <div class="rating-section">
-                        <div class="rating-container bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl px-6 py-4 shadow-lg">
-                          <div class="flex items-center gap-2">
-                            <Icon name="mdi:star" class="w-6 h-6 text-white" />
-                            <span class="text-xl font-black text-white">4.8</span>
-                            <span class="text-sm text-white/90">Excellent</span>
+                          <!-- Live Countdown Timer -->
+                          <div v-if="sale.ends_till" class="text-right">
+                            <div class="bg-red-100 dark:bg-red-900/30 px-3 py-2 rounded-lg">
+                              <div class="text-sm font-bold text-red-700 dark:text-red-300">
+                                {{ getTimeRemaining(sale.ends_till) }}
+                              </div>
+                              <div class="text-xs text-red-600 dark:text-red-400">
+                                remaining
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Transition>
                 </div>
 
-                <!-- Categories -->
-                <div v-if="product.categories" class="categories-section mb-8">
-                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <Icon name="mdi:tag-multiple" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                    Categories
-                  </h3>
-                  <div class="flex flex-wrap gap-3">
-                    <NuxtLink
-                        v-for="category in product.categories"
-                        :key="category.url"
-                        :to="`/category/${category.url}`"
-                        class="category-link px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-300"
-                    >
-                      {{ category.name }}
-                    </NuxtLink>
+                <!-- Reward Points -->
+                <div v-if="product.reward_point" class="reward-points mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/10 dark:to-indigo-900/10 rounded-xl border border-purple-200 dark:border-purple-800/30 backdrop-blur-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                      <Icon name="mdi:diamond-stone" class="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <div class="font-bold text-purple-700 dark:text-purple-300">
+                        Earn {{ Math.round(product.reward_point) }} Reward Points
+                      </div>
+                      <div class="text-sm text-purple-600 dark:text-purple-400">
+                        Worth ₹{{ (product.reward_point * 0.1).toFixed(0) }} on next purchase
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Enhanced Variants Section -->
-                <div v-if="product.parent?.variants || product.variants" class="variants-section mb-8" ref="variantsSection">
-                  <div class="variants-header mb-6">
-                    <div class="flex justify-between items-center">
-                      <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center">
-                        <Icon name="mdi:palette" class="w-5 h-5 mr-2 text-purple-600 dark:text-purple-400" />
-                        Similar Products
-                        <span class="ml-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm font-bold">
-                          {{ product.parent?.variants?.length || product.variants?.length }}
+              <!-- Product Variants -->
+              <div v-if="product.variants?.length" class="variant-selection bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-slate-700/50" ref="variantSection">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Icon name="mdi:palette" class="w-5 h-5 text-blue-500" />
+                  Available Variants ({{ product.variants.length }})
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                  <NuxtLink
+                      v-for="variant in product.variants"
+                      :key="variant.sku"
+                      :to="`/product/${variant.url}`"
+                      class="variant-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 bg-gray-50/90 dark:bg-slate-700/90 hover:bg-blue-50/90 dark:hover:bg-blue-900/20 transition-all duration-300 hover:scale-102 hover:shadow-md backdrop-blur-sm"
+                  >
+                    <div class="flex items-center gap-4">
+                      <img
+                          :src="variant.thumbnail || '/images/placeholder.png'"
+                          :alt="variant.name"
+                          class="w-20 h-20 object-cover rounded-lg bg-gray-100 dark:bg-gray-600"
+                      />
+                      <div class="flex-1">
+                        <div class="font-bold text-gray-900 dark:text-white mb-1">{{ variant.name }}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">SKU: {{ variant.sku }}</div>
+                        <div class="flex items-center justify-between">
+                          <div class="font-bold text-green-600 dark:text-green-400 text-lg">{{ variant.price }}</div>
+                          <div class="text-sm text-gray-500">Qty: {{ variant.min_quantity }}-{{ variant.max_quantity }}</div>
+                        </div>
+                      </div>
+                      <Icon name="mdi:chevron-right" class="w-6 h-6 text-gray-400" />
+                    </div>
+                  </NuxtLink>
+                </div>
+              </div>
+
+              <!-- Product Specifications -->
+              <div v-if="product.filter_option?.length" class="product-features bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-slate-700/50" ref="featuresSection">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Icon name="mdi:format-list-bulleted" class="w-5 h-5 text-green-500" />
+                  Specifications
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div
+                      v-for="filter in product.filter_option"
+                      :key="`${filter.filter.name}-${filter.value}`"
+                      class="spec-item p-4 bg-gray-50/90 dark:bg-slate-700/90 rounded-xl hover:bg-gray-100/90 dark:hover:bg-slate-600/90 transition-colors duration-200 backdrop-blur-sm"
+                  >
+                    <div class="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">{{ filter.filter.name }}</div>
+                    <div class="text-base font-bold text-gray-900 dark:text-white">{{ filter.value }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Enhanced Stock & Delivery Info -->
+              <div class="stock-delivery-section bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-slate-700/50" ref="stockSection">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Stock Info -->
+                  <div class="stock-info">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                      <Icon name="mdi:package-variant" class="w-5 h-5 text-blue-500" />
+                      Stock Information
+                    </h4>
+                    <div class="space-y-2">
+                      <div class="flex items-center gap-2">
+                        <Icon
+                            :name="isInStock ? 'mdi:check-circle' : 'mdi:alert-circle'"
+                            class="w-5 h-5"
+                            :class="isInStock ? 'text-green-500' : 'text-red-500'"
+                        />
+                        <span class="font-semibold" :class="isInStock ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                          {{ isInStock ? 'In Stock' : 'Out of Stock' }}
                         </span>
-                      </h3>
-                      <span class="text-sm text-gray-600 dark:text-gray-400">
-                        Choose your preferred option
-                      </span>
+                      </div>
+                      <div v-if="isInStock" class="text-sm text-gray-600 dark:text-gray-400">
+                        {{ currentStock }} units available
+                      </div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">
+                        Min Order: {{ product.min_quantity }} | Max Order: {{ currentMaxQuantity }}
+                      </div>
                     </div>
                   </div>
 
-                  <div class="variants-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    <div
-                        v-for="variant in (product.parent?.variants || product.variants)"
-                        :key="variant.url"
-                        class="variant-card group bg-white dark:bg-gray-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border-2 relative transform hover:scale-105"
-                        :class="variant.url === product.url ? 'border-indigo-500 ring-4 ring-indigo-500/20' : 'border-gray-200 dark:border-gray-600 hover:border-indigo-300'"
-                    >
-                      <NuxtLink :to="`/product/${variant.url}`" :title="`View ${variant.name}`">
-                        <!-- Variant Image -->
-                        <div class="variant-image relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-600">
-                          <img
-                              :src="variant.thumbnail"
-                              :alt="variant.name"
-                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                              loading="lazy"
-                          />
-
-                          <!-- Stock Status -->
-                          <div class="stock-badge absolute top-2 left-2">
-                            <span class="px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-lg shadow-lg">
-                              In Stock
-                            </span>
-                          </div>
-
-                          <!-- Current Badge -->
-                          <div
-                              v-if="variant.url === product.url"
-                              class="current-badge absolute top-2 right-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg animate-pulse"
-                          >
-                            CURRENT
-                          </div>
-
-                          <!-- Quick Action Overlay -->
-                          <div class="variant-overlay absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <span class="px-4 py-2 bg-white text-gray-900 rounded-xl font-semibold shadow-lg">
-                              View Details
-                            </span>
-                          </div>
-                        </div>
-                      </NuxtLink>
-                    </div>
-                  </div>
-
-                  <!-- Variant Selection Helper -->
-                  <div class="variant-info mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
-                    <div class="flex items-center gap-3">
-                      <Icon name="mdi:information" class="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                      <div class="text-sm text-blue-800 dark:text-blue-200">
-                        <span class="font-bold">{{ (product.parent?.variants || product.variants)?.length }} variants available</span>
-                        - Click any variant to view its details and make your selection
+                  <!-- Delivery & Return Info -->
+                  <div class="delivery-info">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                      <Icon name="mdi:truck-delivery" class="w-5 h-5 text-orange-500" />
+                      Delivery & Returns
+                    </h4>
+                    <div class="space-y-2">
+                      <div class="flex items-center gap-2">
+                        <Icon name="mdi:clock-fast" class="w-4 h-4 text-green-500" />
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Fast Delivery Available</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <Icon
+                            :name="product.returnable ? 'mdi:keyboard-return' : 'mdi:cancel'"
+                            class="w-4 h-4"
+                            :class="product.returnable ? 'text-blue-500' : 'text-red-500'"
+                        />
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                          {{ product.returnable ? '7 days return policy' : 'No returns available' }}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Enhanced Add to Cart Section -->
-                <div class="cart-section mb-8">
-                  <div class="add-to-cart-container bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 border border-gray-200 dark:border-gray-600">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                      <Icon name="mdi:cart-plus" class="w-5 h-5 mr-2 text-green-600 dark:text-green-400" />
-                      Add to Cart
-                    </h3>
+              <!-- Action Buttons -->
+              <div class="action-buttons space-y-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-slate-700/50" ref="actionButtons">
+                <!-- Add to Cart with Quantity -->
+                <AddToCartWithQuantitySelector
+                    :sku="product.sku"
+                    :min-quantity="product.min_quantity"
+                    :max-quantity="currentMaxQuantity"
+                />
 
-                    <AddToCartWithQuantitySelector
-                        :sku="product.sku"
-                        :min-quantity="product.min_quantity"
-                        :max-quantity="product.max_quantity"
-                        class="mb-4"
-                    />
-                  </div>
-                </div>
+                <!-- Buy Now Button -->
+                <BuyNowButton
+                    :sku="product.sku"
+                    :min-quantity="product.min_quantity"
+                />
 
-                <!-- Enhanced Buy Now Button -->
-                <div class="buy-now-section mb-8">
-                  <BuyNowButton
-                      :sku="product.sku"
-                      :min-quantity="product.min_quantity"
-                  />
-                </div>
+                <!-- Additional Actions -->
+                <div class="grid grid-cols-2 gap-4">
+                  <button class="action-btn w-full py-3 bg-gray-100/90 dark:bg-slate-700/90 hover:bg-gray-200/90 dark:hover:bg-slate-600/90 text-gray-700 dark:text-gray-300 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 backdrop-blur-sm">
+                    <Icon name="mdi:share-variant" class="w-5 h-5" />
+                    Share Product
+                  </button>
 
-                <!-- Enhanced Available Offers -->
-                <div v-if="product.sales?.length" class="offers-section mb-8" ref="offersSection">
-                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <Icon name="mdi:tag-heart" class="w-5 h-5 mr-2 text-red-600 dark:text-red-400" />
-                    Special Offers
-                  </h3>
-                  <div class="offers-list space-y-3">
-                    <div
-                        v-for="offer in product.sales"
-                        :key="offer.sale.uuid"
-                        class="offer-card bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-4 border border-green-200 dark:border-green-800 shadow-lg hover:scale-105 transition-all duration-300"
-                    >
-                      <div class="flex items-start gap-4">
-                        <div class="offer-icon w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Icon name="mdi:tag" class="w-6 h-6 text-white" />
-                        </div>
-                        <div class="offer-content flex-1">
-                          <div class="offer-text">
-                            <span class="font-bold text-green-800 dark:text-green-200">
-                              {{ formatOffer(offer) }}
-                            </span>
-                            <button class="ml-3 px-3 py-1 bg-green-500 text-white rounded-lg text-xs font-semibold hover:bg-green-600 transition-colors duration-200">
-                              Terms & Conditions
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Enhanced Product Overview -->
-                <div v-if="product.short_description" class="overview-section">
-                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <Icon name="mdi:information-outline" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                    Product Overview
-                  </h3>
-                  <div class="overview-content bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-800">
-                    <div v-html="product.short_description" class="text-gray-700 dark:text-gray-300 leading-relaxed prose prose-sm max-w-none"></div>
-                  </div>
+                  <button class="action-btn w-full py-3 bg-gray-100/90 dark:bg-slate-700/90 hover:bg-gray-200/90 dark:hover:bg-slate-600/90 text-gray-700 dark:text-gray-300 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 backdrop-blur-sm">
+                    <Icon name="mdi:bookmark-outline" class="w-5 h-5" />
+                    Save for Later
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Enhanced Full Product Description -->
-      <div v-if="product?.description" class="description-section px-4 lg:px-20 mb-16" ref="descriptionSection">
+      <!-- Product Description -->
+      <section v-if="product.description" class="description-section px-4 lg:px-6 py-8" ref="descriptionSection">
         <div class="max-w-7xl mx-auto">
-          <div class="description-container bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 overflow-hidden">
-            <div class="description-header bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8">
-              <h2 class="text-3xl font-black flex items-center">
-                <Icon name="mdi:text-box-multiple" class="w-8 h-8 mr-3" />
-                Detailed Description
+          <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 dark:border-slate-700/50 overflow-hidden">
+            <div class="p-6 border-b border-gray-200/50 dark:border-slate-700/50">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <Icon name="mdi:file-document-outline" class="w-6 h-6 text-blue-500" />
+                Product Description
               </h2>
-              <p class="text-blue-100 mt-2">Everything you need to know about this product</p>
             </div>
-            <div class="description-content p-8">
-              <FilamentTipTapContent :text="product.description" class="prose prose-lg max-w-none dark:prose-invert" />
+            <div class="p-6">
+              <FilamentTipTapContent :text="product.description" />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Enhanced Product Comments Section -->
-      <div class="reviews-section px-4 lg:px-20 mb-16" ref="reviewsSection">
+      <!-- Reviews Section -->
+      <section class="reviews-section px-4 lg:px-6 py-8" ref="reviewsSection">
         <div class="max-w-7xl mx-auto">
-          <div class="reviews-container bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 overflow-hidden">
-            <div class="reviews-header bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8">
-              <h2 class="text-3xl font-black flex items-center">
-                <Icon name="mdi:star-box-multiple" class="w-8 h-8 mr-3" />
-                Customer Reviews
-              </h2>
-              <p class="text-indigo-100 mt-2">See what our customers are saying about this product</p>
-            </div>
-            <div class="reviews-content">
-              <ProductComment :url="product?.url" />
-            </div>
-          </div>
+          <ProductComment :url="product.url" />
         </div>
-      </div>
-    </div>
+      </section>
+
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
-import { useRoute, useRuntimeConfig, useSanctumFetch } from '#imports'
-import CartCounter from "~/components/cart/CartCounter.vue"
-import GlobalLoader from "~/components/GlobalLoader.vue"
-import ProductMediaSlider from "~/components/sliders/ProductMediaSlider.vue"
-import FilamentTipTapContent from "~/components/FilamentTipTapContent.vue"
-import AddToCartWithQuantitySelector from "~/components/store/buttons/AddToCartWithQuantitySelector.vue"
-import BuyNowButton from "~/components/cart/BuyNowButton.vue"
-import ProductComment from "~/components/product/ProductComment.vue"
+import { ref, computed, onMounted, nextTick, watch, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useSanctumFetch, useRuntimeConfig } from '#imports'
+import { useToast } from '~/composables/useToast'
+import { useWishlist } from '~/composables/useWishlist'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-// GSAP imports (client-side only)
-let gsap: any = null
-let ScrollTrigger: any = null
+// Components
+import GlobalLoader from '~/components/GlobalLoader.vue'
+import AddToCartWithQuantitySelector from '~/components/store/buttons/AddToCartWithQuantitySelector.vue'
+import BuyNowButton from '~/components/cart/BuyNowButton.vue'
+import ProductMediaSlider from '~/components/sliders/ProductMediaSlider.vue'
+import ProductComment from '~/components/product/ProductComment.vue'
+import FilamentTipTapContent from '~/components/FilamentTipTapContent.vue'
 
+// Register GSAP plugins
 if (process.client) {
-  import('gsap').then(({ default: gsapModule }) => {
-    gsap = gsapModule
-    import('gsap/ScrollTrigger').then(({ ScrollTrigger: ScrollTriggerModule }) => {
-      ScrollTrigger = ScrollTriggerModule
-      gsap.registerPlugin(ScrollTrigger)
-    })
-  })
+  gsap.registerPlugin(ScrollTrigger)
+}
+
+// Types (keeping existing interfaces)
+interface ProductSale {
+  start_from: string | null
+  ends_till: string
+  sale_price: string
+  discount: number
+  discount_type: string
+}
+
+interface ProductTier {
+  min_quantity: number
+  max_quantity: number
+  wholesale_unit_quantity: number | null
+  price: string
+  stock: number
+  in_stock: boolean
+}
+
+interface ProductVariant {
+  name: string
+  url: string
+  sku: string
+  short_description: string | null
+  price: string
+  min_quantity: number
+  max_quantity: number
+  reward_point: number
+  returnable: boolean
+  views: number
+  thumbnail: string
+  formatted: {
+    regular: string | null
+    sale: string | null
+    effective: string | null
+  }
+}
+
+interface ProductCategory {
+  name: string
+  url: string
+  views: number
+  thumbnail: string
+  meta: {
+    keywords: string[]
+  }
+}
+
+interface FilterOption {
+  value: string
+  swatch_value: string | null
+  filter: {
+    name: string
+  }
+}
+
+interface Engagement {
+  id: number
+  review: string
+  rating: number
+  helpful_votes: number
+  author: {
+    name: string
+    type: string
+  }
+  product: {
+    url: string
+    sku: string
+  }
+  created_at: string
+  updated_at: string
+}
+
+interface Product {
+  name: string
+  url: string
+  sku: string
+  short_description: string
+  price: string
+  min_quantity: number
+  max_quantity: number
+  reward_point: number
+  returnable: boolean
+  views: number
+  thumbnail: string
+  formatted: {
+    regular: string | null
+    sale: string | null
+    effective: string | null
+  }
+  banner: string[]
+  description: string
+  meta: {
+    og_title: string
+    meta_title: string
+    canonical_url: string
+    meta_keywords: string
+    twitter_title: string
+    og_description: string
+    meta_description: string
+    twitter_description: string
+  }
+  hasParent: boolean
+  filter_option: FilterOption[]
+  categories: ProductCategory[]
+  tiers: ProductTier[]
+  sales: ProductSale[]
+  variants: ProductVariant[]
+  engagement: Engagement[]
+  is_wishlisted?: number
+  review_count?: number
+  engagements_avg_rating?: number
+  engagements_avg_helpful_votes?: number
 }
 
 // Composables
 const route = useRoute()
 const config = useRuntimeConfig()
+const toast = useToast()
+const { toggleWishlist: apiToggleWishlist, isLoggedIn } = useWishlist()
 
-// Refs for animations
-const orb1 = ref<HTMLElement>()
-const orb2 = ref<HTMLElement>()
-const orb3 = ref<HTMLElement>()
-const mediaSection = ref<HTMLElement>()
-const detailsSection = ref<HTMLElement>()
-const trustBadges = ref<HTMLElement>()
-const variantsSection = ref<HTMLElement>()
-const offersSection = ref<HTMLElement>()
-const descriptionSection = ref<HTMLElement>()
-const reviewsSection = ref<HTMLElement>()
+// Refs for GSAP animations
+const imageContainer = ref()
+const detailsContainer = ref()
+const productHeader = ref()
+const categorySection = ref()
+const priceSection = ref()
+const salesSection = ref()
+const variantSection = ref()
+const featuresSection = ref()
+const stockSection = ref()
+const actionButtons = ref()
+const descriptionSection = ref()
+const reviewsSection = ref()
 
 // State
-const isLoading = useState('pageLoading', () => false)
-const product = ref<any>(null)
-let gsapContext: any = null
+const productUrl = computed(() => route.params.url as string)
+const isLoading = ref(false)
+const error = ref<string | null>(null)
+const product = ref<Product | null>(null)
+const wishlistLoading = ref(false)
+const timeUpdateInterval = ref<NodeJS.Timeout>()
+const salesExpanded = ref(false) // 🔥 New: Control sales list visibility
 
-// Animated particles
-const particles = [
-  { class: 'w-4 h-4 bg-blue-400', style: 'top: 15%; left: 10%; animation-delay: 0s;' },
-  { class: 'w-3 h-3 bg-purple-400', style: 'top: 25%; right: 15%; animation-delay: 1.5s;' },
-  { class: 'w-5 h-5 bg-emerald-400', style: 'bottom: 20%; left: 20%; animation-delay: 3s;' },
-  { class: 'w-3 h-3 bg-pink-400', style: 'bottom: 30%; right: 25%; animation-delay: 4.5s;' }
-]
+definePageMeta({
+  layout: 'default',
+})
 
-// Utility functions
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('en-IN').format(price)
-}
+// ✅ CORRECTED Computed Properties with Proper Pricing Logic
+const hasSale = computed(() => product.value?.sales?.length > 0)
+const currentSale = computed(() => hasSale.value ? product.value!.sales[0] : null)
+const currentSalePrice = computed(() => currentSale.value?.sale_price || '')
 
-const formatOffer = (offer: any): string => {
-  if (!offer) return ""
-  let discountAmount = offer.discount ?? ""
-  if (offer.discount_type === "by_percent" || offer.discount_type === "to_percent") {
-    discountAmount += "%"
+// Helper: Get minimum price tier when tiers available
+const minPriceTier = computed(() => {
+  if (!product.value?.tiers?.length) return null
+
+  return product.value.tiers.reduce((min, tier) => {
+    const minPrice = parseFloat(min.price.replace(/[^0-9.]/g, ''))
+    const tierPrice = parseFloat(tier.price.replace(/[^0-9.]/g, ''))
+    return tierPrice < minPrice ? tier : min
+  })
+})
+
+// ✅ CORRECTED: Use minimum price tier when available, fallback to product price
+const currentPrice = computed(() => {
+  return minPriceTier.value?.price || product.value?.price || ''
+})
+
+const currentStock = computed(() => {
+  return minPriceTier.value?.stock || 0
+})
+
+const currentMaxQuantity = computed(() => {
+  return minPriceTier.value?.max_quantity || product.value?.max_quantity || 1
+})
+
+const isInStock = computed(() => {
+  return minPriceTier.value?.in_stock ?? true
+})
+
+const isWishlisted = computed(() => product.value?.is_wishlisted === 1)
+
+// 🔥 NEW: Calculate maximum discount percentage across all sales
+const maxDiscount = computed(() => {
+  if (!product.value?.sales?.length) return 0
+
+  return Math.max(...product.value.sales.map(sale => {
+    if (sale.discount_type === 'by_percent') {
+      return sale.discount
+    } else {
+      // For fixed discounts, calculate percentage
+      const original = parseFloat(currentPrice.value.replace(/[^0-9.]/g, ''))
+      return Math.round((sale.discount / original) * 100)
+    }
+  }))
+})
+
+// Media for ProductMediaSlider component
+const productMedia = computed(() => {
+  const media = []
+
+  // Add main thumbnail
+  if (product.value?.thumbnail) {
+    media.push(product.value.thumbnail)
   }
-  return `${offer.sale.name} Offer ${discountAmount} off - ${offer.sale.description}`
+
+  // Add banner images
+  if (product.value?.banner?.length) {
+    media.push(...product.value.banner)
+  }
+
+  // Fallback to placeholder if no media
+  if (media.length === 0) {
+    media.push('/images/placeholder.png')
+  }
+
+  return media
+})
+
+const discountPercentage = computed(() => {
+  if (!hasSale.value || !currentSale.value) return null
+  const original = parseFloat(currentPrice.value.replace(/[^0-9.]/g, ''))
+  const sale = parseFloat(currentSalePrice.value.replace(/[^0-9.]/g, ''))
+  return Math.round(((original - sale) / original) * 100)
+})
+
+const savings = computed(() => {
+  if (!hasSale.value || !currentSale.value) return ''
+  const original = parseFloat(currentPrice.value.replace(/[^0-9.]/g, ''))
+  const sale = parseFloat(currentSalePrice.value.replace(/[^0-9.]/g, ''))
+  const saved = original - sale
+  return `₹${saved.toFixed(0)}`
+})
+
+const averageRating = computed(() => {
+  return product.value?.engagements_avg_rating || 0
+})
+
+// Methods
+const getSaleLabel = (sale: ProductSale) => {
+  switch (sale.discount_type) {
+    case 'by_percent':
+      return `${sale.discount}% OFF`
+    case 'by_fixed':
+      return `₹${sale.discount} OFF`
+    default:
+      return 'SPECIAL PRICE'
+  }
 }
 
-// API calls
-const fetchProductDetail = async () => {
+const getSaleSavings = (sale: ProductSale) => {
+  const original = parseFloat(currentPrice.value.replace(/[^0-9.]/g, ''))
+  const salePrice = parseFloat(sale.sale_price.replace(/[^0-9.]/g, ''))
+  const saved = original - salePrice
+  return `₹${saved.toFixed(0)}`
+}
+
+// Live countdown timer
+const getTimeRemaining = (endTime: string) => {
+  const now = new Date().getTime()
+  const end = new Date(endTime).getTime()
+  const diff = end - now
+
+  if (diff <= 0) return 'Expired'
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+  if (days > 0) return `${days}d ${hours}h ${minutes}m`
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`
+  return `${minutes}m ${seconds}s`
+}
+
+const toggleWishlist = async () => {
+  if (!isLoggedIn.value) {
+    toast.error('Please login to add items to your wishlist')
+    return
+  }
+
+  if (!product.value || wishlistLoading.value) return
+
+  wishlistLoading.value = true
+  const originalStatus = isWishlisted.value
+
   try {
-    isLoading.value = true
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/${route.params.url}`, {
-      method: 'GET'
+    // Optimistic UI update
+    product.value.is_wishlisted = originalStatus ? 0 : 1
+
+    // Make API call
+    const response = await apiToggleWishlist(product.value.url, originalStatus)
+
+    if (response?.data?.message) {
+      toast.success(response.data.message)
+    }
+
+  } catch (error: any) {
+    console.error('Wishlist toggle failed:', error)
+
+    // Revert optimistic update
+    product.value.is_wishlisted = originalStatus ? 1 : 0
+
+    let errorMessage = 'Failed to update wishlist'
+    if (error.message?.includes('login')) {
+      errorMessage = 'Please login to manage your wishlist'
+    } else if (error.message?.includes('not found')) {
+      errorMessage = 'Product not found'
+    }
+
+    toast.error(errorMessage)
+
+  } finally {
+    wishlistLoading.value = false
+  }
+}
+
+const fetchProduct = async () => {
+  isLoading.value = true
+  error.value = null
+
+  try {
+    const response = await useSanctumFetch(`${config.public.apiBase}/products/${productUrl.value}`, {
+      credentials: 'include'
     })
-    product.value = res?.data ?? null
-  } catch (error) {
-    console.error('[✘] Failed to load product', error)
-    product.value = null
+
+    if (response?.data) {
+      product.value = response.data
+
+      // Initialize animations after product data loads
+      await nextTick()
+      initAnimations()
+
+      // Start countdown timer updates
+      startTimeUpdates()
+    } else {
+      error.value = 'Product not found'
+    }
+  } catch (e: any) {
+    console.error('Failed to fetch product:', e)
+    if (e.status === 404) {
+      error.value = 'Product not found'
+    } else {
+      error.value = e.message || 'Failed to load product'
+    }
   } finally {
     isLoading.value = false
   }
 }
 
-// GSAP animations
-const initializeAnimations = () => {
-  if (!process.client || !gsap) return
+const startTimeUpdates = () => {
+  // Update countdown timers every second
+  if (timeUpdateInterval.value) {
+    clearInterval(timeUpdateInterval.value)
+  }
 
-  gsapContext = gsap.context(() => {
-    // Floating orbs animation
-    if (orb1.value) {
-      gsap.to(orb1.value, {
-        y: -40,
-        rotation: 15,
-        duration: 8,
-        ease: 'power2.inOut',
-        yoyo: true,
-        repeat: -1
-      })
-    }
-
-    if (orb2.value) {
-      gsap.to(orb2.value, {
-        y: 30,
-        rotation: -12,
-        duration: 10,
-        ease: 'power2.inOut',
-        yoyo: true,
-        repeat: -1
-      })
-    }
-
-    if (orb3.value) {
-      gsap.to(orb3.value, {
-        y: -25,
-        rotation: 20,
-        duration: 6,
-        ease: 'power2.inOut',
-        yoyo: true,
-        repeat: -1
-      })
-    }
-
-    // Product sections entrance animations
-    if (ScrollTrigger) {
-      // Media section animation
-      if (mediaSection.value) {
-        gsap.fromTo(mediaSection.value,
-            { x: -50, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 1,
-              ease: 'back.out(1.7)',
-              scrollTrigger: {
-                trigger: mediaSection.value,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-        )
-      }
-
-      // Details section animation
-      if (detailsSection.value) {
-        gsap.fromTo(detailsSection.value,
-            { x: 50, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 1,
-              ease: 'back.out(1.7)',
-              scrollTrigger: {
-                trigger: detailsSection.value,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-        )
-      }
-
-      // Trust badges animation
-      if (trustBadges.value && trustBadges.value.children) {
-        gsap.fromTo(trustBadges.value.children,
-            { y: 30, opacity: 0, scale: 0.9 },
-            {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration: 0.6,
-              ease: 'back.out(1.7)',
-              stagger: 0.2,
-              scrollTrigger: {
-                trigger: trustBadges.value,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-        )
-      }
-
-      // Variant cards animation
-      if (variantsSection.value) {
-        const variantCards = variantsSection.value.querySelectorAll('.variant-card')
-        if (variantCards.length) {
-          gsap.fromTo(variantCards,
-              { y: 20, opacity: 0, scale: 0.95 },
-              {
-                y: 0,
-                opacity: 1,
-                scale: 1,
-                duration: 0.5,
-                ease: 'back.out(1.7)',
-                stagger: 0.1,
-                scrollTrigger: {
-                  trigger: variantsSection.value,
-                  start: 'top 80%',
-                  toggleActions: 'play none none reverse'
-                }
-              }
-          )
-        }
-      }
-
-      // Offer cards animation
-      if (offersSection.value) {
-        const offerCards = offersSection.value.querySelectorAll('.offer-card')
-        if (offerCards.length) {
-          gsap.fromTo(offerCards,
-              { x: -30, opacity: 0 },
-              {
-                x: 0,
-                opacity: 1,
-                duration: 0.6,
-                ease: 'back.out(1.7)',
-                stagger: 0.1,
-                scrollTrigger: {
-                  trigger: offersSection.value,
-                  start: 'top 80%',
-                  toggleActions: 'play none none reverse'
-                }
-              }
-          )
-        }
-      }
-
-      // Description section animation
-      if (descriptionSection.value) {
-        gsap.fromTo(descriptionSection.value,
-            { y: 50, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: 'back.out(1.7)',
-              scrollTrigger: {
-                trigger: descriptionSection.value,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-        )
-      }
-
-      // Reviews section animation
-      if (reviewsSection.value) {
-        gsap.fromTo(reviewsSection.value,
-            { y: 40, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: 'back.out(1.7)',
-              scrollTrigger: {
-                trigger: reviewsSection.value,
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-        )
-      }
-    }
-  })
+  timeUpdateInterval.value = setInterval(() => {
+    // Force reactive updates for countdown timers
+    // The computed getTimeRemaining will automatically update
+  }, 1000)
 }
 
-// Watchers
-watch(() => route.params.url, async (newUrl) => {
-  if (newUrl) {
-    await fetchProductDetail()
+const initAnimations = () => {
+  if (!process.client) return
+
+  // Reset any existing animations
+  gsap.killTweensOf("*")
+
+  // Image container animation
+  gsap.fromTo(imageContainer.value,
+      { opacity: 0, scale: 0.9, rotationY: -15 },
+      {
+        opacity: 1,
+        scale: 1,
+        rotationY: 0,
+        duration: 1.2,
+        ease: "power3.out",
+        delay: 0.2
+      }
+  )
+
+  // Details container animation
+  gsap.fromTo(detailsContainer.value,
+      { opacity: 0, x: 50 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: "power3.out",
+        delay: 0.4
+      }
+  )
+
+  // Category tags animation
+  if (categorySection.value) {
+    gsap.fromTo(categorySection.value?.children || [],
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.1,
+          delay: 0.6
+        }
+    )
   }
-})
+
+  // Product header animation
+  gsap.fromTo(productHeader.value?.children || [],
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        stagger: 0.1,
+        delay: 0.8
+      }
+  )
+
+  // Price section special animation
+  if (priceSection.value) {
+    gsap.fromTo(priceSection.value,
+        { opacity: 0, scale: 0.9, y: 20 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+          delay: 1.0
+        }
+    )
+  }
+
+  // ScrollTrigger animations for sections below the fold
+  const sections = [
+    salesSection.value,
+    variantSection.value,
+    featuresSection.value,
+    stockSection.value,
+    actionButtons.value,
+    descriptionSection.value,
+    reviewsSection.value
+  ].filter(Boolean)
+
+  sections.forEach((section, index) => {
+    gsap.fromTo(section,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            end: "bottom 15%",
+            toggleActions: "play none none reverse"
+          }
+        }
+    )
+  })
+
+  // Continuous animations
+  startContinuousAnimations()
+}
+
+const startContinuousAnimations = () => {
+  // Price section glow effect
+  if (priceSection.value && hasSale.value) {
+    gsap.to(priceSection.value, {
+      boxShadow: "0 0 30px rgba(34, 197, 94, 0.2)",
+      duration: 3,
+      ease: "power2.inOut",
+      repeat: -1,
+      yoyo: true
+    })
+  }
+
+  // Wishlist button heartbeat
+  const wishlistBtn = document.querySelector('.wishlist-btn')
+  if (wishlistBtn && isWishlisted.value) {
+    gsap.to(wishlistBtn, {
+      scale: 1.1,
+      duration: 1,
+      ease: "power2.inOut",
+      repeat: -1,
+      yoyo: true
+    })
+  }
+}
+
+const refresh = () => {
+  fetchProduct()
+}
 
 // Lifecycle
-onMounted(async () => {
-  try {
-    await fetchProductDetail()
-
-    // Initialize animations after content loads
-    await nextTick()
-    setTimeout(() => {
-      initializeAnimations()
-    }, 100)
-  } catch (e) {
-    console.error('Failed to load product:', e)
-  }
+onMounted(() => {
+  fetchProduct()
 })
 
 onUnmounted(() => {
-  if (gsapContext) {
-    gsapContext.kill()
-  }
-
-  if (process.client && ScrollTrigger) {
-    ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
+  if (timeUpdateInterval.value) {
+    clearInterval(timeUpdateInterval.value)
   }
 })
 
 // SEO
 useSeoMeta({
-  title: computed(() => `${product.value?.name || 'Product'} - Premium Quality`),
-  description: computed(() => product.value?.short_description || 'Discover this amazing product with great deals and fast delivery'),
+  title: computed(() => product.value?.meta?.meta_title || product.value?.name || 'Product'),
+  description: computed(() => product.value?.meta?.meta_description || product.value?.short_description || ''),
+  ogTitle: computed(() => product.value?.meta?.og_title || product.value?.name || ''),
+  ogDescription: computed(() => product.value?.meta?.og_description || product.value?.short_description || ''),
+  twitterTitle: computed(() => product.value?.meta?.twitter_title || product.value?.name || ''),
+  twitterDescription: computed(() => product.value?.meta?.twitter_description || product.value?.short_description || ''),
+  keywords: computed(() => product.value?.meta?.meta_keywords || ''),
+})
+
+// Watch for route changes
+watch(() => route.params.url, (newUrl) => {
+  if (newUrl && newUrl !== productUrl.value) {
+    fetchProduct()
+  }
 })
 </script>
 
 <style scoped>
-/* Line clamp utilities */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.category-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
-/* Performance optimizations */
-.will-change-transform {
-  will-change: transform;
+.variant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Enhanced card effects */
-.variant-card {
-  position: relative;
+.spec-item:hover {
+  transform: translateY(-1px);
 }
 
-.variant-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  background: linear-gradient(135deg, transparent, rgba(99, 102, 241, 0.3), transparent);
-  border-radius: 1rem;
-  mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.variant-card:hover::before {
-  opacity: 1;
-}
-
-/* Trust badge hover effects */
-.trust-badge {
-  position: relative;
+/* 🔥 Sales collapse animation styles */
+.sales-collapse-enter-active,
+.sales-collapse-leave-active {
   transition: all 0.3s ease;
-}
-
-.trust-badge:hover {
-  transform: translateY(-5px);
-}
-
-/* Category link effects */
-.category-link {
-  position: relative;
   overflow: hidden;
 }
 
-.category-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s ease;
+.sales-collapse-enter-from {
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0.8);
+  transform-origin: top;
 }
 
-.category-link:hover::before {
-  left: 100%;
+.sales-collapse-enter-to {
+  max-height: 1000px;
+  opacity: 1;
+  transform: scaleY(1);
 }
 
-/* Particle animations */
-.particle {
-  animation: float 6s ease-in-out infinite;
-  will-change: transform;
+.sales-collapse-leave-from {
+  max-height: 1000px;
+  opacity: 1;
+  transform: scaleY(1);
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(180deg);
-  }
+.sales-collapse-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0.8);
+  transform-origin: top;
 }
 
-/* Wishlist button effect */
-.wishlist-btn:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+/* Enhanced transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 
-/* Responsive design */
-@media (max-width: 1024px) {
-  .product-orb-2 {
-    display: none;
-  }
+/* Hover effects */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
 }
 
-@media (max-width: 640px) {
-  .product-name {
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .text-4xl, .text-5xl {
     font-size: 2rem;
-    line-height: 1.2;
   }
 
-  .current-price h2 {
-    font-size: 2.5rem;
-  }
-
-  .variants-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
-  .trust-badges {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+  .lg\:col-span-5, .lg\:col-span-7 {
+    grid-column: span 1;
   }
 }
 
-@media (max-width: 480px) {
-  .product-orb-1, .product-orb-3 {
-    width: 4rem;
-    height: 4rem;
-  }
-
-  .particles {
-    display: none;
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
   }
 }
 
-/* Focus states for accessibility */
-.variant-card:focus-visible,
-.wishlist-btn:focus-visible,
-.category-link:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+/* Heartbeat animation for wishlisted items */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
-/* Prose styling for description */
-.prose {
-  max-w: none;
-}
-
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-  color: inherit;
-  margin-top: 1.5em;
-  margin-bottom: 0.75em;
-}
-
-.prose p {
-  margin-top: 0.75em;
-  margin-bottom: 0.75em;
-}
-
-.prose img {
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.wishlist-btn.wishlisted {
+  animation: heartbeat 1.5s ease-in-out infinite;
 }
 </style>

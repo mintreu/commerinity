@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-indigo-950 dark:to-purple-950 overflow-x-hidden">
+  <div class="min-h-screen w-screen  bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-indigo-950 dark:to-purple-950 overflow-x-hidden">
 
     <!-- Floating Background Elements -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">

@@ -105,15 +105,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 
-// GSAP imports (client-side only)
-let gsap: any = null
-
-if (process.client) {
-  import('gsap').then(({ default: gsapModule }) => {
-    gsap = gsapModule
-  })
-}
-
 // Props
 interface Props {
   showLabel?: boolean
@@ -143,7 +134,6 @@ const toggleButton = ref<HTMLElement>()
 const rippleEffect = ref<HTMLElement>()
 const dropdown = ref<HTMLElement>()
 
-let gsapContext: any = null
 let mediaQuery: MediaQueryList | null = null
 
 // Theme options for advanced mode
@@ -238,17 +228,15 @@ async function toggleDark() {
 
   // Toggle theme
   if (selectedTheme.value === 'system') {
-    // If currently system, switch to opposite of current
     selectedTheme.value = isDark.value ? 'light' : 'dark'
     followSystem.value = false
   } else {
-    // Toggle between light and dark
     selectedTheme.value = selectedTheme.value === 'light' ? 'dark' : 'light'
   }
 
   await applyTheme(selectedTheme.value)
 
-  // Trigger animations
+  // Trigger CSS animations via class changes
   animateToggle()
 
   setTimeout(() => {
@@ -268,6 +256,8 @@ function setTheme(theme: 'light' | 'dark' | 'system') {
 }
 
 async function applyTheme(theme: 'light' | 'dark' | 'system') {
+  if (!process.client) return
+
   const html = document.documentElement
 
   if (theme === 'system') {
@@ -281,12 +271,10 @@ async function applyTheme(theme: 'light' | 'dark' | 'system') {
     localStorage.setItem('theme', theme)
   }
 
-  // Dispatch custom event for other components
-  if (process.client) {
-    window.dispatchEvent(new CustomEvent('theme-changed', {
-      detail: { theme: selectedTheme.value, isDark: isDark.value }
-    }))
-  }
+  // Dispatch custom event
+  window.dispatchEvent(new CustomEvent('theme-changed', {
+    detail: { theme: selectedTheme.value, isDark: isDark.value }
+  }))
 }
 
 function updateSystemPreference() {
@@ -309,82 +297,33 @@ function handleClickOutside(event: Event) {
 }
 
 function animateToggle() {
-  if (!process.client || !gsap) return
+  if (!process.client) return
 
-  gsapContext = gsap.context(() => {
-    // Icon rotation animation
-    const iconContainer = toggleButton.value?.querySelector('.icon-container')
-    if (iconContainer) {
-      gsap.to(iconContainer, {
-        rotation: 360,
-        duration: 0.6,
-        ease: 'back.out(1.7)'
-      })
-    }
+  // Trigger CSS animations by adding/removing classes
+  const iconContainer = toggleButton.value?.querySelector('.icon-container')
+  if (iconContainer) {
+    iconContainer.classList.add('animate-spin-once')
+    setTimeout(() => {
+      iconContainer.classList.remove('animate-spin-once')
+    }, 600)
+  }
 
-    // Ripple effect
-    if (rippleEffect.value) {
-      gsap.fromTo(rippleEffect.value,
-          { scale: 0, opacity: 0.8 },
-          { scale: 2, opacity: 0, duration: 0.6, ease: 'power2.out' }
-      )
-    }
-
-    // Animate rays and stars
-    const rays = toggleButton.value?.querySelectorAll('.sun-ray')
-    if (rays && !isDark.value) {
-      gsap.fromTo(rays,
-          { scale: 0.5, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.3, stagger: 0.05, delay: 0.2 }
-      )
-    }
-
-    const stars = toggleButton.value?.querySelectorAll('.star')
-    if (stars && isDark.value) {
-      gsap.fromTo(stars,
-          { scale: 0, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.4, stagger: 0.1, delay: 0.3 }
-      )
-    }
-  })
+  // Ripple effect is handled by CSS
+  if (rippleEffect.value) {
+    rippleEffect.value.classList.add('ripple-animate')
+    setTimeout(() => {
+      rippleEffect.value?.classList.remove('ripple-animate')
+    }, 600)
+  }
 }
 
 function initializeAnimations() {
-  if (!process.client || !gsap) return
+  if (!process.client) return
 
-  gsapContext = gsap.context(() => {
-    // Entrance animation
-    if (toggleContainer.value) {
-      gsap.fromTo(toggleContainer.value,
-          { scale: 0.8, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' }
-      )
-    }
-
-    // Animate decorative elements
-    const rays = toggleButton.value?.querySelectorAll('.sun-ray')
-    if (rays) {
-      gsap.to(rays, {
-        rotation: 360,
-        duration: 8,
-        repeat: -1,
-        ease: 'none',
-        stagger: 0.1
-      })
-    }
-
-    const stars = toggleButton.value?.querySelectorAll('.star')
-    if (stars) {
-      gsap.to(stars, {
-        scale: 1.2,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: 'power2.inOut',
-        stagger: 0.3
-      })
-    }
-  })
+  // Add entrance animation class
+  if (toggleContainer.value) {
+    toggleContainer.value.classList.add('container-entrance')
+  }
 }
 
 // Initialize theme on mount
@@ -400,9 +339,13 @@ onMounted(() => {
     isDark.value = systemPrefersDark
     document.documentElement.classList.toggle('dark', systemPrefersDark)
 
-    // Listen for system theme changes
     mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    mediaQuery.addListener(handleSystemThemeChange)
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemThemeChange)
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleSystemThemeChange)
+    }
   } else if (saved === 'dark') {
     selectedTheme.value = 'dark'
     isDark.value = true
@@ -413,28 +356,28 @@ onMounted(() => {
     document.documentElement.classList.remove('dark')
   }
 
-  // Add click outside listener for dropdown
   if (props.showAdvanced) {
     document.addEventListener('click', handleClickOutside)
   }
 
   nextTick(() => {
-    setTimeout(initializeAnimations, 100)
+    setTimeout(initializeAnimations, 50)
   })
 })
 
 // Cleanup
 onUnmounted(() => {
   if (mediaQuery) {
-    mediaQuery.removeListener(handleSystemThemeChange)
+    if (mediaQuery.removeEventListener) {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange)
+    } else {
+      // Fallback for older browsers
+      mediaQuery.removeListener(handleSystemThemeChange)
+    }
   }
 
-  if (props.showAdvanced) {
+  if (props.showAdvanced && process.client) {
     document.removeEventListener('click', handleClickOutside)
-  }
-
-  if (gsapContext) {
-    gsapContext.kill()
   }
 })
 
@@ -446,7 +389,7 @@ function toggleAdvanced() {
 
 // Watch for advanced mode
 watch(() => props.showAdvanced, (newVal) => {
-  if (newVal) {
+  if (newVal && process.client) {
     toggleButton.value?.addEventListener('contextmenu', (e) => {
       e.preventDefault()
       toggleAdvanced()
@@ -456,6 +399,52 @@ watch(() => props.showAdvanced, (newVal) => {
 </script>
 
 <style scoped>
+/* Container entrance animation */
+@keyframes containerEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.container-entrance {
+  animation: containerEntrance 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Icon spin animation */
+@keyframes spinOnce {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-once {
+  animation: spinOnce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Ripple animation */
+@keyframes rippleEffect {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.ripple-animate {
+  animation: rippleEffect 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Dark Mode Toggle Container */
 .dark-mode-toggle-container {
   position: relative;
@@ -502,7 +491,7 @@ watch(() => props.showAdvanced, (newVal) => {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-center: center;
   width: 100%;
   height: 100%;
 }
@@ -896,7 +885,10 @@ watch(() => props.showAdvanced, (newVal) => {
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .sun-ray,
-  .star {
+  .star,
+  .container-entrance,
+  .animate-spin-once,
+  .ripple-animate {
     animation: none !important;
   }
 

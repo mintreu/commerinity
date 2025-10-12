@@ -1,68 +1,46 @@
 <template>
-  <div
-      ref="statCard"
-      class="dashboard-stat-card group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-  >
+  <div ref="statCard" class="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+
     <!-- Top Gradient Border -->
-    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r rounded-t-2xl" :class="topBorderGradient"></div>
-
-    <!-- Background Effects -->
-    <div class="absolute inset-0 pointer-events-none">
-      <!-- Gradient Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-br opacity-5 rounded-2xl" :class="backgroundGradient"></div>
-
-      <!-- Glow Effect -->
-      <div class="absolute inset-0 opacity-10 rounded-2xl" :style="glowStyle"></div>
-    </div>
+    <div class="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" :class="topBorderGradient"></div>
 
     <!-- Card Content -->
     <div class="relative z-10 flex items-center gap-4">
 
       <!-- Icon Container -->
       <div class="flex-shrink-0">
-        <div
-            class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110"
-            :class="iconClasses"
-        >
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110" :class="iconClasses">
           <Icon :name="icon" class="w-6 h-6 text-white" />
         </div>
       </div>
 
       <!-- Stats Details -->
       <div class="flex-1 min-w-0">
-
-        <!-- Label -->
         <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1 leading-tight">
           {{ label }}
         </h3>
 
-        <!-- Value -->
-        <div class="text-2xl font-bold leading-none mb-2" :class="valueClasses">
-          <span ref="animatedValue" class="tabular-nums">{{ displayValue }}</span>
+        <div class="text-2xl font-bold leading-none mb-2 tabular-nums" :class="valueClasses">
+          <span ref="animatedValue">{{ displayValue }}</span>
         </div>
 
-        <!-- Change Indicator -->
-        <div
-            v-if="change"
-            class="flex items-center gap-1 text-xs font-semibold"
-            :class="changeClasses"
-        >
+        <div v-if="change" class="flex items-center gap-1 text-xs font-semibold" :class="changeClasses">
           <Icon :name="changeIcon" class="w-3 h-3" />
           <span>{{ change }}</span>
         </div>
-
       </div>
     </div>
 
-    <!-- Subtle Animation Dots -->
+    <!-- Dots -->
     <div class="absolute top-4 right-4 flex gap-1 opacity-30">
-      <div class="w-1 h-1 rounded-full animate-pulse" :class="dotColor" style="animation-delay: 0s"></div>
-      <div class="w-1 h-1 rounded-full animate-pulse" :class="dotColor" style="animation-delay: 0.5s"></div>
-      <div class="w-1 h-1 rounded-full animate-pulse" :class="dotColor" style="animation-delay: 1s"></div>
+      <div class="w-1 h-1 rounded-full animate-pulse" :class="dotColor" style="animation-delay:0s"></div>
+      <div class="w-1 h-1 rounded-full animate-pulse" :class="dotColor" style="animation-delay:.5s"></div>
+      <div class="w-1 h-1 rounded-full animate-pulse" :class="dotColor" style="animation-delay:1s"></div>
     </div>
-
   </div>
 </template>
+
+
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'

@@ -8,7 +8,6 @@ use Filament\Forms;
 use Filament\Resources\Resource;
 use Mintreu\LaravelCommerinity\Casts\SaleActionTypeCast;
 use Mintreu\LaravelCommerinity\Models\Sale;
-use Mintreu\LaravelMoney\Filament\Forms\Components\MoneyInput;
 use Mintreu\LaravelMoney\LaravelMoney;
 
 

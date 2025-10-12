@@ -16,22 +16,18 @@
           <img
               :src="user.avatar || '/default-avatar.png'"
               loading="lazy"
-              class="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(59,130,246,0.3)]"
+              class="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-800 shadow-lg transition-all duration-300 group-hover:scale-110"
               :alt="user.name"
           />
-          <!-- Online Status -->
+          <!-- Online Status Indicator -->
           <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full animate-pulse"></div>
         </div>
       </div>
 
-      <!-- User Info (Desktop) -->
+      <!-- User Info (Hidden on Mobile) -->
       <div class="hidden sm:block text-left">
-        <span class="font-bold text-sm text-slate-900 dark:text-white block leading-tight">
-          {{ user.name }}
-        </span>
-        <span class="text-xs text-slate-500 dark:text-slate-400 capitalize">
-          {{ user.role || 'Member' }}
-        </span>
+        <span class="font-bold text-sm text-slate-900 dark:text-white block leading-tight">{{ user.name }}</span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 capitalize">{{ user.role || 'Member' }}</span>
       </div>
 
       <!-- Dropdown Arrow -->
@@ -42,50 +38,39 @@
       />
     </button>
 
-    <!-- Enhanced Dropdown Menu -->
+    <!-- Dropdown Menu -->
     <Teleport to="body">
+      <!-- Overlay -->
       <div
           v-if="dropdownOpen"
           class="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-sm"
           @click="closeDropdown"
       ></div>
 
+      <!-- Menu -->
       <div
           v-if="dropdownOpen"
           ref="dropdownMenu"
           class="fixed z-[9999] w-80 max-h-[90vh] shadow-2xl"
           :style="dropdownPosition"
       >
-        <!-- Dropdown Background with Glassmorphism -->
         <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-slate-800/50 overflow-hidden relative">
-          <!-- Gradient Overlay -->
           <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none"></div>
 
-          <!-- Menu Content with Scroll -->
-          <div class="relative z-10 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
-
-            <!-- User Profile Header - Sticky -->
+          <div class="relative z-10 max-h-[90vh] overflow-y-auto">
+            <!-- User Header -->
             <div class="sticky top-0 z-20 p-6 border-b border-slate-200/50 dark:border-slate-700/50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl">
               <div class="flex items-center gap-4">
                 <div class="relative">
-                  <img
-                      :src="user.avatar || '/default-avatar.png'"
-                      loading="lazy"
-                      class="w-12 h-12 rounded-2xl object-cover shadow-lg"
-                      :alt="user.name"
-                  />
+                  <img :src="user.avatar || '/default-avatar.png'" loading="lazy" class="w-12 h-12 rounded-2xl object-cover shadow-lg" :alt="user.name" />
                   <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-black text-lg text-slate-900 dark:text-white truncate">{{ user.name }}</h3>
                   <p class="text-sm text-slate-500 dark:text-slate-400 truncate">{{ user.email }}</p>
                   <div class="flex items-center gap-2 mt-1">
-                    <div class="px-2 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full">
-                      {{ user.role || 'Member' }}
-                    </div>
-                    <div class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs font-semibold rounded-full">
-                      Online
-                    </div>
+                    <div class="px-2 py-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold rounded-full">{{ user.role || 'Member' }}</div>
+                    <div class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs font-semibold rounded-full">Online</div>
                   </div>
                 </div>
               </div>
@@ -111,138 +96,76 @@
 
             <!-- Menu Items -->
             <div class="p-3 space-y-2">
-              <!-- Navigation Links -->
               <NuxtLink
                   v-if="isDashboard"
                   to="/"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-300 group hover:translate-x-1"
+                  ref="menuItem1"
+                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 transition-all duration-300 group"
                   @click="closeDropdown"
               >
-                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl flex items-center justify-center shadow-lg">
                   <Icon name="mdi:home" class="w-5 h-5" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <span class="font-semibold text-slate-900 dark:text-white block truncate">Back to Home</span>
                   <span class="text-xs text-slate-500 dark:text-slate-400">Browse products</span>
                 </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors duration-300 flex-shrink-0" />
+                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 transition-colors duration-300 flex-shrink-0" />
               </NuxtLink>
 
               <NuxtLink
                   v-else
                   to="/dashboard"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 group hover:translate-x-1"
+                  ref="menuItem1"
+                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-pink-500/10 transition-all duration-300 group"
                   @click="closeDropdown"
               >
-                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl flex items-center justify-center shadow-lg">
                   <Icon name="mdi:view-dashboard" class="w-5 h-5" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <span class="font-semibold text-slate-900 dark:text-white block truncate">Dashboard</span>
-                  <span class="text-xs text-slate-500 dark:text-slate-400">Manage your account</span>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">Manage account</span>
                 </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-purple-500 transition-colors duration-300 flex-shrink-0" />
+                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 transition-colors duration-300 flex-shrink-0" />
               </NuxtLink>
 
-              <!-- Profile -->
-              <NuxtLink
-                  to="/dashboard/account"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-green-500/10 hover:to-emerald-500/10 transition-all duration-300 group hover:translate-x-1"
-                  @click="closeDropdown"
-              >
-                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <NuxtLink to="/dashboard/account" ref="menuItem2" class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-green-500/10 hover:to-emerald-500/10 transition-all duration-300 group" @click="closeDropdown">
+                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl flex items-center justify-center shadow-lg">
                   <Icon name="mdi:account" class="w-5 h-5" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <span class="font-semibold text-slate-900 dark:text-white block truncate">Profile Settings</span>
-                  <span class="text-xs text-slate-500 dark:text-slate-400">Edit your information</span>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">Edit information</span>
                 </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-green-500 transition-colors duration-300 flex-shrink-0" />
+                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 transition-colors duration-300 flex-shrink-0" />
               </NuxtLink>
 
-              <!-- Orders -->
-              <NuxtLink
-                  to="/dashboard/orders"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-red-500/10 transition-all duration-300 group hover:translate-x-1"
-                  @click="closeDropdown"
-              >
-                <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <NuxtLink to="/dashboard/orders" ref="menuItem3" class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-orange-500/10 hover:to-red-500/10 transition-all duration-300 group" @click="closeDropdown">
+                <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl flex items-center justify-center shadow-lg">
                   <Icon name="mdi:package-variant-closed" class="w-5 h-5" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <span class="font-semibold text-slate-900 dark:text-white block truncate">My Orders</span>
-                  <span class="text-xs text-slate-500 dark:text-slate-400">Track your purchases</span>
+                  <span class="text-xs text-slate-500 dark:text-slate-400">Track purchases</span>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
                   <div class="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[1.5rem] text-center">3</div>
-                  <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors duration-300" />
+                  <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 transition-colors duration-300" />
                 </div>
               </NuxtLink>
 
-              <!-- Wallet -->
-              <NuxtLink
-                  to="/dashboard/wallet"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-blue-500/10 transition-all duration-300 group hover:translate-x-1"
-                  @click="closeDropdown"
-              >
-                <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Icon name="mdi:wallet" class="w-5 h-5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <span class="font-semibold text-slate-900 dark:text-white block truncate">Wallet</span>
-                  <span class="text-xs text-slate-500 dark:text-slate-400">Manage your funds</span>
-                </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors duration-300 flex-shrink-0" />
-              </NuxtLink>
-
-              <!-- Settings -->
-              <NuxtLink
-                  to="/dashboard/settings"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-slate-500/10 hover:to-slate-600/10 transition-all duration-300 group hover:translate-x-1"
-                  @click="closeDropdown"
-              >
-                <div class="w-10 h-10 bg-gradient-to-r from-slate-500 to-slate-600 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Icon name="mdi:cog" class="w-5 h-5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <span class="font-semibold text-slate-900 dark:text-white block truncate">Settings</span>
-                  <span class="text-xs text-slate-500 dark:text-slate-400">Preferences & privacy</span>
-                </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-500 transition-colors duration-300 flex-shrink-0" />
-              </NuxtLink>
-
-              <!-- Support -->
-              <NuxtLink
-                  to="/dashboard/support"
-                  class="flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-teal-500/10 hover:to-cyan-500/10 transition-all duration-300 group hover:translate-x-1"
-                  @click="closeDropdown"
-              >
-                <div class="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Icon name="mdi:help-circle" class="w-5 h-5" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <span class="font-semibold text-slate-900 dark:text-white block truncate">Help & Support</span>
-                  <span class="text-xs text-slate-500 dark:text-slate-400">Get assistance</span>
-                </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-teal-500 transition-colors duration-300 flex-shrink-0" />
-              </NuxtLink>
-
-              <!-- Divider -->
               <div class="my-3 border-t border-slate-200 dark:border-slate-700"></div>
 
-              <!-- Logout -->
-              <button
-                  @click="logoutUser"
-                  class="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-red-500/10 hover:to-pink-500/10 text-red-600 dark:text-red-400 transition-all duration-300 group hover:translate-x-1"
-              >
-                <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <button ref="logoutBtn" @click="logoutUser" class="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-gradient-to-r hover:from-red-500/10 hover:to-pink-500/10 text-red-600 dark:text-red-400 transition-all duration-300 group">
+                <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl flex items-center justify-center shadow-lg">
                   <Icon name="mdi:logout" class="w-5 h-5" />
                 </div>
                 <div class="text-left flex-1 min-w-0">
                   <span class="font-semibold block truncate">Logout</span>
-                  <span class="text-xs opacity-75">Sign out of your account</span>
+                  <span class="text-xs opacity-75">Sign out</span>
                 </div>
-                <Icon name="mdi:arrow-right" class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0" />
+                <Icon name="mdi:arrow-right" class="w-4 h-4 opacity-50 transition-opacity duration-300 flex-shrink-0" />
               </button>
             </div>
           </div>
@@ -253,19 +176,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSanctum } from '#imports'
 
-// GSAP imports (client-side only)
-let gsap: any = null
-if (process.client) {
-  import('gsap').then(({ default: gsapModule }) => {
-    gsap = gsapModule
-  })
-}
-
-// Interface
 interface User {
   name: string
   email: string
@@ -273,37 +187,50 @@ interface User {
   role?: string
 }
 
-// Composables
 const { user, logout } = useSanctum<User>()
 const route = useRoute()
 
-// State
 const dropdownOpen = ref(false)
 const dropdownPosition = ref({})
-
-// Refs
 const dropdownRef = ref<HTMLElement | null>(null)
 const dropdownMenu = ref<HTMLElement | null>(null)
+const menuItem1 = ref<HTMLElement | null>(null)
+const menuItem2 = ref<HTMLElement | null>(null)
+const menuItem3 = ref<HTMLElement | null>(null)
+const logoutBtn = ref<HTMLElement | null>(null)
 
-let gsapContext: any = null
+// ✅ OPTIMIZED: Lazy load GSAP only when dropdown opens
+let gsap: any = null
+let gsapLoaded = false
 
-// Computed
+const loadGsap = async () => {
+  if (gsapLoaded) return gsap
+
+  try {
+    const module = await import('gsap')
+    gsap = module.gsap
+    gsapLoaded = true
+    return gsap
+  } catch (error) {
+    console.error('Failed to load GSAP:', error)
+    return null
+  }
+}
+
 const isDashboard = computed(() => route.path.startsWith('/dashboard'))
 
-// Methods
 function calculateDropdownPosition() {
   if (!dropdownRef.value) return
 
   const rect = dropdownRef.value.getBoundingClientRect()
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
-  const dropdownWidth = 320 // 80 * 4 = 320px
-  const dropdownHeight = 600 // estimated height
+  const dropdownWidth = 320
+  const dropdownHeight = 600
 
   let top = rect.bottom + 8
   let left = rect.left
 
-  // Adjust horizontal position
   if (left + dropdownWidth > viewportWidth) {
     left = rect.right - dropdownWidth
   }
@@ -311,7 +238,6 @@ function calculateDropdownPosition() {
     left = 8
   }
 
-  // Adjust vertical position
   if (top + dropdownHeight > viewportHeight) {
     top = rect.top - dropdownHeight - 8
   }
@@ -325,117 +251,77 @@ function calculateDropdownPosition() {
   }
 }
 
-function toggleDropdown() {
+async function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value
 
   if (dropdownOpen.value) {
-    nextTick(() => {
-      calculateDropdownPosition()
+    await nextTick()
+    calculateDropdownPosition()
 
-      // Add haptic feedback
-      if (process.client && 'vibrate' in navigator) {
-        navigator.vibrate(30)
-      }
+    // ✅ OPTIMIZED: Load GSAP only when needed
+    const gsapInstance = await loadGsap()
 
-      // Animate dropdown
-      if (process.client && gsap && dropdownMenu.value) {
-        gsap.fromTo(dropdownMenu.value,
-            { opacity: 0, y: -20, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.3,
-              ease: 'back.out(1.7)'
-            }
-        )
-      }
+    if (gsapInstance && dropdownMenu.value) {
+      // Animate dropdown entrance
+      gsapInstance.fromTo(
+          dropdownMenu.value,
+          { opacity: 0, scale: 0.95, y: -10 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      )
+
+      // Stagger menu items
+      const items = [menuItem1.value, menuItem2.value, menuItem3.value, logoutBtn.value].filter(Boolean)
+      gsapInstance.fromTo(
+          items,
+          { opacity: 0, x: -20 },
+          { opacity: 1, x: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out' }
+      )
+    }
+
+    if (process.client && 'vibrate' in navigator) {
+      navigator.vibrate(30)
+    }
+  }
+}
+
+async function logoutUser() {
+  // ✅ OPTIMIZED: Only use GSAP if already loaded
+  if (gsapLoaded && gsap && logoutBtn.value) {
+    await gsap.to(logoutBtn.value, {
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.2,
+      ease: 'power2.in'
     })
   }
+
+  logout()
+  dropdownOpen.value = false
 }
 
 function closeDropdown() {
   dropdownOpen.value = false
 }
 
-function logoutUser() {
-  // Animate logout
-  if (process.client && gsap && dropdownMenu.value) {
-    gsap.to(dropdownMenu.value, {
-      opacity: 0,
-      scale: 0.9,
-      duration: 0.2,
-      onComplete: () => {
-        logout()
-        dropdownOpen.value = false
-      }
-    })
-  } else {
-    logout()
-    dropdownOpen.value = false
-  }
-}
-
-// Click outside handler
 function handleClickOutside(event: MouseEvent) {
-  if (
-      dropdownRef.value &&
-      !dropdownRef.value.contains(event.target as Node)
-  ) {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
     dropdownOpen.value = false
   }
 }
 
-// Resize handler
 function handleResize() {
   if (dropdownOpen.value) {
     calculateDropdownPosition()
   }
 }
 
-// Initialize animations
-const initializeAnimations = () => {
-  if (!process.client || !gsap) return
-
-  gsapContext = gsap.context(() => {
-    // Animate menu items on hover - will target elements dynamically
-    const menuItems = document.querySelectorAll('[data-menu-item]')
-    menuItems.forEach((item: any) => {
-      item.addEventListener('mouseenter', () => {
-        gsap.to(item, {
-          x: 3,
-          duration: 0.3,
-          ease: 'power2.out'
-        })
-      })
-
-      item.addEventListener('mouseleave', () => {
-        gsap.to(item, {
-          x: 0,
-          duration: 0.3,
-          ease: 'power2.out'
-        })
-      })
-    })
-  }, dropdownRef.value)
-}
-
-// Lifecycle
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   window.addEventListener('resize', handleResize)
-
-  setTimeout(() => {
-    initializeAnimations()
-  }, 100)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
   window.removeEventListener('resize', handleResize)
-
-  if (gsapContext) {
-    gsapContext.kill()
-  }
 })
 </script>

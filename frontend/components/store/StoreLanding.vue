@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 overflow-x-hidden">
 
     <!-- Optimized Floating Background Elements -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">
+    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform ">
       <div ref="orb1" class="store-orb-1 absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 blur-3xl will-change-transform"></div>
       <div ref="orb2" class="store-orb-2 absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-15 blur-3xl will-change-transform"></div>
       <div ref="orb3" class="store-orb-3 absolute top-1/2 left-1/4 w-72 h-72 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-10 blur-2xl will-change-transform"></div>
@@ -19,7 +19,7 @@
     </div>
 
     <!-- Enhanced Hero Section with Fixed Layout -->
-    <section class="hero-section relative min-h-screen flex flex-col justify-center overflow-hidden">
+    <section class="hero-section relative h-screen md:min-h-screen flex flex-col justify-center overflow-hidden">
       <ClientOnly>
         <div v-if="heroSlides.length > 1" class="hero-carousel w-full flex-1 flex items-center">
           <Swiper

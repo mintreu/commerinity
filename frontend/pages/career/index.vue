@@ -1,13 +1,13 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 text-gray-800 dark:text-gray-100 overflow-x-hidden">
+  <div class="min-h-screen w-full bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 text-gray-800 dark:text-gray-100 overflow-x-hidden">
 
     <!-- Enhanced Hero Section -->
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
       <!-- Animated Background Elements -->
-      <div class="absolute inset-0">
+      <div class="absolute inset-0 pointer-events-none">
         <div class="hero-orb-1 absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-20 blur-3xl"></div>
         <div class="hero-orb-2 absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-15 blur-3xl"></div>
-        <div class="hero-orb-3 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-10 blur-2xl"></div>
+        <div class="hero-orb-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-10 blur-2xl"></div>
       </div>
 
       <!-- Hero Content -->
@@ -33,7 +33,7 @@
 
           <!-- CTA Buttons -->
           <div class="hero-cta flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
-            <a href="#openings" class="cta-primary group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105">
+            <a href="#openings" class="cta-primary group relative px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 overflow-hidden">
               <span class="relative z-10">View Open Positions</span>
             </a>
             <button class="cta-secondary group px-10 py-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold text-lg rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 backdrop-blur-sm">
@@ -45,7 +45,7 @@
           <!-- Enhanced Highlights -->
           <div class="hero-highlights grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-16 max-w-5xl mx-auto">
             <div v-for="(highlight, index) in heroHighlights" :key="highlight.title"
-                 class="highlight-card group bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20">
+                 class="highlight-card relative group bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 overflow-hidden">
 
               <div class="highlight-icon w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6"
                    :style="{ background: `linear-gradient(135deg, ${highlight.color}20, ${highlight.color}40)`, color: highlight.color }">
@@ -60,14 +60,14 @@
               </p>
 
               <!-- Hover Effect Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl pointer-events-none"></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Scroll Indicator -->
-      <div class="scroll-indicator absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div class="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
         <div class="w-6 h-10 border-2 border-gray-400 dark:border-gray-600 rounded-full flex justify-center">
           <div class="w-1 h-3 bg-gradient-to-b from-blue-600 to-transparent rounded-full mt-2"></div>
         </div>
@@ -96,7 +96,7 @@
                   type="text"
                   class="w-full px-6 py-4 text-lg rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300"
               />
-              <Icon name="mdi:magnify" class="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+              <Icon name="mdi:magnify" class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
             </div>
 
             <button type="submit" class="search-btn w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-emerald-500/25 transition-all duration-300 transform hover:scale-105">
@@ -145,7 +145,7 @@
 
         <!-- Enhanced Filter Controls -->
         <div class="filter-controls mb-12 space-y-6">
-          <div class="flex justify-center items-center gap-8">
+          <div class="flex justify-center items-center gap-8 flex-wrap">
             <label class="filter-option group cursor-pointer flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 hover:bg-purple-50 dark:hover:bg-purple-900/20">
               <input type="radio" value="type" v-model="filterBy" class="w-4 h-4 text-purple-600" />
               <span class="font-medium group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">Filter by Type</span>
@@ -206,7 +206,7 @@
               class="pb-16"
           >
             <SwiperSlide v-for="(job, index) in filteredJobs" :key="job.url">
-              <div class="job-card group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 border border-gray-200/50 dark:border-gray-700/50 h-96">
+              <div class="job-card relative group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 border border-gray-200/50 dark:border-gray-700/50 h-96">
 
                 <!-- Job Type Badge -->
                 <div class="absolute top-6 right-6 z-20">
@@ -273,7 +273,7 @@
     <!-- Enhanced Core Values -->
     <section class="values-section py-20 px-6 bg-white dark:bg-gray-900 relative overflow-hidden">
       <!-- Background Pattern -->
-      <div class="absolute inset-0 opacity-5 dark:opacity-10">
+      <div class="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none">
         <div class="values-pattern w-full h-full" style="background-image: radial-gradient(circle, currentColor 2px, transparent 2px); background-size: 40px 40px;"></div>
       </div>
 
@@ -294,7 +294,7 @@
 
         <div class="values-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
           <div v-for="(value, index) in enhancedValues" :key="value.title"
-               class="value-card group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 border border-gray-200/50 dark:border-gray-700/50 text-center overflow-hidden">
+               class="value-card relative group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 border border-gray-200/50 dark:border-gray-700/50 text-center overflow-hidden">
 
             <!-- Icon -->
             <div class="value-icon w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center text-4xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-12"
@@ -307,8 +307,7 @@
             </div>
 
             <!-- Content -->
-            <h4 class="text-xl font-bold mb-4 transition-colors duration-300"
-                :style="{ color: hoverColor === value.color ? value.color : 'inherit' }">
+            <h4 class="text-xl font-bold mb-4 text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-purple-600 dark:group-hover:text-purple-400">
               {{ value.title }}
             </h4>
             <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -316,15 +315,13 @@
             </p>
 
             <!-- Hover Border Effect -->
-            <div class="absolute inset-0 rounded-3xl pointer-events-none transition-all duration-500"
+            <div class="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                  :style="{
-                   boxShadow: hoverColor === value.color
-                     ? `0 0 0 3px ${value.color}40, 0 20px 40px ${value.color}20`
-                     : 'none'
+                   boxShadow: `0 0 0 3px ${value.color}40, 0 20px 40px ${value.color}20`
                  }"></div>
 
             <!-- Background Pattern -->
-            <div class="absolute top-0 right-0 w-24 h-24 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+            <div class="absolute top-0 right-0 w-24 h-24 opacity-5 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none">
               <Icon :name="value.icon" class="w-full h-full" :style="{ color: value.color }" />
             </div>
           </div>
@@ -347,7 +344,7 @@
 
         <div class="life-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div v-for="(item, index) in enhancedLifeAtCompany" :key="index"
-               class="life-card group bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/50 dark:border-gray-700/50">
+               class="life-card relative group bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/50 dark:border-gray-700/50">
 
             <!-- Icon -->
             <div class="life-icon w-16 h-16 mb-6 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center text-white text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
@@ -372,7 +369,7 @@
     <!-- Enhanced Final CTA -->
     <section class="final-cta py-24 px-6 bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900 text-white relative overflow-hidden">
       <!-- Animated Background -->
-      <div class="absolute inset-0">
+      <div class="absolute inset-0 pointer-events-none">
         <div class="cta-particles">
           <div class="particle absolute w-2 h-2 bg-white rounded-full opacity-30 animate-pulse" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
           <div class="particle absolute w-1 h-1 bg-purple-300 rounded-full opacity-40 animate-pulse" style="top: 60%; left: 80%; animation-delay: 1s;"></div>
@@ -392,9 +389,9 @@
         </p>
 
         <div class="cta-actions flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-          <a href="#openings" class="cta-primary-btn group px-12 py-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-black text-xl rounded-2xl shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105">
+          <a href="#openings" class="cta-primary-btn relative group px-12 py-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-black text-xl rounded-2xl shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-105 overflow-hidden">
             <span class="relative z-10">Explore Opportunities</span>
-            <Icon name="mdi:rocket" class="inline w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform duration-300" />
+            <Icon name="mdi:rocket" class="relative z-10 inline w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform duration-300" />
           </a>
 
           <button class="cta-secondary-btn group px-12 py-6 bg-transparent border-2 border-white/30 text-white font-bold text-xl rounded-2xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
@@ -466,7 +463,6 @@ const query = ref('')
 const login = ref(true)
 const error = ref('')
 const application = ref<any>(null)
-const hoverColor = ref<string | null>(null)
 
 // Filter state
 const filterBy = ref<'type' | 'role'>('type')
@@ -631,172 +627,179 @@ function handleSearch() {
 onMounted(() => {
   if (process.client) {
     // Hero timeline animation
-    const heroTl = gsap.timeline()
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
-    heroTl.from('.hero-orb-1', { scale: 0, opacity: 0, duration: 2, ease: 'elastic.out(1, 0.5)' })
-        .from('.hero-orb-2', { scale: 0, opacity: 0, duration: 2, ease: 'elastic.out(1, 0.5)' }, '-=1.5')
-        .from('.hero-orb-3', { scale: 0, opacity: 0, duration: 2, ease: 'elastic.out(1, 0.5)' }, '-=1.5')
-        .from('.hero-badge', { y: 50, opacity: 0, duration: 1, ease: 'back.out(1.7)' })
-        .from('.hero-title', { y: 100, opacity: 0, duration: 1.2, ease: 'back.out(1.7)' }, '-=0.8')
-        .from('.hero-subtitle', { y: 50, opacity: 0, duration: 1, ease: 'back.out(1.7)' }, '-=0.6')
-        .from('.hero-cta', { y: 50, opacity: 0, duration: 1, ease: 'back.out(1.7)' }, '-=0.4')
+    heroTl.from('.hero-orb-1', { scale: 0, opacity: 0, duration: 1.5, ease: 'elastic.out(1, 0.5)' })
+        .from('.hero-orb-2', { scale: 0, opacity: 0, duration: 1.5, ease: 'elastic.out(1, 0.5)' }, '-=1.2')
+        .from('.hero-orb-3', { scale: 0, opacity: 0, duration: 1.5, ease: 'elastic.out(1, 0.5)' }, '-=1.2')
+        .from('.hero-badge', { y: 30, opacity: 0, duration: 0.8, ease: 'back.out(1.7)' })
+        .from('.hero-title', { y: 50, opacity: 0, duration: 1, ease: 'back.out(1.7)' }, '-=0.6')
+        .from('.hero-subtitle', { y: 30, opacity: 0, duration: 0.8, ease: 'back.out(1.7)' }, '-=0.5')
+        .from('.hero-cta', { y: 30, opacity: 0, duration: 0.8, ease: 'back.out(1.7)' }, '-=0.4')
         .from('.hero-highlights .highlight-card', {
-          y: 80,
+          y: 50,
           opacity: 0,
-          scale: 0.8,
-          duration: 1,
+          scale: 0.9,
+          duration: 0.8,
           ease: 'back.out(1.7)',
-          stagger: 0.2
-        }, '-=0.2')
+          stagger: 0.15
+        }, '-=0.3')
 
     // Floating animations
     gsap.to('.hero-orb-1', {
-      y: -40,
-      rotation: 15,
-      duration: 6,
-      ease: 'power2.inOut',
+      y: -30,
+      rotation: 10,
+      duration: 5,
+      ease: 'sine.inOut',
       yoyo: true,
       repeat: -1
     })
 
     gsap.to('.hero-orb-2', {
-      y: 30,
-      rotation: -10,
-      duration: 8,
-      ease: 'power2.inOut',
+      y: 25,
+      rotation: -8,
+      duration: 7,
+      ease: 'sine.inOut',
       yoyo: true,
       repeat: -1
     })
 
     gsap.to('.hero-orb-3', {
-      y: -25,
-      rotation: 20,
-      duration: 5,
-      ease: 'power2.inOut',
+      y: -20,
+      rotation: 15,
+      duration: 4,
+      ease: 'sine.inOut',
       yoyo: true,
       repeat: -1
     })
 
     // Scroll-triggered animations
-    const observerOptions = {
+    const scrollConfig = {
       start: 'top 80%',
       toggleActions: 'play none none reverse'
     }
 
-    // Section badges animation
-    gsap.fromTo('.section-badge',
-        { y: 30, opacity: 0, scale: 0.8 },
+    // Section badges
+    gsap.utils.toArray('.section-badge').forEach((badge: any) => {
+      gsap.fromTo(badge,
+          { y: 20, opacity: 0, scale: 0.9 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: badge,
+              ...scrollConfig
+            }
+          }
+      )
+    })
+
+    // Application card
+    if (document.querySelector('.application-card')) {
+      gsap.fromTo('.application-card',
+          { y: 40, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: '.application-status',
+              ...scrollConfig
+            }
+          }
+      )
+    }
+
+    // Job cards
+    if (document.querySelector('.jobs-swiper')) {
+      gsap.fromTo('.jobs-swiper',
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '.jobs-section',
+              ...scrollConfig
+            }
+          }
+      )
+    }
+
+    // Values grid
+    gsap.utils.toArray('.value-card').forEach((card: any, index: number) => {
+      gsap.fromTo(card,
+          { y: 40, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: card,
+              ...scrollConfig
+            }
+          }
+      )
+    })
+
+    // Life cards
+    gsap.utils.toArray('.life-card').forEach((card: any) => {
+      gsap.fromTo(card,
+          { y: 30, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: card,
+              ...scrollConfig
+            }
+          }
+      )
+    })
+
+    // Final CTA
+    gsap.fromTo(['.cta-title', '.cta-subtitle', '.cta-actions'],
+        { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          scale: 1,
           duration: 0.8,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: '.section-badge',
-            ...observerOptions
-          }
-        }
-    )
-
-    // Application card animation
-    gsap.fromTo('.application-card',
-        { y: 60, opacity: 0, scale: 0.95 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: '.application-status',
-            ...observerOptions
-          }
-        }
-    )
-
-    // Job cards animation
-    gsap.fromTo('.jobs-swiper',
-        { y: 80, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: '.jobs-section',
-            ...observerOptions
-          }
-        }
-    )
-
-    // Values grid animation
-    gsap.fromTo('.value-card',
-        { y: 60, opacity: 0, scale: 0.9, rotateY: 15 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          rotateY: 0,
-          duration: 0.8,
-          ease: 'back.out(1.7)',
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: '.values-grid',
-            ...observerOptions
-          }
-        }
-    )
-
-    // Life at company animation
-    gsap.fromTo('.life-card',
-        { y: 50, opacity: 0, scale: 0.9 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: 'back.out(1.7)',
+          ease: 'power3.out',
           stagger: 0.2,
           scrollTrigger: {
-            trigger: '.life-grid',
-            ...observerOptions
-          }
-        }
-    )
-
-    // Final CTA animation
-    gsap.fromTo('.cta-title, .cta-subtitle, .cta-actions',
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: 'back.out(1.7)',
-          stagger: 0.3,
-          scrollTrigger: {
             trigger: '.final-cta',
-            ...observerOptions
+            ...scrollConfig
           }
         }
     )
 
-    // Particle floating animation
+    // Particle animation
     gsap.to('.cta-particles .particle', {
-      y: -200,
+      y: -150,
       opacity: 0,
-      duration: 4,
+      duration: 3,
       ease: 'power2.out',
-      stagger: 0.8,
+      stagger: 0.6,
       repeat: -1,
-      repeatDelay: 2
+      repeatDelay: 1.5
     })
   }
 })
 </script>
 
 <style scoped>
-/* Custom animations and effects */
+/* Custom animations */
 .highlight-card::before {
   content: '';
   position: absolute;
@@ -833,10 +836,11 @@ onMounted(() => {
   content: '';
   position: absolute;
   inset: 0;
-  padding: 3px;
-  background: linear-gradient(135deg, transparent, rgba(168, 85, 247, 0.4), transparent);
+  padding: 2px;
+  background: linear-gradient(135deg, transparent, rgba(168, 85, 247, 0.3), transparent);
   border-radius: 1.5rem;
-  mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -846,6 +850,7 @@ onMounted(() => {
   opacity: 1;
 }
 
+.cta-primary::before,
 .cta-primary-btn::before {
   content: '';
   position: absolute;
@@ -857,6 +862,7 @@ onMounted(() => {
   transition: left 0.5s;
 }
 
+.cta-primary:hover::before,
 .cta-primary-btn:hover::before {
   left: 100%;
 }
@@ -878,7 +884,9 @@ onMounted(() => {
   }
 
   .hero-orb-2 {
-    display: none;
+    opacity: 0.1;
+    width: 16rem;
+    height: 16rem;
   }
 }
 
@@ -898,16 +906,6 @@ onMounted(() => {
   .job-card, .value-card, .life-card, .highlight-card {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
-}
-
-/* Animation keyframes */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-.floating {
-  animation: float 3s ease-in-out infinite;
 }
 
 /* Custom scroll indicator */

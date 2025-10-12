@@ -43,11 +43,19 @@ class Stage extends Model
         'max_per_order' => 'integer',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'url';
+    }
+
 
     public function levels(): HasMany
     {
         return $this->hasMany(Level::class,'stage_id','id');
     }
 
-
+    public function subscription(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class,'level_id','id');
+    }
 }

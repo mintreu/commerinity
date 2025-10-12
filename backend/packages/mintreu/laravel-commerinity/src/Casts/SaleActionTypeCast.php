@@ -5,6 +5,7 @@ namespace Mintreu\LaravelCommerinity\Casts;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Mintreu\LaravelMoney\LaravelMoney;
 
 enum SaleActionTypeCast: string implements HasColor, HasIcon, HasLabel
 {
@@ -50,6 +51,16 @@ enum SaleActionTypeCast: string implements HasColor, HasIcon, HasLabel
             self::BY_FIXED   => 'Take fixed off. Ex: ₹10 of ₹450 → ₹440',
             self::TO_PERCENT => 'Set price to % of original. Ex: 10% of ₹450 → ₹45',
             self::TO_FIXED   => 'Set price to fixed amount. Ex: ₹10 (was ₹450)',
+        };
+    }
+
+    public function getUnit(int $value): string
+    {
+        return match ($this) {
+            self::BY_PERCENT,
+            self::TO_PERCENT => $value . '%',
+            self::BY_FIXED,
+            self::TO_FIXED   => LaravelMoney::make($value)->formatted(),
         };
     }
 

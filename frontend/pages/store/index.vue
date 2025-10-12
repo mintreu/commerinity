@@ -1,5 +1,5 @@
 <template>
-  <div class="store-page">
+  <div class="store-page overflow-x-hidden w-screen">
     <StoreLanding :categories="categorySections" />
   </div>
 </template>

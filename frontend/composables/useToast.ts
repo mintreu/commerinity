@@ -1,4 +1,4 @@
-import { ref, nextTick, onScopeDispose } from 'vue'
+import { ref, nextTick, getCurrentScope, onScopeDispose } from 'vue'
 import { createVNode, render, type VNode } from 'vue'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'question'
@@ -63,13 +63,21 @@ const initializeToast = async (): Promise<void> => {
         mountedVNode.value = vnode
 
         // Get component instance (compatible with both Nuxt 3 and 4)
-        toastInstance.value = vnode.component?.exposed || vnode.component?.setupState
+        // toastInstance.value = vnode.component?.exposed || vnode.component?.setupState
+
+        const component = vnode.component as ComponentInternalInstance & { setupState?: any }
+        toastInstance.value = component?.exposed || component?.setupState
 
         if (!toastInstance.value) {
             console.warn('Toast component instance not found. Toast functionality may be limited.')
         }
 
         isInitialized = true
+
+        // Setup cleanup on window unload as fallback
+        if (process.client) {
+            window.addEventListener('beforeunload', destroyToast, { once: true })
+        }
     } catch (error) {
         console.error('Failed to initialize toast system:', error)
         throw error
@@ -192,15 +200,19 @@ const custom = async (options: ToastOptions) => {
     return toastInstance.value.addToast(options)
 }
 
-// Auto-cleanup on scope dispose (important for Nuxt 4)
-if (process.client) {
-    onScopeDispose(() => {
-        destroyToast()
-    })
-}
-
 // Main composable interface
 export const useToast = () => {
+    // Register cleanup only when within an active Vue scope
+    if (process.client && getCurrentScope()) {
+        onScopeDispose(() => {
+            // Only clear toasts, don't destroy the entire system
+            // as other components might still be using it
+            if (toastInstance.value?.clearAllToasts) {
+                toastInstance.value.clearAllToasts()
+            }
+        })
+    }
+
     return {
         success,
         error,

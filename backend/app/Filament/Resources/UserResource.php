@@ -79,6 +79,7 @@ class UserResource extends Resource
             'view' => Pages\ViewUser::route('/{record:referral_code}'),
             'edit' => Pages\EditUser::route('/{record:referral_code}/edit'),
             'members' => Pages\ManageChildrens::route('/{record:referral_code}/children'),
+            'community' => Pages\ManageCommunity::route('/{record:referral_code}/community'),
             'stats' => Pages\ViewUserStats::route('/{record:referral_code}/stats'),
         ];
     }

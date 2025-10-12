@@ -112,12 +112,14 @@ class ViewProduct extends ViewRecord
                                                     ->formatStateUsing(fn($state) => "/{$state}")
                                                     ->color('info'),
 
+                                                TextEntry::make('hsn')->label(__('HSN Code'))->badge()->default('--not set--'),
+
                                                 TextEntry::make('status')
                                                     ->badge()
                                                     ->color(fn($state) => $state ? $state->getColor() : 'gray')
                                                     ->icon(fn($state) => $state ? $state->getIcon() : ''),
 
-                                                TextEntry::make('category.name')
+                                                TextEntry::make('categories.name')
                                                     ->label('Category')
                                                     ->badge()
                                                     ->color('success')

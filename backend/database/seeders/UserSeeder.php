@@ -78,7 +78,7 @@ class UserSeeder extends Seeder
 //        }
 
 
-     //   User::factory(5)->create(['parent_id' => $demoUser->id])->each(fn($user) => User::factory(5)->create(['parent_id' => $user->id]));
+       User::factory(5)->create(['parent_id' => $demoUser->id])->each(fn($user) => User::factory(5)->create(['parent_id' => $user->id]));
 
     }
 
