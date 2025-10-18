@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
@@ -79,7 +80,7 @@ class CategoryController extends Controller
                             'name' => $child->name,
                             'url' => $child->url,
                             'image' => $child->getFirstMediaUrl('displayImage'),
-                            'starting_from_price' => $lowest,
+                            'starting_from_price' => LaravelMoney::format($lowest),
                         ];
                     }
                 }
