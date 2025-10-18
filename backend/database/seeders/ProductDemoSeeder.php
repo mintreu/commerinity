@@ -161,12 +161,12 @@ class ProductDemoSeeder extends Seeder
     protected function attachMediaFiles(Product $product)
     {
         // Add Media
-        $displayImagePath = $this->getMediaFromStorage($product->url.'.jpg');
+        $displayImagePath = $this->getMediaFromStorage($product->url.'.png');
         if (file_exists($displayImagePath))
         {
             $product->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
         }
-        $bannerImagePath = $this->getMediaFromStorage($product->url.'.jpg');
+        $bannerImagePath = $this->getMediaFromStorage($product->url.'.png');
         if (file_exists($bannerImagePath))
         {
             $product->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
