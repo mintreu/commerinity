@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\{Auth\SanctumUserController,
     PushNotificationController,
     RecruitmentController,
     SaleController,
+    SearchController,
     TransactionController,
     WalletController};
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,12 @@ Route::prefix('geo')->group(base_path('routes/apis/geo-location.php'));
 
 // Load extra route files
 require base_path('routes/apis/products.php');
+
+
+
+// Global search endpoint
+Route::get('/search', [SearchController::class, 'search']);
+
 
 
 // ========================

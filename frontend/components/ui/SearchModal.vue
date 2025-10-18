@@ -75,61 +75,90 @@
             <!-- Search Content -->
             <div class="search-content max-h-96 overflow-y-auto" v-if="searchQuery.length > 0">
 
-              <!-- Loading State -->
-              <div v-if="isLoading" class="loading-state p-8 text-center">
-                <div class="loading-spinner w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto mb-4 animate-spin flex items-center justify-center">
-                  <Icon name="mdi:loading" class="w-6 h-6 text-white animate-spin" />
-                </div>
-                <p class="text-gray-600 dark:text-gray-400 font-semibold">Searching...</p>
-              </div>
-
-              <!-- Search Results -->
-              <div v-else-if="searchResults.length > 0" class="search-results p-6">
+              <!-- Search Suggestions (Always show when typing) -->
+              <div class="search-results p-6">
                 <h3 class="results-header text-lg font-black text-gray-900 dark:text-white mb-4 flex items-center">
                   <Icon name="mdi:format-list-bulleted" class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
-                  Search Results ({{ searchResults.length }})
+                  Search Suggestions
                 </h3>
 
                 <div class="results-grid space-y-3">
+                  <!-- Search All Products -->
                   <div
-                      v-for="(result, index) in searchResults"
-                      :key="index"
                       class="result-item flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 rounded-2xl transition-all duration-300 cursor-pointer hover:scale-102"
-                      @click="selectResult(result)"
+                      @click="selectResult({ type: 'products', query: searchQuery })"
                   >
-                    <!-- Result Icon -->
                     <div class="result-icon w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                      <Icon :name="result.icon" class="w-6 h-6 text-white" />
+                      <Icon name="mdi:shopping" class="w-6 h-6 text-white" />
                     </div>
-
-                    <!-- Result Info -->
                     <div class="result-info flex-1">
-                      <h4 class="result-title font-bold text-gray-900 dark:text-white">{{ result.title }}</h4>
-                      <p class="result-subtitle text-sm text-gray-600 dark:text-gray-400">{{ result.subtitle }}</p>
+                      <h4 class="result-title font-bold text-gray-900 dark:text-white">{{ searchQuery }} Products</h4>
+                      <p class="result-subtitle text-sm text-gray-600 dark:text-gray-400">Browse all related products</p>
                       <div class="result-tags mt-2 flex items-center gap-2">
-                        <span
-                            v-for="tag in result.tags"
-                            :key="tag"
-                            class="tag px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-semibold rounded-full"
-                        >
-                          {{ tag }}
-                        </span>
+                        <span class="tag px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-semibold rounded-full">Products</span>
+                        <span class="tag px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-semibold rounded-full">Popular</span>
                       </div>
                     </div>
+                    <Icon name="mdi:arrow-right" class="w-5 h-5 text-gray-400" />
+                  </div>
 
-                    <!-- Result Arrow -->
+                  <!-- Search in Categories -->
+                  <div
+                      v-for="category in topCategories"
+                      :key="category.slug"
+                      class="result-item flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 rounded-2xl transition-all duration-300 cursor-pointer hover:scale-102"
+                      @click="selectResult({ type: 'category', category: category.slug, query: searchQuery })"
+                  >
+                    <div class="result-icon w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <Icon :name="category.icon" class="w-6 h-6 text-white" />
+                    </div>
+                    <div class="result-info flex-1">
+                      <h4 class="result-title font-bold text-gray-900 dark:text-white">{{ searchQuery }} in {{ category.name }}</h4>
+                      <p class="result-subtitle text-sm text-gray-600 dark:text-gray-400">{{ category.description }}</p>
+                      <div class="result-tags mt-2 flex items-center gap-2">
+                        <span class="tag px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400 text-xs font-semibold rounded-full">{{ category.name }}</span>
+                      </div>
+                    </div>
+                    <Icon name="mdi:arrow-right" class="w-5 h-5 text-gray-400" />
+                  </div>
+
+                  <!-- Search Deals -->
+                  <div
+                      class="result-item flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 dark:hover:from-orange-900/20 dark:hover:to-red-900/20 rounded-2xl transition-all duration-300 cursor-pointer hover:scale-102"
+                      @click="selectResult({ type: 'deals', query: searchQuery })"
+                  >
+                    <div class="result-icon w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <Icon name="mdi:tag" class="w-6 h-6 text-white" />
+                    </div>
+                    <div class="result-info flex-1">
+                      <h4 class="result-title font-bold text-gray-900 dark:text-white">{{ searchQuery }} Deals</h4>
+                      <p class="result-subtitle text-sm text-gray-600 dark:text-gray-400">Special offers and discounts</p>
+                      <div class="result-tags mt-2 flex items-center gap-2">
+                        <span class="tag px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 text-xs font-semibold rounded-full">Deals</span>
+                        <span class="tag px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 text-xs font-semibold rounded-full">Discount</span>
+                      </div>
+                    </div>
+                    <Icon name="mdi:arrow-right" class="w-5 h-5 text-gray-400" />
+                  </div>
+
+                  <!-- Search Blog -->
+                  <div
+                      class="result-item flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 rounded-2xl transition-all duration-300 cursor-pointer hover:scale-102"
+                      @click="selectResult({ type: 'blog', query: searchQuery })"
+                  >
+                    <div class="result-icon w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <Icon name="mdi:post" class="w-6 h-6 text-white" />
+                    </div>
+                    <div class="result-info flex-1">
+                      <h4 class="result-title font-bold text-gray-900 dark:text-white">{{ searchQuery }} in Blog</h4>
+                      <p class="result-subtitle text-sm text-gray-600 dark:text-gray-400">Articles and blog posts</p>
+                      <div class="result-tags mt-2 flex items-center gap-2">
+                        <span class="tag px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs font-semibold rounded-full">Blog</span>
+                      </div>
+                    </div>
                     <Icon name="mdi:arrow-right" class="w-5 h-5 text-gray-400" />
                   </div>
                 </div>
-              </div>
-
-              <!-- No Results -->
-              <div v-else class="no-results p-8 text-center">
-                <div class="no-results-icon w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <Icon name="mdi:magnify-remove-outline" class="w-10 h-10 text-gray-400" />
-                </div>
-                <h3 class="text-xl font-black text-gray-900 dark:text-white mb-2">No results found</h3>
-                <p class="text-gray-600 dark:text-gray-400">Try different keywords or browse our categories</p>
               </div>
             </div>
 
@@ -143,7 +172,7 @@
               <div class="links-grid grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <NuxtLink
                     v-for="(link, index) in quickLinks"
-                    :key="index"
+                    :key="`link-${index}`"
                     :to="link.to"
                     class="quick-link flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 rounded-2xl transition-all duration-300 hover:scale-102"
                     @click="closeModal"
@@ -183,14 +212,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
-// GSAP imports (client-side only)
-let gsap: any = null
-
-if (process.client) {
-  import('gsap').then(({ default: gsapModule }) => {
-    gsap = gsapModule
-  })
-}
+// Composables
+const router = useRouter()
 
 // Props & Emits
 const emit = defineEmits<{
@@ -199,45 +222,33 @@ const emit = defineEmits<{
 
 // State
 const searchQuery = ref('')
-const isLoading = ref(false)
-const searchResults = ref<any[]>([])
 
 // Refs
-const searchContainer = ref<HTMLElement>()
-const searchInput = ref<HTMLInputElement>()
+const searchContainer = ref<HTMLElement | null>(null)
+const searchInput = ref<HTMLInputElement | null>(null)
 
-let gsapContext: any = null
-let debounceTimer: number | null = null
+// Top Categories for search suggestions
+const topCategories = [
+  { name: 'Electronics', slug: 'electronics', icon: 'mdi:laptop', description: 'Electronic items matching your search' },
+  { name: 'Fashion', slug: 'fashion', icon: 'mdi:tshirt-crew', description: 'Clothing and accessories' },
+  { name: 'Groceries', slug: 'groceries', icon: 'mdi:cart', description: 'Food and daily essentials' }
+]
 
 // Quick Links Data
 const quickLinks = [
   {
-    to: '/categories/electronics',
-    title: 'Electronics',
-    subtitle: 'Latest gadgets',
-    icon: 'mdi:laptop',
+    to: '/categories',
+    title: 'All Categories',
+    subtitle: 'Browse all',
+    icon: 'mdi:view-grid',
     iconBg: 'bg-gradient-to-r from-blue-500 to-indigo-500'
   },
   {
-    to: '/categories/fashion',
-    title: 'Fashion',
-    subtitle: 'Trendy clothing',
-    icon: 'mdi:tshirt-crew',
+    to: '/blog',
+    title: 'Blog',
+    subtitle: 'Latest articles',
+    icon: 'mdi:post',
     iconBg: 'bg-gradient-to-r from-purple-500 to-pink-500'
-  },
-  {
-    to: '/categories/home',
-    title: 'Home & Living',
-    subtitle: 'Furniture & decor',
-    icon: 'mdi:home',
-    iconBg: 'bg-gradient-to-r from-green-500 to-emerald-500'
-  },
-  {
-    to: '/categories/beauty',
-    title: 'Beauty',
-    subtitle: 'Cosmetics & care',
-    icon: 'mdi:lipstick',
-    iconBg: 'bg-gradient-to-r from-pink-500 to-rose-500'
   },
   {
     to: '/deals',
@@ -257,177 +268,87 @@ const quickLinks = [
 
 // Methods
 const closeModal = () => {
-  if (gsap && searchContainer.value) {
-    gsap.to(searchContainer.value, {
-      opacity: 0,
-      y: -20,
-      scale: 0.95,
-      duration: 0.3,
-      onComplete: () => emit('close')
-    })
-  } else {
-    emit('close')
-  }
+  emit('close')
 }
 
 const clearSearch = () => {
   searchQuery.value = ''
-  searchResults.value = []
-  searchInput.value?.focus()
+  nextTick(() => searchInput.value?.focus())
 }
 
 const handleInput = () => {
-  if (debounceTimer) {
-    clearTimeout(debounceTimer)
-  }
-
-  debounceTimer = setTimeout(() => {
-    if (searchQuery.value.length > 2) {
-      performSearch()
-    } else {
-      searchResults.value = []
-    }
-  }, 300)
+  // Just for reactivity - suggestions show instantly
 }
 
-const performSearch = async () => {
+const performSearch = () => {
   if (!searchQuery.value.trim()) return
 
-  isLoading.value = true
-
-  try {
-    // Simulate API call - replace with your actual search API
-    await new Promise(resolve => setTimeout(resolve, 800))
-
-    // Mock search results
-    searchResults.value = [
-      {
-        title: `${searchQuery.value} Products`,
-        subtitle: 'Browse all related products',
-        icon: 'mdi:shopping',
-        tags: ['Products', 'Popular'],
-        type: 'products',
-        query: searchQuery.value
-      },
-      {
-        title: `${searchQuery.value} in Electronics`,
-        subtitle: 'Electronic items matching your search',
-        icon: 'mdi:laptop',
-        tags: ['Electronics', 'Tech'],
-        type: 'category',
-        category: 'electronics'
-      },
-      {
-        title: `${searchQuery.value} Deals`,
-        subtitle: 'Special offers and discounts',
-        icon: 'mdi:tag',
-        tags: ['Deals', 'Discount'],
-        type: 'deals',
-        query: searchQuery.value
-      }
-    ]
-
-  } catch (error) {
-    console.error('Search error:', error)
-    searchResults.value = []
-  } finally {
-    isLoading.value = false
-  }
+  // Navigate to full search page
+  router.push({
+    path: '/search',
+    query: { q: searchQuery.value.trim() }
+  })
+  closeModal()
 }
 
 const selectResult = (result: any) => {
-  // Handle result selection - navigate to appropriate page
-  console.log('Selected result:', result)
+  const query = encodeURIComponent(result.query)
 
-  // Example navigation based on result type
   switch (result.type) {
     case 'products':
-      navigateTo(`/search?q=${encodeURIComponent(result.query)}`)
+      router.push(`/search?q=${query}`)
       break
     case 'category':
-      navigateTo(`/categories/${result.category}?q=${encodeURIComponent(result.query)}`)
+      router.push(`/search?q=${query}&category=${result.category}`)
       break
     case 'deals':
-      navigateTo(`/deals?q=${encodeURIComponent(result.query)}`)
+      router.push(`/search?q=${query}&filter=deals`)
+      break
+    case 'blog':
+      router.push(`/search?q=${query}&filter=blog`)
       break
     default:
-      navigateTo(`/search?q=${encodeURIComponent(searchQuery.value)}`)
+      router.push(`/search?q=${query}`)
   }
 
   closeModal()
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
-    closeModal()
-  }
-}
-
-// Initialize animations
-const initializeAnimations = () => {
-  if (!process.client || !gsap || !searchContainer.value) return
-
-  gsapContext = gsap.context(() => {
-    // Entrance animation
-    gsap.fromTo(searchContainer.value,
-        { opacity: 0, y: -50, scale: 0.9 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.5,
-          ease: 'back.out(1.7)'
-        }
-    )
-  })
+  if (event.key === 'Escape') closeModal()
 }
 
 // Lifecycle
 onMounted(() => {
-  // Focus search input
-  nextTick(() => {
-    searchInput.value?.focus()
-  })
-
-  // Add keyboard listener
+  nextTick(() => searchInput.value?.focus())
   document.addEventListener('keydown', handleKeydown)
-
-  // Initialize animations
-  setTimeout(() => {
-    initializeAnimations()
-  }, 50)
 })
 
 onUnmounted(() => {
-  // Clean up
   document.removeEventListener('keydown', handleKeydown)
-
-  if (debounceTimer) {
-    clearTimeout(debounceTimer)
-  }
-
-  if (gsapContext) {
-    gsapContext.kill()
-  }
 })
 </script>
 
 <style scoped>
-/* Performance optimizations */
-.will-change-transform {
-  will-change: transform;
-}
-
-/* Search Modal */
+/* Keep all your original styles */
 .search-modal {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Search Container */
 .search-container {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .search-box {
@@ -435,79 +356,27 @@ onUnmounted(() => {
   -webkit-backdrop-filter: blur(20px);
 }
 
-/* Search Input */
 .search-input {
   caret-color: #3b82f6;
 }
 
-.search-input:focus {
-  transform: scale(1.02);
-  transition: transform 0.3s ease;
-}
-
-/* Buttons */
-.search-btn,
-.clear-btn,
-.close-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.search-btn::before,
-.clear-btn::before,
-.close-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.search-btn:hover::before,
-.clear-btn:hover::before,
-.close-btn:hover::before {
-  opacity: 1;
-}
-
-/* Result Items */
 .result-item:hover {
   transform: translateX(5px) scale(1.02);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Quick Links */
 .quick-link:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Keyboard shortcuts */
 .kbd {
   @apply px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs font-semibold border border-gray-300 dark:border-gray-600;
 }
 
-/* Loading spinner */
-.loading-spinner::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #3b82f6);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  z-index: -1;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Transitions */
 .search-modal-enter-active,
 .search-modal-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-modal-enter-from,
@@ -515,13 +384,6 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-.search-modal-enter-from .search-container,
-.search-modal-leave-to .search-container {
-  opacity: 0;
-  transform: translateY(-50px) scale(0.9);
-}
-
-/* Responsive design */
 @media (max-width: 640px) {
   .search-container {
     margin: 0 1rem;
@@ -530,32 +392,8 @@ onUnmounted(() => {
   .links-grid {
     grid-template-columns: 1fr;
   }
-
-  .search-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
 }
 
-/* Dark mode enhancements */
-@media (prefers-color-scheme: dark) {
-  .search-box {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-}
-
-/* Focus states */
-.search-input:focus,
-.search-btn:focus-visible,
-.clear-btn:focus-visible,
-.close-btn:focus-visible,
-.result-item:focus-visible,
-.quick-link:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Smooth scrolling */
 .search-content {
   scrollbar-width: thin;
   scrollbar-color: rgb(156 163 175) transparent;
@@ -565,16 +403,8 @@ onUnmounted(() => {
   width: 6px;
 }
 
-.search-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 .search-content::-webkit-scrollbar-thumb {
   background-color: rgb(156 163 175);
   border-radius: 3px;
-}
-
-.search-content::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(107 114 128);
 }
 </style>

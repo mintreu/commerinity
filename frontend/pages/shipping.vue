@@ -457,15 +457,7 @@
         </section>
       </div>
 
-      <!-- Back to Top -->
-      <div class="back-to-top fixed bottom-8 right-8 z-20">
-        <button
-            @click="scrollToTop"
-            class="w-14 h-14 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white rounded-full shadow-2xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
-        >
-          <Icon name="mdi:arrow-up" class="w-6 h-6" />
-        </button>
-      </div>
+
     </div>
   </div>
 </template>

@@ -503,7 +503,7 @@ const fetchNotifications = async (reset = false) => {
       filter: currentFilter.value
     })
 
-    const res = await useSanctumFetch(`/api/account/notifications?${params}`, {
+    const res = await useSanctumFetch(`${config.public.apiBase}/account/notifications?${params}`, {
       method: 'GET'
     })
 

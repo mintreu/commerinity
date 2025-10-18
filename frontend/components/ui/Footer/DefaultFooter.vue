@@ -171,17 +171,19 @@ const socialLinks = Object.freeze([
 ])
 
 const shopLinks = Object.freeze([
-  { title: 'New Arrivals', url: '/shop/new' },
-  { title: 'Best Sellers', url: '/shop/bestsellers' },
-  { title: 'Sale', url: '/shop/sale' },
-  { title: 'All Products', url: '/shop' }
-])
+  { title: 'Electronics', url: '/category/electronics' },
+  { title: 'Electrical Appliances', url: '/category/electrical' },
+  { title: 'Fashion & Accessories', url: '/category/fashion' },
+  { title: 'All Products', url: '/store' }
+]);
+
 
 const supportLinks = Object.freeze([
-  { title: 'Help Center', url: '/help' },
-  { title: 'Track Order', url: '/track-order' },
+  // { title: 'Help Center', url: '/help' },
   { title: 'Shipping Info', url: '/shipping' },
-  { title: 'Returns', url: '/returns' },
+  { title: 'Returns', url: '/return-refund' },
+  { title: 'Privacy', url: '/privacy' },
+  { title: 'Terms & Condition', url: '/terms' },
   { title: 'Contact Us', url: '/contact' }
 ])
 
@@ -189,7 +191,7 @@ const companyLinks = Object.freeze([
   { title: 'About Us', url: '/about' },
   { title: 'Careers', url: '/careers' },
   { title: 'Blog', url: '/blog' },
-  { title: 'Affiliate Program', url: '/affiliate' }
+  // { title: 'Affiliate Program', url: '/affiliate' }
 ])
 </script>
 

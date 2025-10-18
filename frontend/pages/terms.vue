@@ -409,15 +409,7 @@
         </div>
       </div>
 
-      <!-- Back to Top -->
-      <div class="back-to-top fixed bottom-8 right-8 z-20">
-        <button
-            @click="scrollToTop"
-            class="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
-        >
-          <Icon name="mdi:arrow-up" class="w-6 h-6" />
-        </button>
-      </div>
+
     </div>
   </div>
 </template>
