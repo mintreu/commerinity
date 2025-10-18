@@ -204,7 +204,7 @@
                   {{ category.name }}
                 </h3>
                 <p class="category-price text-sm lg:text-base text-green-600 dark:text-green-400 font-bold">
-                  From ₹{{ formatPrice(category.starting_from_price) }}
+                  From {{ category.starting_from_price }}
                 </p>
                 <div class="category-arrow opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 mt-2">
                   <Icon name="mdi:arrow-right" class="w-4 h-4 mx-auto text-blue-600 dark:text-blue-400" />
