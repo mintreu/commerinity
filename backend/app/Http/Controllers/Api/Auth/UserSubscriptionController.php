@@ -10,6 +10,42 @@ use Illuminate\Http\Request;
 class UserSubscriptionController extends Controller
 {
 
+
+    public function subscribeStagePlan(Request $request)
+    {
+
+        $user = $request->user();
+
+        $service = MembershipSubscriptionService::make($user);
+
+        if (!$service->isSubscriptionRequired())
+        {
+            return response()->json([
+                'status' => false,
+                'message' => 'You already have an active plan.',
+                'remaining_days' => now()->diffInDays($user->membership->expire_at, false),
+                'expires_at' => $user->membership->expire_at->toDateTimeString(),
+            ]);
+
+        }
+
+        // New Subscription
+        $service->ensureSubscription();
+        $newSubscription = $service->getSubscription();
+        dd($newSubscription);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
     public function getCurrentSubscription(Request $request)
     {
         $user = $request->user();
@@ -26,7 +62,6 @@ class UserSubscriptionController extends Controller
     {
 
         $user = $request->user();
-
 
 
         // User want subscription

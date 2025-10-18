@@ -12,11 +12,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Mintreu\LaravelMoney\LaravelMoney;
+use Mintreu\LaravelTransaction\Casts\TransactionStatusCast;
+use Mintreu\LaravelTransaction\Casts\TransactionTypeCast;
 use Mintreu\LaravelTransaction\Casts\WalletStatusCast;
 use Mintreu\LaravelTransaction\Models\Wallet;
+use Mintreu\LaravelTransaction\Services\WalletService\WalletService;
 
 class WalletController extends Controller
 {
+
+
     public function index(Request $request): WalletResource|JsonResponse
     {
         $user = $request->user();
@@ -33,14 +38,198 @@ class WalletController extends Controller
                     'wallet' => null,
                     'transactions' => null,
                     'beneficiary' => null,
+                    'stats' => null,
                 ],
             ]);
         }
 
-        return WalletResource::make($user->wallet);
+        $wallet = $user->wallet;
+
+        // Calculate comprehensive statistics
+        $stats = $this->calculateWalletStats($wallet);
+
+        // Attach stats to wallet for resource access
+        $wallet->stats = $stats;
+
+        return WalletResource::make($wallet);
     }
 
-    public function create(Request $request)
+    /**
+     * Calculate comprehensive wallet statistics
+     */
+    protected function calculateWalletStats($wallet): array
+    {
+        $todayStart = Carbon::today()->startOfDay();
+        $todayEnd = Carbon::today()->endOfDay();
+
+        // Base query for today's completed transactions only
+        $todayQuery = $wallet->transactions()
+            ->whereBetween('created_at', [$todayStart, $todayEnd])
+            ->where('status', TransactionStatusCast::COMPLETED->value);
+
+        // Today's activity by type (completed only)
+        $todayCredits = (clone $todayQuery)
+            ->where('type', TransactionTypeCast::CREDITED->value)
+            ->sum('amount');
+
+        $todayDebits = (clone $todayQuery)
+            ->where('type', TransactionTypeCast::DEBITED->value)
+            ->sum('amount');
+
+        // Net today activity (credits - debits)
+        $todayNetActivity = $todayCredits - $todayDebits;
+
+        // Total transaction counts by type (all time, completed only)
+        $totalCreditsCount = $wallet->transactions()
+            ->where('type', TransactionTypeCast::CREDITED->value)
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->count();
+
+        $totalDebitsCount = $wallet->transactions()
+            ->where('type', TransactionTypeCast::DEBITED->value)
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->count();
+
+        $totalTransactions = $totalCreditsCount + $totalDebitsCount;
+
+        // Pending transactions count
+        $pendingCount = $wallet->transactions()
+            ->whereIn('status', [
+                TransactionStatusCast::PENDING->value,
+                TransactionStatusCast::PROCESSING->value,
+            ])
+            ->count();
+
+        // Failed transactions count (for reference)
+        $failedCount = $wallet->transactions()
+            ->whereIn('status', [
+                TransactionStatusCast::FAILED->value,
+                TransactionStatusCast::CANCELLED->value,
+            ])
+            ->count();
+
+        // Last transaction (any status)
+        $lastTransaction = $wallet->transactions()
+            ->latest()
+            ->first();
+
+        // Last completed transaction
+        $lastCompletedTransaction = $wallet->transactions()
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->latest()
+            ->first();
+
+        // Beneficiary count
+        $beneficiaryCount = $wallet->beneficiaries()
+            ->where('beneficiary_active', true)
+            ->count();
+
+        $hasDefaultBeneficiary = $wallet->beneficiaries()
+            ->where('default', true)
+            ->where('beneficiary_active', true)
+            ->exists();
+
+        // This week's activity (completed only)
+        $weekStart = Carbon::now()->startOfWeek();
+        $weekEnd = Carbon::now()->endOfWeek();
+
+        $weekCredits = $wallet->transactions()
+            ->whereBetween('created_at', [$weekStart, $weekEnd])
+            ->where('type', TransactionTypeCast::CREDITED->value)
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->sum('amount');
+
+        $weekDebits = $wallet->transactions()
+            ->whereBetween('created_at', [$weekStart, $weekEnd])
+            ->where('type', TransactionTypeCast::DEBITED->value)
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->sum('amount');
+
+        // This month's activity (completed only)
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+
+        $monthCredits = $wallet->transactions()
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->where('type', TransactionTypeCast::CREDITED->value)
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->sum('amount');
+
+        $monthDebits = $wallet->transactions()
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->where('type', TransactionTypeCast::DEBITED->value)
+            ->where('status', TransactionStatusCast::COMPLETED->value)
+            ->sum('amount');
+
+        return [
+            // Today's stats
+            'today' => [
+                'credits' => $todayCredits,
+                'debits' => $todayDebits,
+                'net_activity' => $todayNetActivity,
+            ],
+
+            // This week's stats
+            'week' => [
+                'credits' => $weekCredits,
+                'debits' => $weekDebits,
+                'net_activity' => $weekCredits - $weekDebits,
+            ],
+
+            // This month's stats
+            'month' => [
+                'credits' => $monthCredits,
+                'debits' => $monthDebits,
+                'net_activity' => $monthCredits - $monthDebits,
+            ],
+
+            // Transaction counts
+            'counts' => [
+                'total' => $totalTransactions,
+                'credits' => $totalCreditsCount,
+                'debits' => $totalDebitsCount,
+                'pending' => $pendingCount,
+                'failed' => $failedCount,
+            ],
+
+            // Beneficiary info
+            'beneficiary' => [
+                'count' => $beneficiaryCount,
+                'has_default' => $hasDefaultBeneficiary,
+            ],
+
+            // Last transactions
+            'last_transaction' => $lastTransaction ? [
+                'id' => $lastTransaction->id,
+                'uuid' => $lastTransaction->uuid,
+                'purpose' => $lastTransaction->purpose,
+                'amount' => $lastTransaction->amount,
+                'type' => $lastTransaction->type->value,
+                'status' => $lastTransaction->status->value,
+                'created_at' => $lastTransaction->created_at,
+            ] : null,
+
+            'last_completed_transaction' => $lastCompletedTransaction ? [
+                'id' => $lastCompletedTransaction->id,
+                'uuid' => $lastCompletedTransaction->uuid,
+                'purpose' => $lastCompletedTransaction->purpose,
+                'amount' => $lastCompletedTransaction->amount,
+                'type' => $lastCompletedTransaction->type->value,
+                'created_at' => $lastCompletedTransaction->created_at,
+            ] : null,
+        ];
+    }
+
+
+    // Wallet CURD METHODS
+
+    /**
+     * Create User Wallet When None Have
+     * Unlock Wallet for User
+     * @param Request $request
+     * @return WalletResource|JsonResponse
+     */
+    public function create(Request $request): WalletResource|JsonResponse
     {
         $user = Auth::user();
         $user->load('wallet');
@@ -52,20 +241,11 @@ class WalletController extends Controller
             ], 200);
         }
 
-        $userDob = $user->dob instanceof Carbon ? $user->dob : Carbon::parse($user->dob);
-        $birthYear = $userDob?->format('Y') ?? '0000';
-
         $validated = $request->validate([
-            'pin' => ['nullable', 'string', 'min:4', 'max:6'],
+            'pin' => ['nullable', 'digits:6'],
         ]);
 
-        $wallet = $user->wallet()->create([
-            'uuid'     => (string) Str::uuid(),
-            'pin'      => $validated['pin'] ?? $birthYear, // hashed by mutator
-            'balance'  => 0.00,
-            'currency' => LaravelMoney::defaultCurrency(),
-            'status'   => WalletStatusCast::ACTIVE,
-        ]);
+        $wallet = WalletService::create(owner: $user, pin: $validated['pin'] ?? null);
 
         return WalletResource::make($wallet);
     }
@@ -108,43 +288,53 @@ class WalletController extends Controller
         return response()->json(['success' => true, 'message' => 'PIN changed successfully.']);
     }
 
+
+    /**
+     * Return Checkout Url
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function addMoney(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:1'],
             'reference' => ['nullable', 'string', 'max:255'],
+            'pin' => ['required']
         ]);
 
         $user = $request->user();
         $wallet = $user->wallet;
 
+
+
         if (!$wallet) {
             return response()->json(['success' => false, 'message' => 'Wallet not found.'], 404);
         }
 
-        DB::transaction(function () use ($wallet, $validated) {
-            // Lock for update to avoid race conditions
-            $locked = Wallet::whereKey($wallet->id)->lockForUpdate()->first();
+        $amount = (int) round(((float) $validated['amount']) * 100);
+        $checkoutUrl = WalletService::make($wallet)
+            ->addFund($amount)
+            ->getCheckoutUrl(
+                redirect_success_url: config('app.client_url').'/dashboard/wallet',
+                redirect_failure_url: config('app.client_url').'/dashboard/wallet',
+            );
 
-            $amount = (float) $validated['amount'];
-            $locked->balance = (float) $locked->balance + $amount;
-            $locked->save();
 
-            $locked->transactions()->create([
-                'type'   => 'credit',
-                'purpose'=> 'wallet_topup',
-                'amount' => $amount,
-                'status' => 'success',
-            ]);
-        });
-
+        // On Successfully Return Checkout Url
         return response()->json([
-            'success' => true,
+            'success' => !is_null($checkoutUrl),
             'message' => 'Money added successfully.',
-            'redirect' => 'redirect_url'
+            'redirect' => $checkoutUrl
         ]);
     }
 
+
+    /**
+     * Return true or false
+     * Generate a Pending Or Holding Status Transaction For it
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function withdraw(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -183,7 +373,7 @@ class WalletController extends Controller
                 $locked->save();
 
                 $locked->transactions()->create([
-                    'type'   => 'debit',
+                    'type'   => TransactionTypeCast::DEBITED->value,
                     'purpose'=> 'wallet_withdrawal',
                     'amount' => $amount,
                     'status' => 'pending', // set success after payout provider confirms
@@ -196,12 +386,18 @@ class WalletController extends Controller
         return response()->json(['success' => true, 'message' => 'Withdrawal initiated.']);
     }
 
+
+    /**
+     * Send Money return true or false
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function send(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'amount'         => ['required', 'numeric', 'min:1'],
             'recipient_uuid' => ['required', 'uuid'],
-            'pin'            => ['nullable', 'string', 'min:4', 'max:6'],
+            'pin'            => ['nullable', 'digit:6'],
         ]);
 
         $sender = $request->user()->wallet;
@@ -234,7 +430,7 @@ class WalletController extends Controller
                 $senderLocked->balance = (float) $senderLocked->balance - $amount;
                 $senderLocked->save();
                 $senderLocked->transactions()->create([
-                    'type'    => 'debit',
+                    'type'   => TransactionTypeCast::DEBITED->value,
                     'purpose' => 'p2p_transfer_out',
                     'amount'  => $amount,
                     'status'  => 'success',
@@ -245,7 +441,7 @@ class WalletController extends Controller
                 $recipientLocked->balance = (float) $recipientLocked->balance + $amount;
                 $recipientLocked->save();
                 $recipientLocked->transactions()->create([
-                    'type'    => 'credit',
+                    'type'   => TransactionTypeCast::CREDITED->value,
                     'purpose' => 'p2p_transfer_in',
                     'amount'  => $amount,
                     'status'  => 'success',
@@ -259,37 +455,59 @@ class WalletController extends Controller
         return response()->json(['success' => true, 'message' => 'Transfer successful.']);
     }
 
-    public function transactions(Request $request)
+
+
+
+
+    /**
+     * Return true or false
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function pointToBalanceConversion(Request $request):JsonResponse
     {
+        $validated = $request->validate([
+           'pin'    => ['required'],
+           'points' => ['required', 'numeric', 'min:1'],
+        ]);
+
         $user = $request->user();
+        $user->load('wallet');
         $wallet = $user->wallet;
-        if (!$wallet) {
-            return response()->json(['success' => false, 'message' => 'Wallet not found.'], 404);
+        $currentPoints = $wallet->points;
+
+
+        if ($validated['points'] > $currentPoints)
+        {
+            return response()->json(['success' => false, 'message' => 'You only have '.$currentPoints.' points in total for conversion']);
+        }else{
+
+            $conversionRatio = 10;  // some ratio later use config value here..
+            $pointAmount = $validated['points'] * $conversionRatio;
+            $newBalance = LaravelMoney::make($pointAmount)->plus($wallet->balance)->getAmount();
+            $newPoint = $wallet->points - $validated['points'];
+
+            // Here we later ad a internal transaction for it..
+
+
+            $wallet->update([
+               'balance' => $newBalance,
+               'points' => $newPoint,
+            ]);
+            return response()->json(['success' => true, 'message' => 'Transfer successful.']);
         }
 
-        $query = $wallet->transactions();
-
-        if ($type = $request->get('type')) {
-            $query->where('type', $type);
-        }
-        if ($status = $request->get('status')) {
-            $query->where('status', $status);
-        }
-
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');
-        $query->orderBy($sort, $direction);
-
-        $perPage = (int) $request->get('per_page', 10);
-        $transactions = $query->paginate($perPage);
-
-        return TransactionResource::collection($transactions);
     }
 
-    // Stub for provider callback; customize for gateway
-    public function verify(Request $request): JsonResponse
-    {
-        // Implement provider-specific verification and update transaction status.
-        return response()->json(['success' => true]);
-    }
+
+
+
+
+
+
+
+
+
+
+
 }

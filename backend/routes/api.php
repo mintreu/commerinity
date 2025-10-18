@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\{Auth\SanctumUserController,
     OrderController,
     PageController,
     PostApiController,
+    PushNotificationController,
     RecruitmentController,
     SaleController,
     TransactionController,
@@ -48,11 +49,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('send', [WalletController::class, 'send']);          // POST /wallet/send (P2P via wallet UUID)
         Route::post('change-pin', [WalletController::class, 'changePin']); // POST /wallet/change-pin
 
-        // Transactions
-        Route::get('transactions', [WalletController::class, 'transactions']); // list with filters/pagination
 
-        // Optional: verify money-in callbacks (if using a payment provider)
-        Route::post('verify', [WalletController::class, 'verify'])->name('wallet.verify'); // POST /wallet/verify
+
+        Route::post('point-conversion',[WalletController::class,'pointToBalanceConversion']);
+
     });
 
     // Beneficiaries (bank/upi)
@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('{account:uuid}/default', [BeneficiaryController::class, 'makeDefault']); // set default
     });
 });
+
 
 // ========================
 // 📄 PAGES ROUTES
@@ -166,6 +167,7 @@ Route::prefix('orders')->group(function () {
     Route::post('{order:uuid}/canceled', [OrderController::class, 'cancelOrder']); // POST /orders/{uuid}/canceled
     Route::post('{order:uuid}/return', [OrderController::class, 'returnOrder']);   // POST /orders/{uuid}/return
     Route::post('{order:uuid}/refund', [OrderController::class, 'refundOrder']);   // POST /orders/{uuid}/refund
+    Route::get('{order:uuid}/invoice', [OrderController::class, 'getOrderInvoicePdf']);   // POST /orders/{uuid}/refund
 
 });
 
@@ -175,9 +177,20 @@ Route::prefix('orders')->group(function () {
 Route::prefix(config('laravel-transaction.callback.prefix', '_transaction'))
     ->middleware(config('laravel-transaction.callback.middleware', []))
     ->group(function () {
-        Route::get('/validate/{transaction:uuid}', [TransactionController::class, 'confirmTransaction'])->name('transaction.validate');
-        Route::get('/failed/{transaction:uuid}', [TransactionController::class, 'failureTransaction'])->name('transaction.failure');
+        Route::get('/validate/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'confirmTransaction'])->name('transaction.validate');
+        Route::get('/failed/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'failureTransaction'])->name('transaction.failure');
     });
+
+// Transactions
+Route::prefix('transactions')
+    ->middleware('auth:sanctum')
+    ->group(function (){
+        Route::get('/', [\App\Http\Controllers\Api\Transaction\TransactionDisplayController::class, 'index']);
+        Route::get('/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionDisplayController::class, 'show']);
+        Route::get('/{transaction:uuid}/request_pdf', [\App\Http\Controllers\Api\Transaction\TransactionDisplayController::class, 'sendInvoiceToEmail']);
+    });
+
+
 
 // ========================
 // 🔗 INTEGRATION ROUTES
@@ -245,4 +258,22 @@ Route::post('/contact/business', [\App\Http\Controllers\Api\InquiryController::c
 Route::prefix('blogs')->group(function () {
     Route::get('/', [PostApiController::class, 'index'])->name('api.posts.index');
     Route::get('/{post:url}', [PostApiController::class, 'show'])->name('api.posts.show');
+});
+
+
+
+// Public routes
+Route::get('/push/vapid-public-key', [PushNotificationController::class, 'getVapidPublicKey']);
+Route::post('/push/subscribe', [PushNotificationController::class, 'subscribe']);
+
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/push/unsubscribe', [PushNotificationController::class, 'unsubscribe']);
+
+    // Admin routes (add your admin middleware)
+    Route::middleware('admin')->group(function () {
+        Route::post('/push/send-to-user', [PushNotificationController::class, 'sendToUser']);
+        Route::post('/push/send-to-all', [PushNotificationController::class, 'sendToAll']);
+        Route::post('/push/send-to-level', [PushNotificationController::class, 'sendToLevel']);
+    });
 });

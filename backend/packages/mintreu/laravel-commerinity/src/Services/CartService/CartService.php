@@ -54,7 +54,7 @@ class CartService
         // Read token TTL from config (seconds), keep default if missing
         $this->tokenTTL = (int) config('laravel-commerinity.cart.guest.token_ttl_seconds', $this->tokenTTL);
 
-        if ($this->guestId && $this->token) {
+        if ($this->guestId) {
             $this->hasGuest   = true;
             $this->validToken = $this->validateGuestToken($this->guestId, $this->token);
         }
@@ -150,16 +150,23 @@ class CartService
         }
 
         $cart = $query->first();
-        if (!$cart) return;
+       // if (!$cart) return;
 
-        // Find product safely; fallback max from config
-        $product = Product::find($item->cartable_id ?? $item->id);
-        $defaultMax = (int) config('laravel-commerinity.cart.limits.max_per_order_default', 1);
-        $maxPerOrder = $product->max_quantity ?? $defaultMax;
+        if (!$cart)
+        {
+             $this->add($item,$quantity);
+        }else{
+            // Find product safely; fallback max from config
+            $product = Product::find($item->cartable_id ?? $item->id);
+            $defaultMax = (int) config('laravel-commerinity.cart.limits.max_per_order_default', 1);
+            $maxPerOrder = $product->max_quantity ?? $defaultMax;
 
-        $cart->update([
-            'quantity' => min($quantity, $maxPerOrder),
-        ]);
+            $cart->update([
+                'quantity' => min($quantity, $maxPerOrder),
+            ]);
+        }
+
+
     }
 
     public function delete(Model $item): void

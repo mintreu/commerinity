@@ -10,6 +10,8 @@ use App\Services\RecruitmentService\RecruitmentConfirmationService;
 use App\Services\UserServices\MembershipSubscriptionService;
 use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Mintreu\LaravelTransaction\Events\TransactionConfirmed;
+use Mintreu\LaravelTransaction\Models\Wallet;
+use Mintreu\LaravelTransaction\Services\WalletService\WalletService;
 
 class HandleTransactionConfirmed
 {
@@ -47,6 +49,13 @@ class HandleTransactionConfirmed
         {
             RecruitmentConfirmationService::make($transactionAbleRecord)->validate($transaction);
         }
+
+        // Wallet
+        if ($transactionAbleRecord instanceof Wallet)
+        {
+            WalletService::make($transactionAbleRecord)->validate($transaction);
+        }
+
 
     }
 }

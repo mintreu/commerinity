@@ -323,8 +323,9 @@
             </div>
           </div>
           <div class="relative" style="height: 800px;">
-            <UserVillage
+            <LazyAccountCommunityWorld
                 :tree-data="chartData"
+                splash-background=""
                 @select-member="selectMember"
             />
           </div>

@@ -50,21 +50,23 @@ class CartVoucherValidator
 
     public function validate(Model $cartable):bool
     {
-        $this->cartable = $cartable;
-        if ($this->validateCouponCode($this->voucherCode,$this->customer))
+        if ($this->couponCode)
         {
-            if (empty($this->voucher->conditions))
+            $this->cartable = $cartable;
+            if ($this->validateCouponCode($this->voucherCode,$this->customer))
             {
-                return true;
+                if (empty($this->voucher->conditions))
+                {
+                    return true;
+                }
+
+                if ($this->checkVoucherConditionValidation())
+                {
+                    return $this->verified;
+                }
             }
-
-            if ($this->checkVoucherConditionValidation())
-            {
-                return $this->verified;
-            }
-
-
         }
+
         return false;
     }
 

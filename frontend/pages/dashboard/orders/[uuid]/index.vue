@@ -574,9 +574,58 @@ function proceedToPayment() {
   toast.info('Redirecting...', 'Taking you to payment page')
 }
 
-function downloadInvoice() {
-  toast.success('Download Started', 'Invoice download has started')
+
+
+
+async function downloadInvoice() {
+  if (!order.value?.uuid) {
+    toast.error('Error', 'Order UUID not found')
+    return
+  }
+
+  try {
+    toast.info('Downloading...', 'Preparing your invoice')
+
+    // Fetch the PDF as blob
+    const response = await useSanctumFetch(
+        `${config.public.apiBase}/orders/${order.value.uuid}/invoice`,
+        {
+          method: 'GET',
+          responseType: 'blob' // Important: tells fetch to expect binary data
+        }
+    )
+
+    // Create blob from response
+    const blob = new Blob([response as BlobPart], { type: 'application/pdf' })
+
+    // Create download link
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `Invoice-${order.value.uuid}.pdf`
+
+    // Trigger download
+    document.body.appendChild(link)
+    link.click()
+
+    // Cleanup
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+
+    toast.success('Downloaded!', 'Invoice downloaded successfully')
+  } catch (error: any) {
+    console.error('Download invoice error:', error)
+    toast.error('Download Failed', error?.message || 'Could not download invoice')
+  }
 }
+
+
+
+
+
+
+
+
 
 function trackOrder() {
   toast.info('Opening Tracker', 'Order tracking information')

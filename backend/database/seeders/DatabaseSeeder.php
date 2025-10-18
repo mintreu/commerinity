@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
 
             // MasterDemoProductSeeder::class,
 
+            TaxCodeSeeder::class,
+
             //ProductSeeder::class,
             ProductDemoSeeder::class,
 
@@ -44,7 +46,7 @@ class DatabaseSeeder extends Seeder
 
             PostSeeder::class,
 
-            TaxCodeSeeder::class
+
 
         ]);
 

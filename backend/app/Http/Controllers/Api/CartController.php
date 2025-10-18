@@ -44,8 +44,14 @@ class CartController extends Controller
 
         $cart = new Cart($request->user());
         $cart->capture($request);
+        $cartMeta = $cart->getMeta();
 
-        return CartResource::make($cart->getMeta());
+        // Any Suggestions For Cart Products
+
+
+        return CartResource::make($cartMeta)->additional([
+            'suggestions' => []
+        ]);
     }
 
     // 2. Add Product

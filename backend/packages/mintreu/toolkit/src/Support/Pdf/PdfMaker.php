@@ -2,24 +2,22 @@
 
 namespace Mintreu\Toolkit\Support\Pdf;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\App;
+
 class PdfMaker
 {
 
-    public static function make()
+
+
+
+    public static function make(): static
     {
         return new static();
     }
 
 
-    public  function html()
-    {
-        return $this;
-    }
 
-    public  function view()
-    {
-        return $this;
-    }
 
 
 

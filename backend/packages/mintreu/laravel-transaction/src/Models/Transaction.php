@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Schema;
 use Mintreu\LaravelIntegration\Casts\PaymentMethodTypeCast;
 use Mintreu\LaravelIntegration\Traits\HasLaravelIntegration;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Casts\TransactionStatusCast;
 use Mintreu\LaravelTransaction\Casts\TransactionTypeCast;
 use Mintreu\Toolkit\Traits\HasPackageModelFactory;
@@ -37,7 +38,7 @@ class Transaction extends Model
         'amount',
         'verified',
         'metadata',
-        'provider_id',
+//        'provider_id',
         'success_url',
         'failure_url',
         'success_redirect_url',
@@ -46,6 +47,8 @@ class Transaction extends Model
         'expire_at',
         'integration_id',
         'wallet_id',
+        'transactionable_type',
+        'transactionable_id'
     ];
 
     /**
@@ -128,54 +131,6 @@ class Transaction extends Model
     }
 
 
-
-    /**
-     * Verify a transaction based on Laravel request data.
-     *
-     * @param Request $request
-     * @param array $fields Fields to validate, default: ['provider_transaction_id', 'amount']
-     *
-     * @return Transaction The verified transaction instance
-     *
-     * @throws RuntimeException If required fields are missing or mismatched
-     */
-//    public static function verifyTransaction(Request $request, array $fields = ['provider_transaction_id','amount']): self
-//    {
-//        // Extract only required fields from the request
-//        $data = $request->only($fields);
-//
-//        // provider_transaction_id is mandatory
-//        if (!isset($data['provider_transaction_id'])) {
-//            throw new RuntimeException('Missing provider_transaction_id.');
-//        }
-//
-//        // Find transaction by provider_transaction_id
-//        $transaction = self::where('provider_transaction_id', $data['provider_transaction_id'])->first();
-//
-//        if (!$transaction) {
-//            throw new RuntimeException('Transaction not found for verification.');
-//        }
-//
-//        // Validate fields
-//        foreach ($fields as $field) {
-//            if (!isset($data[$field])) {
-//                throw new RuntimeException("Missing required field: {$field}");
-//            }
-//
-//            if ($transaction->$field != $data[$field]) {
-//                throw new RuntimeException("Field mismatch for {$field}");
-//            }
-//        }
-//
-//        // Mark transaction as verified
-//        $transaction->verified = true;
-//        $transaction->save();
-//
-//        // Fire event after verification
-//        Event::dispatch('transaction.verified', [$transaction]);
-//
-//        return $transaction;
-//    }
 
 
 

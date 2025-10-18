@@ -223,7 +223,7 @@
                     <div class="package-price">
                       <span class="price-currency">₹</span>
                       <span class="price-amount">{{ subscriptionData.price.replace('₹', '').replace('.00', '') }}</span>
-                      <span class="price-period">/year</span>
+<!--                      <span class="price-period">/year</span>-->
                     </div>
                     <p class="package-description">{{ subscriptionData.description }}</p>
 

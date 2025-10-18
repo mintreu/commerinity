@@ -16,6 +16,12 @@ trait HasLaravelIntegration
             ->where('type', $type);
     }
 
+    protected function integrationOfTypes(...$type): BelongsTo
+    {
+        return $this->belongsTo(Integration::class, 'integration_id', 'id')
+            ->whereIn('type', $type);
+    }
+
     public function integration(): BelongsTo
     {
         return $this->belongsTo(Integration::class, 'integration_id', 'id');

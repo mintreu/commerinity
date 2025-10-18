@@ -21,13 +21,7 @@ export default defineNuxtConfig({
     },
 
     // ✅ Removed @nuxt/image module
-    modules: [
-        '@nuxt/icon',
-        '@qirolab/nuxt-sanctum-authentication',
-        '@nuxtjs/google-fonts',
-        '@vite-pwa/nuxt',
-        'nuxt-echarts'
-    ],
+    modules: ['@nuxt/icon', '@qirolab/nuxt-sanctum-authentication', '@nuxtjs/google-fonts', '@vite-pwa/nuxt', 'nuxt-echarts', '@nuxtjs/robots','@nuxtjs/sitemap'],
 
     runtimeConfig: {
         // Private keys (only available on server-side)
@@ -39,6 +33,7 @@ export default defineNuxtConfig({
             webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'https://panel.vvindia.in',
             siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com',
             nodeEnv: process.env.NODE_ENV || 'production',
+            vapidPublicKey: process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY,
             sentry: {
                 dsn: process.env.SENTRY_DSN_PUBLIC || '',
             },
@@ -109,6 +104,8 @@ export default defineNuxtConfig({
         server: false,
         client: process.env.NODE_ENV === 'development' ? true : 'hidden'
     },
+
+    // ✅ Sitemap Configuration
 
 
 
@@ -202,5 +199,204 @@ export default defineNuxtConfig({
     // ✅ Vue Configuration
     vue: {
         propsDestructure: true
-    }
+    },
+
+
+
+
+
+
+    // ✅ Site Configuration (for canonical URLs)
+    site: {
+        url: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com',
+        name: process.env.NUXT_PUBLIC_APP_NAME || 'Vriddhi Vikash',
+        description: 'VVIndia is a unified platform for shopping, blogging, and more.',
+        defaultLocale: 'en-IN',
+    },
+
+    // ✅ Robots Configuration
+    robots: {
+        disallow: [
+            '/dashboard',
+            '/dashboard/**',
+            '/admin',
+            '/admin/**',
+            '/auth/**',
+            '/backups/**',
+            '/sample/**',
+            '/test',
+            '/cart', // Usually no-index for cart
+            '/*?*', // Exclude all query parameters
+        ],
+        allow: [
+            '/auth/login', // Allow only login if you want it indexed
+            '/auth/register',
+        ],
+    },
+
+    // ✅ Production-Ready Sitemap Configuration
+    sitemap: {
+        // Hostname (will use canonical URLs in production)
+        //hostname: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com',
+        xsl: false,
+        // Disable XSL stylesheet tips in production
+        xslTips: process.env.NODE_ENV === 'development',
+
+        // Customize columns shown in sitemap UI
+        xslColumns: [
+            { label: 'URL', width: '50%' },
+            { label: 'Last Modified', select: 'sitemap:lastmod', width: '25%' },
+            { label: 'Priority', select: 'sitemap:priority', width: '12.5%' },
+            { label: 'Change Freq', select: 'sitemap:changefreq', width: '12.5%' },
+        ],
+
+        // Exclude routes from sitemap
+        exclude: [
+            '/dashboard',
+            '/dashboard/**',
+            '/admin/**',
+            '/auth/**', // All auth routes
+            '/backups/**', // All backup routes
+            '/sample/**', // All sample routes
+            '/test', // Test page
+            '/cart', // Shopping cart
+            '/*?*', // All routes with query parameters
+        ],
+
+        // Set default values for all URLs
+        defaults: {
+            changefreq: 'daily',
+            priority: 0.5,
+            lastmod: new Date().toISOString(),
+        },
+
+        // Custom URL configuration with priorities
+        urls: async () => {
+            return [
+                // High priority pages
+                {
+                    loc: '/',
+                    priority: 1.0,
+                    changefreq: 'daily',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/shop',
+                    priority: 0.9,
+                    changefreq: 'hourly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/categories',
+                    priority: 0.9,
+                    changefreq: 'daily',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/store',
+                    priority: 0.9,
+                    changefreq: 'hourly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/blog',
+                    priority: 0.8,
+                    changefreq: 'daily',
+                    lastmod: new Date().toISOString(),
+                },
+
+                // Medium priority pages
+                {
+                    loc: '/about',
+                    priority: 0.7,
+                    changefreq: 'monthly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/contact',
+                    priority: 0.7,
+                    changefreq: 'monthly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/career',
+                    priority: 0.6,
+                    changefreq: 'weekly',
+                    lastmod: new Date().toISOString(),
+                },
+
+                // Lower priority pages
+                {
+                    loc: '/help',
+                    priority: 0.5,
+                    changefreq: 'monthly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/privacy',
+                    priority: 0.4,
+                    changefreq: 'yearly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/terms',
+                    priority: 0.4,
+                    changefreq: 'yearly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/return-refund',
+                    priority: 0.4,
+                    changefreq: 'yearly',
+                    lastmod: new Date().toISOString(),
+                },
+                {
+                    loc: '/shipping',
+                    priority: 0.4,
+                    changefreq: 'yearly',
+                    lastmod: new Date().toISOString(),
+                },
+            ]
+        },
+
+        // Enable gzip compression
+        //gzip: true,
+
+        // Exclude routes based on robots rules
+        discoverImages: true,
+
+        // Better caching
+        cacheMaxAgeSeconds: 600, // 10 minutes
+    },
+
+    // Route rules for additional control
+    routeRules: {
+        // Exclude from search engines completely
+        '/dashboard/**': { robots: false, index: false },
+        '/admin/**': { robots: false, index: false },
+        '/auth/**': { robots: false, index: false },
+        '/backups/**': { robots: false, index: false },
+        '/sample/**': { robots: false, index: false },
+        '/test': { robots: false, index: false },
+        '/cart': { robots: false, index: false },
+
+        // Allow but with specific rules
+        '/auth/login': { robots: true, index: true },
+        '/auth/register': { robots: true, index: true },
+
+        // Prerender important pages
+        '/': { prerender: true },
+        '/shop': { prerender: true },
+        '/categories': { prerender: true },
+        '/blog': { prerender: true },
+        '/about': { prerender: true },
+        '/contact': { prerender: true },
+    },
+
+
+
+
+
+
+
 })

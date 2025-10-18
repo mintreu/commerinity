@@ -20,9 +20,9 @@ Route::post('/change-password', [\App\Http\Controllers\Api\Auth\UserAccountContr
 
 Route::post('/onboarding',[\App\Http\Controllers\Api\Auth\UserOnboardingController::class,'processOnboarding']);
 
-Route::post('/get-subscription',[\App\Http\Controllers\Api\Auth\UserSubscriptionController::class,'getCurrentSubscription']);
-
-Route::post('/subscribe-now',[\App\Http\Controllers\Api\Auth\UserSubscriptionController::class,'subscribeSubscription']);
+//Route::post('/get-subscription',[\App\Http\Controllers\Api\Auth\UserSubscriptionController::class,'getCurrentSubscription']);
+//
+//Route::post('/subscribe-now',[\App\Http\Controllers\Api\Auth\UserSubscriptionController::class,'subscribeSubscription']);
 
 Route::get('/address-all',[\App\Http\Controllers\Api\Auth\UserAddressController::class,'getUserAllAddress']);
 Route::post('/address/create',[\App\Http\Controllers\Api\Auth\UserAddressController::class,'addUserAddress']);

@@ -78,9 +78,20 @@ return [
                 'secret'   => null,
                 'webhook'  => null,
                 'api'      => null,
-                'dev'       => true,
+                'dev'       => false,
                 'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Cash\CashPaymentProvider::class,
             ],
+
+            'wallet' => [
+                'key'      => null,
+                'secret'   => null,
+                'webhook'  => null,
+                'api'      => null,
+                'dev'       => false,
+                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Wallet\WalletPaymentProvider::class,
+            ],
+
+
             'razorpay' => [
                 'key'      => env('RAZORPAY_KEY', ''),
                 'secret'   => env('RAZORPAY_SECRET', ''),

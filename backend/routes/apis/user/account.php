@@ -58,11 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::post('/onboarding', [UserOnboardingController::class, 'processOnboarding'])->name('account.onboarding.store');
 
-    /**
-     * Subscription
-     */
-    Route::get('/subscription', [UserSubscriptionController::class, 'getCurrentSubscription'])->name('account.subscription.show');
-    Route::post('/subscription', [UserSubscriptionController::class, 'subscribeSubscription'])->name('account.subscription.store');
 
     /**
      * Addresses
@@ -126,12 +121,34 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
+    // Dashboard And Stats Related
+    Route::get('dashboard',[\App\Http\Controllers\Api\Auth\UserDashboardController::class,'getAccountDashboard']);
 
 
+    /**
+     * User Lifecycle Api Route
+     * full prefix: account/lifecycle
+     */
+    Route::prefix('lifecycle')
+        ->group(function (){
+            Route::get('/',[\App\Http\Controllers\Api\Auth\UserLifecycleController::class,'getUserLifecycleProgress']);
+            Route::get('/get_status',[\App\Http\Controllers\Api\Auth\UserLifecycleController::class,'getUserSubscriptionStatus']);
 
 
+            Route::get('/stages',[\App\Http\Controllers\Api\Auth\UserLifecycleController::class,'getAllStages']);
+            Route::get('/stages/{stage:url}',[\App\Http\Controllers\Api\Auth\UserLifecycleController::class,'showStage']);
+            Route::get('/level/{level:url}',[\App\Http\Controllers\Api\Auth\UserLifecycleController::class,'showLevel']);
+
+            Route::post('subscribe',[UserSubscriptionController::class,'subscribeStagePlan']);
+
+        });
 
 
+    /**
+     * Subscription
+     */
+//    Route::get('/subscription', [UserSubscriptionController::class, 'getCurrentSubscription'])->name('account.subscription.show');
+//    Route::post('/subscription', [UserSubscriptionController::class, 'subscribeSubscription'])->name('account.subscription.store');
 
 
 

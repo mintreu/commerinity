@@ -32,7 +32,7 @@ class UserSubscription extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'amount' => LaravelMoneyCast::class,
+        //'amount' => LaravelMoneyCast::class,
         'is_paid' => 'boolean',
         'expires_at' => 'datetime',
         'checkout_expires_at' => 'datetime',

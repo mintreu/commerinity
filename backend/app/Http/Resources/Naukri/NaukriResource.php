@@ -20,7 +20,7 @@ class NaukriResource extends NaukriIndexResource
             'open_date'     => optional($this->open_date)->format('d/m/Y'),
             'close_date'    => optional($this->close_date)->format('d/m/Y'),
             'is_payable'    => $this->is_payable,
-            'fees'          => LaravelMoney::format($this->fees ?? 0),
+            'fees'          => LaravelMoney::format($this->fees),
 
         ]);
     }

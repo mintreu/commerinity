@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order\Order;
 use App\Models\User;
 use App\Notifications\Welcome\WelcomeDatabaseNotification;
+use App\Services\OrderService\OrderConfirmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mintreu\LaravelIntegration\LaravelIntegration;
 use Mintreu\LaravelIntegration\Support\OrderBuilder\ProviderOrder;
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelMoney\Money;
 use Mintreu\Toolkit\Support\Pdf\PdfMaker;
 
@@ -20,17 +23,41 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        $user = User::with('children')->firstWhere('email','test@example.com');
-        dd($user);
+        $order = Order::firstWhere('uuid','2025o2U8wC1z6z7q');
+
+
+        dd([
+           OrderConfirmService::make($order)->confirm()
+        ]);
 
 
 
 
 
 
-        $user = User::firstWhere('email','applicant@example.com');
 
-        dd(LaravelIntegration::payment('cash-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
+
+
+        dd(
+          LaravelMoney::make(150.50)->getAmount(),
+            LaravelMoney::make(150.50)->formatted(),
+          LaravelMoney::make(15050)->getAmount(),
+            LaravelMoney::make(15050)->formatted(),
+        );
+
+
+
+//        $user = User::with('children')->firstWhere('email','test@example.com');
+//        dd($user);
+//
+//
+//
+//
+//
+//
+       $user = User::firstWhere('email','applicant@example.com');
+
+        dd(LaravelIntegration::payment('cash-free-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
             $order
                 ->currency('INR')
                 ->amount(10.34)

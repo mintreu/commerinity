@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Casts\TaxTypeCast;
+use App\Models\TaxCode;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Mintreu\LaravelCategory\Models\Category;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
@@ -15,17 +18,23 @@ use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class ProductDemoSeeder extends Seeder
 {
+
+    protected ?Collection $taxCodes = null;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+
+        $taxCodes = TaxCode::where('type',TaxTypeCast::GOODS->value)->get();
+
         // Seed Grocery Masala
         $demoMasalaProducts = $this->getFromStorage('private/data/products/demo-products.json');
         $masalaCategory = Category::firstWhere('url','spices-masalas');
         $masalaFilterGroup = FilterGroup::with('filters.options')->where('name','Spices & Masala')->first();
 
-        $this->startSeedingProducts($demoMasalaProducts,$masalaFilterGroup,$masalaCategory);
+        $this->startSeedingProducts($demoMasalaProducts,$masalaFilterGroup,$masalaCategory,$taxCodes);
 
 //        $topTenCategory = Category::where('url', '!=', 'spices-masalas')
 //            ->take(10)
@@ -57,11 +66,11 @@ class ProductDemoSeeder extends Seeder
 
 
 
-    public function startSeedingProducts($productList,$filterGroup,$parentCategory)
+    public function startSeedingProducts($productList,$filterGroup,$parentCategory,$taxCodes)
     {
         foreach ($productList as $productInfo)
         {
-
+            $hsnTaxCode = $taxCodes->random(1)->first();
 
             // Handle array vs object
             $name = is_array($productInfo) ? $productInfo['name'] : $productInfo->name;
@@ -77,6 +86,7 @@ class ProductDemoSeeder extends Seeder
                 'status' => PublishableStatusCast::PUBLISHED->value,
                 'filter_group_id' => $filterGroup->id,
                 'filter_options' => $this->mapFilterOptions($filterGroup, ProductTypeCast::SIMPLE->value),
+                'tax_code_id' => $hsnTaxCode->id
             ]);
 
 

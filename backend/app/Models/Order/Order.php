@@ -51,11 +51,11 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'amount' => LaravelMoneyCast::class,
-        'subtotal' => LaravelMoneyCast::class,
-        'discount' => LaravelMoneyCast::class,
-        'tax' => LaravelMoneyCast::class,
-        'total' => LaravelMoneyCast::class,
+//        'amount' => LaravelMoneyCast::class,
+//        'subtotal' => LaravelMoneyCast::class,
+//        'discount' => LaravelMoneyCast::class,
+//        'tax' => LaravelMoneyCast::class,
+//        'total' => LaravelMoneyCast::class,
         'status' => OrderStatusCast::class,
         'expire_at' => 'datetime',
     ];
@@ -82,6 +82,12 @@ class Order extends Model
     public function orderProducts(): HasMany
     {
         return $this->hasMany(OrderProduct::class,'order_id','id');
+    }
+
+
+    public function invoices()
+    {
+        return $this->hasMany(OrderInvoice::class,'order_id');
     }
 
 

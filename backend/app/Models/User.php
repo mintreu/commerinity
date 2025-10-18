@@ -37,6 +37,7 @@ use Mintreu\Toolkit\Casts\GenderCast;
 use Mintreu\Toolkit\Contracts\Fingerprintable;
 use Mintreu\Toolkit\Traits\HasFingerprint;
 use Mintreu\Toolkit\Traits\HasUnique;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
@@ -44,7 +45,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable, Commenter
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens,HasFactory, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
+    use HasApiTokens,HasFactory,HasPushSubscriptions, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
         HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,
         HasSupportTicket,HasWallet,HasBeneficiary,HasVoucherAccess,HasProductEngagement,HasProductWishlist;
 
@@ -166,7 +167,7 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
     public function membership(): HasOne
     {
         return $this->hasOne(UserSubscription::class, 'user_id', 'id')
-            //->where('expire_at', '>=', now())
+            ->where('expire_at', '>=', now())
             ->latest();
     }
 

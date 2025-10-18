@@ -27,7 +27,7 @@ return new class extends Migration
             $table->date('close_date')->nullable();
 
             $table->boolean('is_payable')->default(false);
-            $table->integer('fees')->nullable();
+            $table->unsignedBigInteger('fees')->default(0);
 
             $table->string('status')->default(\Mintreu\Toolkit\Casts\PublishableStatusCast::PUBLISHED->value);
             $table->text('status_feedback')->nullable();

@@ -38,15 +38,14 @@ class NaukriFactory extends Factory
             'open_date' => $this->faker->dateTimeBetween('-30 days', 'now')->format('Y-m-d'),
             'close_date' => $this->faker->dateTimeBetween('now', '+60 days')->format('Y-m-d'),
             'is_payable' => $isPayable = true,
-            //'is_payable' => $isPayable = $this->faker->boolean(60),
-            'fees' => $isPayable ? $this->faker->numberBetween(150, 550) : 0.00,
-            'status' => PublishableStatusCast::PUBLISHED,
+            'fees' => $isPayable ? fake()->randomElement([25000,35000,10000]) : 0,
+           // 'status' => PublishableStatusCast::PUBLISHED,
 
-//            'status' => $this->faker->randomElement(
-//                collect(PublishableStatusCast::cases())
-//                    ->map(fn($case) => $case->value)
-//                    ->toArray()
-//            ),
+            'status' => $this->faker->randomElement(
+                collect(PublishableStatusCast::cases())
+                    ->map(fn($case) => $case->value)
+                    ->toArray()
+            ),
         ];
     }
 }

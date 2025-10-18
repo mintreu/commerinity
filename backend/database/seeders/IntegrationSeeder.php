@@ -61,6 +61,18 @@ class IntegrationSeeder extends Seeder
             'default' => false,
         ]);
 
+        $wallet =  Integration::create([
+            'name' => 'Wallet',
+            'url' => 'wallet-payment',
+            'desc' => 'Wallet Payment Gateway',
+            'type' => IntegrationTypeCast::PAYMENT,
+            'key'      => null,
+            'secret'   => null,
+            'logo_url'  => '#',
+            'status' => true,
+            'default' => false,
+        ]);
+
 
 
         $fast2Sms =  Integration::create([

@@ -18,10 +18,10 @@ return new class extends Migration
             // Required
             $table->string('uuid')->unique();
             $table->string('type');                         // type : credit or debit
-            $table->integer('amount')->default(0);
+            $table->unsignedBigInteger('amount')->default(0);
             $table->morphs('transactionable');              // use HasRelation on your Order Model or Subscription Model with this relationship
 
-            $table->string('purpose')->nullable();          // user choice tag for categorize or grouping transaction moto
+            $table->string('purpose',120)->nullable();          // user choice tag for categorize or grouping transaction moto
 
             // Provider Info On Creation
             $table->string('provider_gen_id')->nullable()->unique();

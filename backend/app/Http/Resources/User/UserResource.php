@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Http\Resources\Geo\AddressResource;
+use App\Http\Resources\Lifecycle\LevelResource;
 use App\Http\Resources\Lifecycle\UserSubscriptionResource;
 use App\Http\Resources\Transaction\KycResource;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class UserResource extends UserIndexResource
             'bio' => $this->bio,
             'address' => AddressResource::make($this->whenLoaded('address')),
             'kyc'   => KycResource::make($this->whenLoaded('kyc')),
-            'subscription' => UserSubscriptionResource::make($this->whenLoaded('membership'))
+            'subscription' => UserSubscriptionResource::make($this->whenLoaded('membership')),
+            'level' => LevelResource::make($this->whenLoaded('level')),
         ]);
     }
 }

@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Mintreu\LaravelCommerinity\Services\CartService\Cart;
 use Mintreu\LaravelGeokit\Models\Address;
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Models\Transaction;
+use Mintreu\LaravelTransaction\Services\WalletService\WalletService;
 
 class OrderCreationService
 {
@@ -24,6 +26,7 @@ class OrderCreationService
     protected Order $order;
     protected ?string $error = null;
     protected ?Transaction $transaction = null;
+    protected ?string $checkoutUrl = null;
 
     /**
      * @param Model|null $customer
@@ -91,48 +94,42 @@ class OrderCreationService
     public function placeOrder(Request $request): static
     {
 
+
         $this->initilizeCart($request);
+
+
 
         if ($this->cartMeta['summary']['quantity'])
         {
             $this->order = $this->createOrder();
-
+            $this->order->load('transaction');
             if ($this->order)
             {
-                if ($this->order->transaction()->count())
+                if ((bool) $this->order?->transaction?->count())
                 {
-                    $this->order->load('transaction');
                     $this->transaction = $this->order->transaction;
                 }else{
-                    $this->createOrderPayment();
+                    $this->createOrderTransaction();
                 }
-
-
             }
         }else{
             $this->setError('no product found for order');
         }
 
 
-
-
-        $this->attachProductsToOrderProducts();
-
-        $this->cart->empty();
-
         return $this;
+    }
+
+
+    public function getTransaction(): ?Transaction
+    {
+        return $this->transaction;
     }
 
 
     public function getCheckoutUrl():?string
     {
-
-
-        if(!is_null($this->transaction))
-        {
-            return route('checkout',['transaction' => $this->transaction->uuid]);
-        }
-        return null;
+       return $this->checkoutUrl;
     }
 
 
@@ -155,11 +152,11 @@ class OrderCreationService
         $orderFillables = [
             'voucher' => $this->cartMeta['summary']['coupon_code'],
             'quantity' => $this->cartMeta['summary']['quantity'],
-            'amount' => $this->cartMeta['summary']['total']->getValue(),
-            'subtotal' => $this->cartMeta['summary']['sub_total']->getValue(),
-            'discount' => $this->cartMeta['summary']['discount']->getValue(),
-            'tax' => $this->cartMeta['summary']['tax']->getValue(),
-            'total' => $this->cartMeta['summary']['total']->getValue(),
+            'amount' => $this->cartMeta['summary']['total']->getAmount(),
+            'subtotal' => $this->cartMeta['summary']['sub_total']->getAmount(),
+            'discount' => $this->cartMeta['summary']['discount']->getAmount(),
+            'tax' => $this->cartMeta['summary']['tax']->getAmount(),
+            'total' => $this->cartMeta['summary']['total']->getAmount(),
             'status' => OrderStatusCast::PENDING,
             'payment_success' => false,
             'expire_at' => now()->addDay(),
@@ -174,39 +171,90 @@ class OrderCreationService
             'customer_mobile'   => $customer['mobile'],
         ];
 
+
         return !is_null($this->customer) ? $this->customer->orders()->create($orderFillables) : Order::create($orderFillables);
     }
 
 
 
-    protected function createOrderPayment()
+    protected function createOrderTransaction()
     {
 
+
+
+        // Customer Info
         $customer = [
             'name'      => $this->order->customer_name,
             'email'     => $this->order->customer_email,
             'mobile'    => $this->order->customer_mobile
         ];
+        // Redirects
+        $successUrl = $this->customer ? config('app.client_url').'/dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid;
+        $failureUrl = $this->customer ? config('app.client_url').'/dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid ;
 
 
-        $successUrl = $this->customer ? config('app.client_url').'dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid;
-        $failureUrl = $this->customer ? config('app.client_url').'dashboard/orders/'.$this->order->uuid : config('app.client_url').'order/'.$this->order->uuid ;
+
+        // Check given provider
+        $userWallet = $this->customer?->wallet;
+        if ($this->provider == 'wallet-payment' && $userWallet)
+        {
+
+            if (LaravelMoney::make($userWallet?->balance)->greaterThanOrEqual($this->order->amount))
+            {
+                $this->transaction = WalletService::make($userWallet)->payFor(
+                    payable_record: $this->order,
+                    successUrl: $successUrl,
+                    failureUrl: $failureUrl,
+                    amount_column: 'amount',
+                    purpose: 'Purchasing Products'
+                )->getTransaction();
+
+                $this->checkoutUrl =  $successUrl;
+                // For Wallet Case Transaction always Confirm, no need to checkout again
+                $this->processLeftJobs();
+                // Confirm This Order
+                OrderConfirmService::make($this->order,$this->transaction)->confirm();
+            }else{
+                $this->checkoutUrl =  $failureUrl;
+                $this->setError('insufficient balance in your wallet!');
+            }
 
 
 
-        $this->transaction = $this->order->createDebitTransaction(
-            customer: $customer,
-            redirect_success_url: $successUrl,
-            redirect_failure_url: $failureUrl,
-            wallet: $this->customer?->wallet,
-            purpose: 'Purchasing Products',
-            paymentProviderSlug: $this->provider,
-            expireAfterMinutes: 60
-        );
+        }else{
+
+            // Other Providers
+            $this->transaction = $this->order->createDebitTransaction(
+                customer: $customer,
+                redirect_success_url: $successUrl,
+                redirect_failure_url: $failureUrl,
+                wallet: $this->customer?->wallet,
+                purpose: 'Purchasing Products',
+                paymentProviderSlug: $this->provider,
+                expireAfterMinutes: 60
+            );
+
+            $this->checkoutUrl = route('checkout',['transaction' => $this->transaction->uuid]);
+            // Left Jobs
+            $this->processLeftJobs();
+            // Confirmation will apply after payment
+        }
+
+
+
 
     }
 
 
+    protected function processLeftJobs()
+    {
+
+
+        $this->attachProductsToOrderProducts();
+
+
+        $this->cart->empty();
+    }
 
 
     private function attachProductsToOrderProducts()
@@ -214,14 +262,16 @@ class OrderCreationService
 
         foreach ($this->cartMeta['items'] as $item)
         {
-            $this->order->orderProducts()->create([
+
+            $newOrderProduct = $this->order->orderProducts()->create([
                 'quantity' => $item['summary']['quantity'],
-                'amount' => $item['summary']['sub_total']->getValue(),
-                'discount' => $item['summary']['discount']->getValue(),
-                'tax' => $item['summary']['tax']->getValue(),
-                'total' => $item['summary']['total']->getValue(),
+                'amount' => $item['summary']['raw']['sub_total']->getAmount(),
+                'discount' => $item['summary']['raw']['discount']->getAmount(),
+                'tax' => $item['summary']['raw']['tax']->getAmount(),
+                'total' => $item['summary']['raw']['total']->getAmount(),
                 'product_id' => $item['product_id'],
             ]);
+
         }
 
     }

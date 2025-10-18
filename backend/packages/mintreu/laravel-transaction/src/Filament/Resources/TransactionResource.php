@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources;
 
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages;
 use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\RelationManagers;
 use Filament\Forms;
@@ -72,25 +73,26 @@ class TransactionResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('checkout_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('provider_gen_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('provider_transaction_id')
-                    ->searchable(),
+//                Tables\Columns\TextColumn::make('provider_gen_id')
+//                    ->searchable(),
+//                Tables\Columns\TextColumn::make('provider_transaction_id')
+//                    ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->numeric()
+                    //->money(LaravelMoney::defaultCurrency())
+                    ->formatStateUsing(fn($state) => LaravelMoney::format($state))
                     ->sortable(),
                 Tables\Columns\IconColumn::make('verified')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('expire_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('transactionable_type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('transactionable_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('success_url')
-                    ->searchable(),
+//                Tables\Columns\TextColumn::make('transactionable_type')
+//                    ->searchable(),
+//                Tables\Columns\TextColumn::make('transactionable_id')
+//                    ->numeric()
+//                    ->sortable(),
+//                Tables\Columns\TextColumn::make('success_url')
+//                    ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('integration.name')

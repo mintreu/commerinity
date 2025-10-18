@@ -3,6 +3,7 @@
 namespace Mintreu\LaravelIntegration\Traits;
 
 use Illuminate\Support\Arr;
+use Mintreu\LaravelMoney\LaravelMoney;
 
 trait NormalizesTransactionResponse
 {
@@ -19,6 +20,15 @@ trait NormalizesTransactionResponse
         $responseData = $this->responseData ?? [];
         $data = $this->data ?? [];
         $provider = $this->provider ?? null;
+
+        $amountWillBe = Arr::get($responseData, 'data.amount')
+            ?? Arr::get($responseData, 'amount')
+            ?? Arr::get($responseData, 'payment_amount')
+            ?? Arr::get($responseData, 'data.order_amount')
+            ?? Arr::get($data, 'amount', 0);
+
+        $amountWillBe = LaravelMoney::make($amountWillBe);
+
 
         return [
             'success' => $provider && $provider->getError() === null,
@@ -47,11 +57,7 @@ trait NormalizesTransactionResponse
                 'provider_generated_sign' => Arr::get($responseData, 'data.signature'),
 
                 // Amount fallback chain
-                'amount' => Arr::get($responseData, 'data.amount')
-                    ?? Arr::get($responseData, 'amount')
-                        ?? Arr::get($responseData, 'payment_amount')
-                        ?? Arr::get($responseData, 'data.order_amount')
-                        ?? Arr::get($data, 'amount', 0),
+                'amount' => $amountWillBe->getAmount(),
 
                 // URLs
                 'success_url' => Arr::get($data, 'order_meta.return_url', Arr::get($data, 'success_url', '')),

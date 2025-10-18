@@ -49,7 +49,7 @@ class OrderWrapper
         return [
             'order_id' => $this->orderData->getReceipt(),
             'order_currency' => $this->orderData->getCurrency(),
-            'order_amount'   => $this->orderData->getAmount(),
+            'order_amount'   => $this->orderData->getAmount() / 100,
 //            'order_expiry_time' => $this->orderData->getExpireAt()->toIso8601String(),
 //            'order_expiry_time' => $this->orderData
 //                ->getExpireAt()

@@ -20,12 +20,20 @@ class CartLineService
     protected ?Collection $sales = null;
     protected ?ProductTier $cheapestTire = null;
     protected int $resolveProductPrice = 0;
-    protected null|int|LaravelMoney $discount = null;
     protected ?SaleProduct $applicableSale = null;
     protected CartSaleValidator $cartSaleValidator;
+    protected LaravelMoney $subTotal;
+    protected LaravelMoney $discount;
+    protected LaravelMoney $taxAmount;
+    protected LaravelMoney $total;
 
     public function __construct(CartService $cartService,CartModel $lineItem,?CartVoucherValidator $voucherValidator = null)
     {
+        $this->subTotal = LaravelMoney::make(0);
+        $this->discount = LaravelMoney::make(0);
+        $this->taxAmount = LaravelMoney::make(0);
+        $this->total = LaravelMoney::make(0);
+
         $this->cartService = $cartService;
         $this->lineItem = $lineItem;
         $this->voucherValidator = $voucherValidator;
@@ -56,9 +64,11 @@ class CartLineService
     {
         $this->calculating();
 
+
         return array_merge([
             'product_id' => $this->cartable->id,
             'quantity'   => $this->lineItem->quantity,
+
             'product'    => [
                 'name'         => $this->cartable->name,
                 'url'          => $this->cartable->url,
@@ -68,17 +78,26 @@ class CartLineService
                 'max_quantity' => $this->cartable->max_quantity,
                 'price'        => $this->resolveProductPrice,
                 'thumbnail'    => $this->cartable?->getFirstMediaUrl('displayImage'),
+                'instance'     => $this->cartable,
             ],
             'summary' => [
-                'quantity'  => null,
+                'quantity'  => $this->lineItem->quantity,
                 'original_price' => LaravelMoney::format($this->resolveProductPrice),
                 'discounted_price' => $this->discount?->formatted() ?? LaravelMoney::format($this->resolveProductPrice),
-                'sub_total' => LaravelMoney::format($this->discount?->getAmount() ?? $this->resolveProductPrice),
-                'discount'  => $this->applicableSale?->action_type?->getUnit($this->applicableSale?->discount_amount),
+                'sub_total' => $this->subTotal->formatted(),
+//                'discount'  => $this->applicableSale?->action_type?->getUnit($this->applicableSale?->discount_amount),
+                'discount'  => $this->applicableSale?->action_type?->getUnit($this->discount),
                 'voucher'   => $this->voucherValidator->getCoupon(),
                 'valid_voucher' => $this->voucherValidator->isValid(),
                 'tax'       => null,
-                'total'     => LaravelMoney::make($this->discount?->getAmount() ?? $this->resolveProductPrice)->formatted(),
+                'total'     => $this->total->formatted(),
+
+                'raw' => [
+                    'sub_total' => $this->subTotal,
+                    'discount'  => $this->discount,
+                    'tax'       => $this->taxAmount,
+                    'total'     => $this->total,
+                ]
             ],
             'tire' => $this->cheapestTire,
             'errors' => $this->cartService->getErrors()
@@ -88,11 +107,16 @@ class CartLineService
 
     public function calculating()
     {
+        $validSale = $this->cartSaleValidator->validate();
 
-        if ($this->cartSaleValidator->validate() && $this->voucherValidator->validate($this->cartable))
-        {
-            //
-        }
+        $validVoucher = $this->voucherValidator->validate($this->cartable);
+
+
+        $this->subTotal = $this->subTotal->add($this->resolveProductPrice)->multiply($this->lineItem->quantity);
+
+
+        $this->total = $this->total->add($this->subTotal)->subtract($this->discount)->add($this->taxAmount);
+
 
 
     }

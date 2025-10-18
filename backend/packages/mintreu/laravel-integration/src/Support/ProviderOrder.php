@@ -148,14 +148,48 @@ class ProviderOrder
         return $this->resolve($this->currency);
     }
 
-    public function getAmount(): float|int|string|null
+//    public function getAmount(): float|int|string|null
+//    {
+//        $value = $this->resolve($this->amount);
+//        if (is_numeric($value)) {
+//            return $value + 0; // normalize
+//        }
+//        return $value;
+//    }
+
+
+    public function getAmount(): int
     {
         $value = $this->resolve($this->amount);
-        if (is_numeric($value)) {
-            return $value + 0; // normalize
+
+        // Handle null/empty
+        if ($value === null || $value === '') {
+            return 0;
         }
-        return $value;
+
+        // If already integer, return as-is (assume already in smallest unit)
+        if (is_int($value)) {
+            return $value;
+        }
+
+        // Convert string to float first (handles "100.50", "100", etc.)
+        if (is_string($value)) {
+            // Remove any non-numeric characters except decimal point
+            $value = preg_replace('/[^0-9.]/', '', $value);
+            $value = (float) $value;
+        }
+
+        // If float, convert to integer (multiply by 100 for cents)
+        if (is_float($value)) {
+            // Round to 2 decimal places first to avoid floating point issues
+            // Then multiply by 100 and cast to int
+            return (int) round($value * 100);
+        }
+
+        // Fallback: try to cast to int
+        return (int) $value;
     }
+
 
     public function getReceipt(): ?string
     {

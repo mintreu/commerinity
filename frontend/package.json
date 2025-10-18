@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@nuxtjs/google-fonts": "^3.2.0",
+    "@nuxtjs/robots": "^5.5.6",
+    "@nuxtjs/sitemap": "^7.4.7",
     "@qirolab/nuxt-sanctum-authentication": "^0.1.15",
     "@vite-pwa/nuxt": "^1.0.4",
     "@vue-pdf-viewer/viewer": "^2.5.8",

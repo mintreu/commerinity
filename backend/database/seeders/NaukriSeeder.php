@@ -12,6 +12,8 @@ class NaukriSeeder extends Seeder
      */
     public function run(): void
     {
-        Naukri::factory(20)->create();
+
+
+        Naukri::factory(30)->create();
     }
 }

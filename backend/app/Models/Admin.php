@@ -2,20 +2,34 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Cart\HasCartOwner;
+use App\Models\Traits\HasKyc;
+use App\Models\Traits\HasOrder;
+use App\Models\Traits\HasProductEngagement;
+use App\Models\Traits\HasProductWishlist;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Mintreu\LaravelCommerinity\Traits\HasVoucherAccess;
+use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;
+use Mintreu\LaravelTransaction\Traits\HasBeneficiary;
+use Mintreu\LaravelTransaction\Traits\HasWallet;
 use Mintreu\Toolkit\Traits\HasFingerprint;
+use Mintreu\Toolkit\Traits\HasUnique;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Admin extends Authenticatable implements FilamentUser,HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasSupportTicket,InteractsWithMedia,HasFingerprint;
+    use HasFactory, Notifiable,HasPushSubscriptions,InteractsWithMedia,HasFingerprint,
+        HasAddress,HasCartOwner,HasKyc,HasUnique,
+        HasOrder,HasFingerprint,
+        HasSupportTicket,HasWallet,HasBeneficiary,HasVoucherAccess,HasProductEngagement,HasProductWishlist;
 
     /**
      * The attributes that are mass assignable.

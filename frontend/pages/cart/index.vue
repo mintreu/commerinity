@@ -708,7 +708,7 @@ const onApplyCoupon = async () => {
 
 const fetchSuggestionProducts = async () => {
   try {
-    const res = await useSanctumFetch(`${config.public.apiBase}/products/suggestions/get`)
+    const res = await useSanctumFetch(`${config.public.apiBase}/products/suggestions/cart`)
     suggestionProducts.value = res?.data ?? []
   } catch (e) {
     console.error('Failed to load suggestion products', e)

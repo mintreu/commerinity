@@ -11,7 +11,10 @@ use App\Models\User;
 use App\Notifications\Subscription\SubscriptionConfirmationNotificaion;
 use App\Notifications\Subscription\SubscriptionFailedNotificaion;
 use App\Services\UserServices\NetworkServices\NetworkService;
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Models\Transaction;
+use Mintreu\LaravelTransaction\Models\Wallet;
+use Mintreu\LaravelTransaction\Services\WalletService\WalletService;
 use Throwable;
 
 class MembershipSubscriptionService
@@ -20,6 +23,7 @@ class MembershipSubscriptionService
     protected User $user;
     protected Stage $stage;
     protected Level $level;
+    protected ?Wallet $wallet = null;
     protected ?UserSubscription $subscription = null;
     protected bool $subscriptionNeed = false;
     /**
@@ -28,7 +32,12 @@ class MembershipSubscriptionService
     public function __construct(User $user)
     {
         $this->user = $user;
-        $existingUnpaidSubscription = $this->user->memberships()->where('is_paid',false)->first();
+        $this->user->load([
+            'memberships' => fn($query) => $query->where('is_paid',false)->limit(1),
+            'wallet'
+        ]);
+        $this->wallet = $this->user->wallet;
+        $existingUnpaidSubscription = $this->user->memberships->first();
         if ($existingUnpaidSubscription)
         {
             $existingUnpaidSubscription->load('stage','level');
@@ -43,11 +52,6 @@ class MembershipSubscriptionService
             $this->subscription = $existingUnpaidSubscription;
         }
 
-
-
-      //  dd($this->subscriptionNeed,$this->user->level_id);
-
-
     }
 
 
@@ -56,19 +60,72 @@ class MembershipSubscriptionService
         return new static($user);
     }
 
-    public function ensureSubscription():static
+    public function isSubscriptionRequired(): bool
     {
-        if ($this->subscriptionNeed)
-        {
-            $this->makeSubscription();
-        }
-
-        return $this;
+        return $this->subscriptionNeed;
     }
 
     public function getSubscription():?UserSubscription
     {
         return $this->subscription;
+    }
+
+    public function getApplicableStage():?Stage
+    {
+        return $this->stage;
+    }
+
+
+    public function ensureSubscription():static
+    {
+        if ($this->subscriptionNeed)
+        {
+            if ($this->wallet && LaravelMoney::make($this->wallet->balance)->greaterThanOrEqual($this->stage->price))
+            {
+                $this->subscribeWithWallet();
+            }else{
+                $this->subscribeWithCheckout();
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
+    protected function subscribeWithWallet()
+    {
+        if ($this->wallet && LaravelMoney::make($this->wallet->balance)->greaterThanOrEqual($this->stage->price))
+        {
+            $this->subscription = $this->createSubscription();
+            WalletService::make($this->wallet)
+                ->payFor(payable_record: $this->subscription,amount_column: 'amount');
+        }
+
+
+    }
+
+
+
+    protected function subscribeWithCheckout()
+    {
+        $this->createSubscription();
+    }
+
+
+
+
+
+    protected function createSubscription():UserSubscription
+    {
+        return $this->user->memberships()->create([
+            'amount' => $this->stage->price,
+            'stage_id' => $this->stage->id,
+            'level_id' => $this->level->id,
+            'expire_at' => now()->addYears($this->level->validate_years)
+        ]);
+
     }
 
 
@@ -90,16 +147,7 @@ class MembershipSubscriptionService
 
 
 
-    protected function makeSubscription():void
-    {
-        $this->subscription =  $this->user->memberships()->create([
-            'amount' => $this->stage->price,
-            'stage_id' => $this->stage->id,
-            'level_id' => $this->level->id,
-            'expire_at' => now()->addYears($this->level->validate_years)
-        ]);
 
-    }
 
     /**
      * @throws Throwable

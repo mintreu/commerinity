@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->uuid('uuid')->unique();
 
-            $table->integer('amount')->default(0);
+            $table->unsignedBigInteger('amount')->default(0);
 
             $table->boolean('is_paid')->default(false);
             $table->timestamp('expire_at')->nullable();

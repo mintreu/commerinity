@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources;
 
+use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages;
 use Mintreu\LaravelTransaction\Filament\Resources\WalletResource\RelationManagers;
 
@@ -11,6 +12,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Mintreu\LaravelTransaction\Models\Wallet;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 
 class WalletResource extends Resource
 {
@@ -18,6 +21,22 @@ class WalletResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Wallet';
+    protected static ?string $recordRouteKeyName = 'uuid';
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewWallet::class,
+            Pages\ManageTransactions::class,
+            Pages\ManageBeneficiaries::class
+        ]);
+    }
+
+
+
+
 
     public static function form(Form $form): Form
     {
@@ -61,7 +80,7 @@ class WalletResource extends Resource
                 Tables\Columns\TextColumn::make('pin')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('balance')
-                    ->numeric()
+                    ->money(LaravelMoney::defaultCurrency(),100)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('walletable_type')
                     ->searchable(),
@@ -107,8 +126,10 @@ class WalletResource extends Resource
         return [
             'index' => \Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages\ListWallets::route('/'),
             'create' => \Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages\CreateWallet::route('/create'),
-            'view' => \Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages\ViewWallet::route('/{record}'),
-            'edit' => \Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages\EditWallet::route('/{record}/edit'),
+            'view' => \Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages\ViewWallet::route('/{record:uuid}'),
+            'edit' => \Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages\EditWallet::route('/{record:uuid}/edit'),
+            'transactions' => Pages\ManageTransactions::route('/{record:uuid}/transactions'),
+            'beneficiaries' => Pages\ManageBeneficiaries::route('/{record:uuid}/beneficiaries'),
         ];
     }
 }

@@ -15,8 +15,9 @@ return new class extends Migration
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique(); // explicit column name
-            $table->string('pin', 60); // store hashed PIN instead of raw 4 digits
-            $table->decimal('balance', 15, 2)->default(0.00)->index();
+            $table->string('pin', 60); // store hashed PIN instead of raw 6 digits
+            $table->unsignedBigInteger('balance')->default(0);
+            $table->unsignedInteger('points')->default(0);
             $table->morphs('walletable');
             $table->unique(['walletable_id', 'walletable_type']);
             $table->string('currency', 3)->default('INR'); // fixed currency for India

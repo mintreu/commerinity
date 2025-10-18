@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-blue-950 dark:to-purple-950 overflow-x-hidden">
 
     <!-- Background Effects -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
@@ -39,14 +39,16 @@
               @toggle-mobile-sidebar="toggleMobileSidebar"
           />
         </header>
-
+        <PermissionWizard />
         <!-- Onboarding Banner -->
         <div v-if="showOnboarding">
-          <OnboardingBanner @close="showOnboarding = false" />
+
+
+<!--          <OnboardingBanner @close="showOnboarding = false" />-->
         </div>
 
         <!-- Main Content - ✅ FIXED: No Transition wrapper -->
-        <main class="flex-1 overflow-y-auto custom-scrollbar">
+        <main class="flex-1 overflow-y-auto custom-scrollbar overflow-x-hidden">
           <div class="p-4 md:p-8">
             <slot />
           </div>
@@ -124,6 +126,7 @@ import DashboardSidebar from '~/components/ui/Navbar/DashboardSidebar.vue'
 import DashboardTopbar from '~/components/ui/Navbar/DashboardTopbar.vue'
 import BottomNavBar from '~/components/ui/BottomNavBar.vue'
 import OnboardingBanner from '~/components/onboarding/OnboardingBanner.vue'
+import PermissionWizard from "~/components/onboarding/PermissionWizard.vue";
 
 // ✅ Optimized GSAP
 let gsap: any = null

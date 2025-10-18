@@ -154,38 +154,45 @@ class LaravelMoneyService
     // COMPARISONS (UNCHANGED - ALREADY SAFE)
     // ========================================
 
-    public function equals(self $other): bool
+    public function equals(self|int $other): bool
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->money->equals($other->money);
     }
 
-    public function sameAs(self $other): bool
+    public function sameAs(self|int $other): bool
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->equals($other);
     }
 
-    public function greaterThan(self $other): bool
+    public function greaterThan(self|int $other): bool
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->money->greaterThan($other->money);
     }
 
-    public function greaterThanOrEqual(self $other)
+    public function greaterThanOrEqual(self|int $other): bool
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->money->greaterThanOrEqual($other->money);
     }
 
-    public function lessThan(self $other): bool
+    public function lessThan(self|int $other): bool
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->money->lessThan($other->money);
     }
 
-    public function lessThanOrEqual(self $other)
+    public function lessThanOrEqual(self|int $other)
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->money->lessThanOrEqual($other->money);
     }
 
-    public function compare(self $other): int
+    public function compare(self|int $other): int
     {
+        $other = is_int($other) ? self::make($other) : $other;
         return $this->money->compare($other->money);
     }
 

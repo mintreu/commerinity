@@ -7,32 +7,41 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Hash;
+use Mintreu\LaravelTransaction\Traits\HasMultipleTransactions;
+use Mintreu\LaravelTransaction\Traits\HasTransaction;
 use Mintreu\Toolkit\Traits\HasUnique;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Wallet extends Model
 {
-    use HasFactory,HasUnique;
+    use HasFactory,HasUnique,HasMultipleTransactions;
 
     protected $fillable = [
         'uuid',
         'pin',
         'balance',
+        'points',
         'currency',
         'status',
     ];
 
     protected $casts = [
-        'balance' => 'decimal:2',
+        //'balance' => 'decimal:2',
     ];
 
 
     protected static function booted()
     {
         static::creating(function ($record){
-            $record->setUniqueCode('uuid',16);
+            $record->setUniqueCode('uuid', 10, 'WAL-');
         });
         parent::booted();
+    }
+
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
 
@@ -60,11 +69,13 @@ class Wallet extends Model
         return $this->morphTo();
     }
 
-
-    public function transactions(): HasMany
+    public function customer()
     {
-        return $this->hasMany(Transaction::class,'wallet_id');
+        return $this->walletable();
     }
+
+
+
 
 
     public function beneficiaries(): HasMany

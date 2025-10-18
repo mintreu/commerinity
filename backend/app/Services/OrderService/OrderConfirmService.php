@@ -7,6 +7,9 @@ use App\Models\Order\Order;
 use App\Models\Order\OrderInvoice;
 use App\Models\Order\OrderProduct;
 use App\Models\Order\OrderShipment;
+use App\Notifications\Order\OrderNotification;
+use Illuminate\Support\Facades\Log;
+use Mintreu\LaravelTransaction\Casts\TransactionStatusCast;
 use Mintreu\LaravelTransaction\Models\Transaction;
 
 class OrderConfirmService
@@ -14,6 +17,8 @@ class OrderConfirmService
 
     protected Order $order;
     protected \Mintreu\LaravelTransaction\Models\Transaction $transaction;
+    protected ?string $error = null;
+    protected bool $isPaid = false;
 
     /**
      * @param Order $order
@@ -24,26 +29,48 @@ class OrderConfirmService
         $this->order = $order;
         if (is_null($transaction))
         {
-            $this->order->load('transaction');
+            $this->order->loadMissing(['transaction','orderProducts','customer']);
         }
         $this->transaction = $transaction ?? $this->order->transaction;
+
+        $this->isPaid = $this->transaction->verified && $this->transaction->status->value == TransactionStatusCast::COMPLETED->value;
     }
 
 
 
-    public static function make(Order $order,?\Mintreu\LaravelTransaction\Models\Transaction $transaction = null)
+    public static function make(Order $order,?\Mintreu\LaravelTransaction\Models\Transaction $transaction = null): static
     {
         return new static($order,$transaction);
     }
 
-
-    public function confirm()
+    protected function setError(string $error): void
     {
+        $this->error = $error;
+    }
+
+    public function getError():?string
+    {
+        return $this->error;
+    }
 
 
-        $this->order->update([
-           'status'     => OrderStatusCast::CONFIRM
-        ]);
+    public function confirm(): bool
+    {
+        if ($this->isPaid)
+        {
+            $this->processOrderConfirmation();
+
+            $this->order->update([
+                'status'     => OrderStatusCast::CONFIRM
+            ]);
+        }
+
+        if ($this->order->customer?->email)
+        {
+            $this->order->customer->notify(new OrderNotification($this->order));
+        }
+
+        return $this->order->status->value == OrderStatusCast::CONFIRM->value;
 
     }
 
@@ -110,8 +137,16 @@ class OrderConfirmService
 
                     // Step 1.2
                     $newOrderShipment = $this->makeOrderShipment($orderProduct, $totalQuantityOfThisPickupAddress, $pickupAddress_id);
+                    if (!$newOrderShipment)
+                    {
+                        Log::error('shipment not generate for order '.$this->order->uuid);
+                    }
                     // Step 1.3
                     $newOrderInvoice = $this->makeOrderInvoice($newOrderShipment, $orderProduct);
+                    if (!$newOrderInvoice)
+                    {
+                        Log::error('invoice not generate for order '.$this->order->uuid);
+                    }
                 }
             }
 
@@ -128,7 +163,12 @@ class OrderConfirmService
         $quantityFulfilled = 0;
         $bag = [];
 
-        foreach ($product->availableStocks as $productStock) {
+        if (!$product->tiers)
+        {
+            $product->loadMissing('tiers');
+        }
+
+        foreach ($product->tiers as $productStock) {
             if ($productStock->in_stock_quantity >= $requiredQuantity - $quantityFulfilled) {
                 // Deducted Stock Quantity & Update Product Stock
                 $quantityToDeduct = $requiredQuantity - $quantityFulfilled;
