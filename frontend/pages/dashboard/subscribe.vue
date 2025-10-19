@@ -5,7 +5,7 @@
     <!-- Loader -->
     <GlobalLoader v-if="isLoading" />
 
-    <!-- ✅ Active Subscription -->
+    <!-- ✅ Active Subscription Display -->
     <transition name="fade-slide-up" mode="out-in">
       <div v-if="!isLoading && hasActiveSubscription" class="active-subscription">
         <div class="container">
@@ -18,10 +18,12 @@
             </div>
             <h1 class="success-title">Premium Membership Active</h1>
             <p class="success-subtitle">
-              Your subscription is active until
-              <strong class="success-date">{{ formatDate(subscription.subscription.expire_at) }}</strong>
+              Your subscription is currently active
+              <strong v-if="subscription.subscription?.expire_at" class="success-date">
+                until {{ formatDate(subscription.subscription.expire_at) }}
+              </strong>
             </p>
-            <div class="countdown-badge">
+            <div v-if="remainingDays > 0" class="countdown-badge">
               <Icon name="mdi:timer-sand" class="w-5 h-5 animate-pulse" />
               <span>{{ remainingDays }} {{ remainingDays === 1 ? 'Day' : 'Days' }} Remaining</span>
             </div>
@@ -36,8 +38,8 @@
                 </div>
               </div>
               <div class="detail-content">
-                <h3 class="detail-title">{{ subscription.subscription.stage?.name }}</h3>
-                <p class="detail-subtitle">{{ subscription.subscription.stage?.description || 'Premium Tier' }}</p>
+                <h3 class="detail-title">{{ subscription.subscription?.stage?.name || 'Premium Plan' }}</h3>
+                <p class="detail-subtitle">{{ subscription.subscription?.stage?.description || 'Active Subscription' }}</p>
               </div>
             </div>
 
@@ -48,21 +50,21 @@
                 </div>
               </div>
               <div class="detail-content">
-                <h3 class="detail-title">{{ subscription.subscription.level?.name }}</h3>
-                <p class="detail-subtitle">Team Capacity: {{ subscription.subscription.level?.max_team_capacity }} members</p>
+                <h3 class="detail-title">{{ subscription.subscription?.level?.name || 'Member Level' }}</h3>
+                <p class="detail-subtitle">Team Capacity: {{ subscription.subscription?.level?.team_member_limit || subscription.subscription?.level?.max_team_capacity || 'Unlimited' }} members</p>
               </div>
             </div>
           </div>
 
           <!-- Benefits -->
-          <div class="benefits-card" data-animate data-delay="300">
+          <div v-if="subscription.subscription?.stage?.benefits" class="benefits-card" data-animate data-delay="300">
             <div class="benefits-header">
               <Icon name="mdi:star-circle-outline" class="w-6 h-6 text-amber-500 dark:text-amber-400" />
               <h3 class="benefits-title">Your Active Benefits</h3>
             </div>
             <div class="benefits-grid">
               <div
-                  v-for="(status, benefit, index) in subscription.subscription.stage?.benefits"
+                  v-for="(status, benefit, index) in subscription.subscription.stage.benefits"
                   :key="benefit"
                   class="benefit-item"
                   :class="{ 'benefit-active': status === 'Active', 'benefit-inactive': status !== 'Active' }"
@@ -77,8 +79,33 @@
             </div>
           </div>
 
+          <!-- Auto-Renewal Toggle -->
+          <div class="auto-renew-card" data-animate data-delay="400">
+            <div class="auto-renew-header">
+              <Icon name="mdi:refresh-auto" class="w-6 h-6 text-blue-500 dark:text-blue-400" />
+              <h3 class="auto-renew-title">Auto Renewal Settings</h3>
+            </div>
+            <div class="auto-renew-control">
+              <label class="toggle-label">
+                <input
+                    type="checkbox"
+                    v-model="autoRenewEnabled"
+                    class="toggle-checkbox"
+                    @change="updateAutoRenew"
+                />
+                <span class="toggle-switch"></span>
+                <span class="toggle-text">
+                  <span class="toggle-text-primary">Automatic Renewal</span>
+                  <span class="toggle-text-secondary">
+                    {{ autoRenewEnabled ? 'Your subscription will renew automatically' : 'Enable to auto-renew on expiry' }}
+                  </span>
+                </span>
+              </label>
+            </div>
+          </div>
+
           <!-- Renew CTA -->
-          <div class="renew-cta" data-animate data-delay="400">
+          <div class="renew-cta" data-animate data-delay="500">
             <button @click="currentStep = 1" class="btn-renew">
               <Icon name="mdi:autorenew" class="w-5 h-5" />
               <span>Renew Subscription</span>
@@ -223,7 +250,6 @@
                     <div class="package-price">
                       <span class="price-currency">₹</span>
                       <span class="price-amount">{{ subscriptionData.price.replace('₹', '').replace('.00', '') }}</span>
-<!--                      <span class="price-period">/year</span>-->
                     </div>
                     <p class="package-description">{{ subscriptionData.description }}</p>
 
@@ -232,30 +258,18 @@
                         <Icon name="mdi:account-group-outline" class="w-5 h-5" />
                         <span><strong>Team Capacity:</strong> {{ subscriptionData.max_team_capacity }} members</span>
                       </div>
-                      <div class="package-detail-item">
+                      <div v-if="subscriptionData.levels?.[0]?.name" class="package-detail-item">
                         <Icon name="mdi:trophy-outline" class="w-5 h-5" />
-                        <span><strong>Level:</strong> {{ subscriptionData.levels[0]?.name }}</span>
+                        <span><strong>Level:</strong> {{ subscriptionData.levels[0].name }}</span>
                       </div>
-                      <div class="package-detail-item">
+                      <div v-if="subscriptionData.levels?.[0]?.validate_years" class="package-detail-item">
                         <Icon name="mdi:calendar-check-outline" class="w-5 h-5" />
-                        <span><strong>Validity:</strong> {{ subscriptionData.levels[0]?.validate_years }} Year</span>
+                        <span><strong>Validity:</strong> {{ subscriptionData.levels[0].validate_years }} Year{{ subscriptionData.levels[0].validate_years > 1 ? 's' : '' }}</span>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="testimonial-card">
-                  <Icon name="mdi:format-quote-open" class="quote-icon" />
-                  <p class="testimonial-text">
-                    "This subscription changed my life! In just 6 months, I've built a team of 50+ members and earned over ₹1.2L in commissions."
-                  </p>
-                  <div class="testimonial-author">
-                    <div class="author-avatar">
-                      <span>RS</span>
-                    </div>
-                    <div class="author-info">
-                      <div class="author-name">Rajesh Sharma</div>
-                      <div class="author-role">Premium Member Since 2024</div>
+                      <div v-if="subscriptionData.levels?.[0]?.team_member_limit" class="package-detail-item">
+                        <Icon name="mdi:account-group" class="w-5 h-5" />
+                        <span><strong>Team Limit:</strong> {{ subscriptionData.levels[0].team_member_limit }} members</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -289,7 +303,7 @@
                     </div>
                     <div class="guarantee-badge">
                       <Icon name="mdi:cash-refund" class="w-5 h-5 md:w-6 md:h-6" />
-                      <span>Gurranted Savings</span>
+                      <span>Guaranteed Savings</span>
                     </div>
                     <div class="guarantee-badge">
                       <Icon name="mdi:headset" class="w-5 h-5 md:w-6 md:h-6" />
@@ -303,10 +317,77 @@
                       <span class="price-final">{{ subscriptionData.price }}</span>
                     </div>
                     <div class="price-divider"></div>
-                    <div class="price-row price-row-small">
+                    <div v-if="subscriptionData.levels?.[0]?.validate_years" class="price-row price-row-small">
                       <span>Validity Period</span>
-                      <span>{{ subscriptionData.levels[0]?.validate_years }} Year</span>
+                      <span>{{ subscriptionData.levels[0].validate_years }} Year{{ subscriptionData.levels[0].validate_years > 1 ? 's' : '' }}</span>
                     </div>
+                  </div>
+
+                  <!-- Payment Method Selection -->
+                  <div class="payment-method-section">
+                    <h3 class="payment-method-title">
+                      <Icon name="mdi:wallet-outline" class="w-5 h-5" />
+                      <span>Select Payment Method</span>
+                    </h3>
+                    <div class="payment-options">
+                      <label class="payment-option" :class="{ 'payment-option-selected': paymentProvider === 'wallet' }">
+                        <input
+                            type="radio"
+                            name="payment_provider"
+                            value="wallet"
+                            v-model="paymentProvider"
+                            class="payment-radio"
+                        />
+                        <span class="payment-radio-custom">
+                          <span class="payment-radio-dot"></span>
+                        </span>
+                        <div class="payment-option-content">
+                          <div class="payment-option-header">
+                            <Icon name="mdi:wallet" class="w-6 h-6 text-blue-500 dark:text-blue-400" />
+                            <span class="payment-option-name">Pay with Wallet</span>
+                          </div>
+                          <p class="payment-option-desc">Use your account wallet balance for instant payment</p>
+                        </div>
+                      </label>
+
+                      <label class="payment-option" :class="{ 'payment-option-selected': paymentProvider === 'online' }">
+                        <input
+                            type="radio"
+                            name="payment_provider"
+                            value="online"
+                            v-model="paymentProvider"
+                            class="payment-radio"
+                        />
+                        <span class="payment-radio-custom">
+                          <span class="payment-radio-dot"></span>
+                        </span>
+                        <div class="payment-option-content">
+                          <div class="payment-option-header">
+                            <Icon name="mdi:credit-card-outline" class="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
+                            <span class="payment-option-name">Pay Online</span>
+                          </div>
+                          <p class="payment-option-desc">Credit/Debit Card, UPI, Net Banking & more</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Auto-Renewal Option -->
+                  <div class="auto-renew-option">
+                    <label class="checkbox-label">
+                      <input
+                          type="checkbox"
+                          v-model="autoRenewEnabled"
+                          class="checkbox-input"
+                      />
+                      <span class="checkbox-custom">
+                        <Icon v-if="autoRenewEnabled" name="mdi:check-bold" class="w-4 h-4" />
+                      </span>
+                      <span class="checkbox-text">
+                        <span class="checkbox-text-primary">Enable Auto-Renewal</span>
+                        <span class="checkbox-text-secondary">Automatically renew when your subscription expires</span>
+                      </span>
+                    </label>
                   </div>
 
                   <div class="urgency-banner">
@@ -374,6 +455,8 @@ const subscription = ref<any>(null)
 const hasError = ref(false)
 const currentStep = ref(1)
 const slideDirection = ref('slide-left')
+const autoRenewEnabled = ref(true) // Default true
+const paymentProvider = ref('online') // Default payment method
 
 const subscriptionData = reactive({
   name: "",
@@ -382,6 +465,7 @@ const subscriptionData = reactive({
   price: "",
   max_team_capacity: 0,
   benefits: {} as Record<string, string>,
+  accessibility: {} as Record<string, string>,
   levels: [] as any[],
 })
 
@@ -389,7 +473,7 @@ const stepLabels = ['Welcome', 'Benefits', 'Details', 'Confirm']
 
 // Computed
 const hasActiveSubscription = computed(() => {
-  return subscription.value?.subscription && !subscription.value.subscription.expired
+  return subscription.value?.active === true && subscription.value?.subscription !== null
 })
 
 const remainingDays = computed(() => {
@@ -432,7 +516,6 @@ function animateCounters() {
     const target = parseFloat(counter.getAttribute('data-target') || '0')
     let current = 0
     const increment = target / 50
-
     const timer = setInterval(() => {
       current += increment
       if (current >= target) {
@@ -462,25 +545,37 @@ function animateElements() {
 
 async function fetchSubscriptionData() {
   try {
-    const url = `${config.public.apiBase}/account/subscription`
+    // Updated endpoint
+    const url = `${config.public.apiBase}/account/lifecycle/get_status`
     const res = await useSanctumFetch(url, { method: "GET" })
-    if (res?.data) subscription.value = res.data
-    else hasError.value = true
+
+    if (res?.data || res) {
+      const data = res?.data || res
+      subscription.value = data
+
+      // If there's an upcoming_plan, populate subscriptionData
+      if (data.upcoming_plan) {
+        Object.assign(subscriptionData, data.upcoming_plan)
+      }
+    } else {
+      hasError.value = true
+    }
   } catch (error) {
-    console.error("Failed to fetch user subscription:", error)
+    console.error("Failed to fetch subscription status:", error)
     hasError.value = true
   }
 }
 
-async function fetchNewLifecycle() {
+async function updateAutoRenew() {
+  // Optional: Call API to update auto-renew preference
   try {
-    const url = `${config.public.apiBase}/lifecycle/subscribable`
-    const res = await useSanctumFetch(url, { method: "GET" })
-    if (res?.data) Object.assign(subscriptionData, res.data)
-    else hasError.value = true
-  } catch (e) {
-    console.error("Failed to fetch subscription data:", e)
-    hasError.value = true
+    const url = `${config.public.apiBase}/account/subscription/auto-renew`
+    await useSanctumFetch(url, {
+      method: "POST",
+      body: { auto_renew: autoRenewEnabled.value }
+    })
+  } catch (error) {
+    console.error("Failed to update auto-renew:", error)
   }
 }
 
@@ -497,19 +592,29 @@ async function handleSubscribe() {
       levelId = subscriptionData.level_id
     }
 
-    const url = `${config.public.apiBase}/account/subscription`
-    const payload = { stage_id: stageId, level_id: levelId }
+    // Updated endpoint with payment provider
+    const url = `${config.public.apiBase}/account/lifecycle/subscribe`
+    const payload = {
+      stage_id: stageId,
+      level_id: levelId,
+      auto_renew: autoRenewEnabled.value,
+      provider: paymentProvider.value // Pass payment provider
+    }
+
     const res = await useSanctumFetch(url, { method: "POST", body: payload })
     const response = res?.data
 
-    if (response?.status) {
-      if (response?.redirect && response?.redirect_url) {
-        window.location.href = response.redirect_url
+    if (response?.success) {
+      // Handle checkout URL
+      if (response?.checkout_url) {
+        window.location.href = response.checkout_url
       } else {
         router.push("/dashboard/subscription/success")
       }
     } else {
-      alert(response?.message || "Failed to subscribe.")
+      // Show error message
+      const errorMsg = response?.message || "Failed to subscribe."
+      alert(errorMsg)
     }
   } catch (error) {
     console.error("Subscription request failed:", error)
@@ -523,9 +628,6 @@ async function handleSubscribe() {
 onMounted(async () => {
   try {
     await fetchSubscriptionData()
-    if (!subscription.value?.subscription || subscription.value.subscription.expired) {
-      await fetchNewLifecycle()
-    }
   } catch (e) {
     console.error("Init error", e)
     hasError.value = true
@@ -626,6 +728,10 @@ onMounted(async () => {
 
 [data-delay="400"] {
   transition-delay: 400ms;
+}
+
+[data-delay="500"] {
+  transition-delay: 500ms;
 }
 
 /* Transitions */
@@ -1011,6 +1117,408 @@ onMounted(async () => {
 .dark .benefit-inactive {
   background: rgba(71, 85, 105, 0.3);
   color: #64748b;
+}
+
+/* Auto-Renewal Card */
+.auto-renew-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark .auto-renew-card {
+  background: #1e293b;
+}
+
+@media (min-width: 768px) {
+  .auto-renew-card {
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+  }
+}
+
+.auto-renew-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.auto-renew-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dark .auto-renew-title {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .auto-renew-title {
+    font-size: 1.125rem;
+  }
+}
+
+.auto-renew-control {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.toggle-checkbox {
+  display: none;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 3.5rem;
+  height: 2rem;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.dark .toggle-switch {
+  background: #475569;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-checkbox:checked + .toggle-switch {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.toggle-checkbox:checked + .toggle-switch::after {
+  transform: translateX(1.5rem);
+}
+
+.toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.toggle-text-primary {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dark .toggle-text-primary {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .toggle-text-primary {
+    font-size: 1rem;
+  }
+}
+
+.toggle-text-secondary {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.dark .toggle-text-secondary {
+  color: #94a3b8;
+}
+
+@media (min-width: 768px) {
+  .toggle-text-secondary {
+    font-size: 0.875rem;
+  }
+}
+
+/* Payment Method Section */
+.payment-method-section {
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dark .payment-method-section {
+  background: #334155;
+}
+
+@media (min-width: 768px) {
+  .payment-method-section {
+    padding: 1.25rem;
+  }
+}
+
+.payment-method-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.dark .payment-method-title {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .payment-method-title {
+    font-size: 1rem;
+  }
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .payment-options {
+    gap: 1rem;
+  }
+}
+
+.payment-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dark .payment-option {
+  background: #1e293b;
+  border-color: #475569;
+}
+
+.payment-option:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark .payment-option:hover {
+  border-color: #64748b;
+}
+
+.payment-option-selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+}
+
+.dark .payment-option-selected {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+.payment-radio {
+  display: none;
+}
+
+.payment-radio-custom {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  background: white;
+  margin-top: 0.125rem;
+}
+
+.dark .payment-radio-custom {
+  background: #1e293b;
+  border-color: #475569;
+}
+
+.payment-radio:checked + .payment-radio-custom {
+  border-color: #3b82f6;
+  background: white;
+}
+
+.dark .payment-radio:checked + .payment-radio-custom {
+  background: #1e293b;
+}
+
+.payment-radio-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.payment-radio:checked + .payment-radio-custom .payment-radio-dot {
+  background: #3b82f6;
+}
+
+.payment-option-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.payment-option-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.payment-option-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dark .payment-option-name {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .payment-option-name {
+    font-size: 1rem;
+  }
+}
+
+.payment-option-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.dark .payment-option-desc {
+  color: #94a3b8;
+}
+
+@media (min-width: 768px) {
+  .payment-option-desc {
+    font-size: 0.875rem;
+  }
+}
+
+/* Auto-Renewal Option (Wizard) */
+.auto-renew-option {
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dark .auto-renew-option {
+  background: #334155;
+}
+
+@media (min-width: 768px) {
+  .auto-renew-option {
+    padding: 1.25rem;
+  }
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.dark .checkbox-custom {
+  background: #1e293b;
+  border-color: #475569;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+}
+
+.checkbox-custom .w-4 {
+  color: white;
+}
+
+.checkbox-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.checkbox-text-primary {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dark .checkbox-text-primary {
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .checkbox-text-primary {
+    font-size: 1rem;
+  }
+}
+
+.checkbox-text-secondary {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.dark .checkbox-text-secondary {
+  color: #94a3b8;
+}
+
+@media (min-width: 768px) {
+  .checkbox-text-secondary {
+    font-size: 0.875rem;
+  }
 }
 
 /* Renew CTA */
@@ -1678,17 +2186,6 @@ onMounted(async () => {
   }
 }
 
-.price-period {
-  font-size: 1rem;
-  opacity: 0.75;
-}
-
-@media (min-width: 768px) {
-  .price-period {
-    font-size: 1.25rem;
-  }
-}
-
 .package-description {
   font-size: 0.875rem;
   opacity: 0.9;
@@ -1721,106 +2218,6 @@ onMounted(async () => {
 @media (min-width: 768px) {
   .package-detail-item {
     font-size: 1rem;
-  }
-}
-
-/* Testimonial Card */
-.testimonial-card {
-  background: white;
-  border-radius: 1rem;
-  padding: 1.25rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dark .testimonial-card {
-  background: #1e293b;
-}
-
-@media (min-width: 768px) {
-  .testimonial-card {
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-  }
-}
-
-.quote-icon {
-  width: 2rem;
-  height: 2rem;
-  color: #3b82f6;
-  margin-bottom: 0.75rem;
-}
-
-.testimonial-text {
-  font-size: 0.875rem;
-  color: #475569;
-  font-style: italic;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-}
-
-.dark .testimonial-text {
-  color: #cbd5e1;
-}
-
-@media (min-width: 768px) {
-  .testimonial-text {
-    font-size: 1rem;
-  }
-}
-
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.author-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.author-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.author-name {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.125rem;
-}
-
-.dark .author-name {
-  color: white;
-}
-
-@media (min-width: 768px) {
-  .author-name {
-    font-size: 1rem;
-  }
-}
-
-.author-role {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.dark .author-role {
-  color: #94a3b8;
-}
-
-@media (min-width: 768px) {
-  .author-role {
-    font-size: 0.875rem;
   }
 }
 

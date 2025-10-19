@@ -9,4 +9,18 @@ class LevelTask extends Model
 {
     /** @use HasFactory<\Database\Factories\Lifecycle\LevelTaskFactory> */
     use HasFactory;
+
+
+
+
+
+
+    public function level()
+    {
+        return $this->belongsTo(Level::class,'level_id');
+    }
+
+
+
+
 }

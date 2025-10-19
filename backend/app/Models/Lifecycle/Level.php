@@ -54,4 +54,10 @@ class Level extends Model
     }
 
 
+    public function tasks()
+    {
+        return $this->hasMany(LevelTask::class,'level_id');
+    }
+
+
 }
