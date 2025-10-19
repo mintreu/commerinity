@@ -2,7 +2,7 @@
   <div ref="statCard" class="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
 
     <!-- Top Gradient Border -->
-    <div class="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" :class="topBorderGradient"></div>
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-t-2xl" :class="topBorderGradient"></div>
 
     <!-- Card Content -->
     <div class="relative z-10 flex items-center gap-4">
