@@ -3,6 +3,7 @@
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\VariantsRelationManager;
@@ -168,7 +169,7 @@ class EditProduct extends EditRecord
                                 Textarea::make('short_description')
                                     ->columnSpanFull(),
 
-                                Forms\Components\RichEditor::make('description')
+                                RichEditor::make('description')
                                     ->columnSpanFull(),
                             ]),
 
