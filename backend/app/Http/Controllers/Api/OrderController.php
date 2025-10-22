@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Casts\OrderStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
 use App\Http\Resources\Order\OrderIndexResource;
 use App\Http\Resources\Order\OrderResource;
 use App\Models\Order\Order;
+use App\Models\User;
 use App\Services\OrderService\OrderCreationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
@@ -22,18 +25,31 @@ class OrderController extends Controller
 {
 
 
+    /**
+     * Get all orders for authenticated user with stats
+     *
+     * @param Request $request
+     * @return AnonymousResourceCollection
+     */
     public function getAllOrders(Request $request): AnonymousResourceCollection
     {
         $user = $request->user();
 
+        // Validate inputs
+        $request->validate([
+            'status' => 'nullable|string',
+            'from_date' => 'nullable|date',
+            'to_date' => 'nullable|date|after_or_equal:from_date'
+        ]);
+
         $query = $user->orders()->newQuery();
 
-        // ✅ Filter by status
+        // ✅ Filter by status (only for table data)
         if ($status = $request->input('status')) {
             $query->where('status', $status);
         }
 
-        // ✅ Filter by date range
+        // ✅ Filter by date range (only for table data)
         if ($from = $request->input('from_date')) {
             $query->whereDate('created_at', '>=', $from);
         }
@@ -41,9 +57,63 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $to);
         }
 
+        // ✅ Get stats WITHOUT filters (all orders)
+        $stats = $this->getOrderStats($user);
+
         return OrderIndexResource::collection(
-            $query->latest()->paginate(10) // ✅ pagination
-        );
+            $query->latest()->paginate(10)
+        )->additional([
+            'stats' => $stats
+        ]);
+    }
+
+    /**
+     * Get order statistics (NOT filtered - shows all orders)
+     *
+     * @param User|Model $user
+     * @return array
+     */
+    private function getOrderStats(User|Model $user): array
+    {
+        // Get all orders WITHOUT any filters
+        $stats = $user->orders()->selectRaw('
+            COUNT(*) as total,
+            SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as confirm,
+            SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as completed
+        ', [
+            OrderStatusCast::PENDING->value,
+            OrderStatusCast::PROCESSING->value,
+            OrderStatusCast::CONFIRM->value,
+            OrderStatusCast::COMPLETED->value
+        ])->first();
+
+        return [
+            'total_orders' => [
+                'label' => 'Total Orders',
+                'value' => (string) ($stats->total ?? 0),
+                'change' => null,
+                'trend' => 'neutral'
+            ],
+            'pending_orders' => [
+                'label' => 'Pending Orders',
+                'value' => (string) ($stats->pending ?? 0),
+                'change' => null,
+                'trend' => 'neutral'
+            ],
+            'confirmed_orders' => [
+                'label' => 'Confirmed Orders',
+                'value' => (string) ($stats->confirm ?? 0),
+                'change' => null,
+                'trend' => 'neutral'
+            ],
+            'completed_orders' => [
+                'label' => 'Completed Orders',
+                'value' => (string) ($stats->completed ?? 0),
+                'change' => null,
+                'trend' => 'neutral'
+            ]
+        ];
     }
 
 

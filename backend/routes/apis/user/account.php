@@ -122,7 +122,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Dashboard And Stats Related
-    Route::get('dashboard',[\App\Http\Controllers\Api\Auth\UserDashboardController::class,'getAccountDashboard']);
+    Route::get('stats/dashboard',[\App\Http\Controllers\Api\Auth\UserDashboardController::class,'getAccountDashboard']);
 
 
     /**

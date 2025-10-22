@@ -17,47 +17,110 @@
 
       <!-- Mobile Stats Grid -->
       <main class="p-4 space-y-4">
+        <!-- Date Filter Dropdown (Mobile) -->
+        <div v-if="SHOW_DATE_FILTER" class="relative">
+          <button
+              @click="showDateFilter = !showDateFilter"
+              class="w-full flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium shadow-sm hover:shadow-md transition-all"
+          >
+            <div class="flex items-center gap-2">
+              <Icon name="mdi:calendar-filter" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span class="text-slate-700 dark:text-slate-300">
+                {{ dateFilterLabel }}
+              </span>
+            </div>
+            <Icon
+                :name="showDateFilter ? 'mdi:chevron-up' : 'mdi:chevron-down'"
+                class="w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                :class="{ 'rotate-180': showDateFilter }"
+            />
+          </button>
+
+          <!-- Dropdown Content -->
+          <Transition
+              enter-active-class="transition ease-out duration-200"
+              enter-from-class="opacity-0 scale-95"
+              enter-to-class="opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100 scale-100"
+              leave-to-class="opacity-0 scale-95"
+          >
+            <div v-if="showDateFilter" class="absolute z-50 w-full mt-2 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">From Date</label>
+                <input
+                    v-model="dateFrom"
+                    type="date"
+                    class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">To Date</label>
+                <input
+                    v-model="dateTo"
+                    type="date"
+                    class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
+                />
+              </div>
+              <div class="flex gap-2">
+                <button
+                    @click="applyDateFilter"
+                    :disabled="isLoadingStats"
+                    class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+                >
+                  {{ isLoadingStats ? 'Loading...' : 'Apply' }}
+                </button>
+                <button
+                    @click="clearDateFilter"
+                    class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-semibold transition-all"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </Transition>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
+          <DashboardStatCard
+              icon="mdi:currency-inr"
+              :label="statsData.total_earnings?.label || 'Total Earnings'"
+              :value="statsData.total_earnings?.value || '₹0'"
+              :change="statsData.total_earnings?.change"
+              :trend="statsData.total_earnings?.trend || 'neutral'"
+              color="green"
+              :loading="isLoadingStats"
+          />
 
-          <div class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-8 h-8 rounded bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <Icon name="mdi:currency-inr" class="w-5 h-5 text-green-600" />
-              </div>
-            </div>
-            <p class="text-xs text-slate-500">Earnings</p>
-            <p class="text-lg font-bold text-green-600">₹<span class="animated-number" data-value="15200">0</span></p>
-          </div>
+          <DashboardStatCard
+              icon="mdi:account-group"
+              :label="statsData.total_referrals?.label || 'My Referrals'"
+              :value="statsData.total_referrals?.value || '0'"
+              :change="statsData.total_referrals?.change"
+              :trend="statsData.total_referrals?.trend || 'neutral'"
+              color="blue"
+              :loading="isLoadingStats"
+          />
 
-          <div class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-8 h-8 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                <Icon name="mdi:account-group" class="w-5 h-5 text-blue-600" />
-              </div>
-            </div>
-            <p class="text-xs text-slate-500">Referrals</p>
-            <p class="text-lg font-bold text-blue-600"><span class="animated-number" data-value="38">0</span></p>
-          </div>
+          <DashboardStatCard
+              icon="mdi:shopping"
+              :label="statsData.total_orders?.label || 'My Orders'"
+              :value="statsData.total_orders?.value || '0'"
+              :change="statsData.total_orders?.change"
+              :trend="statsData.total_orders?.trend || 'neutral'"
+              color="purple"
+              :loading="isLoadingStats"
+          />
 
-          <div class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-8 h-8 rounded bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                <Icon name="mdi:shopping" class="w-5 h-5 text-purple-600" />
-              </div>
-            </div>
-            <p class="text-xs text-slate-500">Orders</p>
-            <p class="text-lg font-bold text-purple-600"><span class="animated-number" data-value="129">0</span></p>
-          </div>
-
-          <div class="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-8 h-8 rounded bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                <Icon name="mdi:trophy" class="w-5 h-5 text-yellow-600" />
-              </div>
-            </div>
-            <p class="text-xs text-slate-500">Rank</p>
-            <p class="text-lg font-bold text-yellow-600">Gold</p>
-          </div>
+          <DashboardStatCard
+              icon="mdi:trophy"
+              :label="statsData.current_rank?.label || 'Current Rank'"
+              :value="statsData.current_rank?.value || 'N/A'"
+              :change="statsData.current_rank?.change"
+              :trend="statsData.current_rank?.trend || 'neutral'"
+              color="orange"
+              :loading="isLoadingStats"
+          />
         </div>
 
         <!-- Mobile Quick Actions -->
@@ -104,7 +167,7 @@
               Welcome Back, {{ user?.name?.split(' ')[0] || 'User' }}! 👋
             </h1>
             <p class="text-lg text-slate-600 dark:text-slate-300">
-              {{ greetingMessage }} Here's what's happening with your account today.
+              {{ greetingMessage }} Here's your personal performance overview.
             </p>
           </div>
 
@@ -148,101 +211,159 @@
         <!-- Main Content -->
         <main class="space-y-8">
 
+          <!-- Date Filter Dropdown Section (Desktop) -->
+          <section v-if="SHOW_DATE_FILTER" class="relative">
+            <button
+                @click="showDateFilter = !showDateFilter"
+                class="w-full flex items-center justify-between p-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                  <Icon name="mdi:calendar-filter" class="w-5 h-5 text-white" />
+                </div>
+                <div class="text-left">
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ dateFilterLabel }}</h3>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">Click to filter statistics by date range</p>
+                </div>
+              </div>
+              <Icon
+                  :name="showDateFilter ? 'mdi:chevron-up' : 'mdi:chevron-down'"
+                  class="w-6 h-6 text-slate-500 dark:text-slate-400 transition-transform duration-200"
+                  :class="{ 'rotate-180': showDateFilter }"
+              />
+            </button>
+
+            <!-- Dropdown Content -->
+            <Transition
+                enter-active-class="transition ease-out duration-300"
+                enter-from-class="opacity-0 -translate-y-4"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition ease-in duration-200"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-4"
+            >
+              <div v-if="showDateFilter" class="mt-4 p-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl shadow-xl">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">From Date</label>
+                    <input
+                        v-model="dateFrom"
+                        type="date"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all shadow-sm"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">To Date</label>
+                    <input
+                        v-model="dateTo"
+                        type="date"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all shadow-sm"
+                    />
+                  </div>
+                  <div class="flex items-end gap-2">
+                    <button
+                        @click="applyDateFilter"
+                        :disabled="isLoadingStats"
+                        class="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
+                    >
+                      {{ isLoadingStats ? 'Loading...' : 'Apply Filter' }}
+                    </button>
+                    <button
+                        @click="clearDateFilter"
+                        class="px-4 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-all shadow-sm"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </section>
+
           <!-- Stats Grid -->
           <section>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <DashboardStatCard
+                  icon="mdi:currency-inr"
+                  :label="statsData.total_earnings?.label || 'Total Earnings'"
+                  :value="statsData.total_earnings?.value || '₹0'"
+                  :change="statsData.total_earnings?.change"
+                  :trend="statsData.total_earnings?.trend || 'neutral'"
+                  color="green"
+                  :loading="isLoadingStats"
+              />
 
-              <div class="group relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-t-2xl"></div>
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="mdi:currency-inr" class="w-6 h-6" />
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Total Earnings</h3>
-                    <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
-                      ₹<span class="animated-number tabular-nums" data-value="15200">0</span>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400">
-                      <Icon name="mdi:trending-up" class="w-3 h-3" />
-                      <span>+12.5%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DashboardStatCard
+                  icon="mdi:cash-multiple"
+                  :label="statsData.direct_earnings?.label || 'Direct Earnings'"
+                  :value="statsData.direct_earnings?.value || '₹0'"
+                  :change="statsData.direct_earnings?.change"
+                  :trend="statsData.direct_earnings?.trend || 'neutral'"
+                  color="purple"
+                  :loading="isLoadingStats"
+              />
 
-              <div class="group relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-2xl"></div>
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="mdi:account-group" class="w-6 h-6" />
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Referral Count</h3>
-                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                      <span class="animated-number tabular-nums" data-value="38">0</span>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400">
-                      <Icon name="mdi:trending-up" class="w-3 h-3" />
-                      <span>+8.3%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DashboardStatCard
+                  icon="mdi:account-network"
+                  :label="statsData.team_earnings?.label || 'Team Earnings'"
+                  :value="statsData.team_earnings?.value || '₹0'"
+                  :change="statsData.team_earnings?.change"
+                  :trend="statsData.team_earnings?.trend || 'neutral'"
+                  color="orange"
+                  :loading="isLoadingStats"
+              />
 
-              <div class="group relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-t-2xl"></div>
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="mdi:shopping" class="w-6 h-6" />
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Total Orders</h3>
-                    <div class="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                      <span class="animated-number tabular-nums" data-value="129">0</span>
-                    </div>
-                    <div class="flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400">
-                      <Icon name="mdi:trending-up" class="w-3 h-3" />
-                      <span>+15.7%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DashboardStatCard
+                  icon="mdi:wallet"
+                  :label="statsData.wallet_balance?.label || 'Wallet Balance'"
+                  :value="statsData.wallet_balance?.value || '₹0'"
+                  :change="statsData.wallet_balance?.change"
+                  :trend="statsData.wallet_balance?.trend || 'neutral'"
+                  color="emerald"
+                  :loading="isLoadingStats"
+              />
 
-              <div class="group relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-t-2xl"></div>
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="mdi:trophy" class="w-6 h-6" />
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-1">Current Rank</h3>
-                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">Gold</div>
-                    <div class="flex items-center gap-1 text-xs font-semibold text-slate-500">
-                      <Icon name="mdi:minus" class="w-3 h-3" />
-                      <span>No change</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DashboardStatCard
+                  icon="mdi:account-group"
+                  :label="statsData.total_referrals?.label || 'My Referrals'"
+                  :value="statsData.total_referrals?.value || '0'"
+                  :change="statsData.total_referrals?.change"
+                  :trend="statsData.total_referrals?.trend || 'neutral'"
+                  color="blue"
+                  :loading="isLoadingStats"
+              />
+
+              <DashboardStatCard
+                  icon="mdi:shopping"
+                  :label="statsData.total_orders?.label || 'My Orders'"
+                  :value="statsData.total_orders?.value || '0'"
+                  :change="statsData.total_orders?.change"
+                  :trend="statsData.total_orders?.trend || 'neutral'"
+                  color="indigo"
+                  :loading="isLoadingStats"
+              />
+
+              <DashboardStatCard
+                  icon="mdi:cart-check"
+                  :label="statsData.completed_orders?.label || 'Completed Orders'"
+                  :value="statsData.completed_orders?.value || '0'"
+                  :change="statsData.completed_orders?.change"
+                  :trend="statsData.completed_orders?.trend || 'neutral'"
+                  color="teal"
+                  :loading="isLoadingStats"
+              />
+
+              <DashboardStatCard
+                  icon="mdi:trophy"
+                  :label="statsData.current_rank?.label || 'Current Rank'"
+                  :value="statsData.current_rank?.value || 'N/A'"
+                  :change="statsData.current_rank?.change"
+                  :trend="statsData.current_rank?.trend || 'neutral'"
+                  color="cyan"
+                  :loading="isLoadingStats"
+              />
             </div>
           </section>
-
-          <!-- System Stats -->
-          <ClientOnly v-if="showSystemStats">
-            <section>
-              <div class="flex items-center gap-3 mb-6">
-                <Icon name="mdi:chart-box" class="w-6 h-6 text-slate-600 dark:text-slate-400" />
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white">System Analytics</h3>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <DashboardStatCard icon="mdi:account-group" label="Total Users" value="1,250" change="+5.2%" trend="up" color="blue" />
-                <DashboardStatCard icon="mdi:currency-usd" label="Monthly Sales" value="$14,200" change="+12.8%" trend="up" color="green" />
-                <DashboardStatCard icon="mdi:cart-outline" label="Active Orders" value="320" change="-2.1%" trend="down" color="orange" />
-                <DashboardStatCard icon="mdi:chart-line" label="Total Revenue" value="$54,000" change="+18.5%" trend="up" color="purple" />
-              </div>
-            </section>
-          </ClientOnly>
 
           <!-- Charts -->
           <ClientOnly v-if="showCharts">
@@ -252,7 +373,7 @@
             <section>
               <div class="flex items-center gap-3 mb-6">
                 <Icon name="mdi:chart-timeline-variant" class="w-6 h-6 text-slate-600 dark:text-slate-400" />
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Orders Trend Analysis</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">My Orders Trend Analysis</h3>
               </div>
               <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl shadow-lg overflow-hidden">
                 <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
@@ -262,7 +383,7 @@
                     </div>
                     <div>
                       <h3 class="text-lg font-bold text-slate-900 dark:text-white">My Orders Trend</h3>
-                      <p class="text-sm text-slate-500 dark:text-slate-400">Completed and confirmed orders over time</p>
+                      <p class="text-sm text-slate-500 dark:text-slate-400">Your completed and confirmed orders over time</p>
                     </div>
                   </div>
                   <button class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
@@ -356,10 +477,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useSanctum } from '#imports'
+import { ref, computed, onMounted, reactive } from 'vue'
+import { useSanctum, useSanctumFetch, useRuntimeConfig } from '#imports'
 
-// ✅ Lazy components (NO LODASH IMPORTS!)
+// ✅ Lazy components
 const LazyOrdersTrendChart = defineAsyncComponent(() =>
     import('~/components/charts/OrdersTrendChart.vue')
 )
@@ -382,14 +503,35 @@ useHead({
   }]
 })
 
+const config = useRuntimeConfig()
 const { user } = useSanctum()
+
+// ✅ CONSTANT: Toggle date filter visibility
+const SHOW_DATE_FILTER = true // Set to false to hide date filter
 
 // State
 const isRefreshing = ref(false)
-const showSystemStats = ref(false)
+const isLoadingStats = ref(true)
+const showDateFilter = ref(false)
 const showCharts = ref(false)
 const showQuickActions = ref(false)
 const showBackground = ref(false)
+
+// Date Filter State
+const dateFrom = ref('')
+const dateTo = ref('')
+
+// Stats Data
+const statsData = reactive({
+  total_earnings: { label: 'Total Earnings', value: '₹0', change: '+0%', trend: 'neutral' },
+  direct_earnings: { label: 'Direct Earnings', value: '₹0', change: '+0%', trend: 'neutral' },
+  team_earnings: { label: 'Team Earnings', value: '₹0', change: '+0%', trend: 'neutral' },
+  wallet_balance: { label: 'Wallet Balance', value: '₹0', change: '+0%', trend: 'neutral' },
+  total_referrals: { label: 'My Referrals', value: '0', change: '+0%', trend: 'neutral' },
+  total_orders: { label: 'My Orders', value: '0', change: '+0%', trend: 'neutral' },
+  completed_orders: { label: 'Completed Orders', value: '0', change: '+0%', trend: 'neutral' },
+  current_rank: { label: 'Current Rank', value: 'N/A', change: null, trend: 'neutral' }
+})
 
 // Refs
 const orb1 = ref<HTMLElement>()
@@ -403,41 +545,87 @@ const greetingMessage = computed(() => {
   return "Good evening!"
 })
 
+const dateFilterLabel = computed(() => {
+  if (dateFrom.value && dateTo.value) {
+    return `Filtered: ${formatDate(dateFrom.value)} - ${formatDate(dateTo.value)}`
+  } else if (dateFrom.value) {
+    return `From: ${formatDate(dateFrom.value)}`
+  } else if (dateTo.value) {
+    return `Until: ${formatDate(dateTo.value)}`
+  }
+  return 'Filter Statistics by Date'
+})
+
 // Methods
-async function refreshDashboard() {
-  isRefreshing.value = true
-  await new Promise(resolve => setTimeout(resolve, 1500))
-  animateNumbers()
-  isRefreshing.value = false
+function formatDate(dateStr: string): string {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-function animateNumbers() {
-  if (!process.client) return
+async function fetchDashboardStats() {
+  try {
+    isLoadingStats.value = true
 
-  const numbers = document.querySelectorAll('.animated-number')
-  numbers.forEach((el) => {
-    const target = parseInt(el.getAttribute('data-value') || '0')
-    let current = 0
-    const increment = target / 30
+    const url = `${config.public.apiBase}/account/stats/dashboard`
+    const params: any = {}
 
-    const interval = setInterval(() => {
-      current += increment
-      if (current >= target) {
-        current = target
-        clearInterval(interval)
-      }
-      el.textContent = Math.round(current).toLocaleString()
-    }, 30)
-  })
+    if (dateFrom.value) params.from = dateFrom.value
+    if (dateTo.value) params.to = dateTo.value
+
+    const response = await useSanctumFetch(url, {
+      method: 'GET',
+      params
+    })
+
+    if (response?.data) {
+      const data = response.data
+
+      // Map API response to statsData
+      Object.keys(statsData).forEach(key => {
+        if (data[key]) {
+          statsData[key] = {
+            label: data[key].label || statsData[key].label,
+            value: data[key].value || statsData[key].value,
+            change: data[key].change || null,
+            trend: data[key].trend || 'neutral'
+          }
+        }
+      })
+    }
+  } catch (error) {
+    console.error('Failed to fetch dashboard stats:', error)
+  } finally {
+    isLoadingStats.value = false
+  }
+}
+
+async function applyDateFilter() {
+  showDateFilter.value = false
+  await fetchDashboardStats()
+}
+
+function clearDateFilter() {
+  dateFrom.value = ''
+  dateTo.value = ''
+  showDateFilter.value = false
+  fetchDashboardStats()
+}
+
+async function refreshDashboard() {
+  isRefreshing.value = true
+  await fetchDashboardStats()
+  isRefreshing.value = false
 }
 
 // ✅ Progressive loading
 async function loadProgressively() {
   await nextTick()
-  animateNumbers()
+
+  // Fetch stats
+  await fetchDashboardStats()
 
   setTimeout(() => { showQuickActions.value = true }, 300)
-  setTimeout(() => { showSystemStats.value = true }, 800)
 
   // Only load heavy components on desktop
   if (process.client && window.innerWidth >= 1024) {

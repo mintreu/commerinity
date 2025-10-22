@@ -15,6 +15,13 @@
 return [
 
 
+    'allowed_user_types' => [
+        \App\Models\User::class => 'User (Member)',
+        \App\Models\Admin::class => 'Admin',
+        \App\Models\Distributor::class => 'Distributor'
+    ],
+
+
     'callback' => [
 
         /*
@@ -95,5 +102,11 @@ return [
         // Database table name for the wallet model
         'table'  => 'wallets',
     ],
+
+
+
+    'beneficiary' => [
+
+    ]
 
 ];

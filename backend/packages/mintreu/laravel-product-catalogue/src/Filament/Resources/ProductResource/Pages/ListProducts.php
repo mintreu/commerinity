@@ -68,9 +68,6 @@ class ListProducts extends ListRecords
                                 ->label('SKU')
                                 ->prefix('Sku: ')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('url')
-                                ->prefix('slug: ')
-                                ->searchable(),
 
                             Tables\Columns\Layout\Split::make([
                                 Tables\Columns\TextColumn::make('type')

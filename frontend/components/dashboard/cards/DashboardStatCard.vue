@@ -1,8 +1,9 @@
+<!-- components/dashboard/cards/DashboardStatCard.vue -->
 <template>
   <div ref="statCard" class="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
 
-    <!-- Top Gradient Border -->
-    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-t-2xl" :class="topBorderGradient"></div>
+    <!-- Top Gradient Border (Dynamic Colors) -->
+    <div class="absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-gradient-to-r" :class="topBorderGradient"></div>
 
     <!-- Card Content -->
     <div class="relative z-10 flex items-center gap-4">
@@ -39,8 +40,6 @@
     </div>
   </div>
 </template>
-
-
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
@@ -81,80 +80,60 @@ const colorSystem = computed(() => {
       icon: 'bg-gradient-to-br from-blue-500 to-blue-600',
       value: 'text-blue-600 dark:text-blue-400',
       border: 'from-blue-500 to-indigo-500',
-      background: 'from-blue-500 to-indigo-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 70%)',
       dot: 'bg-blue-500'
     },
     green: {
       icon: 'bg-gradient-to-br from-green-500 to-emerald-600',
       value: 'text-green-600 dark:text-green-400',
       border: 'from-green-500 to-emerald-500',
-      background: 'from-green-500 to-emerald-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.15), transparent 70%)',
       dot: 'bg-green-500'
     },
     purple: {
       icon: 'bg-gradient-to-br from-purple-500 to-pink-600',
       value: 'text-purple-600 dark:text-purple-400',
       border: 'from-purple-500 to-pink-500',
-      background: 'from-purple-500 to-pink-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(147, 51, 234, 0.15), transparent 70%)',
       dot: 'bg-purple-500'
     },
     orange: {
       icon: 'bg-gradient-to-br from-orange-500 to-red-600',
       value: 'text-orange-600 dark:text-orange-400',
       border: 'from-orange-500 to-red-500',
-      background: 'from-orange-500 to-red-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.15), transparent 70%)',
       dot: 'bg-orange-500'
     },
     red: {
       icon: 'bg-gradient-to-br from-red-500 to-pink-600',
       value: 'text-red-600 dark:text-red-400',
       border: 'from-red-500 to-pink-500',
-      background: 'from-red-500 to-pink-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.15), transparent 70%)',
       dot: 'bg-red-500'
     },
     indigo: {
       icon: 'bg-gradient-to-br from-indigo-500 to-purple-600',
       value: 'text-indigo-600 dark:text-indigo-400',
       border: 'from-indigo-500 to-purple-500',
-      background: 'from-indigo-500 to-purple-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%)',
       dot: 'bg-indigo-500'
     },
     pink: {
       icon: 'bg-gradient-to-br from-pink-500 to-rose-600',
       value: 'text-pink-600 dark:text-pink-400',
       border: 'from-pink-500 to-rose-500',
-      background: 'from-pink-500 to-rose-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(236, 72, 153, 0.15), transparent 70%)',
       dot: 'bg-pink-500'
     },
     teal: {
       icon: 'bg-gradient-to-br from-teal-500 to-cyan-600',
       value: 'text-teal-600 dark:text-teal-400',
       border: 'from-teal-500 to-cyan-500',
-      background: 'from-teal-500 to-cyan-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.15), transparent 70%)',
       dot: 'bg-teal-500'
     },
     emerald: {
       icon: 'bg-gradient-to-br from-emerald-500 to-green-600',
       value: 'text-emerald-600 dark:text-emerald-400',
       border: 'from-emerald-500 to-green-500',
-      background: 'from-emerald-500 to-green-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15), transparent 70%)',
       dot: 'bg-emerald-500'
     },
     cyan: {
       icon: 'bg-gradient-to-br from-cyan-500 to-blue-600',
       value: 'text-cyan-600 dark:text-cyan-400',
       border: 'from-cyan-500 to-blue-500',
-      background: 'from-cyan-500 to-blue-500',
-      glow: 'radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15), transparent 70%)',
       dot: 'bg-cyan-500'
     }
   }
@@ -165,8 +144,6 @@ const colorSystem = computed(() => {
 const iconClasses = computed(() => colorSystem.value.icon)
 const valueClasses = computed(() => colorSystem.value.value)
 const topBorderGradient = computed(() => colorSystem.value.border)
-const backgroundGradient = computed(() => colorSystem.value.background)
-const glowStyle = computed(() => ({ background: colorSystem.value.glow }))
 const dotColor = computed(() => colorSystem.value.dot)
 
 // Trend-based Change Classes
@@ -188,13 +165,7 @@ const changeIcon = computed(() => {
   return icons[props.trend]
 })
 
-// Value Processing
-const numericValue = computed(() => {
-  if (typeof props.value === 'number') return props.value
-  const match = props.value.toString().match(/[\d,]+/)
-  return match ? parseInt(match[0].replace(/,/g, '')) : 0
-})
-
+// Display value as-is (NO FORMATTING)
 const displayValue = computed(() => {
   if (props.loading) return '---'
   return props.value.toString()
@@ -205,11 +176,6 @@ function animateValue() {
   if (!process.client || !gsap || !animatedValue.value || props.loading) return
 
   const element = animatedValue.value
-  const targetValue = numericValue.value
-
-  if (targetValue === 0) return
-
-  const obj = { value: 0 }
 
   gsap.set(element, { scale: 0.8, opacity: 0 })
 
@@ -218,30 +184,6 @@ function animateValue() {
     opacity: 1,
     duration: 0.5,
     ease: 'back.out(1.7)'
-  })
-
-  gsap.to(obj, {
-    value: targetValue,
-    duration: 1.8,
-    ease: 'power2.out',
-    delay: 0.2,
-    onUpdate: () => {
-      const currentValue = Math.round(obj.value)
-
-      if (typeof props.value === 'string') {
-        if (props.value.includes('₹')) {
-          element.textContent = `₹${currentValue.toLocaleString('en-IN')}`
-        } else if (props.value.includes('$')) {
-          element.textContent = `$${currentValue.toLocaleString()}`
-        } else if (props.value.includes('%')) {
-          element.textContent = `${currentValue}%`
-        } else {
-          element.textContent = currentValue.toLocaleString()
-        }
-      } else {
-        element.textContent = currentValue.toLocaleString()
-      }
-    }
   })
 }
 
@@ -255,7 +197,7 @@ function animateCard() {
     opacity: 1,
     duration: 0.6,
     ease: 'power3.out',
-    delay: Math.random() * 0.3 // Stagger animation
+    delay: Math.random() * 0.3
   })
 }
 
@@ -318,3 +260,36 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* Ensure all color gradients work properly */
+.from-blue-500 { --tw-gradient-from: rgb(59 130 246) var(--tw-gradient-from-position); }
+.to-indigo-500 { --tw-gradient-to: rgb(99 102 241) var(--tw-gradient-to-position); }
+
+.from-green-500 { --tw-gradient-from: rgb(34 197 94) var(--tw-gradient-from-position); }
+.to-emerald-500 { --tw-gradient-to: rgb(16 185 129) var(--tw-gradient-to-position); }
+
+.from-purple-500 { --tw-gradient-from: rgb(168 85 247) var(--tw-gradient-from-position); }
+.to-pink-500 { --tw-gradient-to: rgb(236 72 153) var(--tw-gradient-to-position); }
+
+.from-orange-500 { --tw-gradient-from: rgb(249 115 22) var(--tw-gradient-from-position); }
+.to-red-500 { --tw-gradient-to: rgb(239 68 68) var(--tw-gradient-to-position); }
+
+.from-red-500 { --tw-gradient-from: rgb(239 68 68) var(--tw-gradient-from-position); }
+.to-pink-500 { --tw-gradient-to: rgb(236 72 153) var(--tw-gradient-to-position); }
+
+.from-indigo-500 { --tw-gradient-from: rgb(99 102 241) var(--tw-gradient-from-position); }
+.to-purple-500 { --tw-gradient-to: rgb(168 85 247) var(--tw-gradient-to-position); }
+
+.from-pink-500 { --tw-gradient-from: rgb(236 72 153) var(--tw-gradient-from-position); }
+.to-rose-500 { --tw-gradient-to: rgb(244 63 94) var(--tw-gradient-to-position); }
+
+.from-teal-500 { --tw-gradient-from: rgb(20 184 166) var(--tw-gradient-from-position); }
+.to-cyan-500 { --tw-gradient-to: rgb(6 182 212) var(--tw-gradient-to-position); }
+
+.from-emerald-500 { --tw-gradient-from: rgb(16 185 129) var(--tw-gradient-from-position); }
+.to-green-500 { --tw-gradient-to: rgb(34 197 94) var(--tw-gradient-to-position); }
+
+.from-cyan-500 { --tw-gradient-from: rgb(6 182 212) var(--tw-gradient-from-position); }
+.to-blue-500 { --tw-gradient-to: rgb(59 130 246) var(--tw-gradient-to-position); }
+</style>
