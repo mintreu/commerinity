@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Notifications\OtpNotification;
 use App\Mail\OtpMail;
 use App\Models\Distributor;
 use App\Models\User;
@@ -220,7 +221,7 @@ class OtpManager
 
         if ($existUser) {
             // ✅ Existing user or distributor — use Laravel Notification
-            $existUser->notify(new \App\Notifications\OtpNotification($otp));
+            $existUser->notify(new OtpNotification($otp));
         } else {
             // ✅ No existing user — send mail directly (for registration)
             Mail::to($email)->send(new OtpMail($otp, 'registration'));

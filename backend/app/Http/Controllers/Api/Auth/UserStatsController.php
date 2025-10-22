@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\UserServices\NetworkServices\NetworkService;
@@ -46,7 +47,7 @@ class UserStatsController extends Controller
     }
 
 
-    public function getUserTree(Request $request): \Illuminate\Http\JsonResponse
+    public function getUserTree(Request $request): JsonResponse
     {
         $user = $request->user();
         // add filter for check any ?referral_code given

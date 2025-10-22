@@ -2,6 +2,7 @@
 
 namespace App\Models\Lifecycle;
 
+use Database\Factories\Lifecycle\LevelFactory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Mintreu\Toolkit\Traits\HasRecordNavigator;
 
 class Level extends Model
 {
-    /** @use HasFactory<\Database\Factories\Lifecycle\LevelFactory> */
+    /** @use HasFactory<LevelFactory> */
     use HasFactory,HasRecordNavigator,HasSaleAccess,HasVoucherAccess;
 
 

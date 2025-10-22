@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelNaukriManager\Models;
 
+use Mintreu\LaravelNaukriManager\Database\Factories\NaukriFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Naukri extends Model  implements  HasMedia
 {
-    /** @use HasFactory<\Mintreu\LaravelNaukriManager\Database\Factories\NaukriFactory> */
+    /** @use HasFactory<NaukriFactory> */
     use HasPackageModelFactory,InteractsWithMedia;
 
 

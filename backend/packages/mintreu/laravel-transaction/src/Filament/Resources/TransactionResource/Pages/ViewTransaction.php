@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource;
@@ -13,7 +14,7 @@ class ViewTransaction extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

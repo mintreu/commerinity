@@ -2,10 +2,23 @@
 
 namespace App\Filament\Resources\Promotion;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Promotion\VoucherResource\Pages\ListVouchers;
+use App\Filament\Resources\Promotion\VoucherResource\Pages\CreateVoucher;
+use App\Filament\Resources\Promotion\VoucherResource\Pages\ViewVoucher;
+use App\Filament\Resources\Promotion\VoucherResource\Pages\EditVoucher;
 use App\Filament\Resources\Promotion\VoucherResource\Pages;
 use App\Filament\Resources\Promotion\VoucherResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,58 +28,58 @@ class VoucherResource extends Resource
 {
     protected static ?string $model = Voucher::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Shop';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('description')
+                TextInput::make('description')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('starts_from'),
-                Forms\Components\DatePicker::make('ends_till'),
-                Forms\Components\Toggle::make('status')
+                DatePicker::make('starts_from'),
+                DatePicker::make('ends_till'),
+                Toggle::make('status')
                     ->required(),
-                Forms\Components\TextInput::make('usage_per_customer')
+                TextInput::make('usage_per_customer')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('coupon_usage_limit')
+                TextInput::make('coupon_usage_limit')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('times_used')
+                TextInput::make('times_used')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\Toggle::make('condition_type')
+                Toggle::make('condition_type')
                     ->required(),
-                Forms\Components\TextInput::make('conditions'),
-                Forms\Components\Toggle::make('end_other_rules')
+                TextInput::make('conditions'),
+                Toggle::make('end_other_rules')
                     ->required(),
-                Forms\Components\TextInput::make('action_type')
+                TextInput::make('action_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('discount_amount')
+                TextInput::make('discount_amount')
                     ->required()
                     ->numeric()
                     ->default(0.0000),
-                Forms\Components\TextInput::make('discount_quantity')
+                TextInput::make('discount_quantity')
                     ->required()
                     ->numeric()
                     ->default(1),
-                Forms\Components\TextInput::make('discount_step')
+                TextInput::make('discount_step')
                     ->required()
                     ->maxLength(255)
                     ->default(1),
-                Forms\Components\Toggle::make('apply_to_shipping')
+                Toggle::make('apply_to_shipping')
                     ->required(),
-                Forms\Components\Toggle::make('free_shipping')
+                Toggle::make('free_shipping')
                     ->required(),
-                Forms\Components\TextInput::make('sort_order')
+                TextInput::make('sort_order')
                     ->required()
                     ->numeric()
                     ->default(0),
@@ -77,53 +90,53 @@ class VoucherResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('starts_from')
+                TextColumn::make('starts_from')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('ends_till')
+                TextColumn::make('ends_till')
                     ->date()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('status')
+                IconColumn::make('status')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('usage_per_customer')
+                TextColumn::make('usage_per_customer')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('coupon_usage_limit')
+                TextColumn::make('coupon_usage_limit')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('times_used')
+                TextColumn::make('times_used')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('condition_type')
+                IconColumn::make('condition_type')
                     ->boolean(),
-                Tables\Columns\IconColumn::make('end_other_rules')
+                IconColumn::make('end_other_rules')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('action_type')
+                TextColumn::make('action_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('discount_amount')
+                TextColumn::make('discount_amount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discount_quantity')
+                TextColumn::make('discount_quantity')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discount_step')
+                TextColumn::make('discount_step')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('apply_to_shipping')
+                IconColumn::make('apply_to_shipping')
                     ->boolean(),
-                Tables\Columns\IconColumn::make('free_shipping')
+                IconColumn::make('free_shipping')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('sort_order')
+                TextColumn::make('sort_order')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -131,13 +144,13 @@ class VoucherResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -152,10 +165,10 @@ class VoucherResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVouchers::route('/'),
-            'create' => Pages\CreateVoucher::route('/create'),
-            'view' => Pages\ViewVoucher::route('/{record}'),
-            'edit' => Pages\EditVoucher::route('/{record}/edit'),
+            'index' => ListVouchers::route('/'),
+            'create' => CreateVoucher::route('/create'),
+            'view' => ViewVoucher::route('/{record}'),
+            'edit' => EditVoucher::route('/{record}/edit'),
         ];
     }
 }

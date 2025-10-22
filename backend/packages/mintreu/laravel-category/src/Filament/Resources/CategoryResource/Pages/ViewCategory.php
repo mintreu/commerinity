@@ -2,13 +2,14 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Actions;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
 
@@ -19,15 +20,15 @@ class ViewCategory extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return parent::infolist($infolist)
-            ->schema([
+            ->components([
                 Section::make('Category Image')
                     ->schema([
                         SpatieMediaLibraryImageEntry::make('display')->collection('displayImage'),

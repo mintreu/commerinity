@@ -3,17 +3,29 @@
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\VariantsRelationManager;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\KeyValue;
 use App\Models\TaxCode;
 use Awcodes\Shout\Components\Shout;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Support\HtmlString;
 use Mintreu\LaravelMoney\Filament\Forms\Components\MoneyInput;
 use Mintreu\LaravelMoney\LaravelMoney;
@@ -30,8 +42,8 @@ class EditProduct extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 
@@ -40,7 +52,7 @@ class EditProduct extends EditRecord
     {
         $relationManagers = [];
         if ($this->record->type == 'configurable') {
-            $relationManagers[] = ProductResource\RelationManagers\VariantsRelationManager::class;
+            $relationManagers[] = VariantsRelationManager::class;
         }
 
         return $relationManagers;
@@ -121,27 +133,27 @@ class EditProduct extends EditRecord
 
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema([
-                Forms\Components\Tabs::make('Heading')
+        return parent::form($schema)
+            ->components([
+                Tabs::make('Heading')
                     ->columnSpanFull()
                     ->contained(false)
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('General')
+                        Tab::make('General')
                             ->columns()
                             ->schema([
                                 // Basic product info: name, slug, type, status
-                                Forms\Components\TextInput::make('name')
+                                TextInput::make('name')
                                     ->required()
                                     ->maxLength(255)
                                     ->default('Unnamed Product'),
 
-                                Forms\Components\TextInput::make('url')
+                                TextInput::make('url')
                                     ->required()
                                     ->maxLength(255),
-                                Forms\Components\TextInput::make('type')
+                                TextInput::make('type')
                                     ->required()
                                     ->maxLength(255),
 
@@ -149,34 +161,34 @@ class EditProduct extends EditRecord
 
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Details')
+                        Tab::make('Details')
                             ->schema([
                                 // Description, brand, tags, SKU, barcode, short/long description
 
-                                Forms\Components\Textarea::make('short_description')
+                                Textarea::make('short_description')
                                     ->columnSpanFull(),
 
-                                TiptapEditor::make('description')
+                                Forms\Components\RichEditor::make('description')
                                     ->columnSpanFull(),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Pricing')
+                        Tab::make('Pricing')
                             ->columns()
                             ->schema([
                                 // Price, special price, tax class, cost, discount logic
 
-                                Forms\Components\Grid::make(1)
+                                Grid::make(1)
                                     ->columnSpan(1)
                                     ->schema([
-                                        Forms\Components\Select::make('tax_code_id')
+                                        Select::make('tax_code_id')
                                             ->label('HSN Code')
                                             ->relationship('tax_code','code')
                                             ->live()
                                             ->columnSpanFull()
                                             ->required(),
 
-                                        Forms\Components\Toggle::make('is_tax_inclusive')->default(false),
-                                        Forms\Components\Toggle::make('is_exempted')->default(false),
+                                        Toggle::make('is_tax_inclusive')->default(false),
+                                        Toggle::make('is_exempted')->default(false),
 
 
 
@@ -190,7 +202,7 @@ class EditProduct extends EditRecord
 
 
 
-                                        Forms\Components\TextInput::make('reward_point')
+                                        TextInput::make('reward_point')
                                             ->required()
                                             ->numeric()
                                             ->default(0),
@@ -202,7 +214,7 @@ class EditProduct extends EditRecord
 
 
 
-                                Forms\Components\Placeholder::make('price_breakdown')
+                                Placeholder::make('price_breakdown')
                                     ->content(function (Get $get) {
                                         if ($get('tax_code_id')) {
                                             $model = config('laravel-product-catalogue.tax.model');
@@ -268,12 +280,12 @@ class EditProduct extends EditRecord
                                     ->columnSpan(1),
 
 
-                                Forms\Components\TextInput::make('min_quantity')
+                                TextInput::make('min_quantity')
                                     ->required()
                                     ->numeric()
                                     ->default(0),
 
-                                Forms\Components\TextInput::make('max_quantity')
+                                TextInput::make('max_quantity')
                                     ->required()
                                     ->numeric()
                                     ->default(0),
@@ -284,44 +296,44 @@ class EditProduct extends EditRecord
 
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Inventory')
+                        Tab::make('Inventory')
                             ->schema([
                                 // Quantity, stock status, backorders, low stock threshold
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Media')
+                        Tab::make('Media')
                             ->schema([
                                 // Images, gallery, video
-                                Forms\Components\SpatieMediaLibraryFileUpload::make('display')
+                                SpatieMediaLibraryFileUpload::make('display')
                                     ->collection('displayImage'),
 
-                                Forms\Components\SpatieMediaLibraryFileUpload::make('banner')
+                                SpatieMediaLibraryFileUpload::make('banner')
                                     ->multiple()
                                     ->collection('bannerImage'),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Shipping')
+                        Tab::make('Shipping')
                             ->columns()
                             ->schema([
                                 // Weight, dimensions, shipping class, free shipping flag
-                                Forms\Components\TextInput::make('width')
+                                TextInput::make('width')
                                     ->numeric(),
-                                Forms\Components\TextInput::make('height')
+                                TextInput::make('height')
                                     ->numeric(),
-                                Forms\Components\TextInput::make('length')
+                                TextInput::make('length')
                                     ->numeric(),
-                                Forms\Components\TextInput::make('weight')
+                                TextInput::make('weight')
                                     ->numeric(),
 
                             ]),
 
 
 
-                        Forms\Components\Tabs\Tab::make('Configuration')
+                        Tab::make('Configuration')
                             ->schema([
-                                Forms\Components\Grid::make(1)
+                                Grid::make(1)
                                     ->schema([
-                                        Forms\Components\Select::make('filter_group_id')
+                                        Select::make('filter_group_id')
                                             ->label(__('Filter Group'))
                                             ->relationship('filterGroup','name')
                                             ->live()
@@ -338,21 +350,22 @@ class EditProduct extends EditRecord
                                     ])
                                     ->columnSpanFull(),
 
-                                Forms\Components\Fieldset::make('Options')
+                                Fieldset::make('Options')
                                     ->label(fn() => $this->record->type == ProductTypeCast::CONFIGURABLE ? 'Options' : 'Filter Options')
                                     ->columns(2)
                                     ->schema(fn(Get $get) => $this->getFilterSchema($get('filter_group_id'))),
 
 
-                                SelectTree::make('categories')
+                                Select::make('categories')
                                     ->lazy()
+                                    ->multiple()
                                     ->relationship('categories', 'name', 'parent_id', function ($query, Get $get) {
                                         return $query->where('status', true);
                                     }),
 
 
 
-                                Forms\Components\KeyValue::make('meta_data')
+                                KeyValue::make('meta_data')
                                     ->label(fn () => new HtmlString('Meta Data (SEO)'))
                                     ->keyLabel('Key')
                                     ->valueLabel('Value')
@@ -377,11 +390,11 @@ class EditProduct extends EditRecord
 
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Relations')
+                        Tab::make('Relations')
                             ->schema([
                                 // Related products, upsells, cross-sells, bundles
 
-                                SelectTree::make('categories')
+                                Select::make('categories')
                                     ->live()
                                     ->relationship('categories', 'name', 'parent_id', function ($query, Get $get) {
 //                                        $categoryId = $get('category_id');
@@ -429,7 +442,7 @@ class EditProduct extends EditRecord
                 $optionBag = $item->options->mapWithKeys(function ($item) {
                     return [$item['id'] => $item['value']];
                 })->toArray();
-                return Forms\Components\Select::make('filter_options.' . $item->id)
+                return Select::make('filter_options.' . $item->id)
                     ->label($item->name)
                     ->options($optionBag)
                     ->required($item->is_required)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Product;
 
+use Exception;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductEngagementResource;
 use App\Models\ProductEngagement;
@@ -112,7 +113,7 @@ class ProductEngagementController extends Controller
                 'message' => 'Review deleted successfully!'
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete review',
@@ -146,7 +147,7 @@ class ProductEngagementController extends Controller
                 'helpful_votes' => $engagement->helpful_votes
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to mark as helpful',

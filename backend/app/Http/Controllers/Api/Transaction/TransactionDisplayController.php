@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Transaction;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Models\Lifecycle\UserSubscription;
@@ -20,9 +21,9 @@ class TransactionDisplayController extends Controller
      * Fetches all user transactions from orders, memberships, and optionally wallet
      *
      * @param Request $request
-     * @return JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return JsonResponse|AnonymousResourceCollection
      */
-    public function index(Request $request): JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(Request $request): JsonResponse|AnonymousResourceCollection
     {
         $user = $request->user();
         $wallet = $user->wallet;

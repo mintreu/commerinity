@@ -2,9 +2,13 @@
 
 namespace Mintreu\LaravelCategory\Support\AdjacencySchema;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Schemas\Components\Utilities\Get;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
-use Filament\Forms\Set;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
@@ -37,7 +41,7 @@ trait HasAdjacencyFormSchema
     public static function getAdjacencyResourceFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('name')
+            TextInput::make('name')
                 ->required()
                 ->lazy()
                 ->afterStateUpdated(function (Set $set, $state) {
@@ -46,16 +50,16 @@ trait HasAdjacencyFormSchema
                 ->hint(__('Max: 100'))
                 ->maxLength(100),
 
-            Forms\Components\TextInput::make('url')
+            TextInput::make('url')
                 ->required()->unique(ignoreRecord: true)
                 ->hint(__('Max: 150'))
                 ->maxLength(150),
 
-            Forms\Components\Toggle::make('status')
+            Toggle::make('status')
                 ->default(false)
                 ->required(),
 
-            Forms\Components\SpatieMediaLibraryFileUpload::make('display')
+            SpatieMediaLibraryFileUpload::make('display')
                 ->collection('displayImage'),
         ];
     }
@@ -63,14 +67,14 @@ trait HasAdjacencyFormSchema
     public static function getAdjacencyResourceParentFormSchema(): array
     {
         return [
-            Forms\Components\Toggle::make('show_parent')->label('Add/modify parent')->dehydrated(false)->live()
+            Toggle::make('show_parent')->label('Add/modify parent')->dehydrated(false)->live()
                 ->helperText(fn (): HtmlString => new HtmlString('<ol class="font-semibold">
                         <li>Dont add parent for root levels.</li>
                         <li>Use the x icon to remove parent.</li>
                         </ol>')),
 
             SelectTree::make('parent_id')->searchable()->withCount()
-                ->relationship('parent', 'url', 'parent_id')->visible(fn (Forms\Get $get): bool => $get('show_parent') ?? false),
+                ->relationship('parent', 'url', 'parent_id')->visible(fn (Get $get): bool => $get('show_parent') ?? false),
 
         ];
     }

@@ -2,6 +2,11 @@
 
 namespace Mintreu\LaravelCategory\Support\AdjacencySchema;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,19 +16,19 @@ trait HasAdjacencyTableSchema
     public function getAdjacencyTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('parent.name')->badge()
+            TextColumn::make('parent.name')->badge()
                 ->placeholder('No Data')->searchable()->sortable(),
-            Tables\Columns\TextColumn::make('name')
+            TextColumn::make('name')
                 ->searchable()->sortable(),
-            Tables\Columns\TextColumn::make('url')
+            TextColumn::make('url')
                 ->searchable()->sortable(),
-            Tables\Columns\IconColumn::make('status')
+            IconColumn::make('status')
                 ->boolean(),
-            Tables\Columns\TextColumn::make('created_at')
+            TextColumn::make('created_at')
                 ->dateTime()
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
-            Tables\Columns\TextColumn::make('updated_at')
+            TextColumn::make('updated_at')
                 ->dateTime()
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
@@ -33,8 +38,8 @@ trait HasAdjacencyTableSchema
     public function getAdjacencyTableActions(): array
     {
         return [
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
+            ViewAction::make(),
+            EditAction::make(),
         ];
     }
 
@@ -46,7 +51,7 @@ trait HasAdjacencyTableSchema
             SelectFilter::make('status')
                 ->options([true => 'True', false => 'False']),
 
-            Tables\Filters\TernaryFilter::make('toggle_category_type')
+            TernaryFilter::make('toggle_category_type')
                 ->label('Category type')
                 ->placeholder('All categories')
                 ->trueLabel('Parent Categories Only')

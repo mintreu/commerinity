@@ -2,6 +2,8 @@
 
 namespace Mintreu\LaravelCategory\Models;
 
+use RuntimeException;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -68,7 +70,7 @@ class Category extends Model implements HasMedia
 
 
         if (! $targetModel) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "No Category categorized models defined in config/laravel-category.php"
             );
         }
@@ -103,7 +105,7 @@ class Category extends Model implements HasMedia
         // Config defined target models
         $targets = config('laravel-category.categorized.models', []);
         foreach ($targets as $class) {
-            $expected = \Illuminate\Support\Str::plural(strtolower(class_basename($class)));
+            $expected = Str::plural(strtolower(class_basename($class)));
 
             if ($method === $expected) {
                 return $this->morphedByMany(

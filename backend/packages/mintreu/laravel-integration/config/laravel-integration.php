@@ -1,5 +1,14 @@
 <?php
 
+use Mintreu\LaravelIntegration\Providers\Payment\Cash\CashPaymentProvider;
+use Mintreu\LaravelIntegration\Providers\Payment\Wallet\WalletPaymentProvider;
+use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\RazorpayPaymentProvider;
+use Mintreu\LaravelIntegration\Providers\Payment\CashFree\CashFreePaymentProvider;
+use Mintreu\LaravelIntegration\Providers\Payment\Paytm\PaytmPaymentProvider;
+use Mintreu\LaravelIntegration\Providers\Payout\Razorpay\RazorpayPayoutProvider;
+use Mintreu\LaravelIntegration\Providers\Sms\Fast2Sms\Fast2SmsProvider;
+use Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket\ShipRocketServiceProvider;
+
 /*
 |--------------------------------------------------------------------------
 | Laravel Integration Configuration
@@ -23,7 +32,6 @@
 | - provider: Fully qualified Laravel ServiceProvider class for the integration.
 |
 */
-
 return [
 
     /*
@@ -79,7 +87,7 @@ return [
                 'webhook'  => null,
                 'api'      => null,
                 'dev'       => false,
-                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Cash\CashPaymentProvider::class,
+                'provider' => CashPaymentProvider::class,
             ],
 
             'wallet' => [
@@ -88,7 +96,7 @@ return [
                 'webhook'  => null,
                 'api'      => null,
                 'dev'       => false,
-                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Wallet\WalletPaymentProvider::class,
+                'provider' => WalletPaymentProvider::class,
             ],
 
 
@@ -101,7 +109,7 @@ return [
                   'prod'    => 'https://api.razorpay.com/v1/'
                 ],
                 'dev'       => true,
-                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Razorpay\RazorpayPaymentProvider::class,
+                'provider' => RazorpayPaymentProvider::class,
             ],
             'cash-free' => [
                 'key'      => env('CASH_FREE_KEY', ''),
@@ -112,7 +120,7 @@ return [
                     'prod'    => 'https://api.cashfree.com/pg/'
                 ],
                 'dev'       => true,
-                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\CashFree\CashFreePaymentProvider::class,
+                'provider' => CashFreePaymentProvider::class,
             ],
             'paytm' => [
                 'key'      => env('CASH_FREE_KEY', ''),
@@ -122,7 +130,7 @@ return [
                     'test'    => 'https://sandbox.cashfree.com/pg/',
                     'prod'    => 'https://api.cashfree.com/pg/'
                 ],
-                'provider' => \Mintreu\LaravelIntegration\Providers\Payment\Paytm\PaytmPaymentProvider::class,
+                'provider' => PaytmPaymentProvider::class,
             ],
 
 
@@ -154,7 +162,7 @@ return [
                     'test'    => 'https://api.razorpay.com/v1/',
                     'prod'    => 'https://api.razorpay.com/v1/'
                 ],
-                'provider' => \Mintreu\LaravelIntegration\Providers\Payout\Razorpay\RazorpayPayoutProvider::class
+                'provider' => RazorpayPayoutProvider::class
             ],
         ],
 
@@ -176,7 +184,7 @@ return [
                 'key'      => env('FAST2SMS_KEY', ''),
                 'secret'   => env('FAST2SMS_SECRET', ''),
                 'webhook'  => env('FAST2SMS_WEBHOOK', ''),
-                'provider' => \Mintreu\LaravelIntegration\Providers\Sms\Fast2Sms\Fast2SmsProvider::class,
+                'provider' => Fast2SmsProvider::class,
             ],
         ],
 
@@ -198,7 +206,7 @@ return [
                 'key'      => env('SHIPROCKET_KEY', ''),
                 'secret'   => env('SHIPROCKET_SECRET', ''),
                 'webhook'  => env('SHIPROCKET_WEBHOOK', ''),
-                'provider' => \Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket\ShipRocketServiceProvider::class,
+                'provider' => ShipRocketServiceProvider::class,
                 'supports_cod' => true,
             ],
         ],

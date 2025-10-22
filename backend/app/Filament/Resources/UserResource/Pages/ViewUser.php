@@ -2,6 +2,14 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Flex;
 use App\Casts\AuthStatusCast;
 use App\Casts\AuthTypeCast;
 use App\Filament\Resources\UserResource;
@@ -9,12 +17,8 @@ use Filament\Actions;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -25,18 +29,18 @@ class ViewUser extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
 
-            Actions\Action::make('team')
+            Action::make('team')
                 ->url(fn() => self::$resource::getUrl('members',['record' => $this->record->referral_code]),false),
 
-            Actions\Action::make('view_stats')
+            Action::make('view_stats')
                 ->label('Stats')
                 ->url(fn() => self::$resource::getUrl('stats',['record' => $this->record->referral_code]),false),
 
 
-            Actions\ActionGroup::make([
-                Actions\Action::make('updateStatus')
+            ActionGroup::make([
+                Action::make('updateStatus')
                     ->label('Change Status')
                     ->icon('heroicon-o-wrench-screwdriver')
                     ->color('warning') // Can be primary, success, danger, etc.
@@ -45,7 +49,7 @@ class ViewUser extends ViewRecord
                         'status' => $this->record->status,
                         'status_feedback' => $this->record->status_feedback,
                     ])
-                    ->form([
+                    ->schema([
                         Radio::make('status')
                             ->label('Status')
                             ->options(fn () => collect(AuthStatusCast::cases())->mapWithKeys(
@@ -73,7 +77,7 @@ class ViewUser extends ViewRecord
 
 
 
-                Actions\Action::make('updateType')
+                Action::make('updateType')
                     ->label('Change Type')
                     ->icon('heroicon-o-sparkles')
                     ->color('info') // Can be primary, success, danger, etc.
@@ -81,7 +85,7 @@ class ViewUser extends ViewRecord
                     ->fillForm([
                         'type' => $this->record->type,
                     ])
-                    ->form([
+                    ->schema([
                         Radio::make('type')
                             ->label('Type')
                             ->options(fn () => collect(AuthTypeCast::cases())->mapWithKeys(
@@ -111,15 +115,15 @@ class ViewUser extends ViewRecord
     }
 
 
-    public function infolist(Infolist $infolist):Infolist
+    public function infolist(Schema $schema):Schema
     {
         return parent::infolist($infolist)
-            ->schema([
+            ->components([
 
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Profile')
+                        Tab::make('Profile')
                             ->schema([
                                 Section::make('Basic Information')
                                     ->aside()
@@ -144,7 +148,7 @@ class ViewUser extends ViewRecord
                                         IconEntry::make('mobile_verified_at')->boolean(),
                                     ])
                             ]),
-                        Tabs\Tab::make('Affiliate Information')
+                        Tab::make('Affiliate Information')
                             ->schema([
 
                                 Section::make('Affiliate Information')
@@ -156,7 +160,7 @@ class ViewUser extends ViewRecord
                                             ->columnSpanFull()
                                             ->columnSpanFull(),
 
-                                        Split::make([
+                                        Flex::make([
                                             TextEntry::make('downline')
                                                 ->label('Total Members :')
                                                 ->formatStateUsing(fn() => $this->record->descendants()->count())
@@ -194,7 +198,7 @@ class ViewUser extends ViewRecord
 
                                     ])
                             ]),
-                        Tabs\Tab::make('KYC INFO')
+                        Tab::make('KYC INFO')
                             ->schema([
                                 Section::make('Aadhaar Information')
                                     ->relationship('kyc')
@@ -248,7 +252,7 @@ class ViewUser extends ViewRecord
                             ]),
 
 
-                        Tabs\Tab::make('Address')
+                        Tab::make('Address')
                             ->schema([
                                 Section::make('Home Address Information')
                                     ->aside()

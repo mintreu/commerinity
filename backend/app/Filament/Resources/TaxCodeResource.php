@@ -2,11 +2,23 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\TaxCodeResource\Pages\ListTaxCodes;
+use App\Filament\Resources\TaxCodeResource\Pages\CreateTaxCode;
+use App\Filament\Resources\TaxCodeResource\Pages\ViewTaxCode;
+use App\Filament\Resources\TaxCodeResource\Pages\EditTaxCode;
 use App\Filament\Resources\TaxCodeResource\Pages;
 use App\Filament\Resources\TaxCodeResource\RelationManagers;
 use App\Models\TaxCode;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,36 +27,36 @@ class TaxCodeResource extends Resource
 {
     protected static ?string $model = TaxCode::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('code')
+        return $schema
+            ->components([
+                TextInput::make('code')
                     ->required()
                     ->maxLength(10),
-                Forms\Components\TextInput::make('type')
+                TextInput::make('type')
                     ->required(),
-                Forms\Components\TextInput::make('description')
+                TextInput::make('description')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('cgst_rate')
+                TextInput::make('cgst_rate')
                     ->required()
                     ->numeric()
                     ->default(0.00),
-                Forms\Components\TextInput::make('sgst_rate')
+                TextInput::make('sgst_rate')
                     ->required()
                     ->numeric()
                     ->default(0.00),
-                Forms\Components\TextInput::make('igst_rate')
+                TextInput::make('igst_rate')
                     ->required()
                     ->numeric()
                     ->default(0.00),
-                Forms\Components\TextInput::make('cess_rate')
+                TextInput::make('cess_rate')
                     ->required()
                     ->numeric()
                     ->default(0.00),
-                Forms\Components\Toggle::make('is_active')
+                Toggle::make('is_active')
                     ->required(),
             ]);
     }
@@ -53,30 +65,30 @@ class TaxCodeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')
+                TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('type'),
+                TextColumn::make('description')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('cgst_rate')
+                TextColumn::make('cgst_rate')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sgst_rate')
+                TextColumn::make('sgst_rate')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('igst_rate')
+                TextColumn::make('igst_rate')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('cess_rate')
+                TextColumn::make('cess_rate')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('is_active')
+                IconColumn::make('is_active')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -84,13 +96,13 @@ class TaxCodeResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -105,10 +117,10 @@ class TaxCodeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTaxCodes::route('/'),
-            'create' => Pages\CreateTaxCode::route('/create'),
-            'view' => Pages\ViewTaxCode::route('/{record}'),
-            'edit' => Pages\EditTaxCode::route('/{record}/edit'),
+            'index' => ListTaxCodes::route('/'),
+            'create' => CreateTaxCode::route('/create'),
+            'view' => ViewTaxCode::route('/{record}'),
+            'edit' => EditTaxCode::route('/{record}/edit'),
         ];
     }
 }

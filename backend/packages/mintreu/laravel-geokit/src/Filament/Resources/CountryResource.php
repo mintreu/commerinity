@@ -2,9 +2,26 @@
 
 namespace Mintreu\LaravelGeokit\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\ListCountries;
+use Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\CreateCountry;
+use Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\ViewCountry;
+use Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\EditCountry;
 use Mintreu\LaravelGeokit\Filament\Resources\CountryResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,56 +31,56 @@ class CountryResource extends Resource
 {
     protected static ?string $model = Country::class;
 
-    protected static ?string $navigationGroup = 'Localization';
+    protected static string | \UnitEnum | null $navigationGroup = 'Localization';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('iso_code_2')
+                TextInput::make('iso_code_2')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('iso_code_3')
+                TextInput::make('iso_code_3')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('isd_code')
+                TextInput::make('isd_code')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('address_format')
+                TextInput::make('address_format')
                     ->maxLength(255),
-                Forms\Components\Toggle::make('postcode_required')
+                Toggle::make('postcode_required')
                     ->required(),
-                Forms\Components\TextInput::make('locale')
+                TextInput::make('locale')
                     ->required()
                     ->maxLength(255)
                     ->default('en'),
-                Forms\Components\TextInput::make('region')
+                TextInput::make('region')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('timezone')
+                TextInput::make('timezone')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('timezone_diff')
+                TextInput::make('timezone_diff')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('currency')
+                TextInput::make('currency')
                     ->required()
                     ->maxLength(255)
                     ->default('USD'),
-                Forms\Components\TextInput::make('flag')
+                TextInput::make('flag')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('exchange_rate'),
-                Forms\Components\TextInput::make('multiplier')
+                TextInput::make('exchange_rate'),
+                TextInput::make('multiplier')
                     ->required()
                     ->numeric()
                     ->default(1),
-                Forms\Components\Toggle::make('is_active')
+                Toggle::make('is_active')
                     ->required(),
             ]);
     }
@@ -76,9 +93,9 @@ class CountryResource extends Resource
                 'md' => 2
             ])
             ->columns([
-               Tables\Columns\Layout\Stack::make([
+               Stack::make([
 
-                   Tables\Columns\ImageColumn::make('flag')
+                   ImageColumn::make('flag')
 //                            ->width('200px')
 //                            ->height('150px')
                        ->columnSpanFull()
@@ -86,41 +103,41 @@ class CountryResource extends Resource
                        ->size('70%')
                        ->square(),
 
-                   Tables\Columns\Layout\Grid::make(2)
+                   Grid::make(2)
                        ->schema([
-                           Tables\Columns\Layout\Grid::make(3)
+                           Grid::make(3)
                                ->schema([
-                                   Tables\Columns\TextColumn::make('name')
-                                       ->size(Tables\Columns\TextColumn\TextColumnSize::Large)
+                                   TextColumn::make('name')
+                                       ->size(TextSize::Large)
                                        ->prefix(__('Country:- '))
                                        ->grow()
                                        ->searchable(),
-                                   Tables\Columns\IconColumn::make('is_active')
+                                   IconColumn::make('is_active')
                                        ->boolean(),
                                ])
                                ->extraAttributes(['class' => 'mx-auto mt-3'])
                                 ->columnSpanFull(),
 
-                           Tables\Columns\TextColumn::make('iso_code_2')
+                           TextColumn::make('iso_code_2')
                                ->badge()
                                ->description(__('ISO Code 2'))
                                ->alignCenter()
                                ->searchable(),
-                           Tables\Columns\TextColumn::make('iso_code_3')
+                           TextColumn::make('iso_code_3')
                                ->badge()
                                ->alignCenter()
                                ->description(__('ISO Code 3'))
                                ->searchable(),
 
 
-                           Tables\Columns\Layout\Split::make([
-                               Tables\Columns\TextColumn::make('created_at')
+                           Split::make([
+                               TextColumn::make('created_at')
                                    ->dateTime()
                                    ->alignCenter()
                                    ->description('Create At')
                                    ->sortable()
                                    ->toggleable(isToggledHiddenByDefault: true),
-                               Tables\Columns\TextColumn::make('updated_at')
+                               TextColumn::make('updated_at')
                                    ->dateTime()
                                    ->alignCenter()
                                    ->description('Update At')
@@ -137,13 +154,13 @@ class CountryResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -158,10 +175,10 @@ class CountryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\ListCountries::route('/'),
-            'create' => \Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\CreateCountry::route('/create'),
-            'view' => \Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\ViewCountry::route('/{record}'),
-            'edit' => \Mintreu\LaravelGeokit\Filament\Resources\CountryResource\Pages\EditCountry::route('/{record}/edit'),
+            'index' => ListCountries::route('/'),
+            'create' => CreateCountry::route('/create'),
+            'view' => ViewCountry::route('/{record}'),
+            'edit' => EditCountry::route('/{record}/edit'),
         ];
     }
 }

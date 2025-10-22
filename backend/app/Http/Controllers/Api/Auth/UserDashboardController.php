@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Http\JsonResponse;
+use App\Models\User;
 use App\Casts\OrderStatusCast;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,7 +16,7 @@ class UserDashboardController extends Controller
      * Get user dashboard statistics
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getAccountDashboard(Request $request)
     {
@@ -48,7 +50,7 @@ class UserDashboardController extends Controller
     /**
      * Calculate all dashboard statistics
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @param string|null $dateFrom
      * @param string|null $dateTo
      * @return array
@@ -133,7 +135,7 @@ class UserDashboardController extends Controller
     /**
      * Get order statistics with a single optimized query
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @param string|null $dateFrom
      * @param string|null $dateTo
      * @return array
@@ -165,7 +167,7 @@ class UserDashboardController extends Controller
     /**
      * Calculate total earnings for user
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @param string|null $dateFrom
      * @param string|null $dateTo
      * @return float
@@ -187,7 +189,7 @@ class UserDashboardController extends Controller
     /**
      * Calculate direct earnings (self-generated)
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @param string|null $dateFrom
      * @param string|null $dateTo
      * @return float
@@ -210,7 +212,7 @@ class UserDashboardController extends Controller
     /**
      * Calculate team earnings (from downline)
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @param string|null $dateFrom
      * @param string|null $dateTo
      * @return float
@@ -233,7 +235,7 @@ class UserDashboardController extends Controller
     /**
      * Get total referrals count
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @param string|null $dateFrom
      * @param string|null $dateTo
      * @return int
@@ -328,7 +330,7 @@ class UserDashboardController extends Controller
      * Clear dashboard cache for user
      * Call this when user data changes (orders, earnings, etc.)
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return void
      */
     public function clearDashboardCache($user): void

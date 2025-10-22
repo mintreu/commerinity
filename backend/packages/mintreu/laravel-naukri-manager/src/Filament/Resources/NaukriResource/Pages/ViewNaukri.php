@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource;
@@ -13,7 +14,7 @@ class ViewNaukri extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

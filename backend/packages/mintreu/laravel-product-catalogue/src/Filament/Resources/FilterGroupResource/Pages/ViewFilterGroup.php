@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource;
@@ -13,7 +14,7 @@ class ViewFilterGroup extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

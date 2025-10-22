@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Exception;
 use App\Helpers\OtpManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\UserIndexResource;
@@ -48,7 +49,7 @@ class UserAccountController extends Controller
         try {
             $user->update($validated);
             return response()->json(['message' => 'Profile updated successfully']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['message' => 'Failed to update profile'], 500);
         }
     }
@@ -151,7 +152,7 @@ class UserAccountController extends Controller
                 'success' => true,
                 'message' => 'Data export initiated successfully. You will receive an email with your data within 5-10 minutes.',
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'message' => 'Failed to initiate data export. Please try again.'
             ], 500);
@@ -207,7 +208,7 @@ class UserAccountController extends Controller
                 'message' => 'Your account has been permanently deleted.',
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete account. Please try again.'
             ], 500);

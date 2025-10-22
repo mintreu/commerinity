@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelTransaction\Services\WalletService;
 
+use Throwable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Carbon;
@@ -57,7 +58,7 @@ class WalletService
             $dob = $owner->dob instanceof Carbon
                 ? $owner->dob
                 : (!empty($owner->dob) ? Carbon::parse($owner->dob) : null);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $dob = null;
         }
 
@@ -118,7 +119,7 @@ class WalletService
 
 
     // Verify Transactions
-    public function validate(\Mintreu\LaravelTransaction\Models\Transaction $transaction)
+    public function validate(Transaction $transaction)
     {
         $currentBalance = LaravelMoney::make($this->wallet->balance);
 

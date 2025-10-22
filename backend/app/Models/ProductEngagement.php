@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ProductEngagementFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ProductEngagement extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductEngagementFactory> */
+    /** @use HasFactory<ProductEngagementFactory> */
     use HasFactory;
 
     protected $fillable = [

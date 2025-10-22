@@ -2,11 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\IncentiveResource\Pages\ListIncentives;
+use App\Filament\Resources\IncentiveResource\Pages\CreateIncentive;
+use App\Filament\Resources\IncentiveResource\Pages\ViewIncentive;
+use App\Filament\Resources\IncentiveResource\Pages\EditIncentive;
 use App\Filament\Resources\IncentiveResource\Pages;
 use App\Filament\Resources\IncentiveResource\RelationManagers;
 use App\Models\Incentive;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,33 +25,33 @@ class IncentiveResource extends Resource
 {
     protected static ?string $model = Incentive::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Incentive & Commission';
-    public static function form(Form $form): Form
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Incentive & Commission';
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('transaction_id')
+        return $schema
+            ->components([
+                TextInput::make('transaction_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('incentivable_type')
+                TextInput::make('incentivable_type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('incentivable_id')
+                TextInput::make('incentivable_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('sourceable_type')
+                TextInput::make('sourceable_type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('sourceable_id')
+                TextInput::make('sourceable_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('type')
+                TextInput::make('type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('depth')
+                TextInput::make('depth')
                     ->numeric(),
-                Forms\Components\TextInput::make('metadata'),
+                TextInput::make('metadata'),
             ]);
     }
 
@@ -49,29 +59,29 @@ class IncentiveResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('transaction_id')
+                TextColumn::make('transaction_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('incentivable_type')
+                TextColumn::make('incentivable_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('incentivable_id')
+                TextColumn::make('incentivable_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sourceable_type')
+                TextColumn::make('sourceable_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('sourceable_id')
+                TextColumn::make('sourceable_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('depth')
+                TextColumn::make('depth')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -79,13 +89,13 @@ class IncentiveResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -100,10 +110,10 @@ class IncentiveResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListIncentives::route('/'),
-            'create' => Pages\CreateIncentive::route('/create'),
-            'view' => Pages\ViewIncentive::route('/{record}'),
-            'edit' => Pages\EditIncentive::route('/{record}/edit'),
+            'index' => ListIncentives::route('/'),
+            'create' => CreateIncentive::route('/create'),
+            'view' => ViewIncentive::route('/{record}'),
+            'edit' => EditIncentive::route('/{record}/edit'),
         ];
     }
 }

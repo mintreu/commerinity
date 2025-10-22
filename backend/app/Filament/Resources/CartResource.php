@@ -2,11 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\CartResource\Pages\ListCarts;
+use App\Filament\Resources\CartResource\Pages\CreateCart;
+use App\Filament\Resources\CartResource\Pages\ViewCart;
+use App\Filament\Resources\CartResource\Pages\EditCart;
 use App\Filament\Resources\CartResource\Pages;
 use App\Filament\Resources\CartResource\RelationManagers;
 use App\Models\Cart;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,31 +28,31 @@ class CartResource extends Resource
 {
     protected static ?string $model = Cart::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Shop';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('quantity')
+        return $schema
+            ->components([
+                TextInput::make('quantity')
                     ->required()
                     ->numeric()
                     ->default(1),
-                Forms\Components\TextInput::make('discount')
+                TextInput::make('discount')
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('cartable_type')
+                TextInput::make('cartable_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('cartable_id')
+                TextInput::make('cartable_id')
                     ->numeric(),
-                Forms\Components\TextInput::make('ownerable_type')
+                TextInput::make('ownerable_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('ownerable_id')
+                TextInput::make('ownerable_id')
                     ->numeric(),
-                Forms\Components\TextInput::make('guest_id')
+                TextInput::make('guest_id')
                     ->maxLength(255),
-                Forms\Components\Toggle::make('is_guest')
+                Toggle::make('is_guest')
                     ->required(),
             ]);
     }
@@ -49,28 +62,28 @@ class CartResource extends Resource
         return $table
             ->columns([
 
-                Tables\Columns\SpatieMediaLibraryImageColumn::make('cartable.media')
+                SpatieMediaLibraryImageColumn::make('cartable.media')
                     ->collection('displayImage')
                     ->label('Thumbnail')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('cartable.name')
+                TextColumn::make('cartable.name')
                     ->label('Product Name')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('quantity')
+                TextColumn::make('quantity')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discount')
+                TextColumn::make('discount')
                     ->numeric()
                     ->sortable(),
 
-                Tables\Columns\IconColumn::make('is_guest')
+                IconColumn::make('is_guest')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -78,13 +91,13 @@ class CartResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -99,10 +112,10 @@ class CartResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCarts::route('/'),
-            'create' => Pages\CreateCart::route('/create'),
-            'view' => Pages\ViewCart::route('/{record}'),
-            'edit' => Pages\EditCart::route('/{record}/edit'),
+            'index' => ListCarts::route('/'),
+            'create' => CreateCart::route('/create'),
+            'view' => ViewCart::route('/{record}'),
+            'edit' => EditCart::route('/{record}/edit'),
         ];
     }
 }

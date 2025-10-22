@@ -2,10 +2,27 @@
 
 namespace Mintreu\LaravelNaukriManager\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Radio;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\ListNaukriApplications;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\CreateNaukriApplication;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\ViewNaukriApplication;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\EditNaukriApplication;
 use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages;
 use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,51 +32,51 @@ class NaukriApplicationResource extends Resource
 {
     protected static ?string $model = NaukriApplication::class;
     protected static ?string $recordRouteKeyName = 'uuid';
-    protected static ?string $navigationGroup = 'Recruitment';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Recruitment';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('uuid')
+        return $schema
+            ->components([
+                TextInput::make('uuid')
                     ->label('UUID')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('user_id')
+                TextInput::make('user_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('guardian_name')
+                TextInput::make('guardian_name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Toggle::make('is_paid')
+                Toggle::make('is_paid')
                     ->required(),
-                Forms\Components\TextInput::make('educations'),
-                Forms\Components\TextInput::make('skills'),
-                Forms\Components\TextInput::make('experiences'),
-                Forms\Components\TextInput::make('reference_name')
+                TextInput::make('educations'),
+                TextInput::make('skills'),
+                TextInput::make('experiences'),
+                TextInput::make('reference_name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('reference_contact')
+                TextInput::make('reference_contact')
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('submitted_at'),
-                Forms\Components\Select::make('naukri_id')
+                DateTimePicker::make('submitted_at'),
+                Select::make('naukri_id')
                     ->relationship('naukri', 'name'),
-                Forms\Components\Select::make('address_id')
+                Select::make('address_id')
                     ->relationship('address', 'title'),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('awaiting_payment'),
-                Forms\Components\Textarea::make('status_feedback')
+                Textarea::make('status_feedback')
                     ->columnSpanFull(),
 
 
-                Forms\Components\Section::make('Transaction')
+                Section::make('Transaction')
                     ->relationship('transaction')
                     ->schema([
-                        Forms\Components\TextInput::make('uuid'),
-                        Forms\Components\TextInput::make('amount'),
-                        Forms\Components\Radio::make('verified'),
+                        TextInput::make('uuid'),
+                        TextInput::make('amount'),
+                        Radio::make('verified'),
                     ])
 
 
@@ -70,36 +87,36 @@ class NaukriApplicationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
+                TextColumn::make('user_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('guardian_name')
+                TextColumn::make('guardian_name')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_paid')
+                IconColumn::make('is_paid')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('reference_name')
+                TextColumn::make('reference_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('reference_contact')
+                TextColumn::make('reference_contact')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('submitted_at')
+                TextColumn::make('submitted_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('naukri.name')
+                TextColumn::make('naukri.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('address.title')
+                TextColumn::make('address.title')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -107,13 +124,13 @@ class NaukriApplicationResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -128,10 +145,10 @@ class NaukriApplicationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\ListNaukriApplications::route('/'),
-            'create' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\CreateNaukriApplication::route('/create'),
-            'view' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\ViewNaukriApplication::route('/{record:uuid}'),
-            'edit' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriApplicationResource\Pages\EditNaukriApplication::route('/{record:uuid}/edit'),
+            'index' => ListNaukriApplications::route('/'),
+            'create' => CreateNaukriApplication::route('/create'),
+            'view' => ViewNaukriApplication::route('/{record:uuid}'),
+            'edit' => EditNaukriApplication::route('/{record:uuid}/edit'),
         ];
     }
 }

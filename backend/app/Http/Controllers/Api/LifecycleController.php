@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Lifecycle\LevelResource;
 use App\Http\Resources\Lifecycle\StageResource;
@@ -24,7 +25,7 @@ class LifecycleController extends Controller
     }
 
 
-    public function getAllStages(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function getAllStages(): AnonymousResourceCollection
     {
         $allAvailableStages = Stage::with('levels')->where('status',true)->get();
         return StageResource::collection($allAvailableStages);

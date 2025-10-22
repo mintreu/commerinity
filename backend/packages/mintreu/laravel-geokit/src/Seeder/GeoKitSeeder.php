@@ -3,6 +3,7 @@
 namespace Mintreu\LaravelGeokit\Seeder;
 
 
+use Throwable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -109,7 +110,7 @@ class GeoKitSeeder extends Seeder
 
             Log::info('Seeding completed successfully', ['country' => $countryAttributes->iso_code_2]);
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Seeding failed', [
                 'country' => $countryData->iso_code_2 ?? 'unknown',
                 'message' => $e->getMessage(),

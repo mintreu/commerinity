@@ -2,8 +2,10 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
+use Filament\Actions\CreateAction;
+use Filament\Schemas\Schema;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,7 +21,7 @@ class ListCategories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
@@ -27,9 +29,9 @@ class ListCategories extends ListRecords
     /**
      * Builds the form used by the Filament resource for creating topics.
      */
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema(array_merge(
+        return $schema->components(array_merge(
             self::$resource::getForm(),
             self::$resource::getParentForm(),
         ));
@@ -41,9 +43,9 @@ class ListCategories extends ListRecords
             ->modifyQueryUsing(fn($query) => $query->latest())
             ->columns($this->getAdjacencyTableColumns())
             ->filters($this->getAdjacencyTableFilters())
-            ->actions($this->getAdjacencyTableActions())
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+            ->recordActions($this->getAdjacencyTableActions())
+            ->toolbarActions([
+                DeleteBulkAction::make(),
             ]);
     }
 

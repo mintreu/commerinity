@@ -1,5 +1,8 @@
 <?php
 
+use Mintreu\LaravelProductCatalogue\Models\Product;
+use App\Models\Lifecycle\Level;
+
 return [
 
     /*
@@ -14,7 +17,7 @@ return [
     */
 
     'product' => [
-        'model' => \Mintreu\LaravelProductCatalogue\Models\Product::class,
+        'model' => Product::class,
     ],
 
     /*
@@ -45,7 +48,7 @@ return [
         'status' => true,
 
         'targets' => [
-            \App\Models\Lifecycle\Level::class,
+            Level::class,
         ],
     ],
 
@@ -76,7 +79,7 @@ return [
 
         'targets' => [
             // Add your voucher target models here
-            \App\Models\Lifecycle\Level::class,
+            Level::class,
         ],
     ],
 

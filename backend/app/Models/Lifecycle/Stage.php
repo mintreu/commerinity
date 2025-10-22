@@ -2,6 +2,7 @@
 
 namespace App\Models\Lifecycle;
 
+use Database\Factories\Lifecycle\StageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,7 @@ use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 
 class Stage extends Model
 {
-    /** @use HasFactory<\Database\Factories\Lifecycle\StageFactory> */
+    /** @use HasFactory<StageFactory> */
     use HasFactory;
 
 

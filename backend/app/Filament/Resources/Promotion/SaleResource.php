@@ -2,6 +2,18 @@
 
 namespace App\Filament\Resources\Promotion;
 
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\Utilities\Get;
+use App\Filament\Resources\Promotion\SaleResource\RelationManagers\SaleProductsRelationManager;
+use App\Filament\Resources\Promotion\SaleResource\Pages\ListSales;
+use App\Filament\Resources\Promotion\SaleResource\Pages\CreateSale;
+use App\Filament\Resources\Promotion\SaleResource\Pages\ViewSale;
+use App\Filament\Resources\Promotion\SaleResource\Pages\EditSale;
 use App\Filament\Resources\Promotion\SaleResource\Pages;
 use App\Filament\Resources\Promotion\SaleResource\RelationManagers;
 use Filament\Forms;
@@ -15,8 +27,8 @@ class SaleResource extends Resource
 {
     protected static ?string $model = Sale::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Shop';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
 
 
@@ -27,12 +39,12 @@ class SaleResource extends Resource
     public static function getCommonFormSchema():array
     {
         return [
-            Forms\Components\Section::make('General')
+            Section::make('General')
                 ->aside()
                 ->description('')
                 ->schema([
 
-                    Forms\Components\TextInput::make('name')
+                    TextInput::make('name')
                         ->label(__('Rule Name'))
                         ->placeholder(__('Enter Rule Name'))
                         ->required()
@@ -40,7 +52,7 @@ class SaleResource extends Resource
                         ->hint(__('Max: 250'))
                         ->maxLength(250),
 
-                    Forms\Components\Select::make('targets')
+                    Select::make('targets')
                         ->label('Applicable Groups')
                         ->multiple()
                         ->preload()
@@ -50,30 +62,30 @@ class SaleResource extends Resource
                         ->placeholder(__('Select some groups'))
                         ->helperText('Choose groups for applicable for that groups only'),
 
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->placeholder('Write Briefly About This Rule')
                         ->hint(__('Max: 40,000'))
                         ->columnSpanFull()
                         ->maxLength(40000),
 
-                    Forms\Components\Toggle::make('status')->default(false)->inline(),
+                    Toggle::make('status')->default(false)->inline(),
                 ])->columns(3),
 
 
-            Forms\Components\Section::make('Rule Information')
+            Section::make('Rule Information')
                 ->aside()
                 ->description('')
                 ->schema([
-                    Forms\Components\DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
-                    Forms\Components\DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
-                    Forms\Components\TextInput::make('sort_order')->type('number')->label('Priority')->required()->placeholder('Set Priority'),
+                    DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
+                    DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
+                    TextInput::make('sort_order')->type('number')->label('Priority')->required()->placeholder('Set Priority'),
                 ])->columns(3),
 
-            Forms\Components\Section::make('Discount Information')
+            Section::make('Discount Information')
                 ->aside()
                 ->description('')
                 ->schema([
-                    Forms\Components\Select::make('action_type')
+                    Select::make('action_type')
                         ->options(
                             collect(SaleActionTypeCast::cases())
                                 ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])
@@ -84,10 +96,10 @@ class SaleResource extends Resource
                         ->live()
                         ->label('Discount Type'),
 
-                    Forms\Components\TextInput::make('discount_amount')
+                    TextInput::make('discount_amount')
                         ->label('Discount Value')
                         ->helperText('Enter percentage or if fixed amount, enter in paisa')
-                        ->hint(function (Forms\Get $get, $state) {
+                        ->hint(function (Get $get, $state) {
                             if (! $state) {
                                 return null;
                             }
@@ -112,7 +124,7 @@ class SaleResource extends Resource
 
 
 
-                    Forms\Components\Select::make('end_other_rules')->options([
+                    Select::make('end_other_rules')->options([
                         0 => 'No',
                         1 => 'Yes',
                     ])->required(),
@@ -128,17 +140,17 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\SaleProductsRelationManager::class
+            SaleProductsRelationManager::class
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSales::route('/'),
-            'create' => Pages\CreateSale::route('/create'),
-            'view' => Pages\ViewSale::route('/{record}'),
-            'edit' => Pages\EditSale::route('/{record}/edit'),
+            'index' => ListSales::route('/'),
+            'create' => CreateSale::route('/create'),
+            'view' => ViewSale::route('/{record}'),
+            'edit' => EditSale::route('/{record}/edit'),
         ];
     }
 }

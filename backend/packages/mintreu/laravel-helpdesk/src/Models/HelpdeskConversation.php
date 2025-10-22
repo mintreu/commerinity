@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelHelpdesk\Models;
 
+use Database\Factories\HelpdeskConversationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class HelpdeskConversation extends Model  implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\HelpdeskConversationFactory> */
+    /** @use HasFactory<HelpdeskConversationFactory> */
     use HasFactory,InteractsWithMedia;
 
 

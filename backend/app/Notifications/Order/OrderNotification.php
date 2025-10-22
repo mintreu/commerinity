@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Order;
 
+use Filament\Actions\Action;
 use App\Casts\OrderStatusCast;
 use App\Models\Order\Order;
 use Filament\Facades\Filament;
@@ -76,7 +77,7 @@ class OrderNotification extends Notification implements ShouldQueue
             ->icon($this->order->status->getIcon())
             ->color($this->order->status->getColor())
             ->actions([
-                \Filament\Notifications\Actions\Action::make('view_order')
+                Action::make('view_order')
                     ->label('View Order')
                     ->url(fn () => route('filament.resources.orders.view', ['record' => $this->order->uuid])),
             ])

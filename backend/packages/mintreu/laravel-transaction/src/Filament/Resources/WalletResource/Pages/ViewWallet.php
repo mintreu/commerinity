@@ -2,14 +2,20 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Grid;
+use Closure;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\TextSize;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Hash;
@@ -29,19 +35,19 @@ class ViewWallet extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
 
-            Actions\ActionGroup::make([
-                Actions\Action::make('change_pin')
+            ActionGroup::make([
+                Action::make('change_pin')
                     ->label('Change PIN')
                     ->icon('heroicon-o-key')
                     ->color('warning'),
 
-                Actions\Action::make('add_money')
+                Action::make('add_money')
                     ->label('Add Money')
                     ->icon('heroicon-o-plus-circle')
                     ->color('success')
-                    ->form([
+                    ->schema([
                         TextInput::make('amount')
                             //->minValue(99)
                             ->type('decimal')
@@ -65,16 +71,16 @@ class ViewWallet extends ViewRecord
 
                     }),
 
-                Actions\Action::make('withdraw_money')
+                Action::make('withdraw_money')
                     ->label('Withdraw Money')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('danger'),
 
-                Actions\Action::make('send_money')
+                Action::make('send_money')
                     ->label('Send Money')
                     ->icon('heroicon-o-paper-airplane')
-                    ->form([
-                        \Filament\Forms\Components\Grid::make(2)
+                    ->schema([
+                        Grid::make(2)
                             ->schema([
 
                                 TextInput::make('receiver_wallet_uuid')
@@ -109,7 +115,7 @@ class ViewWallet extends ViewRecord
                                     ->revealable()
                                     ->maxLength(6)
                                     ->rule(function () {
-                                        return function (string $attribute, $value, \Closure $fail) {
+                                        return function (string $attribute, $value, Closure $fail) {
                                             // Compare hashed pin with record pin
                                             if (! Hash::check($value, $this->record->pin)) {
                                                 $fail(__('The provided PIN is incorrect.'));
@@ -150,7 +156,7 @@ class ViewWallet extends ViewRecord
                     })
                     ->color('info'),
 
-                Actions\Action::make('manage_beneficiary')
+                Action::make('manage_beneficiary')
                     ->label('Manage Bank Accounts')
                     ->icon('heroicon-o-banknotes')
                     ->color('primary'),
@@ -175,10 +181,10 @@ class ViewWallet extends ViewRecord
     }
 
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return parent::infolist($infolist)
-            ->schema([
+            ->components([
 
                 Section::make('General')
                     ->aside()
@@ -190,10 +196,10 @@ class ViewWallet extends ViewRecord
                             ->color('primary')
                             ->copyable()
                             ->copyableState(fn($state) => Str::replace('WAL-','',$state))
-                            ->size(TextEntry\TextEntrySize::Large),
+                            ->size(TextSize::Large),
 
                         TextEntry::make('balance')
-                            ->size(TextEntry\TextEntrySize::Large)
+                            ->size(TextSize::Large)
                             ->color('success')
                             ->money(LaravelMoney::defaultCurrency(),100),
 

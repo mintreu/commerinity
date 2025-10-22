@@ -2,6 +2,13 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers;
 
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,7 +32,7 @@ class VariantsRelationManager  extends RelationManager
             $filters = $parentProduct->filterGroup->filters;
 
             foreach ($filters as $filter) {
-                $dynamicColumns[] = Tables\Columns\TextColumn::make("filterOptions.{$filter->name}")
+                $dynamicColumns[] = TextColumn::make("filterOptions.{$filter->name}")
                     ->label($filter->name)
                     ->searchable()
                     ->sortable()
@@ -50,13 +57,13 @@ class VariantsRelationManager  extends RelationManager
 
         return $table
             ->columns(array_merge([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sku')
+                TextColumn::make('sku')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ], $dynamicColumns))
@@ -64,18 +71,18 @@ class VariantsRelationManager  extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->url(fn (Model $record) => ProductResource::getUrl('view', ['record' => $record])),
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->url(fn (Model $record) => ProductResource::getUrl('edit', ['record' => $record])),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

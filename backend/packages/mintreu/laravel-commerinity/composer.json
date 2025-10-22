@@ -27,7 +27,7 @@
         "mintreu/laravel-geokit": "dev-main",
         "mintreu/laravel-product-catalogue": "dev-main",
         "mintreu/laravel-transaction": "dev-main",
-        "filament/filament": "^3.0",
+        "filament/filament": "^3.0||^4.0",
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {

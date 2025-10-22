@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\Order\OrderResource\Pages;
 
+use App\Filament\Resources\Order\OrderResource\Schema\HasOrderCreationFormSchema;
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Utilities\Get;
 use App\Filament\Resources\Order\OrderResource;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Collection;
 use Mintreu\LaravelIntegration\Casts\IntegrationTypeCast;
@@ -17,7 +21,7 @@ use App\Models\User;
 
 class CreateOrder extends CreateRecord
 {
-    use OrderResource\Schema\HasOrderCreationFormSchema, CreateRecord\Concerns\HasWizard;
+    use HasOrderCreationFormSchema, HasWizard;
 
     protected static string $resource = OrderResource::class;
     protected ?Collection $orderAbleProducts = null;
@@ -27,25 +31,25 @@ class CreateOrder extends CreateRecord
         parent::mount();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema([
-                \Filament\Forms\Components\Wizard::make([
-                    \Filament\Forms\Components\Wizard\Step::make('Customer')
+        return parent::form($schema)
+            ->components([
+                Wizard::make([
+                    Step::make('Customer')
                         ->columns()
                         ->schema($this->chooseCustomer())
                         ->afterValidation(fn(Get $get, callable $set) => $this->afterCustomerSet($get, $set)),
 
-                    \Filament\Forms\Components\Wizard\Step::make('Order')
+                    Step::make('Order')
                         ->columns()
                         ->schema(fn(Get $get) => $this->chooseProducts($get)),
 
-                    \Filament\Forms\Components\Wizard\Step::make('Delivery')
+                    Step::make('Delivery')
                         ->columns()
                         ->schema($this->getDeliveryFormSchema()),
 
-                    \Filament\Forms\Components\Wizard\Step::make('Billing')
+                    Step::make('Billing')
                         ->schema([
                             // Future: billing step schema
                         ]),

@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\CashFree\Support;
 
+use InvalidArgumentException;
 use Mintreu\LaravelIntegration\Support\ProviderOrder;
 use Throwable;
 use function PHPUnit\Framework\throwException;
@@ -38,7 +39,7 @@ class OrderWrapper
     private function orderSchema(): array
     {
         if (is_null($this->orderData->getCustomerId()) || is_null($this->orderData->getCustomerMobile())) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'LaravelIntegration (CashFree):: Customer uuid and mobile info missing'
             );
         }

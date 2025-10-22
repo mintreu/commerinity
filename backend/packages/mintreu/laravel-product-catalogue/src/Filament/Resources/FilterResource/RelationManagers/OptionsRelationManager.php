@@ -2,8 +2,15 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,14 +21,14 @@ class OptionsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'value';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('value')
+        return $schema
+            ->components([
+                TextInput::make('value')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('swatch_value')
+                TextInput::make('swatch_value')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -31,22 +38,22 @@ class OptionsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('value'),
-                Tables\Columns\TextColumn::make('swatch_value'),
+                TextColumn::make('value'),
+                TextColumn::make('swatch_value'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

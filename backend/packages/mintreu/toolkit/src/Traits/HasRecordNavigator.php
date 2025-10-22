@@ -95,7 +95,7 @@ trait HasRecordNavigator
      * @param string $column
      * @param Closure|null $modifyQuery
      * @param bool $returnQuery
-     * @return Model|\Illuminate\Database\Eloquent\Builder|null
+     * @return Model|Builder|null
      */
     public static function firstRecord(string $column = 'id', ?Closure $modifyQuery = null, bool $returnQuery = false)
     {
@@ -129,7 +129,7 @@ trait HasRecordNavigator
      * @param string $column
      * @param Closure|null $modifyQuery
      * @param bool $returnQuery
-     * @return Model|\Illuminate\Database\Eloquent\Builder|null
+     * @return Model|Builder|null
      */
     public static function lastRecord(string $column = 'id', ?Closure $modifyQuery = null, bool $returnQuery = false)
     {

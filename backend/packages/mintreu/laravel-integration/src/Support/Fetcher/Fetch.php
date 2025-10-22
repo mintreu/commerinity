@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelIntegration\Support\Fetcher;
 
+use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
@@ -23,15 +24,15 @@ class Fetch
 
 
 
-    public static function get(string $url,array|\Closure $param)
+    public static function get(string $url,array|Closure $param)
     {
     }
 
-    public static function post(string $url,\Closure $param,array $payload = [])
+    public static function post(string $url,Closure $param,array $payload = [])
     {
     }
 
-    public static function delete(string $url,\Closure $param,array $payload = [])
+    public static function delete(string $url,Closure $param,array $payload = [])
     {
     }
 

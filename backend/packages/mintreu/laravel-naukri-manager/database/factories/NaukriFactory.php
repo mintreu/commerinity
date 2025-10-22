@@ -9,7 +9,7 @@ use Mintreu\LaravelNaukriManager\Models\Naukri;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Mintreu\LaravelNaukriManager\Models\Naukri>
+ * @extends Factory<Naukri>
  */
 class NaukriFactory extends Factory
 {

@@ -2,10 +2,24 @@
 
 namespace Mintreu\LaravelNaukriManager\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\ListNaukris;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\CreateNaukri;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\ViewNaukri;
+use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\EditNaukri;
 use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages;
 use Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,44 +29,44 @@ class NaukriResource extends Resource
 {
     protected static ?string $model = Naukri::class;
     protected static ?string $recordRouteKeyName = 'url';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Recruitment';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Recruitment';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('url')
+                TextInput::make('url')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('role')
+                TextInput::make('role')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('location')
+                TextInput::make('location')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('employment_type')
+                TextInput::make('employment_type')
                     ->required()
                     ->maxLength(255)
                     ->default('internship'),
-                Forms\Components\TextInput::make('vacancy')
+                TextInput::make('vacancy')
                     ->required()
                     ->numeric()
                     ->default(1),
-                Forms\Components\DatePicker::make('open_date'),
-                Forms\Components\DatePicker::make('close_date'),
-                Forms\Components\Toggle::make('is_payable')
+                DatePicker::make('open_date'),
+                DatePicker::make('close_date'),
+                Toggle::make('is_payable')
                     ->required(),
-                Forms\Components\TextInput::make('fees')
+                TextInput::make('fees')
                     ->numeric(),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('published'),
-                Forms\Components\Textarea::make('status_feedback')
+                Textarea::make('status_feedback')
                     ->columnSpanFull(),
             ]);
     }
@@ -61,37 +75,37 @@ class NaukriResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('url')
+                TextColumn::make('url')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('role')
+                TextColumn::make('role')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('location')
+                TextColumn::make('location')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('employment_type')
+                TextColumn::make('employment_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('vacancy')
+                TextColumn::make('vacancy')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('open_date')
+                TextColumn::make('open_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('close_date')
+                TextColumn::make('close_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('is_payable')
+                IconColumn::make('is_payable')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('fees')
+                TextColumn::make('fees')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -99,13 +113,13 @@ class NaukriResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -120,10 +134,10 @@ class NaukriResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\ListNaukris::route('/'),
-            'create' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\CreateNaukri::route('/create'),
-            'view' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\ViewNaukri::route('/{record:url}'),
-            'edit' => \Mintreu\LaravelNaukriManager\Filament\Resources\NaukriResource\Pages\EditNaukri::route('/{record:url}/edit'),
+            'index' => ListNaukris::route('/'),
+            'create' => CreateNaukri::route('/create'),
+            'view' => ViewNaukri::route('/{record:url}'),
+            'edit' => EditNaukri::route('/{record:url}/edit'),
         ];
     }
 }

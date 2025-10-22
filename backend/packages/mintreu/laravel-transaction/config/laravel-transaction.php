@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\User;
+use App\Models\Admin;
+use App\Models\Distributor;
+use Mintreu\LaravelTransaction\Models\Wallet;
+
 /*
 |--------------------------------------------------------------------------
 | Laravel Transaction Package Configuration
@@ -11,14 +16,13 @@
 | work in your application.
 |
 */
-
 return [
 
 
     'allowed_user_types' => [
-        \App\Models\User::class => 'User (Member)',
-        \App\Models\Admin::class => 'Admin',
-        \App\Models\Distributor::class => 'Distributor'
+        User::class => 'User (Member)',
+        Admin::class => 'Admin',
+        Distributor::class => 'Distributor'
     ],
 
 
@@ -97,7 +101,7 @@ return [
         'status' => true,
 
         // Wallet model class to be used (default: package Wallet model)
-        'model'  => Mintreu\LaravelTransaction\Models\Wallet::class,
+        'model'  => Wallet::class,
 
         // Database table name for the wallet model
         'table'  => 'wallets',

@@ -3,14 +3,22 @@
 namespace Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages;
 
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\TextSize;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -27,8 +35,8 @@ class ManageTransactions extends ManageRelatedRecords
 
     protected static string $relationship = 'transactions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-square-3-stack-3d';
-    protected static ?string $activeNavigationIcon = 'heroicon-m-square-3-stack-3d';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-square-3-stack-3d';
+    protected static string | \BackedEnum | null $activeNavigationIcon = 'heroicon-m-square-3-stack-3d';
 
     public static function getNavigationLabel(): string
     {
@@ -47,17 +55,17 @@ class ManageTransactions extends ManageRelatedRecords
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
 
-                Forms\Components\TextInput::make('amount')
+                TextInput::make('amount')
                     ->columnSpanFull()
                     ->required(),
 
-                Forms\Components\ToggleButtons::make('type')
+                ToggleButtons::make('type')
                     ->required()
                     ->inlineLabel()
                     ->inline()
@@ -66,7 +74,7 @@ class ManageTransactions extends ManageRelatedRecords
                         array_map(fn($type) => $type->getLabel(), TransactionTypeCast::cases())
                     )),
 
-                Forms\Components\Textarea::make('description')->maxLength(1000)->columnSpanFull(),
+                Textarea::make('description')->maxLength(1000)->columnSpanFull(),
 
             ]);
     }
@@ -95,13 +103,13 @@ class ManageTransactions extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('type')
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')->label(__('Receipt')),
-                Tables\Columns\TextColumn::make('amount')->money(LaravelMoney::defaultCurrency(),100),
-                Tables\Columns\TextColumn::make('type')->badge(),
-                Tables\Columns\TextColumn::make('status')->badge(),
-                Tables\Columns\IconColumn::make('verified')->boolean()->default(false),
-                Tables\Columns\TextColumn::make('integration.name')->badge(),
-                Tables\Columns\TextColumn::make('updated_at')->dateTime('md/m/y H:i'),
+                TextColumn::make('uuid')->label(__('Receipt')),
+                TextColumn::make('amount')->money(LaravelMoney::defaultCurrency(),100),
+                TextColumn::make('type')->badge(),
+                TextColumn::make('status')->badge(),
+                IconColumn::make('verified')->boolean()->default(false),
+                TextColumn::make('integration.name')->badge(),
+                TextColumn::make('updated_at')->dateTime('md/m/y H:i'),
             ])
             ->filters([
                 //
@@ -110,12 +118,12 @@ class ManageTransactions extends ManageRelatedRecords
 //                Tables\Actions\CreateAction::make(),
 //                Tables\Actions\AssociateAction::make()
             ],[]))
-            ->actions([
-                Tables\Actions\ViewAction::make()->infolist($this->getTransactionInfolistSchema()),
+            ->recordActions([
+                ViewAction::make()->schema($this->getTransactionInfolistSchema()),
 //                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
             ]);
     }
 
@@ -141,7 +149,7 @@ class ManageTransactions extends ManageRelatedRecords
                         'lg' => 3
                     ])->schema([
                         TextEntry::make('receipt')
-                            ->size(TextEntry\TextEntrySize::Large)
+                            ->size(TextSize::Large)
                             ->weight(FontWeight::SemiBold)->color('primary'),
                         TextEntry::make('type')->badge(),
                         TextEntry::make('status')->badge(),

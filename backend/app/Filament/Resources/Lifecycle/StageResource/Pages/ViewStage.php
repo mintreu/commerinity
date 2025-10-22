@@ -3,14 +3,16 @@
 namespace App\Filament\Resources\Lifecycle\StageResource\Pages;
 
 
+use Filament\Actions\EditAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Components\Flex;
 use App\Filament\Resources\Lifecycle\StageResource;
 use Filament\Actions;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\HtmlString;
@@ -24,14 +26,14 @@ class ViewStage extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return parent::infolist($infolist)->schema($this->getStageInfolistAppSchema());
+        return parent::infolist($infolist)->components($this->getStageInfolistAppSchema());
     }
 
 
@@ -63,20 +65,20 @@ class ViewStage extends ViewRecord
                 ->schema([
                     TextEntry::make('name')
                         ->hiddenLabel()
-                        ->size(TextEntry\TextEntrySize::Large)
+                        ->size(TextSize::Large)
                         ->weight(FontWeight::SemiBold)
                         ->color('primary'),
 
-                    Split::make([
+                    Flex::make([
                         TextEntry::make('team_member_limit')
-                            ->size(TextEntry\TextEntrySize::Medium)
+                            ->size(TextSize::Medium)
                             ->icon('heroicon-m-users')
                             ->label('Team Limit'),
 
                         TextEntry::make('joining_bonus')
                             ->label('Bonus')
                             ->money(LaravelMoney::defaultCurrency())
-                            ->size(TextEntry\TextEntrySize::Medium),
+                            ->size(TextSize::Medium),
                     ])
                 ]),
 

@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelGeokit\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +22,7 @@ class State extends Model
 
 
 
-    public function address(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function address(): HasMany
     {
         return $this->hasMany(Address::class,'state_code','code');
     }
@@ -32,7 +33,7 @@ class State extends Model
     }
 
 
-    public function blocks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function blocks(): HasMany
     {
         return $this->hasMany(Block::class,'state_code','code');
     }

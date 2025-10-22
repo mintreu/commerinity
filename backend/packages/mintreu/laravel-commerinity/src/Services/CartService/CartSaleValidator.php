@@ -2,6 +2,8 @@
 
 namespace Mintreu\LaravelCommerinity\Services\CartService;
 
+use InvalidArgumentException;
+use Throwable;
 use App\Models\Cart as CartModel;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -178,9 +180,9 @@ class CartSaleValidator
                 '<=' => $cartValue <= $conditionValue,
                 '==', '=' => $cartValue == $conditionValue,
                 '!=', '<>' => $cartValue != $conditionValue,
-                default => throw new \InvalidArgumentException("Unsupported operator: {$operator}"),
+                default => throw new InvalidArgumentException("Unsupported operator: {$operator}"),
             };
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->cartService->setError("Comparison error: {$e->getMessage()} (cartValue={$cartValue}, operator={$operator}, conditionValue={$conditionValue})");
             return false;
         }

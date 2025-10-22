@@ -2,6 +2,13 @@
 
 namespace App\Filament\Resources\Promotion\SaleResource\Pages;
 
+use Filament\Actions\CreateAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use App\Filament\Resources\Promotion\SaleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -16,7 +23,7 @@ class ListSales extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
@@ -26,24 +33,24 @@ class ListSales extends ListRecords
         return $table
             ->defaultGroup('action_type')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
 //                Tables\Columns\TextColumn::make('description')
 //                    ->searchable(),
-                Tables\Columns\TextColumn::make('starts_from')
+                TextColumn::make('starts_from')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('ends_till')
+                TextColumn::make('ends_till')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discount_amount')
+                TextColumn::make('discount_amount')
                     ->money(LaravelMoney::defaultCurrency(),100)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('action_type')
+                TextColumn::make('action_type')
                     ->badge()
                     ->searchable(),
 
-                Tables\Columns\IconColumn::make('status')
+                IconColumn::make('status')
                     ->boolean(),
 //                Tables\Columns\IconColumn::make('condition_type')
 //                    ->boolean(),
@@ -51,14 +58,14 @@ class ListSales extends ListRecords
 //                    ->boolean(),
 
 
-                Tables\Columns\TextColumn::make('sort_order')
+                TextColumn::make('sort_order')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -66,13 +73,13 @@ class ListSales extends ListRecords
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

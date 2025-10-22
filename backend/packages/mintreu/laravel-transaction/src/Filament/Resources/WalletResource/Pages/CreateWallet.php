@@ -2,13 +2,13 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use App\Models\Admin;
 use App\Models\Distributor;
 use App\Models\User;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +19,9 @@ class CreateWallet extends CreateRecord
 {
     protected static string $resource = WalletResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)->schema([
+        return parent::form($schema)->components([
             Radio::make('walletable_type')
                 ->label('For:')
                 ->options([

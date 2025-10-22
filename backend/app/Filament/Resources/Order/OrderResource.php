@@ -2,11 +2,25 @@
 
 namespace App\Filament\Resources\Order;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Order\OrderResource\Pages\ListOrders;
+use App\Filament\Resources\Order\OrderResource\Pages\CreateOrder;
+use App\Filament\Resources\Order\OrderResource\Pages\ViewOrder;
+use App\Filament\Resources\Order\OrderResource\Pages\EditOrder;
 use App\Filament\Resources\Order\OrderResource\Pages;
 use App\Filament\Resources\Order\OrderResource\RelationManagers;
 use App\Models\Order\Order;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,65 +29,65 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup ='Order Management';
-    public static function form(Form $form): Form
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup ='Order Management';
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('uuid')
+        return $schema
+            ->components([
+                TextInput::make('uuid')
                     ->label('UUID')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('amount')
+                TextInput::make('amount')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('subtotal')
+                TextInput::make('subtotal')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('discount')
+                TextInput::make('discount')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('tax')
+                TextInput::make('tax')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('total')
+                TextInput::make('total')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('quantity')
+                TextInput::make('quantity')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('voucher')
+                TextInput::make('voucher')
                     ->maxLength(255),
-                Forms\Components\Toggle::make('is_cod')
+                Toggle::make('is_cod')
                     ->required(),
-                Forms\Components\TextInput::make('tracking_id')
+                TextInput::make('tracking_id')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('pending'),
-                Forms\Components\Toggle::make('payment_success')
+                Toggle::make('payment_success')
                     ->required(),
-                Forms\Components\DateTimePicker::make('expire_at'),
-                Forms\Components\TextInput::make('customerable_type')
+                DateTimePicker::make('expire_at'),
+                TextInput::make('customerable_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('customerable_id')
+                TextInput::make('customerable_id')
                     ->numeric(),
-                Forms\Components\Toggle::make('has_guest')
+                Toggle::make('has_guest')
                     ->required(),
-                Forms\Components\TextInput::make('customer_name')
+                TextInput::make('customer_name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('customer_email')
+                TextInput::make('customer_email')
                     ->email()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('customer_mobile')
+                TextInput::make('customer_mobile')
                     ->maxLength(255),
-                Forms\Components\Toggle::make('shipping_is_billing')
+                Toggle::make('shipping_is_billing')
                     ->required(),
-                Forms\Components\Select::make('billing_address_id')
+                Select::make('billing_address_id')
                     ->relationship('billingAddress', 'title'),
-                Forms\Components\Select::make('shipping_address_id')
+                Select::make('shipping_address_id')
                     ->relationship('shippingAddress', 'title'),
             ]);
     }
@@ -82,66 +96,66 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('amount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('subtotal')
+                TextColumn::make('subtotal')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discount')
+                TextColumn::make('discount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tax')
+                TextColumn::make('tax')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total')
+                TextColumn::make('total')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('quantity')
+                TextColumn::make('quantity')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('voucher')
+                TextColumn::make('voucher')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_cod')
+                IconColumn::make('is_cod')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('tracking_id')
+                TextColumn::make('tracking_id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('payment_success')
+                IconColumn::make('payment_success')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('expire_at')
+                TextColumn::make('expire_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('customerable_type')
+                TextColumn::make('customerable_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('customerable_id')
+                TextColumn::make('customerable_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('has_guest')
+                IconColumn::make('has_guest')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('customer_name')
+                TextColumn::make('customer_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('customer_email')
+                TextColumn::make('customer_email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('customer_mobile')
+                TextColumn::make('customer_mobile')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('shipping_is_billing')
+                IconColumn::make('shipping_is_billing')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('billingAddress.title')
+                TextColumn::make('billingAddress.title')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('shippingAddress.title')
+                TextColumn::make('shippingAddress.title')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -149,13 +163,13 @@ class OrderResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -170,10 +184,10 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'view' => Pages\ViewOrder::route('/{record}'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'index' => ListOrders::route('/'),
+            'create' => CreateOrder::route('/create'),
+            'view' => ViewOrder::route('/{record}'),
+            'edit' => EditOrder::route('/{record}/edit'),
         ];
     }
 }

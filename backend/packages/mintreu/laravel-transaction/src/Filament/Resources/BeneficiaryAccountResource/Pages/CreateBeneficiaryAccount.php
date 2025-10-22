@@ -2,21 +2,22 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages;
 
-use Filament\Forms\Form;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Schemas\HasBeneficiaryCreationFormSchema;
+use Filament\Schemas\Schema;
 use Filament\Resources\Pages\CreateRecord;
 use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource;
 
 class CreateBeneficiaryAccount extends CreateRecord
 {
-    use BeneficiaryAccountResource\Schemas\HasBeneficiaryCreationFormSchema;
+    use HasBeneficiaryCreationFormSchema;
     protected static string $resource = BeneficiaryAccountResource::class;
 
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema($this->getBeneficiaryCreationFormSchema());
+        return parent::form($schema)
+            ->components($this->getBeneficiaryCreationFormSchema());
     }
 
 

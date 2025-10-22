@@ -2,11 +2,24 @@
 
 namespace Mintreu\LaravelGeokit\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\ListAddresses;
+use Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\CreateAddress;
+use Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\ViewAddress;
+use Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\EditAddress;
 use Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages;
 use Mintreu\LaravelGeokit\Filament\Resources\AddressResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,65 +29,65 @@ class AddressResource extends Resource
 {
     protected static ?string $model = Address::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Localization';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Localization';
     protected static ?string $recordRouteKeyName = 'uuid';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('uuid')
+        return $schema
+            ->components([
+                TextInput::make('uuid')
                     ->label('UUID')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('title')
+                TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('type')
+                TextInput::make('type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('address_1')
+                TextInput::make('address_1')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('city')
+                TextInput::make('city')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('postal_code')
+                TextInput::make('postal_code')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Toggle::make('default')
+                Toggle::make('default')
                     ->required(),
-                Forms\Components\TextInput::make('person_name')
+                TextInput::make('person_name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('person_email')
+                TextInput::make('person_email')
                     ->email()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('person_mobile')
+                TextInput::make('person_mobile')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('alternate_contact')
+                TextInput::make('alternate_contact')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('landmark')
+                TextInput::make('landmark')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('pickup_location')
+                TextInput::make('pickup_location')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('priority')
+                TextInput::make('priority')
                     ->required()
                     ->numeric()
                     ->default(1),
-                Forms\Components\TextInput::make('addressable_type')
+                TextInput::make('addressable_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('addressable_id')
+                TextInput::make('addressable_id')
                     ->numeric(),
-                Forms\Components\TextInput::make('latitude')
+                TextInput::make('latitude')
                     ->numeric(),
-                Forms\Components\TextInput::make('longitude')
+                TextInput::make('longitude')
                     ->numeric(),
-                Forms\Components\Select::make('block_id')
+                Select::make('block_id')
                     ->relationship('block', 'name'),
-                Forms\Components\TextInput::make('state_code')
+                TextInput::make('state_code')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('country_code')
+                TextInput::make('country_code')
                     ->maxLength(255),
             ]);
     }
@@ -83,59 +96,59 @@ class AddressResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('address_1')
+                TextColumn::make('address_1')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('city')
+                TextColumn::make('city')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('postal_code')
+                TextColumn::make('postal_code')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('default')
+                IconColumn::make('default')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('person_name')
+                TextColumn::make('person_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('person_email')
+                TextColumn::make('person_email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('person_mobile')
+                TextColumn::make('person_mobile')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('alternate_contact')
+                TextColumn::make('alternate_contact')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('landmark')
+                TextColumn::make('landmark')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('pickup_location')
+                TextColumn::make('pickup_location')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('priority')
+                TextColumn::make('priority')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('addressable_type')
+                TextColumn::make('addressable_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('addressable_id')
+                TextColumn::make('addressable_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('latitude')
+                TextColumn::make('latitude')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('longitude')
+                TextColumn::make('longitude')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('block.name')
+                TextColumn::make('block.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('state_code')
+                TextColumn::make('state_code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('country_code')
+                TextColumn::make('country_code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -143,13 +156,13 @@ class AddressResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -164,10 +177,10 @@ class AddressResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\ListAddresses::route('/'),
-            'create' => \Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\CreateAddress::route('/create'),
-            'view' => \Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\ViewAddress::route('/{record:uuid}'),
-            'edit' => \Mintreu\LaravelGeokit\Filament\Resources\AddressResource\Pages\EditAddress::route('/{record:uuid}/edit'),
+            'index' => ListAddresses::route('/'),
+            'create' => CreateAddress::route('/create'),
+            'view' => ViewAddress::route('/{record:uuid}'),
+            'edit' => EditAddress::route('/{record:uuid}/edit'),
         ];
     }
 }

@@ -10,7 +10,7 @@ use Flowframe\Trend\TrendValue;
 
 class OrdersChart extends ChartWidget
 {
-    protected static ?string $heading = 'Order Overview';
+    protected ?string $heading = 'Order Overview';
 
 
 

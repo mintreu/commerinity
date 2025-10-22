@@ -2,12 +2,19 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DissociateBulkAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 use App\Casts\AuthStatusCast;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,7 +30,7 @@ class ManageChildrens extends ManageRelatedRecords
 
     protected static string $relationship = 'children';
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
     protected static ?string $breadcrumb = 'Community';
     protected static ?string $title = 'Community';
 
@@ -48,11 +55,11 @@ class ManageChildrens extends ManageRelatedRecords
 //        return   (string) filament()->auth()->user()->descendants()->where('status',AuthStatusCast::SUBSCRIBED)->count() ;
 //    }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -65,10 +72,10 @@ class ManageChildrens extends ManageRelatedRecords
             //->modifyQueryUsing(fn($query) => $query->where('status',AuthStatusCast::SUBSCRIBED))
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('mobile'),
-                Tables\Columns\TextColumn::make('referral_code'),
+                TextColumn::make('name'),
+                TextColumn::make('email'),
+                TextColumn::make('mobile'),
+                TextColumn::make('referral_code'),
             ])
             ->emptyStateHeading('No team members')
             ->emptyStateDescription('Create a team member to get started.')
@@ -79,7 +86,7 @@ class ManageChildrens extends ManageRelatedRecords
 
 
             ])
-            ->actions([
+            ->recordActions([
 //                Impersonate::make()
 //                    ->model(fn(Model $record) => $record)
 //                    ->requiresConfirmation()
@@ -88,14 +95,14 @@ class ManageChildrens extends ManageRelatedRecords
 //                    ->failureRedirectUrl(fn() => self::$resource::getUrl())
 //                    ->redirectTo(fn() => url(PanelGuardCast::APP->getPanelPath())),
 
-                Tables\Actions\ViewAction::make()->url(fn(Model $record) => self::$resource::getUrl('view',['record' => $record->referral_code])),
+                ViewAction::make()->url(fn(Model $record) => self::$resource::getUrl('view',['record' => $record->referral_code])),
 //                Tables\Actions\EditAction::make(),
                 //Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DissociateBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -107,17 +114,17 @@ class ManageChildrens extends ManageRelatedRecords
     {
         return [
             Wizard::make([
-                Wizard\Step::make('Welcome')
+                Step::make('Welcome')
                     ->schema($this->getParentSelectionFormSchema()),
-                Wizard\Step::make('Creation')
+                Step::make('Creation')
                     ->icon('heroicon-s-user-circle')
                     ->columns(3)
                     ->schema($this->getUserCreationFormSchema()),
-                Wizard\Step::make('Address')
+                Step::make('Address')
                     ->icon('heroicon-s-map-pin')
                     ->columns(3)
                     ->schema($this->getAddressAccountFormSchema()),
-                Wizard\Step::make('Finish')
+                Step::make('Finish')
                     ->schema($this->UserCreationFinalPreviewSchema()),
             ])->submitAction(new HtmlString(Blade::render(<<<BLADE
                         <x-filament::button

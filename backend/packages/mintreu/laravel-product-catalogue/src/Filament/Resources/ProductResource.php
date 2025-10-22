@@ -2,6 +2,12 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources;
 
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\VariantsRelationManager;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\TiersRelationManager;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\ListProducts;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\CreateProduct;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\ViewProduct;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\EditProduct;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers;
 use Filament\Forms;
@@ -15,8 +21,8 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
     protected static ?string $recordRouteKeyName = 'url';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Catalogue';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Catalogue';
 
 //    public static function form(Form $form): Form
 //    {
@@ -78,18 +84,18 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\VariantsRelationManager::class,
-            \Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\TiersRelationManager::class
+            VariantsRelationManager::class,
+            TiersRelationManager::class
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\ListProducts::route('/'),
-            'create' => \Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\CreateProduct::route('/create'),
-            'view' => \Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\ViewProduct::route('/{record:url}'),
-            'edit' => \Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages\EditProduct::route('/{record:url}/edit'),
+            'index' => ListProducts::route('/'),
+            'create' => CreateProduct::route('/create'),
+            'view' => ViewProduct::route('/{record:url}'),
+            'edit' => EditProduct::route('/{record:url}/edit'),
         ];
     }
 }

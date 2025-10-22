@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\PushNotification;
@@ -65,7 +66,7 @@ class PushNotificationController extends Controller
                 ]
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to save subscription',
@@ -108,7 +109,7 @@ class PushNotificationController extends Controller
                 'message' => 'Successfully unsubscribed'
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to unsubscribe',
@@ -153,7 +154,7 @@ class PushNotificationController extends Controller
                 'message' => 'Notification sent successfully!'
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to send notification',
@@ -199,7 +200,7 @@ class PushNotificationController extends Controller
                 'message' => "Notification sent to {$users->count()} users!"
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to send notifications',
@@ -248,7 +249,7 @@ class PushNotificationController extends Controller
                 'message' => "Notification sent to {$users->count()} users!"
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to send notifications',

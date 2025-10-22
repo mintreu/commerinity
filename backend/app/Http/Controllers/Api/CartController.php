@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
 use Illuminate\Http\Request;
@@ -13,14 +14,14 @@ class CartController extends Controller
 {
 
 
-    public function ensureGuestCartCredential(Request $request): \Illuminate\Http\JsonResponse
+    public function ensureGuestCartCredential(Request $request): JsonResponse
     {
         $cart = new Cart($request->user());
         $cart->capture($request);
         return $cart->ensureGuestCredential();
     }
 
-    public function validateGuestCartCredential(Request $request): \Illuminate\Http\JsonResponse
+    public function validateGuestCartCredential(Request $request): JsonResponse
     {
         $cart = new Cart($request->user());
         $cart->capture($request);
@@ -91,7 +92,7 @@ class CartController extends Controller
     }
 
     // 4. Clear Entire Cart
-    public function clearCart(Request $request): \Illuminate\Http\JsonResponse
+    public function clearCart(Request $request): JsonResponse
     {
         if ($request->user()) {
             $request->user()->cartItems()->delete();
@@ -103,7 +104,7 @@ class CartController extends Controller
     }
 
     // 5. Merge Guest Cart After Login/Register
-    public function mergeGuestCart(Request $request): \Illuminate\Http\JsonResponse
+    public function mergeGuestCart(Request $request): JsonResponse
     {
         $guestCart = session('guest_cart', []);
         $user = $request->user();

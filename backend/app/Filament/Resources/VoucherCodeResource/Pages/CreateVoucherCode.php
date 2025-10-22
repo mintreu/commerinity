@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\VoucherCodeResource\Pages;
 
+use Filament\Actions\Action;
 use App\Filament\Resources\VoucherCodeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
@@ -19,7 +20,7 @@ class CreateVoucherCode extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('manage_vouchers_resource')
+            Action::make('manage_vouchers_resource')
                 ->url(fn() => VoucherCodeResource::getUrl())
                 ->icon('heroicon-o-chevron-left')
                 ->size('xl')

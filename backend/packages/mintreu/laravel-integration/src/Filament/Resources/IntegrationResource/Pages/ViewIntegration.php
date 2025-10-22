@@ -2,6 +2,9 @@
 
 namespace Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
@@ -15,22 +18,22 @@ class ViewIntegration extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
 
-            Actions\Action::make('configuration')
+            Action::make('configuration')
                 ->label('Configuration')
                 ->modalHeading('Integration Configuration')
                 ->modalDescription('Set or update the credentials and webhook URL for this integration.')
                 ->fillForm(fn () => $this->record->toArray())
-                ->form([
-                    Forms\Components\TextInput::make('key')
+                ->schema([
+                    TextInput::make('key')
                         ->label('API Key')
                         ->maxLength(255)
                         ->placeholder('Enter API key...')
                         ->required()
                         ->hint('Provided by the integration provider.'),
 
-                    Forms\Components\TextInput::make('secret')
+                    TextInput::make('secret')
                         ->label('API Secret')
                         ->password()
                         ->revealable()
@@ -39,7 +42,7 @@ class ViewIntegration extends ViewRecord
                         ->required()
                         ->hint('Keep this secret safe and never share it.'),
 
-                    Forms\Components\TextInput::make('webhook')
+                    TextInput::make('webhook')
                         ->label('Webhook URL')
                         ->url()
                         ->maxLength(255)

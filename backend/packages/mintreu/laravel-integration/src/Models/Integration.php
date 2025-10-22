@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelIntegration\Models;
 
+use Database\Factories\IntegrationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Artisan;
@@ -11,7 +12,7 @@ use function Livewire\of;
 
 class Integration extends Model
 {
-    /** @use HasFactory<\Database\Factories\IntegrationFactory> */
+    /** @use HasFactory<IntegrationFactory> */
     use HasPackageModelFactory;
 
     protected $hidden = ['key', 'secret', 'webhook'];

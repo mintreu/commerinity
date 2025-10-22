@@ -2,10 +2,23 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\VoucherCodeResource\Pages\ListVoucherCodes;
+use App\Filament\Resources\VoucherCodeResource\Pages\CreateVoucherCode;
+use App\Filament\Resources\VoucherCodeResource\Pages\ViewVoucherCode;
+use App\Filament\Resources\VoucherCodeResource\Pages\EditVoucherCode;
 use App\Filament\Resources\VoucherCodeResource\Pages;
 use App\Filament\Resources\VoucherCodeResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,39 +28,39 @@ class VoucherCodeResource extends Resource
 {
     protected static ?string $model = VoucherCode::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Shop';
+    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
     protected static ?string $slug = 'coupon';
     protected static ?string $pluralLabel = 'coupons';
     protected static ?string $navigationLabel = 'Coupons';
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
-                Forms\Components\TextInput::make('code')
+                TextInput::make('code')
                     ->required()
                     ->hint(__('Max: 250'))
                     ->columnSpanFull()
                     ->maxLength(250),
 
-                Forms\Components\Fieldset::make('Voucher Timeline & Usage')
+                Fieldset::make('Voucher Timeline & Usage')
                     ->schema([
-                        Forms\Components\DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
-                        Forms\Components\DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
-                        Forms\Components\TextInput::make('usage_per_customer')
+                        DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
+                        DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
+                        TextInput::make('usage_per_customer')
                             ->label('Usage Per Customer')
                             ->required(),
-                        Forms\Components\TextInput::make('coupon_usage_limit')
+                        TextInput::make('coupon_usage_limit')
                             ->label('Coupon Usage Limit')
                             ->required(),
                     ])->columns(2),
 
 
-                Forms\Components\Select::make('voucher_id')
+                Select::make('voucher_id')
                     ->relationship('voucher', 'name')
                     ->required(),
             ]);
@@ -57,34 +70,34 @@ class VoucherCodeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')
+                TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('coupon_usage_limit')
+                TextColumn::make('coupon_usage_limit')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('usage_per_user')
+                TextColumn::make('usage_per_user')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('times_used')
+                TextColumn::make('times_used')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('starts_from')
+                TextColumn::make('starts_from')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('ends_till')
+                TextColumn::make('ends_till')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('voucher.name')
+                TextColumn::make('voucher.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -92,13 +105,13 @@ class VoucherCodeResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -113,10 +126,10 @@ class VoucherCodeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVoucherCodes::route('/'),
-            'create' => Pages\CreateVoucherCode::route('/create'),
-            'view' => Pages\ViewVoucherCode::route('/{record}'),
-            'edit' => Pages\EditVoucherCode::route('/{record}/edit'),
+            'index' => ListVoucherCodes::route('/'),
+            'create' => CreateVoucherCode::route('/create'),
+            'view' => ViewVoucherCode::route('/{record}'),
+            'edit' => EditVoucherCode::route('/{record}/edit'),
         ];
     }
 }

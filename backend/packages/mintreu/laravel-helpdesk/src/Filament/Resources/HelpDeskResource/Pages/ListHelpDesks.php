@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskResource\Pages;
 
+use Filament\Actions\CreateAction;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskResource;
@@ -13,7 +14,7 @@ class ListHelpDesks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Create Ticket'),
+            CreateAction::make()->label('Create Ticket'),
         ];
     }
 }

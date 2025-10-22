@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use Database\Factories\Order\OrderShipmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 
 class OrderShipment extends Model
 {
-    /** @use HasFactory<\Database\Factories\Order\OrderShipmentFactory> */
+    /** @use HasFactory<OrderShipmentFactory> */
     use HasFactory,HasOrderAddresses;
 
     // shipment status

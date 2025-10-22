@@ -2,6 +2,11 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Schemas;
 
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms;
 use Mintreu\LaravelTransaction\Casts\BeneficiaryAccountTypeCast;
 
@@ -13,23 +18,23 @@ trait HasBeneficiaryCreationFormSchema
 
         return [
 
-            Forms\Components\Select::make('accountable_type')
+            Select::make('accountable_type')
                 ->required()
                 ->options(config('laravel-transaction.allowed_user_types'))
                 ->live()
                 ->default(get_class(filament()->auth()->user())),
 
-            Forms\Components\Select::make('accountable_id')
+            Select::make('accountable_id')
                 ->required()
                 ->live()
-                ->options(function (Forms\Get $get){
+                ->options(function (Get $get){
                     $selectedModel = $get('accountable_type');
                     return $selectedModel ? $selectedModel::latest()->pluck('name','id')->toArray() : [];
                 }),
 
 
-            Forms\Components\Select::make('wallet_id')
-                ->options(function (Forms\Get $get){
+            Select::make('wallet_id')
+                ->options(function (Get $get){
                     if ($get('accountable_id') && $get('accountable_type'))
                     {
                         $selectedModel = $get('accountable_type');
@@ -40,47 +45,47 @@ trait HasBeneficiaryCreationFormSchema
                 })
                 ->required(),
 
-            Forms\Components\Select::make('type')
+            Select::make('type')
                 ->options(collect(BeneficiaryAccountTypeCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                 ->required(),
 
 
-            Forms\Components\TextInput::make('upi_handle')
+            TextInput::make('upi_handle')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('ifsc')
+            TextInput::make('ifsc')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('bank_name')
+            TextInput::make('bank_name')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('bank_branch')
+            TextInput::make('bank_branch')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('account_name')
+            TextInput::make('account_name')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('account_number')
+            TextInput::make('account_number')
                 ->maxLength(255),
 
-            Forms\Components\Toggle::make('default')
+            Toggle::make('default')
                 ->required(),
-            Forms\Components\TextInput::make('status')
+            TextInput::make('status')
                 ->required(),
-            Forms\Components\Textarea::make('status_feedback')
+            Textarea::make('status_feedback')
                 ->columnSpanFull(),
-            Forms\Components\Select::make('integration_id')
+            Select::make('integration_id')
                 ->relationship('integration', 'name'),
-            Forms\Components\TextInput::make('source_fund_account')
+            TextInput::make('source_fund_account')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('source_upi_handle')
+            TextInput::make('source_upi_handle')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('provider_beneficiary_id')
+            TextInput::make('provider_beneficiary_id')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('provider_beneficiary_type')
+            TextInput::make('provider_beneficiary_type')
                 ->maxLength(255),
-            Forms\Components\TextInput::make('provider_upi_handle')
+            TextInput::make('provider_upi_handle')
                 ->maxLength(255),
-            Forms\Components\Toggle::make('beneficiary_active')
+            Toggle::make('beneficiary_active')
                 ->required(),
-            Forms\Components\TextInput::make('provider_data'),
+            TextInput::make('provider_data'),
 
-            Forms\Components\TextInput::make('extra'),
+            TextInput::make('extra'),
 
 
         ];

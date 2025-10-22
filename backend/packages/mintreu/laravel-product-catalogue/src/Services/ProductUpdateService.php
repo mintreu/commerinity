@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelProductCatalogue\Services;
 
+use Throwable;
 use Illuminate\Database\Eloquent\Model;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\Product;
@@ -46,7 +47,7 @@ class ProductUpdateService
                 ProductTypeCast::WHOLESALE => $this->updateProduct(ProductTypeCast::WHOLESALE),
                 ProductTypeCast::CONFIGURABLE => $this->updateConfigurableProduct(),
             };
-        }catch (\Throwable $t)
+        }catch (Throwable $t)
         {
             throw $t;
         }

@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelCommerinity\Models;
 
+use Mintreu\LaravelCommerinity\Database\Factories\SaleProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Mintreu\Toolkit\Traits\HasPackageModelFactory;
 
 class SaleProduct extends Model
 {
-    /** @use HasFactory<\Mintreu\LaravelCommerinity\Database\Factories\SaleProductFactory> */
+    /** @use HasFactory<SaleProductFactory> */
     use HasPackageModelFactory;
 
     protected $fillable = [

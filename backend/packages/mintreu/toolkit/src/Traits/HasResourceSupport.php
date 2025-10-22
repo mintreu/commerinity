@@ -2,6 +2,9 @@
 
 namespace Mintreu\Toolkit\Traits;
 
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+
 trait HasResourceSupport
 {
 
@@ -14,12 +17,12 @@ trait HasResourceSupport
                 $data = $this->$relation;
 
                 // Check if the relation is a Collection or has multiple records
-                if ($data instanceof \Illuminate\Support\Collection || $data instanceof \Illuminate\Database\Eloquent\Collection) {
+                if ($data instanceof Collection || $data instanceof \Illuminate\Database\Eloquent\Collection) {
                     return $data->isNotEmpty() ? $resourceClass::collection($data) : null;
                 }
 
                 // Handle single model instance
-                return $data instanceof \Illuminate\Database\Eloquent\Model ? $resourceClass::make($data) : null;
+                return $data instanceof Model ? $resourceClass::make($data) : null;
             }
         );
     }

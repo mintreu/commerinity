@@ -2,12 +2,14 @@
 
 namespace Mintreu\LaravelProductCatalogue\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Database\Factories\FilterOptionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FilterOption extends Model
 {
-    /** @use HasFactory<\Database\Factories\FilterOptionFactory> */
+    /** @use HasFactory<FilterOptionFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -16,7 +18,7 @@ class FilterOption extends Model
     ];
 
 
-    public function filter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function filter(): BelongsTo
     {
         return $this->belongsTo(Filter::class,'filter_id','id');
     }

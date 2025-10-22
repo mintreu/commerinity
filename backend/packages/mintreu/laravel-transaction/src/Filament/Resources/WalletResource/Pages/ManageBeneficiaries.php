@@ -3,9 +3,18 @@
 namespace Mintreu\LaravelTransaction\Filament\Resources\WalletResource\Pages;
 
 
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -21,8 +30,8 @@ class ManageBeneficiaries extends ManageRelatedRecords
 
     protected static string $relationship = 'beneficiaries';
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
-    protected static ?string $activeNavigationIcon = 'heroicon-m-building-office-2';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office-2';
+    protected static string | \BackedEnum | null $activeNavigationIcon = 'heroicon-m-building-office-2';
 
 
 
@@ -37,10 +46,10 @@ class ManageBeneficiaries extends ManageRelatedRecords
     }
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
             ]);
     }
@@ -54,52 +63,52 @@ class ManageBeneficiaries extends ManageRelatedRecords
                 'lg' => 3
             ])
             ->columns([
-                Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\TextColumn::make('bank_name')
-                        ->size(Tables\Columns\TextColumn\TextColumnSize::Large)
+                Stack::make([
+                    TextColumn::make('bank_name')
+                        ->size(TextSize::Large)
                         ->weight(FontWeight::SemiBold)
                         ->icon('heroicon-m-building-office')
                         ->color('primary'),
-                    Tables\Columns\TextColumn::make('bank_branch')
+                    TextColumn::make('bank_branch')
                         ->weight(FontWeight::SemiBold)
                         ->sortable()
                         ->icon('heroicon-s-map-pin'),
-                    Tables\Columns\TextColumn::make('ifsc')
+                    TextColumn::make('ifsc')
                         ->weight(FontWeight::SemiBold)
                         ->sortable()
                         ->icon('heroicon-c-folder'),
-                    Tables\Columns\TextColumn::make('accountable.name')
+                    TextColumn::make('accountable.name')
                         ->icon('heroicon-c-identification')
                         ->color('primary')
                         ->alignRight(),
-                    Tables\Columns\ToggleColumn::make('default')->default(false)->alignRight(),
-                    Tables\Columns\TextColumn::make('status')->badge()->alignRight(),
+                    ToggleColumn::make('default')->default(false)->alignRight(),
+                    TextColumn::make('status')->badge()->alignRight(),
                 ])
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label(__('Create Bank Account'))
                     ->icon('heroicon-s-squares-plus')
                     ->modalIcon('heroicon-m-building-office')
                     ->modalHeading('Add New Bank Account')
                     ->createAnother(false)
-                    ->mutateFormDataUsing(function ($data){
+                    ->mutateDataUsing(function ($data){
                         return array_merge($data,[
                            'accountable_id' => $this->record->walletable_id,
                             'accountable_type' => $this->record->walletable_type,
                         ]);
                     }),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
 //                    Tables\Actions\DissociateBulkAction::make(),
 //                    Tables\Actions\DeleteBulkAction::make(),
                 ]),

@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use Database\Factories\Order\OrderProductFactory;
 use App\Casts\OrderStatusCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class OrderProduct extends Model
 {
-    /** @use HasFactory<\Database\Factories\Order\OrderProductFactory> */
+    /** @use HasFactory<OrderProductFactory> */
     use HasFactory;
 
 

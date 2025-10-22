@@ -2,6 +2,10 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources;
 
+use Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\ListCategories;
+use Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\CreateCategory;
+use Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\ViewCategory;
+use Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\EditCategory;
 use Filament\Resources\Resource;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource\RelationManagers;
 use Mintreu\LaravelCategory\Models\Category;
@@ -9,12 +13,12 @@ use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyFormSchema;
 
 class CategoryResource extends Resource
 {
-    use HasAdjacencyFormSchema;
+   // use HasAdjacencyFormSchema;
 
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Catalogue';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Catalogue';
 
 //    public static function form(Form $form): Form
 //    {
@@ -108,10 +112,10 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\ListCategories::route('/'),
-            'create' => \Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\CreateCategory::route('/create'),
-            'view' => \Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\ViewCategory::route('/{record}'),
-            'edit' => \Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages\EditCategory::route('/{record}/edit'),
+            'index' => ListCategories::route('/'),
+            'create' => CreateCategory::route('/create'),
+            'view' => ViewCategory::route('/{record}'),
+            'edit' => EditCategory::route('/{record}/edit'),
         ];
     }
 }

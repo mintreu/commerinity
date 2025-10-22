@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use Throwable;
 use App\Models\Lifecycle\Stage;
 use Carbon\Carbon;
 
@@ -65,7 +66,7 @@ trait HasLifecycle
             }
 
             return null;
-        }catch (\Throwable $t)
+        }catch (Throwable $t)
         {
             report($t);
         }

@@ -244,7 +244,7 @@ trait HasTransaction
      *
      * @return int|float
      *
-     * @throws \RuntimeException if no amount is resolved
+     * @throws RuntimeException if no amount is resolved
      */
     protected function resolveTransactionAmount(): int|float
     {
@@ -267,7 +267,7 @@ trait HasTransaction
         }
 
         // 4. If nothing found → throw explicit error
-        throw new \RuntimeException(sprintf(
+        throw new RuntimeException(sprintf(
             "Unable to resolve transaction amount for [%s]. ".
             "Please define a [protected \$transactionAmount] property, ".
             "or a [const TRANSACTION_AMOUNT_VALUE], ".

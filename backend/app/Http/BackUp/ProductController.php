@@ -3,6 +3,7 @@
 namespace App\Http\BackUp;
 
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductIndexResource;
 use App\Http\Resources\Product\ProductResource;
@@ -195,7 +196,7 @@ class ProductController extends Controller
 
 
 
-    public function topSuggestProduct(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function topSuggestProduct(): AnonymousResourceCollection
     {
         $products = Product::with([
             'media' => fn($query) => $query->where('collection_name','displayImage')

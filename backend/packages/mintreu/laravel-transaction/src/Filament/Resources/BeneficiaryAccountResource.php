@@ -2,10 +2,24 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\ListBeneficiaryAccounts;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\CreateBeneficiaryAccount;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\ViewBeneficiaryAccount;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\EditBeneficiaryAccount;
 use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages;
 use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,58 +28,58 @@ use Mintreu\LaravelTransaction\Models\BeneficiaryAccount;
 class BeneficiaryAccountResource extends Resource
 {
     protected static ?string $model = BeneficiaryAccount::class;
-    protected static ?string $navigationGroup = 'Wallet';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Wallet';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $slug = 'beneficiaries';
     protected static ?string $pluralLabel = 'Beneficiaries';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('accountable_type')
+        return $schema
+            ->components([
+                TextInput::make('accountable_type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('accountable_id')
+                TextInput::make('accountable_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('upi_handle')
+                TextInput::make('upi_handle')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('ifsc')
+                TextInput::make('ifsc')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('bank_name')
+                TextInput::make('bank_name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('bank_branch')
+                TextInput::make('bank_branch')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('account_name')
+                TextInput::make('account_name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('account_number')
+                TextInput::make('account_number')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('account_type'),
-                Forms\Components\Toggle::make('default')
+                TextInput::make('account_type'),
+                Toggle::make('default')
                     ->required(),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->required(),
-                Forms\Components\Textarea::make('status_feedback')
+                Textarea::make('status_feedback')
                     ->columnSpanFull(),
-                Forms\Components\Select::make('integration_id')
+                Select::make('integration_id')
                     ->relationship('integration', 'name'),
-                Forms\Components\TextInput::make('source_fund_account')
+                TextInput::make('source_fund_account')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('source_upi_handle')
+                TextInput::make('source_upi_handle')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('provider_beneficiary_id')
+                TextInput::make('provider_beneficiary_id')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('provider_beneficiary_type')
+                TextInput::make('provider_beneficiary_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('provider_upi_handle')
+                TextInput::make('provider_upi_handle')
                     ->maxLength(255),
-                Forms\Components\Toggle::make('beneficiary_active')
+                Toggle::make('beneficiary_active')
                     ->required(),
-                Forms\Components\TextInput::make('provider_data'),
-                Forms\Components\Select::make('wallet_id')
+                TextInput::make('provider_data'),
+                Select::make('wallet_id')
                     ->relationship('wallet', 'id'),
-                Forms\Components\TextInput::make('extra'),
+                TextInput::make('extra'),
             ]);
     }
 
@@ -73,50 +87,50 @@ class BeneficiaryAccountResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('accountable_type')
+                TextColumn::make('accountable_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('accountable_id')
+                TextColumn::make('accountable_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('upi_handle')
+                TextColumn::make('upi_handle')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('ifsc')
+                TextColumn::make('ifsc')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('bank_name')
+                TextColumn::make('bank_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('bank_branch')
+                TextColumn::make('bank_branch')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('account_name')
+                TextColumn::make('account_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('account_number')
+                TextColumn::make('account_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('account_type'),
-                Tables\Columns\IconColumn::make('default')
+                TextColumn::make('account_type'),
+                IconColumn::make('default')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('status'),
-                Tables\Columns\TextColumn::make('integration.name')
+                TextColumn::make('status'),
+                TextColumn::make('integration.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('source_fund_account')
+                TextColumn::make('source_fund_account')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('source_upi_handle')
+                TextColumn::make('source_upi_handle')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('provider_beneficiary_id')
+                TextColumn::make('provider_beneficiary_id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('provider_beneficiary_type')
+                TextColumn::make('provider_beneficiary_type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('provider_upi_handle')
+                TextColumn::make('provider_upi_handle')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('beneficiary_active')
+                IconColumn::make('beneficiary_active')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('wallet.id')
+                TextColumn::make('wallet.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -124,13 +138,13 @@ class BeneficiaryAccountResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -145,10 +159,10 @@ class BeneficiaryAccountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\ListBeneficiaryAccounts::route('/'),
-            'create' => \Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\CreateBeneficiaryAccount::route('/create'),
-            'view' => \Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\ViewBeneficiaryAccount::route('/{record}'),
-            'edit' => \Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Pages\EditBeneficiaryAccount::route('/{record}/edit'),
+            'index' => ListBeneficiaryAccounts::route('/'),
+            'create' => CreateBeneficiaryAccount::route('/create'),
+            'view' => ViewBeneficiaryAccount::route('/{record}'),
+            'edit' => EditBeneficiaryAccount::route('/{record}/edit'),
         ];
     }
 }

@@ -2,9 +2,19 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
+use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Throwable;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Blade;
@@ -17,7 +27,7 @@ use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
 
 class CreateProduct extends CreateRecord
 {
-    use CreateRecord\Concerns\HasWizard;
+    use HasWizard;
     protected static string $resource = ProductResource::class;
     protected static bool $canCreateAnother = false;
     public bool $continue = false;
@@ -34,7 +44,7 @@ class CreateProduct extends CreateRecord
                 Notification::make()->success()->title('Product Created Successfully')->send();
                 $this->redirect($this->getRedirectUrl());
             }
-        }catch (\Throwable $t){
+        }catch (Throwable $t){
             Notification::make()
                 ->title('Error creating product')
                 ->body($t->getMessage())
@@ -43,16 +53,16 @@ class CreateProduct extends CreateRecord
         }
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
                 Wizard::make([
-                    Wizard\Step::make('Product Info')
+                    Step::make('Product Info')
                         ->icon('heroicon-s-folder')
                         ->schema(fn() => $this->getProductInfoFormSectionSchema()),
-                    Wizard\Step::make('Filter Configuration')
+                    Step::make('Filter Configuration')
                         ->icon('heroicon-c-cog-6-tooth')
                         ->schema(fn() => $this->getProductFilterSectionSchema()),
 
@@ -90,14 +100,14 @@ class CreateProduct extends CreateRecord
     public function getProductInfoFormSectionSchema(): array
     {
         return [
-            Forms\Components\Grid::make(3)
+            Grid::make(3)
                 ->schema([
 
                     // Product Type & Preview
-                    Forms\Components\Grid::make(1)
+                    Grid::make(1)
                         ->columnSpan(1)
                         ->schema([
-                            Forms\Components\Select::make('type')
+                            Select::make('type')
                                 ->label('Product Type')
                                 ->placeholder('Select product type...')
                                 ->helperText('Choose how this product behaves (e.g. Simple, Configurable).')
@@ -111,10 +121,10 @@ class CreateProduct extends CreateRecord
                                         ->toArray()
                                 ),
 
-                            Forms\Components\Placeholder::make('preview_type')
+                            Placeholder::make('preview_type')
                                 ->hiddenLabel()
                                 ->disabled()
-                                ->content(fn (Forms\Get $get) => filled($type = $get('type'))
+                                ->content(fn (Get $get) => filled($type = $get('type'))
                                     ? new HtmlString(
                                         '<div class="mt-2">
                                         <img src="' . ProductTypeCast::from($type)->getMedia() . '" alt="Product Type Preview" class="w-full h-48 object-cover rounded shadow" />
@@ -122,24 +132,24 @@ class CreateProduct extends CreateRecord
                                     )
                                     : null
                                 )
-                                ->visible(fn (Forms\Get $get) => filled($get('type')))
+                                ->visible(fn (Get $get) => filled($get('type')))
                         ]),
 
                     // Product Details Section
-                    Forms\Components\Section::make('Basic Product Information')
+                    Section::make('Basic Product Information')
                         ->description('Enter the primary information about this product.')
                         ->columnSpan(2)
                         ->schema([
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->label('Product Name')
                                 ->placeholder('e.g. Apple iPhone 15 Pro')
                                 ->helperText('This is the name displayed to customers.')
                                 ->required()
                                 ->lazy()
                                 ->maxLength(255)
-                                ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('url', Str::slug($state))),
+                                ->afterStateUpdated(fn (Set $set, $state) => $set('url', Str::slug($state))),
 
-                            Forms\Components\TextInput::make('url')
+                            TextInput::make('url')
                                 ->label('Product URL Slug')
                                 ->placeholder('e.g. apple-iphone-15-pro')
                                 ->helperText('Used in the product’s URL (e.g. /products/apple-iphone-15-pro).')
@@ -147,7 +157,7 @@ class CreateProduct extends CreateRecord
                                 ->unique('products', 'url', ignoreRecord: true)
                                 ->maxLength(255),
 
-                            Forms\Components\TextInput::make('sku')
+                            TextInput::make('sku')
                                 ->label('SKU')
                                 ->placeholder('e.g. IP15PRO-128GB')
                                 ->helperText('Stock Keeping Unit — must be unique for inventory tracking.')
@@ -167,13 +177,13 @@ class CreateProduct extends CreateRecord
     public function getProductFilterSectionSchema(): array
     {
         return [
-            Forms\Components\Section::make('Filter Configuration')
+            Section::make('Filter Configuration')
                 ->description('Attach this product to a filter group for storefront browsing and search.')
                 ->aside()
                 ->columnSpanFull()
                 //->live()
-                ->schema(fn(Forms\Get $get) => array_merge([
-                    Forms\Components\Select::make('filter_group_id')
+                ->schema(fn(Get $get) => array_merge([
+                    Select::make('filter_group_id')
                         ->label('Filter Group')
                         ->placeholder('Select a filter group...')
                         ->helperText('Used for grouping and filtering products on the storefront.')
@@ -181,7 +191,7 @@ class CreateProduct extends CreateRecord
                         ->live()
                         ->relationship('filterGroup', 'name')
                         ->searchable()
-                        ->afterStateUpdated(fn ($state,Forms\Get $get) => $this->preloadFilterOptions($state, $get('type')))
+                        ->afterStateUpdated(fn ($state,Get $get) => $this->preloadFilterOptions($state, $get('type')))
                         ->preload(),
                 ],$this->getFilterSelectionSchema($get))),
         ];
@@ -202,7 +212,7 @@ class CreateProduct extends CreateRecord
 
         if (!$filterGroupId) {
             return [
-                Forms\Components\Placeholder::make('NoFilters')
+                Placeholder::make('NoFilters')
                     ->content('Select a filter group first.'),
             ];
         }
@@ -214,7 +224,7 @@ class CreateProduct extends CreateRecord
 
         if (!$filterGroup || $filterGroup->filters->isEmpty()) {
             return [
-                Forms\Components\Placeholder::make('NoFiltersAvailable')
+                Placeholder::make('NoFiltersAvailable')
                     ->content('No filters available for this group.'),
             ];
         }
@@ -223,14 +233,14 @@ class CreateProduct extends CreateRecord
 
 
         return [
-            Forms\Components\Section::make()
+            Section::make()
                 //->aside()
                 ->columns()
                 ->heading('Product filters')
                 ->description('All filters from the selected group must be configured.')
                 ->schema(
                     $filterGroup->filters
-                        ->map(fn($filter) => Forms\Components\Select::make("filter_options.{$filter->id}")
+                        ->map(fn($filter) => Select::make("filter_options.{$filter->id}")
                             ->label($filter->name)
                             ->options($filter->options->pluck('value', 'id'))
                             ->multiple($isConfigurable)

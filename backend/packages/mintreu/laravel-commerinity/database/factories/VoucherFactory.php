@@ -7,7 +7,7 @@ use Mintreu\LaravelCommerinity\Casts\VoucherActionTypeCast;
 use Mintreu\LaravelCommerinity\Models\Voucher;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Mintreu\LaravelCommerinity\Models\Voucher>
+ * @extends Factory<Voucher>
  */
 class VoucherFactory extends Factory
 {

@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use Mintreu\LaravelCategory\Models\Category;
+use Illuminate\Support\Facades\DB;
+use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
+use Illuminate\Support\Str;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductIndexResource;
 use App\Http\Resources\Product\ProductResource;
@@ -121,7 +126,7 @@ class ProductController extends Controller
         $categoryUrl = $request->query('category');
 
         if ($categoryUrl) {
-            $category = \Mintreu\LaravelCategory\Models\Category::with('descendants')
+            $category = Category::with('descendants')
                 ->where('url', $categoryUrl)
                 ->first();
 
@@ -129,9 +134,9 @@ class ProductController extends Controller
                 $categoryIds = $category->descendants->pluck('id')->push($category->id);
 
                 // All parent (non-variant) published products under this category tree
-                $products = \Mintreu\LaravelProductCatalogue\Models\Product::query()
+                $products = Product::query()
                     ->whereNull('parent_id')
-                    ->where('status', \Mintreu\Toolkit\Casts\PublishableStatusCast::PUBLISHED)
+                    ->where('status', PublishableStatusCast::PUBLISHED)
                     ->whereHas('categories', fn($q) => $q->whereIn('categories.id', $categoryIds))
                     ->select(['id', 'filter_group_id'])
                     ->get();
@@ -149,7 +154,7 @@ class ProductController extends Controller
 
                 // Limit options to those that are used by these products (correct pivot: product_filter_options)
                 $productIds = $products->pluck('id');
-                $optionIds = \Illuminate\Support\Facades\DB::table('product_filter_options')
+                $optionIds = DB::table('product_filter_options')
                     ->whereIn('product_id', $productIds)
                     ->pluck('filter_option_id')
                     ->unique();
@@ -159,15 +164,15 @@ class ProductController extends Controller
                 }
 
                 // Load only the groups used by products, keep only options used in this category
-                $filterGroups = \Mintreu\LaravelProductCatalogue\Models\FilterGroup::query()
+                $filterGroups = FilterGroup::query()
                     ->whereIn('id', $filterGroupIds)
                     ->with([
                         'filters.options' => fn($q) => $q->whereIn('id', $optionIds),
                     ])->get();
 
                 // Prefer a single group whose slug matches the category URL for a crisp, relevant sidebar
-                $categorySlug = \Illuminate\Support\Str::slug($category->url ?? $category->name ?? '');
-                $matching = $filterGroups->filter(fn($g) => \Illuminate\Support\Str::slug($g->name) === $categorySlug);
+                $categorySlug = Str::slug($category->url ?? $category->name ?? '');
+                $matching = $filterGroups->filter(fn($g) => Str::slug($g->name) === $categorySlug);
 
                 $groupsToReturn = $matching->isNotEmpty() ? $matching : $filterGroups;
 
@@ -184,7 +189,7 @@ class ProductController extends Controller
                         // Keep same shape as original: value => label (swatch_value), no empty keys
                         $options = $filter->options->map(function ($option) {
                             if (is_null($option->swatch_value)) {
-                                $option->swatch_value = \Illuminate\Support\Str::ucfirst($option->value);
+                                $option->swatch_value = Str::ucfirst($option->value);
                             }
                             return $option;
                         })->pluck('swatch_value', 'value')->toArray();
@@ -202,7 +207,7 @@ class ProductController extends Controller
         }
 
         // Fallback (no category param): global list unchanged
-        $filterGroups = \Mintreu\LaravelProductCatalogue\Models\FilterGroup::with([
+        $filterGroups = FilterGroup::with([
             'filters.options'
         ])->get();
 
@@ -212,7 +217,7 @@ class ProductController extends Controller
                 foreach ($group->filters as $filter) {
                     $options = $filter->options->map(function ($option) {
                         if (is_null($option->swatch_value)) {
-                            $option->swatch_value = \Illuminate\Support\Str::ucfirst($option->value);
+                            $option->swatch_value = Str::ucfirst($option->value);
                         }
                         return $option;
                     });
@@ -330,7 +335,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function topSuggestProduct(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function topSuggestProduct(): AnonymousResourceCollection
     {
         $products = Product::with([
             'media' => fn($query) => $query->where('collection_name','displayImage')

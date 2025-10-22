@@ -2,7 +2,7 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Pages\CreateRecord;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
 use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyFormSchema;
@@ -13,8 +13,8 @@ class CreateCategory extends CreateRecord
 
     protected static string $resource = CategoryResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)->schema($this->getAdjacencyFormSchema());
+        return parent::form($schema)->components($this->getAdjacencyFormSchema());
     }
 }

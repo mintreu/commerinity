@@ -2,6 +2,16 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Filament\Actions\CreateAction;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -16,7 +26,7 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
@@ -25,10 +35,10 @@ class ListUsers extends ListRecords
     {
         return $table
             ->columns([
-                Tables\Columns\Layout\Stack::make([
+                Stack::make([
 
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\SpatieMediaLibraryImageColumn::make('avatar')
+                    Split::make([
+                        SpatieMediaLibraryImageColumn::make('avatar')
                             ->label('Profile Picture')
                             //->extraAttributes(['class' => 'hidden md:block'])
                             ->extraImgAttributes(['class' => 'mx-auto object-cover'])
@@ -37,46 +47,46 @@ class ListUsers extends ListRecords
 //                        ->alignCenter()
                             ->size('80%'),
 
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('name')
-                                ->size(Tables\Columns\TextColumn\TextColumnSize::Large)
+                        Stack::make([
+                            TextColumn::make('name')
+                                ->size(TextSize::Large)
                                 ->weight(FontWeight::SemiBold)
                                 ->color('primary')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('uuid')->label('Registration'),
-                            Tables\Columns\TextColumn::make('email')
+                            TextColumn::make('uuid')->label('Registration'),
+                            TextColumn::make('email')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('email_verified_at')
+                            TextColumn::make('email_verified_at')
                                 ->sortable(),
-                            Tables\Columns\TextColumn::make('mobile')
+                            TextColumn::make('mobile')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('mobile_verified_at')
+                            TextColumn::make('mobile_verified_at')
                                 ->dateTime()
                                 ->sortable(),
-                            Tables\Columns\TextColumn::make('referral_code')
+                            TextColumn::make('referral_code')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('parent_id')
+                            TextColumn::make('parent_id')
                                 ->numeric()
                                 ->sortable(),
-                            Tables\Columns\TextColumn::make('originator_type')
+                            TextColumn::make('originator_type')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('originator_id')
+                            TextColumn::make('originator_id')
                                 ->numeric()
                                 ->sortable(),
-                            Tables\Columns\TextColumn::make('gender')
+                            TextColumn::make('gender')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('dob')
+                            TextColumn::make('dob')
                                 ->date()
                                 ->sortable(),
-                            Tables\Columns\TextColumn::make('type')
+                            TextColumn::make('type')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('status')
+                            TextColumn::make('status')
                                 ->searchable(),
-                            Tables\Columns\TextColumn::make('created_at')
+                            TextColumn::make('created_at')
                                 ->dateTime()
                                 ->sortable()
                                 ->toggleable(isToggledHiddenByDefault: true),
-                            Tables\Columns\TextColumn::make('updated_at')
+                            TextColumn::make('updated_at')
                                 ->dateTime()
                                 ->sortable()
                                 ->toggleable(isToggledHiddenByDefault: true),
@@ -91,13 +101,13 @@ class ListUsers extends ListRecords
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

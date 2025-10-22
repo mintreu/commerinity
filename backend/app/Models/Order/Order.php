@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use Database\Factories\Order\OrderFactory;
 use App\Casts\OrderStatusCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Mintreu\Toolkit\Traits\HasUnique;
 
 class Order extends Model
 {
-    /** @use HasFactory<\Database\Factories\Order\OrderFactory> */
+    /** @use HasFactory<OrderFactory> */
     use HasFactory,HasOrderAddresses,HasTransaction,HasUnique;
 
     protected string $billingAddressKey = 'billing_address_id';

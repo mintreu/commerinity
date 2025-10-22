@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Kirschbaum\Commentions\Contracts\Commenter;
 use Laravel\Sanctum\HasApiTokens;
 use Mintreu\LaravelCommerinity\Traits\HasVoucherAccess;
 use Mintreu\LaravelGeokit\Traits\HasAddress;
@@ -42,7 +41,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable, Commenter
+class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory,HasPushSubscriptions, Notifiable,InteractsWithMedia,HasRecursiveRelationships,

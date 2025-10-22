@@ -2,10 +2,31 @@
 
 namespace Mintreu\LaravelPenpress\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\KeyValue;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\ListPages;
+use Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\CreatePage;
+use Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\ViewPage;
+use Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\EditPage;
 use Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages;
 use Mintreu\LaravelPenpress\Filament\Resources\PageResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,28 +38,28 @@ class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Blogs & Pages';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Blogs & Pages';
     protected static ?string $recordRouteKeyName = 'url';
     protected static ?string $pluralLabel = 'WebPages';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
-                Forms\Components\Grid::make(3)
+                Grid::make(3)
                     ->columnSpanFull()
                     ->schema([
 
-                        Forms\Components\Grid::make(1)
+                        Grid::make(1)
                             ->columnSpan(2)
                             ->schema([
-                                Forms\Components\Section::make('Page Detail')
+                                Section::make('Page Detail')
                                     ->description('Tell about the page')
                                     ->columnSpanFull()
                                     ->schema([
-                                        Forms\Components\TextInput::make('title')
+                                        TextInput::make('title')
                                             ->required()
                                             ->maxLength(255),
                                         TiptapEditor::make('content')
@@ -46,12 +67,12 @@ class PageResource extends Resource
                                     ]),
 
 
-                                Forms\Components\Builder::make('sections')
+                                Builder::make('sections')
                                     ->schema([
-                                        Forms\Components\Builder\Block::make('card')
+                                        Block::make('card')
                                             ->schema([
-                                                Forms\Components\TextInput::make('Title'),
-                                                Forms\Components\Textarea::make('description')
+                                                TextInput::make('Title'),
+                                                Textarea::make('description')
                                             ]),
 
                                     ])->addable()->deletable()
@@ -61,28 +82,28 @@ class PageResource extends Resource
 
 
 
-                        Forms\Components\Grid::make(1)
+                        Grid::make(1)
                             ->columnSpan(1)
                             ->schema([
-                                Forms\Components\Section::make('Url Detail')
+                                Section::make('Url Detail')
                                     ->collapsible()
                                     ->schema([
-                                        Forms\Components\TextInput::make('slug')
+                                        TextInput::make('slug')
                                             ->required()
                                             ->inlineLabel()
                                             ->lazy()
                                             ->maxLength(255),
-                                        Forms\Components\TextInput::make('prefix')
+                                        TextInput::make('prefix')
                                             ->lazy()
                                             ->inlineLabel()
                                             ->maxLength(255),
 
-                                        Forms\Components\Placeholder::make('url_preview')
+                                        Placeholder::make('url_preview')
                                             ->live()
                                             ->label('Url : ')
                                             ->inlineLabel()
-                                            ->visible(fn(Forms\Get $get) => $get('slug'))
-                                            ->content(function (Forms\Get $get,Forms\Set $set){
+                                            ->visible(fn(Get $get) => $get('slug'))
+                                            ->content(function (Get $get,Set $set){
                                                 $prefix = $get('prefix');
                                                 $slug = $get('slug');
                                                 $link = null;
@@ -106,7 +127,7 @@ class PageResource extends Resource
                                                 ');
                                             }),
 
-                                        Forms\Components\TextInput::make('url')
+                                        TextInput::make('url')
                                             ->required()
                                             ->hidden()
                                             ->maxLength(255)
@@ -114,36 +135,36 @@ class PageResource extends Resource
                                     ]),
 
 
-                                Forms\Components\Section::make('Configuration')
+                                Section::make('Configuration')
                                     ->collapsible()
                                     ->collapsed()
                                     ->schema([
-                                        Forms\Components\Toggle::make('status')
+                                        Toggle::make('status')
                                             ->required(),
-                                        Forms\Components\TextInput::make('order')
+                                        TextInput::make('order')
                                             ->required()
                                             ->numeric()
                                             ->default(0),
 
-                                        Forms\Components\TextInput::make('layout')
+                                        TextInput::make('layout')
                                             ->required()
                                             ->maxLength(255)
                                             ->default('default'),
-                                        Forms\Components\TextInput::make('template')
+                                        TextInput::make('template')
                                             ->maxLength(255),
 
                                     ]),
 
 
-                                Forms\Components\Section::make('Header')
+                                Section::make('Header')
                                     ->collapsible()
                                     ->collapsed()
                                     ->schema([
-                                        Forms\Components\KeyValue::make('meta')
+                                        KeyValue::make('meta')
                                             ->columnSpanFull(),
-                                        Forms\Components\Textarea::make('custom_css')
+                                        Textarea::make('custom_css')
                                             ->columnSpanFull(),
-                                        Forms\Components\Textarea::make('custom_js')
+                                        Textarea::make('custom_js')
                                             ->columnSpanFull(),
                                     ]),
 
@@ -162,28 +183,28 @@ class PageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('prefix')
+                TextColumn::make('prefix')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('url')
+                TextColumn::make('url')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('layout')
+                TextColumn::make('layout')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('template')
+                TextColumn::make('template')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('status')
+                IconColumn::make('status')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('order')
+                TextColumn::make('order')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -191,13 +212,13 @@ class PageResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -212,10 +233,10 @@ class PageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\ListPages::route('/'),
-            'create' => \Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\CreatePage::route('/create'),
-            'view' => \Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\ViewPage::route('/{record:url}'),
-            'edit' => \Mintreu\LaravelPenpress\Filament\Resources\PageResource\Pages\EditPage::route('/{record:url}/edit'),
+            'index' => ListPages::route('/'),
+            'create' => CreatePage::route('/create'),
+            'view' => ViewPage::route('/{record:url}'),
+            'edit' => EditPage::route('/{record:url}/edit'),
         ];
     }
 }

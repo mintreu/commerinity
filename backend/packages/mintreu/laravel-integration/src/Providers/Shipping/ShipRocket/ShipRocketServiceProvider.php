@@ -2,6 +2,11 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket;
 
+use Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket\Actions\OrderAction;
+use Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket\Actions\CourierAction;
+use Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket\Actions\ReturnAction;
+use Mintreu\LaravelIntegration\Providers\Shipping\ShipRocket\Actions\TrackingAction;
+
 class ShipRocketServiceProvider
 {
 
@@ -34,17 +39,17 @@ class ShipRocketServiceProvider
 
     public function order()
     {
-        return new Actions\OrderAction($this->api);
+        return new OrderAction($this->api);
     }
 
     public function courier()
     {
-        return new Actions\CourierAction($this->api);
+        return new CourierAction($this->api);
     }
 
     public function return()
     {
-        return new Actions\ReturnAction($this->api);
+        return new ReturnAction($this->api);
     }
 
     public function shipment()
@@ -54,7 +59,7 @@ class ShipRocketServiceProvider
 
     public function tracking()
     {
-        return new Actions\TrackingAction($this->api);
+        return new TrackingAction($this->api);
     }
 
 

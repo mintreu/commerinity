@@ -3,13 +3,18 @@
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
 
+use Filament\Actions\EditAction;
+use Filament\Actions\Action;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\VariantsRelationManager;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers\TiersRelationManager;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -25,14 +30,14 @@ class ViewProduct extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
 
-            Actions\Action::make('status_changer')
+            Action::make('status_changer')
                 ->fillForm([
                     'status' => $this->record->status,
                     'status_feedback' => $this->record->status_feedback
                 ])
-                ->form([
+                ->schema([
                     Select::make('status')
                     ->options(
                         collect(PublishableStatusCast::cases())
@@ -52,9 +57,9 @@ class ViewProduct extends ViewRecord
     {
         $relationManagers = [];
         if ($this->record->type === ProductTypeCast::CONFIGURABLE) {
-            $relationManagers[] = ProductResource\RelationManagers\VariantsRelationManager::class;
+            $relationManagers[] = VariantsRelationManager::class;
         }else{
-            $relationManagers[] = ProductResource\RelationManagers\TiersRelationManager::class;
+            $relationManagers[] = TiersRelationManager::class;
         }
 
         return $relationManagers;
@@ -81,14 +86,14 @@ class ViewProduct extends ViewRecord
     }
 
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return parent::infolist($infolist)
-            ->schema([
+            ->components([
 
                 Tabs::make('Product')
                     ->tabs([
-                        Tabs\Tab::make('Primary')
+                        Tab::make('Primary')
                             ->schema([
                                 Section::make('Primary Information')
                                     ->aside()
@@ -138,7 +143,7 @@ class ViewProduct extends ViewRecord
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('About')
+                        Tab::make('About')
                             ->schema([
                                 TextEntry::make('short_description')
                                     ->markdown()
@@ -148,12 +153,12 @@ class ViewProduct extends ViewRecord
                                     ->columnSpanFull(),
                             ]),
 
-                        Tabs\Tab::make('Media')
+                        Tab::make('Media')
                             ->schema([
 
                             ]),
 
-                        Tabs\Tab::make('Price')
+                        Tab::make('Price')
                             ->schema([
                                 Section::make()
                                     ->aside()
@@ -222,7 +227,7 @@ class ViewProduct extends ViewRecord
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Filters')
+                        Tab::make('Filters')
                             ->schema([
 
                                 Section::make()

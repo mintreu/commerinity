@@ -2,9 +2,16 @@
 
 namespace App\Filament\Resources\Promotion\VoucherResource\Pages;
 
+use App\Filament\Resources\Promotion\VoucherResource\Schema\HasVoucherFormSchema;
+use Filament\Support\Enums\Width;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Promotion\VoucherResource;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Casts\VoucherConditionMatchingCast;
@@ -13,9 +20,9 @@ use Mintreu\LaravelCommerinity\Support\VoucherManager;
 
 class CreateVoucher extends CreateRecord
 {
-    use VoucherResource\Schema\HasVoucherFormSchema;
+    use HasVoucherFormSchema;
     protected static string $resource = VoucherResource::class;
-    protected ?string $maxContentWidth = '9xl';
+    protected Width|string|null $maxContentWidth = '9xl';
 
     protected ?Collection $conditions = null;
     protected VoucherManager $voucherManager;
@@ -32,10 +39,10 @@ class CreateVoucher extends CreateRecord
 
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema(array_merge($this->getSchema(),[]));
+        return parent::form($schema)
+            ->components(array_merge($this->getFormSchema(),[]));
     }
 
     protected function getFormSchema(): array
@@ -43,18 +50,18 @@ class CreateVoucher extends CreateRecord
         return [
 
 
-            Forms\Components\Fieldset::make('Conditions_list')
+            Fieldset::make('Conditions_list')
                 ->schema([
 
-                    Forms\Components\Select::make('condition_type')
+                    Select::make('condition_type')
                         ->options(collect(VoucherConditionMatchingCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                         ->required()
                         ->label('Apply By'),
 
-                    Forms\Components\Repeater::make('conditions')
+                    Repeater::make('conditions')
                         ->label(__('Condition List'))
                         ->schema([
-                            Forms\Components\Select::make('attribute')
+                            Select::make('attribute')
                                 ->label('Choose Condition')
                                 ->options(function (){
                                     $this->conditions = $this->conditions ?? VoucherManager::make()->getCondition();
@@ -65,7 +72,7 @@ class CreateVoucher extends CreateRecord
                                 })
                                 ->lazy(),
 
-                            Forms\Components\Fieldset::make('options')
+                            Fieldset::make('options')
                                 ->schema(function (callable $get) {
                                     if ($get('attribute') !== null) {
                                         $this->conditions = $this->conditions ?? VoucherManager::make()->getCondition();
@@ -78,13 +85,13 @@ class CreateVoucher extends CreateRecord
                                         }
 
                                         // return $item['operator'];
-                                        return [Forms\Components\Select::make('operator')->options($item['operator']), $field];
+                                        return [Select::make('operator')->options($item['operator']), $field];
                                     } else {
                                         return [];
                                     }
                                 })
                                 ->label('Details')
-                                ->visible(function (\Filament\Forms\Get $get) {
+                                ->visible(function (Get $get) {
                                     return ! empty($get('attribute'));
                                 }),
 
@@ -102,17 +109,17 @@ class CreateVoucher extends CreateRecord
     {
         if (! empty($attribute)) {
             return match ($attribute['type']) {
-                'select' => Forms\Components\Select::make('value')
+                'select' => Select::make('value')
                     ->label('Value')
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
-                'multiselect' => Forms\Components\Select::make('value')->label('Value')
+                'multiselect' => Select::make('value')->label('Value')
                     ->multiple()
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
-                default => Forms\Components\TextInput::make('value')
+                default => TextInput::make('value')
                     ->type(function () use ($attribute) {
                         return $attribute['options'] ?? 'text';
                     })->placeholder(function () use ($attribute) {

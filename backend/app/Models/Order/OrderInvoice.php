@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use Database\Factories\Order\OrderInvoiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Mintreu\Toolkit\Traits\HasUnique;
 
 class OrderInvoice extends Model
 {
-    /** @use HasFactory<\Database\Factories\Order\OrderInvoiceFactory> */
+    /** @use HasFactory<OrderInvoiceFactory> */
     use HasFactory,HasUnique;
 
 

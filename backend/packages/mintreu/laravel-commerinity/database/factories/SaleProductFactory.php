@@ -2,10 +2,11 @@
 
 namespace Mintreu\LaravelCommerinity\Database\Factories;
 
+use Mintreu\LaravelCommerinity\Models\SaleProduct;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Mintreu\LaravelCommerinity\Models\SaleProduct>
+ * @extends Factory<SaleProduct>
  */
 class SaleProductFactory extends Factory
 {

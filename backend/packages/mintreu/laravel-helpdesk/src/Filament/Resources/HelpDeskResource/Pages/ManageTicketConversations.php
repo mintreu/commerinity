@@ -2,8 +2,16 @@
 
 namespace Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DissociateBulkAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,23 +24,23 @@ class ManageTicketConversations extends ManageRelatedRecords
 
     protected static string $relationship = 'conversations';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationLabel(): string
     {
         return 'Conversations';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Textarea::make('message')
+        return $schema
+            ->components([
+                Textarea::make('message')
                     ->required()
                     ->columnSpanFull()
                     ->maxLength(255),
 
-                Forms\Components\SpatieMediaLibraryFileUpload::make('attachment')
+                SpatieMediaLibraryFileUpload::make('attachment')
                     ->label('Send Attachment')
                     ->image()
                     ->multiple()
@@ -48,9 +56,9 @@ class ManageTicketConversations extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('message')
             ->columns([
-                Tables\Columns\TextColumn::make('message'),
-                Tables\Columns\TextColumn::make('authorable.name'),
-                Tables\Columns\TextColumn::make('authorable_type')
+                TextColumn::make('message'),
+                TextColumn::make('authorable.name'),
+                TextColumn::make('authorable_type')
                     ->badge()
                     ->formatStateUsing(fn($state) => Str::afterLast($state,'\\')),
 
@@ -59,9 +67,9 @@ class ManageTicketConversations extends ManageRelatedRecords
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                CreateAction::make()
                     ->label(__('Send Message'))
-                   ->mutateFormDataUsing(function (array $data){
+                   ->mutateDataUsing(function (array $data){
                        $supportUser = filament()->auth()->user();
                        return array_merge($data,[
                            'authorable_type' => get_class($supportUser),
@@ -70,16 +78,16 @@ class ManageTicketConversations extends ManageRelatedRecords
                    }),
                // Tables\Actions\AssociateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
 //                Tables\Actions\EditAction::make(),
 //                Tables\Actions\DissociateAction::make(),
 //                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DissociateBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

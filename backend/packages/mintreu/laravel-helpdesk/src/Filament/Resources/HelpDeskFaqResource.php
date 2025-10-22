@@ -2,9 +2,17 @@
 
 namespace Mintreu\LaravelHelpdesk\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\ListHelpDeskFaqs;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\CreateHelpDeskFaq;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\ViewHelpDeskFaq;
+use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\EditHelpDeskFaq;
 use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages;
 use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\RelationManagers;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -14,13 +22,13 @@ class HelpDeskFaqResource extends Resource
 {
     protected static ?string $model = HelpDeskFaq::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'HelpDesk & Support';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'HelpDesk & Support';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -34,13 +42,13 @@ class HelpDeskFaqResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -55,10 +63,10 @@ class HelpDeskFaqResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\ListHelpDeskFaqs::route('/'),
-            'create' => \Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\CreateHelpDeskFaq::route('/create'),
-            'view' => \Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\ViewHelpDeskFaq::route('/{record}'),
-            'edit' => \Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskFaqResource\Pages\EditHelpDeskFaq::route('/{record}/edit'),
+            'index' => ListHelpDeskFaqs::route('/'),
+            'create' => CreateHelpDeskFaq::route('/create'),
+            'view' => ViewHelpDeskFaq::route('/{record}'),
+            'edit' => EditHelpDeskFaq::route('/{record}/edit'),
         ];
     }
 }

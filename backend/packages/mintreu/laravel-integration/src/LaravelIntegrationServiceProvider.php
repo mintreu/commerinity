@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelIntegration;
 
+use Mintreu\LaravelIntegration\Models\Integration;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -141,7 +142,7 @@ class LaravelIntegrationServiceProvider extends PackageServiceProvider
 
             $this->app->singleton($singletonKey, function ($app) use ($providerClass, $code) {
                 return new $providerClass(function() use ($code) {
-                    return \Mintreu\LaravelIntegration\Models\Integration::where('url', $code)->first();
+                    return Integration::where('url', $code)->first();
                 });
             });
 

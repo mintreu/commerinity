@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelNaukriManager\Models;
 
+use Mintreu\LaravelNaukriManager\Database\Factories\NaukriApplicationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Mintreu\Toolkit\Traits\HasUnique;
 
 class NaukriApplication extends Model
 {
-    /** @use HasFactory<\Mintreu\LaravelNaukriManager\Database\Factories\NaukriApplicationFactory> */
+    /** @use HasFactory<NaukriApplicationFactory> */
     use HasFactory,HasUnique,HasTransaction,HasAddress;
 
 

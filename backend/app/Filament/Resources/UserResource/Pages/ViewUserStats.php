@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewUserStats extends ViewRecord
@@ -21,7 +23,7 @@ class ViewUserStats extends ViewRecord
         return [
 
 
-            Actions\Action::make('team')
+            Action::make('team')
                 ->color('info')
                 ->url(fn() => self::$resource::getUrl('members',['record' => $this->record->referral_code]),false),
 
@@ -31,15 +33,15 @@ class ViewUserStats extends ViewRecord
     }
 
 
-    public function infolist(Infolist $infolist):Infolist
+    public function infolist(Schema $schema):Schema
     {
         return parent::infolist($infolist)
-            ->schema([
+            ->components([
 
                 Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->tabs([
-                        Tabs\Tab::make('Team Rewards')
+                        Tab::make('Team Rewards')
                             ->schema([
                                 RepeatableEntry::make('children')
                                     ->schema([

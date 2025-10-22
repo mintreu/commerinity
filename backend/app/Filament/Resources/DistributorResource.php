@@ -2,11 +2,22 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\DistributorResource\Pages\ListDistributors;
+use App\Filament\Resources\DistributorResource\Pages\CreateDistributor;
+use App\Filament\Resources\DistributorResource\Pages\ViewDistributor;
+use App\Filament\Resources\DistributorResource\Pages\EditDistributor;
 use App\Filament\Resources\DistributorResource\Pages;
 use App\Filament\Resources\DistributorResource\RelationManagers;
 use App\Models\Distributor;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,31 +26,31 @@ class DistributorResource extends Resource
 {
     protected static ?string $model = Distributor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('uuid')
+        return $schema
+            ->components([
+                TextInput::make('uuid')
                     ->label('UUID')
                     ->required()
                     ->maxLength(36),
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->email()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('mobile')
+                DateTimePicker::make('email_verified_at'),
+                TextInput::make('mobile')
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('mobile_verified_at'),
-                Forms\Components\TextInput::make('password')
+                DateTimePicker::make('mobile_verified_at'),
+                TextInput::make('password')
                     ->password()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('draft'),
@@ -50,28 +61,28 @@ class DistributorResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
+                TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('mobile')
+                TextColumn::make('mobile')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('mobile_verified_at')
+                TextColumn::make('mobile_verified_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -79,13 +90,13 @@ class DistributorResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -100,10 +111,10 @@ class DistributorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDistributors::route('/'),
-            'create' => Pages\CreateDistributor::route('/create'),
-            'view' => Pages\ViewDistributor::route('/{record}'),
-            'edit' => Pages\EditDistributor::route('/{record}/edit'),
+            'index' => ListDistributors::route('/'),
+            'create' => CreateDistributor::route('/create'),
+            'view' => ViewDistributor::route('/{record}'),
+            'edit' => EditDistributor::route('/{record}/edit'),
         ];
     }
 }

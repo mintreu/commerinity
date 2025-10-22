@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions;
 
+use Throwable;
 use App\Services\Iotron\LaravelRazorpay\LaravelRazorpay;
 use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\RazorpayPaymentProvider;
 
@@ -47,7 +48,7 @@ class RefundAction
                 'amount' => $amount,
                 'speed' => config('laravel-razorpay.speed'),
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $error = $e->getMessage();
             $success = false;
         }

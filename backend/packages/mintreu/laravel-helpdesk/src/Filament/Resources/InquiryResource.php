@@ -2,10 +2,26 @@
 
 namespace Mintreu\LaravelHelpdesk\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\ListInquiries;
+use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\CreateInquiry;
+use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\ViewInquiry;
+use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\EditInquiry;
 use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages;
 use Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,21 +31,21 @@ class InquiryResource extends Resource
 {
     protected static ?string $model = Inquiry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'HelpDesk & Support';
-    public static function form(Form $form): Form
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'HelpDesk & Support';
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Contact details')
+        return $schema
+            ->components([
+                Section::make('Contact details')
                     ->description('Share basic contact information so we can follow up.')
                     ->aside()
                     ->schema([
-                        Forms\Components\Grid::make([
+                        Grid::make([
                             'default' => 1,
                             'sm' => 2,
                         ])->schema([
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->label('Full name')
                                 ->placeholder('Jane Doe')
                                 ->required()
@@ -38,7 +54,7 @@ class InquiryResource extends Resource
                                 ->prefixIcon('heroicon-m-user')
                                 ->columnSpan(1),
 
-                            Forms\Components\TextInput::make('email')
+                            TextInput::make('email')
                                 ->label('Email address')
                                 ->email()
                                 ->placeholder('you@example.com')
@@ -49,7 +65,7 @@ class InquiryResource extends Resource
                                 ->columnSpan(1),
                         ]),
 
-                        Forms\Components\Textarea::make('message')
+                        Textarea::make('message')
                             ->label('Message')
                             ->placeholder('How can we help? Share as much detail as possible.')
                             ->rows(6)
@@ -57,7 +73,7 @@ class InquiryResource extends Resource
                             ->helperText('Include context, links, or references to speed things up.')
                             ->columnSpanFull(),
 
-                        Forms\Components\Toggle::make('is_business')
+                        Toggle::make('is_business')
                             ->label('This is a business inquiry')
                             ->helperText('Enable to provide your company information.')
                             ->inline(false)
@@ -65,54 +81,54 @@ class InquiryResource extends Resource
                     ])
                     ->columns(1),
 
-                Forms\Components\Section::make('Business details')
+                Section::make('Business details')
                     ->description('Tell us a bit more about your company.')
                     ->collapsible()
                     ->aside()
                     ->schema([
-                        Forms\Components\Fieldset::make('Company information')
+                        Fieldset::make('Company information')
                             ->schema([
-                                Forms\Components\Grid::make([
+                                Grid::make([
                                     'default' => 1,
                                     'sm' => 2,
                                     'lg' => 2,
                                 ])->schema([
-                                    Forms\Components\TextInput::make('company_name')
+                                    TextInput::make('company_name')
                                         ->label('Company name')
                                         ->placeholder('Acme Inc.')
                                         ->maxLength(255)
                                         ->prefixIcon('heroicon-m-building-office')
-                                        ->required(fn (Forms\Get $get) => (bool) $get('is_business'))
-                                        ->visible(fn (Forms\Get $get) => (bool) $get('is_business')),
+                                        ->required(fn (Get $get) => (bool) $get('is_business'))
+                                        ->visible(fn (Get $get) => (bool) $get('is_business')),
 
-                                    Forms\Components\TextInput::make('phone')
+                                    TextInput::make('phone')
                                         ->label('Phone')
                                         ->tel()
                                         ->placeholder('+1 555 123 4567')
                                         ->maxLength(255)
                                         ->prefixIcon('heroicon-m-phone')
-                                        ->visible(fn (Forms\Get $get) => (bool) $get('is_business')),
+                                        ->visible(fn (Get $get) => (bool) $get('is_business')),
                                 ]),
 
-                                Forms\Components\TextInput::make('address')
+                                TextInput::make('address')
                                     ->label('Company address')
                                     ->placeholder('123 Street, City, Country')
                                     ->maxLength(255)
                                     ->prefixIcon('heroicon-m-map-pin')
-                                    ->visible(fn (Forms\Get $get) => (bool) $get('is_business')),
+                                    ->visible(fn (Get $get) => (bool) $get('is_business')),
 
-                                Forms\Components\TextInput::make('website')
+                                TextInput::make('website')
                                     ->label('Website')
                                     ->placeholder('https://example.com')
                                     ->url()
                                     ->maxLength(255)
                                     ->suffixIcon('heroicon-m-globe-alt')
                                     ->helperText('Public company site, portfolio, or landing page.')
-                                    ->visible(fn (Forms\Get $get) => (bool) $get('is_business')),
+                                    ->visible(fn (Get $get) => (bool) $get('is_business')),
                             ])
                             ->columns(1),
                     ])
-                    ->visible(fn (Forms\Get $get) => (bool) $get('is_business'))
+                    ->visible(fn (Get $get) => (bool) $get('is_business'))
                     ->compact(), // sleeker nested section look
             ]);
     }
@@ -123,20 +139,20 @@ class InquiryResource extends Resource
         return $table
             ->modifyQueryUsing(fn($query) => $query->latest())
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_business')
+                IconColumn::make('is_business')
                     ->label(__('Business Enquiry'))
                     ->boolean(),
-                Tables\Columns\TextColumn::make('company_name')
+                TextColumn::make('company_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -144,13 +160,13 @@ class InquiryResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                ViewAction::make(),
                 //Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -165,10 +181,10 @@ class InquiryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\ListInquiries::route('/'),
-            'create' => \Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\CreateInquiry::route('/create'),
-            'view' => \Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\ViewInquiry::route('/{record}'),
-            'edit' => \Mintreu\LaravelHelpdesk\Filament\Resources\InquiryResource\Pages\EditInquiry::route('/{record}/edit'),
+            'index' => ListInquiries::route('/'),
+            'create' => CreateInquiry::route('/create'),
+            'view' => ViewInquiry::route('/{record}'),
+            'edit' => EditInquiry::route('/{record}/edit'),
         ];
     }
 }

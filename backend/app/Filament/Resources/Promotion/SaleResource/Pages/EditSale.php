@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\Promotion\SaleResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Resources\Promotion\SaleResource;
 use App\Filament\Resources\Promotion\SaleResource\Schema\HasSaleConditionFormSchema;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
@@ -32,8 +36,8 @@ class EditSale extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 
@@ -49,17 +53,17 @@ class EditSale extends EditRecord
         $this->redirect(self::$resource::getUrl('edit',['record' => $this->record->getRouteKey()]));
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema([
-                Forms\Components\Tabs::make('Tabs')
+        return parent::form($schema)
+            ->components([
+                Tabs::make('Tabs')
                     ->columnSpanFull()
                     ->contained(false)
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('Information')
+                        Tab::make('Information')
                             ->schema(self::$resource::getCommonFormSchema()),
-                        Forms\Components\Tabs\Tab::make('Conditions')
+                        Tab::make('Conditions')
                             ->schema($this->getSaleConditionFormSchema()),
                     ])
             ]);

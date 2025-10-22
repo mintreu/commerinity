@@ -2,12 +2,13 @@
 
 namespace Mintreu\LaravelProductCatalogue\Models;
 
+use Database\Factories\FilterGroupFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FilterGroup extends Model
 {
-    /** @use HasFactory<\Database\Factories\FilterGroupFactory> */
+    /** @use HasFactory<FilterGroupFactory> */
     use HasFactory;
 
 

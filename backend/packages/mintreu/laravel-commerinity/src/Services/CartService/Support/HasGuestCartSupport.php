@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelCommerinity\Services\CartService\Support;
 
+use Carbon\CarbonInterface;
 use App\Models\Cart;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -57,7 +58,7 @@ trait HasGuestCartSupport
     }
 
 
-    public function newGuestCredential(?string $guestId, Carbon|\Carbon\CarbonInterface $tokenTTL): array
+    public function newGuestCredential(?string $guestId, Carbon|CarbonInterface $tokenTTL): array
     {
         $newGuestId = !empty($guestId) && !is_null($guestId) ? $guestId : (string) Str::slug($this->request->ip().'-'.Str::uuid());
         $newToken   = bin2hex(random_bytes(32));

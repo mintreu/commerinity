@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\VoucherCodeResource\Pages;
 
+use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use App\Filament\Resources\Promotion\VoucherResource;
 use App\Filament\Resources\VoucherCodeResource;
 use Filament\Actions;
@@ -16,7 +18,7 @@ class ListVoucherCodes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->icon('heroicon-m-pencil-square')
                 ->size('xl')
                 ->tooltip('Create Coupon')
@@ -27,7 +29,7 @@ class ListVoucherCodes extends ListRecords
             ,
 
 
-            Actions\Action::make('manage_vouchers_resource')
+            Action::make('manage_vouchers_resource')
                 ->label(__('Manage Vouchers'))
                 ->url(fn() => VoucherResource::getUrl())
                 ->icon('heroicon-o-chevron-left')

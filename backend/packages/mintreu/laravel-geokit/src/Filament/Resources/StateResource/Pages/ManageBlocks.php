@@ -2,8 +2,18 @@
 
 namespace Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,34 +26,34 @@ class ManageBlocks extends ManageRelatedRecords
 
     protected static string $relationship = 'blocks';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getNavigationLabel(): string
     {
         return 'Blocks';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->lazy()
-                    ->afterStateUpdated(fn ($state,Forms\Set $set) => $set('url',Str::slug($state)))
+                    ->afterStateUpdated(fn ($state,Set $set) => $set('url',Str::slug($state)))
                     ->maxLength(255),
 
 
-                Forms\Components\TextInput::make('url')
+                TextInput::make('url')
                     ->required()
                     ->maxLength(255),
 
 
-                Forms\Components\TextInput::make('district_name')
+                TextInput::make('district_name')
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\Select::make('state_code')
+                Select::make('state_code')
                     ->relationship('state','name')
 
 
@@ -55,26 +65,26 @@ class ManageBlocks extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('district_name')->label(__('District'))->sortable()->searchable(),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('district_name')->label(__('District'))->sortable()->searchable(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
               //  Tables\Actions\AssociateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
               //  Tables\Actions\DissociateAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            ->toolbarActions([
+                BulkActionGroup::make([
              //       Tables\Actions\DissociateBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

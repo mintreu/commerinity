@@ -2,10 +2,31 @@
 
 namespace Mintreu\LaravelIntegration\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Flex;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\ListIntegrations;
+use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\CreateIntegration;
+use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\ViewIntegration;
+use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\EditIntegration;
 use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages;
 use Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,28 +36,28 @@ use Mintreu\LaravelIntegration\Models\Integration;
 class IntegrationResource extends Resource
 {
     protected static ?string $model = Integration::class;
-    protected static ?string $navigationGroup = 'Settings';
+    protected static string | \UnitEnum | null $navigationGroup = 'Settings';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
                 // ---------------- Integration Details ----------------
-                Forms\Components\Section::make('Integration Details')
+                Section::make('Integration Details')
                     ->description('Basic information about the integration such as name and endpoint URL.')
                     ->aside()
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label('Integration Name')
                             ->required()
                             ->maxLength(255)
                             ->placeholder('e.g. PayPal, Stripe, Zoom')
                             ->hint('Enter a clear, descriptive name.'),
 
-                        Forms\Components\TextInput::make('url')
+                        TextInput::make('url')
                             ->label('Integration URL')
                             ->required()
                             ->maxLength(255)
@@ -45,11 +66,11 @@ class IntegrationResource extends Resource
                     ]),
 
                 // ---------------- Provider ----------------
-                Forms\Components\Section::make('Provider')
+                Section::make('Provider')
                     ->description('Details about the provider offering this integration.')
                     ->aside()
                     ->schema([
-                        Forms\Components\ToggleButtons::make('branding_method')
+                        ToggleButtons::make('branding_method')
                             ->label('Branding Method')
                             ->live()
                             ->default(true)
@@ -59,29 +80,29 @@ class IntegrationResource extends Resource
                                 true => 'Paste Direct logo url',
                                 false => 'Upload logo image'
                             ]),
-                        Forms\Components\TextInput::make('logo_url')
+                        TextInput::make('logo_url')
                             ->label('Logo URL')
                             ->placeholder('Paste the provider logo URL')
                             ->maxLength(255)
-                            ->visible(fn(Forms\Get $get) => $get('branding_method'))
+                            ->visible(fn(Get $get) => $get('branding_method'))
                             ->helperText('Use this if you already have the image hosted.'),
 
-                        Forms\Components\FileUpload::make('logo_url')
+                        FileUpload::make('logo_url')
                             ->label('Upload Logo')
                             ->image()
                             ->imageEditor()
                             ->hint('Or upload a logo image instead.')
                             ->helperText('Recommended size: 200x200px, PNG or JPG.')
-                            ->visible(fn(Forms\Get $get) => !$get('branding_method'))
+                            ->visible(fn(Get $get) => !$get('branding_method'))
                             ->multiple(false),
 
-                        Forms\Components\TextInput::make('link')
+                        TextInput::make('link')
                             ->label('Provider Link')
                             ->placeholder('https://provider.com')
                             ->maxLength(255)
                             ->hint('Optional: Add the provider’s official website.'),
 
-                        Forms\Components\TextInput::make('charge')
+                        TextInput::make('charge')
                             ->label('Charge Amount')
                             ->required()
                             ->numeric()
@@ -91,11 +112,11 @@ class IntegrationResource extends Resource
                     ]),
 
                 // ---------------- Description ----------------
-                Forms\Components\Section::make('Description')
+                Section::make('Description')
                     ->description('Write a short summary about the integration.')
                     ->aside()
                     ->schema([
-                        Forms\Components\Textarea::make('desc')
+                        Textarea::make('desc')
                             ->hiddenLabel()
                             ->placeholder('Write a brief description...')
                             ->maxLength(1024)
@@ -103,24 +124,24 @@ class IntegrationResource extends Resource
                     ]),
 
                 // ---------------- Visibility ----------------
-                Forms\Components\Section::make('Visibility')
+                Section::make('Visibility')
                     ->description('Control how this integration is displayed to users.')
                     ->aside()
                     ->schema([
-                        Forms\Components\Select::make('type')
+                        Select::make('type')
                             ->label('Integration Type')
                             ->options(collect(IntegrationTypeCast::cases())
                                 ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                             ->required()
                             ->hint('Choose the type that best matches this integration.'),
 
-                        Forms\Components\Split::make([
-                            Forms\Components\Toggle::make('status')
+                        Flex::make([
+                            Toggle::make('status')
                                 ->label('Active')
                                 ->required()
                                 ->helperText('Enable or disable this integration.'),
 
-                            Forms\Components\Toggle::make('default')
+                            Toggle::make('default')
                                 ->label('Default')
                                 ->required()
                                 ->helperText('Mark as the default integration of its type.'),
@@ -136,28 +157,28 @@ class IntegrationResource extends Resource
         return $table
             ->defaultGroup('type')
             ->columns([
-                Tables\Columns\ImageColumn::make('logo_url')
+                ImageColumn::make('logo_url')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\IconColumn::make('status')
+                IconColumn::make('status')
                     ->boolean(),
-                Tables\Columns\ToggleColumn::make('default')
+                ToggleColumn::make('default')
                     ->default(false),
-                Tables\Columns\ToggleColumn::make('is_live')
+                ToggleColumn::make('is_live')
                     ->label('Alive')
                     ->default(false),
 //                Tables\Columns\TextColumn::make('created_at')
 //                    ->dateTime()
 //                    ->sortable()
 //                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -165,13 +186,13 @@ class IntegrationResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -186,10 +207,10 @@ class IntegrationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\ListIntegrations::route('/'),
-            'create' => \Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\CreateIntegration::route('/create'),
-            'view' => \Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\ViewIntegration::route('/{record}'),
-            'edit' => \Mintreu\LaravelIntegration\Filament\Resources\IntegrationResource\Pages\EditIntegration::route('/{record}/edit'),
+            'index' => ListIntegrations::route('/'),
+            'create' => CreateIntegration::route('/create'),
+            'view' => ViewIntegration::route('/{record}'),
+            'edit' => EditIntegration::route('/{record}/edit'),
         ];
     }
 }

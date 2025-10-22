@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use App\Models\Traits\Cart\HasCartOwner;
 use App\Models\Traits\HasKyc;
 use App\Models\Traits\HasOrder;
@@ -25,7 +26,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Admin extends Authenticatable implements FilamentUser,HasMedia
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable,HasPushSubscriptions,InteractsWithMedia,HasFingerprint,
         HasAddress,HasCartOwner,HasKyc,HasUnique,
         HasOrder,HasFingerprint,

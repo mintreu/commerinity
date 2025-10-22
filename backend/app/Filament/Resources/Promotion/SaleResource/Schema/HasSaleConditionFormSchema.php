@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\Promotion\SaleResource\Schema;
 
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
 use Mintreu\LaravelMoney\Filament\Forms\Components\MoneyInput;
@@ -13,12 +19,12 @@ trait HasSaleConditionFormSchema
     public function getSaleConditionFormSchema():array
     {
         return [
-            Forms\Components\Section::make('Conditions_list')
+            Section::make('Conditions_list')
                 //->aside()
                 ->description('')
                 ->schema([
 
-                    Forms\Components\Select::make('condition_type')
+                    Select::make('condition_type')
                         ->label(__('Condition Type'))
                         ->options([
                             0 => 'Match All Conditions',
@@ -29,10 +35,10 @@ trait HasSaleConditionFormSchema
                         ->required(),
 
 
-                    Forms\Components\Repeater::make('conditions')
+                    Repeater::make('conditions')
                         ->label(__('Condition List'))
                         ->schema([
-                            Forms\Components\Select::make('attribute')
+                            Select::make('attribute')
                                 ->label(__('Choose Attribute'))
                                 ->options([])
                                 //->options(fn() =>$this->conditions?->pluck('label', 'key')->toArray())
@@ -49,10 +55,10 @@ trait HasSaleConditionFormSchema
                                 })
                                 ->lazy(),
 
-                            Forms\Components\Fieldset::make('options')
+                            Fieldset::make('options')
                                 ->label(__('Options Details'))
-                                ->schema(fn(Forms\Get $get) => $this->getConditionOptions($get))
-                                ->visible(function (\Filament\Forms\Get $get) {
+                                ->schema(fn(Get $get) => $this->getConditionOptions($get))
+                                ->visible(function (Get $get) {
                                     return ! empty($get('attribute'));
                                 })
                                 ->columnSpan(2),
@@ -70,7 +76,7 @@ trait HasSaleConditionFormSchema
 
 
 
-    protected function getConditionOptions(Forms\Get $get): array
+    protected function getConditionOptions(Get $get): array
     {
         if ($get('attribute') !== null) {
             // $conditionList = $this->getCondition();
@@ -86,7 +92,7 @@ trait HasSaleConditionFormSchema
            // dd($field,$item,$get('attribute'),$this->conditions->pluck('key'));
 
             // return $item['operator'];
-            return [Forms\Components\Select::make('operator')->options($item['operator']), $field];
+            return [Select::make('operator')->options($item['operator']), $field];
         } else {
             return [];
         }
@@ -97,17 +103,17 @@ trait HasSaleConditionFormSchema
     {
         if (! empty($attribute)) {
             return match ($attribute['type']) {
-                'select' => Forms\Components\Select::make('value')
+                'select' => Select::make('value')
                     ->label('Value')
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
-                'multiselect' => Forms\Components\Select::make('value')->multiple()->label('Value')
+                'multiselect' => Select::make('value')->multiple()->label('Value')
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
                 'number', 'price' => MoneyInput::make('value')->dehydrateStateUsing(fn($state) => $state),
-                default => Forms\Components\TextInput::make('value')
+                default => TextInput::make('value')
                     ->type(function () use ($attribute) {
                         return $attribute['options'] ?? 'text';
                     })->placeholder(function () use ($attribute) {

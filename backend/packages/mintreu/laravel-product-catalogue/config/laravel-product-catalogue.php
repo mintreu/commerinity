@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\TaxCode;
+use Mintreu\LaravelCommerinity\Models\Sale;
+use Mintreu\LaravelCommerinity\Models\SaleProduct;
+
 /*
 |--------------------------------------------------------------------------
 | Laravel Product Catalogue – Sales Configuration
@@ -18,11 +22,10 @@
 | extend models without changing the package code.
 |
 */
-
 return [
 
     'tax' => [
-      'model' => \App\Models\TaxCode::class,
+      'model' => TaxCode::class,
       'foreign_key' => 'tax_code_id'
     ],
 
@@ -51,7 +54,7 @@ return [
         | custom class, as long as it extends the base Sale model.
         |
         */
-        'model' => \Mintreu\LaravelCommerinity\Models\Sale::class,
+        'model' => Sale::class,
 
         /*
         |--------------------------------------------------------------------------
@@ -66,7 +69,7 @@ return [
         | override it here.
         |
         */
-        'related_model' => \Mintreu\LaravelCommerinity\Models\SaleProduct::class,
+        'related_model' => SaleProduct::class,
     ],
 
 ];

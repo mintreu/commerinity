@@ -150,7 +150,7 @@ class Product extends Model implements HasMedia
         }
 
         // Safe fallback: empty relation
-        return $this->hasMany(\Illuminate\Database\Eloquent\Model::class, 'id')
+        return $this->hasMany(Model::class, 'id')
             ->whereRaw('1 = 0');
     }
 

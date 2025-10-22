@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelTransaction\Models;
 
+use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -21,7 +22,7 @@ use RuntimeException;
 
 class Transaction extends Model
 {
-    /** @use HasFactory<\Database\Factories\TransactionFactory> */
+    /** @use HasFactory<TransactionFactory> */
     use HasPackageModelFactory, HasLaravelIntegration, HasUnique;
 
     protected $fillable = [

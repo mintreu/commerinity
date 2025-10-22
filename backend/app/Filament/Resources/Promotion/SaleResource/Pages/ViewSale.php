@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\Promotion\SaleResource\Pages;
 
+use Filament\Actions\EditAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\IconEntry;
 use App\Filament\Resources\Promotion\SaleResource;
 use Filament\Actions;
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
@@ -22,7 +26,7 @@ class ViewSale extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 
@@ -40,28 +44,28 @@ class ViewSale extends ViewRecord
 //    }
 
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
         return parent::infolist($infolist)
-            ->schema([
+            ->components([
 
-                Infolists\Components\Section::make('General Information')
+                Section::make('General Information')
                     ->aside()
                     ->columns(2)
                     ->schema([
-                        Infolists\Components\TextEntry::make('name'),
-                        Infolists\Components\IconEntry::make('status')->boolean(),
-                        Infolists\Components\TextEntry::make('discount_amount')
+                        TextEntry::make('name'),
+                        IconEntry::make('status')->boolean(),
+                        TextEntry::make('discount_amount')
                             ->label('Discount Percentage')
                             ->formatStateUsing(fn($state) => $state/100)
                             ->suffix('%'),
                         MoneyEntry::make('discount_amount')
                     ]),
 
-                Infolists\Components\Section::make('Description')
+                Section::make('Description')
                     ->aside()
                     ->schema([
-                        Infolists\Components\TextEntry::make('description')->alignJustify()->hiddenLabel()->columnSpanFull(),
+                        TextEntry::make('description')->alignJustify()->hiddenLabel()->columnSpanFull(),
                     ]),
 
 

@@ -3,6 +3,8 @@
 namespace Mintreu\LaravelCommerinity\Models;
 
 
+use RuntimeException;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -73,7 +75,7 @@ class Voucher extends Model
         $targetModel = config('laravel-commerinity.voucher.targets')[0] ?? null;
 
         if (! $targetModel) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "No voucher target models defined in config/laravel-commerinity.php"
             );
         }
@@ -113,7 +115,7 @@ class Voucher extends Model
     }
 
 
-    public function coupons(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function coupons(): HasMany
     {
         return $this->hasMany(VoucherCode::class);
     }

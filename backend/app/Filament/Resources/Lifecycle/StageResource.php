@@ -2,12 +2,21 @@
 
 namespace App\Filament\Resources\Lifecycle;
 
+use Filament\Pages\Enums\SubNavigationPosition;
+use App\Filament\Resources\Lifecycle\StageResource\Pages\ViewStage;
+use App\Filament\Resources\Lifecycle\StageResource\Pages\ManageStageLevels;
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use App\Filament\Resources\Lifecycle\StageResource\Pages\ListStages;
+use App\Filament\Resources\Lifecycle\StageResource\Pages\CreateStage;
+use App\Filament\Resources\Lifecycle\StageResource\Pages\EditStage;
+use App\Filament\Resources\Lifecycle\StageResource\Pages\ManageSubscription;
 use App\Filament\Resources\Lifecycle\StageResource\Pages;
 use App\Filament\Resources\Lifecycle\StageResource\RelationManagers;
 use App\Models\Lifecycle\Stage;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -15,69 +24,69 @@ class StageResource extends Resource
 {
     protected static ?string $model = Stage::class;
     protected static ?string $recordRouteKeyName = 'url';
-    protected static ?string $navigationIcon = 'heroicon-o-square-2-stack';
-    protected static ?string $navigationGroup = 'Lifecycle';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-square-2-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Lifecycle';
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    protected static ?\Filament\Pages\Enums\SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
-            Pages\ViewStage::class,
-            Pages\ManageStageLevels::class,
+            ViewStage::class,
+            ManageStageLevels::class,
            // Pages\ManageSubscription::class,
         ]);
     }
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('url')
+                TextInput::make('url')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('desc')
+                Textarea::make('desc')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('base_price')
+                TextInput::make('base_price')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('discount')
+                TextInput::make('discount')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('tax_percentage')
+                TextInput::make('tax_percentage')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('tax_amount')
+                TextInput::make('tax_amount')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('price')
+                TextInput::make('price')
                     ->required()
                     ->numeric()
                     ->default(0)
                     ->prefix('$'),
-                Forms\Components\TextInput::make('max_team_members')
+                TextInput::make('max_team_members')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('estimated_total_joining_points')
+                TextInput::make('estimated_total_joining_points')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('estimated_total_purchasing_points')
+                TextInput::make('estimated_total_purchasing_points')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('benefits'),
-                Forms\Components\TextInput::make('accessibility'),
-                Forms\Components\Toggle::make('status')
+                TextInput::make('benefits'),
+                TextInput::make('accessibility'),
+                Toggle::make('status')
                     ->required(),
             ]);
     }
@@ -93,12 +102,12 @@ class StageResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStages::route('/'),
-            'create' => Pages\CreateStage::route('/create'),
-            'view' => Pages\ViewStage::route('/{record:url}'),
-            'edit' => Pages\EditStage::route('/{record:url}/edit'),
-            'levels' => Pages\ManageStageLevels::route('/{record:url}/level'),
-            'subscriptions' => Pages\ManageSubscription::route('/{record:url}/subscriptions'),
+            'index' => ListStages::route('/'),
+            'create' => CreateStage::route('/create'),
+            'view' => ViewStage::route('/{record:url}'),
+            'edit' => EditStage::route('/{record:url}/edit'),
+            'levels' => ManageStageLevels::route('/{record:url}/level'),
+            'subscriptions' => ManageSubscription::route('/{record:url}/subscriptions'),
         ];
     }
 }

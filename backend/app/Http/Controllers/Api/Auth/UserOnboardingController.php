@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Lifecycle\UserOnboardingRequest;
 use App\Services\UserServices\MembershipSubscriptionService;
@@ -12,7 +13,7 @@ class UserOnboardingController extends Controller
 
 
 
-    public function processOnboarding(UserOnboardingRequest $request): \Illuminate\Http\JsonResponse
+    public function processOnboarding(UserOnboardingRequest $request): JsonResponse
     {
         $user = $request->user();
         $user->load('address', 'kyc');

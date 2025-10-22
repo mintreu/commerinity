@@ -2,8 +2,10 @@
 
 namespace Mintreu\LaravelCategory\Filament\Resources\CategoryResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Schema;
 use Filament\Actions;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
 use Mintreu\LaravelCategory\Filament\Resources\CategoryResource;
 use Mintreu\LaravelCategory\Support\AdjacencySchema\HasAdjacencyFormSchema;
@@ -18,15 +20,15 @@ class EditCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)->schema($this->getAdjacencyFormSchema());
+        return parent::form($schema)->components($this->getAdjacencyFormSchema());
     }
 
 

@@ -4,6 +4,7 @@ namespace Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions;
 
 
 
+use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Mintreu\LaravelIntegration\Providers\Payout\Razorpay\RazorpayPayoutProvider;
@@ -46,19 +47,19 @@ class PayoutAction
         $this->bankModel = $payee->{$bank_relationship};
 
         // Ensure the bank model exists
-        throw_if(is_null($this->bankModel), new \Exception("The bank model relationship '{$bank_relationship}' does not exist for the payee."));
+        throw_if(is_null($this->bankModel), new Exception("The bank model relationship '{$bank_relationship}' does not exist for the payee."));
 
 
         // Check if 'fund_contact' column exists in the model attributes
         if (!array_key_exists('fund_contact', $this->bankModel->getAttributes())) {
-            throw new \Exception("'fund_contact' column is missing in the payee's bank model.");
+            throw new Exception("'fund_contact' column is missing in the payee's bank model.");
         }
         $this->fundContactId = $this->bankModel->fund_contact;
 
 
         // Check if 'fund_account' column exists in the model attributes
         if (!array_key_exists('fund_account', $this->bankModel->getAttributes())) {
-            throw new \Exception("'fund_account' column is missing in the payee's bank model.");
+            throw new Exception("'fund_account' column is missing in the payee's bank model.");
         }
         $this->fundAccountId = $this->bankModel->fund_account;
 

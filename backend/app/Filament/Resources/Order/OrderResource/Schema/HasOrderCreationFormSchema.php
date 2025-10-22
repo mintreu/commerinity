@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Order\OrderResource\Schema;
 
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Repeater;
 use App\Casts\AuthStatusCast;
 use App\Casts\AuthTypeCast;
 use App\Models\User;
@@ -9,7 +12,6 @@ use Filament\Forms\Components;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Mintreu\LaravelGeokit\Casts\AddressTypeCast;
@@ -129,23 +131,23 @@ trait HasOrderCreationFormSchema
         return [
             Toggle::make('has_discount')->default(false),
 
-            Components\TextInput::make('voucher')
+            TextInput::make('voucher')
                 ->label('Enter Coupon Code')
                 ->exists('voucher_codes', 'code')
                 ->inlineLabel()
                 ->nullable(),
 
-            Components\Repeater::make('cart')
+            Repeater::make('cart')
                 ->columnSpanFull()
                 ->columns(3)
                 ->schema([
-                    Components\Select::make('cartable_id')
+                    Select::make('cartable_id')
                         ->label('Select Product')
                         ->options(fn() => $this->getProducts()?->pluck('name', 'id') ?? [])
                         ->required()
                         ->live(),
 
-                    Components\TextInput::make('quantity')
+                    TextInput::make('quantity')
                         ->lazy()
                         ->hint(function (Get $get) {
                             $productId = $get('cartable_id');

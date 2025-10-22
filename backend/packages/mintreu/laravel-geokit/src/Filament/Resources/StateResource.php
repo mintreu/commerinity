@@ -2,10 +2,22 @@
 
 namespace Mintreu\LaravelGeokit\Filament\Resources;
 
+use Filament\Pages\Enums\SubNavigationPosition;
+use Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ViewState;
+use Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\EditState;
+use Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ManageBlocks;
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ListStates;
+use Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\CreateState;
 use Mintreu\LaravelGeokit\Filament\Resources\StateResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -15,31 +27,31 @@ use Mintreu\LaravelGeokit\Models\State;
 class StateResource extends Resource
 {
     protected static ?string $model = State::class;
-    protected static ?string $navigationGroup = 'Localization';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Localization';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $recordRouteKeyName = 'code';
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    protected static ?\Filament\Pages\Enums\SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
-            \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ViewState::class,
-            \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\EditState::class,
-            \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ManageBlocks::class
+            ViewState::class,
+            EditState::class,
+            ManageBlocks::class
         ]);
     }
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('code')
+                TextInput::make('code')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('country_id')
+                Select::make('country_id')
                     ->relationship('country', 'name')
                     ->required(),
             ]);
@@ -49,19 +61,19 @@ class StateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('code')
+                TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('blocks_count')->counts('blocks')->badge(),
-                Tables\Columns\TextColumn::make('country.name')
+                TextColumn::make('blocks_count')->counts('blocks')->badge(),
+                TextColumn::make('country.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -69,13 +81,13 @@ class StateResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -90,11 +102,11 @@ class StateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ListStates::route('/'),
-            'create' => \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\CreateState::route('/create'),
-            'view' => \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ViewState::route('/{record:code}'),
-            'edit' => \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\EditState::route('/{record}:code/edit'),
-            'blocks' => \Mintreu\LaravelGeokit\Filament\Resources\StateResource\Pages\ManageBlocks::route('/{record:code}/blocks'),
+            'index' => ListStates::route('/'),
+            'create' => CreateState::route('/create'),
+            'view' => ViewState::route('/{record:code}'),
+            'edit' => EditState::route('/{record}:code/edit'),
+            'blocks' => ManageBlocks::route('/{record:code}/blocks'),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Product;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Casts\OrderStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Catalogue\Product\ProductIndexResource;
@@ -134,7 +135,7 @@ class ProductDisplayController extends Controller
 
 
 
-    public function topSaleProduct(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function topSaleProduct(Request $request): AnonymousResourceCollection
     {
         $query  = Product::select([
             'id','name','url','sku','view_count','type','status',

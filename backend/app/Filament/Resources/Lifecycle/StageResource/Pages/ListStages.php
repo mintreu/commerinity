@@ -2,6 +2,14 @@
 
 namespace App\Filament\Resources\Lifecycle\StageResource\Pages;
 
+use Filament\Actions\CreateAction;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
 use App\Filament\Resources\Lifecycle\StageResource;
 use App\Services\MoneyService\Money;
 use Filament\Actions;
@@ -19,7 +27,7 @@ class ListStages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
@@ -34,30 +42,30 @@ class ListStages extends ListRecords
             ->heading(fn() => new HtmlString('<h3 class="text-center text-gray-500">Unlock stages in '.config('app.name').' to enjoy exclusive perks and rewards. Reach premium member status by advancing through all stages!</h3>'))
             ->columns([
 
-                Tables\Columns\Layout\Stack::make([
+                Stack::make([
 
-                    Tables\Columns\TextColumn::make('name')
-                        ->size(Tables\Columns\TextColumn\TextColumnSize::Large)
+                    TextColumn::make('name')
+                        ->size(TextSize::Large)
                         ->weight(FontWeight::Medium)
                         ->color('success')
                         ->extraAttributes(['class' => 'mt-2'])
                         ->alignCenter(),
 
-                    Tables\Columns\TextColumn::make('price')
-                        ->size(Tables\Columns\TextColumn\TextColumnSize::Medium)
+                    TextColumn::make('price')
+                        ->size(TextSize::Medium)
                         ->weight(FontWeight::Medium)
                         ->money(LaravelMoney::defaultCurrency())
                         ->prefix('Price : ')
                         ->badge()
                         ->alignCenter(),
 
-                    Tables\Columns\IconColumn::make('status')
+                    IconColumn::make('status')
                         ->alignCenter()
                         ->extraAttributes(['class' => 'py-2'])
                         ->boolean(),
 
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\TextColumn::make('max_team_members')
+                    Split::make([
+                        TextColumn::make('max_team_members')
                             ->numeric()
                             ->weight(FontWeight::SemiBold)
                             ->alignCenter()
@@ -65,7 +73,7 @@ class ListStages extends ListRecords
                             ->description('Team Member'),
 
 
-                        Tables\Columns\TextColumn::make('estimated_total_joining_points')
+                        TextColumn::make('estimated_total_joining_points')
                             ->numeric()
                             ->alignCenter()
                             ->weight(FontWeight::SemiBold)
@@ -73,15 +81,15 @@ class ListStages extends ListRecords
                             ->description('Joining Point'),
                     ]),
 
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\TextColumn::make('estimated_total_purchasing_points')
+                    Split::make([
+                        TextColumn::make('estimated_total_purchasing_points')
                             ->numeric()
                             ->alignCenter()
                             ->weight(FontWeight::SemiBold)
                             ->icon('heroicon-o-fire')
                             ->description('Purchasing Point'),
 
-                        Tables\Columns\TextColumn::make('lavels_count')
+                        TextColumn::make('lavels_count')
                             ->counts('levels')
                             ->default(0)
                             ->alignCenter()
@@ -106,9 +114,9 @@ class ListStages extends ListRecords
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
 //            ->bulkActions([
 //                Tables\Actions\BulkActionGroup::make([

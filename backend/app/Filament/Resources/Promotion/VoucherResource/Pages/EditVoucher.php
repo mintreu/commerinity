@@ -2,13 +2,24 @@
 
 namespace App\Filament\Resources\Promotion\VoucherResource\Pages;
 
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Placeholder;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Flex;
 use App\Filament\Resources\Promotion\VoucherResource;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Casts\VoucherActionTypeCast;
@@ -27,8 +38,8 @@ class EditVoucher extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 
@@ -44,10 +55,10 @@ class EditVoucher extends EditRecord
 
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema($this->getFormSchema())
+        return parent::form($schema)
+            ->components($this->getFormSchema())
             ;
     }
 
@@ -55,17 +66,17 @@ class EditVoucher extends EditRecord
     {
         return [
 
-            Forms\Components\Fieldset::make('General Information')
+            Fieldset::make('General Information')
                 ->schema([
 
-                    Forms\Components\TextInput::make('name')
+                    TextInput::make('name')
                         ->placeholder(__('Enter Voucher Name'))
                         ->maxLength(250)
                         ->hint(__('Max: 250'))
                         ->columnSpan(2)
                         ->required(),
 
-                    Forms\Components\Select::make('targets')
+                    Select::make('targets')
                         ->label('Applicable Groups')
                         ->multiple()
                         ->preload()
@@ -75,15 +86,15 @@ class EditVoucher extends EditRecord
                         ->placeholder(__('Select some groups'))
                         ->helperText('Choose groups for applicable for that groups only'),
 
-                    Forms\Components\Textarea::make('description')
+                    Textarea::make('description')
                         ->placeholder('Write Briefly About This Voucher')
                         ->hint(__('Max: 30,000'))
                         ->maxLength(30000)
                         ->columnSpanFull(),
 
-                    Forms\Components\Toggle::make('status')->inline(true),
+                    Toggle::make('status')->inline(true),
 
-                    Forms\Components\TextInput::make('sort_order')
+                    TextInput::make('sort_order')
                         ->label('Priority')
                         ->placeholder('Set Priority')
                         ->numeric()
@@ -93,18 +104,18 @@ class EditVoucher extends EditRecord
 
                 ])->columns(3),
 
-            Forms\Components\Fieldset::make('Voucher Timeline & Usage')
+            Fieldset::make('Voucher Timeline & Usage')
                 ->schema([
-                    Forms\Components\DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
-                    Forms\Components\DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
-                    Forms\Components\TextInput::make('usage_per_customer')->label('Usage Per Customer')->required(),
-                    Forms\Components\TextInput::make('coupon_usage_limit')->label('Coupon Usage Limit')->required(),
+                    DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
+                    DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
+                    TextInput::make('usage_per_customer')->label('Usage Per Customer')->required(),
+                    TextInput::make('coupon_usage_limit')->label('Coupon Usage Limit')->required(),
                 ])->columns(2),
 
-            Forms\Components\Fieldset::make('Discount Information')
+            Fieldset::make('Discount Information')
                 ->schema([
 
-                    Forms\Components\TextInput::make('discount_amount')
+                    TextInput::make('discount_amount')
                         ->label('Discount Amount')
                         ->numeric()
                         ->inputMode('decimal')
@@ -121,7 +132,7 @@ class EditVoucher extends EditRecord
                         ->hint(__('eg: 45020 = '.LaravelMoney::format(45020)))
                         ->lazy(),
 
-                    Forms\Components\Placeholder::make('formatted_discount')
+                    Placeholder::make('formatted_discount')
                         ->live()
                         ->label(__('Discount (Formatted)'))
                         ->content(function (Get $get) {
@@ -130,30 +141,30 @@ class EditVoucher extends EditRecord
                             return LaravelMoney::format($discountAmount);
                         }),
 
-                    Forms\Components\TextInput::make('discount_quantity')->label('Max Allowed Discountable Quantity'),
-                    Forms\Components\TextInput::make('discount_step')->label('By X Quantity'),
+                    TextInput::make('discount_quantity')->label('Max Allowed Discountable Quantity'),
+                    TextInput::make('discount_step')->label('By X Quantity'),
                 ])->columns(2),
 
-            Forms\Components\Fieldset::make('Action Information')
+            Fieldset::make('Action Information')
                 ->schema([
-                    Forms\Components\Select::make('action_type')
+                    Select::make('action_type')
                         ->options(collect(VoucherActionTypeCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                         ->required(),
 
-                    Forms\Components\ToggleButtons::make('apply_to_shipping')
+                    ToggleButtons::make('apply_to_shipping')
                         ->boolean()
                         ->inline()
                         ->live()
                         ->inlineLabel(),
 
-                    Forms\Components\ToggleButtons::make('free_shipping')
+                    ToggleButtons::make('free_shipping')
                         ->boolean()
                         ->inline()
                         ->inlineLabel()
-                        ->disabled(fn(Forms\Get $get) => !$get('apply_to_shipping'))
+                        ->disabled(fn(Get $get) => !$get('apply_to_shipping'))
                         ->required(),
 
-                    Forms\Components\ToggleButtons::make('end_other_rules')
+                    ToggleButtons::make('end_other_rules')
                         ->inline()
                         ->inlineLabel()
                         ->boolean()
@@ -161,10 +172,10 @@ class EditVoucher extends EditRecord
 
                 ])->columns(2),
 
-            Forms\Components\Fieldset::make('Conditions_list')
+            Fieldset::make('Conditions_list')
                 ->schema([
 
-                    Forms\Components\Select::make('condition_type')
+                    Select::make('condition_type')
                         ->options(collect(VoucherConditionMatchingCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                         ->required()
                         ->label('Apply By'),
@@ -178,7 +189,7 @@ class EditVoucher extends EditRecord
                             Header::make('value'),
                         ])
                         ->schema([
-                            Forms\Components\Select::make('attribute')
+                            Select::make('attribute')
                                 ->label('Choose Condition')
                                 ->options(fn() => !is_null($this->conditions) ? $this->conditions->pluck('label', 'key')->toArray() : [])
                                 ->columnSpan(function ($state) {
@@ -187,7 +198,7 @@ class EditVoucher extends EditRecord
                                 ->lazy(),
 
 
-                            Forms\Components\Split::make(function (Get $get){
+                            Flex::make(function (Get $get){
                                 $conditionArray = [];
 
                                 if ($get('attribute') != null) {
@@ -202,14 +213,14 @@ class EditVoucher extends EditRecord
 
                                 return array_merge([
 
-                                    Forms\Components\Select::make('operator')
+                                    Select::make('operator')
                                         ->hiddenLabel()
                                         ->options($conditionArray['operator'] ?? []),
 
                                 ],$field);
 
 
-                            })->visible(function (\Filament\Forms\Get $get) {
+                            })->visible(function (Get $get) {
                                 return ! empty($get('attribute'));
                             }),
 
@@ -227,19 +238,19 @@ class EditVoucher extends EditRecord
     {
         if (! empty($attribute)) {
             return match ($attribute['type']) {
-                'select' => Forms\Components\Select::make('value')
+                'select' => Select::make('value')
                     ->label('Value')
                     ->hiddenLabel()
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
-                'multiselect' => Forms\Components\Select::make('value')->label('Value')
+                'multiselect' => Select::make('value')->label('Value')
                     ->hiddenLabel()
                     ->multiple()
                     ->options(function () use ($attribute) {
                         return $attribute['options'];
                     })->required(),
-                default => Forms\Components\TextInput::make('value')
+                default => TextInput::make('value')
                     ->hiddenLabel()
                     ->type(function () use ($attribute) {
                         return $attribute['options'] ?? 'text';

@@ -2,10 +2,23 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\RelationManagers\OptionsRelationManager;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\ListFilters;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\CreateFilter;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\ViewFilter;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\EditFilter;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,22 +28,22 @@ class FilterResource extends Resource
 {
     protected static ?string $model = Filter::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Catalogue';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Catalogue';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\Select::make('filterGroup')
+                Select::make('filterGroup')
                     ->relationship('groups','name')
                     ->required(),
 
-                Forms\Components\Toggle::make('is_required')->default(false)->required(),
+                Toggle::make('is_required')->default(false)->required(),
             ]);
     }
 
@@ -38,13 +51,13 @@ class FilterResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -52,13 +65,13 @@ class FilterResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -66,17 +79,17 @@ class FilterResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\RelationManagers\OptionsRelationManager::class
+            OptionsRelationManager::class
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\ListFilters::route('/'),
-            'create' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\CreateFilter::route('/create'),
-            'view' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\ViewFilter::route('/{record}'),
-            'edit' => \Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource\Pages\EditFilter::route('/{record}/edit'),
+            'index' => ListFilters::route('/'),
+            'create' => CreateFilter::route('/create'),
+            'view' => ViewFilter::route('/{record}'),
+            'edit' => EditFilter::route('/{record}/edit'),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskTopicResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Mintreu\LaravelHelpdesk\Filament\Resources\HelpDeskTopicResource;
@@ -13,7 +14,7 @@ class ViewHelpDeskTopic extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 }

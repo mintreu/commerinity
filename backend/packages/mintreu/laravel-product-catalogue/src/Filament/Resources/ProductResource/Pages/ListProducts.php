@@ -2,8 +2,18 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\Pages;
 
+use Filament\Actions\CreateAction;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\FontWeight;
 use Mintreu\LaravelMoney\Filament\Tables\Columns\MoneyColumn;
@@ -20,7 +30,7 @@ class ListProducts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
@@ -46,10 +56,10 @@ class ListProducts extends ListRecords
     {
         return $table
             ->columns([
-                Tables\Columns\Layout\Stack::make([
+                Stack::make([
 
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\SpatieMediaLibraryImageColumn::make('thumbnail')
+                    Split::make([
+                        SpatieMediaLibraryImageColumn::make('thumbnail')
                             ->label('Display')
                             ->extraImgAttributes(['class' => 'mx-auto object-cover'])
                             ->collection('displayImage')
@@ -57,44 +67,44 @@ class ListProducts extends ListRecords
                             ->height('300px'),
 
 
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('name')
-                                ->size(Tables\Columns\TextColumn\TextColumnSize::Large)
+                        Stack::make([
+                            TextColumn::make('name')
+                                ->size(TextSize::Large)
                                 ->weight(FontWeight::SemiBold)
                                 ->searchable(),
 
 
-                            Tables\Columns\TextColumn::make('sku')
+                            TextColumn::make('sku')
                                 ->label('SKU')
                                 ->prefix('Sku: ')
                                 ->searchable(),
 
-                            Tables\Columns\Layout\Split::make([
-                                Tables\Columns\TextColumn::make('type')
+                            Split::make([
+                                TextColumn::make('type')
                                     ->badge()
                                     ->searchable(),
 
-                                Tables\Columns\TextColumn::make('status')
+                                TextColumn::make('status')
                                     ->badge()
                                     ->searchable(),
                             ]),
 
-                            Tables\Columns\TextColumn::make('filterGroup.name')
+                            TextColumn::make('filterGroup.name')
                                 ->badge()
                                 ->sortable(),
 
-                            Tables\Columns\Layout\Split::make([
+                            Split::make([
 
                                 MoneyColumn::make('price'),
 
-                                Tables\Columns\TextColumn::make('reward_point')
+                                TextColumn::make('reward_point')
                                     ->numeric()
                                     ->badge()
                                     ->suffix(' points')
                                     ->sortable(),
                             ]),
 
-                            Tables\Columns\TextColumn::make('view_count')
+                            TextColumn::make('view_count')
                                 ->numeric()
                                 ->suffix(' views')
                                 ->badge()
@@ -141,13 +151,13 @@ class ListProducts extends ListRecords
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

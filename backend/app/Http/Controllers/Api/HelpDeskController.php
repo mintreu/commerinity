@@ -108,7 +108,7 @@ class HelpDeskController extends Controller
         }
 
         // Refresh with relations expected by your Resource (author morph is 'authorable' in the model)
-        return (new \App\Http\Resources\Helpdesk\HelpdeskConversationResource(
+        return (new HelpdeskConversationResource(
             $conversation->fresh(['media', 'authorable'])
         ))
             ->additional(['success' => true, 'message' => 'Reply added successfully'])

@@ -1,12 +1,15 @@
 <?php
 
+use Mintreu\LaravelProductCatalogue\Models\Product;
+use App\Models\Lifecycle\Level;
+
 // config for Mintreu/LaravelCategory
 return [
 
 
     'categorized'   => [
         'models'    => [
-            \Mintreu\LaravelProductCatalogue\Models\Product::class
+            Product::class
         ],
     ],
 
@@ -18,7 +21,7 @@ return [
 
         'targets' => [
             // Add your voucher target models here
-            \App\Models\Lifecycle\Level::class,
+            Level::class,
         ],
     ],
 

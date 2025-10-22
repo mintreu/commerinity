@@ -19,7 +19,7 @@ class OrderWrapper
     }
 
 
-    public static function make(\Mintreu\LaravelIntegration\Support\ProviderOrder|array $data)
+    public static function make(ProviderOrder|array $data)
     {
         return new static($data);
     }

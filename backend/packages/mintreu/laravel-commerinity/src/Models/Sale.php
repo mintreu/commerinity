@@ -3,6 +3,8 @@
 namespace Mintreu\LaravelCommerinity\Models;
 
 
+use RuntimeException;
+use Illuminate\Support\Str;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -59,7 +61,7 @@ class Sale extends Model
 
 
         if (! $targetModel) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "No sale target models defined in config/laravel-commerinity.php"
             );
         }
@@ -131,7 +133,7 @@ class Sale extends Model
         $targets = config('laravel-commerinity.sales.targets', []);
 
         foreach ($targets as $class) {
-            $expected = \Illuminate\Support\Str::plural(strtolower(class_basename($class)));
+            $expected = Str::plural(strtolower(class_basename($class)));
 
             if ($method === $expected) {
                 return $this->morphedByMany(

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Promotion\SaleResource\Pages;
 
+use Filament\Schemas\Schema;
 use App\Filament\Resources\Promotion\SaleResource;
 use App\Filament\Resources\Promotion\SaleResource\Schema\HasSaleConditionFormSchema;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Collection;
 use Mintreu\LaravelCommerinity\Support\SaleManager;
@@ -37,10 +37,10 @@ class CreateSale extends CreateRecord
     }
 
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema(array_merge(self::$resource::getCommonFormSchema(),$this->getSaleConditionFormSchema()));
+        return parent::form($schema)
+            ->components(array_merge(self::$resource::getCommonFormSchema(),$this->getSaleConditionFormSchema()));
     }
 
     protected function afterCreate(): void

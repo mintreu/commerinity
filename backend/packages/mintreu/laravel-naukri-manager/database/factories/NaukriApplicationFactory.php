@@ -2,10 +2,11 @@
 
 namespace Mintreu\LaravelNaukriManager\Database\Factories;
 
+use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Mintreu\LaravelNaukriManager\Models\NaukriApplication>
+ * @extends Factory<NaukriApplication>
  */
 class NaukriApplicationFactory extends Factory
 {

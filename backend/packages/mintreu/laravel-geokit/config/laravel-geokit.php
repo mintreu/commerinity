@@ -1,5 +1,7 @@
 <?php
 
+use Mintreu\LaravelGeokit\Seeder\GeoKitSeeder;
+
 return [
 
     /*
@@ -46,7 +48,7 @@ return [
     */
 
     'seeder' => [
-        'class' => \Mintreu\LaravelGeokit\Seeder\GeoKitSeeder::class,
+        'class' => GeoKitSeeder::class,
 
         // ISO 3166-1 alpha-2 country codes to seed
         'countries' => [

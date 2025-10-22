@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Lifecycle\LevelResource;
 use App\Http\Resources\Lifecycle\StageResource;
@@ -15,7 +16,7 @@ class UserLifecycleController extends Controller
 
 
 
-    public function getUserSubscriptionStatus(Request $request): \Illuminate\Http\JsonResponse
+    public function getUserSubscriptionStatus(Request $request): JsonResponse
     {
         $user = $request->user();
         $service = MembershipSubscriptionService::make($user);

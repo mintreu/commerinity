@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use App\Casts\OrderStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\PlaceOrderRequest;
@@ -125,7 +126,7 @@ class OrderController extends Controller
     }
 
 
-    public function getInsight(Request $request): \Illuminate\Http\JsonResponse
+    public function getInsight(Request $request): JsonResponse
     {
         $user   = $request->user();
         $range  = $request->query('range', 'year');          // today|week|month|year

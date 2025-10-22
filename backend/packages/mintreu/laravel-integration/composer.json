@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^3.0",
+        "filament/filament": "^3.0||^4.0",
         "mintreu/laravel-money": "dev-main",
         "mintreu/toolkit": "dev-main",
         "razorpay/razorpay": "^2.9.1",

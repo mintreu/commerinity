@@ -2,6 +2,17 @@
 
 namespace App\Filament\Resources\Promotion\VoucherResource\Schema;
 
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms;
 use Mintreu\LaravelCommerinity\Casts\VoucherActionTypeCast;
 use Mintreu\LaravelCommerinity\Casts\VoucherConditionMatchingCast;
@@ -12,7 +23,7 @@ trait HasVoucherFormSchema
 {
 
 
-    public function getSchema():array
+    public function getFormSchema():array
     {
         return [
             $this->getGeneralSchema(),
@@ -23,21 +34,21 @@ trait HasVoucherFormSchema
     }
 
 
-    protected function getGeneralSchema(): Forms\Components\Section
+    protected function getGeneralSchema(): Section
     {
-        return  Forms\Components\Section::make('General Information')
+        return  Section::make('General Information')
             ->aside()
             ->columns(3)
             ->schema([
 
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->placeholder(__('Enter Voucher Name'))
                     ->maxLength(250)
                     ->hint(__('Max: 250'))
                     ->columnSpan(2)
                     ->required(),
 
-                Forms\Components\Select::make('targets')
+                Select::make('targets')
                     ->label('Applicable Groups')
                     ->multiple()
                     ->preload()
@@ -47,7 +58,7 @@ trait HasVoucherFormSchema
                     ->placeholder(__('Select some groups'))
                     ->helperText('Choose groups for applicable for that groups only'),
 
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->placeholder('Write Briefly About This Voucher')
                     ->hint(__('Max: 30,000'))
                     ->maxLength(30000)
@@ -55,7 +66,7 @@ trait HasVoucherFormSchema
 
 
 
-                Forms\Components\TextInput::make('sort_order')
+                TextInput::make('sort_order')
                     ->label('Priority')
                     ->placeholder('Set Priority')
                     ->numeric()
@@ -64,7 +75,7 @@ trait HasVoucherFormSchema
                     ->inlineLabel()
                     ->required(),
 
-                Forms\Components\Toggle::make('status')->inline(true)->columnSpan(1),
+                Toggle::make('status')->inline(true)->columnSpan(1),
             ]);
     }
 
@@ -72,13 +83,13 @@ trait HasVoucherFormSchema
 
     protected function getVoucherUsageSchema()
     {
-        return Forms\Components\Section::make('Voucher Timeline & Usage')
+        return Section::make('Voucher Timeline & Usage')
                 ->aside()
                 ->schema([
-                    Forms\Components\DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
-                    Forms\Components\DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
-                    Forms\Components\TextInput::make('usage_per_customer')->label('Usage Per Customer')->required(),
-                    Forms\Components\TextInput::make('coupon_usage_limit')->label('Coupon Usage Limit')->required(),
+                    DateTimePicker::make('starts_from')->required()->placeholder('Set Start Date And Time'),
+                    DateTimePicker::make('ends_till')->required()->placeholder('Set End Date And Time'),
+                    TextInput::make('usage_per_customer')->label('Usage Per Customer')->required(),
+                    TextInput::make('coupon_usage_limit')->label('Coupon Usage Limit')->required(),
                 ])->columns(2);
     }
 
@@ -87,36 +98,36 @@ trait HasVoucherFormSchema
 
     protected function getActionSchema()
     {
-        return Forms\Components\Section::make('Action Information')
+        return Section::make('Action Information')
             ->aside()
             ->schema([
 
-                Forms\Components\Select::make('action_type')
+                Select::make('action_type')
                     ->inlineLabel()
                     ->columnSpanFull()
                     ->options(collect(VoucherActionTypeCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                     ->live()
                     ->required(),
 
-                Forms\Components\Grid::make(1)
+                Grid::make(1)
                     ->columns(1)
                     ->columnSpanFull()
-                    ->visible(fn(Forms\Get $get) => $get('action_type'))
+                    ->visible(fn(Get $get) => $get('action_type'))
                     ->schema([
-                        Forms\Components\ToggleButtons::make('apply_to_shipping')
+                        ToggleButtons::make('apply_to_shipping')
                             ->boolean()
                             ->inline()
                             ->live()
                             ->inlineLabel(),
 
-                        Forms\Components\ToggleButtons::make('free_shipping')
+                        ToggleButtons::make('free_shipping')
                             ->boolean()
                             ->inline()
                             ->inlineLabel()
-                            ->disabled(fn(Forms\Get $get) => !$get('apply_to_shipping'))
+                            ->disabled(fn(Get $get) => !$get('apply_to_shipping'))
                             ->required(),
 
-                        Forms\Components\ToggleButtons::make('end_other_rules')
+                        ToggleButtons::make('end_other_rules')
                             ->inline()
                             ->inlineLabel()
                             ->boolean()
@@ -130,13 +141,13 @@ trait HasVoucherFormSchema
     protected function getDiscountSchema()
     {
 
-        return  Forms\Components\Section::make('Discount Information')
+        return  Section::make('Discount Information')
             ->aside()
             ->schema([
-                Forms\Components\TextInput::make('discount_amount')
+                TextInput::make('discount_amount')
                     ->label('Discount Value')
                     ->helperText('Enter percentage or if fixed amount, enter in paisa')
-                    ->hint(function (Forms\Get $get, $state) {
+                    ->hint(function (Get $get, $state) {
                         if (! $state) {
                             return null;
                         }
@@ -161,10 +172,10 @@ trait HasVoucherFormSchema
                     ->reactive() // <-- important to re-render when state changes
                     ->placeholder('Enter Discount'),
 
-                Forms\Components\TextInput::make('formatted_discount')->label(__('Discount (Formatted)'))->disabled(),
+                TextInput::make('formatted_discount')->label(__('Discount (Formatted)'))->disabled(),
 
-                Forms\Components\TextInput::make('discount_quantity')->label('Max Allowed Discountable Quantity'),
-                Forms\Components\TextInput::make('discount_step')->label('By X Quantity'),
+                TextInput::make('discount_quantity')->label('Max Allowed Discountable Quantity'),
+                TextInput::make('discount_step')->label('By X Quantity'),
             ])->columnSpanFull();
 
 
@@ -178,19 +189,19 @@ trait HasVoucherFormSchema
 
     public function getConditionalFormSchema()
     {
-        return  Forms\Components\Section::make('Conditions_list')
+        return  Section::make('Conditions_list')
             ->aside()
             ->schema([
 
-                Forms\Components\Select::make('condition_type')
+                Select::make('condition_type')
                     ->options(collect(VoucherConditionMatchingCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                     ->required()
                     ->label('Apply By'),
 
-                Forms\Components\Repeater::make('conditions')
+                Repeater::make('conditions')
                     ->label(__('Condition List'))
                     ->schema([
-                        Forms\Components\Select::make('attribute')
+                        Select::make('attribute')
                             ->label('Choose Condition')
                             ->options(function (){
                                 $this->conditions = $this->conditions ?? VoucherManager::make()->getCondition();
@@ -202,7 +213,7 @@ trait HasVoucherFormSchema
                             ->columnSpanFull()
                             ->lazy(),
 
-                        Forms\Components\Fieldset::make('options')
+                        Fieldset::make('options')
                             ->schema(function (callable $get) {
                                 if ($get('attribute') !== null) {
                                     $this->conditions = $this->conditions ?? VoucherManager::make()->getCondition();
@@ -215,13 +226,13 @@ trait HasVoucherFormSchema
                                     }
 
                                     // return $item['operator'];
-                                    return [Forms\Components\Select::make('operator')->options($item['operator']), $field];
+                                    return [Select::make('operator')->options($item['operator']), $field];
                                 } else {
                                     return [];
                                 }
                             })
                             ->label('Details')
-                            ->visible(function (\Filament\Forms\Get $get) {
+                            ->visible(function (Get $get) {
                                 return ! empty($get('attribute'));
                             }),
 

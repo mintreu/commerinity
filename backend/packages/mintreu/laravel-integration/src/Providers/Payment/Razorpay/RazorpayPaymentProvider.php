@@ -2,6 +2,10 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\Razorpay;
 
+use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions\RefundAction;
+use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions\VerifyAction;
+use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions\QRCodeAction;
+use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions\PaymentLinkAction;
 use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions\OrderAction;
 use Razorpay\Api\Api;
 use Mintreu\LaravelIntegration\Contracts\ProviderIntegrationContract;
@@ -91,29 +95,29 @@ class RazorpayPaymentProvider
 
     // Actions
 
-    public function order(): Actions\OrderAction
+    public function order(): OrderAction
     {
         return new OrderAction($this);
     }
 
-    public function refund(): Actions\RefundAction
+    public function refund(): RefundAction
     {
-        return new Actions\RefundAction($this);
+        return new RefundAction($this);
     }
 
-    public function verify(): Actions\VerifyAction
+    public function verify(): VerifyAction
     {
-        return new Actions\VerifyAction($this);
+        return new VerifyAction($this);
     }
 
-    public function qr(): Actions\QRCodeAction
+    public function qr(): QRCodeAction
     {
-        return new Actions\QRCodeAction($this);
+        return new QRCodeAction($this);
     }
 
-    public function link(): Actions\PaymentLinkAction
+    public function link(): PaymentLinkAction
     {
-        return new Actions\PaymentLinkAction($this);
+        return new PaymentLinkAction($this);
     }
 
 

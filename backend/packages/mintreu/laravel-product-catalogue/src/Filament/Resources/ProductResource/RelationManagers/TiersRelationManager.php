@@ -2,8 +2,17 @@
 
 namespace Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,29 +28,29 @@ class TiersRelationManager extends RelationManager
         return false;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('init_quantity')
+        return $schema
+            ->components([
+                TextInput::make('init_quantity')
                     ->required()
                     ->label(__('Stock Quantity'))
                     ->minValue(fn() =>  max(0, $this->ownerRecord->sold_quantity))
                     ->numeric()
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('price')
+                TextInput::make('price')
                     ->label('Price')
                     ->numeric()
                     ->required(),
 
-                Forms\Components\TextInput::make('min_quantity')
+                TextInput::make('min_quantity')
                     ->label('Minimum Purchase Quantity')
                     ->helperText('Minimum number of units that must be ordered.')
                     ->numeric()
                     ->required(),
 
-                Forms\Components\TextInput::make('max_quantity')
+                TextInput::make('max_quantity')
                     ->label('Maximum Purchase Quantity')
                     ->helperText('Maximum number of units that must be ordered.')
                     ->numeric()
@@ -49,7 +58,7 @@ class TiersRelationManager extends RelationManager
 
 
 
-                Forms\Components\TextInput::make('wholesale_unit_quantity')
+                TextInput::make('wholesale_unit_quantity')
                     ->label('Units per Wholesale Pack')
                     ->helperText('Number of individual units in one wholesale pack (e.g., 24).')
                     ->visible(fn() => $this->ownerRecord->type == ProductTypeCast::WHOLESALE)
@@ -65,29 +74,29 @@ class TiersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('init_quantity')
             ->columns([
-                Tables\Columns\TextColumn::make('init_quantity'),
-                Tables\Columns\TextColumn::make('sold_quantity')->label('Sold Quantity'),
-                Tables\Columns\TextColumn::make('in_stock_quantity')->label('In Stock Quantity'),
-                Tables\Columns\IconColumn::make('in_stock')->boolean()
+                TextColumn::make('init_quantity'),
+                TextColumn::make('sold_quantity')->label('Sold Quantity'),
+                TextColumn::make('in_stock_quantity')->label('In Stock Quantity'),
+                IconColumn::make('in_stock')->boolean()
                     ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle'),
-                Tables\Columns\TextColumn::make('updated_at')->dateTime()->toggleable(),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->toggleable()->toggledHiddenByDefault(),
+                TextColumn::make('updated_at')->dateTime()->toggleable(),
+                TextColumn::make('created_at')->dateTime()->toggleable()->toggledHiddenByDefault(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

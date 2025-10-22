@@ -2,12 +2,13 @@
 
 namespace App\Models\Lifecycle;
 
+use Database\Factories\Lifecycle\LevelTaskFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LevelTask extends Model
 {
-    /** @use HasFactory<\Database\Factories\Lifecycle\LevelTaskFactory> */
+    /** @use HasFactory<LevelTaskFactory> */
     use HasFactory;
 
 

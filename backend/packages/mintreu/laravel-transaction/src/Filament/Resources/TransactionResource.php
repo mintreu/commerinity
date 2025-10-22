@@ -2,11 +2,25 @@
 
 namespace Mintreu\LaravelTransaction\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\ListTransactions;
+use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\CreateTransaction;
+use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\ViewTransaction;
+use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\EditTransaction;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages;
 use Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\RelationManagers;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,48 +29,48 @@ use Mintreu\LaravelTransaction\Models\Transaction;
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
-    protected static ?string $navigationGroup = 'Wallet';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \UnitEnum | null $navigationGroup = 'Wallet';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('uuid')
+        return $schema
+            ->components([
+                TextInput::make('uuid')
                     ->label('UUID')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('type')
+                TextInput::make('type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('checkout_type')
+                TextInput::make('checkout_type')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('provider_gen_id')
+                TextInput::make('provider_gen_id')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('provider_transaction_id')
+                TextInput::make('provider_transaction_id')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('amount')
+                TextInput::make('amount')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\Toggle::make('verified')
+                Toggle::make('verified')
                     ->required(),
-                Forms\Components\DateTimePicker::make('expire_at'),
-                Forms\Components\TextInput::make('transactionable_type')
+                DateTimePicker::make('expire_at'),
+                TextInput::make('transactionable_type')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('transactionable_id')
+                TextInput::make('transactionable_id')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('provider_data'),
-                Forms\Components\TextInput::make('success_url')
+                TextInput::make('provider_data'),
+                TextInput::make('success_url')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('status')
+                TextInput::make('status')
                     ->required()
                     ->maxLength(255)
                     ->default('pending'),
-                Forms\Components\Select::make('integration_id')
+                Select::make('integration_id')
                     ->relationship('integration', 'name')
                     ->required(),
             ]);
@@ -66,24 +80,24 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')
+                TextColumn::make('uuid')
                     ->label('UUID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('checkout_type')
+                TextColumn::make('checkout_type')
                     ->searchable(),
 //                Tables\Columns\TextColumn::make('provider_gen_id')
 //                    ->searchable(),
 //                Tables\Columns\TextColumn::make('provider_transaction_id')
 //                    ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('amount')
                     //->money(LaravelMoney::defaultCurrency())
                     ->formatStateUsing(fn($state) => LaravelMoney::format($state))
                     ->sortable(),
-                Tables\Columns\IconColumn::make('verified')
+                IconColumn::make('verified')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('expire_at')
+                TextColumn::make('expire_at')
                     ->dateTime()
                     ->sortable(),
 //                Tables\Columns\TextColumn::make('transactionable_type')
@@ -93,16 +107,16 @@ class TransactionResource extends Resource
 //                    ->sortable(),
 //                Tables\Columns\TextColumn::make('success_url')
 //                    ->searchable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('integration.name')
+                TextColumn::make('integration.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -110,13 +124,13 @@ class TransactionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -131,10 +145,10 @@ class TransactionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\ListTransactions::route('/'),
-            'create' => \Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\CreateTransaction::route('/create'),
-            'view' => \Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\ViewTransaction::route('/{record}'),
-            'edit' => \Mintreu\LaravelTransaction\Filament\Resources\TransactionResource\Pages\EditTransaction::route('/{record}/edit'),
+            'index' => ListTransactions::route('/'),
+            'create' => CreateTransaction::route('/create'),
+            'view' => ViewTransaction::route('/{record}'),
+            'edit' => EditTransaction::route('/{record}/edit'),
         ];
     }
 }

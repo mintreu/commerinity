@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Throwable;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Http\Resources\Transaction\WalletResource;
@@ -379,7 +380,7 @@ class WalletController extends Controller
                     'status' => 'pending', // set success after payout provider confirms
                 ]);
             });
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
 
@@ -448,7 +449,7 @@ class WalletController extends Controller
                     'metadata'=> ['from' => $senderLocked->uuid],
                 ]);
             });
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
         }
 
