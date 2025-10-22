@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Incentives;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -9,10 +9,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\IncentiveResource\Pages\ListIncentives;
-use App\Filament\Resources\IncentiveResource\Pages\CreateIncentive;
-use App\Filament\Resources\IncentiveResource\Pages\ViewIncentive;
-use App\Filament\Resources\IncentiveResource\Pages\EditIncentive;
+use App\Filament\Resources\Incentives\Pages\ListIncentives;
+use App\Filament\Resources\Incentives\Pages\CreateIncentive;
+use App\Filament\Resources\Incentives\Pages\ViewIncentive;
+use App\Filament\Resources\Incentives\Pages\EditIncentive;
 use App\Filament\Resources\IncentiveResource\Pages;
 use App\Filament\Resources\IncentiveResource\RelationManagers;
 use App\Models\Incentive;

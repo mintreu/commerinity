@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Lifecycle\StageResource\Pages;
+namespace App\Filament\Resources\Lifecycle\Stages\Pages;
 
 
 use Filament\Actions\EditAction;
@@ -8,7 +8,7 @@ use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Enums\TextSize;
 use Filament\Schemas\Components\Flex;
-use App\Filament\Resources\Lifecycle\StageResource;
+use App\Filament\Resources\Lifecycle\Stages\StageResource;
 use Filament\Actions;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;

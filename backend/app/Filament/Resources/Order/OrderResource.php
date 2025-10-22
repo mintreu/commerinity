@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Order;
+namespace App\Filament\Resources\Order\Orders;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -13,12 +13,12 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\Order\OrderResource\Pages\ListOrders;
-use App\Filament\Resources\Order\OrderResource\Pages\CreateOrder;
-use App\Filament\Resources\Order\OrderResource\Pages\ViewOrder;
-use App\Filament\Resources\Order\OrderResource\Pages\EditOrder;
-use App\Filament\Resources\Order\OrderResource\Pages;
-use App\Filament\Resources\Order\OrderResource\RelationManagers;
+use App\Filament\Resources\Order\Orders\Pages\ListOrders;
+use App\Filament\Resources\Order\Orders\Pages\CreateOrder;
+use App\Filament\Resources\Order\Orders\Pages\ViewOrder;
+use App\Filament\Resources\Order\Orders\Pages\EditOrder;
+use App\Filament\Resources\Order\Orders\Pages;
+use App\Filament\Resources\Order\Orders\RelationManagers;
 use App\Models\Order\Order;
 use Filament\Forms;
 use Filament\Resources\Resource;

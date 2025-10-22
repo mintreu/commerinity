@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Distributors;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -10,10 +10,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\DistributorResource\Pages\ListDistributors;
-use App\Filament\Resources\DistributorResource\Pages\CreateDistributor;
-use App\Filament\Resources\DistributorResource\Pages\ViewDistributor;
-use App\Filament\Resources\DistributorResource\Pages\EditDistributor;
+use App\Filament\Resources\Distributors\Pages\ListDistributors;
+use App\Filament\Resources\Distributors\Pages\CreateDistributor;
+use App\Filament\Resources\Distributors\Pages\ViewDistributor;
+use App\Filament\Resources\Distributors\Pages\EditDistributor;
 use App\Filament\Resources\DistributorResource\Pages;
 use App\Filament\Resources\DistributorResource\RelationManagers;
 use App\Models\Distributor;

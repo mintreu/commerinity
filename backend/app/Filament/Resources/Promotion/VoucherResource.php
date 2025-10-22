@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Promotion;
+namespace App\Filament\Resources\Promotion\Vouchers;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -12,10 +12,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\Promotion\VoucherResource\Pages\ListVouchers;
-use App\Filament\Resources\Promotion\VoucherResource\Pages\CreateVoucher;
-use App\Filament\Resources\Promotion\VoucherResource\Pages\ViewVoucher;
-use App\Filament\Resources\Promotion\VoucherResource\Pages\EditVoucher;
+use App\Filament\Resources\Promotion\Vouchers\Pages\ListVouchers;
+use App\Filament\Resources\Promotion\Vouchers\Pages\CreateVoucher;
+use App\Filament\Resources\Promotion\Vouchers\Pages\ViewVoucher;
+use App\Filament\Resources\Promotion\Vouchers\Pages\EditVoucher;
 use App\Filament\Resources\Promotion\VoucherResource\Pages;
 use App\Filament\Resources\Promotion\VoucherResource\RelationManagers;
 use Filament\Forms;

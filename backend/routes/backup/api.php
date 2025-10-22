@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
-//    //return UserResource::make();
+//    //return Users::make();
 //})->middleware('auth:sanctum');
 
 

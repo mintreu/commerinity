@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Admins;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -10,10 +10,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\AdminResource\Pages\ListAdmins;
-use App\Filament\Resources\AdminResource\Pages\CreateAdmin;
-use App\Filament\Resources\AdminResource\Pages\ViewAdmin;
-use App\Filament\Resources\AdminResource\Pages\EditAdmin;
+use App\Filament\Resources\Admins\Pages\ListAdmins;
+use App\Filament\Resources\Admins\Pages\CreateAdmin;
+use App\Filament\Resources\Admins\Pages\ViewAdmin;
+use App\Filament\Resources\Admins\Pages\EditAdmin;
 use App\Filament\Resources\AdminResource\Pages;
 use App\Filament\Resources\AdminResource\RelationManagers;
 use App\Models\Admin;

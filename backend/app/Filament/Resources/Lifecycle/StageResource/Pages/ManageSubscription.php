@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Lifecycle\StageResource\Pages;
+namespace App\Filament\Resources\Lifecycle\Stages\Pages;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -14,7 +14,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\Lifecycle\StageResource;
+use App\Filament\Resources\Lifecycle\Stages\StageResource;
 use Filament\Forms;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;

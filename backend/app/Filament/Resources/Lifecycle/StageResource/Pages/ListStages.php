@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Lifecycle\StageResource\Pages;
+namespace App\Filament\Resources\Lifecycle\Stages\Pages;
 
 use Filament\Actions\CreateAction;
 use Filament\Tables\Columns\Layout\Stack;
@@ -10,7 +10,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
-use App\Filament\Resources\Lifecycle\StageResource;
+use App\Filament\Resources\Lifecycle\Stages\StageResource;
 use App\Services\MoneyService\Money;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;

@@ -21,7 +21,7 @@ return [
 
     'allowed_user_types' => [
         User::class => 'User (Member)',
-        Admin::class => 'Admin',
+        Admin::class => 'Admins',
         Distributor::class => 'Distributor'
     ],
 

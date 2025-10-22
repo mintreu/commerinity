@@ -5,8 +5,7 @@ namespace App\Providers\Filament;
 use Filament\Pages\Dashboard;
 use App\Models\Admin;
 use Filament\Widgets\AccountWidget;
-use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
-use DutchCodingCompany\FilamentSocialite\Provider;
+
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -23,7 +22,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 use Mintreu\LaravelCategory\LaravelCategoryPlugin;
 use Mintreu\LaravelGeokit\LaravelGeokitPlugin;
 use Mintreu\LaravelHelpdesk\LaravelHelpdeskPlugin;

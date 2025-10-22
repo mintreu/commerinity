@@ -27,7 +27,7 @@ class CreateWallet extends CreateRecord
                 ->options([
                     User::class => 'User (Member)',
                     Distributor::class => 'Distributor',
-                    Admin::class => 'Admin',
+                    Admin::class => 'Admins',
                 ])
                 ->default(User::class)
                 ->live(),

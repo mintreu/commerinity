@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Lifecycle;
+namespace App\Filament\Resources\Lifecycle\UserSubscriptions;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -13,10 +13,10 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\Lifecycle\UserSubscriptionResource\Pages\ListUserSubscriptions;
-use App\Filament\Resources\Lifecycle\UserSubscriptionResource\Pages\CreateUserSubscription;
-use App\Filament\Resources\Lifecycle\UserSubscriptionResource\Pages\ViewUserSubscription;
-use App\Filament\Resources\Lifecycle\UserSubscriptionResource\Pages\EditUserSubscription;
+use App\Filament\Resources\Lifecycle\UserSubscriptions\Pages\ListUserSubscriptions;
+use App\Filament\Resources\Lifecycle\UserSubscriptions\Pages\CreateUserSubscription;
+use App\Filament\Resources\Lifecycle\UserSubscriptions\Pages\ViewUserSubscription;
+use App\Filament\Resources\Lifecycle\UserSubscriptions\Pages\EditUserSubscription;
 use App\Filament\Resources\Lifecycle\UserSubscriptionResource\Pages;
 use App\Filament\Resources\Lifecycle\UserSubscriptionResource\RelationManagers;
 use App\Models\Lifecycle\UserSubscription;

@@ -19,7 +19,7 @@ class UserKycController extends Controller
 
         $user->load(['kyc' => fn($q) => $q->with('media')]);
 
-       // return UserResource::make($user);
+       // return Users::make($user);
 
         return $user?->kyc ? KycResource::make($user->kyc) : response()->json([
             'message'   => 'no kyc info found',

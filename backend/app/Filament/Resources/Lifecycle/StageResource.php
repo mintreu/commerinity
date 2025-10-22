@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\Lifecycle;
+namespace App\Filament\Resources\Lifecycle\Stages;
 
 use Filament\Pages\Enums\SubNavigationPosition;
-use App\Filament\Resources\Lifecycle\StageResource\Pages\ViewStage;
-use App\Filament\Resources\Lifecycle\StageResource\Pages\ManageStageLevels;
+use App\Filament\Resources\Lifecycle\Stages\Pages\ViewStage;
+use App\Filament\Resources\Lifecycle\Stages\Pages\ManageStageLevels;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use App\Filament\Resources\Lifecycle\StageResource\Pages\ListStages;
-use App\Filament\Resources\Lifecycle\StageResource\Pages\CreateStage;
-use App\Filament\Resources\Lifecycle\StageResource\Pages\EditStage;
-use App\Filament\Resources\Lifecycle\StageResource\Pages\ManageSubscription;
+use App\Filament\Resources\Lifecycle\Stages\Pages\ListStages;
+use App\Filament\Resources\Lifecycle\Stages\Pages\CreateStage;
+use App\Filament\Resources\Lifecycle\Stages\Pages\EditStage;
+use App\Filament\Resources\Lifecycle\Stages\Pages\ManageSubscription;
 use App\Filament\Resources\Lifecycle\StageResource\Pages;
 use App\Filament\Resources\Lifecycle\StageResource\RelationManagers;
 use App\Models\Lifecycle\Stage;

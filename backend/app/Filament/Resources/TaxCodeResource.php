@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\TaxCodes;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;

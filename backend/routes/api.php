@@ -277,7 +277,7 @@ Route::post('/push/subscribe', [PushNotificationController::class, 'subscribe'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/push/unsubscribe', [PushNotificationController::class, 'unsubscribe']);
 
-    // Admin routes (add your admin middleware)
+    // Admins routes (add your admin middleware)
     Route::middleware('admin')->group(function () {
         Route::post('/push/send-to-user', [PushNotificationController::class, 'sendToUser']);
         Route::post('/push/send-to-all', [PushNotificationController::class, 'sendToAll']);

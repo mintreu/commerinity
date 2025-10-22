@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Promotion;
+namespace App\Filament\Resources\Promotion\Sales;
 
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -9,11 +9,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Utilities\Get;
-use App\Filament\Resources\Promotion\SaleResource\RelationManagers\SaleProductsRelationManager;
-use App\Filament\Resources\Promotion\SaleResource\Pages\ListSales;
-use App\Filament\Resources\Promotion\SaleResource\Pages\CreateSale;
-use App\Filament\Resources\Promotion\SaleResource\Pages\ViewSale;
-use App\Filament\Resources\Promotion\SaleResource\Pages\EditSale;
+use App\Filament\Resources\Promotion\Sales\RelationManagers\SaleProductsRelationManager;
+use App\Filament\Resources\Promotion\Sales\Pages\ListSales;
+use App\Filament\Resources\Promotion\Sales\Pages\CreateSale;
+use App\Filament\Resources\Promotion\Sales\Pages\ViewSale;
+use App\Filament\Resources\Promotion\Sales\Pages\EditSale;
 use App\Filament\Resources\Promotion\SaleResource\Pages;
 use App\Filament\Resources\Promotion\SaleResource\RelationManagers;
 use Filament\Forms;

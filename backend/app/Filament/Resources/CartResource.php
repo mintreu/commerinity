@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Carts;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -12,12 +12,12 @@ use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\CartResource\Pages\ListCarts;
-use App\Filament\Resources\CartResource\Pages\CreateCart;
-use App\Filament\Resources\CartResource\Pages\ViewCart;
-use App\Filament\Resources\CartResource\Pages\EditCart;
-use App\Filament\Resources\CartResource\Pages;
-use App\Filament\Resources\CartResource\RelationManagers;
+use App\Filament\Resources\Carts\Pages\ListCarts;
+use App\Filament\Resources\Carts\Pages\CreateCart;
+use App\Filament\Resources\Carts\Pages\ViewCart;
+use App\Filament\Resources\Carts\Pages\EditCart;
+use App\Filament\Resources\Carts\Pages;
+use App\Filament\Resources\Carts\RelationManagers;
 use App\Models\Cart;
 use Filament\Forms;
 use Filament\Resources\Resource;
@@ -28,8 +28,8 @@ class CartResource extends Resource
 {
     protected static ?string $model = Cart::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|null|\UnitEnum $navigationGroup = 'Shop';
 
     public static function form(Schema $schema): Schema
     {

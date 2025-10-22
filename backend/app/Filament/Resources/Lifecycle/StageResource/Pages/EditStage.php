@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\Lifecycle\StageResource\Pages;
+namespace App\Filament\Resources\Lifecycle\Stages\Pages;
 
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
-use App\Filament\Resources\Lifecycle\StageResource;
+use App\Filament\Resources\Lifecycle\Stages\StageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
