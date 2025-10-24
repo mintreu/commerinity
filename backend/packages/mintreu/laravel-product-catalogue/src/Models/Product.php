@@ -39,7 +39,6 @@ class Product extends Model implements HasMedia
         'hsn',
         'type',
         'filter_group_id',
-//        'category_id',
         'tenant_id',
         'tenant_type',
         'description',
@@ -48,32 +47,47 @@ class Product extends Model implements HasMedia
         'reward_point',
         'min_quantity',
         'max_quantity',
-//        'wholesale_unit_quantity',
         'is_returnable',
-        'width',
-        'height',
-        'length',
-        'weight',
-        'status',
-        'status_feedback',
+        'width',  // can be removed later
+        'height',  // can be removed later
+        'length',  // can be removed later
+        'weight',  // can be removed later
+        'status_feedback',  
         'view_count',
         'meta_data',
         'tax_code_id',
         'is_tax_inclusive',
         'is_exempted',
+        'is_downloadable',
+        'download_link',
+        'demo_data',
+        'file_size',
+        'proxy_base_url',
+        'internal_auth_key',
+        'internal_auth_secret',
     ];
 
     protected $casts = [
         //'price' => LaravelMoneyCast::class,
         'reward_point' => 'float',
         'is_returnable' => 'boolean',
+        'is_downloadable' => 'boolean',
         'view_count' => 'integer',
         'meta_data' => 'array',
+        'demo_data' => 'array',
         'type' => ProductTypeCast::class,
         'status' => PublishableStatusCast::class,
         'min_quantity' => 'integer',
         'wholesale_unit_quantity' => 'integer'
 
+    ];
+
+
+    protected $hidden = [
+        'download_link',
+        'proxy_base_url',
+        'internal_auth_key',
+        'internal_auth_secret',
     ];
 
     /**
@@ -185,6 +199,8 @@ class Product extends Model implements HasMedia
     }
 
 
+	// need to use through config, upgrade needed here
+	
     public function engagements()
     {
         return $this->hasMany(ProductEngagement::class,'product_id');

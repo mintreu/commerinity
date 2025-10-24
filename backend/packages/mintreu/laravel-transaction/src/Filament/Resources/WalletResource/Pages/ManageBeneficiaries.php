@@ -13,10 +13,13 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Mintreu\LaravelTransaction\Filament\Resources\BeneficiaryAccountResource\Schemas\HasBeneficiaryCreationFormSchema;
 use Mintreu\LaravelTransaction\Filament\Resources\WalletResource;
 
 class ManageBeneficiaries extends ManageRelatedRecords
 {
+
+    use HasBeneficiaryCreationFormSchema;
     protected static string $resource = WalletResource::class;
 
     protected static string $relationship = 'beneficiaries';
@@ -86,6 +89,7 @@ class ManageBeneficiaries extends ManageRelatedRecords
                     ->modalIcon('heroicon-m-building-office')
                     ->modalHeading('Add New Bank Account')
                     ->createAnother(false)
+                    ->form($this->getBeneficiaryCreationFormSchema())
                     ->mutateFormDataUsing(function ($data){
                         return array_merge($data,[
                            'accountable_id' => $this->record->walletable_id,

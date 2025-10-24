@@ -35,7 +35,7 @@ class IntegrationSeeder extends Seeder
             'secret'   => env('RAZORPAY_PAYOUT_SECRET', ''),
             'logo_url'  => 'https://badges.razorpay.com/badge-light.png',
             'status' => true,
-            'default' => true,
+            'default' => false,
         ]);
 
         $Cashfree =  Integration::create([
@@ -45,6 +45,19 @@ class IntegrationSeeder extends Seeder
             'type' => IntegrationTypeCast::PAYMENT,
             'key'      => config('laravel-integration.providers.payment.cash-free.key'),
             'secret'   => config('laravel-integration.providers.payment.cash-free.secret'),
+            'logo_url' => 'https://cdn.brandfetch.io/idLecjUPYL/w/1250/h/1250/theme/dark/icon.png?c=1dxbfHSJFAPEGdCLU4o5B',
+            'status' => true,
+            'default' => true,
+        ]);
+
+        $CashfreePayout =  Integration::create([
+            'name' => 'CashFree (Payout)',
+            'url' => 'cash-free-payout',
+            'desc' => 'Payout Gateway of Application',
+            'type' => IntegrationTypeCast::PAYOUT,
+            'key'      => config('laravel-integration.providers.payment.cash-free.key'),
+            'secret'   => config('laravel-integration.providers.payment.cash-free.secret'),
+            'logo_url' => 'https://cdn.brandfetch.io/idLecjUPYL/w/1250/h/1250/theme/dark/icon.png?c=1dxbfHSJFAPEGdCLU4o5B',
             'status' => true,
             'default' => true,
         ]);

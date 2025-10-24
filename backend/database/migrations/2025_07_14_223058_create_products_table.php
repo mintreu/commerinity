@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name')->default('Unnamed Product');
             $table->string('sku')->unique();
             $table->string('url')->unique();
-            $table->string('hsn')->nullable();
             $table->string('type')->nullable();
             $table->foreignId('filter_group_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->cascadeOnUpdate()->cascadeOnDelete();
@@ -33,10 +32,28 @@ return new class extends Migration
             // Configurable Product
             $table->foreignId('parent_id')->nullable()->constrained('products')->cascadeOnUpdate()->nullOnDelete();
 
+            // Shipping
             $table->decimal('width', 12, 2)->nullable();
             $table->decimal('height', 12, 2)->nullable();
             $table->decimal('length', 12, 2)->nullable();
             $table->decimal('weight', 12, 2)->nullable();
+
+            // Downloadable product attributes
+            $table->boolean('is_downloadable')->default(false);
+            $table->string('download_link')->nullable(); // Secure URL for downloadable file
+            $table->json('demo_data')->nullable(); // Optional demo auth with preview URL
+            $table->unsignedBigInteger('file_size')->nullable(); // File size in bytes (optional)
+
+            // In products table
+            $table->string('proxy_base_url')->nullable(); // e.g., 'https://webcrm.com/internal' – Internal URL for proxying to App B
+            $table->string('internal_auth_key')->nullable();
+            $table->string('internal_auth_secret')->nullable(); // Shared secret for App A to authenticate with App B (e.g., JWT key)
+
+
+            // Subscription product attributes
+//            $table->unsignedSmallInteger('subscription_interval')->nullable(); // e.g., 1 for monthly
+//            $table->enum('subscription_period', ['day', 'week', 'month', 'year'])->nullable(); // Billing period
+
 
             $table->string('status')->default(\Mintreu\Toolkit\Casts\PublishableStatusCast::DRAFT->value);
             $table->text('status_feedback')->nullable();

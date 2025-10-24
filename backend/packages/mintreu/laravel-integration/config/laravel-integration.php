@@ -156,6 +156,17 @@ return [
                 ],
                 'provider' => \Mintreu\LaravelIntegration\Providers\Payout\Razorpay\RazorpayPayoutProvider::class
             ],
+
+            'cash-free' => [
+                'key'      => env('CASH_FREE_KEY', ''),
+                'secret'   => env('CASH_FREE_SECRET', ''),
+                'webhook'  => env('CASH_FREE_WEBHOOK', ''),
+                'api'      => [
+                    'test'    => 'https://sandbox.cashfree.com/pg/',
+                    'prod'    => 'https://api.cashfree.com/pg/'
+                ],
+                'provider' => \Mintreu\LaravelIntegration\Providers\Payout\CashFree\CashFreePayoutProvider::class
+            ],
         ],
 
         /*
