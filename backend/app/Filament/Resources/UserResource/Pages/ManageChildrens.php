@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Casts\AuthStatusCast;
 use App\Filament\Resources\UserResource;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;

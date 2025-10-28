@@ -9,8 +9,8 @@ use App\Http\Resources\Category\CategoryIndexResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class SearchController extends Controller
 {

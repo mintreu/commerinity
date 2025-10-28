@@ -12,7 +12,6 @@ use Mintreu\LaravelIntegration\LaravelIntegration;
 use Mintreu\LaravelIntegration\Support\OrderBuilder\ProviderOrder;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelMoney\Money;
-use Mintreu\Toolkit\Support\Pdf\PdfMaker;
 
 
 class TestController extends Controller
@@ -23,12 +22,23 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        $order = Order::firstWhere('uuid','2025o2U8wC1z6z7q');
 
 
-        dd([
-           OrderConfirmService::make($order)->confirm()
-        ]);
+        dd(XYSLEERR::make());
+
+
+
+
+
+
+
+
+//        $order = Order::firstWhere('uuid','2025o2U8wC1z6z7q');
+//
+//
+//        dd([
+//           OrderConfirmService::make($order)->confirm()
+//        ]);
 
 
 

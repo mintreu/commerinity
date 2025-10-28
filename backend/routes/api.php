@@ -80,7 +80,7 @@ Route::prefix('geo')->group(base_path('routes/apis/geo-location.php'));
 
 //Route::group(base_path('routes/apis/products.php'));
 
-// Load extra route files
+// Load  route files
 require base_path('routes/apis/products.php');
 
 
@@ -98,21 +98,6 @@ Route::prefix('categories')->group(function () {
     Route::get('/with-products', [CategoryController::class, 'getParentCategoriesWithProducts']); // GET /categories/with-products
     Route::get('{category:url}', [CategoryController::class, 'show']); // GET /categories/{url}
 });
-
-// ========================
-// 📦 PRODUCT ROUTES
-// ========================
-//Route::prefix('products')->group(function () {
-//    Route::get('/', [ProductController::class, 'getAllSimpleProducts']); // GET /products
-//    Route::get('filters/get', [ProductController::class, 'getFilterOptions']); // GET /products/filters/get
-//    Route::get('sorts/get', [ProductController::class, 'getSortingOptions']); // GET /products/sorts/get
-//    Route::get('suggestions/get', [ProductController::class, 'topSuggestProduct']); // GET /products/suggestions/get
-//    Route::get('{product:url}', [ProductController::class, 'show']); // GET /products/{url}
-//
-//
-//});
-
-
 
 
 
@@ -211,8 +196,8 @@ Route::prefix('integration')->group(function () {
 // ========================
 Route::prefix('recruitment')->group(function () {
     Route::get('/', [RecruitmentController::class, 'index']); // GET /recruitment
-    Route::get('{naukri:url}', [RecruitmentController::class, 'show']); // GET /recruitment/{url}
-    Route::post('{naukri:url}/apply', [RecruitmentController::class, 'apply'])->middleware('auth:sanctum'); // POST /recruitment/{url}/apply
+    Route::get('{recruitment:url}', [RecruitmentController::class, 'show']); // GET /recruitment/{url}
+//    Route::post('{recruitment:url}/apply', [RecruitmentController::class, 'apply'])->middleware('auth:sanctum'); // POST /recruitment/{url}/apply
 });
 
 // ========================

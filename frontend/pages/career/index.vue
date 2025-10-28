@@ -74,61 +74,6 @@
       </div>
     </section>
 
-    <!-- Enhanced Application Status Section -->
-    <section v-if="isLoggedIn" class="application-status py-20 px-6 bg-white dark:bg-gray-900 relative">
-      <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-12">
-          <div class="section-badge inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-200 dark:border-emerald-800 backdrop-blur-sm mb-6">
-            <Icon name="mdi:magnify" class="w-4 h-4 mr-2 text-emerald-600 dark:text-emerald-400" />
-            <span class="text-sm font-medium text-emerald-700 dark:text-emerald-300">Application Tracker</span>
-          </div>
-          <h2 class="text-3xl sm:text-4xl font-black mb-4">
-            Track Your <span class="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Application Journey</span>
-          </h2>
-        </div>
-
-        <div class="application-card bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700">
-          <form @submit.prevent="handleSearch" class="space-y-6">
-            <div class="relative">
-              <input
-                  v-model="query"
-                  :placeholder="login ? 'Enter your registered email or mobile' : 'Enter your Application ID'"
-                  type="text"
-                  class="w-full px-6 py-4 text-lg rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300"
-              />
-              <Icon name="mdi:magnify" class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-            </div>
-
-            <button type="submit" class="search-btn w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-emerald-500/25 transition-all duration-300 transform hover:scale-105">
-              <Icon name="mdi:magnify" class="inline w-5 h-5 mr-2" />
-              Search Application
-            </button>
-          </form>
-
-          <p v-if="error" class="error-message mt-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-800">
-            {{ error }}
-          </p>
-
-          <div v-if="application" class="application-result mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-bold text-gray-900 dark:text-white">Application Found!</h3>
-              <div class="status-badge px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-semibold">
-                {{ application.status }}
-              </div>
-            </div>
-            <p class="text-gray-700 dark:text-gray-300 mb-4">
-              Your application for <strong class="text-blue-600 dark:text-blue-400">{{ application.role }}</strong> is currently <strong>{{ application.status }}</strong>.
-            </p>
-            <NuxtLink :to="`/career/applications/${application.uuid}`"
-                      class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              View Full Details
-              <Icon name="mdi:arrow-right" class="ml-2 w-5 h-5" />
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Enhanced Job Listings -->
     <section v-if="jobs.length" class="jobs-section py-20 px-6 bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900" id="openings">
       <div class="max-w-7xl mx-auto">
@@ -366,6 +311,359 @@
       </div>
     </section>
 
+    <!-- Enhanced Jobs Table Section with Pagination -->
+    <section v-if="jobs.length" class="jobs-table-section py-20 px-6 bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-indigo-950/20 dark:to-purple-950/20">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <div class="section-badge inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 border border-indigo-200 dark:border-indigo-800 backdrop-blur-sm mb-6">
+            <Icon name="mdi:table" class="w-4 h-4 mr-2 text-indigo-600 dark:text-indigo-400" />
+            <span class="text-sm font-medium text-indigo-700 dark:text-indigo-300">Detailed View</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-black mb-6">
+            <span class="text-gray-900 dark:text-white">Browse All</span><br>
+            <span class="bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">Opportunities</span>
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Explore our complete list of openings with advanced search and filtering options.
+          </p>
+        </div>
+
+        <!-- Table Controls: Search + Type Filter -->
+        <div class="table-controls mb-8">
+          <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col lg:flex-row gap-6 items-center">
+
+              <!-- Search Bar -->
+              <div class="relative flex-1 w-full">
+                <input
+                    v-model="tableSearch"
+                    type="text"
+                    placeholder="Search by job title, role, or location..."
+                    class="w-full px-6 py-4 pl-14 text-base rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300"
+                />
+                <Icon name="mdi:magnify" class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none" />
+                <button
+                    v-if="tableSearch"
+                    @click="tableSearch = ''"
+                    class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
+                >
+                  <Icon name="mdi:close-circle" class="text-xl" />
+                </button>
+              </div>
+
+              <!-- Type Filter -->
+              <div class="flex items-center gap-4 w-full lg:w-auto">
+                <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <Icon name="mdi:filter-variant" class="inline w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" />
+                  Filter by Type:
+                </label>
+                <select
+                    v-model="tableTypeFilter"
+                    class="flex-1 lg:w-64 px-6 py-4 rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 cursor-pointer"
+                >
+                  <option value="All">All Types</option>
+                  <option v-for="type in uniqueTypes" :key="type" :value="type">{{ type }}</option>
+                </select>
+              </div>
+
+              <!-- Results Count -->
+              <div class="text-sm font-bold text-gray-600 dark:text-gray-400 whitespace-nowrap bg-indigo-50 dark:bg-indigo-900/20 px-6 py-4 rounded-2xl">
+                <span class="text-indigo-600 dark:text-indigo-400 text-lg">{{ searchedJobs.length }}</span>
+                <span class="hidden sm:inline">{{ searchedJobs.length === 1 ? 'job' : 'jobs' }} found</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="table-wrapper hidden lg:block bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 text-white">
+              <tr>
+                <th @click="sortTable('title')" class="cursor-pointer px-6 py-5 text-left text-sm font-bold uppercase tracking-wider hover:bg-indigo-700/50 transition-colors duration-300 group">
+                  <div class="flex items-center gap-3">
+                    <Icon name="mdi:briefcase" class="w-5 h-5" />
+                    Job Title
+                    <Icon :name="getSortIcon('title')" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </th>
+                <th @click="sortTable('role')" class="cursor-pointer px-6 py-5 text-left text-sm font-bold uppercase tracking-wider hover:bg-indigo-700/50 transition-colors duration-300 group">
+                  <div class="flex items-center gap-3">
+                    <Icon name="mdi:account-tie" class="w-5 h-5" />
+                    Role
+                    <Icon :name="getSortIcon('role')" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </th>
+                <th @click="sortTable('type')" class="cursor-pointer px-6 py-5 text-left text-sm font-bold uppercase tracking-wider hover:bg-indigo-700/50 transition-colors duration-300 group">
+                  <div class="flex items-center gap-3">
+                    <Icon name="mdi:clock-outline" class="w-5 h-5" />
+                    Type
+                    <Icon :name="getSortIcon('type')" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </th>
+                <th @click="sortTable('location')" class="cursor-pointer px-6 py-5 text-left text-sm font-bold uppercase tracking-wider hover:bg-indigo-700/50 transition-colors duration-300 group">
+                  <div class="flex items-center gap-3">
+                    <Icon name="mdi:map-marker" class="w-5 h-5" />
+                    Location
+                    <Icon :name="getSortIcon('location')" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </th>
+                <th class="px-6 py-5 text-right text-sm font-bold uppercase tracking-wider">
+                  <Icon name="mdi:cursor-pointer" class="inline w-5 h-5 mr-2" />
+                  Action
+                </th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+              <tr v-if="paginatedJobs.length === 0">
+                <td colspan="5" class="px-6 py-16 text-center">
+                  <div class="flex flex-col items-center justify-center space-y-4">
+                    <div class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                      <Icon name="mdi:briefcase-search-outline" class="w-10 h-10 text-gray-400" />
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">No Jobs Found</h3>
+                    <p class="text-gray-600 dark:text-gray-400 max-w-md">
+                      We couldn't find any jobs matching your search criteria. Try adjusting your filters.
+                    </p>
+                    <button
+                        @click="resetFilters"
+                        class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                    >
+                      <Icon name="mdi:refresh" class="inline w-5 h-5 mr-2" />
+                      Clear All Filters
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-for="(job, index) in paginatedJobs" :key="`table-${job.url}`"
+                  class="table-row hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-300"
+                  :style="{ animationDelay: `${index * 0.05}s` }">
+                <td class="px-6 py-5">
+                  <NuxtLink :to="`/career/${job.url}`" class="flex items-center gap-4 group">
+                    <div class="relative">
+                      <img
+                          :src="job.thumbnail"
+                          :alt="job.title"
+                          class="w-14 h-14 rounded-xl object-cover shadow-md ring-2 ring-white dark:ring-gray-700 group-hover:ring-indigo-400 transition-all duration-300"
+                          loading="lazy"
+                      />
+                      <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-indigo-600/0 to-cyan-600/0 group-hover:from-indigo-600/20 group-hover:to-cyan-600/20 transition-all duration-300"></div>
+                    </div>
+                    <div>
+                      <div class="text-base font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300 line-clamp-1">
+                        {{ job.title }}
+                      </div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+                        {{ job.summary }}
+                      </div>
+                    </div>
+                  </NuxtLink>
+                </td>
+                <td class="px-6 py-5">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                      <Icon name="mdi:account-tie" class="w-4 h-4 mr-2" />
+                      {{ job.role }}
+                    </span>
+                </td>
+                <td class="px-6 py-5">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300">
+                      <Icon name="mdi:clock-outline" class="w-4 h-4 mr-2" />
+                      {{ job.type }}
+                    </span>
+                </td>
+                <td class="px-6 py-5">
+                  <div class="flex items-center text-gray-700 dark:text-gray-300 font-medium">
+                    <Icon name="mdi:map-marker" class="w-5 h-5 mr-2 text-red-500" />
+                    {{ job.location }}
+                  </div>
+                </td>
+                <td class="px-6 py-5 text-right">
+                  <NuxtLink
+                      :to="`/career/${job.url}`"
+                      class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold text-sm rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transform hover:scale-105 transition-all duration-300"
+                  >
+                    View & Apply
+                    <Icon name="mdi:arrow-right" class="w-5 h-5 ml-2" />
+                  </NuxtLink>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mobile Card View (Responsive for mobile/tablet) -->
+        <div class="mobile-cards lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div v-if="paginatedJobs.length === 0" class="col-span-full">
+            <div class="flex flex-col items-center justify-center py-16 px-6 bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700">
+              <div class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
+                <Icon name="mdi:briefcase-search-outline" class="w-10 h-10 text-gray-400" />
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">No Jobs Found</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-center mb-6">
+                We couldn't find any jobs matching your search criteria.
+              </p>
+              <button
+                  @click="resetFilters"
+                  class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
+              >
+                <Icon name="mdi:refresh" class="inline w-5 h-5 mr-2" />
+                Clear Filters
+              </button>
+            </div>
+          </div>
+
+          <div v-for="(job, index) in paginatedJobs" :key="`mobile-${job.url}`"
+               class="mobile-job-card group relative bg-white dark:bg-gray-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-200 dark:border-gray-700 transform hover:-translate-y-2"
+               :style="{ animationDelay: `${index * 0.1}s` }">
+
+            <!-- Card Image -->
+            <div class="relative h-48 overflow-hidden">
+              <img
+                  :src="job.thumbnail"
+                  :alt="job.title"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+              <!-- Type Badge -->
+              <div class="absolute top-4 right-4">
+                <span class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white text-xs font-bold rounded-full shadow-lg backdrop-blur-sm">
+                  {{ job.type }}
+                </span>
+              </div>
+
+              <!-- Location -->
+              <div class="absolute bottom-4 left-4 flex items-center px-3 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-lg">
+                <Icon name="mdi:map-marker" class="w-4 h-4 mr-2 text-red-500" />
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ job.location }}</span>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <div class="p-6">
+              <div class="mb-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                  <Icon name="mdi:account-tie" class="w-3 h-3 mr-1" />
+                  {{ job.role }}
+                </span>
+              </div>
+
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300 line-clamp-2">
+                {{ job.title }}
+              </h3>
+
+              <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-6 line-clamp-2">
+                {{ job.summary }}
+              </p>
+
+              <NuxtLink
+                  :to="`/career/${job.url}`"
+                  class="inline-flex items-center justify-center w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 transform hover:scale-105"
+              >
+                View & Apply
+                <Icon name="mdi:arrow-right" class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+              </NuxtLink>
+            </div>
+
+            <!-- Hover Effect -->
+            <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-cyan-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl"></div>
+          </div>
+        </div>
+
+        <!-- Enhanced Pagination -->
+        <div v-if="searchedJobs.length > 0" class="pagination-wrapper mt-12">
+          <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+
+              <!-- Items per page selector -->
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                  <Icon name="mdi:format-list-numbered" class="inline w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400" />
+                  Rows per page:
+                </span>
+                <select
+                    v-model="itemsPerPage"
+                    @change="currentPage = 1"
+                    class="px-5 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-bold focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <option :value="6">6</option>
+                  <option :value="12">12</option>
+                  <option :value="24">24</option>
+                  <option :value="50">50</option>
+                </select>
+              </div>
+
+              <!-- Pagination Controls -->
+              <nav class="flex items-center gap-2" aria-label="Pagination">
+                <!-- Previous Button -->
+                <button
+                    @click="currentPage--"
+                    :disabled="currentPage === 1"
+                    :class="[
+                      'group flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 border-2',
+                      currentPage === 1
+                        ? 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50'
+                        : 'border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:scale-105'
+                    ]"
+                    title="Previous page"
+                >
+                  <Icon name="mdi:chevron-left" class="w-5 h-5" />
+                  <span class="hidden sm:inline">Previous</span>
+                </button>
+
+                <!-- Page Numbers -->
+                <div class="hidden md:flex items-center gap-2">
+                  <button
+                      v-for="page in visiblePages"
+                      :key="page"
+                      @click="currentPage = page"
+                      :class="[
+                        'min-w-[3rem] px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 transform',
+                        currentPage === page
+                          ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-lg shadow-indigo-500/25 scale-110'
+                          : 'border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-indigo-300 dark:hover:border-indigo-600 hover:scale-105'
+                      ]"
+                  >
+                    {{ page }}
+                  </button>
+                </div>
+
+                <!-- Current page indicator for mobile -->
+                <div class="md:hidden px-5 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold text-sm rounded-xl shadow-lg">
+                  {{ currentPage }} / {{ totalPages }}
+                </div>
+
+                <!-- Next Button -->
+                <button
+                    @click="currentPage++"
+                    :disabled="currentPage === totalPages"
+                    :class="[
+                      'group flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all duration-300 border-2',
+                      currentPage === totalPages
+                        ? 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50'
+                        : 'border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:scale-105'
+                    ]"
+                    title="Next page"
+                >
+                  <span class="hidden sm:inline">Next</span>
+                  <Icon name="mdi:chevron-right" class="w-5 h-5" />
+                </button>
+              </nav>
+
+              <!-- Page Info -->
+              <div class="text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 px-5 py-3 rounded-xl">
+                Page <span class="text-indigo-600 dark:text-indigo-400 text-base">{{ currentPage }}</span> of
+                <span class="text-indigo-600 dark:text-indigo-400 text-base">{{ totalPages }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Enhanced Final CTA -->
     <section class="final-cta py-24 px-6 bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900 text-white relative overflow-hidden">
       <!-- Animated Background -->
@@ -458,15 +756,17 @@ const SwiperAutoplay = Autoplay
 const SwiperEffectCoverflow = EffectCoverflow
 const SwiperPagination = Pagination
 
-// Form state
-const query = ref('')
-const login = ref(true)
-const error = ref('')
-const application = ref<any>(null)
-
 // Filter state
 const filterBy = ref<'type' | 'role'>('type')
 const filterTeam = ref('All')
+
+// Table state
+const tableSearch = ref('')
+const tableTypeFilter = ref('All')
+const currentPage = ref(1)
+const itemsPerPage = ref(12)
+const sortBy = ref<'title' | 'role' | 'type' | 'location'>('title')
+const sortOrder = ref<'asc' | 'desc'>('asc')
 
 // Enhanced data
 const heroHighlights = ref([
@@ -601,26 +901,105 @@ const filteredJobs = computed(() =>
     filterTeam.value === 'All' ? jobs.value : jobs.value.filter(j => j[filterBy.value] === filterTeam.value)
 )
 
-// Methods
-function handleSearch() {
-  if (!query.value.trim()) {
-    error.value = 'Please enter your application ID, email, or mobile number.'
-    application.value = null
-    return
+// Table computed properties
+const uniqueTypes = computed(() => {
+  const types = new Set(jobs.value.map(j => j.type))
+  return Array.from(types).sort()
+})
+
+const searchedJobs = computed(() => {
+  let filtered = filteredJobs.value
+
+  // Apply type filter
+  if (tableTypeFilter.value !== 'All') {
+    filtered = filtered.filter(job => job.type === tableTypeFilter.value)
   }
 
-  // Demo search functionality
-  if (['demo-uuid-123', 'user@example.com', '+91-1234567890'].includes(query.value)) {
-    application.value = {
-      uuid: 'demo-uuid-123',
-      role: 'Senior Frontend Developer',
-      status: 'Under Review'
+  // Apply search
+  if (!tableSearch.value) return filtered
+
+  const search = tableSearch.value.toLowerCase()
+  return filtered.filter(job =>
+      job.title.toLowerCase().includes(search) ||
+      job.role.toLowerCase().includes(search) ||
+      job.location.toLowerCase().includes(search) ||
+      job.type.toLowerCase().includes(search) ||
+      job.summary.toLowerCase().includes(search)
+  )
+})
+
+const sortedJobs = computed(() => {
+  const jobsCopy = [...searchedJobs.value]
+
+  jobsCopy.sort((a, b) => {
+    const aVal = a[sortBy.value].toLowerCase()
+    const bVal = b[sortBy.value].toLowerCase()
+
+    if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1
+    if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1
+    return 0
+  })
+
+  return jobsCopy
+})
+
+const totalPages = computed(() => Math.ceil(searchedJobs.value.length / itemsPerPage.value))
+
+const paginatedJobs = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return sortedJobs.value.slice(start, end)
+})
+
+const visiblePages = computed(() => {
+  const pages = []
+  const total = totalPages.value
+  const current = currentPage.value
+
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) {
+      pages.push(i)
     }
-    error.value = ''
   } else {
-    application.value = null
-    error.value = 'No application found with the provided information.'
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i)
+      pages.push('...')
+      pages.push(total)
+    } else if (current >= total - 3) {
+      pages.push(1)
+      pages.push('...')
+      for (let i = total - 4; i <= total; i++) pages.push(i)
+    } else {
+      pages.push(1)
+      pages.push('...')
+      for (let i = current - 1; i <= current + 1; i++) pages.push(i)
+      pages.push('...')
+      pages.push(total)
+    }
   }
+
+  return pages.filter(p => p !== '...')
+})
+
+// Methods
+function sortTable(column: 'title' | 'role' | 'type' | 'location') {
+  if (sortBy.value === column) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortBy.value = column
+    sortOrder.value = 'asc'
+  }
+}
+
+function getSortIcon(column: string) {
+  if (sortBy.value !== column) return 'mdi:unfold-more-horizontal'
+  return sortOrder.value === 'asc' ? 'mdi:arrow-up' : 'mdi:arrow-down'
+}
+
+function resetFilters() {
+  tableSearch.value = ''
+  tableTypeFilter.value = 'All'
+  currentPage.value = 1
 }
 
 // Animations
@@ -697,24 +1076,6 @@ onMounted(() => {
       )
     })
 
-    // Application card
-    if (document.querySelector('.application-card')) {
-      gsap.fromTo('.application-card',
-          { y: 40, opacity: 0, scale: 0.95 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.8,
-            ease: 'back.out(1.7)',
-            scrollTrigger: {
-              trigger: '.application-status',
-              ...scrollConfig
-            }
-          }
-      )
-    }
-
     // Job cards
     if (document.querySelector('.jobs-swiper')) {
       gsap.fromTo('.jobs-swiper',
@@ -767,6 +1128,88 @@ onMounted(() => {
           }
       )
     })
+
+    // Table section animations
+    if (document.querySelector('.jobs-table-section')) {
+      gsap.fromTo('.table-controls',
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '.jobs-table-section',
+              ...scrollConfig
+            }
+          }
+      )
+
+      gsap.fromTo('.table-wrapper',
+          { y: 40, opacity: 0, scale: 0.98 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: '.table-wrapper',
+              ...scrollConfig
+            }
+          }
+      )
+
+      // Animate table rows with stagger
+      gsap.fromTo('.table-row',
+          { x: -20, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.5,
+            ease: 'power2.out',
+            stagger: 0.05,
+            scrollTrigger: {
+              trigger: '.table-wrapper',
+              start: 'top 70%',
+              toggleActions: 'play none none reverse'
+            }
+          }
+      )
+
+      // Animate mobile cards
+      gsap.utils.toArray('.mobile-job-card').forEach((card: any, index: number) => {
+        gsap.fromTo(card,
+            { y: 30, opacity: 0, scale: 0.95 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.6,
+              ease: 'back.out(1.7)',
+              scrollTrigger: {
+                trigger: card,
+                ...scrollConfig
+              }
+            }
+        )
+      })
+
+      // Pagination animation
+      gsap.fromTo('.pagination-wrapper',
+          { y: 20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: '.pagination-wrapper',
+              ...scrollConfig
+            }
+          }
+      )
+    }
 
     // Final CTA
     gsap.fromTo(['.cta-title', '.cta-subtitle', '.cta-actions'],
@@ -867,7 +1310,41 @@ onMounted(() => {
   left: 100%;
 }
 
+/* Table animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-row {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.mobile-job-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+/* Hover effects for table rows */
+.table-row:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+}
+
 /* Mobile responsiveness */
+@media (max-width: 1024px) {
+  .table-wrapper {
+    display: none !important;
+  }
+}
+
 @media (max-width: 640px) {
   .hero-title {
     font-size: 2.5rem;
@@ -888,6 +1365,10 @@ onMounted(() => {
     width: 16rem;
     height: 16rem;
   }
+
+  .pagination-wrapper nav {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 480px) {
@@ -899,17 +1380,44 @@ onMounted(() => {
   .highlight-card {
     padding: 1.5rem;
   }
+
+  .mobile-job-card {
+    padding: 1rem;
+  }
 }
 
 /* Dark mode enhancements */
 @media (prefers-color-scheme: dark) {
-  .job-card, .value-card, .life-card, .highlight-card {
+  .job-card, .value-card, .life-card, .highlight-card, .mobile-job-card {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .table-wrapper {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
   }
 }
 
 /* Custom scroll indicator */
 .scroll-indicator:hover {
   transform: translateX(-50%) scale(1.1);
+}
+
+/* Smooth transitions */
+select, input[type="text"] {
+  transition: all 0.3s ease;
+}
+
+/* Pagination hover effects */
+.pagination-wrapper button:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+.pagination-wrapper button:disabled {
+  opacity: 0.5;
+}
+
+/* Smooth scroll */
+* {
+  scroll-behavior: smooth;
 }
 </style>

@@ -144,7 +144,7 @@
                   <!-- Search Blog -->
                   <div
                       class="result-item flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 rounded-2xl transition-all duration-300 cursor-pointer hover:scale-102"
-                      @click="selectResult({ type: 'blog', query: searchQuery })"
+                      @click="selectResult({ type: 'blogs', query: searchQuery })"
                   >
                     <div class="result-icon w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
                       <Icon name="mdi:post" class="w-6 h-6 text-white" />
@@ -304,7 +304,7 @@ const selectResult = (result: any) => {
     case 'deals':
       router.push(`/search?q=${query}&filter=deals`)
       break
-    case 'blog':
+    case 'blogs':
       router.push(`/search?q=${query}&filter=blog`)
       break
     default:

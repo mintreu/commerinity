@@ -357,12 +357,18 @@
                              required />
                     </div>
                     <div class="form-group">
-                      <label class="form-label font-medium text-gray-700 dark:text-gray-300 mb-2">Year</label>
+                      <label class="form-label font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                        <Icon name="mdi:calendar" class="w-4 h-4 mr-2 text-blue-500" />
+                        Year of Passing
+                      </label>
                       <input type="number"
                              v-model.number="edu.year"
                              placeholder="e.g. 2023"
-                             class="form-input"
+                             :min="1950"
+                             :max="currentYear"
+                             class="form-input year-input"
                              required />
+                      <p class="form-hint text-xs mt-1">Year between 1950 and {{ currentYear }}</p>
                     </div>
                   </div>
                 </div>
@@ -625,7 +631,7 @@
                   <p class="text-blue-100">
                     Please review all information before submitting your application.
                     <span v-if="job.is_payable" class="block mt-2 font-semibold text-yellow-200">
-                      Application fee: ₹{{ job.fees }} (non-refundable)
+                      Application fee: {{ job.fees }} (non-refundable)
                     </span>
                   </p>
                 </div>
@@ -634,7 +640,7 @@
                         class="submit-btn group px-12 py-6 bg-white text-blue-600 font-black text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                   <Icon name="mdi:rocket-launch" class="inline w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" />
                   <span v-if="!job.is_payable">Submit Application</span>
-                  <span v-else>Submit & Pay ₹{{ job.fees }}</span>
+                  <span v-else>Submit & Pay {{ job.fees }}</span>
                   <Icon name="mdi:arrow-right" class="inline w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform duration-300" />
                 </button>
               </div>
@@ -726,6 +732,9 @@ let redirectTimer: ReturnType<typeof setTimeout> | null = null;
 const skillsKey = ref(0);
 const educationsKey = ref(0);
 const experiencesKey = ref(0);
+
+// Current year for validation
+const currentYear = new Date().getFullYear();
 
 interface Job {
   name: string
@@ -1070,10 +1079,15 @@ const handleRemoveExperience = async () => {
 
 // Submit functionality
 const finalSubmit = async () => {
-  // Validate educations year numeric
+  // Validate educations year numeric and within valid range
   for (const e of form.educations) {
-    if (e.year === "" || Number.isNaN(Number(e.year))) {
+    const yearNum = Number(e.year);
+    if (e.year === "" || Number.isNaN(yearNum)) {
       toast.error({ title: "Invalid Education Year", message: "Education year must be a valid number.", timeout: 3000, position: "topRight" });
+      return;
+    }
+    if (yearNum < 1950 || yearNum > currentYear) {
+      toast.error({ title: "Invalid Year Range", message: `Year must be between 1950 and ${currentYear}.`, timeout: 3000, position: "topRight" });
       return;
     }
   }
@@ -1129,7 +1143,8 @@ const finalSubmit = async () => {
   }
 
   try {
-    const apiUrl = `${config.public.apiBase}/recruitment/${route.params.url}/apply`;
+    // const apiUrl = `${config.public.apiBase}/recruitment/${route.params.url}/apply`;
+    const apiUrl = `${config.public.apiBase}/account/apply/${route.params.url}`;
     const res: any = await useSanctumFetch(apiUrl, {
       method: "POST",
       body: payload,
@@ -1216,6 +1231,21 @@ const initializeAnimations = () => {
 .form-input:focus {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+}
+
+/* Year Input Styling */
+.year-input {
+  @apply relative;
+}
+
+.year-input::-webkit-inner-spin-button,
+.year-input::-webkit-outer-spin-button {
+  @apply opacity-100 cursor-pointer;
+}
+
+.year-input[type="number"] {
+  @apply appearance-none;
+  -moz-appearance: textfield;
 }
 
 .locked-input {

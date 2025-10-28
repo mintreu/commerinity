@@ -33,7 +33,8 @@ class ProductDisplayController extends Controller
         $currentUser = $request->user();
 
         $query = $product->load([
-            'media' => fn($q) => $q->where('collection_name', 'displayImage')->where('collection_name', 'bannerImage'),
+            //'media' => fn($q) => $q->where('collection_name', 'displayImage')->where('collection_name', 'bannerImage'),
+            'media',
             'categories' => fn($q) => $q->latest(),
             'engagements',
             'filterOptions.filter'
@@ -134,7 +135,7 @@ class ProductDisplayController extends Controller
 
 
 
-    public function topSaleProduct(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function bestSaleProducts(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $query  = Product::select([
             'id','name','url','sku','view_count','type','status',

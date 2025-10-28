@@ -9,8 +9,8 @@ use App\Http\Resources\Naukri\NaukriResource;
 use App\Services\RecruitmentService\RecruitmentApplicationCreationService;
 use App\Services\UserServices\ApplicationFeesService;
 use Illuminate\Http\Request;
-use Mintreu\LaravelNaukriManager\Casts\NaukriApplicationStatusCast;
-use Mintreu\LaravelNaukriManager\Models\Naukri;
+use Mintreu\LaravelRecruitment\Casts\JobApplicationStatusCast;
+use Mintreu\LaravelRecruitment\Models\Recruitment;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class RecruitmentController extends Controller
@@ -19,27 +19,42 @@ class RecruitmentController extends Controller
 
     public function index(Request $request)
     {
-        $allRecruitments = Naukri::withinDate()
+        $user = $request->user();
+
+        // Safely fetch applied recruitment IDs if the user is authenticated
+        $appliedRecruitments = $user
+            ? $user->jobApplications()->pluck('recruitment_id')->toArray()
+            : [];
+
+        // Fetch all active and published recruitments not yet applied by the user
+        $recruitments = Recruitment::query()
+            ->withinDate()
             ->with([
-                'media' => fn($query) => $query->where('collection_name','displayImage')
+                'media' => fn($query) => $query->where('collection_name', 'displayImage'),
             ])
-            ->where('status',PublishableStatusCast::PUBLISHED)
+            ->when(!empty($appliedRecruitments), fn($q) =>
+            $q->whereNotIn('id', $appliedRecruitments)
+            )
+            ->where('status', PublishableStatusCast::PUBLISHED)
+            ->latest('open_date')
             ->get();
-        return NaukriIndexResource::collection($allRecruitments);
+
+        return NaukriIndexResource::collection($recruitments);
     }
 
 
-    public function show(Naukri $naukri)
+
+    public function show(Recruitment $recruitment)
     {
-        $naukri->load(['media']);
-        return NaukriResource::make($naukri);
+        $recruitment->load(['media']);
+        return NaukriResource::make($recruitment);
     }
 
 
 
 
 
-    public function apply(Naukri $naukri, ApplyRecruitmentRequest $request)
+    public function apply(Recruitment $naukri, ApplyRecruitmentRequest $request)
     {
 
         // Job status validation
@@ -74,6 +89,17 @@ class RecruitmentController extends Controller
 
         $user = $request->user();
 
+        if (!$user)
+        {
+            return response()->json([
+                'data' => [
+                    'status'  => false,
+                    'message' => 'Authentication failed!',
+                ]
+            ], 400);
+        }
+
+
         $selectedAddress = $user->addresses()->firstWhere('uuid',$request->address_uuid);
         $application = $user->applications()->firstWhere('naukri_id',$naukri->id);
 
@@ -101,7 +127,7 @@ class RecruitmentController extends Controller
             "reference_contact" => $request->reference_contact,
             "relocation" => $request->relocation,
             'submitted_at' => now(),
-            'status'    => $naukri->is_payable ? NaukriApplicationStatusCast::AWAITING_PAYMENT : NaukriApplicationStatusCast::SUBMITTED
+            'status'    => $naukri->is_payable ? JobApplicationStatusCast::AWAITING_PAYMENT : JobApplicationStatusCast::SUBMITTED
         ]);
 
 

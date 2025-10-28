@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Mintreu\LaravelGeokit\Traits\HasOrderAddresses;
-use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\LaravelTransaction\Traits\HasTransaction;
 use Mintreu\Toolkit\Traits\HasUnique;
 

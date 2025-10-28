@@ -9,6 +9,8 @@ use App\Services\OrderService\OrderConfirmService;
 use App\Services\RecruitmentService\RecruitmentConfirmationService;
 use App\Services\UserServices\MembershipSubscriptionService;
 use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
+use Mintreu\LaravelRecruitment\LaravelRecruitment;
+use Mintreu\LaravelRecruitment\Models\JobApplication;
 use Mintreu\LaravelTransaction\Events\TransactionConfirmed;
 use Mintreu\LaravelTransaction\Models\Wallet;
 use Mintreu\LaravelTransaction\Services\WalletService\WalletService;
@@ -45,9 +47,11 @@ class HandleTransactionConfirmed
 
         }
 
-        if ($transactionAbleRecord instanceof NaukriApplication)
+        if ($transactionAbleRecord instanceof JobApplication)
         {
-            RecruitmentConfirmationService::make($transactionAbleRecord)->validate($transaction);
+            $transactionAbleRecord->load('recruitment');
+            $recruitment = $transactionAbleRecord->recruitment;
+            LaravelRecruitment::make($recruitment)->submitApplication($transactionAbleRecord);
         }
 
         // Wallet

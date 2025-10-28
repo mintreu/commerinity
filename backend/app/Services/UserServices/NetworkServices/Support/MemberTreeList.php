@@ -4,7 +4,6 @@ namespace App\Services\UserServices\NetworkServices\Support;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 /**
  * Member Tree List Generator

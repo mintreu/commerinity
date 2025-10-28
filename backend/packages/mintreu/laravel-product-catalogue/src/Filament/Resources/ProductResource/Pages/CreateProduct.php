@@ -14,6 +14,7 @@ use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
+use Mintreu\LaravelProductCatalogue\Services\ProductManager;
 
 class CreateProduct extends CreateRecord
 {
@@ -28,7 +29,8 @@ class CreateProduct extends CreateRecord
     {
         $data = $this->form->getState();
         try {
-            $this->record = ProductCreationService::make($data)->create();
+            //$this->record = ProductCreationService::make($data)->create();
+            $this->record = ProductManager::create($data);
             if ($this->record)
             {
                 Notification::make()->success()->title('Product Created Successfully')->send();

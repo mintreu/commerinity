@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelCategory\Traits\HasCategory;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 use Mintreu\Toolkit\Traits\HasUnique;
 use Spatie\MediaLibrary\HasMedia;
@@ -15,7 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Post extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
-    use HasFactory,HasUnique,InteractsWithMedia;
+    use HasFactory,HasUnique,InteractsWithMedia,HasCategory;
 
 
     protected $fillable = [
@@ -37,10 +38,11 @@ class Post extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('displayImage')
-            ->useFallbackUrl('https://placehold.co/800x300?text=Image\nNot Found')
+//            ->useFallbackUrl('https://placehold.co/800x300?text=Image\nNot Found')
+            ->useFallbackUrl(asset('images/post_fallback.jpg'))
         ;
         $this->addMediaCollection('bannerImage')
-            //->useFallbackUrl('https://placehold.co/600x400?text=Banner\nImage')
+            ->useFallbackUrl(asset('images/post_fallback_banner.jpg'))
         ;
     }
 

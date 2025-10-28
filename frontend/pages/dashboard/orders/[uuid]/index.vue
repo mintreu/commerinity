@@ -73,7 +73,7 @@
             </button>
 
             <button
-                v-if="order?.status === 'pending'"
+                v-if="order?.status?.toLowerCase() === 'pending'"
                 @click="proceedToPayment"
                 class="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center gap-2"
             >
@@ -85,7 +85,7 @@
       </div>
 
       <!-- ✅ Payment Countdown (if pending) -->
-      <div v-if="order?.status === 'pending' && countdown" class="mb-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border border-orange-200 dark:border-orange-700 rounded-2xl p-4">
+      <div v-if="order?.status?.toLowerCase() === 'pending' && countdown" class="mb-6 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border border-orange-200 dark:border-orange-700 rounded-2xl p-4">
         <div class="flex items-center gap-3">
           <Icon name="mdi:clock-alert" class="w-6 h-6 text-orange-600 dark:text-orange-400" />
           <div>
@@ -97,7 +97,7 @@
         </div>
       </div>
 
-      <!-- ✅ Order Progress Timeline -->
+      <!-- ✅ FIXED: Order Progress Timeline with Tooltips -->
       <div v-if="order" class="mb-8 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-xl ring-1 ring-gray-200/50 dark:ring-gray-700/50 p-6">
         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
           <Icon name="mdi:timeline-clock" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -110,21 +110,27 @@
           <!-- Progress Bar Fill -->
           <div
               class="absolute top-4 left-6 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
-              :style="{ width: `${getProgressWidth()}%` }"
+              :style="{ width: `calc(${getProgressWidth()}% - 24px)` }"
           ></div>
 
-          <!-- Timeline Steps -->
+          <!-- Timeline Steps with Tooltips -->
           <div class="relative flex justify-between">
             <div
                 v-for="(step, index) in orderSteps"
                 :key="step.status"
-                class="flex flex-col items-center text-center"
-                :class="getStepClasses(step.status, index)"
+                class="flex flex-col items-center text-center flex-1 relative group"
+                :class="getStepClasses(step.status)"
             >
-              <div class="step-circle">
+              <!-- Tooltip -->
+              <div class="tooltip opacity-0 group-hover:opacity-100 absolute -top-20 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-700 text-white text-xs font-semibold px-4 py-2 rounded-lg whitespace-nowrap pointer-events-none transition-opacity duration-200 z-10 shadow-lg">
+                {{ getStepTooltip(step.status) }}
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900 dark:bg-gray-700"></div>
+              </div>
+
+              <div class="step-circle mb-2">
                 <Icon :name="step.icon" class="w-4 h-4" />
               </div>
-              <span class="step-label">{{ step.label }}</span>
+              <span class="step-label text-xs px-2">{{ step.label }}</span>
             </div>
           </div>
         </div>
@@ -149,148 +155,82 @@
               </div>
 
               <div class="bg-green-50/50 dark:bg-green-900/20 rounded-xl p-4 text-center">
-                <Icon name="mdi:currency-usd" class="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                <Icon name="mdi:currency-inr" class="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Amount</p>
-                <p class="font-bold text-gray-900 dark:text-white">₹{{ order?.amount || 'N/A' }}</p>
+                <p class="font-bold text-gray-900 dark:text-white">{{ order?.amount || 'N/A' }}</p>
               </div>
 
               <div class="bg-purple-50/50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
                 <Icon name="mdi:calendar" class="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Order Date</p>
-                <p class="font-bold text-gray-900 dark:text-white">{{ formatDate(order?.created_at) }}</p>
+                <p class="font-bold text-gray-900 dark:text-white text-xs">{{ formatDate(order?.created_at) }}</p>
               </div>
 
               <div class="bg-orange-50/50 dark:bg-orange-900/20 rounded-xl p-4 text-center">
-                <Icon name="mdi:update" class="w-6 h-6 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Last Update</p>
-                <p class="font-bold text-gray-900 dark:text-white">{{ formatDate(order?.updated_at) }}</p>
+                <Icon name="mdi:shield-check" class="w-6 h-6 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Payment</p>
+                <p class="font-bold text-gray-900 dark:text-white text-xs">{{ order?.is_paid ? 'Paid' : 'Pending' }}</p>
               </div>
             </div>
           </div>
 
-          <!-- ✅ FIXED: Order Items (using your working structure) -->
+          <!-- Order Items -->
           <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-xl ring-1 ring-gray-200/50 dark:ring-gray-700/50 p-6">
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
               <Icon name="mdi:shopping" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
               Order Items
             </h2>
 
-            <!-- Items List based on your working code structure -->
+            <!-- Items List -->
             <div class="space-y-4">
-              <!-- Single item display (based on your code showing item.product) -->
-              <template v-if="order">
-                <!-- If order has direct item structure -->
-                <div
-                    v-if="order.item?.product"
-                    class="flex items-center gap-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50"
-                >
-                  <!-- Product Image Placeholder -->
-                  <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div
+                  v-for="(item, index) in order?.products || []"
+                  :key="index"
+                  class="flex items-center gap-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50"
+              >
+                <!-- Product Image -->
+                <div class="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+                  <img
+                      v-if="item.product?.thumbnail"
+                      :src="item.product.thumbnail"
+                      :alt="item.product.name"
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                  />
+                  <div v-else class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
                     <Icon name="mdi:package-variant" class="w-8 h-8 text-white" />
-                  </div>
-
-                  <!-- Product Details -->
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-gray-900 dark:text-white truncate">
-                      {{ order.item.product.name || 'Product' }}
-                    </h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      SKU: <span class="font-mono font-semibold">{{ order.item.product.sku }}</span>
-                    </p>
-                    <div class="flex items-center gap-4 mt-2 text-sm">
-                      <span class="text-gray-600 dark:text-gray-400">
-                        Qty: <span class="font-semibold text-gray-900 dark:text-white">{{ order.item.quantity || 1 }}</span>
-                      </span>
-                      <span class="text-gray-600 dark:text-gray-400">
-                        Price: <span class="font-semibold text-gray-900 dark:text-white">₹{{ order.item.product.price }}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Item Total -->
-                  <div class="text-right">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Total</p>
-                    <p class="font-bold text-lg text-gray-900 dark:text-white">
-                      ₹{{ ((order.item.quantity || 1) * (order.item.product.price || 0)).toLocaleString() }}
-                    </p>
                   </div>
                 </div>
 
-                <!-- Multiple items array (if exists) -->
-                <div
-                    v-for="item in order.items || []"
-                    :key="item.id || Math.random()"
-                    class="flex items-center gap-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50"
-                >
-                  <!-- Product Image Placeholder -->
-                  <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Icon name="mdi:package-variant" class="w-8 h-8 text-white" />
-                  </div>
-
-                  <!-- Product Details -->
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-gray-900 dark:text-white truncate">
-                      {{ item.product?.name || item.name || 'Product' }}
-                    </h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      SKU: <span class="font-mono font-semibold">{{ item.product?.sku || item.sku || 'N/A' }}</span>
-                    </p>
-                    <div class="flex items-center gap-4 mt-2 text-sm">
-                      <span class="text-gray-600 dark:text-gray-400">
-                        Qty: <span class="font-semibold text-gray-900 dark:text-white">{{ item.quantity || 1 }}</span>
-                      </span>
-                      <span class="text-gray-600 dark:text-gray-400">
-                        Price: <span class="font-semibold text-gray-900 dark:text-white">₹{{ item.product?.price || item.price || 'N/A' }}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Item Total -->
-                  <div class="text-right">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Total</p>
-                    <p class="font-bold text-lg text-gray-900 dark:text-white">
-                      ₹{{ ((item.quantity || 1) * (item.product?.price || item.price || 0)).toLocaleString() }}
-                    </p>
+                <!-- Product Details -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-gray-900 dark:text-white truncate">
+                    {{ item.product?.name || 'Product' }}
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    SKU: <span class="font-mono font-semibold">{{ item.product?.sku || 'N/A' }}</span>
+                  </p>
+                  <div class="flex items-center gap-4 mt-2 text-sm">
+                    <span class="text-gray-600 dark:text-gray-400">
+                      Qty: <span class="font-semibold text-gray-900 dark:text-white">{{ item.quantity || order.quantity || 1 }}</span>
+                    </span>
+                    <span class="text-gray-600 dark:text-gray-400">
+                      Price: <span class="font-semibold text-gray-900 dark:text-white">{{ item.product?.price || 'N/A' }}</span>
+                    </span>
                   </div>
                 </div>
 
-                <!-- Fallback: If no items structure, show order-level info -->
-                <div
-                    v-if="!order.item?.product && (!order.items || order.items.length === 0)"
-                    class="flex items-center gap-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50"
-                >
-                  <!-- Product Image Placeholder -->
-                  <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Icon name="mdi:package-variant" class="w-8 h-8 text-white" />
-                  </div>
-
-                  <!-- Product Details -->
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-gray-900 dark:text-white truncate">
-                      Order #{{ order.uuid?.slice(-8) }}
-                    </h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Order Details
-                    </p>
-                    <div class="flex items-center gap-4 mt-2 text-sm">
-                      <span class="text-gray-600 dark:text-gray-400">
-                        Qty: <span class="font-semibold text-gray-900 dark:text-white">{{ order.quantity || 1 }}</span>
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Item Total -->
-                  <div class="text-right">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Total</p>
-                    <p class="font-bold text-lg text-gray-900 dark:text-white">
-                      ₹{{ order.amount || 'N/A' }}
-                    </p>
-                  </div>
+                <!-- Item Total -->
+                <div class="text-right">
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Total</p>
+                  <p class="font-bold text-lg text-gray-900 dark:text-white">
+                    {{ item.amount ? `₹${item.amount}` : 'N/A' }}
+                  </p>
                 </div>
-              </template>
+              </div>
 
               <!-- No items fallback -->
-              <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div v-if="!order?.products || order.products.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
                 <Icon name="mdi:package-variant-closed" class="w-12 h-12 mx-auto mb-3" />
                 <p>No items information available</p>
               </div>
@@ -366,40 +306,47 @@
               <p class="text-sm">No shipping address available</p>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Quick Actions -->
-          <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-xl ring-1 ring-gray-200/50 dark:ring-gray-700/50 p-6">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Icon name="mdi:lightning-bolt" class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-              Quick Actions
-            </h2>
+      <!-- ✅ UPDATED: Quick Actions - Full Width with Flex Row (Desktop) / Flex Col (Mobile) -->
+      <div class="mt-8 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-xl ring-1 ring-gray-200/50 dark:ring-gray-700/50 p-6">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+          <Icon name="mdi:lightning-bolt" class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+          Quick Actions
+        </h2>
 
-            <div class="space-y-3">
-              <button
-                  @click="downloadInvoice"
-                  class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <Icon name="mdi:download" class="w-4 h-4" />
-                Download Invoice
-              </button>
+        <div class="flex flex-col md:flex-row gap-4">
+          <button
+              @click="downloadInvoice"
+              class="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
+          >
+            <Icon name="mdi:download" class="w-5 h-5" />
+            Download Invoice
+          </button>
 
-              <button
-                  @click="trackOrder"
-                  class="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <Icon name="mdi:map-marker-path" class="w-4 h-4" />
-                Track Order
-              </button>
+          <button
+              @click="trackOrder"
+              :disabled="!canTrackOrder"
+              :class="[
+                'flex-1 px-6 py-4 font-semibold rounded-xl shadow-md transition-all duration-200 transform flex items-center justify-center gap-2',
+                canTrackOrder
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white hover:shadow-lg hover:scale-105'
+                  : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed opacity-60'
+              ]"
+          >
+            <Icon name="mdi:map-marker-path" class="w-5 h-5" />
+            Track Order
+            <span v-if="!canTrackOrder" class="text-xs">(Available when ready to ship)</span>
+          </button>
 
-              <button
-                  @click="contactSupport"
-                  class="w-full px-4 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <Icon name="mdi:help-circle" class="w-4 h-4" />
-                Contact Support
-              </button>
-            </div>
-          </div>
+          <button
+              @click="contactSupport"
+              class="flex-1 px-6 py-4 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
+          >
+            <Icon name="mdi:help-circle" class="w-5 h-5" />
+            Contact Support
+          </button>
         </div>
       </div>
     </div>
@@ -407,7 +354,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter, useRuntimeConfig, useSanctumFetch } from '#imports'
+import { useRoute, useRouter, useRuntimeConfig, useSanctumFetch, useToast } from '#imports'
 import { onMounted, ref, computed, onUnmounted } from 'vue'
 import GlobalLoader from '~/components/GlobalLoader.vue'
 
@@ -424,9 +371,7 @@ if (process.client) {
   })
 }
 
-// ✅ Use proper toast system
 const toast = useToast()
-
 const route = useRoute()
 const router = useRouter()
 const config = useRuntimeConfig()
@@ -443,37 +388,65 @@ let countdownInterval: NodeJS.Timeout | null = null
 const order = ref<any>(null)
 const countdown = ref<string>('')
 
-// ✅ Order statuses and timeline
+// ✅ Order statuses matching your backend enum (case-insensitive)
 const orderStatuses = [
-  { value: 'pending', label: 'Pending', icon: 'mdi:clock', class: 'status-yellow' },
-  { value: 'processing', label: 'Processing', icon: 'mdi:cog', class: 'status-blue' },
+  { value: 'pending', label: 'Pending', icon: 'mdi:clock', class: 'status-blue' },
+  { value: 'processing', label: 'Processing', icon: 'mdi:cog', class: 'status-yellow' },
+  { value: 'payment_failed', label: 'Payment Failed', icon: 'mdi:alert-circle', class: 'status-red' },
   { value: 'confirm', label: 'Confirmed', icon: 'mdi:check-circle', class: 'status-green' },
-  { value: 'ready_to_ship', label: 'Ready To Ship', icon: 'mdi:truck', class: 'status-teal' },
+  { value: 'review', label: 'Under Review', icon: 'mdi:eye', class: 'status-purple' },
+  { value: 'accepted', label: 'Accepted', icon: 'mdi:check', class: 'status-orange' },
+  { value: 'ready_to_ship', label: 'Ready To Ship', icon: 'mdi:package-variant', class: 'status-teal' },
   { value: 'in_transit', label: 'In Transit', icon: 'mdi:truck-fast', class: 'status-blue' },
-  { value: 'completed', label: 'Completed', icon: 'mdi:check-all', class: 'status-green' },
+  { value: 'completed', label: 'Delivered', icon: 'mdi:check-all', class: 'status-green' },
   { value: 'cancelled', label: 'Cancelled', icon: 'mdi:cancel', class: 'status-red' },
+  { value: 'refunded', label: 'Refunded', icon: 'mdi:arrow-u-left-top', class: 'status-blue' },
+  { value: 'return', label: 'Return Initiated', icon: 'mdi:package-down', class: 'status-orange' },
 ]
 
+// ✅ Order progress steps for timeline
 const orderSteps = [
-  { status: 'pending', label: 'Order Placed', icon: 'mdi:receipt' },
-  { status: 'processing', label: 'Processing', icon: 'mdi:cog' },
+  { status: 'pending', label: 'Placed', icon: 'mdi:receipt' },
   { status: 'confirm', label: 'Confirmed', icon: 'mdi:check-circle' },
-  { status: 'ready_to_ship', label: 'Ready to Ship', icon: 'mdi:truck' },
-  { status: 'in_transit', label: 'In Transit', icon: 'mdi:truck-fast' },
+  { status: 'ready_to_ship', label: 'Ready', icon: 'mdi:package-variant' },
+  { status: 'in_transit', label: 'Shipped', icon: 'mdi:truck-fast' },
   { status: 'completed', label: 'Delivered', icon: 'mdi:check-all' },
 ]
 
+// ✅ NEW: Check if order can be tracked
+const canTrackOrder = computed(() => {
+  if (!order.value?.status) return false
+  const currentStatus = order.value.status.toLowerCase()
+  const trackableStatuses = ['ready_to_ship', 'in_transit', 'completed']
+  return trackableStatuses.includes(currentStatus)
+})
+
 // ✅ Helper functions
 function statusLabel(status: string) {
-  return orderStatuses.find(s => s.value === status)?.label || status
+  const normalized = status.toLowerCase()
+  return orderStatuses.find(s => s.value === normalized)?.label || status
 }
 
 function statusIcon(status: string) {
-  return orderStatuses.find(s => s.value === status)?.icon || 'mdi:help-circle'
+  const normalized = status.toLowerCase()
+  return orderStatuses.find(s => s.value === normalized)?.icon || 'mdi:help-circle'
 }
 
 function statusClass(status: string) {
-  return orderStatuses.find(s => s.value === status)?.class || 'status-gray'
+  const normalized = status.toLowerCase()
+  return orderStatuses.find(s => s.value === normalized)?.class || 'status-gray'
+}
+
+// ✅ NEW: Get tooltip text for each step
+function getStepTooltip(stepStatus: string) {
+  const tooltips: Record<string, string> = {
+    'pending': 'Order placed and awaiting confirmation',
+    'confirm': 'Order confirmed and being prepared',
+    'ready_to_ship': 'Package ready for shipment',
+    'in_transit': 'Order is on the way to you',
+    'completed': 'Order successfully delivered'
+  }
+  return tooltips[stepStatus] || 'Order status'
 }
 
 function formatDate(dateString: string) {
@@ -489,23 +462,39 @@ function formatDate(dateString: string) {
 
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text).then(() => {
-    toast.success('Copied!', 'Order ID copied to clipboard')
+    toast.success({ title: 'Copied!', message: 'Order ID copied to clipboard' })
   }).catch(() => {
-    toast.error('Copy Failed', 'Could not copy to clipboard')
+    toast.error({ title: 'Copy Failed', message: 'Could not copy to clipboard' })
   })
 }
 
+// ✅ Progress calculation based on actual order status
 function getProgressWidth() {
   if (!order.value?.status) return 0
-  const currentIndex = orderSteps.findIndex(step => step.status === order.value.status)
-  return currentIndex >= 0 ? ((currentIndex + 1) / orderSteps.length) * 100 : 0
+
+  const currentStatus = order.value.status.toLowerCase()
+  const currentIndex = orderSteps.findIndex(step => step.status === currentStatus)
+
+  if (currentIndex === -1) {
+    if (currentStatus === 'processing') return 10
+    if (currentStatus === 'review') return 25
+    if (currentStatus === 'accepted') return 40
+    if (currentStatus === 'cancelled' || currentStatus === 'refunded' || currentStatus === 'return') return 0
+    return 0
+  }
+
+  return ((currentIndex + 1) / orderSteps.length) * 100
 }
 
-function getStepClasses(stepStatus: string, index: number) {
+// ✅ Step classes based on actual status
+function getStepClasses(stepStatus: string) {
   if (!order.value?.status) return 'step-inactive'
 
-  const currentIndex = orderSteps.findIndex(step => step.status === order.value.status)
+  const currentStatus = order.value.status.toLowerCase()
+  const currentIndex = orderSteps.findIndex(step => step.status === currentStatus)
   const stepIndex = orderSteps.findIndex(step => step.status === stepStatus)
+
+  if (currentIndex === -1) return 'step-inactive'
 
   if (stepIndex <= currentIndex) {
     return 'step-active'
@@ -514,7 +503,7 @@ function getStepClasses(stepStatus: string, index: number) {
   }
 }
 
-// ✅ API Functions - keeping your working structure
+// ✅ API Functions
 async function fetchOrder() {
   try {
     isLoading.value = true
@@ -528,12 +517,12 @@ async function fetchOrder() {
       order.value = res.data
       startCountdown()
     } else {
-      toast.error('Order Not Found', 'The requested order could not be found')
+      toast.error({ title: 'Order Not Found', message: 'The requested order could not be found' })
       router.push('/dashboard/orders')
     }
   } catch (error) {
     console.error('Fetch order error:', error)
-    toast.error('Error', 'Failed to load order details')
+    toast.error({ title: 'Error', message: 'Failed to load order details' })
     router.push('/dashboard/orders')
   } finally {
     isLoading.value = false
@@ -541,10 +530,10 @@ async function fetchOrder() {
 }
 
 function startCountdown() {
-  if (order.value?.status !== 'pending' || !order.value?.created_at) return
+  if (order.value?.status?.toLowerCase() !== 'pending' || !order.value?.created_at) return
 
   const createdAt = new Date(order.value.created_at)
-  const expiryTime = new Date(createdAt.getTime() + 30 * 60 * 1000) // 30 minutes
+  const expiryTime = new Date(createdAt.getTime() + 30 * 60 * 1000)
 
   const updateCountdown = () => {
     const now = new Date()
@@ -566,73 +555,60 @@ function startCountdown() {
 }
 
 async function refreshOrder() {
-  toast.info('Refreshing...', 'Getting latest order status')
+  toast.info({ title: 'Refreshing...', message: 'Getting latest order status' })
   await fetchOrder()
 }
 
 function proceedToPayment() {
-  toast.info('Redirecting...', 'Taking you to payment page')
+  toast.info({ title: 'Redirecting...', message: 'Taking you to payment page' })
 }
-
-
-
 
 async function downloadInvoice() {
   if (!order.value?.uuid) {
-    toast.error('Error', 'Order UUID not found')
+    toast.error({ title: 'Error', message: 'Order UUID not found' })
     return
   }
 
   try {
-    toast.info('Downloading...', 'Preparing your invoice')
+    toast.info({ title: 'Downloading...', message: 'Preparing your invoice' })
 
-    // Fetch the PDF as blob
     const response = await useSanctumFetch(
         `${config.public.apiBase}/orders/${order.value.uuid}/invoice`,
         {
           method: 'GET',
-          responseType: 'blob' // Important: tells fetch to expect binary data
+          responseType: 'blob'
         }
     )
 
-    // Create blob from response
     const blob = new Blob([response as BlobPart], { type: 'application/pdf' })
-
-    // Create download link
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.download = `Invoice-${order.value.uuid}.pdf`
 
-    // Trigger download
     document.body.appendChild(link)
     link.click()
 
-    // Cleanup
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
 
-    toast.success('Downloaded!', 'Invoice downloaded successfully')
+    toast.success({ title: 'Downloaded!', message: 'Invoice downloaded successfully' })
   } catch (error: any) {
     console.error('Download invoice error:', error)
-    toast.error('Download Failed', error?.message || 'Could not download invoice')
+    toast.error({ title: 'Download Failed', message: error?.message || 'Could not download invoice' })
   }
 }
 
-
-
-
-
-
-
-
-
 function trackOrder() {
-  toast.info('Opening Tracker', 'Order tracking information')
+  if (!canTrackOrder.value) {
+    toast.warning({ title: 'Not Available', message: 'Tracking available when order is ready to ship' })
+    return
+  }
+  toast.info({ title: 'Opening Tracker', message: 'Order tracking information' })
 }
 
 function contactSupport() {
-  toast.info('Contacting Support', 'Opening support channel')
+  toast.info({ title: 'Contacting Support', message: 'Opening support channel' })
 }
 
 /* Animations */
@@ -640,7 +616,6 @@ function initializeAnimations() {
   if (!process.client || !gsap) return
 
   gsapContext = gsap.context(() => {
-    // Floating orbs animation
     if (pageOrb1.value && pageOrb2.value) {
       gsap.to(pageOrb1.value, {
         x: -100,
@@ -667,8 +642,6 @@ function initializeAnimations() {
 
 onMounted(() => {
   fetchOrder()
-
-  // Initialize animations
   setTimeout(() => {
     initializeAnimations()
   }, 100)
@@ -752,13 +725,21 @@ onUnmounted(() => {
   @apply bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300;
 }
 
+.status-purple {
+  @apply bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300;
+}
+
+.status-orange {
+  @apply bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300;
+}
+
 .status-gray {
   @apply bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300;
 }
 
 /* ✅ Timeline Steps */
 .step-circle {
-  @apply w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-all duration-300;
+  @apply w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300;
 }
 
 .step-label {
@@ -779,6 +760,11 @@ onUnmounted(() => {
 
 .step-inactive .step-label {
   @apply text-gray-400 dark:text-gray-500;
+}
+
+/* ✅ Tooltip */
+.tooltip {
+  @apply shadow-xl;
 }
 
 /* ✅ Custom scrollbar */

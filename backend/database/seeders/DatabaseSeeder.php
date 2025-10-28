@@ -21,21 +21,21 @@ class DatabaseSeeder extends Seeder
 
             AdminSeeder::class,
             StageSeeder::class,
-            FilterSeeder::class,
-            CategorySeeder::class,
+            FilterSeeder::class,  // required for product
+            CategorySeeder::class,  // required for product
 
             UserSeeder::class,
 
             // MasterDemoProductSeeder::class,
 
-            TaxCodeSeeder::class,
+            TaxCodeSeeder::class,  // required for product
 
             //ProductSeeder::class,
-            ProductDemoSeeder::class,
+            ProductDemoSeeder::class,   // product seeder
 
 
             IntegrationSeeder::class,
-            NaukriSeeder::class,
+            RecruitmentSeeder::class,
 
             PageSeeder::class,
             HelpDeskTopicSeeder::class,

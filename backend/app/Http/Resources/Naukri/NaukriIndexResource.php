@@ -18,7 +18,7 @@ class NaukriIndexResource extends JsonResource
             'name'  => $this->name,
             'url'   => $this->url,
             'role'  => ucwords($this->role ?? ''),
-            'type'  => $this->employment_type->getLabel(),
+            'type'  => $this->type->getLabel(),
             'location'  => $this->location,
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),
             'pdf'       => $this->getFirstMediaUrl('infoPdf'),

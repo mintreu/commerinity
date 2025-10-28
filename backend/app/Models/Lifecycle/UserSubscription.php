@@ -6,7 +6,6 @@ namespace App\Models\Lifecycle;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\LaravelTransaction\Traits\HasTransaction;
 use Mintreu\Toolkit\Traits\HasUnique;
 

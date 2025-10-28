@@ -189,8 +189,9 @@ const supportLinks = Object.freeze([
 
 const companyLinks = Object.freeze([
   { title: 'About Us', url: '/about' },
-  { title: 'Careers', url: '/careers' },
-  { title: 'Blog', url: '/blog' },
+  { title: 'Careers', url: '/career' },
+  { title: 'News', url: '/news' },
+  { title: 'Blog', url: '/blogs' },
   // { title: 'Affiliate Program', url: '/affiliate' }
 ])
 </script>

@@ -58,7 +58,20 @@ class PostApiController extends Controller
 
     public function show(Post $post)
     {
-        $post->load(['author', 'category', 'media']);
-        return PostResource::make($post);
+        $post->load([
+            'author',
+            'category',
+            'media'
+        ]);
+
+        $relatedPosts = Post::where('category_id', $post->category_id)
+            ->where('id', '!=', $post->id)
+            ->with(['author', 'media', 'category'])
+            ->limit(12)
+            ->get();
+
+        return PostResource::make($post)->additional([
+            'related_posts' => PostIndexResource::collection($relatedPosts),
+        ]);
     }
 }

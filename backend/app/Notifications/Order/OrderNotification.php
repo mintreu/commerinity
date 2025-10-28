@@ -4,7 +4,6 @@ namespace App\Notifications\Order;
 
 use App\Casts\OrderStatusCast;
 use App\Models\Order\Order;
-use Filament\Facades\Filament;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

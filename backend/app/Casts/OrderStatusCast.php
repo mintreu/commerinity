@@ -19,6 +19,7 @@ enum OrderStatusCast: string implements HasLabel, HasIcon, HasColor
     case COMPLETED = 'completed';
     case CANCELLED = 'cancelled';
     case REFUNDED = 'refunded';
+    case RETURN = 'return';  // NEW: Return case
 
     /**
      * @return string|array|null
@@ -37,6 +38,7 @@ enum OrderStatusCast: string implements HasLabel, HasIcon, HasColor
             self::COMPLETED => 'green',
             self::CANCELLED => 'red',
             self::REFUNDED => 'blue',
+            self::RETURN => 'orange',  // NEW: Return color
         };
     }
 
@@ -46,17 +48,18 @@ enum OrderStatusCast: string implements HasLabel, HasIcon, HasColor
     public function getIcon(): ?string
     {
         return match($this) {
-            self::PROCESSING => 'heroicon-o-refresh',       // Outline refresh icon
-            self::PENDING => 'heroicon-o-clock',           // Outline clock icon
-            self::PAYMENT_FAILED => 'heroicon-o-x-circle', // Outline X circle icon
-            self::CONFIRM => 'heroicon-o-check-circle',    // Outline check circle icon
-            self::REVIEW => 'heroicon-o-eye',             // Outline eye icon
-            self::ACCEPTED => 'heroicon-o-check',         // Outline check icon
-            self::READY_TO_SHIP => 'heroicon-o-truck',    // Outline truck icon
-            self::IN_TRANSIT => 'heroicon-o-arrow-path',  // Outline arrow path (representing transit)
-            self::COMPLETED => 'heroicon-o-badge-check',  // Outline badge check icon
-            self::CANCELLED => 'heroicon-o-ban',          // Outline ban icon
-            self::REFUNDED => 'heroicon-o-arrow-uturn-left', // Outline u-turn arrow icon
+            self::PROCESSING => 'heroicon-o-refresh',
+            self::PENDING => 'heroicon-o-clock',
+            self::PAYMENT_FAILED => 'heroicon-o-x-circle',
+            self::CONFIRM => 'heroicon-o-check-circle',
+            self::REVIEW => 'heroicon-o-eye',
+            self::ACCEPTED => 'heroicon-o-check',
+            self::READY_TO_SHIP => 'heroicon-o-truck',
+            self::IN_TRANSIT => 'heroicon-o-arrow-path',
+            self::COMPLETED => 'heroicon-o-badge-check',
+            self::CANCELLED => 'heroicon-o-ban',
+            self::REFUNDED => 'heroicon-o-arrow-uturn-left',
+            self::RETURN => 'heroicon-o-arrow-uturn-down',  // NEW: Return icon
         };
     }
 
@@ -77,7 +80,7 @@ enum OrderStatusCast: string implements HasLabel, HasIcon, HasColor
             self::COMPLETED => 'Completed',
             self::CANCELLED => 'Cancelled',
             self::REFUNDED => 'Refunded',
+            self::RETURN => 'Return Initiated',  // NEW: Return label
         };
     }
 }
-

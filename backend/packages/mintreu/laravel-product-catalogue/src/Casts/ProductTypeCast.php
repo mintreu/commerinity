@@ -12,6 +12,11 @@ enum ProductTypeCast: string implements HasColor, HasIcon, HasLabel
     case CONFIGURABLE = 'configurable';
     case WHOLESALE = 'wholesale'; // Formerly BULK
 
+    public static function validate(string $type): bool
+    {
+        return in_array($type,[self::SIMPLE->value,self::CONFIGURABLE->value,self::WHOLESALE->value]);
+    }
+
     public function getLabel(): ?string
     {
         return match ($this) {

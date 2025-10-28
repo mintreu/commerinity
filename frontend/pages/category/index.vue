@@ -46,7 +46,7 @@
                   class="w-full h-32 object-cover rounded-md mb-3"
               />
               <p class="font-medium text-sm text-center text-black dark:text-white mb-1">{{ child.name }}</p>
-              <p class="text-center text-blue-600 text-base font-semibold">From ₹{{ child.starting_from_price }}</p>
+              <p class="text-center text-blue-600 text-base font-semibold">From {{ child.starting_from_price }}</p>
             </NuxtLink>
           </SwiperSlide>
         </Swiper>

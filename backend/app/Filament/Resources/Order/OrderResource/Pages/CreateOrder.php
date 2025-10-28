@@ -3,17 +3,13 @@
 namespace App\Filament\Resources\Order\OrderResource\Pages;
 
 use App\Filament\Resources\Order\OrderResource;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Collection;
-use Mintreu\LaravelIntegration\Casts\IntegrationTypeCast;
-use Mintreu\LaravelIntegration\Models\Integration;
+use Illuminate\Support\Facades\Cache;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
-use Illuminate\Support\Facades\Cache;
-use App\Models\User;
 
 class CreateOrder extends CreateRecord
 {

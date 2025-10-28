@@ -30,7 +30,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Mintreu\LaravelCommerinity\Traits\HasVoucherAccess;
 use Mintreu\LaravelGeokit\Traits\HasAddress;
 use Mintreu\LaravelHelpdesk\Traits\HasSupportTicket;
-use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
+use Mintreu\LaravelRecruitment\Traits\HasJobApplications;
 use Mintreu\LaravelTransaction\Traits\HasBeneficiary;
 use Mintreu\LaravelTransaction\Traits\HasWallet;
 use Mintreu\Toolkit\Casts\GenderCast;
@@ -46,7 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory,HasPushSubscriptions, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
-        HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,
+        HasAddress,HasCartOwner,HasKyc,HasUnique, HasLifecycle,HasOrder,HasFingerprint,HasJobApplications,
         HasSupportTicket,HasWallet,HasBeneficiary,HasVoucherAccess,HasProductEngagement,HasProductWishlist;
 
     /**
@@ -171,11 +171,6 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
             ->latest();
     }
 
-
-    public function applications(): HasMany
-    {
-        return $this->hasMany(NaukriApplication::class,'user_id','id');
-    }
 
 
 

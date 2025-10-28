@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Lifecycle\LevelResource;
 use App\Http\Resources\Lifecycle\StageResource;
-use App\Http\Resources\Lifecycle\UserSubscriptionResource;
-use App\Http\Resources\User\UserResource;
 use App\Services\UserServices\MembershipSubscriptionService;
 use Illuminate\Http\Request;
 

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Order\OrderResource\Schema;
 
-use App\Casts\AuthStatusCast;
-use App\Casts\AuthTypeCast;
 use App\Models\User;
 use Filament\Forms\Components;
 use Filament\Forms\Components\Placeholder;

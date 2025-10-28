@@ -26,7 +26,7 @@
                 Results for "<span class="font-semibold">{{ searchQuery }}</span>"
                 <span v-if="categoryFilter" class="text-purple-600 dark:text-purple-400"> in {{ categoryFilter }}</span>
                 <span v-if="filter === 'deals'" class="text-orange-600 dark:text-orange-400"> (Deals)</span>
-                <span v-if="filter === 'blog'" class="text-green-600 dark:text-green-400"> (Blog)</span>
+                <span v-if="filter === 'blogs'" class="text-green-600 dark:text-green-400"> (Blog)</span>
               </p>
             </div>
           </div>

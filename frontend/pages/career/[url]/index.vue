@@ -217,7 +217,7 @@
                       <Icon name="mdi:currency-inr" class="w-5 h-5 mr-3 text-emerald-500" />
                       <span class="font-semibold text-gray-700 dark:text-gray-300">Application Fee</span>
                     </div>
-                    <p class="text-gray-900 dark:text-white font-bold">₹{{ job.fees }}</p>
+                    <p class="text-gray-900 dark:text-white font-bold">{{ job.fees }}</p>
                   </div>
                 </div>
               </div>

@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     /**
+     * Recruitment
      * Prefix 'account'
      * Full Prefix: /account/application
      * Job Applications
@@ -87,8 +88,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/applications')->group(function (){
         Route::get('/', [\App\Http\Controllers\Api\Auth\JobApplicationController::class, 'index']);
+
         Route::get('/{application:uuid}', [\App\Http\Controllers\Api\Auth\JobApplicationController::class, 'show']);
     })->middleware('auth:sanctum');
+
+    Route::post('apply/{recruitment:url}', [\App\Http\Controllers\Api\Auth\JobApplicationController::class, 'apply']); // POST /account/apply/{recruitment-url}
+
+
 
 
     Route::prefix('stats')->group(function (){

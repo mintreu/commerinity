@@ -2,7 +2,7 @@
 
 namespace App\Services\RecruitmentService;
 
-use Mintreu\LaravelNaukriManager\Casts\NaukriApplicationStatusCast;
+use Mintreu\LaravelNaukriManager\Casts\JobApplicationStatusCast;
 use Mintreu\LaravelNaukriManager\Models\NaukriApplication;
 use Mintreu\LaravelTransaction\Models\Transaction;
 
@@ -41,7 +41,7 @@ class RecruitmentConfirmationService
     {
         $this->application->update([
             'is_paid' => true,
-            'status' => NaukriApplicationStatusCast::SUBMITTED
+            'status' => JobApplicationStatusCast::SUBMITTED
         ]);
 
 

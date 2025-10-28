@@ -340,7 +340,7 @@ const navigationLinks = [
   { to: '/store', label: 'Store', icon: 'mdi:store' },
   { to: '/categories', label: 'Categories', icon: 'mdi:grid' },
   { to: '/career', label: 'Career', icon: 'mdi:briefcase' },
-  { to: '/blog', label: 'Blog', icon: 'mdi:post' },
+  { to: '/blogs', label: 'Blog', icon: 'mdi:post' },
   { to: '/about', label: 'About', icon: 'mdi:information' }
 ]
 

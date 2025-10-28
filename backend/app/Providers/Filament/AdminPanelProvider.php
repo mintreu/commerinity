@@ -28,6 +28,7 @@ use Mintreu\LaravelIntegration\LaravelIntegrationPlugin;
 use Mintreu\LaravelNaukriManager\LaravelNaukriManagerPlugin;
 use Mintreu\LaravelPenpress\LaravelPenpressPlugin;
 use Mintreu\LaravelProductCatalogue\LaravelProductCataloguePlugin;
+use Mintreu\LaravelRecruitment\LaravelRecruitmentPlugin;
 use Mintreu\LaravelTransaction\LaravelTransactionPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -58,7 +59,7 @@ class AdminPanelProvider extends PanelProvider
                 LaravelGeokitPlugin::make(),
                 LaravelHelpdeskPlugin::make(),
                 LaravelTransactionPlugin::make(),
-                LaravelNaukriManagerPlugin::make(),
+                LaravelRecruitmentPlugin::make(),
                 LaravelIntegrationPlugin::make(),
                 LaravelPenpressPlugin::make(),
 

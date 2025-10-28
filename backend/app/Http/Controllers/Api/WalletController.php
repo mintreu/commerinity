@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Transaction\TransactionResource;
 use App\Http\Resources\Transaction\WalletResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Casts\TransactionStatusCast;
 use Mintreu\LaravelTransaction\Casts\TransactionTypeCast;
-use Mintreu\LaravelTransaction\Casts\WalletStatusCast;
 use Mintreu\LaravelTransaction\Models\Wallet;
 use Mintreu\LaravelTransaction\Services\WalletService\WalletService;
 

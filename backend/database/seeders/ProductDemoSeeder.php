@@ -14,6 +14,7 @@ use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
+use Mintreu\LaravelProductCatalogue\Services\ProductManager;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class ProductDemoSeeder extends Seeder
@@ -76,6 +77,8 @@ class ProductDemoSeeder extends Seeder
             $name = is_array($productInfo) ? $productInfo['name'] : $productInfo->name;
             $url  = is_array($productInfo) ? $productInfo['url']  : $productInfo->url;
             $sku  = is_array($productInfo) ? $productInfo['sku']  : $productInfo->sku;
+            $shortDesc = is_array($productInfo) ? $productInfo['short_description']  : $productInfo->short_description;
+            $desc = is_array($productInfo) ? $productInfo['description']  : $productInfo->description;
 
             $productData = Product::factory()->raw([
                 'name' => $name,
@@ -86,11 +89,15 @@ class ProductDemoSeeder extends Seeder
                 'status' => PublishableStatusCast::PUBLISHED->value,
                 'filter_group_id' => $filterGroup->id,
                 'filter_options' => $this->mapFilterOptions($filterGroup, ProductTypeCast::SIMPLE->value),
-                'tax_code_id' => $hsnTaxCode->id
+                'tax_code_id' => $hsnTaxCode->id,
+                'short_description' => $shortDesc,
+                'description' => $desc
             ]);
 
 
-            $product = ProductCreationService::make($productData)->create();
+            //$product = ProductCreationService::make($productData)->create();
+
+            $product = ProductManager::create($productData);
 
 
             // Add Media
