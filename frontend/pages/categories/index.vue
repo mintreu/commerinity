@@ -181,7 +181,7 @@
                   <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <span>{{ category.children?.length || 0 }} subcategories</span>
                     <span class="font-semibold text-emerald-600 dark:text-emerald-400">
-                      From ₹{{ formatPrice(getStartingPrice(category)) }}
+                      From {{ getStartingPrice(category) }}
                     </span>
                   </div>
 
@@ -250,7 +250,7 @@
                           </span>
                           <span class="flex items-center gap-1">
                             <Icon name="mdi:currency-inr" class="w-4 h-4" />
-                            Starting from ₹{{ formatPrice(getStartingPrice(category)) }}
+                            Starting from {{ getStartingPrice(category) }}
                           </span>
                           <span class="flex items-center gap-1 text-yellow-500">
                             <Icon name="mdi:star" class="w-4 h-4" />
@@ -277,7 +277,7 @@
                       <div class="flex items-center gap-4 ml-6">
                         <div class="text-right">
                           <div class="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                            From ₹{{ formatPrice(getStartingPrice(category)) }}
+                            From {{ getStartingPrice(category) }}
                           </div>
                           <div class="text-sm text-gray-500 dark:text-gray-400">Best prices</div>
                         </div>
@@ -337,7 +337,7 @@ interface ChildCategory {
   name: string
   url: string
   image: string
-  starting_from_price: number
+  starting_from_price: string  // Changed from number to string
 }
 
 interface ParentCategory {
@@ -414,16 +414,14 @@ const filteredCategories = computed(() => {
 })
 
 // Methods
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('en-IN').format(price)
-}
-
-const getStartingPrice = (category: ParentCategory): number => {
+const getStartingPrice = (category: ParentCategory): string => {
   if (category.children?.length) {
-    const prices = category.children.map(child => child.starting_from_price).filter(Boolean)
-    return prices.length > 0 ? Math.min(...prices) : 999
+    const firstPrice = category.children[0]?.starting_from_price
+    if (firstPrice) {
+      return firstPrice  // Return as-is since it's already formatted
+    }
   }
-  return 999
+  return '₹999.00'  // Default fallback with proper formatting
 }
 
 const handleSearch = () => {

@@ -135,6 +135,18 @@
                   Cookie Policy
                 </NuxtLink>
               </div>
+
+              <!-- Added backlink (no removals) -->
+              <a
+                  href="https://mintreu.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  aria-label="Built by Mintreu"
+              >
+                <span class="hidden sm:inline">Built by</span>
+                <span class="font-semibold">Mintreu</span>
+              </a>
             </div>
           </div>
 
@@ -175,8 +187,7 @@ const shopLinks = Object.freeze([
   { title: 'Electrical Appliances', url: '/category/electrical' },
   { title: 'Fashion & Accessories', url: '/category/fashion' },
   { title: 'All Products', url: '/store' }
-]);
-
+])
 
 const supportLinks = Object.freeze([
   // { title: 'Help Center', url: '/help' },
