@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Filament\Exports\ProductExporter;
+use App\Filament\Exports\UserExporter;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
 
 class ListUsers extends ListRecords
@@ -98,6 +101,8 @@ class ListUsers extends ListRecords
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(UserExporter::class)
                 ]),
             ]);
     }

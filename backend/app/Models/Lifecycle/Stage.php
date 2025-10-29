@@ -37,7 +37,7 @@ class Stage extends Model
     protected $casts = [
         'benefits' => 'array',
         'accessibility' => 'array',
-        'price' => LaravelMoneyCast::class,
+        'price' => 'integer',
         'status' => 'boolean',
         'min_per_order' => 'integer',
         'max_per_order' => 'integer',

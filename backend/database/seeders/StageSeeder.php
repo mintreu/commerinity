@@ -28,36 +28,34 @@ class StageSeeder extends Seeder
         $plan = Stage::create([
             'name' => ucfirst($planName),
             'url' => Str::slug($planName),
-//            'base_price' => $price,
-//            'discount' => 0,
-//            'tax_percentage' => 0,
-//            'tax_amount' => 0,
             'price' => $price,
             'max_team_members' => 780,
             'desc' => fake()->paragraph,
             'status' => true,
             'benefits' => [
-                "Team Building" => "DeActive",
-                "Sponsorship" => "DeActive",
-                "Shopping Benefits" => "Active", // Always active
-                "Affiliate Commissions" => "DeActive",
-                "Exclusive Tools" => "DeActive",
-                "Network Growth" => "DeActive",
-                "Early Access Features" => "DeActive",
-                "Premium Support" => "DeActive",
-                "Career Opportunities" => "DeActive",
+                ['name' => 'Team Building', 'slug' => 'team-building', 'value' => 0],
+                ['name' => 'Sponsorship', 'slug' => 'sponsorship', 'value' => 0],
+                ['name' => 'Shopping Benefits', 'slug' => 'shopping-benefits', 'value' => 1], // Always active
+                ['name' => 'Affiliate Commissions', 'slug' => 'affiliate-commissions', 'value' => 0],
+                ['name' => 'Exclusive Tools', 'slug' => 'exclusive-tools', 'value' => 0],
+                ['name' => 'Network Growth', 'slug' => 'network-growth', 'value' => 0],
+                ['name' => 'Early Access Features', 'slug' => 'early-access-features', 'value' => 0],
+                ['name' => 'Premium Support', 'slug' => 'premium-support', 'value' => 0],
+                ['name' => 'Career Opportunities', 'slug' => 'career-opportunities', 'value' => 0],
             ],
+
             'accessibility' => [
-                "Team Building" => "DeActive",
-                "Sponsorship" => "DeActive",
-                "Shopping Benefits" => "Active",
-                "Affiliate Commissions" => "DeActive",
-                "Exclusive Tools" => "DeActive",
-                "Network Growth" => "DeActive",
-                "Early Access Features" => "DeActive",
-                "Premium Support" => "DeActive",
-                "Career Opportunities" => "DeActive",
+                ['name' => 'Team Building', 'slug' => 'team-building', 'value' => 0],
+                ['name' => 'Sponsorship', 'slug' => 'sponsorship', 'value' => 0],
+                ['name' => 'Shopping Benefits', 'slug' => 'shopping-benefits', 'value' => 1],
+                ['name' => 'Affiliate Commissions', 'slug' => 'affiliate-commissions', 'value' => 0],
+                ['name' => 'Exclusive Tools', 'slug' => 'exclusive-tools', 'value' => 0],
+                ['name' => 'Network Growth', 'slug' => 'network-growth', 'value' => 0],
+                ['name' => 'Early Access Features', 'slug' => 'early-access-features', 'value' => 0],
+                ['name' => 'Premium Support', 'slug' => 'premium-support', 'value' => 0],
+                ['name' => 'Career Opportunities', 'slug' => 'career-opportunities', 'value' => 0],
             ],
+
 
 
         ]);

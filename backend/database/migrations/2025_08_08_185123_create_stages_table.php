@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('url')->unique();
+            $table->string('player_type')->nullable();
+            $table->string('player_model')->nullable();
             $table->text('desc')->nullable();
-
             $table->unsignedBigInteger('price')->default(0);
+            $table->boolean('tax_inclusive')->default(true);
+
+
 
 
             // For Cart Quantity Range*************************************

@@ -2,11 +2,38 @@
 
 namespace App\Models\Traits;
 
+use App\Models\Lifecycle\Level;
 use App\Models\Lifecycle\Stage;
+use App\Models\Lifecycle\UserLevelTaskProgress;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasLifecycle
 {
+
+
+
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
+
+    /**
+     * A user can have many level task progress records.
+     */
+    public function levelTaskProgressions(): MorphMany
+    {
+        return $this->morphMany(UserLevelTaskProgress::class, 'player');
+    }
+
+
+
+
+
+
+
+
+
     /**
      * Get the next lifecycle stage for upgrading/continuing the subscription.
      *

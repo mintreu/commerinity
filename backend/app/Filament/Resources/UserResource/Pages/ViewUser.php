@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Casts\AuthStatusCast;
 use App\Casts\AuthTypeCast;
 use App\Filament\Resources\UserResource;
+use App\Models\Admin;
 use Filament\Actions;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
@@ -25,7 +26,7 @@ class ViewUser extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+
 
             Actions\Action::make('team')
                 ->url(fn() => self::$resource::getUrl('members',['record' => $this->record->referral_code]),false),
@@ -36,6 +37,7 @@ class ViewUser extends ViewRecord
 
 
             Actions\ActionGroup::make([
+                Actions\EditAction::make(),
                 Actions\Action::make('updateStatus')
                     ->label('Change Status')
                     ->icon('heroicon-o-wrench-screwdriver')
@@ -102,7 +104,7 @@ class ViewUser extends ViewRecord
                     ->requiresConfirmation()
                     ->modalSubmitActionLabel('Save')
                     ->modalWidth('md')
-            ]),
+            ])->visible(fn() => filament()->auth()->user() instanceof Admin),
 
 
 

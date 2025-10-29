@@ -44,7 +44,10 @@ class DatabaseSeeder extends Seeder
 
             HelpDeskTicketSeeder::class,
 
+            StaffSeeder::class,
+
             PostSeeder::class,
+
 
 
 

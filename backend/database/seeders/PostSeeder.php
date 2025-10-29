@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Post;
+use App\Models\Staff;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Seeder;
@@ -24,8 +25,9 @@ class PostSeeder extends Seeder
             ?? Category::factory()->create(['name' => 'Blog', 'url' => 'blog']); // safe if category package uses factories [web:2][web:3]
 
         // Resolve pre-existing default author (do NOT create)
-        $defaultAuthorEmail = config('blog.default_author_email', 'test@example.com');
-        $defaultAuthor = User::where('email', $defaultAuthorEmail)->first();
+       // $defaultAuthorEmail = config('blog.default_author_email', 'test@staff.com');
+        $defaultAuthorEmail = 'test@staff.com';
+        $defaultAuthor = Staff::where('email', $defaultAuthorEmail)->first();
         if (! $defaultAuthor) {
             throw new Exception("Default author not found by email: {$defaultAuthorEmail}. Create this user before running PostSeeder.");
         }
