@@ -1,0 +1,31 @@
+# Incentive Model Documentation
+
+-   **File:** `backend/app/Models/Incentive.php`
+-   **Purpose:** Represents an incentive or commission earned, linking to a transaction and polymorphic source/incentivable entities.
+-   **Key Attributes:**
+    -   `transaction_id` (integer)
+    -   `incentivable_id` (integer)
+    -   `incentivable_type` (string)
+    -   `sourceable_id` (integer)
+    -   `sourceable_type` (string)
+    -   `type` (string, casted by `IncentiveTypeCast`)
+    -   `depth` (integer)
+    -   `metadata` (array)
+-   **Relationships:**
+    -   `incentivable()`: `morphTo` relationship to the entity receiving the incentive (e.g., `User`, `Staff`).
+    -   `sourceable()`: `morphTo` relationship to the entity that generated the incentive (e.g., `Order`, `User`).
+    -   `transaction()`: `belongsTo` relationship to a `Transaction`.
+-   **Traits:** None.
+-   **Implemented Features:** Stores detailed information about incentives, including type, depth (likely for multi-level marketing/referral systems), and arbitrary `metadata`.
+-   **Usage:** Used to track and manage various types of incentives and commissions within the platform, often linked to financial transactions.
+-   **Pros/Cons/Suggestions:**
+    -   **Pros:** Flexible design with polymorphic relationships, `metadata` field allows for storing diverse incentive-related data.
+    -   **Cons:** `depth` field implies a hierarchical system, but its exact interpretation and constraints are not explicit in the model.
+    -   **Suggestions:** Document the possible values for `type` (from `IncentiveTypeCast`) and provide examples of `metadata` usage. Clarify the meaning and usage of the `depth` field.
+-   **Feature Checklist:**
+    -   [x] Polymorphic incentivable entity
+    -   [x] Polymorphic sourceable entity
+    -   [x] Link to Transaction
+    -   [x] Stores incentive type
+    -   [x] Stores depth (for hierarchy)
+    -   [x] Stores metadata
