@@ -3,7 +3,7 @@
 
     <!-- Hero Section -->
     <section class="hero-section w-full mx-auto flex flex-col items-center justify-center py-12 sm:py-16 md:py-20 lg:py-24 min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] relative">
-      <div class="w-full  px-4 sm:px-6 md:px-8 lg:px-12 relative z-10">
+      <div class="w-full px-4 sm:px-6 md:px-8 lg:px-12 relative z-10">
         <div class="hero-content flex flex-col items-center text-center space-y-4 sm:space-y-6 lg:space-y-8">
 
           <!-- Badge -->
@@ -48,22 +48,7 @@
 
           <!-- Stats -->
           <div class="hero-stats w-full max-w-2xl grid grid-cols-2 gap-4 sm:gap-6 pt-8 sm:pt-12">
-            <div class="flex flex-col items-center">
-              <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-purple-600 dark:text-purple-400 counter" data-target="15">0</div>
-              <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">Happy Users</div>
-            </div>
-            <div class="flex flex-col items-center">
-              <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-blue-600 dark:text-blue-400 counter" data-target="99.9">0</div>
-              <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">% Uptime</div>
-            </div>
-            <div class="flex flex-col items-center">
-              <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-pink-600 dark:text-pink-400 counter" data-target="1000">0</div>
-              <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">+ Features</div>
-            </div>
-            <div class="flex flex-col items-center">
-              <div class="text-2xl sm:text-3xl lg:text-4xl font-black text-purple-600 dark:text-purple-400 counter" data-target="24">0</div>
-              <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">/7 Support</div>
-            </div>
+            <StatsCounter api="/stats/homepage" :animated="true" />
           </div>
         </div>
       </div>
@@ -79,10 +64,9 @@
     <!-- Component Sections -->
     <AffiliateBenefitsSection />
     <BestSaleProducts />
-
     <FeaturedProductsSection />
 
-    <div class=" overflow-x-hidden mx-auto">
+    <div class="overflow-x-hidden mx-auto">
       <EnhancedFeaturesSection />
     </div>
   </div>
@@ -135,27 +119,6 @@ onMounted(() => {
           duration: 0.8,
           ease: 'back.out(1.7)'
         }, '-=0.2')
-
-    // Counter Animation
-    const counters = document.querySelectorAll('.counter')
-    counters.forEach(counter => {
-      const target = parseFloat(counter.getAttribute('data-target') || '0')
-      gsap.fromTo(
-          counter,
-          { textContent: 0 },
-          {
-            textContent: target,
-            duration: 2,
-            ease: 'power2.out',
-            snap: { textContent: target >= 10 ? 1 : 0.1 },
-            scrollTrigger: {
-              trigger: counter,
-              start: 'top 80%',
-              once: true
-            }
-          }
-      )
-    })
 
     // Scroll Indicator Animation
     gsap.to('.scroll-indicator', {

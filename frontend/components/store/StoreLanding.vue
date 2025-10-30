@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950 overflow-x-hidden">
 
     <!-- Optimized Floating Background Elements -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform ">
+    <div class="fixed inset-0 pointer-events-none overflow-hidden will-change-transform">
       <div ref="orb1" class="store-orb-1 absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-10 blur-3xl will-change-transform"></div>
       <div ref="orb2" class="store-orb-2 absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-15 blur-3xl will-change-transform"></div>
       <div ref="orb3" class="store-orb-3 absolute top-1/2 left-1/4 w-72 h-72 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full opacity-10 blur-2xl will-change-transform"></div>
@@ -54,12 +54,12 @@
                   </div>
 
                   <h1 class="hero-title text-4xl sm:text-6xl lg:text-8xl font-black mb-8 leading-tight">
-                    <span class="block">{{ slide.title || 'Welcome to Our' }}</span>
-                    <span class="block bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">Premium Store</span>
+                    <span class="block">{{ slide.title || 'Discover Endless' }}</span>
+                    <span class="block bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">Possibilities</span>
                   </h1>
 
                   <p class="hero-subtitle text-xl sm:text-2xl lg:text-3xl mb-12 opacity-90 max-w-4xl mx-auto leading-relaxed">
-                    {{ slide.subtitle || 'Discover amazing products with unbeatable deals and fast delivery!' }}
+                    {{ slide.subtitle || 'Shop from thousands of premium products with unbeatable prices and lightning-fast delivery to your doorstep.' }}
                   </p>
 
                   <div class="hero-actions flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -105,12 +105,12 @@
               </div>
 
               <h1 class="hero-title text-4xl sm:text-6xl lg:text-8xl font-black mb-8 leading-tight">
-                <span class="block">{{ heroSlides[0]?.title || 'Welcome to Our' }}</span>
-                <span class="block bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">Premium Store</span>
+                <span class="block">{{ heroSlides[0]?.title || 'Discover Endless' }}</span>
+                <span class="block bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">Possibilities</span>
               </h1>
 
               <p class="hero-subtitle text-xl sm:text-2xl lg:text-3xl mb-12 opacity-90 max-w-4xl mx-auto leading-relaxed">
-                {{ heroSlides[0]?.subtitle || 'Discover amazing products with unbeatable deals and fast delivery!' }}
+                {{ heroSlides[0]?.subtitle || 'Shop from thousands of premium products with unbeatable prices and lightning-fast delivery to your doorstep.' }}
               </p>
 
               <div class="hero-actions flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -138,12 +138,7 @@
 
       <!-- Enhanced Floating Stats - Fixed Position -->
       <div ref="heroStats" class="hero-stats absolute bottom-20 left-1/2 transform -translate-x-1/2 hidden xl:flex gap-6 z-30">
-        <div v-for="(stat, index) in stats" :key="`stat-${index}`"
-             class="stat-card bg-white/10 backdrop-blur-lg rounded-3xl px-6 py-4 text-center text-white border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-110 shadow-2xl">
-          <Icon :name="stat.icon" :class="`w-6 h-6 mx-auto mb-2 ${stat.color}`" />
-          <div class="text-2xl font-black">{{ stat.value }}</div>
-          <div class="text-xs opacity-80 font-medium">{{ stat.label }}</div>
-        </div>
+        <StatsCounter api="/stats/stores/hero" :animated="true" />
       </div>
 
       <!-- Scroll Indicator - Positioned Above Stats -->
@@ -406,168 +401,9 @@
       </div>
     </section>
 
-    <!-- Optimized Category Showcase Sections -->
-    <section
-        v-for="(category, categoryIndex) in categorySections"
-        :key="`category-section-${category.url}-${categoryIndex}`"
-        class="category-showcase-section py-20"
-        :class="categoryIndex % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : 'bg-white dark:bg-gray-800'"
-    >
-      <div class="max-w-7xl mx-auto px-6">
-
-        <!-- Section Header -->
-        <div class="category-header mb-12">
-          <div class="header-content flex flex-col lg:flex-row justify-between items-center gap-8">
-            <div class="header-left flex items-center gap-6">
-              <div class="category-icon w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Icon name="mdi:storefront" class="w-8 h-8 text-white" />
-              </div>
-              <div class="header-text">
-                <h2 class="text-2xl sm:text-4xl font-black text-gray-900 dark:text-white mb-2">
-                  Best of {{ category.name }}
-                </h2>
-                <p class="text-lg text-gray-600 dark:text-gray-400">
-                  {{ category.children?.length || 0 }} amazing subcategories with thousands of products
-                </p>
-              </div>
-            </div>
-
-            <NuxtLink
-                :to="`/category/${category.url}`"
-                class="category-view-all hidden lg:flex items-center gap-3 px-8 py-4 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold rounded-2xl border-2 border-blue-200 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 transform hover:scale-105 shadow-lg group"
-            >
-              <Icon name="mdi:eye" class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              View All {{ category.name }}
-              <Icon name="mdi:arrow-right" class="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <!-- Products Container -->
-        <div class="category-products-container bg-white dark:bg-gray-700 rounded-3xl p-6 lg:p-8 shadow-xl border border-gray-200 dark:border-gray-600">
-          <ClientOnly>
-            <Swiper
-                :slides-per-view="2"
-                :space-between="20"
-                :breakpoints="{
-                640: { slidesPerView: 3, spaceBetween: 24 },
-                768: { slidesPerView: 4, spaceBetween: 24 },
-                1024: { slidesPerView: 5, spaceBetween: 24 },
-                1280: { slidesPerView: 6, spaceBetween: 24 }
-              }"
-                :lazy="{ loadPrevNext: true }"
-                class="category-swiper"
-            >
-              <SwiperSlide v-for="(child, childIndex) in category.children" :key="`child-${child.url}-${childIndex}`">
-                <NuxtLink :to="`/category/${child.url}`" class="category-product-link group block">
-                  <div class="category-product-card bg-white dark:bg-gray-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 border border-gray-100 dark:border-gray-500">
-
-                    <!-- Image Container -->
-                    <div class="product-image-container relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-500 dark:to-gray-400 overflow-hidden">
-                      <img
-                          :src="child.image"
-                          :alt="child.name"
-                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          loading="lazy"
-                          :width="200"
-                          :height="200"
-                      />
-
-                      <!-- Discount Badge -->
-                      <div class="discount-badge absolute top-3 left-3 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg">
-                        UP TO {{ getRandomDiscount(30, 50) }}% OFF
-                      </div>
-
-                      <!-- Quick Actions -->
-                      <div class="quick-actions-overlay absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                        <div class="quick-actions-buttons flex gap-2">
-                          <button
-                              @click.prevent="quickView(child)"
-                              class="quick-action-btn w-10 h-10 bg-white/90 text-gray-900 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200"
-                              :aria-label="`Quick view ${child.name}`"
-                          >
-                            <Icon name="mdi:eye" class="w-4 h-4" />
-                          </button>
-                          <button
-                              @click.prevent="toggleWishlist(child.url)"
-                              class="quick-action-btn w-10 h-10 bg-white/90 text-gray-900 rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200"
-                              :aria-label="`Add ${child.name} to wishlist`"
-                          >
-                            <Icon name="mdi:heart-outline" class="w-4 h-4" />
-                          </button>
-                          <button
-                              @click.prevent="addToCart(child)"
-                              class="quick-action-btn w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-200"
-                              :aria-label="`Add ${child.name} to cart`"
-                          >
-                            <Icon name="mdi:cart-plus" class="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Product Info -->
-                    <div class="product-info-content p-4">
-                      <h3 class="product-title font-bold text-sm lg:text-base text-gray-900 dark:text-white mb-3 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                        {{ child.name }}
-                      </h3>
-
-                      <!-- Pricing & Rating -->
-                      <div class="product-details flex justify-between items-end">
-                        <div class="pricing-info">
-                          <p class="current-price text-lg lg:text-xl font-black text-green-600 dark:text-green-400">
-                            ₹{{ formatPrice(child.starting_from_price) }}
-                          </p>
-                          <p class="original-price text-xs text-gray-500 dark:text-gray-400 line-through">
-                            ₹{{ formatPrice(Math.floor(child.starting_from_price * 1.5)) }}
-                          </p>
-                        </div>
-
-                        <!-- Rating -->
-                        <div class="rating-info flex items-center gap-1">
-                          <Icon name="mdi:star" class="w-4 h-4 text-yellow-400" />
-                          <span class="rating-value text-sm font-semibold text-gray-600 dark:text-gray-400">
-                            {{ getRating() }}
-                          </span>
-                        </div>
-                      </div>
-
-                      <!-- Delivery Info -->
-                      <div class="delivery-info mt-3 flex items-center justify-between">
-                        <div class="delivery-text flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
-                          <Icon name="mdi:truck-fast" class="w-3 h-3" />
-                          <span>Free Delivery</span>
-                        </div>
-                        <div class="stock-info text-xs text-orange-600 dark:text-orange-400 font-medium">
-                          {{ getStockCount() }} left in stock
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </NuxtLink>
-              </SwiperSlide>
-            </Swiper>
-          </ClientOnly>
-
-          <!-- Mobile View All Button -->
-          <div class="mobile-view-all mt-8 lg:hidden">
-            <NuxtLink
-                :to="`/category/${category.url}`"
-                class="w-full flex items-center justify-center gap-3 py-4 text-blue-600 dark:text-blue-400 font-bold border-2 border-blue-200 dark:border-blue-600 rounded-2xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300"
-            >
-              <Icon name="mdi:eye" class="w-5 h-5" />
-              View All {{ category.name }}
-              <Icon name="mdi:arrow-right" class="w-5 h-5" />
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Enhanced Why Choose Us -->
     <section class="trust-features-section py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20">
       <div class="max-w-7xl mx-auto px-6">
-
         <!-- Section Header -->
         <div class="section-header text-center mb-20">
           <div class="header-badge inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-200 dark:border-green-800 backdrop-blur-sm mb-8">
@@ -634,7 +470,6 @@
 </template>
 
 <script setup lang="ts">
-// [Keep the exact same script section as before - no changes needed]
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
@@ -721,40 +556,12 @@ const particles = [
 const heroSlides = ref([
   {
     id: 1,
-    title: 'Welcome to Our Premium Store',
-    subtitle: 'Discover amazing products with unbeatable deals and lightning-fast delivery!',
+    title: 'Discover Endless',
+    subtitle: 'Shop from thousands of premium products with unbeatable prices and lightning-fast delivery to your doorstep.',
     cta: 'Start Shopping',
-    image: null // Add image URL here for background
+    image: null
   }
 ])
-
-// Stats data
-const stats = [
-  { icon: 'mdi:account-heart', value: '2M+', label: 'Happy Customers', color: 'text-pink-300' },
-  { icon: 'mdi:package-variant', value: '100K+', label: 'Products', color: 'text-blue-300' },
-  { icon: 'mdi:headset', value: '24/7', label: 'Support', color: 'text-green-300' },
-  { icon: 'mdi:truck-fast', value: 'Same Day', label: 'Delivery', color: 'text-yellow-300' }
-]
-
-// Computed properties
-const firstCategoryLink = computed(() => {
-  if (categorySections.value.length === 0) {
-    return '/categories'
-  }
-
-  const firstParent = categorySections.value[0]
-  if (firstParent.children && firstParent.children.length > 0) {
-    return `/category/${firstParent.children[0].url}`
-  }
-
-  return `/category/${firstParent.url}`
-})
-
-const quickCategories = computed(() => {
-  return categorySections.value
-      .flatMap(parent => parent.children?.slice(0, 6) || [])
-      .slice(0, 18)
-})
 
 // Enhanced trust features
 const trustFeatures = [
@@ -801,22 +608,6 @@ const getStockCount = (): number => {
   return Math.floor(Math.random() * 50 + 10)
 }
 
-// API calls
-const loadFeaturedProducts = async () => {
-  try {
-    const { data } = await useLazyFetch<Product[]>(`${config.public.apiBase}/products/suggestions/get`, {
-      key: 'featured-products',
-      default: () => [],
-      server: false
-    })
-    if (data.value) {
-      featuredProducts.value = data.value
-    }
-  } catch (error) {
-    console.error('Failed to load featured products:', error)
-  }
-}
-
 // Countdown timer
 const updateCountdown = () => {
   const now = new Date()
@@ -851,6 +642,26 @@ const addToCart = (product: any) => {
 const onSwiperInit = (swiper: any) => {
   console.log('Swiper initialized:', swiper)
 }
+
+// Computed properties
+const firstCategoryLink = computed(() => {
+  if (categorySections.value.length === 0) {
+    return '/categories'
+  }
+
+  const firstParent = categorySections.value[0]
+  if (firstParent.children && firstParent.children.length > 0) {
+    return `/category/${firstParent.children[0].url}`
+  }
+
+  return `/category/${firstParent.url}`
+})
+
+const quickCategories = computed(() => {
+  return categorySections.value
+      .flatMap(parent => parent.children?.slice(0, 6) || [])
+      .slice(0, 18)
+})
 
 // Optimized animations with client-side check
 const initializeAnimations = () => {
@@ -999,9 +810,6 @@ const initializeAnimations = () => {
 onMounted(async () => {
   await nextTick()
 
-  // Load featured products
-  await loadFeaturedProducts()
-
   // Initialize countdown timer
   updateCountdown()
   countdownInterval = setInterval(updateCountdown, 1000)
@@ -1040,238 +848,5 @@ onUnmounted(() => {
 /* Performance optimizations */
 .will-change-transform {
   will-change: transform;
-}
-
-/* Enhanced button effects with better performance */
-.hero-btn-primary,
-.flash-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-btn-primary::before,
-.flash-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.6s ease;
-  will-change: transform;
-}
-
-.hero-btn-primary:hover::before,
-.flash-btn:hover::before {
-  left: 100%;
-}
-
-/* Category card effects */
-.category-item {
-  position: relative;
-}
-
-.category-item::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
-  transform: scaleX(0);
-  transition: transform 0.4s ease;
-  border-radius: 1.5rem 1.5rem 0 0;
-  will-change: transform;
-}
-
-.category-item:hover::after {
-  transform: scaleX(1);
-}
-
-/* Product card hover effects with better performance */
-.product-card {
-  position: relative;
-}
-
-.product-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  background: linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.3), transparent);
-  border-radius: 1rem;
-  mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.product-card:hover::before {
-  opacity: 1;
-}
-
-/* Trust feature card effects */
-.trust-feature-card {
-  position: relative;
-}
-
-.trust-feature-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-  border-radius: 1.5rem;
-  mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.trust-feature-card:hover::before {
-  opacity: 1;
-}
-
-/* Optimized Swiper customizations */
-:deep(.swiper-button-next),
-:deep(.swiper-button-prev) {
-  color: #4f46e5;
-  background: rgba(255, 255, 255, 0.95);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-:deep(.swiper-button-next):hover,
-:deep(.swiper-button-prev):hover {
-  transform: scale(1.1);
-}
-
-:deep(.swiper-button-next:after),
-:deep(.swiper-button-prev:after) {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-:deep(.swiper-pagination-bullet) {
-  background: rgba(255, 255, 255, 0.6);
-  opacity: 1;
-  width: 12px;
-  height: 12px;
-  transition: all 0.3s ease;
-}
-
-:deep(.swiper-pagination-bullet-active) {
-  background: white;
-  transform: scale(1.2);
-}
-
-/* Optimized particle animations */
-.particle {
-  animation: float 6s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-30px) rotate(180deg);
-  }
-}
-
-/* Mobile responsiveness with better performance */
-@media (max-width: 1280px) {
-  .hero-stats {
-    display: none !important; /* Hide stats on smaller screens to prevent overlap */
-  }
-}
-
-@media (max-width: 640px) {
-  .hero-title {
-    font-size: 2.5rem;
-    line-height: 1.2;
-  }
-
-  .hero-content {
-    padding-bottom: 8rem; /* Reduce bottom padding on mobile */
-  }
-
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .store-orb-2 {
-    display: none; /* Improve mobile performance */
-  }
-
-  .hero-actions {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .trust-features-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .hero-content {
-    padding-bottom: 6rem; /* Further reduce on very small screens */
-  }
-}
-
-/* Dark mode enhancements */
-@media (prefers-color-scheme: dark) {
-  .category-item,
-  .product-card,
-  .trust-feature-card {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-}
-
-/* Optimized smooth transitions */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .particle,
-  .animate-bounce,
-  .animate-pulse {
-    animation: none !important;
-  }
-
-  * {
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Focus states for accessibility */
-.category-card:focus-visible,
-.product-card:focus-visible,
-.trust-feature-card:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Loading states */
-.loading {
-  @apply animate-pulse bg-gray-200 dark:bg-gray-700;
 }
 </style>

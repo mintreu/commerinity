@@ -34,6 +34,13 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [SanctumUserController::class, 'getUser']);
 });
 
+require base_path('routes/apis/stats.php');
+
+
+
+
+
+
 // ========================
 // 💰 WALLET ROUTES
 // ========================
