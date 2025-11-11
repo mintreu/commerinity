@@ -13,7 +13,7 @@ use App\Models\Traits\HasLifecycle;
 use App\Models\Traits\HasOrder;
 use App\Models\Traits\HasProductEngagement;
 use App\Models\Traits\HasProductWishlist;
-use App\Services\LifeCycleService\EnjoyLifeCycle;
+use App\Services\LifeCycleService\Contracts\EnjoyLifeCycle;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -43,7 +43,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable,EnjoyLifeCycle
+class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens,HasFactory,HasPushSubscriptions, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
@@ -71,7 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentU
         'dob',
         'email_verified_at',
         'mobile_verified_at',
-        'onboarded'
+        'onboarded',
+        'level_id'
     ];
 
 

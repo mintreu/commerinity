@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: '2024-04-03',
-    devtools: { enabled: process.env.NODE_ENV === 'development' },
+    devtools: {enabled: process.env.NODE_ENV === 'development'},
     ssr: false,
 
     css: ['~/assets/css/main.css'],
@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     },
 
     // ✅ Removed @nuxt/image module
-    modules: ['@nuxt/icon', '@qirolab/nuxt-sanctum-authentication', '@nuxtjs/google-fonts', '@vite-pwa/nuxt', 'nuxt-echarts', '@nuxtjs/robots','@nuxtjs/sitemap'],
+    modules: ['@nuxt/icon', '@qirolab/nuxt-sanctum-authentication', '@nuxtjs/google-fonts', '@vite-pwa/nuxt', 'nuxt-echarts', '@nuxtjs/robots', '@nuxtjs/sitemap'],
 
     runtimeConfig: {
         // Private keys (only available on server-side)
@@ -51,22 +51,22 @@ export default defineNuxtConfig({
             title: 'VVIndia - All in One Place',
             titleTemplate: '%s | VVIndia',
             meta: [
-                { name: 'description', content: 'VVIndia is a unified platform for shopping, blogging, and more.' },
+                {name: 'description', content: 'VVIndia is a unified platform for shopping, blogging, and more.'},
                 // { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-                { charset: 'utf-8' },
-                { name: 'format-detection', content: 'telephone=no' },
-                { name: 'theme-color', content: '#ffffff' },
-                { name: 'mobile-web-app-capable', content: 'yes' },
-                { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-                { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes' },
+                {charset: 'utf-8'},
+                {name: 'format-detection', content: 'telephone=no'},
+                {name: 'theme-color', content: '#ffffff'},
+                {name: 'mobile-web-app-capable', content: 'yes'},
+                {name: 'apple-mobile-web-app-status-bar-style', content: 'default'},
+                {name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes'},
             ],
             link: [
-                { rel: 'icon', type: 'image/png', href: '/logo.png' },
-                { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-                { rel: 'canonical', href: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com' },
+                {rel: 'icon', type: 'image/png', href: '/logo.png'},
+                {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'},
+                {rel: 'canonical', href: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com'},
                 // Preconnect to API
-                { rel: 'preconnect', href: 'http://localhost:8000' },
-                { rel: 'dns-prefetch', href: 'http://localhost:8000' }
+                {rel: 'preconnect', href: 'http://localhost:8000'},
+                {rel: 'dns-prefetch', href: 'http://localhost:8000'}
             ]
         }
     },
@@ -108,7 +108,6 @@ export default defineNuxtConfig({
     // ✅ Sitemap Configuration
 
 
-
     // ✅ Build Configuration
     build: {
         transpile: ['vue-echarts', 'echarts'],
@@ -118,9 +117,15 @@ export default defineNuxtConfig({
     // ✅ Enhanced PWA Configuration
     pwa: {
         registerType: 'autoUpdate',
+        // ✅ Add these options
+        scope: '/',
+        base: '/',
         workbox: {
-            cleanupOutdatedCaches: true,
             navigateFallback: '/',
+            // ✅ Ensure SW is registered for push
+            skipWaiting: true,
+            clientsClaim: true,
+            cleanupOutdatedCaches: true,
             globPatterns: ['**/*.{js,css,html,png,svg,ico,json,webp}'],
             runtimeCaching: [
                 {
@@ -130,7 +135,7 @@ export default defineNuxtConfig({
                         cacheName: 'api-cache',
                         expiration: {
                             maxEntries: 100,
-                            maxAgeSeconds: 60 * 60 * 24 // 1 day
+                            maxAgeSeconds: 60 * 60 * 24
                         }
                     }
                 },
@@ -141,7 +146,7 @@ export default defineNuxtConfig({
                         cacheName: 'images-cache',
                         expiration: {
                             maxEntries: 200,
-                            maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                            maxAgeSeconds: 60 * 60 * 24 * 30
                         }
                     }
                 }
@@ -184,6 +189,7 @@ export default defineNuxtConfig({
         },
     },
 
+
     // ✅ Performance Optimizations
     experimental: {
         payloadExtraction: false,
@@ -200,10 +206,6 @@ export default defineNuxtConfig({
     vue: {
         propsDestructure: true
     },
-
-
-
-
 
 
     // ✅ Site Configuration (for canonical URLs)
@@ -244,10 +246,10 @@ export default defineNuxtConfig({
 
         // Customize columns shown in sitemap UI
         xslColumns: [
-            { label: 'URL', width: '50%' },
-            { label: 'Last Modified', select: 'sitemap:lastmod', width: '25%' },
-            { label: 'Priority', select: 'sitemap:priority', width: '12.5%' },
-            { label: 'Change Freq', select: 'sitemap:changefreq', width: '12.5%' },
+            {label: 'URL', width: '50%'},
+            {label: 'Last Modified', select: 'sitemap:lastmod', width: '25%'},
+            {label: 'Priority', select: 'sitemap:priority', width: '12.5%'},
+            {label: 'Change Freq', select: 'sitemap:changefreq', width: '12.5%'},
         ],
 
         // Exclude routes from sitemap
@@ -372,31 +374,26 @@ export default defineNuxtConfig({
     // Route rules for additional control
     routeRules: {
         // Exclude from search engines completely
-        '/dashboard/**': { robots: false, index: false },
-        '/admin/**': { robots: false, index: false },
-        '/auth/**': { robots: false, index: false },
-        '/backups/**': { robots: false, index: false },
-        '/sample/**': { robots: false, index: false },
-        '/test': { robots: false, index: false },
-        '/cart': { robots: false, index: false },
+        '/dashboard/**': {robots: false, index: false},
+        '/admin/**': {robots: false, index: false},
+        '/auth/**': {robots: false, index: false},
+        '/backups/**': {robots: false, index: false},
+        '/sample/**': {robots: false, index: false},
+        '/test': {robots: false, index: false},
+        '/cart': {robots: false, index: false},
 
         // Allow but with specific rules
-        '/auth/login': { robots: true, index: true },
-        '/auth/register': { robots: true, index: true },
+        '/auth/login': {robots: true, index: true},
+        '/auth/register': {robots: true, index: true},
 
         // Prerender important pages
-        '/': { prerender: true },
-        '/shop': { prerender: true },
-        '/categories': { prerender: true },
-        '/blog': { prerender: true },
-        '/about': { prerender: true },
-        '/contact': { prerender: true },
+        '/': {prerender: true},
+        '/shop': {prerender: true},
+        '/categories': {prerender: true},
+        '/blog': {prerender: true},
+        '/about': {prerender: true},
+        '/contact': {prerender: true},
     },
-
-
-
-
-
 
 
 })

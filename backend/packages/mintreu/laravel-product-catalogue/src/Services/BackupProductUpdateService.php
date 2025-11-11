@@ -48,7 +48,13 @@ class BackupProductUpdateService
             };
         }catch (\Throwable $t)
         {
-            dd($t->getMessage(),$t->getLine(),$t->getFile(),$t->getTraceAsString());
+            Log::error('Product update failed', [
+                'message' => $t->getMessage(),
+                'line' => $t->getLine(),
+                'file' => $t->getFile(),
+                'trace' => $t->getTraceAsString()
+            ]);
+            throw $t; // Re-throw the exception after logging
         }
     }
 
@@ -177,10 +183,6 @@ class BackupProductUpdateService
             $signature = implode('-', collect($variant['filter_option_ids'])->sort()->values()->all());
             return [$signature => $variant];
         });
-
-
-        dd($newOptionIds,$existingOptionIds,$this->data['filter_options'],$existingSignatures,$newSignatures);
-
 
         // 5. Delete outdated variants
         $toDelete = $existingSignatures->keys()->diff($newSignatures->keys());

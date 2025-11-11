@@ -154,20 +154,10 @@
         </div>
 
         <!-- Error -->
-        <div v-else-if="loadError" class="text-center py-20">
-          <div class="w-32 h-32 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-8">
-            <Icon name="mdi:alert-circle" class="w-16 h-16 text-red-500" />
-          </div>
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Error Loading Articles</h3>
-          <p class="text-gray-600 dark:text-gray-400 mb-8">{{ loadError }}</p>
-          <button
-              @click="fetchPosts(1)"
-              class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
-          >
-            <Icon name="mdi:refresh" class="w-5 h-5 inline mr-2" />
-            Try Again
-          </button>
-        </div>
+        <ErrorState  v-else-if="loadError" />
+
+
+
 
         <!-- No Results -->
         <div v-else-if="posts.length === 0" class="text-center py-20">
@@ -287,6 +277,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useSanctumFetch, useRuntimeConfig, useToast } from '#imports'
+import ErrorState from "~/components/ErrorState.vue";
 
 const props = withDefaults(defineProps<{
   title: string

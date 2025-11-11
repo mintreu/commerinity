@@ -64,28 +64,6 @@ class AdminPanelProvider extends PanelProvider
                 LaravelPenpressPlugin::make(),
 
 
-                // Filament Socialite
-                FilamentSocialitePlugin::make()
-                    // (required) Add providers corresponding with providers in `config/services.php`.
-                    ->providers([
-                        // Create a provider 'gitlab' corresponding to the Socialite driver with the same name.
-                        Provider::make('google')
-                            ->label('Google')
-                            ->icon('fab-google')
-                            ->color(Color::hex('#DB4437'))
-                            ->outlined(false)
-                            ->stateless(false)
-                            ->scopes(['...'])
-                            ->with(['...']),
-                    ])
-                    // (optional) Override the panel slug to be used in the oauth routes. Defaults to the panel's configured path.
-                    ->slug('admin')
-                    // (optional) Enable/disable registration of new (socialite-) users.
-                    ->registration(true)
-                    // (optional) Enable/disable registration of new (socialite-) users using a callback.
-                    // In this example, a login flow can only continue if there exists a user (Authenticatable) already.
-                    ->registration(fn (string $provider, SocialiteUserContract $oauthUser, ?Authenticatable $user) => (bool) $user)
-                    ->userModelClass(\App\Models\Admin::class)
 
 
             ])

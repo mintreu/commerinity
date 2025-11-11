@@ -52,13 +52,14 @@
 
     <!-- ✅ Newsletter - Load AFTER 5 seconds (ALWAYS) -->
     <ClientOnly>
-      <component :is="newsletterComponent" v-if="mounted && showNewsletter" />
+      <component :is="newsletterComponent" v-if="mounted && showNewsletter && isLoggedIn" />
     </ClientOnly>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
+import {useSanctum} from "#imports";
 
 // ✅ CRITICAL: Lazy load components
 const navbarComponent = defineAsyncComponent(() =>
@@ -86,6 +87,8 @@ const showFooter = ref(true)
 const showNewsletter = ref(true) // ✅ Always true - component handles its own visibility
 const showBottomNav = ref(true)
 const showBackgroundEffects = ref(true)
+
+const { isLoggedIn } = useSanctum()
 
 // ✅ Optimized scroll handler
 const scrollToTop = () => {

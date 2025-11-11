@@ -38,9 +38,6 @@ class FlashDealController extends Controller
             ->latest()
             ->paginate(30);
 
-        dd($runningSales->first()->sale_products->first());
-
-
         return SaleResource::collection($runningSales);
 
         //return FlashDealResource::collection($flashDeals);

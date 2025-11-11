@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Order\Order;
 use App\Models\User;
+use App\Notifications\PushNotification;
 use App\Notifications\Welcome\WelcomeDatabaseNotification;
+use App\Services\LifeCycleService\LifeCycleService;
 use App\Services\OrderService\OrderConfirmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -23,11 +25,32 @@ class TestController extends Controller
     {
 
 
+        // get actual user instance
+        $user = User::where('email', 'test@example.com')->first();
 
-        dd(XYSLEERR::make());
+        if (! $user) {
+            info('User not found.');
+            return;
+        }
+
+// check if user has push subscriptions
+        if ($user->pushSubscriptions()->exists()) {
+
+            $user->notify(new PushNotification(
+                title: 'Hello from Laravel 👋',
+                body: 'This is a test web push notification.',
+                icon: asset('icon-192x192.png'),
+                url: route('dev.test') // or any URL you want
+            ));
+
+        } else {
+            info('No push subscriptions found for this user.');
+        }
 
 
+        //dd(LifeCycleService::make($user)->fetchAndResolve());
 
+        return response()->json(['status' => 'ok']);
 
 
 
@@ -44,16 +67,12 @@ class TestController extends Controller
 
 
 
-
-
-
-
-        dd(
-          LaravelMoney::make(150.50)->getAmount(),
-            LaravelMoney::make(150.50)->formatted(),
-          LaravelMoney::make(15050)->getAmount(),
-            LaravelMoney::make(15050)->formatted(),
-        );
+        return response()->json([
+            'money_150_50_amount' => LaravelMoney::make(150.50)->getAmount(),
+            'money_150_50_formatted' => LaravelMoney::make(150.50)->formatted(),
+            'money_15050_amount' => LaravelMoney::make(15050)->getAmount(),
+            'money_15050_formatted' => LaravelMoney::make(15050)->formatted(),
+        ]);
 
 
 
@@ -65,9 +84,9 @@ class TestController extends Controller
 //
 //
 //
-       $user = User::firstWhere('email','applicant@example.com');
+        $user = User::firstWhere('email','applicant@example.com');
 
-        dd(LaravelIntegration::payment('cash-free-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
+        $order = LaravelIntegration::payment('cash-free-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
             $order
                 ->currency('INR')
                 ->amount(10.34)
@@ -77,17 +96,14 @@ class TestController extends Controller
                 ->failureUrl(url('/payment/failure'))
                 ->expireAfter(20)
                 ->notes([]);
-        }));
+        });
+
+        return response()->json(['order' => $order]);
 
 
 
 
-
-
-
-
-
-        dd('stop!');
+        return response()->json(['status' => 'stopped']);
 
 
 
@@ -95,7 +111,7 @@ class TestController extends Controller
 //
         $user = User::firstWhere('email','applicant@example.com');
 
-        dd(LaravelIntegration::payment('razorpay-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
+        $order = LaravelIntegration::payment('razorpay-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
             $order
                 ->currency('INR')
                 ->amount(10.34)
@@ -105,7 +121,9 @@ class TestController extends Controller
                 ->failureUrl(url('/payment/failure'))
                 ->expireAfter(20)
                 ->notes([]);
-        }));
+        });
+
+        return response()->json(['razorpay_order' => $order]);
 
 //        dd(LaravelIntegration::payment('cash-free-payment')->order()->create(function (\Mintreu\LaravelIntegration\Support\ProviderOrder $order) use($user){
 //            $order
@@ -137,7 +155,8 @@ class TestController extends Controller
             'receipt' => '123', 'amount' => 100, 'currency' => 'INR',
             'notes'=> array('key1'=> 'value3','key2'=> 'value2')
         ]);
-        dd($orderData);
+
+        return response()->json(['order_data' => $orderData]);
 
 //
 //

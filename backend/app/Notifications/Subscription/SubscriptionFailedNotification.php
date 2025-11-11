@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SubscriptionFailedNotificaion extends Notification
+class SubscriptionFailedNotification extends Notification
 {
     use Queueable;
 

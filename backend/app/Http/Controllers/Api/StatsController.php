@@ -17,10 +17,8 @@ class StatsController extends Controller
     public function getHomepageStats()
     {
         $stats = Cache::remember('homepage_stats', now()->addMinutes(5), function () {
-            // Real count from database
             $users = (int) User::count();
 
-            // Uptime calculation
             try {
                 DB::connection()->getPdo();
                 $uptime = 99.9;
@@ -28,7 +26,6 @@ class StatsController extends Controller
                 $uptime = 0;
             }
 
-            // Real category and product counts
             $categories = (int) Category::count();
             $products = (int) Product::count();
             $features = $categories + min($products, 200) + 50;
@@ -85,7 +82,6 @@ class StatsController extends Controller
      */
     public function getHeroStats()
     {
-        // NO CACHING - Get real-time data for store hero stats
         $happyCustomers = (int) User::where('status', 'active')->count();
         $formattedCustomers = $this->formatNumber($happyCustomers);
 
@@ -139,32 +135,78 @@ class StatsController extends Controller
     }
 
     /**
+     * Categories page stats - Yellow text, simple cards (isCard: false)
+     */
+    public function getCategoryStats()
+    {
+        $categories = (int) Category::count();
+        $products = (int) Product::count();
+
+        $stats = [
+            [
+                'label' => 'Categories',
+                'value' => $categories,
+                'icon' => 'mdi:folder-multiple',
+                'textColor' => 'yellow',
+                'iconColor' => 'yellow',
+                'type' => 'number',
+                'visibility' => true,
+                'isCard' => false
+            ],
+            [
+                'label' => 'Products',
+                'value' => $products,
+                'icon' => 'mdi:package-variant',
+                'textColor' => 'yellow',
+                'iconColor' => 'yellow',
+                'type' => 'number',
+                'visibility' => true,
+                'isCard' => false
+            ],
+            [
+                'label' => 'Brands',
+                'value' => 100,
+                'icon' => 'mdi:star',
+                'textColor' => 'yellow',
+                'iconColor' => 'yellow',
+                'type' => 'number',
+                'visibility' => true,
+                'isCard' => false
+            ],
+            [
+                'label' => 'Support',
+                'value' => '24/7',
+                'icon' => 'mdi:headset',
+                'textColor' => 'yellow',
+                'iconColor' => 'yellow',
+                'type' => 'text',
+                'visibility' => true,
+                'isCard' => false
+            ]
+        ];
+
+        return ['data' => $stats];
+    }
+
+    /**
      * Format numbers with proper zero handling
-     * 0 -> "0"
-     * 1-999 -> "1", "500", etc
-     * 1000-999999 -> "1K", "1.5K", etc
-     * 1000000+ -> "1M", "2.5M", etc
      */
     private function formatNumber($number)
     {
         $number = (int) $number;
 
-        // If zero, return "0"
         if ($number === 0) {
             return '0';
         }
 
-        // Format numbers 1-999
         if ($number < 1000) {
             return (string) $number;
         }
 
-        // Format numbers 1K-999K
         if ($number < 1000000) {
             return number_format($number / 1000, 1) . 'K';
         }
 
-        // Format numbers 1M+
         return number_format($number / 1000000, 1) . 'M';
     }
 }

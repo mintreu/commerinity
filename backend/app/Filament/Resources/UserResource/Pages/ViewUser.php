@@ -6,8 +6,11 @@ use App\Casts\AuthStatusCast;
 use App\Casts\AuthTypeCast;
 use App\Filament\Resources\UserResource;
 use App\Models\Admin;
+use App\Services\LifeCycleService\LifeCycleService;
+use App\Services\UserServices\MembershipSubscriptionService;
 use Filament\Actions;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
@@ -18,6 +21,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Mintreu\LaravelIntegration\Models\Integration;
 
 class ViewUser extends ViewRecord
 {
@@ -34,6 +38,19 @@ class ViewUser extends ViewRecord
             Actions\Action::make('view_stats')
                 ->label('Stats')
                 ->url(fn() => self::$resource::getUrl('stats',['record' => $this->record->referral_code]),false),
+
+
+            Actions\Action::make('subscribe_now')
+                ->label('Turn into a Subscriber')
+                ->color('success')
+                ->action(fn(array $data) => $this->getSubscriptionAction($data))
+                ->form([
+                    Select::make('payment_provider')
+                        ->options(Integration::payment()->pluck('name', 'id'))
+                ])
+                ->requiresConfirmation()
+                ->visible(fn() => is_null($this->record->level_id)),
+
 
 
             Actions\ActionGroup::make([
@@ -290,6 +307,29 @@ class ViewUser extends ViewRecord
 
             ]);
     }
+
+
+
+
+
+
+
+
+    public function getSubscriptionAction(array $data)
+    {
+
+        $service = LifeCycleService::make($this->record);
+        $service->subscribe();
+
+
+    }
+
+
+
+
+
+
+
 
 
 }

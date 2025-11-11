@@ -12,7 +12,7 @@ Route::get('/', function () {
 
 
 
-Route::get('/test',[\App\Http\Controllers\TestController::class,'index']);
+Route::get('/test',[\App\Http\Controllers\TestController::class,'index'])->name('dev.test');
 
 
 /**
@@ -23,3 +23,4 @@ Route::get('/checkout/{transaction:uuid}',\App\Livewire\Checkout\CheckoutHome::c
 
 
 Route::get('/auth/{provider}/redirect',[\App\Http\Controllers\Web\SocialLoginController::class,'attempt']);
+Route::get('/auth/{provider}/callback',[\App\Http\Controllers\Web\SocialLoginController::class,'callback']);

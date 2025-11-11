@@ -369,11 +369,12 @@ class WalletController extends Controller
                 $locked->balance = (float) $locked->balance - $amount;
                 $locked->save();
 
+                // Use the locked wallet instance for transaction creation
                 $locked->transactions()->create([
                     'type'   => TransactionTypeCast::DEBITED->value,
                     'purpose'=> 'wallet_withdrawal',
                     'amount' => $amount,
-                    'status' => 'pending', // set success after payout provider confirms
+                    'status' => TransactionStatusCast::PENDING->value, // set success after payout provider confirms
                 ]);
             });
         } catch (\Throwable $e) {
@@ -430,7 +431,7 @@ class WalletController extends Controller
                     'type'   => TransactionTypeCast::DEBITED->value,
                     'purpose' => 'p2p_transfer_out',
                     'amount'  => $amount,
-                    'status'  => 'success',
+                    'status'  => TransactionStatusCast::COMPLETED->value,
                     'metadata'=> ['to' => $recipientLocked->uuid],
                 ]);
 
@@ -441,7 +442,7 @@ class WalletController extends Controller
                     'type'   => TransactionTypeCast::CREDITED->value,
                     'purpose' => 'p2p_transfer_in',
                     'amount'  => $amount,
-                    'status'  => 'success',
+                    'status'  => TransactionStatusCast::COMPLETED->value,
                     'metadata'=> ['from' => $senderLocked->uuid],
                 ]);
             });
@@ -471,29 +472,50 @@ class WalletController extends Controller
         $user = $request->user();
         $user->load('wallet');
         $wallet = $user->wallet;
-        $currentPoints = $wallet->points;
 
-
-        if ($validated['points'] > $currentPoints)
-        {
-            return response()->json(['success' => false, 'message' => 'You only have '.$currentPoints.' points in total for conversion']);
-        }else{
-
-            $conversionRatio = 10;  // some ratio later use config value here..
-            $pointAmount = $validated['points'] * $conversionRatio;
-            $newBalance = LaravelMoney::make($pointAmount)->plus($wallet->balance)->getAmount();
-            $newPoint = $wallet->points - $validated['points'];
-
-            // Here we later ad a internal transaction for it..
-
-
-            $wallet->update([
-               'balance' => $newBalance,
-               'points' => $newPoint,
-            ]);
-            return response()->json(['success' => true, 'message' => 'Transfer successful.']);
+        if (!$wallet) {
+            return response()->json(['success' => false, 'message' => 'Wallet not found.'], 404);
         }
 
+        // Optional PIN verification
+        if (!empty($validated['pin']) && !$wallet->verifyPin($validated['pin'])) {
+            return response()->json(['success' => false, 'message' => 'Invalid PIN.'], 422);
+        }
+
+        try {
+            DB::transaction(function () use ($wallet, $validated) {
+                $lockedWallet = Wallet::whereKey($wallet->id)->lockForUpdate()->first();
+
+                $currentPoints = $lockedWallet->points;
+
+                if ($validated['points'] > $currentPoints) {
+                    abort(422, 'You only have '.$currentPoints.' points in total for conversion');
+                }
+
+                $conversionRatio = 10;  // some ratio later use config value here..
+                $pointAmount = $validated['points'] * $conversionRatio;
+                $newBalance = LaravelMoney::make($pointAmount)->plus($lockedWallet->balance)->getAmount();
+                $newPoint = $lockedWallet->points - $validated['points'];
+
+                $lockedWallet->update([
+                   'balance' => $newBalance,
+                   'points' => $newPoint,
+                ]);
+
+                // Create transaction record for the conversion
+                $lockedWallet->transactions()->create([
+                    'type'   => TransactionTypeCast::CREDITED->value,
+                    'purpose' => 'points_conversion',
+                    'amount' => $pointAmount,
+                    'status' => TransactionStatusCast::COMPLETED->value,
+                    'metadata' => ['points_used' => $validated['points'], 'conversion_ratio' => $conversionRatio],
+                ]);
+            });
+
+            return response()->json(['success' => true, 'message' => 'Points converted to balance successfully.']);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+        }
     }
 
 

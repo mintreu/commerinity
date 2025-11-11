@@ -9,8 +9,9 @@ use App\Models\Lifecycle\Stage;
 use App\Models\Lifecycle\UserSubscription;
 use App\Models\User;
 use App\Notifications\Subscription\SubscriptionConfirmationNotificaion;
-use App\Notifications\Subscription\SubscriptionFailedNotificaion;
+use App\Notifications\Subscription\SubscriptionFailedNotification;
 use App\Services\UserServices\NetworkServices\NetworkService;
+use Illuminate\Database\Eloquent\Model;
 use Mintreu\LaravelMoney\LaravelMoney;
 use Mintreu\LaravelTransaction\Models\Transaction;
 use Mintreu\LaravelTransaction\Models\Wallet;
@@ -55,7 +56,7 @@ class MembershipSubscriptionService
     }
 
 
-    public static function make(User $user)
+    public static function make(Model|User $user): static
     {
         return new static($user);
     }
@@ -186,7 +187,7 @@ class MembershipSubscriptionService
 
 
         }else{
-            $this->user->notify(new SubscriptionFailedNotificaion);
+            $this->user->notify(new SubscriptionFailedNotification);
         }
 
     }

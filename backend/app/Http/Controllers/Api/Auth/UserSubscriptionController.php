@@ -32,7 +32,12 @@ class UserSubscriptionController extends Controller
         // New Subscription
         $service->ensureSubscription();
         $newSubscription = $service->getSubscription();
-        dd($newSubscription);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Subscription created successfully.',
+            'subscription' => $newSubscription,
+        ]);
 
 
     }

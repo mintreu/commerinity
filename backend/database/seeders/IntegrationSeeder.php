@@ -63,7 +63,7 @@ class IntegrationSeeder extends Seeder
         ]);
 
         $cod =  Integration::create([
-            'name' => 'COD',
+            'name' => 'CASH',
             'url' => 'cash-payment',
             'desc' => 'Cash Payment Gateway(COD)',
             'type' => IntegrationTypeCast::PAYMENT,

@@ -107,8 +107,15 @@ class Transaction extends Model
     }
 
 
+    public function isVerified()
+    {
+        return $this->verified;
+    }
 
-
+    public function isPaid()
+    {
+        return $this->isVerified();
+    }
 
     /**
      * Conditionally define wallet relation based on config and table existence.

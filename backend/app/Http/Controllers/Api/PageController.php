@@ -53,13 +53,12 @@ class PageController extends Controller
 
     public function show(string $url)
     {
-
-        dd(Page::where('slug',$url)->first());
-
         $existPage = Page::where('url','%LIKE%',$url)->orWhere('slug','%LIKE%',$url)->first();
 
-        dd($existPage);
+        if (!$existPage) {
+            return response()->json(['message' => 'Page not found'], 404);
+        }
 
-        return  PageResource::make($existPage);
+        return PageResource::make($existPage);
     }
 }

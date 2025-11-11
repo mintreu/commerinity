@@ -29,15 +29,7 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="flex items-center justify-center min-h-[300px] sm:min-h-[400px]">
-        <div class="flex flex-col items-center text-center space-y-3">
-          <Icon name="mdi:alert-circle" class="w-12 h-12 sm:w-14 sm:h-14 text-red-500" />
-          <p class="text-sm sm:text-base text-red-600 dark:text-red-400 font-medium px-4">{{ error }}</p>
-          <button @click="fetchProducts" class="px-4 sm:px-5 py-2 bg-purple-600 text-white text-xs sm:text-sm rounded-lg hover:bg-purple-700 transition-all">
-            Try Again
-          </button>
-        </div>
-      </div>
+      <ErrorState v-else-if="error" minimal />
 
       <!-- Products Display -->
       <div v-else-if="products.length > 0" class="w-full">

@@ -180,6 +180,22 @@ Route::prefix(config('laravel-transaction.callback.prefix', '_transaction'))
         Route::get('/failed/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'failureTransaction'])->name('transaction.failure');
     });
 
+// ========================
+// 💳 PAYMENT WEBHOOK ROUTES
+// ========================
+Route::prefix('webhooks')
+    ->middleware(['api'])
+    ->group(function () {
+        // Razorpay webhooks
+        Route::post('/razorpay', [\App\Http\Controllers\Api\Webhook\PaymentWebhookController::class, 'razorpay'])->name('webhook.razorpay');
+
+        // Cashfree webhooks
+        Route::post('/cashfree', [\App\Http\Controllers\Api\Webhook\PaymentWebhookController::class, 'cashfree'])->name('webhook.cashfree');
+
+        // Paytm webhooks
+        Route::post('/paytm', [\App\Http\Controllers\Api\Webhook\PaymentWebhookController::class, 'paytm'])->name('webhook.paytm');
+    });
+
 // Transactions
 Route::prefix('transactions')
     ->middleware('auth:sanctum')
@@ -261,15 +277,15 @@ Route::prefix('blogs')->group(function () {
 
 
 
-// Public routes
+// ✅ Public routes - Exclude from CSRF
+Route::post('/push/subscribe', [PushNotificationController::class, 'subscribe'])->withoutMiddleware('throttle:api');
 Route::get('/push/vapid-public-key', [PushNotificationController::class, 'getVapidPublicKey']);
-Route::post('/push/subscribe', [PushNotificationController::class, 'subscribe']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/push/unsubscribe', [PushNotificationController::class, 'unsubscribe']);
 
-    // Admin routes (add your admin middleware)
+    // Admin routes
     Route::middleware('admin')->group(function () {
         Route::post('/push/send-to-user', [PushNotificationController::class, 'sendToUser']);
         Route::post('/push/send-to-all', [PushNotificationController::class, 'sendToAll']);

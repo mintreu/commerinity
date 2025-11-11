@@ -279,4 +279,69 @@ trait HasTransaction
 
 
 
+    // Refresh Transaction By Reset Provider Data
+    public function refreshTransaction(?Transaction $transaction = null):?Transaction
+    {
+        $currentTransaction = $transaction ?? $this->transaction()->firstWhere('verified',false);
+
+        if ($currentTransaction)
+        {
+            $paymentProvider = $currentTransaction->integration;
+            $currentTransaction = $this->processWithIntegration(
+                paymentProvider: $paymentProvider,
+                customer: $this->customer,
+                currency:  LaravelMoney::defaultCurrency(),
+                notes: '',
+                expireAfterMinutes: 15,
+                transaction: $currentTransaction,
+                resolvedAmount: $currentTransaction->amount
+            );
+        }
+
+        return $currentTransaction;
+
+    }
+
+
+    protected function processWithIntegration($paymentProvider,$customer,$currency,$notes,$expireAfterMinutes, $transaction, $resolvedAmount)
+    {
+        $providerData = $paymentProvider->order()->create(function (ProviderOrder $order) use ($customer, $currency, $notes, $expireAfterMinutes, $transaction, $resolvedAmount) {
+            $order->receipt($this->uuid)
+                ->currency($currency ?? LaravelMoney::defaultCurrency())
+                ->amount($transaction->amount)
+                ->expireAfter($expireAfterMinutes)
+                ->successUrl(route('transaction.validate', ['transaction' => $transaction->uuid]))
+                ->failureUrl(route('transaction.failure', ['transaction' => $transaction->uuid]))
+                ->notes($notes);
+
+            if (!is_array($customer) && $customer instanceof Model) {
+                $order->customer($customer);
+            } elseif (is_array($customer)) {
+                $order->customerName($customer['name'])
+                    ->customerEmail($customer['email'])
+                    ->customerMobile($customer['mobile']);
+            }
+        });
+
+
+
+        if (!isset($providerData['success']) || $providerData['success'] !== true) {
+            throw new RuntimeException($providerData['error'] ?? 'Unknown payment provider error.');
+        }
+
+
+
+        $transactionUpdateData = array_merge([
+            'expire_at' => now()->addMinutes($expireAfterMinutes),
+            // optionally persist amount used for the transaction if your table has such a column
+            // 'amount' => $resolvedAmount,
+        ], $providerData['data'] ?? []);
+
+        $transaction->update($transactionUpdateData);
+        $transaction->refresh();
+
+        return $transaction;
+    }
+
+
 }

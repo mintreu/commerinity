@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Lifecycle\LevelTask;
 use App\Models\Lifecycle\Stage;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -78,6 +79,9 @@ class StageSeeder extends Seeder
                 'validate_years' => max(1, min($x, 3))
                 // Adjust other attributes as needed
             ]);
+
+            LevelTask::factory(20)->create(['level_id' => $level->id]);
+
         }
 
 

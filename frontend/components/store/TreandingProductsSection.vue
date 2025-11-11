@@ -31,15 +31,7 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="flex items-center justify-center min-h-[400px]">
-        <div class="text-center">
-          <Icon name="mdi:alert-circle" class="w-16 h-16 text-pink-500 mx-auto mb-4" />
-          <p class="text-pink-600 dark:text-pink-400 font-medium mb-2">{{ error }}</p>
-          <button @click="fetchProducts" class="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-            Try Again
-          </button>
-        </div>
-      </div>
+      <ErrorState v-else-if="error" minimal />
 
       <!-- Products Display -->
       <div v-else-if="products.length > 0" class="w-full">

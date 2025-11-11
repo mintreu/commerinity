@@ -43,22 +43,7 @@
 
           <!-- Quick Stats -->
           <div ref="quickStats" class="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            <div class="text-center">
-              <div class="text-3xl sm:text-4xl font-black text-yellow-300" ref="categoryCounter">{{ categorySections.length }}</div>
-              <div class="text-sm font-medium text-blue-100">Categories</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl sm:text-4xl font-black text-yellow-300" ref="productCounter">{{ totalProducts }}+</div>
-              <div class="text-sm font-medium text-blue-100">Products</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl sm:text-4xl font-black text-yellow-300">100+</div>
-              <div class="text-sm font-medium text-blue-100">Brands</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl sm:text-4xl font-black text-yellow-300">24/7</div>
-              <div class="text-sm font-medium text-blue-100">Support</div>
-            </div>
+            <StatsCounter api="/stats/categories" :animated="true" />
           </div>
         </div>
       </div>
@@ -121,16 +106,7 @@
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="text-center py-16">
-          <div class="w-32 h-32 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-8">
-            <Icon name="mdi:alert-circle" class="w-16 h-16 text-red-500" />
-          </div>
-          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Error Loading Categories</h3>
-          <p class="text-gray-600 dark:text-gray-400 mb-8">{{ error }}</p>
-          <button @click="refresh()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors duration-200">
-            Try Again
-          </button>
-        </div>
+        <ErrorState  v-else-if="error" />
 
         <!-- Categories Display -->
         <template v-else-if="categorySections.length > 0">
@@ -331,6 +307,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import ErrorState from "~/components/ErrorState.vue";
 
 // Types
 interface ChildCategory {

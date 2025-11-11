@@ -18,7 +18,7 @@ class UserSubscription extends Model
         'amount',
         'is_paid',
         'expire_at',
-        'checkout_expires_at',
+        'checkout_expires_at', // redundant need to remove, as this hold by transaction record
         'user_id',
         'level_id',
         'stage_id',
@@ -31,7 +31,6 @@ class UserSubscription extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        //'amount' => LaravelMoneyCast::class,
         'is_paid' => 'boolean',
         'expires_at' => 'datetime',
         'checkout_expires_at' => 'datetime',
@@ -49,6 +48,23 @@ class UserSubscription extends Model
         parent::booted();
     }
 
+
+    public function isPaid():bool
+    {
+        return $this->is_paid;
+    }
+
+    /**
+     * Check if the subscription has expired.
+     */
+    public function isExpired(): bool
+    {
+        if (!$this->expires_at) {
+            return false; // no expiry date set
+        }
+
+        return $this->expires_at->isPast();
+    }
 
     public function user(): BelongsTo
     {
