@@ -2,10 +2,12 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\Cash;
 
+use Mintreu\LaravelIntegration\Contracts\IntegrationContract;
+use Mintreu\LaravelIntegration\Contracts\PaymentIntegrationContract;
 use Mintreu\LaravelIntegration\Providers\Payment\Cash\Actions\OrderAction;
 use Mintreu\LaravelIntegration\Providers\Payment\Cash\Actions\VerifyAction;
 
-class CashPaymentProvider
+class CashPaymentProvider implements IntegrationContract,PaymentIntegrationContract
 {
 
 
@@ -28,7 +30,7 @@ class CashPaymentProvider
     }
 
 
-    protected function getIntegration()
+    public function getIntegration()
     {
         return ($this->integrationLoader)();
     }

@@ -3,11 +3,13 @@
 namespace Mintreu\LaravelIntegration\Providers\Payment\CashFree;
 
 
+use Mintreu\LaravelIntegration\Contracts\IntegrationContract;
+use Mintreu\LaravelIntegration\Contracts\PaymentIntegrationContract;
 use Mintreu\LaravelIntegration\Providers\Payment\CashFree\Actions\OrderAction;
 use Mintreu\LaravelIntegration\Providers\Payment\CashFree\Actions\VerifyAction;
 use Mintreu\LaravelIntegration\Providers\Payment\CashFree\Support\CashFreeApi;
 
-class CashFreePaymentProvider
+class CashFreePaymentProvider implements IntegrationContract,PaymentIntegrationContract
 {
 
     protected $integrationLoader;
@@ -32,7 +34,7 @@ class CashFreePaymentProvider
         return app(static::class)->getInstance();
     }
 
-    protected function getIntegration()
+    public function getIntegration()
     {
         return ($this->integrationLoader)();
     }

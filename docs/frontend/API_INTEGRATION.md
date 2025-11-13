@@ -1,474 +1,2089 @@
-# Frontend API Integration Documentation
+# API Integration Guide
+
+This document provides a comprehensive guide to integrating with the Commerinity API.
+
+## Authentication
+
+Authentication is handled via Sanctum. To authenticate, you must first obtain a token by sending a `POST` request to `/api/tokens/create` with the user's email and password. This token must then be included in the `Authorization` header of all subsequent requests as a Bearer token.
+
+Example: `Authorization: Bearer <token>`
+
+### Endpoints
+
+#### `POST /api/register`
+
+Registers a new user.
+
+**Request Body:**
+
+```json
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "mobile": "1234567890",
+  "gender": "male",
+  "dob": "1990-01-01",
+  "password": "password",
+  "type": "email",
+  "referral": "optional-referral-code",
+  "otp": "optional-otp"
+}
+```
 
-This document provides a detailed overview of how the frontend application interacts with the backend API. It aims to map frontend API calls to their corresponding backend routes and controllers, identify unused APIs, and suggest areas for further API integration.
+**Response (200 OK):**
 
-## Table of Contents
-- [Overview](#overview)
-- [API Call Mapping](#api-call-mapping)
-  - [Cart Management (`frontend/composables/useCart.ts`)](#cart-management-frontendcomposablesusecartts)
-  - [Wishlist Management (`frontend/composables/useWishlist.ts`)](#wishlist-management-frontendcomposablesusewishlistts)
-  - [Authentication](#authentication)
-  - [Product Related APIs](#product-related-apis)
-  - [User Account & Profile](#user-account--profile)
-  - [Other Pages/Components](#other-pagescomponents)
-- [Unused Backend API Routes](#unused-backend-api-routes)
-- [Static Data to API Conversion](#static-data-to-api-conversion)
-- [Full Integration Workflow](#full-integration-workflow)
+```json
+{
+  "status": "success",
+  "message": "Registration complete",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "mobile": "1234567890",
+    "gender": "male",
+    "dob": "1990-01-01",
+    "referral_code": "ABCDEFG",
+    "parent_id": null,
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "updated_at": "2023-10-27T10:00:00.000000Z"
+  }
+}
+```
 
-## Overview
+#### `POST /api/login`
 
-The frontend application, built with Nuxt.js 3, communicates with the Laravel 12 backend API primarily using `useSanctumFetch` (provided by `@qirolab/nuxt-sanctum-authentication`) for authenticated and guest API requests. The base API URL is configured via `config.public.apiBase`.
+Logs a user in and returns a user object.
 
-## API Call Mapping
+**Request Body:**
 
-This section details the mapping of frontend API calls to their respective backend routes and the controllers/methods that handle them.
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password",
+  "remember": true
+}
+```
 
-### Cart Management (`frontend/composables/useCart.ts`)
+**Response (200 OK):**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `POST /cart/validate/guest-credential` | `Route::post('validate/guest-credential', [CartController::class, 'validateGuestCartCredential']);` (Line 100) | `App\Http\Controllers\Api\CartController@validateGuestCartCredential` |
-| `POST /cart/guest-credential` | `Route::post('guest-credential', [CartController::class, 'ensureGuestCartCredential']);` (Line 99) | `App\Http\Controllers\Api\CartController@ensureGuestCartCredential` |
-| `GET /cart` | `Route::get('/', [CartController::class, 'index']);` (Line 101) | `App\Http\Controllers\Api\CartController@index` |
-| `POST /cart/add/{sku}` | `Route::post('add/{product:sku}', [CartController::class, 'addProduct']);` (Line 102) | `App\Http\Controllers\Api\CartController@addProduct` |
-| `POST /cart/update/{sku}` | `Route::post('update/{product:sku}', [CartController::class, 'updateProduct']);` (Line 103) | `App\Http\Controllers\Api\CartController@updateProduct` |
-| `DELETE /cart/remove/{sku}` | `Route::delete('remove/{product:sku}', [CartController::class, 'removeProduct']);` (Line 104) | `App\Http\Controllers\Api\CartController@removeProduct` |
-| `POST /cart/coupon/{code}` | `Route::post('coupon/{voucher_code}', [CartController::class, 'applyCoupon']);` (Line 105) | `App\Http\Controllers\Api\CartController@applyCoupon` |
-| `POST /cart/clear` | `Route::post('clear', [CartController::class, 'clearCart']);` (Line 106) | `App\Http\Controllers\Api\CartController@clearCart` |
-| `POST /cart/merge` | `Route::post('merge', [CartController::class, 'mergeGuestCart'])->middleware('auth:sanctum');` (Line 107) | `App\Http\Controllers\Api\CartController@mergeGuestCart` |
+```json
+{
+  "message": "Login successful",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "mobile": "1234567890",
+    "gender": "male",
+    "dob": "1990-01-01",
+    "referral_code": "ABCDEFG",
+    "parent_id": null,
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "updated_at": "2023-10-27T10:00:00.000000Z"
+  }
+}
+```
 
-### Wishlist Management (`frontend/composables/useWishlist.ts`)
+#### `POST /api/logout`
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `POST /product/wishlist/{productUrl}` | `Route::post('wishlist/{product:url}',[\App\Http\Controllers\Api\Product\ProductWishlistController::class,'addWishlist']);` (Line 86) | `App\Http\Controllers\Api\Product\ProductWishlistController@addWishlist` |
-| `DELETE /product/wishlist/{productUrl}` | `Route::delete('wishlist/{product:url}',[\App\Http\Controllers\Api\Product\ProductWishlistController::class,'removeWishlist']);` (Line 87) | `App\Http\Controllers\Api\Product\ProductWishlistController@removeWishlist` |
-
-### Authentication
+Logs a user out.
 
-Authentication-related API calls are primarily handled by the `useSanctum` composable and specific endpoints for OTP-based flows and social logins.
+**Response (200 OK):**
 
-#### `frontend/pages/auth/forgot-password.vue`
+```json
+{
+  "message": "Logout successful"
+}
+```
+
+#### `POST /api/tokens/create`
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/auth.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /auth/send-otp` | `Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);` (Line 13) | `App\Http\Controllers\Api\Auth\AuthController@sendOtp` |
-| `POST /auth/verify-otp` | `Route::post('/auth/verify-otp',[AuthController::class,'verifyOtp']);` (Line 14) | `App\Http\Controllers\Api\Auth\AuthController@verifyOtp` |
-| `POST /auth/reset-password` | `Route::post('reset_password',[AuthController::class,'resetPassword']);` (Line 16) | `App\Http\Controllers\Api\Auth\AuthController@resetPassword` |
-
-#### `frontend/pages/auth/login.vue`
-
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/auth.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /auth/send-otp` | `Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);` (Line 13) | `App\Http\Controllers\Api\Auth\AuthController@sendOtp` |
-| `POST /auth/verify-otp` | `Route::post('/auth/verify-otp',[AuthController::class,'verifyOtp']);` (Line 14) | `App\Http\Controllers\Api\Auth\AuthController@verifyOtp` |
-| `login()` (via `useSanctum`) | `Route::post('login',[AuthController::class,'login']);` (Line 10) | `App\Http\Controllers\Api\Auth\AuthController@login` |
-| Redirect to `/auth/google/redirect` | `Route::get('/auth/{provider}/redirect', [\App\Http\Controllers\Web\SocialLoginController::class,'attempt']);` (Line 10 in `backend/routes/web.php`) | `App\Http\Controllers\Web\SocialLoginController@attempt` |
-
-#### `frontend/components/RegisterForm.vue`
-
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/auth.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /auth/has_contact` | `Route::post('/auth/has_contact',[AuthController::class,'checkContactExistence']);` (Line 12) | `App\Http\Controllers\Api\Auth\AuthController@checkContactExistence` |
-| `POST /auth/send-otp` | `Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);` (Line 13) | `App\Http\Controllers\Api\Auth\AuthController@sendOtp` |
-| `POST /auth/verify-otp` | `Route::post('/auth/verify-otp',[AuthController::class,'verifyOtp']);` (Line 14) | `App\Http\Controllers\Api\Auth\AuthController@verifyOtp` |
-| `POST /register` | `Route::post('register',[AuthController::class,'register']);` (Line 15) | `App\Http\Controllers\Api\Auth\AuthController@register` |
-| `login()` (via `useSanctum`) | `Route::post('login',[AuthController::class,'login']);` (Line 10) | `App\Http\Controllers\Api\Auth\AuthController@login` |
+Creates an API token for the user.
 
-#### `frontend/pages/dashboard/account/index.vue`
-
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/stats` | `Route::get('/',[\App\Http\Controllers\Api\Auth\UserStatsController::class,'index']);` (Line 100, within `stats` prefix group) | `App\Http\Controllers\Api\Auth\UserStatsController@index` |
-| `GET /account/activity` | (Assumed: No explicit route found, likely part of a broader stats endpoint or a dedicated activity controller) | (To be determined, e.g., `App\Http\Controllers\Api\Auth\UserActivityController@index`) |
-| `PUT /account/profile` | `Route::put('/profile', [UserAccountController::class, 'updateProfile'])->name('account.profile.update');` (Line 20) | `App\Http\Controllers\Api\Auth\UserAccountController@updateProfile` |
+**Request Body:**
 
-#### `frontend/pages/dashboard/account/edit.vue`
-
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/profile` | `Route::get('/profile', [SanctumUserController::class, 'getProfile'])->name('account.profile.show');` (Line 19) | `App\Http\Controllers\Api\Auth\SanctumUserController@getProfile` |
-| `PUT /account/profile` | `Route::put('/profile', [UserAccountController::class, 'updateProfile'])->name('account.profile.update');` (Line 20) | `App\Http\Controllers\Api\Auth\UserAccountController@updateProfile` |
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password"
+}
+```
 
-#### `frontend/components/account/AvatarUploader.vue`
+**Response (200 OK):**
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `PUT /account/avatar` | `Route::put('/avatar', [UserAccountController::class, 'updateAvatar'])->name('account.avatar.update');` (Line 34) | `App\Http\Controllers\Api\Auth\UserAccountController@updateAvatar` |
+```json
+{
+  "token": "your-api-token"
+}
+```
 
-#### `frontend/components/account/ChangeEmail.vue`
+#### `POST /api/tokens/delete`
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/auth.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /auth/has_contact` | `Route::post('/auth/has_contact',[AuthController::class,'checkContactExistence']);` (Line 12 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@checkContactExistence` |
-| `POST /auth/send-otp` | `Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);` (Line 13 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@sendOtp` |
-| `POST /auth/verify-otp` | `Route::post('/auth/verify-otp',[AuthController::class,'verifyOtp']);` (Line 14 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@verifyOtp` |
-| `PUT /account/contact` | `Route::put('/contact', [UserAccountController::class, 'updateContact'])->name('account.contact.update');` (Line 29 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAccountController@updateContact` |
+Deletes the current API token.
 
-#### `frontend/components/account/ChangeMobile.vue`
+**Response (204 No Content)**
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/auth.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /auth/has_contact` | `Route::post('/auth/has_contact',[AuthController::class,'checkContactExistence']);` (Line 12 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@checkContactExistence` |
-| `POST /auth/send-otp` | `Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);` (Line 13 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@sendOtp` |
-| `POST /auth/verify-otp` | `Route::post('/auth/verify-otp',[AuthController::class,'verifyOtp']);` (Line 14 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@verifyOtp` |
-| `PUT /account/contact` | `Route::put('/contact', [UserAccountController::class, 'updateContact'])->name('account.contact.update');` (Line 29 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAccountController@updateContact` |
+#### `POST /api/auth/has_contact`
 
-#### `frontend/components/account/ChangePassword.vue`
+Checks if a user exists with the given email or mobile number.
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `PUT /account/password` | `Route::put('/password', [UserAccountController::class, 'updatePassword'])->name('account.password.update');` (Line 40) | `App\Http\Controllers\Api\Auth\UserAccountController@updatePassword` |
+**Request Body:**
 
-#### `frontend/components/account/DeleteAccount.vue`
+```json
+{
+  "type": "email",
+  "value": "john.doe@example.com"
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/auth.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /auth/send-otp` | `Route::post('/auth/send-otp',[AuthController::class,'sendOtp']);` (Line 13 in `backend/routes/apis/user/auth.php`) | `App\Http\Controllers\Api\Auth\AuthController@sendOtp` |
-| `DELETE /account/delete` | `Route::delete('/delete', [UserAccountController::class, 'deleteAccount']);` (Line 46 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAccountController@deleteAccount` |
+**Response (200 OK):**
 
-#### `frontend/components/account/ExportData.vue`
+```json
+{
+  "data": {
+    "exists": true
+  }
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `POST /account/export-data` | `Route::post('/export-data', [UserAccountController::class, 'exportData']);` (Line 45) | `App\Http\Controllers\Api\Auth\UserAccountController@exportData` |
+#### `POST /api/auth/send-otp`
 
-#### `frontend/pages/dashboard/account/onboarding.vue`
+Sends a One-Time Password (OTP) to the user's email or mobile.
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /user/my-profile` | `Route::get('/', [SanctumUserController::class, 'getUser'])->name('account.show');` (Line 16 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\SanctumUserController@getUser` |
-| `GET /geo/countries` | `Route::prefix('geo')->group(base_path('routes/apis/geo-location.php'));` (in `backend/routes/api.php`, which then calls `Route::get('/countries', [GeoController::class, 'getCountries']);` in `backend/routes/apis/geo-location.php`) | `App\Http\Controllers\Api\GeoController@getCountries` |
-| `GET /geo/states/IN` | `Route::get('/states/{country_code}', [GeoController::class, 'getStates']);` (in `backend/routes/apis/geo-location.php`) | `App\Http\Controllers\Api\GeoController@getStates` |
-| `GET /geo/state/{state_code}` | `Route::get('/state/{state_code}', [GeoController::class, 'getStateBlocksAndDistricts']);` (in `backend/routes/apis/geo-location.php`) | `App\Http\Controllers\Api\GeoController@getStateBlocksAndDistricts` |
-| `GET /lifecycle/subscribable` | `Route::get('/subscribable', [LifecycleController::class, 'getUserSubscribableStageAndLevel'])->middleware('auth:sanctum');` (Line 190 in `backend/routes/api.php`) | `App\Http\Controllers\Api\LifecycleController@getUserSubscribableStageAndLevel` |
-| `POST /user/onboarding` | `Route::post('/onboarding', [UserOnboardingController::class, 'processOnboarding'])->name('account.onboarding.store');` (Line 52 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserOnboardingController@processOnboarding` |
-| `GET https://api.postalpincode.in/pincode/{code}` | (External API) | (External) |
+**Request Body:**
 
-#### `frontend/pages/dashboard/account/address/index.vue`
+```json
+{
+  "type": "email",
+  "value": "john.doe@example.com"
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /geo/states/IN` | `Route::get('/states/{country_code}', [GeoController::class, 'getStates']);` (in `backend/routes/apis/geo-location.php`) | `App\Http\Controllers\Api\GeoController@getStates` |
-| `GET /geo/state/{state_code}` | `Route::get('/state/{state_code}', [GeoController::class, 'getStateBlocksAndDistricts']);` (in `backend/routes/apis/geo-location.php`) | `App\Http\Controllers\Api\GeoController@getStateBlocksAndDistricts` |
-| `GET /account/addresses` | `Route::get('/addresses', [UserAddressController::class, 'getUserAllAddress'])->name('account.addresses.index');` (Line 58 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAddressController@getUserAllAddress` |
-| `POST /account/addresses` | `Route::post('/addresses', [UserAddressController::class, 'addUserAddress'])->name('account.addresses.store');` (Line 59 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAddressController@addUserAddress` |
-| `PUT /account/addresses/{address:uuid}` | `Route::put('/addresses/{address:uuid}', [UserAddressController::class, 'updateUserAddress'])->name('account.addresses.update');` (Line 61 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAddressController@updateUserAddress` |
-| `DELETE /account/addresses/{address:uuid}` | (Assumed: No explicit route found, but typically handled by a `destroy` method) | `App\Http\Controllers\Api\Auth\UserAddressController@destroy` (or similar) |
-| `GET https://api.postalpincode.in/pincode/{code}` | (External API) | (External) |
+**Response (200 OK):**
 
-#### `frontend/pages/dashboard/account/kyc/index.vue`
+```json
+{
+  "status": "success",
+  "message": "OTP sent successfully",
+  "note": "Otp will be expire after 5 minutes from now"
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/kyc` | `Route::get('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'getUserKyc']);` (Line 70) | `App\Http\Controllers\Api\Auth\UserKycController@getUserKyc` |
-| `POST /account/kyc` | `Route::post('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'addUserKyc']);` (Line 71) | `App\Http\Controllers\Api\Auth\UserKycController@addUserKyc` |
-| `PUT /account/kyc` | `Route::put('/kyc',[\App\Http\Controllers\Api\Auth\UserKycController::class,'updateUserKyc']);` (Line 72) | `App\Http\Controllers\Api\Auth\UserKycController@updateUserKyc` |
+#### `POST /api/auth/verify-otp`
 
-#### `frontend/pages/dashboard/myteam.vue`
+Verifies a One-Time Password (OTP).
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/tree` | `Route::get('/tree',[\App\Http\Controllers\Api\Auth\UserStatsController::class, 'getUserTree']);` (Line 109) | `App\Http\Controllers\Api\Auth\UserStatsController@getUserTree` |
+**Request Body:**
 
-#### `frontend/pages/dashboard/subscribe.vue`
+```json
+{
+  "type": "email",
+  "value": "john.doe@example.com",
+  "otp": "123456"
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/lifecycle/get_status` | `Route::get('/get_status',[\App\Http\Controllers\Api\Auth\UserLifecycleController::class,'getUserSubscriptionStatus']);` (Line 135 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserLifecycleController@getUserSubscriptionStatus` |
-| `POST /account/subscription/auto-renew` | (Assumed: No explicit route found in `account.php` or `api.php`, but implied by `updateAutoRenew` function) | (To be determined, e.g., `App\Http\Controllers\Api\Auth\UserSubscriptionController@updateAutoRenew`) |
-| `POST /account/lifecycle/subscribe` | `Route::post('subscribe',[UserSubscriptionController::class,'subscribeStagePlan']);` (Line 141 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserSubscriptionController@subscribeStagePlan` |
+**Response (200 OK):**
 
-#### `frontend/pages/search.vue`
+```json
+{
+  "data": {
+    "valid": true,
+    "message": "OTP verified successfully"
+  }
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /search` | `Route::get('/search', [SearchController::class, 'search']);` (Line 75) | `App\Http\Controllers\Api\SearchController@search` |
+#### `POST /api/reset_password`
 
-### Product Related APIs
+Resets the user's password.
 
-(To be detailed after analyzing product-related files)
+**Request Body:**
 
-### Product Related APIs
+```json
+{
+  "email": "john.doe@example.com"
+}
+```
 
-#### `frontend/components/blog/BlogList.vue`
+**Response (200 OK):**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /categories/{categorySlug}` | `Route::get('{category:url}', [CategoryController::class, 'show']);` (Line 95) | `App\Http\Controllers\Api\CategoryController@show` |
-| `GET /blogs` | `Route::get('/', [PostApiController::class, 'index'])->name('api.posts.index');` (Line 213) | `App\Http\Controllers\Api\PostApiController@index` |
+```json
+{
+  "message": "Password reset email sent."
+}
+```
+## Account
+
+All endpoints in this section require authentication.
+
+### Endpoints
+
+#### `GET /api/account`
 
-#### `frontend/pages/blogs/[url].vue`
+Retrieves the authenticated user's account information.
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /blogs/{url}` | `Route::get('/{post:url}', [PostApiController::class, 'show'])->name('api.posts.show');` (Line 214) | `App\Http\Controllers\Api\PostApiController@show` |
+**Response (200 OK):**
 
-#### `frontend/pages/career/index.vue`
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "mobile": "1234567890",
+    "gender": "male",
+    "dob": "1990-01-01",
+    "referral_code": "ABCDEFG",
+    "parent_id": null,
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "updated_at": "2023-10-27T10:00:00.000000Z"
+  }
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /recruitment` | `Route::get('/', [RecruitmentController::class, 'index']);` (Line 170) | `App\Http\Controllers\Api\RecruitmentController@index` |
+#### `GET /api/account/profile`
 
-#### `frontend/pages/career/[url]/index.vue`
+Retrieves the authenticated user's profile information.
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /recruitment/{url}` | `Route::get('{recruitment:url}', [RecruitmentController::class, 'show']);` (Line 171) | `App\Http\Controllers\Api\RecruitmentController@show` |
+**Response (200 OK):**
 
-#### `frontend/pages/cart/index.vue`
+```json
+{
+  "data": {
+    "name": "John Doe",
+    "gender": "male",
+    "dob": "1990-01-01",
+    "bio": "A short bio about the user."
+  }
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php` or `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
-| `useCart` composable | (See Cart Management section above) | (See Cart Management section above) |
-| `GET /products/suggestions/cart` | (Assumed: No explicit route found, but likely a product-related controller) | `App\Http\Controllers\Api\ProductController@getCartSuggestions` (or similar) |
-| `GET /account/addresses` | `Route::get('/addresses', [UserAddressController::class, 'getUserAllAddress'])->name('account.addresses.index');` (Line 58 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAddressController@getUserAllAddress` |
-| `GET /account/addresses/{uuid}` | `Route::get('/addresses/{address:uuid}', [UserAddressController::class, 'show'])->name('account.addresses.show');` (Line 60 in `backend/routes/apis/user/account.php`) | `App\Http\Controllers\Api\Auth\UserAddressController@show` |
-| `GET /integration/payment` | `Route::get('/payment', [IntegrationController::class, 'getPaymentIntegrations']);` (Line 160) | `App\Http\Controllers\Api\IntegrationController@getPaymentIntegrations` |
-| `POST /order/place` | `Route::post('order/place', [OrderController::class, 'placeOrder'])->name('order.placed');` (Line 113) | `App\Http\Controllers\Api\OrderController@placeOrder` |
+#### `PUT /api/account/profile`
 
-#### `frontend/pages/categories/index.vue`
+Updates the authenticated user's profile.
+
+**Request Body:**
+
+```json
+{
+  "name": "John Doe",
+  "gender": "male",
+  "dob": "1990-01-01",
+  "bio": "An updated bio."
+}
+```
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /categories/with-products` | `Route::get('/with-products', [CategoryController::class, 'getParentCategoriesWithProducts']);` (Line 94) | `App\Http\Controllers\Api\CategoryController@getParentCategoriesWithProducts` |
+**Response (200 OK):**
 
-#### `frontend/pages/categories/[url].vue`
+```json
+{
+  "message": "Profile updated successfully"
+}
+```
+
+#### `PUT /api/account/contact`
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /products/sorts/get` | (Assumed: No explicit route found, but likely a product-related controller) | `App\Http\Controllers\Api\ProductController@getSortOptions` (or similar) |
-| `GET /products/filters/get?category={categoryUrl}` | (Assumed: No explicit route found, but likely a product-related controller) | `App\Http\Controllers\Api\ProductController@getFilterOptions` (or similar) |
-| `GET /categories/{categoryUrl}?{queryParams}` | `Route::get('{category:url}', [CategoryController::class, 'show']);` (Line 95) | `App\Http\Controllers\Api\CategoryController@show` |
+Updates the authenticated user's email or mobile number.
 
-#### `frontend/pages/dashboard/helpdesk/index.vue`
+**Request Body:**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /helpdesk/tickets` | `Route::get('tickets', [HelpDeskController::class, 'getAllTickets']);` (Line 200) | `App\Http\Controllers\Api\HelpDeskController@getAllTickets` |
+```json
+{
+  "type": "email",
+  "email": "new.email@example.com",
+  "otp": "123456"
+}
+```
 
-#### `frontend/pages/dashboard/helpdesk/create.vue`
+**Response (200 OK):**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /helpdesk/topics/ticket` | `Route::get('topics/ticket', [HelpDeskController::class, 'getTicketTopics']);` (Line 198) | `App\Http\Controllers\Api\HelpDeskController@getTicketTopics` |
-| `POST /helpdesk/tickets` | `Route::post('tickets', [HelpDeskController::class, 'storeTicket']);` (Line 201) | `App\Http\Controllers\Api\HelpDeskController@storeTicket` |
+```json
+{
+  "success": true,
+  "message": "Email updated successfully.",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "new.email@example.com",
+    "mobile": "1234567890",
+    "gender": "male",
+    "dob": "1990-01-01",
+    "referral_code": "ABCDEFG",
+    "parent_id": null,
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "updated_at": "2023-10-27T10:00:00.000000Z"
+  }
+}
+```
 
-#### `frontend/pages/dashboard/helpdesk/[url]/index.vue`
+#### `PUT /api/account/avatar`
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /helpdesk/tickets/{uuid}` | `Route::get('tickets/{helpdesk:uuid}', [HelpDeskController::class, 'viewTicket']);` (Line 202) | `App\Http\Controllers\Api\HelpDeskController@viewTicket` |
-| `POST /helpdesk/tickets/{uuid}/reply` | `Route::post('tickets/{helpdesk:uuid}/reply', [HelpDeskController::class, 'reply']);` (Line 203) | `App\Http\Controllers\Api\HelpDeskController@reply` |
+Updates the authenticated user's avatar.
 
-#### `frontend/pages/dashboard/members/index.vue`
+**Request Body:**
 
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/tree` | `Route::get('/tree',[\App\Http\Controllers\Api\Auth\UserStatsController::class, 'getUserTree']);` (Line 109) | `App\Http\Controllers\Api\Auth\UserStatsController@getUserTree` |
+This endpoint expects a `multipart/form-data` request with an `avatar` field containing the image file.
 
-#### `frontend/pages/dashboard/orders/index.vue`
+**Response (200 OK):**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /orders` | `Route::get('/', [OrderController::class, 'getAllOrders'])->name('orders.all');` (Line 116) | `App\Http\Controllers\Api\OrderController@getAllOrders` |
+```json
+{
+  "message": "Avatar updated successfully",
+  "avatar": "https://example.com/path/to/new_avatar.jpg"
+}
+```
 
-#### `frontend/pages/dashboard/orders/[uuid]/index.vue`
+#### `PUT /api/account/password`
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /orders/{uuid}` | `Route::get('{order:uuid}', [OrderController::class, 'getOrderDetail']);` (Line 117) | `App\Http\Controllers\Api\OrderController@getOrderDetail` |
-| `GET /orders/{uuid}/invoice` | `Route::get('{order:uuid}/invoice', [OrderController::class, 'getOrderInvoicePdf']);` (Line 120) | `App\Http\Controllers\Api\OrderController@getOrderInvoicePdf` |
+Updates the authenticated user's password.
 
-#### `frontend/pages/dashboard/wallet/index.vue`
+**Request Body:**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /wallet` | `Route::get('/', [WalletController::class, 'index']);` (Line 40) | `App\Http\Controllers\Api\WalletController@index` |
-| `GET /wallet/analytics?type={type}` | (Assumed: No explicit route found, but likely a wallet-related controller) | `App\Http\Controllers\Api\WalletController@getAnalytics` (or similar) |
-| `POST /wallet/create` | `Route::post('create', [WalletController::class, 'create']);` (Line 41) | `App\Http\Controllers\Api\WalletController@create` |
-| `POST /wallet/add-money` | `Route::post('add-money', [WalletController::class, 'addMoney']);` (Line 44) | `App\Http\Controllers\Api\WalletController@addMoney` |
-| `POST /wallet/withdraw` | `Route::post('withdraw', [WalletController::class, 'withdraw']);` (Line 45) | `App\Http\Controllers\Api\WalletController@withdraw` |
-| `POST /wallet/send` | `Route::post('send', [WalletController::class, 'send']);` (Line 46) | `App\Http\Controllers\Api\WalletController@send` |
-| `POST /wallet/change-pin` | `Route::post('change-pin', [WalletController::class, 'changePin']);` (Line 47) | `App\Http\Controllers\Api\WalletController@changePin` |
-| `POST /wallet/point-conversion` | `Route::post('point-conversion',[WalletController::class,'pointToBalanceConversion']);` (Line 50) | `App\Http\Controllers\Api\WalletController@pointToBalanceConversion` |
+```json
+{
+  "current_password": "old_password",
+  "password": "new_password",
+  "password_confirmation": "new_password"
+}
+```
 
-#### `frontend/pages/dashboard/wallet/beneficiary.vue`
+**Response (200 OK):**
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /beneficiaries` | `Route::get('/', [BeneficiaryController::class, 'index']);` (Line 54) | `App\Http\Controllers\Api\BeneficiaryController@index` |
-| `POST /beneficiaries` | `Route::post('/', [BeneficiaryController::class, 'store']);` (Line 55) | `App\Http\Controllers\Api\BeneficiaryController@store` |
-| `GET /beneficiaries/{account:uuid}` | `Route::get('{account:uuid}', [BeneficiaryController::class, 'show']);` (Line 56) | `App\Http\Controllers\Api\BeneficiaryController@show` |
-| `PUT /beneficiaries/{account:uuid}` | `Route::put('{account:uuid}', [BeneficiaryController::class, 'update']);` (Line 57) | `App\Http\Controllers\Api\BeneficiaryController@update` |
-| `DELETE /beneficiaries/{account:uuid}` | `Route::delete('{account:uuid}', [BeneficiaryController::class, 'destroy']);` (Line 58) | `App\Http\Controllers\Api\BeneficiaryController@destroy` |
-| `POST /beneficiaries/{account:uuid}/default` | `Route::post('{account:uuid}/default', [BeneficiaryController::class, 'makeDefault']);` (Line 59) | `App\Http\Controllers\Api\BeneficiaryController@makeDefault` |
+```json
+{
+  "success": true,
+  "message": "Password updated successfully.",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "mobile": "1234567890",
+    "gender": "male",
+    "dob": "1990-01-01",
+    "referral_code": "ABCDEFG",
+    "parent_id": null,
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "updated_at": "2023-10-27T10:00:00.000000Z"
+  }
+}
+```
 
-#### `frontend/pages/dashboard/wallet/transactions.vue`
+#### `POST /api/account/export-data`
 
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `GET /transactions` | `Route::get('/', [\App\Http\Controllers\Api\Transaction\TransactionDisplayController::class, 'index']);` (Line 153) | `App\Http\Controllers\Api\Transaction\TransactionDisplayController@index` |
-| `GET /transactions/{uuid}` | `Route::get('/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionDisplayController::class, 'show']);` (Line 154) | `App\Http\Controllers\Api\Transaction\TransactionDisplayController@show` |
-| `GET /transactions/{uuid}/request_pdf` | `Route::get('/{transaction:uuid}/request_pdf', [\App\Http\Controllers\Api\Transaction\TransactionDisplayController::class, 'sendInvoiceToEmail']);` (Line 155) | `App\Http\Controllers\Api\Transaction\TransactionDisplayController@sendInvoiceToEmail` |
-
-### Product Related APIs
-
-#### `backend/routes/apis/products.php`
-
-| Frontend API Call | Backend Route (File: `backend/routes/apis/products.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /products` | `Route::get('/', [\App\Http\Controllers\Api\Product\ProductListController::class, 'index']);` (Line 8) | `App\Http\Controllers\Api\Product\ProductListController@index` |
-| `GET /products/filters/get` | `Route::get('filters/get', [\App\Http\Controllers\Api\Product\ProductListController::class, 'getFilterOptions']);` (Line 10) | `App\Http\Controllers\Api\Product\ProductListController@getFilterOptions` |
-| `GET /products/sorts/get` | `Route::get('sorts/get', [\App\Http\Controllers\Api\Product\ProductListController::class, 'getSortingOptions']);` (Line 11) | `App\Http\Controllers\Api\Product\ProductListController@getSortingOptions` |
-| `GET /products/bestSaleProducts` | `Route::get('bestSaleProducts', [\App\Http\Controllers\Api\Product\ProductDisplayController::class, 'bestSaleProducts']);` (Line 14) | `App\Http\Controllers\Api\Product\ProductDisplayController@bestSaleProducts` |
-| `GET /products/trendingProducts` | `Route::get('trendingProducts', [\App\Http\Controllers\Api\Product\ProductDisplayController::class, 'trendingProducts']);` (Line 15) | `App\Http\Controllers\Api\Product\ProductDisplayController@trendingProducts` |
-| `GET /products/{product:url}` | `Route::get('{product:url}', [\App\Http\Controllers\Api\Product\ProductDisplayController::class, 'show']);` (Line 18) | `App\Http\Controllers\Api\Product\ProductDisplayController@show` |
-
-### User Account & Profile
-
-#### `frontend/pages/dashboard/index.vue`
-
-| Frontend API Call | Backend Route (File: `backend/routes/apis/user/account.php`) | Backend Controller & Method |
-| :---------------- | :------------------------------------------------------ | :-------------------------------------------------- |
-| `GET /account/stats/dashboard` | `Route::get('stats/dashboard',[\App\Http\Controllers\Api\Auth\UserDashboardController::class,'getAccountDashboard']);` (Line 130) | `App\Http\Controllers\Api\Auth\UserDashboardController@getAccountDashboard` |
-
-### Other Pages/Components
-
-(To be detailed after analyzing other pages and components)
-
-### Other Pages/Components
-
-#### `frontend/pages/contact.vue`
-
-| Frontend API Call | Backend Route (File: `backend/routes/api.php`) | Backend Controller & Method |
-| :---------------- | :--------------------------------------------- | :-------------------------- |
-| `POST /contact/user` | `Route::post('/contact/user', [\App\Http\Controllers\Api\InquiryController::class, 'storeUser']);` (Line 209) | `App\Http\Controllers\Api\InquiryController@storeUser` |
-| `POST /contact/business` | `Route::post('/contact/business', [\App\Http\Controllers\Api\InquiryController::class, 'storeBusiness']);` (Line 210) | `App\Http\Controllers\Api\InquiryController@storeBusiness` |
-
-#### `frontend/pages/dashboard/account/insights/index.vue`
-
-This page dynamically loads insight components based on the user's role. The individual insight components (`ApplicantInsight.vue`, `MemberInsight.vue`, `OrganizerInsight.vue`, `RegularInsight.vue`) currently use static data for their displays and charts. These should be integrated with backend APIs to fetch real-time data.
-
-## Unused Backend API Routes
-
-(To be detailed after a comprehensive analysis of frontend API usage)
-
-## Static Data to API Conversion
-
-(To be detailed after identifying static data in the frontend)
-
-## Static Data to API Conversion
-
-The following frontend components currently rely on static, hardcoded data. For a dynamic and real-time user experience, these components should be updated to fetch their data from dedicated backend API endpoints.
-
--   **`frontend/components/insights/organizer/OrganizerInsight.vue`**:
-    -   Currently uses static `stats` (members joined, active recruits, commission, rank) and `rawData` for charts.
-    -   **Suggested API:** `GET /account/insights/organizer` (or similar) to fetch performance statistics and chart data for organizers/mentors.
--   **`frontend/components/insights/regular/RegularInsight.vue`**:
-    -   Currently uses static `stats` (products ordered, services ordered, total spending, free features used) and `rawData` for charts.
-    -   **Suggested API:** `GET /account/insights/regular` (or similar) to fetch activity and spending statistics for regular users.
--   **`frontend/components/insights/applicant/ApplicantInsight.vue`**:
-    -   Currently displays static content related to career opportunities.
-    -   **Suggested API:** `GET /account/insights/applicant` (or similar) to fetch application status, job updates, or career path information for applicants.
--   **`frontend/pages/about.vue`**:
-    -   Currently uses static `missionValues`, `services`, `operations`, `leadership`, and `milestones` arrays.
-    -   **Suggested API:** Dedicated endpoints for fetching company information, such as `/about/mission`, `/about/services`, `/about/operations`, `/about/team`, and `/about/milestones`.
--   **`frontend/components/home/AffiliateBenefitsSection.vue`**:
-    -   Currently uses a static `benefits` array.
-    -   **Suggested API:** `GET /home/affiliate-benefits` (or similar) to fetch dynamic affiliate program benefits.
--   **`frontend/pages/terms.vue`**:
-    -   Currently uses static `sections` array, `effectiveDate`, and `lastUpdated`.
-    -   **Suggested API:** `GET /pages/terms` (or similar) to fetch dynamic terms and conditions content, including sections and dates.
--   **`frontend/pages/career/index.vue`**:
-    -   Currently uses static `heroHighlights`, `enhancedValues`, and `enhancedLifeAtCompany` arrays.
-    -   **Suggested API:** Dedicated endpoints for fetching career page content, such as `/career/highlights`, `/career/values`, and `/career/life-at-company`.
-
-## Unused Backend API Routes
-
-Based on the current frontend analysis, the following backend API routes do not appear to be directly called by the existing frontend implementation. These routes might be intended for future features, internal use, or other client applications.
-
--   `POST /tokens/create` (`App\Http\Controllers\Api\Auth\AuthController@storeToken`)
--   `POST /tokens/delete` (`App\Http\Controllers\Api\Auth\AuthController@destroyToken`)
--   `GET /user` (`App\Http\Controllers\Api\Auth\SanctumUserController@getUser`)
--   `GET /account/applications` (`App\Http\Controllers\Api\Auth\JobApplicationController@index`)
--   `GET /account/applications/{application:uuid}` (`App\Http\Controllers\Api\Auth\JobApplicationController@show`)
--   `POST /account/apply/{recruitment:url}` (`App\Http\Controllers\Api\Auth\JobApplicationController@apply`)
--   `GET /account/stats/minimal` (`App\Http\Controllers\Api\Auth\UserStatsController@getMinimal`)
--   `GET /account/stats/member/{user:uuid}` (`App\Http\Controllers\Api\Auth\UserStatsController@getMemberStat`)
--   `GET /account/notifications` (`App\Http\Controllers\Api\Auth\UserNotificationController@index`)
--   `POST /account/notifications/{id}/read` (`App\Http\Controllers\Api\Auth\UserNotificationController@markAsRead`)
--   `POST /account/notifications/{id}/unread` (`App\Http\Controllers\Api\Auth\UserNotificationController@markAsUnread`)
--   `POST /account/notifications/mark-all-read` (`App\Http\Controllers\Api\Auth\UserNotificationController@markAllRead`)
--   `DELETE /account/notifications/{id}` (`App\Http\Controllers\Api\Auth\UserNotificationController@destroy`)
--   `DELETE /account/notifications/clear-all` (`App\Http\Controllers\Api\Auth\UserNotificationController@clearAll`)
--   `GET /account/lifecycle` (`App\Http\Controllers\Api\Auth\UserLifecycleController@getUserLifecycleProgress`)
--   `GET /account/lifecycle/stages` (`App\Http\Controllers\Api\Auth\UserLifecycleController@getAllStages`)
--   `GET /account/lifecycle/stages/{stage:url}` (`App\Http\Controllers\Api\Auth\UserLifecycleController@showStage`)
--   `GET /account/lifecycle/level/{level:url}` (`App\Http\Controllers\Api\Auth\UserLifecycleController@getLevel`)
--   `GET /pages` (`App\Http\Controllers\Api\PageController@getPages`)
--   `GET /categories` (`App\Http\Controllers\Api\CategoryController@index`)
--   `GET /product/engagements/{product:url}` (`App\Http\Controllers\Api\Product\ProductEngagementController@index`)
--   `POST /product/engagement/{product:url}` (`App\Http\Controllers\Api\Product\ProductEngagementController@store`)
--   `PUT /product/engagement/{product_engagement}` (`App\Http\Controllers\Api\Product\ProductEngagementController@update`)
--   `DELETE /product/engagement/{product_engagement}` (`App\Http\Controllers\Api\Product\ProductEngagementController@destroy`)
--   `POST /product/engagement/{product_engagement}/helpfull` (`App\Http\Controllers\Api\Product\ProductEngagementController@helpFullEngagement`)
--   `GET /flash-deals` (`App\Http\Controllers\Api\FlashDealController@index`)
--   `GET /flash-deals/stats` (`App\Http\Controllers\Api\FlashDealController@getStats`)
--   `GET /flash-deals/categories` (`App\Http\Controllers\Api\FlashDealController@getCategories`)
--   `GET /order/insight` (`App\Http\Controllers\Api\OrderController@getInsight`)
--   `POST /orders/{order:uuid}/canceled` (`App\Http\Controllers\Api\OrderController@cancelOrder`)
--   `POST /orders/{order:uuid}/return` (`App\Http\Controllers\Api\OrderController@returnOrder`)
--   `POST /orders/{order:uuid}/refund` (`App\Http\Controllers\Api\OrderController@refundOrder`)
--   `GET /_transaction/validate/{transaction:uuid}` (`App\Http\Controllers\Api\Transaction\TransactionActionController@confirmTransaction`)
--   `GET /_transaction/failed/{transaction:uuid}` (`App\Http\Controllers\Api\Transaction\TransactionActionController@failureTransaction`)
--   `GET /lifecycle/timeline` (`App\Http\Controllers\Api\LifecycleController@getTimeline`)
--   `GET /lifecycle/stages` (`App\Http\Controllers\Api\LifecycleController@getAllStages`)
--   `GET /lifecycle/stage/{stage:url}` (`App\Http\Controllers\Api\LifecycleController@getStage`)
--   `GET /lifecycle/level/{level:url}` (`App\Http\Controllers\Api\LifecycleController@getLevel`)
--   `GET /sales` (`App\Http\Controllers\Api\SaleController@index`)
--   `GET /helpdesk/topics/faq` (`App\Http\Controllers\Api\HelpDeskController@getFaqTopics`)
--   `POST /helpdesk/tickets/{helpdesk:uuid}/attachments` (`App\Http\Controllers\Api\HelpDeskController@uploadAttachment`)
--   `GET /push/vapid-public-key` (`App\Http\Controllers\Api\PushNotificationController@getVapidPublicKey`)
--   `POST /push/subscribe` (`App\Http\Controllers\Api\PushNotificationController@subscribe`)
--   `POST /push/unsubscribe` (`App\Http\Controllers\Api\PushNotificationController@unsubscribe`)
--   `POST /push/send-to-user` (`App\Http\Controllers\Api\PushNotificationController@sendToUser`)
--   `POST /push/send-to-all` (`App\Http\Controllers\Api\PushNotificationController@sendToAll`)
--   `POST /push/send-to-level` (`App\Http\Controllers\Api\PushNotificationController@sendToLevel`)
--   `GET /products` (`App\Http\Controllers\Api\Product\ProductListController@index`)
--   `GET /products/bestSaleProducts` (`App\Http\Controllers\Api\Product\ProductDisplayController@bestSaleProducts`)
--   `GET /products/trendingProducts` (`App\Http\Controllers\Api\Product\ProductDisplayController@trendingProducts`)
-
-## Full Integration Workflow
-
-The frontend and backend integration follows a standard API-driven architecture, primarily utilizing Laravel Sanctum for authentication and Nuxt.js's `useSanctumFetch` composable for making API requests.
-
-1.  **Authentication Flow:**
-    *   User registration, login, and password recovery are handled via dedicated API endpoints (`/register`, `/login`, `/auth/send-otp`, `/auth/verify-otp`, `/reset_password`).
-    *   Laravel Sanctum manages API token creation and validation, ensuring secure communication for authenticated users.
-    *   Guest users are managed through `X-Guest-ID` and `X-Guest-Token` headers for cart and other non-authenticated functionalities.
-
-2.  **Data Fetching and Manipulation:**
-    *   Frontend components and pages make `GET`, `POST`, `PUT`, `DELETE` requests to specific backend API endpoints to retrieve, create, update, and delete data.
-    *   `useSanctumFetch` automatically handles attaching authentication headers (Sanctum token or guest credentials) to requests.
-    *   Query parameters are extensively used for filtering, sorting, and pagination of data (e.g., `/orders?page=1&status=pending`).
-
-3.  **Error Handling:**
-    *   API responses are typically structured to include `data`, `message`, and `errors` fields.
-    *   Frontend components catch API errors and display user-friendly messages using the `useToast` composable.
-    *   Specific error handling for authentication issues (e.g., 401, 403, 419 status codes) is implemented to refresh guest credentials or prompt re-authentication.
-
-4.  **Data Transformation and Display:**
-    *   Backend API responses are often transformed on the frontend to fit the UI requirements (e.g., formatting dates, currencies, mapping data to chart formats).
-    *   Computed properties and helper functions are used to process and display data effectively.
-
-5.  **Static Data Integration (Future Work):**
-    *   Components currently displaying static data (e.g., `about.vue`, `privacy.vue`, `shipping.vue`, `terms.vue`, insight components, career page content) should be refactored to fetch this content from dedicated backend API endpoints.
-    *   This would allow for dynamic content management from the backend, improving flexibility and maintainability.
-
-6.  **Component-Based API Interaction:**
-    *   API calls are encapsulated within composables (e.g., `useCart`, `useWishlist`) or directly within components/pages, promoting reusability and separation of concerns.
-
-This workflow ensures a clear separation between frontend presentation and backend logic, facilitating scalable and maintainable application development.
-
-(To be detailed after a comprehensive analysis)
+Initiates a job to export the user's data and send it to their email.
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Data export initiated successfully. You will receive an email with your data within 5-10 minutes."
+}
+```
+
+
+
+## Cart
+
+
+
+The cart endpoints allow for managing a shopping cart for both authenticated and guest users. For guest users, a guest ID and token must be provided in the headers (`x-guest-id` and `x-guest-token`).
+
+
+
+### Endpoints
+
+
+
+#### `POST /api/cart/guest-credential`
+
+
+
+Ensures a guest cart credential exists and returns it.
+
+
+
+**Response (200 OK):**
+
+
+
+```json
+
+{
+
+    "data": {
+
+        "id": "some-guest-id",
+
+        "token": "some-guest-token"
+
+    }
+
+}
+
+```
+
+
+
+#### `POST /api/cart/validate/guest-credential`
+
+
+
+Validates a guest cart credential.
+
+
+
+**Request Headers:**
+
+
+
+```
+
+x-guest-id: some-guest-id
+
+x-guest-token: some-guest-token
+
+```
+
+
+
+**Response (200 OK):**
+
+
+
+```json
+
+{
+
+  "data": {
+
+    "status": true,
+
+    "error": "validate"
+
+  }
+
+}
+
+```
+
+
+
+#### `GET /api/cart`
+
+
+
+Retrieves the current cart contents.
+
+
+
+**Response (200 OK):**
+
+
+
+A `CartResource` object. The exact structure depends on the `CartResource` implementation, but it will generally look like this:
+
+
+
+```json
+
+{
+
+  "data": {
+
+    "items": [
+
+      {
+
+        "product_sku": "SKU123",
+
+        "quantity": 2,
+
+        "price": 10.00,
+
+        "total": 20.00
+
+      }
+
+    ],
+
+    "subtotal": 20.00,
+
+    "discount": 0.00,
+
+    "total": 20.00
+
+  },
+
+  "suggestions": []
+
+}
+
+```
+
+
+
+#### `POST /api/cart/add/{product:sku}`
+
+
+
+Adds a product to the cart.
+
+
+
+**Request Body:**
+
+
+
+```json
+
+{
+
+  "quantity": 1
+
+}
+
+```
+
+
+
+**Response (200 OK):**
+
+
+
+A `CartResource` object representing the updated cart.
+
+
+
+#### `POST /api/cart/update/{product:sku}`
+
+
+
+Updates the quantity of a product in the cart.
+
+
+
+**Request Body:**
+
+
+
+```json
+
+{
+
+  "quantity": 3
+
+}
+
+```
+
+
+
+**Response (200 OK):**
+
+
+
+A `CartResource` object representing the updated cart.
+
+
+
+#### `DELETE /api/cart/remove/{product:sku}`
+
+
+
+Removes a product from the cart.
+
+
+
+**Response (200 OK):**
+
+
+
+A `CartResource` object representing the updated cart.
+
+
+
+#### `POST /api/cart/clear`
+
+
+
+Clears all items from the cart.
+
+
+
+**Response (200 OK):**
+
+
+
+```json
+
+{
+
+  "message": "User cart cleared"
+
+}
+
+```
+
+
+
+#### `POST /api/cart/merge`
+
+
+
+Merges a guest cart into an authenticated user's cart upon login.
+
+
+
+**Response (200 OK):**
+
+
+
+```json
+
+{
+
+  "message": "Guest cart merged successfully"
+
+}
+
+```
+
+
+
+## Categories
+
+The categories endpoints provide access to the product category hierarchy.
+
+### Endpoints
+
+#### `GET /api/categories`
+
+Retrieves a tree of all visible categories.
+
+**Response (200 OK):**
+
+A collection of `CategoryIndexResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Electronics",
+    "url": "electronics",
+    "image": "https://example.com/path/to/image.jpg",
+    "children": [
+      {
+        "id": 2,
+        "name": "Phones",
+        "url": "phones",
+        "image": "https://example.com/path/to/image.jpg",
+        "children": []
+      }
+    ]
+  }
+]
+```
+
+#### `GET /api/categories/with-products`
+
+Retrieves parent categories along with their child categories and the starting price of products within those child categories.
+
+**Response (200 OK):**
+
+```json
+[
+  {
+    "url": "electronics",
+    "name": "Electronics",
+    "thumbnail": "https://example.com/path/to/image.jpg",
+    "children": [
+      {
+        "name": "Smartphones",
+        "url": "smartphones",
+        "image": "https://example.com/path/to/image.jpg",
+        "starting_from_price": "₹10,000.00"
+      }
+    ]
+  }
+]
+```
+
+## Products
+
+The products endpoints provide access to the product catalog.
+
+### Endpoints
+
+#### `GET /api/products`
+
+Retrieves a paginated list of products. This endpoint supports filtering, sorting, and searching.
+
+**Query Parameters:**
+
+*   `categories[]` (array): Filter by category URLs.
+*   `price[min]` (integer): Minimum price.
+*   `price[max]` (integer): Maximum price.
+*   `search` (string): Search term for product name, SKU, description, etc.
+*   `in_stock` (boolean): Filter for products that are in stock.
+*   `offer` (boolean): Filter for products that have an active sale.
+*   `min_rating` (float): Minimum average rating.
+*   `vendor[]` (array): Filter by vendor IDs.
+*   `filters[FilterName][]` (array): Filter by product filter options.
+*   `sort[column]` (string): Sort by a specific column (e.g., `popularity`, `latest`, `pricelow2high`, `pricehigh2low`, `rating`, `name`).
+*   `page` (integer): The page number for pagination.
+
+**Response (200 OK):**
+
+A paginated collection of `ProductIndexResource` objects.
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Example Product",
+      "url": "example-product",
+      "sku": "SKU123",
+      "price": "₹1,000.00",
+      "image": "https://example.com/path/to/image.jpg",
+      "is_wishlisted": false,
+      "has_stock": true,
+      "sale_price": "₹900.00"
+    }
+  ],
+  "links": {
+    "first": "http://localhost/api/products?page=1",
+    "last": "http://localhost/api/products?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "path": "http://localhost/api/products",
+    "per_page": 12,
+    "to": 1,
+    "total": 1
+  }
+}
+```
+
+#### `GET /api/products/filters/get`
+
+Retrieves the available filter options for a given category.
+
+**Query Parameters:**
+
+*   `category` (string): The URL of the category.
+
+**Response (200 OK):**
+
+```json
+{
+  "Color": {
+    "Red": "Red",
+    "Blue": "Blue"
+  },
+  "Size": {
+    "S": "S",
+    "M": "M",
+    "L": "L"
+  }
+}
+```
+
+#### `GET /api/products/sorts/get`
+
+Retrieves the available sorting options.
+
+**Response (200 OK):**
+
+```json
+[
+  {
+    "name": "popularity",
+    "value": "view_count",
+    "direction": "desc"
+  },
+  {
+    "name": "latest",
+    "value": "created_at",
+    "direction": "desc"
+  },
+  {
+    "name": "pricelow2high",
+    "value": "price",
+    "direction": "asc"
+  },
+  {
+    "name": "pricehigh2low",
+    "value": "price",
+    "direction": "desc"
+  }
+]
+```
+
+#### `GET /api/products/bestSaleProducts`
+
+Retrieves a list of the best-selling products.
+
+**Response (200 OK):**
+
+A collection of `ProductIndexResource` objects.
+
+#### `GET /api/products/trendingProducts`
+
+Retrieves a list of trending products.
+
+**Response (200 OK):**
+
+A collection of `ProductIndexResource` objects.
+
+## Wishlist
+
+The wishlist endpoints allow authenticated users to manage their product wishlist.
+
+### Endpoints
+
+#### `POST /api/product/wishlist/{product:url}`
+
+Adds a product to the authenticated user's wishlist.
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Example Product successfully added in your wishlist"
+}
+```
+
+#### `DELETE /api/product/wishlist/{product:url}`
+
+Removes a product from the authenticated user's wishlist.
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Example Product successfully removed from in your wishlist"
+}
+```
+
+## Engagements (Reviews)
+
+The engagements endpoints allow authenticated users to review products.
+
+### Endpoints
+
+#### `GET /api/product/engagements/{product:url}`
+
+Retrieves a paginated list of reviews for a product.
+
+**Query Parameters:**
+
+*   `per_page` (integer): The number of reviews to return per page.
+*   `page` (integer): The page number for pagination.
+
+**Response (200 OK):**
+
+A paginated collection of `ProductEngagementResource` objects.
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "review": "This is a great product!",
+      "rating": 5,
+      "author": {
+        "name": "John Doe",
+        "avatar": "https://example.com/path/to/avatar.jpg"
+      },
+      "created_at": "2023-10-27T10:00:00.000000Z"
+    }
+  ],
+  "links": {
+    "first": "http://localhost/api/product/engagements/example-product?page=1",
+    "last": "http://localhost/api/product/engagements/example-product?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "path": "http://localhost/api/product/engagements/example-product",
+    "per_page": 10,
+    "to": 1,
+    "total": 1
+  }
+}
+```
+
+#### `POST /api/product/engagement/{product:url}`
+
+Adds a review to a product.
+
+**Request Body:**
+
+```json
+{
+  "review": "This is a great product!",
+  "rating": 5
+}
+```
+
+**Response (200 OK):**
+
+A `ProductEngagementResource` object representing the new review.
+
+#### `PUT /api/product/engagement/{product_engagement}`
+
+Updates an existing review.
+
+**Request Body:**
+
+```json
+{
+  "review": "This is an updated review.",
+  "rating": 4
+}
+```
+
+**Response (200 OK):**
+
+A `ProductEngagementResource` object representing the updated review.
+
+#### `DELETE /api/product/engagement/{product_engagement}`
+
+Deletes a review.
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Review deleted successfully!"
+}
+```
+
+## Flash Deals
+
+The flash deals endpoints provide access to current flash deals and related information.
+
+### Endpoints
+
+#### `GET /api/flash-deals`
+
+Retrieves a paginated list of active flash deals.
+
+**Response (200 OK):**
+
+A paginated collection of `SaleResource` objects.
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Flash Sale",
+      "description": "A limited time flash sale.",
+      "starts_from": "2023-10-27T00:00:00.000000Z",
+      "ends_till": "2023-10-28T00:00:00.000000Z",
+      "products": [
+        {
+          "id": 1,
+          "name": "Example Product",
+          "url": "example-product",
+          "sku": "SKU123",
+          "price": "₹1,000.00",
+          "sale_price": "₹900.00",
+          "image": "https://example.com/path/to/image.jpg"
+        }
+      ]
+    }
+  ],
+  "links": {
+    "first": "http://localhost/api/flash-deals?page=1",
+    "last": "http://localhost/api/flash-deals?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "path": "http://localhost/api/flash-deals",
+    "per_page": 30,
+    "to": 1,
+    "total": 1
+  }
+}
+```
+
+#### `GET /api/flash-deals/stats`
+
+Retrieves statistics about the current flash deals.
+
+**Response (200 OK):**
+
+```json
+{
+  "total_deals": 10,
+  "avg_discount": 25,
+  "customers_saved": 125
+}
+```
+
+## Orders
+
+The orders endpoints allow for placing and managing orders.
+
+### Endpoints
+
+#### `POST /api/order/place`
+
+Places a new order.
+
+**Request Body:**
+
+The request body for this endpoint is complex and depends on whether the user is authenticated or a guest. See the `PlaceOrderRequest` for full details.
+
+**Response (200 OK):**
+
+```json
+{
+  "data": {
+    "success": true,
+    "checkout_url": "https://example.com/checkout/123",
+    "message": null
+  }
+}
+```
+
+#### `GET /api/order/insight`
+
+Retrieves order trend data for the authenticated user.
+
+**Query Parameters:**
+
+*   `range` (string): The date range for the trend data (e.g., `today`, `week`, `month`, `year`).
+*   `metric` (string): The metric to retrieve (e.g., `count`, `revenue`).
+*   `status` (string|array): Filter by order status.
+
+**Response (200 OK):**
+
+```json
+{
+  "data": {
+    "datasets": [
+      {
+        "label": "Orders",
+        "data": [1, 2, 3]
+      }
+    ],
+    "labels": ["Jan", "Feb", "Mar"],
+    "meta": {
+      "range": "year",
+      "metric": "count",
+      "status": [],
+      "interval": "perMonth",
+      "start": "2023-01-01T00:00:00.000000Z",
+      "end": "2023-12-31T23:59:59.999999Z"
+    }
+  }
+}
+```
+
+#### `GET /api/orders`
+
+Retrieves a paginated list of orders for the authenticated user.
+
+**Query Parameters:**
+
+*   `status` (string): Filter by order status.
+*   `from_date` (date): Filter by a start date.
+*   `to_date` (date): Filter by an end date.
+*   `page` (integer): The page number for pagination.
+
+**Response (200 OK):**
+
+A paginated collection of `OrderIndexResource` objects, with an additional `stats` object.
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "uuid": "order-uuid",
+      "total": "₹1,000.00",
+      "status": "completed",
+      "created_at": "2023-10-27T10:00:00.000000Z"
+    }
+  ],
+  "links": {
+    "first": "http://localhost/api/orders?page=1",
+    "last": "http://localhost/api/orders?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "path": "http://localhost/api/orders",
+    "per_page": 10,
+    "to": 1,
+    "total": 1
+  },
+  "stats": {
+    "total_orders": {
+      "label": "Total Orders",
+      "value": "1",
+      "change": null,
+      "trend": "neutral"
+    },
+    "pending_orders": {
+      "label": "Pending Orders",
+      "value": "0",
+      "change": null,
+      "trend": "neutral"
+    },
+    "confirmed_orders": {
+      "label": "Confirmed Orders",
+      "value": "0",
+      "change": null,
+      "trend": "neutral"
+    },
+    "completed_orders": {
+      "label": "Completed Orders",
+      "value": "1",
+      "change": null,
+      "trend": "neutral"
+    }
+  }
+}
+```
+
+#### `GET /api/orders/{order:uuid}`
+
+Retrieves a single order by its UUID.
+
+**Response (200 OK):**
+
+An `OrderResource` object.
+
+```json
+{
+  "data": {
+    "id": 1,
+    "uuid": "order-uuid",
+    "total": "₹1,000.00",
+    "status": "completed",
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "transaction": {},
+    "billing_address": {},
+    "shipping_address": {},
+    "products": []
+  }
+}
+```
+
+#### `POST /api/orders/{order:uuid}/canceled`
+
+Cancels an order.
+
+**Response (200 OK):**
+
+```json
+{
+  "message": "Order canceled successfully."
+}
+```
+
+#### `POST /api/orders/{order:uuid}/return`
+
+Requests a return for an order.
+
+**Response (200 OK):**
+
+```json
+{
+  "message": "Return requested successfully."
+}
+```
+
+#### `POST /api/orders/{order:uuid}/refund`
+
+Requests a refund for an order.
+
+**Response (200 OK):**
+
+```json
+{
+  "message": "Refund requested successfully."
+}
+```
+
+## Wallet
+
+The wallet endpoints allow authenticated users to manage their wallet, including checking their balance, adding funds, and making transfers.
+
+### Endpoints
+
+#### `GET /api/wallet`
+
+Retrieves the authenticated user's wallet information, including recent transactions and statistics.
+
+**Response (200 OK):**
+
+A `WalletResource` object.
+
+```json
+{
+  "data": {
+    "uuid": "wallet-uuid",
+    "balance": "₹1,000.00",
+    "points": 100,
+    "transactions": [],
+    "beneficiary": {},
+    "stats": {}
+  }
+}
+```
+
+#### `POST /api/wallet/create`
+
+Creates a new wallet for the authenticated user.
+
+**Request Body:**
+
+```json
+{
+  "pin": "123456"
+}
+```
+
+**Response (200 OK):**
+
+A `WalletResource` object representing the new wallet.
+
+#### `GET /api/wallet/qr`
+
+Retrieves a QR code for the authenticated user's wallet.
+
+**Response (200 OK):**
+
+```json
+{
+  "data": {
+    "uuid": "wallet-uuid",
+    "qr": "data:image/png;base64,..."
+  }
+}
+```
+
+#### `POST /api/wallet/change-pin`
+
+Changes the PIN for the authenticated user's wallet.
+
+**Request Body:**
+
+```json
+{
+  "pin": "654321",
+  "confirm_pin": "654321",
+  "old_pin": "123456"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "PIN changed successfully."
+}
+```
+
+#### `POST /api/wallet/add-money`
+
+Adds funds to the authenticated user's wallet.
+
+**Request Body:**
+
+```json
+{
+  "amount": 100,
+  "reference": "Optional reference",
+  "pin": "123456"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Money added successfully.",
+  "redirect": "https://example.com/checkout/123"
+}
+```
+
+#### `POST /api/wallet/withdraw`
+
+Initiates a withdrawal from the authenticated user's wallet to their default beneficiary.
+
+**Request Body:**
+
+```json
+{
+  "amount": 100,
+  "pin": "123456"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Withdrawal initiated."
+}
+```
+
+#### `POST /api/wallet/send`
+
+Sends money from the authenticated user's wallet to another user's wallet.
+
+**Request Body:**
+
+```json
+{
+  "amount": 100,
+  "recipient_uuid": "recipient-wallet-uuid",
+  "pin": "123456"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Transfer successful."
+}
+```
+
+#### `POST /api/wallet/point-conversion`
+
+Converts loyalty points to wallet balance.
+
+**Request Body:**
+
+```json
+{
+  "points": 100,
+  "pin": "123456"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Points converted to balance successfully."
+}
+```
+
+## Beneficiaries
+
+The beneficiaries endpoints allow authenticated users to manage their beneficiary accounts for withdrawals.
+
+### Endpoints
+
+#### `GET /api/beneficiaries`
+
+Retrieves a paginated list of the authenticated user's beneficiary accounts.
+
+**Response (200 OK):**
+
+A paginated collection of `BeneficiaryAccountResource` objects.
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "uuid": "beneficiary-uuid",
+      "type": "savings",
+      "bank_name": "Example Bank",
+      "account_name": "John Doe",
+      "account_number": "1234567890",
+      "ifsc": "EXAM0000001",
+      "default": true
+    }
+  ],
+  "links": {
+    "first": "http://localhost/api/beneficiaries?page=1",
+    "last": "http://localhost/api/beneficiaries?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "path": "http://localhost/api/beneficiaries",
+    "per_page": 10,
+    "to": 1,
+    "total": 1
+  }
+}
+```
+
+#### `GET /api/beneficiaries/{account:uuid}`
+
+Retrieves a single beneficiary account by its UUID.
+
+**Response (200 OK):**
+
+A `BeneficiaryAccountResource` object.
+
+#### `POST /api/beneficiaries`
+
+Adds a new beneficiary account.
+
+**Request Body:**
+
+```json
+{
+  "type": "savings",
+  "bank_name": "Example Bank",
+  "account_name": "John Doe",
+  "account_number": "1234567890",
+  "ifsc": "EXAM0000001",
+  "default": true
+}
+```
+
+**Response (201 Created):**
+
+A `BeneficiaryAccountResource` object representing the new beneficiary account.
+
+#### `PUT /api/beneficiaries/{account:uuid}`
+
+Updates an existing beneficiary account.
+
+**Request Body:**
+
+```json
+{
+  "bank_name": "Updated Bank Name"
+}
+```
+
+**Response (200 OK):**
+
+A `BeneficiaryAccountResource` object representing the updated beneficiary account.
+
+#### `DELETE /api/beneficiaries/{account:uuid}`
+
+Deletes a beneficiary account.
+
+**Response (200 OK):**
+
+```json
+{
+  "data": {
+    "success": true,
+    "message": "Beneficiary Account Deleted!"
+  }
+}
+```
+
+## Geo Location
+
+The geo location endpoints provide access to geographical data such as countries and states.
+
+### Endpoints
+
+#### `GET /api/geo/countries`
+
+Retrieves a list of all active countries.
+
+**Response (200 OK):**
+
+A collection of `CountryIndexResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "India",
+    "iso_code_2": "IN",
+    "isd_code": "+91",
+    "locale": "en_IN",
+    "timezone": "Asia/Kolkata",
+    "currency": "INR",
+    "flag": "🇮🇳",
+    "exchange_rate": 1,
+    "multiplier": 100,
+    "is_active": true
+  }
+]
+```
+
+#### `GET /api/geo/country/{country:iso_code_2}`
+
+Retrieves a single country by its ISO code, including its states.
+
+**Response (200 OK):**
+
+A `CountryResource` object.
+
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "India",
+    "iso_code_2": "IN",
+    "states": [
+      {
+        "id": 1,
+        "name": "West Bengal",
+        "code": "WB"
+      }
+    ]
+  }
+}
+```
+
+#### `GET /api/geo/states/{country:iso_code_2}`
+
+Retrieves a list of all states for a given country.
+
+**Response (200 OK):**
+
+A collection of `StateResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "West Bengal",
+    "code": "WB"
+  }
+]
+```
+
+## HelpDesk
+
+The helpdesk endpoints allow authenticated users to create and manage support tickets.
+
+### Endpoints
+
+#### `GET /api/helpdesk/topics/ticket`
+
+Retrieves a list of all active ticket topics.
+
+**Response (200 OK):**
+
+A collection of `HelpdeskTopicResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Billing",
+    "slug": "billing",
+    "description": "Issues related to billing."
+  }
+]
+```
+
+#### `GET /api/helpdesk/topics/faq`
+
+Retrieves a list of all active FAQ topics.
+
+**Response (200 OK):**
+
+A collection of `HelpdeskTopicResource` objects.
+
+#### `GET /api/helpdesk/tickets`
+
+Retrieves a list of all tickets for the authenticated user.
+
+**Response (200 OK):**
+
+A collection of `HelpdeskResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Billing Issue",
+    "description": "I have an issue with my bill.",
+    "priority": "high",
+    "status": "open",
+    "topic": {
+      "id": 1,
+      "name": "Billing",
+      "slug": "billing"
+    },
+    "created_at": "2023-10-27T10:00:00.000000Z"
+  }
+]
+```
+
+#### `GET /api/helpdesk/tickets/{helpdesk:uuid}`
+
+Retrieves a single ticket by its UUID, including its conversations.
+
+**Response (200 OK):**
+
+```json
+{
+  "ticket": {
+    "id": 1,
+    "title": "Billing Issue",
+    "description": "I have an issue with my bill.",
+    "priority": "high",
+    "status": "open",
+    "topic": {
+      "id": 1,
+      "name": "Billing",
+      "slug": "billing"
+    },
+    "created_at": "2023-10-27T10:00:00.000000Z"
+  },
+  "conversations": [
+    {
+      "id": 1,
+      "message": "This is a reply to the ticket.",
+      "author": {
+        "name": "Support Team",
+        "avatar": "https://example.com/path/to/avatar.jpg"
+      },
+      "created_at": "2023-10-27T10:05:00.000000Z",
+      "attachments": []
+    }
+  ]
+}
+```
+
+#### `POST /api/helpdesk/tickets`
+
+Creates a new support ticket.
+
+**Request Body:**
+
+This endpoint expects a `multipart/form-data` request with the following fields:
+
+*   `topic_slug` (string, required): The slug of the ticket topic.
+*   `title` (string, required): The title of the ticket.
+*   `description` (string, required): The description of the ticket.
+*   `priority` (string, required): The priority of the ticket (e.g., `low`, `medium`, `high`).
+*   `screenshot` (file, optional): A screenshot of the issue.
+
+**Response (201 Created):**
+
+A `HelpdeskResource` object representing the new ticket.
+
+#### `POST /api/helpdesk/tickets/{helpdesk:uuid}/reply`
+
+Adds a reply to a support ticket.
+
+**Request Body:**
+
+This endpoint expects a `multipart/form-data` request with the following fields:
+
+*   `message` (string, required): The reply message.
+*   `attachments[]` (file, optional): An array of file attachments.
+
+**Response (201 Created):**
+
+A `HelpdeskConversationResource` object representing the new reply.
+
+## Inquiry
+
+The inquiry endpoints allow users to submit contact and business inquiries.
+
+### Endpoints
+
+#### `POST /api/contact/user`
+
+Submits a user contact inquiry.
+
+**Request Body:**
+
+```json
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "message": "This is a contact message."
+}
+```
+
+**Response (201 Created):**
+
+```json
+{
+  "success": true,
+  "message": "Message received",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "message": "This is a contact message.",
+    "created_at": "2023-10-27T10:00:00.000000Z",
+    "updated_at": "2023-10-27T10:00:00.000000Z"
+  }
+}
+```
+
+## Integration
+
+The integration endpoints provide access to third-party integrations, such as payment gateways.
+
+### Endpoints
+
+## Lifecycle
+
+The lifecycle endpoints provide access to the user lifecycle stages and levels.
+
+### Endpoints
+
+#### `GET /api/lifecycle/timeline`
+
+Retrieves the entire lifecycle timeline, including all stages and levels.
+
+**Response (200 OK):**
+
+A collection of `StageResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Stage 1",
+    "url": "stage-1",
+    "levels": [
+      {
+        "id": 1,
+        "name": "Level 1",
+        "url": "level-1"
+      }
+    ]
+  }
+]
+```
+
+#### `GET /api/lifecycle/stages`
+
+Retrieves a list of all active lifecycle stages.
+
+**Response (200 OK):**
+
+A collection of `StageResource` objects.
+
+#### `GET /api/lifecycle/stage/{stage:url}`
+
+Retrieves a single lifecycle stage by its URL, including its levels.
+
+**Response (200 OK):**
+
+A `StageResource` object.
+
+#### `GET /api/lifecycle/level/{level:url}`
+
+Retrieves a single lifecycle level by its URL.
+
+**Response (200 OK):**
+
+A `LevelResource` object.
+
+## Pages
+
+The pages endpoints provide access to dynamic page content.
+
+### Endpoints
+
+## Posts (Blogs)
+
+The posts endpoints provide access to blog posts.
+
+### Endpoints
+
+#### `GET /api/blogs`
+
+Retrieves a paginated list of blog posts. This endpoint supports filtering by category, author, date range, and search term.
+
+**Query Parameters:**
+
+*   `category` (string): Filter by category slug.
+*   `author` (integer): Filter by author ID.
+*   `from_date` (date): Filter by a start date.
+*   `to_date` (date): Filter by an end date.
+*   `search` (string): Search term for post title and content.
+*   `page` (integer): The page number for pagination.
+
+**Response (200 OK):**
+
+A paginated collection of `PostIndexResource` objects.
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Example Post",
+      "url": "example-post",
+      "excerpt": "This is an example post.",
+      "image": "https://example.com/path/to/image.jpg",
+      "author": {
+        "name": "John Doe"
+      },
+      "category": {
+        "name": "General"
+      },
+      "created_at": "2023-10-27T10:00:00.000000Z"
+    }
+  ],
+  "links": {
+    "first": "http://localhost/api/blogs?page=1",
+    "last": "http://localhost/api/blogs?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "path": "http://localhost/api/blogs",
+    "per_page": 12,
+    "to": 1,
+    "total": 1
+  }
+}
+```
+
+## Push Notifications
+
+The push notification endpoints allow for subscribing to and sending push notifications.
+
+### Endpoints
+
+#### `POST /api/push/subscribe`
+
+Subscribes a user to push notifications.
+
+**Request Body:**
+
+```json
+{
+  "subscription": {
+    "endpoint": "https://example.com/push-endpoint",
+    "keys": {
+      "p256dh": "p256dh-key",
+      "auth": "auth-key"
+    }
+  },
+  "email": "john.doe@example.com"
+}
+```
+
+**Response (201 Created):**
+
+```json
+{
+  "status": true,
+  "message": "Push notifications enabled successfully!",
+  "data": {
+    "endpoint": "https://example.com/push-endpoint",
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    }
+  }
+}
+```
+
+#### `POST /api/push/unsubscribe`
+
+Unsubscribes a user from push notifications. This endpoint requires authentication.
+
+**Request Body:**
+
+```json
+{
+  "endpoint": "https://example.com/push-endpoint"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": true,
+  "message": "Successfully unsubscribed"
+}
+```
+
+#### `POST /api/push/send-to-user`
+
+Sends a push notification to a specific user. This endpoint requires admin privileges.
+
+**Request Body:**
+
+```json
+{
+  "user_id": 1,
+  "title": "Hello!",
+  "body": "This is a push notification.",
+  "icon": "/icon-192x192.png",
+  "url": "https://example.com"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": true,
+  "message": "Notification sent successfully!"
+}
+```
+
+#### `POST /api/push/send-to-all`
+
+Sends a push notification to all subscribed users. This endpoint requires admin privileges.
+
+**Request Body:**
+
+```json
+{
+  "title": "Hello!",
+  "body": "This is a push notification.",
+  "icon": "/icon-192x192.png",
+  "url": "https://example.com"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": true,
+  "message": "Notification sent to 10 users!"
+}
+```
+
+#### `POST /api/push/send-to-level`
+
+Sends a push notification to all subscribed users in a specific lifecycle level. This endpoint requires admin privileges.
+
+**Request Body:**
+
+```json
+{
+  "level_id": 1,
+  "title": "Hello!",
+  "body": "This is a push notification.",
+  "icon": "/icon-192x192.png",
+  "url": "https://example.com"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": true,
+  "message": "Notification sent to 5 users!"
+}
+```
+
+## Recruitment
+
+The recruitment endpoints allow users to view and apply for job openings.
+
+### Endpoints
+
+#### `GET /api/recruitment`
+
+Retrieves a list of all active and published job recruitments. If the user is authenticated, it will exclude jobs they have already applied for.
+
+**Response (200 OK):**
+
+A collection of `NaukriIndexResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Software Engineer",
+    "url": "software-engineer",
+    "location": "Remote",
+    "type": "Full-time",
+    "image": "https://example.com/path/to/image.jpg"
+  }
+]
+```
+
+#### `GET /api/recruitment/{recruitment:url}`
+
+Retrieves a single job recruitment by its URL.
+
+**Response (200 OK):**
+
+A `NaukriResource` object.
+
+```json
+{
+  "data": {
+    "id": 1,
+    "title": "Software Engineer",
+    "url": "software-engineer",
+    "description": "<p>Job description here.</p>",
+    "location": "Remote",
+    "type": "Full-time",
+    "salary": "₹1,000,000 - ₹2,000,000 per year",
+    "image": "https://example.com/path/to/image.jpg"
+  }
+}
+```
+
+## Sales
+
+The sales endpoints provide access to sales and promotions.
+
+### Endpoints
+
+#### `GET /api/sales`
+
+Retrieves a list of all active sales. If the user is authenticated, it will return sales targeted to their lifecycle level. Otherwise, it will return non-targeted sales.
+
+**Response (200 OK):**
+
+A collection of `SaleResource` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Summer Sale",
+    "description": "A sale for the summer season.",
+    "starts_from": "2023-06-01T00:00:00.000000Z",
+    "ends_till": "2023-08-31T23:59:59.000000Z"
+  }
+]
+```

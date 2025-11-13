@@ -2,7 +2,9 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payout\Razorpay;
 
-class RazorpayPayoutProvider
+use Mintreu\LaravelIntegration\Contracts\IntegrationContract;
+
+class RazorpayPayoutProvider implements IntegrationContract
 {
 
 

@@ -2,12 +2,14 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\Razorpay;
 
+use Mintreu\LaravelIntegration\Contracts\IntegrationContract;
+use Mintreu\LaravelIntegration\Contracts\PaymentIntegrationContract;
 use Mintreu\LaravelIntegration\Providers\Payment\Razorpay\Actions\OrderAction;
 use Razorpay\Api\Api;
 use Mintreu\LaravelIntegration\Contracts\ProviderIntegrationContract;
 
 
-class RazorpayPaymentProvider
+class RazorpayPaymentProvider implements IntegrationContract,PaymentIntegrationContract
 {
     protected $integrationLoader;
 
@@ -33,7 +35,7 @@ class RazorpayPaymentProvider
         return app(static::class)->getInstance();
     }
 
-    protected function getIntegration()
+    public function getIntegration()
     {
         return ($this->integrationLoader)();
     }
