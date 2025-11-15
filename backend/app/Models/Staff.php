@@ -33,7 +33,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-class Staff extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable,EnjoyLifeCycle
+class Staff extends Authenticatable implements MustVerifyEmail,HasMedia,FilamentUser,Fingerprintable
 {
     /** @use HasFactory<\Database\Factories\StaffFactory> */
     use HasApiTokens,HasFactory,HasPushSubscriptions, Notifiable,InteractsWithMedia,HasRecursiveRelationships,
