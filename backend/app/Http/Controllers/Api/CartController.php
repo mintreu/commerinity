@@ -105,19 +105,8 @@ class CartController extends Controller
     // 5. Merge Guest Cart After Login/Register
     public function mergeGuestCart(Request $request): \Illuminate\Http\JsonResponse
     {
-        $guestCart = session('guest_cart', []);
-        $user = $request->user();
-
-        foreach ($guestCart as $item) {
-            $product = Product::where('sku', $item['sku'])->first();
-            if (!$product) continue;
-
-            $cartItem = $user->cartItems()->firstOrNew(['product_id' => $product->id]);
-            $cartItem->quantity += $item['quantity'];
-            $cartItem->save();
-        }
-
-        session()->forget('guest_cart');
+        $cart = new Cart($request->user());
+        $cart->capture($request);
 
         return response()->json(['message' => 'Guest cart merged successfully']);
     }

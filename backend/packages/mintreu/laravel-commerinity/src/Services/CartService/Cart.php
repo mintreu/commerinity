@@ -69,7 +69,7 @@ class Cart extends CartService
     }
 
 
-    protected function prepareMeta(null|CartVoucherValidator $voucherValidator,bool $formatted = true)
+    protected function prepareMeta(null|CartVoucherValidator $voucherValidator,bool $formatted = true): array
     {
         return $this->cartItems->map(fn($item) => CartLineService::make($this,$item,$voucherValidator)->getMeta($formatted))->toArray();
     }
@@ -131,14 +131,26 @@ class Cart extends CartService
       //  $total->add($subTotal)->add($tax)->subtract($discount);
 
         return [
-            'sub_total'       => $formatted ? $subTotal->formatted() : $subTotal,
-            'tax'             => $formatted ? $tax->formatted() : $tax,
+            'sub_total'       => $formatted ? $subTotal->getAmount() : $subTotal,
+            'shipping_cost'   => null,
+            'tax'             => $formatted ? $tax->getAmount() : $tax,
             'tax_percentage'  => 0,
-            'discount'        => $formatted ?$discount->formatted() : $discount,
+            'discount'        => $formatted ?$discount->getAmount() : $discount,
             'coupon_applied'  => $this->validCoupon,
             'coupon_code'     => $this->getCouponCode(),
-            'total'           => $formatted ? $total->formatted() : $total,
-            'quantity'        =>   $this->cartItems?->sum('quantity') ?? 0
+            'total'           => $formatted ? $total->getAmount() : $total,
+            'quantity'        =>   $this->cartItems?->sum('quantity') ?? 0,
+            'formatted'       => [
+                'sub_total'       => $formatted ? $subTotal->formatted() : $subTotal,
+                'shipping_cost'   => null,
+                'tax'             => $formatted ? $tax->formatted() : $tax,
+                'tax_percentage'  => 0,
+                'discount'        => $formatted ?$discount->formatted() : $discount,
+                'coupon_applied'  => $this->validCoupon,
+                'coupon_code'     => $this->getCouponCode(),
+                'total'           => $formatted ? $total->formatted() : $total,
+                'quantity'        =>   $this->cartItems?->sum('quantity') ?? 0,
+            ]
         ];
     }
 

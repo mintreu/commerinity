@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Order;
 
 use App\Filament\Resources\Order\OrderResource\Pages;
 use App\Filament\Resources\Order\OrderResource\RelationManagers;
+use App\Filament\Resources\Order\OrderResource\Schemas\OrderForm;
 use App\Models\Order\Order;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -20,62 +21,7 @@ class OrderResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('amount')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('subtotal')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('discount')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('tax')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('total')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('quantity')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('voucher')
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('is_cod')
-                    ->required(),
-                Forms\Components\TextInput::make('tracking_id')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('pending'),
-                Forms\Components\Toggle::make('payment_success')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('expire_at'),
-                Forms\Components\TextInput::make('customerable_type')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('customerable_id')
-                    ->numeric(),
-                Forms\Components\Toggle::make('has_guest')
-                    ->required(),
-                Forms\Components\TextInput::make('customer_name')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('customer_email')
-                    ->email()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('customer_mobile')
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('shipping_is_billing')
-                    ->required(),
-                Forms\Components\Select::make('billing_address_id')
-                    ->relationship('billingAddress', 'title'),
-                Forms\Components\Select::make('shipping_address_id')
-                    ->relationship('shippingAddress', 'title'),
-            ]);
+            ->schema(OrderForm::configure());
     }
 
     public static function table(Table $table): Table

@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\IncentiveResource\Pages;
 use App\Filament\Resources\IncentiveResource\RelationManagers;
-use App\Models\Incentive;
+use App\Models\Incentives\Incentive;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

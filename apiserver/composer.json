@@ -10,7 +10,10 @@
         "filament/filament": "4.0",
         "filament/spatie-laravel-media-library-plugin": "4.0",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.10.1",
+        "schmeits/filament-character-counter": "4.0",
+        "tonegabes/filament-better-options": "^1.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

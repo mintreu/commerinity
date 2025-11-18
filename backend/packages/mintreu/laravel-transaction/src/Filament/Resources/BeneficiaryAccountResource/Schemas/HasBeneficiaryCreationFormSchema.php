@@ -19,16 +19,16 @@ trait HasBeneficiaryCreationFormSchema
                 ->aside()
                 ->schema([
 
-                    Forms\Components\Select::make('wallet_id')
-                        ->options(Wallet::all()->pluck('uuid','id'))
-                        ->afterStateUpdated(function (Forms\Set $set,$state){
-                            $wallet = Wallet::find($state);
-                            $set('accountable_type',$wallet->walletable_type);
-                            $set('accountable_id',$wallet->walletable_id);
-
-                        })
-                        ->live()
-                        ->required(),
+//                    Forms\Components\Select::make('wallet_id')
+//                        ->options(Wallet::all()->pluck('uuid','id'))
+//                        ->afterStateUpdated(function (Forms\Set $set,$state){
+//                            $wallet = Wallet::find($state);
+//                            $set('accountable_type',$wallet->walletable_type);
+//                            $set('accountable_id',$wallet->walletable_id);
+//
+//                        })
+//                        ->live()
+//                        ->required(),
 
                     Forms\Components\Select::make('accountable_type')
                         ->required()

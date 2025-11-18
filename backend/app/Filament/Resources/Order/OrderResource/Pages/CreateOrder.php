@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Order\OrderResource\Pages;
 
 use App\Filament\Resources\Order\OrderResource;
+use App\Services\OrderService\OrderCreationService;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
@@ -13,91 +15,52 @@ use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class CreateOrder extends CreateRecord
 {
-    use OrderResource\Schema\HasOrderCreationFormSchema, CreateRecord\Concerns\HasWizard;
+    use OrderResource\Schemas\Traits\HasOrderCreateFilamentPageSupport;
 
     protected static string $resource = OrderResource::class;
     protected ?Collection $orderAbleProducts = null;
 
-    public function mount(): void
+
+
+    protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     {
-        parent::mount();
-    }
+        // $record = new ($this->getModel())($data);
 
-    public function form(Form $form): Form
-    {
-        return parent::form($form)
-            ->schema([
-                \Filament\Forms\Components\Wizard::make([
-                    \Filament\Forms\Components\Wizard\Step::make('Customer')
-                        ->columns()
-                        ->schema($this->chooseCustomer())
-                        ->afterValidation(fn(Get $get, callable $set) => $this->afterCustomerSet($get, $set)),
+        $customer = $this->getCachedForms()['form']->getLivewire()->data['cached_customer'];
 
-                    \Filament\Forms\Components\Wizard\Step::make('Order')
-                        ->columns()
-                        ->schema(fn(Get $get) => $this->chooseProducts($get)),
+        $orderService = new OrderCreationService($customer);
+        $data['shipping_address_id'] = (int)$data['shipping_address_id'][0];
+        $data['billing_address_id']  = (int)$data['billing_address_id'][0];
 
-                    \Filament\Forms\Components\Wizard\Step::make('Delivery')
-                        ->columns()
-                        ->schema($this->getDeliveryFormSchema()),
+        $shippingAddressId = $data['shipping_address_id'];
+        $billingAddressId = $data['billing_address_id'];
 
-                    \Filament\Forms\Components\Wizard\Step::make('Billing')
-                        ->schema([
-                            // Future: billing step schema
-                        ]),
-                ])
-                    ->columnSpanFull(),
-            ]);
-    }
+        $shippingAddress = $customerAddress = $customer->addresses->where('id',$shippingAddressId)->first();
+        $billingAddress = $customerAddress = $customer->addresses->where('id',$billingAddressId)->first();
 
-    /**
-     * Cached product retrieval for efficiency.
-     */
-    public function getProducts(?int $productId = null, bool $force = false)
-    {
-        $allProducts = Cache::remember('published_products_with_media', 300, function () {
-            return Product::with(['media', 'cheapestTier'])
-                ->where('status', PublishableStatusCast::PUBLISHED->value)
-                ->get();
-        });
+        $record = $orderService
+            ->shippingAddress($shippingAddress)
+            ->billingAddress($billingAddress)
+            ->draft();
 
-        if ($force && $productId) {
-            return $allProducts->find($productId) ?? null;
+//        $record->update([
+//            'admin_notes' => $data['admin_notes']
+//        ]);
+
+        if (
+            static::getResource()::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
+            return $this->associateRecordWithTenant($record, $tenant);
         }
 
-        return $productId ? $allProducts->find($productId) : $allProducts;
+        $record->save();
+
+        return $record;
     }
 
-    /**
-     * Fired after selecting a customer — stores customer & cart in internal state.
-     */
-    public function afterCustomerSet(Get $get, callable $set): void
-    {
-        $customerId = $get('customer_id');
-        if (! $customerId) {
-            $set('cached_customer', null);
-            $set('cart', []);
-            return;
-        }
 
-        // Efficient eager loading
-        $user = $this->getCustomerWithCart($customerId);
-        if (! $user) {
-            $set('cached_customer', null);
-            $set('cart', []);
-            return;
-        }
 
-        $set('cached_customer', $user);
 
-        // Map customer’s cart items into order form structure
-        $cartProducts = $user->cart->map(function ($item) {
-            return [
-                'cartable_id' => $item->cartable_id,
-                'quantity' => $item->quantity,
-            ];
-        })->toArray();
 
-        $set('cart', $cartProducts);
-    }
 }

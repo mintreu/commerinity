@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Incentives;
 
 use App\Casts\IncentiveTypeCast;
 use Illuminate\Database\Eloquent\Model;

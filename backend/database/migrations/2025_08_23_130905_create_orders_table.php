@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
 
             $table->string('uuid');
-            $table->integer('amount');
+
             $table->integer('subtotal'); // subtotal  base_price
             $table->integer('discount'); // subtotal discount
             $table->integer('tax'); // subtotal tax
+            $table->integer('shipping_cost');  // total shipping cost
             $table->integer('total'); // subtotal final price
             $table->integer('quantity'); // total quantity
             $table->string('voucher')->nullable();
-            $table->boolean('is_cod')->default(false);
+           // $table->boolean('is_cod')->default(false);
             $table->string('tracking_id')->nullable(); // can be deleted
 
             $table->string('status')->default('pending');
@@ -32,14 +33,14 @@ return new class extends Migration
 
             $table->nullableMorphs('customerable');
 
-            // Guest Case
-            $table->boolean('has_guest')->default(false);
-            $table->string('customer_name')->nullable();
-            $table->string('customer_email')->nullable();
-            $table->string('customer_mobile')->nullable();
+            // Guest Case // from now we create a guest user record for it
+//            $table->boolean('has_guest')->default(false);
+//            $table->string('customer_name')->nullable();
+//            $table->string('customer_email')->nullable();
+//            $table->string('customer_mobile')->nullable();
 
             // billing address
-            $table->boolean('shipping_is_billing')->default(true);
+           // $table->boolean('shipping_is_billing')->default(true);
             $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->onUpdate('cascade')->onDelete('cascade');
 
             // delivery/shipping address

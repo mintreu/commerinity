@@ -78,7 +78,21 @@ class OrderCreationService
         return $this;
     }
 
+    public function draft()
+    {
+        $this->cart = new Cart($this->customer);
+        $this->cartMeta = $this->cart->getMeta(false);
 
+        if ($this->cartMeta['summary']['quantity'])
+        {
+            $this->order = $this->createOrder();
+            // For Wallet Case Transaction always Confirm, no need to checkout again
+            $this->processLeftJobs();
+        }else{
+            $this->setError('no product found for order');
+        }
+        return $this->order;
+    }
     protected function initilizeCart(Request $request)
     {
 
@@ -152,10 +166,11 @@ class OrderCreationService
         $orderFillables = [
             'voucher' => $this->cartMeta['summary']['coupon_code'],
             'quantity' => $this->cartMeta['summary']['quantity'],
-            'amount' => $this->cartMeta['summary']['total']->getAmount(),
+
             'subtotal' => $this->cartMeta['summary']['sub_total']->getAmount(),
             'discount' => $this->cartMeta['summary']['discount']->getAmount(),
             'tax' => $this->cartMeta['summary']['tax']->getAmount(),
+            'shipping_cost' => $this->cartMeta['summary']['shipping_cost']->getAmount(),
             'total' => $this->cartMeta['summary']['total']->getAmount(),
             'status' => OrderStatusCast::PENDING,
             'payment_success' => false,
@@ -275,5 +290,7 @@ class OrderCreationService
         }
 
     }
+
+
 
 }
