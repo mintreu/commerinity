@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('subtotal'); // subtotal  base_price
             $table->integer('discount'); // subtotal discount
             $table->integer('tax'); // subtotal tax
-            $table->integer('shipping_cost');  // total shipping cost
+            $table->integer('shipping_cost')->default(0);  // total shipping cost
             $table->integer('total'); // subtotal final price
             $table->integer('quantity'); // total quantity
             $table->string('voucher')->nullable();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mintreu\LaravelCategory\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,11 +42,6 @@ class Category extends Model implements HasMedia
     {
         return 'url';
     }
-
-
-
-
-
 
     public function registerMediaCollections(): void
     {
@@ -119,10 +114,8 @@ class Category extends Model implements HasMedia
         return null; // no dynamic relation found
     }
 
-
-
-
-
-
-
+    public function scopePublic($query)
+    {
+        return $query->where('status', true)->where('is_visible_on_front', true);
+    }
 }

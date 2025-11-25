@@ -46,6 +46,8 @@ trait HasOrderFormSupport
             'addresses' => fn($query) => $query->where('default', true),
             'cart',
         ])->find($state);
+
+
         if ($customer)
         {
             // Cached it
@@ -66,6 +68,7 @@ trait HasOrderFormSupport
             $set('shipping_address_id',$customerAddress);
             $set('billing_address_id',$customerAddress);
 
+
         }
         return null;
     }
@@ -75,6 +78,7 @@ trait HasOrderFormSupport
     {
         $formCart = collect(array_values($get('cart')));
         $customer = $get('cached_customer');
+
 
         $selectedProducts = $formCart->map(function ($item) {
             return isset($item['cartable_id']) ? self::getProducts($item['cartable_id'],true) : null;

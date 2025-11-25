@@ -155,7 +155,7 @@ Route::prefix('cart')->group(function () {
 // ========================
 
 // Guest order placement
-Route::post('order/place', [OrderController::class, 'placeOrder'])->name('order.placed');
+Route::post('order/place', [\App\Http\Controllers\Api\Order\OrderActionController::class, 'placeOrder'])->name('order.placed');
 // Stats
 Route::get('order/insight',[OrderController::class,'getInsight']); // get user order trend data insight
 
@@ -211,7 +211,7 @@ Route::prefix('transactions')
 // 🔗 INTEGRATION ROUTES
 // ========================
 Route::prefix('integration')->group(function () {
-    Route::get('/payment', [IntegrationController::class, 'getPaymentIntegrations']); // GET /integration/payment
+    Route::get('/payment', [IntegrationController::class, 'getMinimalPaymentIntegrations']); // GET /integration/payment
 });
 
 // ========================

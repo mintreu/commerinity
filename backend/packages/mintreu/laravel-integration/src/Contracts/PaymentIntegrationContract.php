@@ -8,9 +8,9 @@ interface PaymentIntegrationContract
 {
 
 
-    public function order();
-
-    public function verify();
-
-    public function getSlug():string;
+//    public function order():object;
+//
+//    public function verify():object;
+//
+//    public function getSlug():string;
 }

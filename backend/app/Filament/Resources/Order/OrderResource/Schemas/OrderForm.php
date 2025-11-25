@@ -125,12 +125,14 @@ class OrderForm
 
             Forms\Components\Section::make('Notes')
                 ->schema([
-                    Forms\Components\Textarea::make('notes')
-                        ->label('Customer Notes')
-                        ->columnSpanFull(),
-                    Forms\Components\Textarea::make('admin_notes')
-                        ->label('Admin Notes')
-                        ->columnSpanFull(),
+//                    Forms\Components\Textarea::make('notes')
+//                        ->label('Customer Notes')
+//                        ->columnSpanFull(),
+//                    Forms\Components\Textarea::make('admin_notes')
+//                        ->label('Admin Notes')
+//                        ->columnSpanFull(),
+
+                
                 ]),
         ];
     }

@@ -84,7 +84,7 @@
         </div>
 
         <!-- TABLET/DESKTOP: Coverflow Effect (sm+) -->
-        <div class="hidden sm:block products-swiper relative">
+        <div class="hidden sm:block products-swiper relative overflow-x-hidden">
           <Swiper
               :modules="swiperModules"
               :slides-per-view="1"

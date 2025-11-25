@@ -29,9 +29,12 @@ export default defineNuxtConfig({
 
         // Public keys (exposed to client-side)
         public: {
-            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in/api',
-            webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'https://panel.vvindia.in',
-            siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com',
+            // apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in/api',
+            // webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'https://panel.vvindia.in',
+            // siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://vvindia.com',
+            apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api',
+            webBase: process.env.NUXT_PUBLIC_WEB_BASE || 'http://localhost:8000',
+            siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:8000',
             nodeEnv: process.env.NODE_ENV || 'production',
             vapidPublicKey: process.env.NUXT_PUBLIC_VAPID_PUBLIC_KEY,
             sentry: {
@@ -58,7 +61,7 @@ export default defineNuxtConfig({
                 {name: 'theme-color', content: '#ffffff'},
                 {name: 'mobile-web-app-capable', content: 'yes'},
                 {name: 'apple-mobile-web-app-status-bar-style', content: 'default'},
-                {name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes'},
+                 {name: 'viewport', content: 'width=device-width, initial-scale=1'},
             ],
             link: [
                 {rel: 'icon', type: 'image/png', href: '/logo.png'},
@@ -73,7 +76,8 @@ export default defineNuxtConfig({
 
     // ✅ Laravel Sanctum Configuration
     laravelSanctum: {
-        apiUrl: process.env.NUXT_PUBLIC_WEB_BASE || 'https://panel.vvindia.in',
+        // apiUrl: process.env.NUXT_PUBLIC_WEB_BASE || 'https://panel.vvindia.in',
+        apiUrl: process.env.NUXT_PUBLIC_WEB_BASE || 'http://localhost:8000',
         authMode: 'cookie',
         userResponseWrapperKey: 'data',
         sanctumEndpoints: {

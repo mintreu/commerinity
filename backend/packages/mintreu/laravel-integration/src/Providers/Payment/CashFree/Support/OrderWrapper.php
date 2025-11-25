@@ -45,7 +45,6 @@ class OrderWrapper
 
 
 
-
         return [
             'order_id' => $this->orderData->getReceipt(),
             'order_currency' => $this->orderData->getCurrency(),

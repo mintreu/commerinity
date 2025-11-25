@@ -41,8 +41,8 @@ class Transaction extends Model
 //        'provider_id',
         'success_url',
         'failure_url',
-        'success_redirect_url',
-        'failure_redirect_url',
+//        'success_redirect_url',
+//        'failure_redirect_url',
         'status',
         'expire_at',
         'integration_id',
@@ -93,6 +93,11 @@ class Transaction extends Model
         return $this->morphTo();
     }
 
+    public function successUrl():?string
+    {
+        return $this->success_url;
+    }
+
     /**
      * Redirect URL on success.
      */
@@ -138,7 +143,15 @@ class Transaction extends Model
     }
 
 
+    public function isExpired(): bool
+    {
+        // If expire_at is null, treat as not expired
+        if (is_null($this->expire_at)) {
+            return false;
+        }
 
+        return $this->expire_at->isPast();
+    }
 
 
 }

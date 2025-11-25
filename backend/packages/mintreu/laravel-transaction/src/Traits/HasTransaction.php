@@ -38,7 +38,7 @@ trait HasTransaction
         ?string $paymentProviderSlug = null,
         int $expireAfterMinutes = 20,
         array $notes = [],
-        null|int|float $amount = null
+        null|int|float|string $amount = null
     ): ?Transaction {
         if ($type instanceof TransactionTypeCast) {
             $type = $type->value;
@@ -53,7 +53,13 @@ trait HasTransaction
 
 
             // Resolve amount with backward compatibility
-            $resolvedAmount = $amount ?? $this->resolveTransactionAmount();
+//            $resolvedAmount = $amount ?? $this->resolveTransactionAmount();
+
+
+
+            $resolvedAmount =  $this->resolveTransactionAmount($amount);
+
+
 
             $transactionData = [
                 'uuid'      => $this->uuid,
@@ -137,7 +143,7 @@ trait HasTransaction
         ?string $currency = null,
         ?string $paymentProviderSlug = null,
         int $expireAfterMinutes = 15,
-        null|int|float $amount = null
+        null|int|float|string $amount = null
     ): ?Transaction {
         return $this->createTransaction(
             $customer,
@@ -163,7 +169,7 @@ trait HasTransaction
         ?string $currency = null,
         ?string $paymentProviderSlug = null,
         int $expireAfterMinutes = 15,
-        null|int|float $amount = null
+        null|int|float|string $amount = null
     ): ?Transaction {
         return $this->createTransaction(
             $customer,
@@ -246,17 +252,29 @@ trait HasTransaction
      *
      * @throws \RuntimeException if no amount is resolved
      */
-    protected function resolveTransactionAmount(): int|float
+    protected function resolveTransactionAmount(null|int|float|string $amount = null): int|float
     {
+
+
+
+
         // 1. Explicit property
         if (isset($this->transactionAmount)) {
             return $this->transactionAmount;
         }
-
         // 2. Constant
         if (defined(static::class.'::TRANSACTION_AMOUNT_VALUE')) {
-            $field = constant(static::class.'::TRANSACTION_AMOUNT_VALUE');
-            return $this->{$field};
+            //$field = constant(static::class.'::TRANSACTION_AMOUNT_VALUE');
+            //return $this->{$field};
+            return $this->getAttributeValue(constant(static::class.'::TRANSACTION_AMOUNT_VALUE'));
+        }
+
+
+//        dd(!isset($field) && is_string($amount));
+
+        if (!isset($field) && is_string($amount))
+        {
+            $field = $amount;
         }
 
         // 3. Common attributes

@@ -65,7 +65,7 @@ watch(() => props.url, fetchProducts)
         1024: { slidesPerView: 4 },
         1280: { slidesPerView: 6 }
       }"
-        class="my-6"
+        class="my-6 overflow-x-hidden"
     >
       <SwiperSlide v-for="product in items" :key="product.url">
         <div class="border border-gray-200 dark:border-gray-700 rounded p-4 hover:shadow-lg transition">

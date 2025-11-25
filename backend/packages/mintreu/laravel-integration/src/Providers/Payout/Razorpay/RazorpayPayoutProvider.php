@@ -28,7 +28,7 @@ class RazorpayPayoutProvider implements IntegrationContract
         return app(static::class)->getInstance();
     }
 
-    protected function getIntegration()
+    public function getIntegration()
     {
         return ($this->integrationLoader)();
     }
@@ -37,6 +37,26 @@ class RazorpayPayoutProvider implements IntegrationContract
     public function getSlug():string
     {
         return 'razorpay-payout';
+    }
+
+    /**
+     * Set an error message.
+     *
+     * @param string $error_text
+     */
+    public function setError(string $error_text): void
+    {
+        $this->error = $error_text;
+    }
+
+    /**
+     * Get the error message.
+     *
+     * @return string|null
+     */
+    public function getError(): ?string
+    {
+        return $this->error;
     }
 
     public function getApi(): ?Api

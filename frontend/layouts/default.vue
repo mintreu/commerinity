@@ -8,7 +8,7 @@
     </div>
 
     <!-- Main Layout Container -->
-    <div class="layout-main flex min-h-screen flex-col">
+    <div class="layout-main flex min-h-screen flex-col overflow-x-hidden">
 
       <!-- ✅ Navbar - Defer 100ms for faster FCP -->
       <ClientOnly>

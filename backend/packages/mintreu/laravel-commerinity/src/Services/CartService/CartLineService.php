@@ -60,7 +60,7 @@ class CartLineService
 
 
 
-    public function getMeta(bool $formatted)
+    public function getMeta(bool $formatted = false)
     {
         $this->calculating();
 
@@ -89,15 +89,16 @@ class CartLineService
                 'discount'          => $this->applicableSale?->action_type?->getUnit($this->discount),
                 'voucher'           => $this->voucherValidator->getCoupon(),
                 'valid_voucher'     => $this->voucherValidator->isValid(),
-                'tax'               => null,
-                'shipping_cost'     => null,
+                'tax'               => LaravelMoney::format(0),
+                'shipping_cost'     => LaravelMoney::format(0),
                 'total'             => $this->total->formatted(),
 
                 'raw' => [
-                    'sub_total' => $formatted ? $this->subTotal->getAmount() : $this->subTotal,
-                    'discount'  => $formatted ? $this->discount->getAmount() : $this->discount,
-                    'tax'       => $formatted ? $this->taxAmount->getAmount() : $this->taxAmount,
-                    'total'     => $formatted ? $this->total->getAmount() : $this->total,
+                    'sub_total'         => $formatted ? $this->subTotal->getAmount() : $this->subTotal,
+                    'discount'          => $formatted ? $this->discount->getAmount() : $this->discount,
+                    'tax'               => $formatted ? $this->taxAmount->getAmount() : $this->taxAmount,
+                    'shipping_cost'     => $formatted ? LaravelMoney::format(0) :LaravelMoney::make(0),
+                    'total'             => $formatted ? $this->total->getAmount() : $this->total,
                 ]
             ],
             'tire' => $this->cheapestTire,
@@ -111,6 +112,8 @@ class CartLineService
         $validSale = $this->cartSaleValidator->validate();
 
         $validVoucher = $this->voucherValidator->validate($this->cartable);
+
+//        $this->cartService->getCustomer()->addresses()
 
 
         $this->subTotal = $this->subTotal->add($this->resolveProductPrice)->multiply($this->lineItem->quantity);

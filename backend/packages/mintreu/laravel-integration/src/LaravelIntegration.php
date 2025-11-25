@@ -2,7 +2,6 @@
 
 namespace Mintreu\LaravelIntegration;
 
-
 use BadMethodCallException;
 use Mintreu\LaravelIntegration\Casts\IntegrationTypeCast;
 use Mintreu\LaravelIntegration\Contracts\PaymentIntegrationContract;
@@ -14,16 +13,8 @@ use Mintreu\LaravelIntegration\Models\Integration;
 use Mintreu\LaravelIntegration\Support\LaravelIntegrationRegistry;
 use Mintreu\Toolkit\Support\Validator\ClassContractValidator;
 
-
-///**
-// * @method static PaymentIntegrationContract payment(?string $provider = null)
-// * @method static PayoutProviderIntegrationContract payout(?string $provider = null)
-// * @method static SmsProviderIntegrationContract sms(?string $provider = null)
-// * @method static ShippingProviderIntegrationContract shipping(?string $provider = null)
-// */
-
-class LaravelIntegration {
-
+class LaravelIntegration
+{
     protected array $providersByType = [];
 
     public function __construct()
@@ -31,13 +22,10 @@ class LaravelIntegration {
         $this->resolveProviders();
     }
 
-
-    public static function make():static
+    public static function make(): static
     {
         return new static();
     }
-
-
 
     public static function __callStatic($name, $arguments)
     {
@@ -46,11 +34,59 @@ class LaravelIntegration {
         return $instance->getProviderInstance($name, $arguments[0] ?? null);
     }
 
+    /**
+     * Get all available providers, optionally filtered by type.
+     * Each provider will have a 'default' property indicating if it's the default provider.
+     *
+     * @param string|null $type Optional type to filter by (payment, payout, sms, shipping)
+     * @return array Array of arrays with 'instance' and 'default' keys, keyed by provider slug
+     */
+    public function getAvailableProviders(?string $type = null): array
+    {
+        if ($type !== null) {
+            $type = strtolower($type);
+            $providers = $this->providersByType[$type] ?? [];
+            return $this->attachDefaultFlag($providers, $type);
+        }
+
+        $result = [];
+        foreach ($this->providersByType as $providerType => $providers) {
+            $result[$providerType] = $this->attachDefaultFlag($providers, $providerType);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Attach 'default' flag to each provider based on database settings.
+     *
+     * @param array $providers Array of provider instances
+     * @param string $type Provider type (payment, payout, sms, shipping)
+     * @return array Array with 'instance' and 'default' keys for each provider
+     */
+    private function attachDefaultFlag(array $providers, string $type): array
+    {
+        $defaultProvider = Integration::where('type', $type)
+            ->where('status', true)
+            ->where('default', true)
+            ->first();
+
+        $result = [];
+        foreach ($providers as $slug => $instance) {
+            $result[$slug] = [
+                'instance' => $instance,
+                'slug'  => $slug,
+                'default' => $defaultProvider && $defaultProvider->url === $slug,
+            ];
+        }
+
+        return $result;
+    }
+
     private function resolveProviders(): void
     {
         $allProviders    = LaravelIntegrationRegistry::make()->getAllProviders();
         $activeProviders = LaravelIntegrationRegistry::getActiveProviders();
-
 
         foreach ($allProviders as $key => $config) {
             $parts = explode('-', $key);
@@ -77,8 +113,6 @@ class LaravelIntegration {
             }
         }
     }
-
-
 
     public function getProviderInstance(string $type, ?string $provider = null)
     {
@@ -121,7 +155,4 @@ class LaravelIntegration {
 
         return $this->providersByType[$type][$default->url];
     }
-
-
-
 }

@@ -2,10 +2,12 @@
 
 namespace Mintreu\LaravelIntegration\Providers\Payment\Wallet;
 
+use Mintreu\LaravelIntegration\Contracts\IntegrationContract;
+use Mintreu\LaravelIntegration\Contracts\PaymentIntegrationContract;
 use Mintreu\LaravelIntegration\Providers\Payment\Wallet\Actions\OrderAction;
 use Mintreu\LaravelIntegration\Providers\Payment\Wallet\Actions\VerifyAction;
 
-class WalletPaymentProvider
+class WalletPaymentProvider  implements IntegrationContract,PaymentIntegrationContract
 {
 
     protected $integrationLoader;
@@ -27,7 +29,7 @@ class WalletPaymentProvider
     }
 
 
-    protected function getIntegration()
+    public function getIntegration()
     {
         return ($this->integrationLoader)();
     }
@@ -69,7 +71,7 @@ class WalletPaymentProvider
         return new OrderAction($this);
     }
 
-    public function verify()
+    public function verify():VerifyAction
     {
         return new VerifyAction($this);
     }

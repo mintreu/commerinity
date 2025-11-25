@@ -30,7 +30,7 @@
             768: { slidesPerView: 4 },
             1024: { slidesPerView: 6 }
           }"
-            class="my-4"
+            class="my-4 overflow-x-hidden"
         >
           <SwiperSlide
               v-for="(child, idx) in category.children"

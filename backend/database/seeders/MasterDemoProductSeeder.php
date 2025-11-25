@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Casts\TaxTypeCast;
+use App\Models\TaxCode;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -12,237 +15,299 @@ use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
+use Mintreu\LaravelProductCatalogue\Services\ProductManager;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
 class MasterDemoProductSeeder extends Seeder
 {
-    protected $allCategories;
-    protected $allFilterGroups;
+    private array $filterGroups;
+    private array $categoryFilterMap = [
+        'electronics' => 'Electronics',
+        'mobiles-accessories' => 'Electronics',
+        'smartphones' => 'Electronics',
+        'cases-covers' => 'Electronics',
+        'headphones-headsets' => 'Electronics',
+        'computers-accessories' => 'Electronics',
+        'laptops' => 'Electronics',
+        'printers-ink' => 'Electronics',
+        'monitors' => 'Electronics',
+        'tvs-appliances' => 'Electronics',
+        'televisions' => 'Electronics',
+        'washing-machines' => 'Electronics',
+        'refrigerators' => 'Electronics',
+        'fashion' => 'Apparels',
+        'mens-fashion' => 'Apparels',
+        'womens-fashion' => 'Apparels',
+        'kids-fashion' => 'Apparels',
+        'home-kitchen' => 'Furniture',
+        'furniture' => 'Furniture',
+        'cookware-dining' => 'Food Products',
+        'home-decor' => 'Furniture',
+        'books' => 'Books',
+        'sports-outdoors' => 'Apparels',
+        'exercise-fitness' => 'Apparels',
+        'outdoor-recreation' => 'Apparels',
+        'team-sports' => 'Apparels',
+        'beauty-health' => 'Ayurveda & Herbal Medicines',
+        'skin-care' => 'Ayurveda & Herbal Medicines',
+        'hair-care' => 'Ayurveda & Herbal Medicines',
+        'personal-care' => 'Ayurveda & Herbal Medicines',
+        'toys-games' => 'Toys & Games',
+        'action-figures' => 'Toys & Games',
+        'puzzles' => 'Toys & Games',
+        'building-toys' => 'Toys & Games',
+        'automotive' => 'Electronics',
+        'car-accessories' => 'Electronics',
+        'motorcycle-parts' => 'Electronics',
+        'car-electronics' => 'Electronics',
+        'baby-care' => 'Apparels',
+        'diapering' => 'Apparels',
+        'feeding' => 'Food Products',
+        'nursery' => 'Furniture',
+        'grocery-gourmet-foods' => 'Food Products',
+        'snack-foods' => 'Food Products',
+        'beverages' => 'Food Products',
+        'cooking-baking-supplies' => 'Food Products',
+        'spices-and-masalas' => 'Spices & Masala',
+        'pet-supplies' => 'Food Products',
+        'dog-supplies' => 'Food Products',
+        'cat-supplies' => 'Food Products',
+        'fish-aquatic-pets' => 'Electronics',
+        'office-products' => 'Printables',
+        'office-electronics' => 'Electronics',
+        'office-furniture' => 'Furniture',
+        'office-supplies' => 'Printables',
+        'industrial-scientific' => 'Electronics',
+        'lab-scientific-products' => 'Electronics',
+        'janitorial-sanitation-supplies' => 'Detergents & Cleaners',
+        'professional-medical-supplies' => 'Ayurveda & Herbal Medicines',
+        'arts-crafts-sewing' => 'Apparels',
+        'painting-drawing-art-supplies' => 'Apparels',
+        'sewing' => 'Apparels',
+        'crafting' => 'Apparels',
+        'software' => 'Electronics',
+        'business-office' => 'Electronics',
+        'antivirus-security' => 'Electronics',
+        'operating-systems' => 'Electronics',
+        'music' => 'Electronics',
+        'cds-vinyl' => 'Electronics',
+        'digital-music' => 'Electronics',
+        'musical-instruments' => 'Electronics',
+        'health' => 'Ayurveda & Herbal Medicines',
+        'vitamins-dietary-supplements' => 'Ayurveda & Herbal Medicines',
+        'health-care' => 'Ayurveda & Herbal Medicines',
+        'medical-equipment' => 'Ayurveda & Herbal Medicines',
+        'medicine' => 'Ayurveda & Herbal Medicines',
+        'over-the-counter-medication' => 'Ayurveda & Herbal Medicines',
+        'prescription-medication' => 'Ayurveda & Herbal Medicines',
+        'first-aid' => 'Ayurveda & Herbal Medicines',
+        'ayurvedic-medicine' => 'Ayurveda & Herbal Medicines',
+        'ayurvedic-supplements' => 'Ayurveda & Herbal Medicines',
+        'ashwagandha' => 'Ayurveda & Herbal Medicines',
+        'turmeric' => 'Ayurveda & Herbal Medicines',
+        'triphala' => 'Ayurveda & Herbal Medicines',
+        'herbal-remedies' => 'Ayurveda & Herbal Medicines',
+        'neem' => 'Ayurveda & Herbal Medicines',
+        'amla' => 'Ayurveda & Herbal Medicines',
+        'tulsi' => 'Ayurveda & Herbal Medicines',
+        'ayurvedic-personal-care' => 'Ayurveda & Herbal Medicines',
+        'ayurvedic-hair-care' => 'Ayurveda & Herbal Medicines',
+        'ayurvedic-skin-care' => 'Ayurveda & Herbal Medicines',
+        'ayurvedic-oral-care' => 'Ayurveda & Herbal Medicines',
+    ];
+
+
+    protected $categories;
+    protected $taxCodes;
+
+    public function __construct()
+    {
+        $this->filterGroups = $this->getFilterGroups();
+        $this->categories = Category::Public()->where('parent_id',null)->with('children')->get();
+        $this->taxCodes = TaxCode::where('type',TaxTypeCast::GOODS->value)->get();
+    }
+
 
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $this->command->info('Starting demo product seeding...');
+        foreach ($this->categories as $category)
+        {
+            if (in_array($category->url,[
+                'spices-and-masalas',
+                'ayurvedic-hair-care',
+                'ayurvedic-oral-care',
+                'hair-care',
+                'home-decor',
+                'mens-fashion',
+                'womens-fashion',
+                'cases-covers'
 
-        $this->allCategories = Category::with('children')->get();
-        $this->allFilterGroups = FilterGroup::with('filters.options')->get();
+            ])){
+                $filterGroup = FilterGroup::with('filters.options')
+                    ->where('name',$this->categoryFilterMap[$category->url])
+                    ->first();
 
-        $processedCategories = 0;
-        $totalProducts = 0;
+                $products = $this->getFromStorage('private/data/products/'.$category->url.'/'.$category->url.'.json');
 
-        foreach ($this->allCategories as $category) {
-            $filterGroup = $this->getCorrectFilterGroupOfThisCategory($category);
-
-            if (!is_null($filterGroup)) {
-                $productsSeeded = $this->attemptToSeedThisCategory($category, $filterGroup);
-                $totalProducts += $productsSeeded;
-                $processedCategories++;
-            } else {
-                $this->command->warn("Filter group not found for category: {$category->url}");
+                $this->seedProducts($products,$category,$filterGroup);
             }
         }
 
-        $this->command->info("Seeding completed! Processed {$processedCategories} categories with {$totalProducts} products.");
+
     }
 
-    /**
-     * Attempt to seed products for a specific category
-     */
-    protected function attemptToSeedThisCategory(Category $category, FilterGroup $filterGroup): int
+
+    // METHODS
+
+    protected function seedProducts(array|object $products, Category $category,FilterGroup $filterGroup)
     {
-        $productList = $this->getFromStorage('private/data/products/demo/' . $category->url . '.json');
+        if ($products)
+        {
+            foreach ($products as $productInfo)
+            {
+                // Handle array vs object
+                $name = is_array($productInfo) ? $productInfo['name'] : $productInfo->name;
+                $url  = is_array($productInfo) ? $productInfo['url']  : $productInfo->url;
+                $sku  = is_array($productInfo) ? $productInfo['sku']  : $productInfo->sku;
+                $shortDesc = is_array($productInfo) ? $productInfo['short_description']  : $productInfo->short_description;
+                $desc = is_array($productInfo) ? $productInfo['description']  : $productInfo->description;
 
-        if (!$productList) {
-            $this->command->warn("No product data found for category: {$category->url}");
-            return 0;
-        }
+                $hsnTaxCode = $this->taxCodes->random(1)->first();
 
-        $this->command->info("Seeding category: {$category->name} ({$category->url}) - " . count($productList) . " products");
-
-        $successCount = 0;
-        foreach ($productList as $productInfo) {
-            try {
-                $this->startSeeding($productInfo, $category, $filterGroup);
-                $successCount++;
-            } catch (Exception $e) {
-                $this->command->error("Failed to seed product {$productInfo->name}: " . $e->getMessage());
-                Log::error("Product seeding failed", [
-                    'product' => $productInfo->name,
-                    'category' => $category->url,
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                $productData = Product::factory()->raw([
+                    'name' => $name,
+                    'url'   => $url,
+                    'sku'   => $sku,
+                    'price' => fake()->randomElement([12050,15000,8000,45000]),
+                    'type' => ProductTypeCast::CONFIGURABLE,
+                    'status' => PublishableStatusCast::PUBLISHED->value,
+                    'filter_group_id' => $filterGroup->id,
+                    'filter_options' => $this->mapFilterOptions($filterGroup, ProductTypeCast::SIMPLE->value),
+                    'tax_code_id' => $hsnTaxCode->id,
+                    'short_description' => $shortDesc,
+                    'description' => $desc
                 ]);
+
+
+                //$product = ProductCreationService::make($productData)->create();
+
+                $product = ProductManager::create($productData);
+                $this->feedTheProduct($product,$category);
             }
         }
-
-        return $successCount;
     }
 
-    /**
-     * Seed individual product
-     */
-    protected function startSeeding($productInfo, Category $category, FilterGroup $filterGroup): void
+
+    protected function feedTheProduct(Product $product,Category $category)
     {
-        // Determine if product should be configurable based on JSON data
-        $isConfigurable = $productInfo->configurable ?? false;
-        $productType = $isConfigurable ? ProductTypeCast::CONFIGURABLE : ProductTypeCast::SIMPLE;
-
-        $productData = Product::factory()->raw([
-            'name' => $productInfo->name,
-            'url' => $productInfo->url,
-            'sku' => $productInfo->sku,
-            'price' => $productInfo->price,
-            'type' => $productType,
-            'status' => PublishableStatusCast::PUBLISHED->value,
-            'filter_group_id' => $filterGroup->id,
-            'filter_options' => $this->mapFilterOptions($filterGroup, $productType->value),
-        ]);
-
-        $product = ProductCreationService::make($productData)->create();
-
         // Add Media
-        $this->attachMediaFiles($product, $productInfo);
+        $this->attachMediaFiles($product,$category);
 
-        // Handle variants for configurable products
-        if ($isConfigurable) {
-            $product->load('variants');
-            $product->variants()->each(function ($variant) use ($product) {
-                $this->attachMediaFilesFromParent($product, $variant);
-                $variant->update([
-                    'status' => PublishableStatusCast::PUBLISHED,
-                    'max_quantity' => fake()->numberBetween(3, 12)
-                ]);
-            });
-        }
+        $product->load('variants');
+        $product->variants()->each(function ($variant) use($product,$category){
+            $this->attachMediaFilesFromParent($product,$variant,$category);
+            //Update Status
+            $variant->update(['status' => PublishableStatusCast::PUBLISHED,'max_quantity' => fake()->numberBetween(3,12)]);
+        });
 
         // Add Stocks
         $this->addStock($product);
 
-        // Add Category mapping with proper base_category handling
-        $this->attachCategories($product, $category);
-    }
-
-    /**
-     * Attach categories with proper base_category handling
-     */
-    protected function attachCategories(Product $product, Category $category): void
-    {
-        // Find the root/base category
-        $baseCategory = $this->findBaseCategoryId($category);
-        $parentCategory = $this->findParentCategory($category);
-
+        // Add Category
         $product->categories()->attach([
-            $parentCategory->id => [
-                'base_category' => $baseCategory,
+            $category->id => [
+                'base_category' => $category?->parent_id ?? $category->id,
             ],
         ]);
-    }
 
-    /**
-     * Find the base category ID (root category) - NEVER returns null
-     */
-    protected function findBaseCategoryId(Category $category): int
-    {
-        // Walk up the category tree to find the root
-        $current = $category;
-        while ($current->parent_id !== null) {
-            $parent = $this->allCategories->where('id', $current->parent_id)->first();
-            if (!$parent) {
-                break; // If parent not found, use current as base
-            }
-            $current = $parent;
+
+        // Engagement
+        $author = User::firstWhere('email','test@example.com');
+        if ($author)
+        {
+            $newEngagement = $author->productEngagements()->create([
+                'product_id' => $product->id,
+                'review' => fake()->text,
+                'rating' => fake()->randomElement([0,1,2,3,4,5]),
+                'helpful_votes' => fake()->randomElement([true,false]),
+            ]);
+
+            // WishList
+            $newWishList = $author->addToWishlist($product->id);
+
         }
-        return $current->id;
     }
 
-    /**
-     * Find the appropriate parent category for attachment
-     */
-    protected function findParentCategory(Category $category): Category
-    {
-        // If category has a parent, use the parent; otherwise use the category itself
-        if ($category->parent_id !== null) {
-            $parent = $this->allCategories->where('id', $category->parent_id)->first();
-            return $parent ?? $category;
-        }
 
-        return $category;
+
+
+
+
+
+
+
+    // HELPER METHODS
+
+    protected function getMediaFromStorage(string $path): string
+    {
+        return storage_path('app/private/media/products/'.$path);
     }
 
-    /**
-     * Get media file path
-     */
-    protected function getMediaFromStorage(string $filename): string
-    {
-        return storage_path('app/private/media/products/' . $filename);
-    }
 
-    /**
-     * Attach media files to product
-     */
-    protected function attachMediaFiles(Product $product, $productInfo): void
+    protected function attachMediaFiles(Product $product,Category $category)
     {
-        // Use the image names from JSON or fallback to URL-based naming
-        $displayImage = $productInfo->displayImage ?? ($product->url . '.jpg');
-        $bannerImage = $productInfo->bannerImage ?? ($product->url . '.jpg');
-
-        // Add display image
-        $displayImagePath = $this->getMediaFromStorage($displayImage);
-        if (file_exists($displayImagePath)) {
+        // Add Media
+        $displayImagePath = $this->getMediaFromStorage($category->url.'/'.$product->url.'.png');
+        if (file_exists($displayImagePath))
+        {
             $product->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
         }
-
-        // Add banner image (only if different from display image)
-        if ($displayImage !== $bannerImage) {
-            $bannerImagePath = $this->getMediaFromStorage($bannerImage);
-            if (file_exists($bannerImagePath)) {
-                $product->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
-            }
+        $bannerImagePath = $this->getMediaFromStorage($category->url.'/'.$product->url.'.png');
+        if (file_exists($bannerImagePath))
+        {
+            $product->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
         }
     }
 
-    /**
-     * Attach media files from parent to variant
-     */
-    protected function attachMediaFilesFromParent(Product $parent, Product $variant): void
-    {
-        $this->copyMediaCollection($parent, $variant, 'displayImage');
-        $this->copyMediaCollection($parent, $variant, 'bannerImage');
-    }
 
-    /**
-     * Copy media collection from parent to child
-     */
-    protected function copyMediaCollection(Product $parent, Product $child, string $collection): void
-    {
-        $url = $parent->getFirstMediaUrl($collection);
-        $path = $parent->getFirstMediaPath($collection);
 
-        // Try URL first, then fallback to path
-        if ($url) {
-            try {
-                $child->addMediaFromUrl($url)
+    protected function attachMediaFilesFromParent(Product $parent, Product $product,Category $category): void
+    {
+        // Helper function to add media from URL or fallback to path
+        $addMediaSafely = function ($mediaCollection) use ($parent, $product) {
+            $url = $parent->getFirstMediaUrl($mediaCollection);
+            $path = $parent->getFirstMediaPath($mediaCollection);
+
+            if ($url) {
+                try {
+                    $product->addMediaFromUrl($url)
+                        ->preservingOriginal()
+                        ->toMediaCollection($mediaCollection);
+                    return;
+                } catch (\Exception $e) {
+                    // URL failed, fallback to path
+                    // optional: log the error
+                    info("Failed to fetch media from URL: {$url}, falling back to path. Error: " . $e->getMessage());
+                }
+            }
+
+            // Fallback to local path
+            if ($path && file_exists($path)) {
+                $product->addMedia($path)
                     ->preservingOriginal()
-                    ->toMediaCollection($collection);
-                return;
-            } catch (Exception $e) {
-                Log::info("Failed to fetch media from URL: {$url}, falling back to path. Error: " . $e->getMessage());
+                    ->toMediaCollection($mediaCollection);
             }
-        }
+        };
 
-        // Fallback to local path
-        if ($path && file_exists($path)) {
-            $child->addMedia($path)
-                ->preservingOriginal()
-                ->toMediaCollection($collection);
-        }
+        $addMediaSafely('displayImage');
+        $addMediaSafely('bannerImage');
     }
 
-    /**
-     * Add stock tiers to product
-     */
+
+
     private function addStock(Product $product): void
     {
         $stockRanges = [
@@ -257,193 +322,102 @@ class MasterDemoProductSeeder extends Seeder
                 'sold_quantity' => 0,
                 'min_quantity' => 1,
                 'max_quantity' => 10,
-                'price' => fake()->randomElement([5000, 10000, 15000, 20000, 25000]), // Prices in paise
+                'price' => fake()->randomElement([12050,15000,8000,45000]),
             ]);
         }
     }
 
-    /**
-     * FIXED: Map filter options based on product type - handles edge cases properly
-     */
-    private function mapFilterOptions(FilterGroup $filterGroup, string $productType): array
+
+    private function mapFilterOptions($filterGroup, string $productType): array
     {
         $isConfigurable = $productType === 'configurable';
 
         return $filterGroup->filters->mapWithKeys(function ($filter) use ($isConfigurable) {
             $options = $filter->options;
 
-            // If no options available, return empty array for this filter
             if ($options->isEmpty()) {
                 return [(string) $filter->id => []];
             }
 
-            $optionsCount = $options->count();
-
-            if ($isConfigurable && $optionsCount > 1) {
-                // For configurable products with multiple options, select 2-3 options
-                // But never more than available
-                $selectedCount = min($optionsCount, max(2, $optionsCount));
-                $selected = $options->random($selectedCount);
+            if ($isConfigurable) {
+                $selected = $options->random(min(2, $options->count()))->pluck('id')->values()->toArray();
             } else {
-                // For simple products OR configurable with only 1 option, select 1 option
-                $selected = $options->random(1);
+                $selected = [$options->random()->id];
             }
 
-            // Extract only the IDs and cast to string
-            $selectedIds = $selected->pluck('id')->map(function($id) {
-                return (string) $id;
-            })->toArray();
+            // Always cast to string to match form data format
+            $selected = array_map('strval', $selected);
 
-            return [(string) $filter->id => $selectedIds];
+            return [(string) $filter->id => $selected];
         })->toArray();
     }
 
-    /**
-     * Load JSON data from storage
-     */
-    protected function getFromStorage(string $path)
-    {
-        $fullPath = storage_path('app/' . $path);
 
-        if (!file_exists($fullPath)) {
+
+    /**
+     * @return array
+     */
+    public function getCategoryTree(): array
+    {
+        $json = Storage::disk('private')->get('data/categories/product-categories.json');
+        return json_decode($json, true);
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilterGroups(): array
+    {
+        $json = Storage::disk('private')->get('data/filters/filter-group.json');
+        return json_decode($json, true);
+    }
+
+
+    /**
+     * @param string $categoryUrl
+     * @return array|null
+     */
+    public function getFilterGroupByCategoryUrl(string $categoryUrl): ?array
+    {
+        $filterGroupName = $this->categoryFilterMap[$categoryUrl] ?? null;
+
+        if (!$filterGroupName) {
             return null;
         }
 
+        foreach ($this->filterGroups as $filterGroup) {
+            if ($filterGroup['name'] === $filterGroupName) {
+                return $filterGroup;
+            }
+        }
+
+        return null;
+    }
+
+
+
+    protected function getFromStorage(string $path)
+    {
+        // Debug the full path using the base disk instead of 'local'
+        $fullPath = storage_path('app/'.$path);
+        echo "Looking for file at: {$fullPath}\n";
+
+        if (! file_exists($fullPath)) {
+            throw new Exception("File not found: {$path}. Full path: {$fullPath}");
+        }
+
         $content = file_get_contents($fullPath);
-        if (!$content) {
-            return null;
+        if (! $content) {
+            throw new Exception("Empty file: {$path}");
         }
 
         $decoded = json_decode($content);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            Log::error("Invalid JSON in {$path}: " . json_last_error_msg());
-            return null;
+            throw new Exception("Invalid JSON in {$path}: ".json_last_error_msg());
         }
 
         return $decoded;
     }
 
-    /**
-     * Get the correct filter group for a category
-     */
-    protected function getCorrectFilterGroupOfThisCategory(Category $category): ?FilterGroup
-    {
-        // Comprehensive category to filter group mapping
-        $categoryFilterMapping = [
-            // Electronics & Tech
-            'electronics' => 'Electronics',
-            'mobiles-accessories' => 'Electronics',
-            'smartphones' => 'Electronics',
-            'cases-covers' => 'Electronics',
-            'headphones-headsets' => 'Electronics',
-            'computers-accessories' => 'Electronics',
-            'laptops' => 'Electronics',
-            'printers-ink' => 'Electronics',
-            'monitors' => 'Electronics',
-            'tvs-appliances' => 'Electronics',
-            'televisions' => 'Electronics',
-            'washing-machines' => 'Electronics',
-            'refrigerators' => 'Electronics',
-            'car-electronics' => 'Electronics',
-            'office-electronics' => 'Electronics',
-            'office-supplies' => 'Electronics',
-            'business-office' => 'Electronics',
-            'industrial-scientific' => 'Electronics',
-            'lab-scientific-products' => 'Electronics',
-            'janitorial-sanitation-supplies' => 'Electronics',
-            'professional-medical-supplies' => 'Electronics',
-            'software' => 'Electronics',
-            'antivirus-security' => 'Electronics',
-            'operating-systems' => 'Electronics',
-            'music' => 'Electronics',
-            'cds-vinyl' => 'Electronics',
-            'digital-music' => 'Electronics',
-            'musical-instruments' => 'Electronics',
 
-            // Fashion & Apparel
-            'fashion' => 'Apparels',
-            'mens-fashion' => 'Apparels',
-            'womens-fashion' => 'Apparels',
-            'kids-fashion' => 'Apparels',
-            'baby-care' => 'Apparels',
-            'diapering' => 'Apparels',
-            'feeding' => 'Apparels',
-            'nursery' => 'Apparels',
-
-            // Home & Furniture
-            'home-kitchen' => 'Furniture',
-            'furniture' => 'Furniture',
-            'cookware-dining' => 'Furniture',
-            'home-decor' => 'Furniture',
-            'office-furniture' => 'Furniture',
-
-            // Books
-            'books' => 'Books',
-
-            // Sports, Toys & Games
-            'sports-outdoors' => 'Toys & Games',
-            'exercise-fitness' => 'Toys & Games',
-            'outdoor-recreation' => 'Toys & Games',
-            'team-sports' => 'Toys & Games',
-            'toys-games' => 'Toys & Games',
-            'action-figures' => 'Toys & Games',
-            'puzzles' => 'Toys & Games',
-            'building-toys' => 'Toys & Games',
-            'automotive' => 'Toys & Games',
-            'car-accessories' => 'Toys & Games',
-            'motorcycle-parts' => 'Toys & Games',
-            'pet-supplies' => 'Toys & Games',
-            'dog-supplies' => 'Toys & Games',
-            'cat-supplies' => 'Toys & Games',
-            'fish-aquatic-pets' => 'Toys & Games',
-            'arts-crafts-sewing' => 'Toys & Games',
-            'painting-drawing-art-supplies' => 'Toys & Games',
-            'sewing' => 'Toys & Games',
-            'crafting' => 'Toys & Games',
-
-            // Health & Beauty (Ayurveda)
-            'beauty-health' => 'Ayurveda & Herbal Medicines',
-            'skin-care' => 'Ayurveda & Herbal Medicines',
-            'hair-care' => 'Ayurveda & Herbal Medicines',
-            'personal-care' => 'Ayurveda & Herbal Medicines',
-            'medicine' => 'Ayurveda & Herbal Medicines',
-            'ayurvedic-medicine' => 'Ayurveda & Herbal Medicines',
-            'ayurvedic-supplements' => 'Ayurveda & Herbal Medicines',
-            'ashwagandha' => 'Ayurveda & Herbal Medicines',
-            'turmeric' => 'Ayurveda & Herbal Medicines',
-            'triphala' => 'Ayurveda & Herbal Medicines',
-            'herbal-remedies' => 'Ayurveda & Herbal Medicines',
-            'neem' => 'Ayurveda & Herbal Medicines',
-            'amla' => 'Ayurveda & Herbal Medicines',
-            'tulsi' => 'Ayurveda & Herbal Medicines',
-            'ayurvedic-personal-care' => 'Ayurveda & Herbal Medicines',
-            'ayurvedic-hair-care' => 'Ayurveda & Herbal Medicines',
-            'ayurvedic-skin-care' => 'Ayurveda & Herbal Medicines',
-            'ayurvedic-oral-care' => 'Ayurveda & Herbal Medicines',
-            'health' => 'Ayurveda & Herbal Medicines',
-            'vitamins-dietary-supplements' => 'Ayurveda & Herbal Medicines',
-            'health-care' => 'Ayurveda & Herbal Medicines',
-            'medical-equipment' => 'Ayurveda & Herbal Medicines',
-            'over-the-counter-medication' => 'Ayurveda & Herbal Medicines',
-            'prescription-medication' => 'Ayurveda & Herbal Medicines',
-            'first-aid' => 'Ayurveda & Herbal Medicines',
-
-            // Food & Grocery
-            'grocery-gourmet-foods' => 'Food Products',
-            'snack-foods' => 'Food Products',
-            'beverages' => 'Food Products',
-            'cooking-baking-supplies' => 'Food Products',
-            'spices-and-masalas' => 'Spices & Masala',
-            'spices-masalas' => 'Spices & Masala',
-        ];
-
-        $filterGroupName = $categoryFilterMapping[$category->url] ?? null;
-
-        if (!$filterGroupName) {
-            Log::warning("No filter group mapping found for category: {$category->url}");
-            return null;
-        }
-
-        return $this->allFilterGroups->where('name', $filterGroupName)->first();
-    }
 }

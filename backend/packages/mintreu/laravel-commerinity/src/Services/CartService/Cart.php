@@ -23,7 +23,7 @@ class Cart extends CartService
      * @param bool $formatted
      * @return array
      */
-    public function getMeta(bool $formatted = true): array
+    public function getMeta(bool $formatted = false): array
     {
 
         // Eager load cartable with media to avoid N+1 problem
@@ -69,7 +69,7 @@ class Cart extends CartService
     }
 
 
-    protected function prepareMeta(null|CartVoucherValidator $voucherValidator,bool $formatted = true): array
+    protected function prepareMeta(null|CartVoucherValidator $voucherValidator,bool $formatted = false): array
     {
         return $this->cartItems->map(fn($item) => CartLineService::make($this,$item,$voucherValidator)->getMeta($formatted))->toArray();
     }
@@ -106,7 +106,7 @@ class Cart extends CartService
 
 
 
-    private function getSummaryMeta(array $itemsMeta = [], bool $formatted = true):array
+    private function getSummaryMeta(array $itemsMeta = [], bool $formatted = false):array
     {
         $subTotal = new LaravelMoney();
         $tax = new LaravelMoney();
@@ -132,7 +132,7 @@ class Cart extends CartService
 
         return [
             'sub_total'       => $formatted ? $subTotal->getAmount() : $subTotal,
-            'shipping_cost'   => null,
+            'shipping_cost'   => $formatted ? LaravelMoney::make(0)->getAmount() : LaravelMoney::make(0),
             'tax'             => $formatted ? $tax->getAmount() : $tax,
             'tax_percentage'  => 0,
             'discount'        => $formatted ?$discount->getAmount() : $discount,

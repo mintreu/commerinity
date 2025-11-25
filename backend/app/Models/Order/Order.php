@@ -22,28 +22,28 @@ class Order extends Model
 
     protected $fillable = [
         'uuid',
-        'amount',
+//        'amount',
         'subtotal',
         'discount',
         'tax',
         'total',
         'quantity',
         'voucher',
-        'is_cod',
+//        'is_cod',
         'tracking_id',
         'status',
         'payment_success',
         'expire_at',
         'customerable_type',
         'customerable_id',
-        'shipping_is_billing',
+//        'shipping_is_billing',
         'billing_address_id',
         'shipping_address_id',
 
-        'has_guest',
-        'customer_name',
-        'customer_email',
-        'customer_mobile',
+//        'has_guest',
+//        'customer_name',
+//        'customer_email',
+//        'customer_mobile',
 
 
 

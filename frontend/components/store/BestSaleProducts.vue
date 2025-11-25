@@ -58,7 +58,7 @@
         </div>
 
         <!-- DESKTOP: Premium Split View -->
-        <div class="hidden md:flex flex-row gap-4 md:gap-5 lg:gap-6 w-full ">
+        <div class="hidden md:flex flex-row gap-4 md:gap-5 lg:gap-6 w-full overflow-x-hidden">
 
           <!-- LEFT: PREMIUM Featured Product Preview -->
           <div class="w-full overflow-y-hidden md:w-3/5 lg:w-7/12 flex-shrink-0 rounded-2xl">

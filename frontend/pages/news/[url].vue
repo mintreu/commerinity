@@ -211,7 +211,7 @@
                         640: { slidesPerView: 2 },
                         1024: { slidesPerView: 1 }
                       }"
-                      class="related-sidebar-swiper"
+                      class="related-sidebar-swiper overflow-x-hidden"
                   >
                     <SwiperSlide v-for="relatedPost in relatedPosts" :key="relatedPost.url">
                       <NuxtLink

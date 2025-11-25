@@ -3,13 +3,16 @@
 namespace App\Filament\Resources\Order\OrderResource\Pages;
 
 use App\Filament\Resources\Order\OrderResource;
+
 use App\Services\OrderService\OrderCreationService;
+use App\Services\OrderService\OrderService;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
+use Mintreu\LaravelCommerinity\Services\CartService\Cart;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 
@@ -26,9 +29,11 @@ class CreateOrder extends CreateRecord
     {
         // $record = new ($this->getModel())($data);
 
+
+
         $customer = $this->getCachedForms()['form']->getLivewire()->data['cached_customer'];
 
-        $orderService = new OrderCreationService($customer);
+        $orderService = OrderService::make();
         $data['shipping_address_id'] = (int)$data['shipping_address_id'][0];
         $data['billing_address_id']  = (int)$data['billing_address_id'][0];
 
@@ -38,14 +43,14 @@ class CreateOrder extends CreateRecord
         $shippingAddress = $customerAddress = $customer->addresses->where('id',$shippingAddressId)->first();
         $billingAddress = $customerAddress = $customer->addresses->where('id',$billingAddressId)->first();
 
-        $record = $orderService
-            ->shippingAddress($shippingAddress)
-            ->billingAddress($billingAddress)
-            ->draft();
+        $cartService = new Cart($customer);
 
-//        $record->update([
-//            'admin_notes' => $data['admin_notes']
-//        ]);
+
+        $record = $orderService
+            ->create(cart: $cartService,billing: $billingAddress,shipping: $shippingAddress,isFilament: true,filamentResource: self::$resource);
+
+
+
 
         if (
             static::getResource()::isScopedToTenant() &&

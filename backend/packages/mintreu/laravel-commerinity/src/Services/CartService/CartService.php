@@ -229,6 +229,11 @@ class CartService
         return $this->changed;
     }
 
+    public function getCustomer(): Model|User|null
+    {
+        return $this->customer;
+    }
+
     public function setCouponCode(string|VoucherCode $voucherCode): void
     {
         if (is_string($voucherCode)) {

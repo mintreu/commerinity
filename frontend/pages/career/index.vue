@@ -148,7 +148,7 @@
               1024: { slidesPerView: 3 },
               1280: { slidesPerView: 3.5 },
             }"
-              class="pb-16"
+              class="pb-16 overflow-x-hidden"
           >
             <SwiperSlide v-for="(job, index) in filteredJobs" :key="job.url">
               <div class="job-card relative group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden transform hover:scale-105 border border-gray-200/50 dark:border-gray-700/50 h-96">

@@ -4,8 +4,11 @@ namespace App\Filament\Resources\Order\OrderResource\Pages;
 
 use App\Filament\Resources\Order\OrderResource;
 use App\Services\OrderService\OrderCreationService;
+use App\Services\OrderService\OrderService;
 use Filament\Actions;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewOrder extends ViewRecord
@@ -25,8 +28,21 @@ class ViewOrder extends ViewRecord
                         ->options([
                             'wallet' => 'Wallet',
                             'online' => 'Online'
-                        ])
+                        ]),
+                    Toggle::make('forced')
+                        ->label('Reset')
+                        ->default(false)
+                        ->helperText('If Enable transaction record reset if expired already')
                 ])->action(function (array $data){
+                    $result =  OrderService::make()->payIt(order: $this->record,provider: $data['provider'],hasResource: true,resource: self::$resource,forced: $data['forced']);
+                    if ($result['success'])
+                    {
+                        $redirectUrl = $result['redirect'];
+                        $this->redirect($redirectUrl);
+                    }else{
+                        Notification::make()->title($result['errors'])->warning()->send();
+                    }
+
 
                 }),
 

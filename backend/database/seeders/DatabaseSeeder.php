@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call([
-            GeoKitSeeder::class,
+            //GeoKitSeeder::class,
 
             AdminSeeder::class,
             StageSeeder::class,
@@ -31,7 +31,9 @@ class DatabaseSeeder extends Seeder
             TaxCodeSeeder::class,  // required for product
 
             //ProductSeeder::class,
-            ProductDemoSeeder::class,   // product seeder
+            //ProductDemoSeeder::class,   // product seeder
+
+            MasterDemoProductSeeder::class,
 
 
             IntegrationSeeder::class,

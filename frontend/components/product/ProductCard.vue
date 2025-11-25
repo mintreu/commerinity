@@ -83,18 +83,18 @@
         <div class="product-info p-3 flex-1 flex flex-col">
 
           <!-- Enhanced Categories Tags - Compact -->
-          <div v-if="product.categories?.length" class="flex flex-wrap gap-1 mb-2">
+          <div v-if="product.categories?.length" class="flex flex-wrap gap-1 mb-2 overflow-hidden">
             <span
                 v-for="category in product.categories.slice(0, 2)"
                 :key="category.url"
-                class="px-2 py-0.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium"
+                class="px-2 py-0.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium truncate"
             >
               {{ category.name }}
             </span>
           </div>
 
           <!-- Enhanced Product Name - Compact -->
-          <h3 class="font-bold text-sm text-gray-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 min-h-[2rem]">
+          <h3 class="font-bold text-sm text-gray-900 dark:text-white mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 min-h-[2rem] overflow-hidden break-words">
             {{ product.name }}
           </h3>
 

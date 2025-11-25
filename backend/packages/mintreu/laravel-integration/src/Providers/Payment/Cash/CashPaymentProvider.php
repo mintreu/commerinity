@@ -67,12 +67,12 @@ class CashPaymentProvider implements IntegrationContract,PaymentIntegrationContr
     }
 
 
-    public function order()
+    public function order():OrderAction
     {
         return new OrderAction($this);
     }
 
-    public function verify()
+    public function verify():VerifyAction
     {
         return new VerifyAction($this);
     }
