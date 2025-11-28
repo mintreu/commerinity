@@ -28,15 +28,15 @@ This file logs all actions, decisions, plans, and outcomes of the AI agent durin
 - **Filament v4 RichEditor Integration**:
     - User highlighted Filament v4's `RichEditor` extensibility for custom buttons.
     - Plan updated to integrate media picker directly into `RichEditor` toolbar.
-- **Project Context Correction**:
-    - User clarified that the new Laravel v12/Filament v4 project is located in `apiserver/`.
-    - Confirmed `apiserver/composer.json` shows Filament 4.0.
-    - `application_info` still reported Filament 3.3.0 for `apiserver`, but `composer.json` is taken as the source of truth for v4.
-    - Performed in-depth recursive listing of `apiserver/vendor/filament/filament` to understand v4 file system.
+### Project Context Correction:
+    - User clarified that the `apiserver/` directory has been removed, and the current Laravel v12/Filament v4 project is located in `backend/`.
+    - Confirmed `backend/composer.json` shows Filament 4.0.
+    - `application_info` still reported Filament 3.3.0 for `backend`, but `composer.json` is taken as the source of truth for v4.
+    - Performed in-depth recursive listing of `backend/vendor/filament/filament` to understand v4 file system.
 
 ### Current Plan
 
-1.  **Generate `MediaResource`**: For the `Spatie\MediaLibrary\MediaCollections\Models\Media` model within the `apiserver` directory.
+1.  **Generate `MediaResource`**: For the `Spatie\MediaLibrary\MediaCollections\Models\Media` model within the `backend` directory.
 2.  **Customize `MediaResource` table**: Make it read-only, with thumbnails and selection capabilities.
 3.  **Extend Filament v4's `RichEditor`**:
     *   Add a custom button to the `RichEditor`'s toolbar (e.g., "Media Library").

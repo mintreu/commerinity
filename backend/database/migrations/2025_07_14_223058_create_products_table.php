@@ -24,6 +24,18 @@ return new class extends Migration
             $table->text('short_description')->nullable();
             $table->unsignedBigInteger('price')->default(0);
 
+            // default we show tax inclusive way
+
+            $table->boolean('is_tax_inclusive')
+                ->default(false)
+                ->comment('Indicates if the product price includes tax');
+
+            $table->boolean('is_exempted')
+                ->default(false)
+                ->comment('Indicates if this product is exempt from tax');
+
+            $table->string('tax_slab')->nullable();
+
             $table->integer('min_quantity')->default(1);
             $table->integer('max_quantity')->nullable();
 

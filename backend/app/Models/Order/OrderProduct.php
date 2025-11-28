@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Mintreu\LaravelMoney\Casts\LaravelMoneyCast;
 use Mintreu\LaravelProductCatalogue\Models\Product;
+use Mintreu\LaravelProductCatalogue\Models\ProductTier;
 
 class OrderProduct extends Model
 {
@@ -23,6 +24,7 @@ class OrderProduct extends Model
         'total',
         'has_tax',
         'product_id',
+        'product_tier_id',
         'status',
         'status_feedback',
     ];
@@ -41,6 +43,11 @@ class OrderProduct extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    public function productTier(): BelongsTo
+    {
+        return $this->belongsTo(ProductTier::class, 'product_tier_id', 'id');
     }
 
     public function order(): BelongsTo

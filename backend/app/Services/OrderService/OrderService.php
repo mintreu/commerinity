@@ -90,7 +90,8 @@ class OrderService
 
     public function create(Cart $cart,Address $billing, Address $shipping,bool $isFilament = false,?string $filamentResource = null):?Order
     {
-        $this->meta = $cart->getMeta();
+        // Pass the shipping address to getMeta for accurate tax and tier selection
+        $this->meta = $cart->getMeta(false, $shipping);
         $this->customer = $cart->getCustomer();
         $this->billingAddress = $billing;
         $this->shippingAddress = $shipping;
@@ -107,11 +108,11 @@ class OrderService
             'voucher' => $this->meta['summary']['coupon_code'],
             'quantity' => $this->meta['summary']['quantity'],
 
-            'subtotal' => $this->meta['summary']['sub_total']->getAmount(),
-            'discount' => $this->meta['summary']['discount']->getAmount(),
-            'tax' => $this->meta['summary']['tax']->getAmount(),
-            'shipping_cost' => $this->meta['summary']['shipping_cost']->getAmount(),
-            'total' => $this->meta['summary']['total']->getAmount(),
+            'subtotal' => $this->meta['summary']['raw']['sub_total']->getAmount(),
+            'discount' => $this->meta['summary']['raw']['discount']->getAmount(),
+            'tax' => $this->meta['summary']['raw']['tax']->getAmount(),
+            'shipping_cost' => $this->meta['summary']['raw']['shipping_cost']->getAmount(),
+            'total' => $this->meta['summary']['raw']['total']->getAmount(),
             'status' => OrderStatusCast::PENDING,
             'payment_success' => false,
             'expire_at' => now()->addDay(),
@@ -133,6 +134,7 @@ class OrderService
                 'tax' => $item['summary']['raw']['tax']->getAmount(),
                 'total' => $item['summary']['raw']['total']->getAmount(),
                 'product_id' => $item['product_id'],
+                'product_tier_id' => $item['tier'] ? $item['tier']->id : null, // Save the selected tier ID
             ]);
 
         }
@@ -311,112 +313,61 @@ class OrderService
 
 
     /**
-     * Process Order
-     * Check Stock
-     * Send For Shipment
-     * Make Invoice
-     * Full Process Related Products
-     * @return void
+     * Process Order Confirmation:
+     * - Consume stock from the correct tier for each product.
+     * - Create shipments and invoices.
      */
     private function processOrderConfirmation(): void
     {
-
         $this->order->orderProducts->each(function (OrderProduct $orderProduct) {
-
-            // Update Sold Stock Of Each Ordered Products
-            $allowedOrderedProducts = $this->getQualifiedUpdatedOrderedProductStockArray($orderProduct);
-            if (empty($allowedOrderedProducts))
-            {
-                $this->setError('no stock available for '.$orderProduct->product->name);
-            }else{
-                $groupedStock = collect($allowedOrderedProducts)->groupBy('pickup_address_id');
-
-                foreach ($groupedStock as $pickupAddress_id => $data) {
-                    $totalQuantityOfThisPickupAddress = $data->sum(function ($item) {
-                        return $item['quantity'];
-                    });
-
-                    // Step 1.2
-                    $newOrderShipment = $this->makeOrderShipment($orderProduct, $totalQuantityOfThisPickupAddress, $pickupAddress_id);
-                    if (!$newOrderShipment)
-                    {
-                        Log::error('shipment not generate for order '.$this->order->uuid);
-                    }
-                    // Step 1.3
-                    $newOrderInvoice = $this->makeOrderInvoice($newOrderShipment, $orderProduct);
-                    if (!$newOrderInvoice)
-                    {
-                        Log::error('invoice not generate for order '.$this->order->uuid);
-                    }
-                }
+            
+            $orderProduct->loadMissing('productTier.address');
+            $tier = $orderProduct->productTier;
+            
+            if (!$tier) {
+                $this->setError("Could not find the stock source for product: {$orderProduct->product->name}. Order cannot be fulfilled.");
+                Log::error("Order-Product ID {$orderProduct->id} is missing a product_tier_id for order {$this->order->uuid}.");
+                // Continue to next product, or maybe fail the whole order? For now, we log and continue.
+                return;
             }
 
+            // Consume stock from the specific tier
+            $stockConsumed = $tier->consumeStock($orderProduct->quantity);
+
+            if (!$stockConsumed) {
+                 $this->setError("Not enough stock for {$orderProduct->product->name} at the selected location.");
+                 Log::critical("Stock discrepancy for Order {$this->order->uuid}. Tried to consume {$orderProduct->quantity} from tier {$tier->id}, but not enough stock.");
+                 // Here you might want to trigger a process for back-orders or notify admins.
+                 return;
+            }
+
+            // Create shipment and invoice for this item from its stock location
+            $pickupAddressId = $tier->address->id;
+            $shipment = $this->makeOrderShipment($orderProduct, $orderProduct->quantity, $pickupAddressId);
+            
+            if (!$shipment) {
+                Log::error("Shipment not generated for order_product {$orderProduct->id} in order {$this->order->uuid}");
+                return;
+            }
+
+            $invoice = $this->makeOrderInvoice($shipment, $orderProduct);
+            if (!$invoice) {
+                Log::error("Invoice not generated for shipment {$shipment->id} in order {$this->order->uuid}");
+            }
         });
-
-
-
     }
-
-    private function getQualifiedUpdatedOrderedProductStockArray(OrderProduct $orderProduct): array
-    {
-        $product = $orderProduct->product;
-        $requiredQuantity = $orderProduct->quantity;
-        $quantityFulfilled = 0;
-        $bag = [];
-
-        if (!$product->tiers)
-        {
-            $product->loadMissing('tiers');
-        }
-
-        foreach ($product->tiers as $productStock) {
-            if ($productStock->in_stock_quantity >= $requiredQuantity - $quantityFulfilled) {
-                // Deducted Stock Quantity & Update Product Stock
-                $quantityToDeduct = $requiredQuantity - $quantityFulfilled;
-
-                $bag[] = [
-                    'quantity' => $quantityToDeduct,
-                    'stock' => $productStock,
-                    'pickup_address_id' => $productStock->addresses->first()->id,
-                ];
-                // Update the quantity fulfilled
-                $quantityFulfilled += $quantityToDeduct;
-                // Break the loop since the required quantity is fulfilled
-                break;
-            }
-        }
-
-        // If Fulfil Order Quantity, Then Stock Will Be Updated
-        if ($quantityFulfilled === $requiredQuantity) {
-
-            foreach ($bag as $data) {
-                $data['stock']->sold_quantity += $data['quantity'];
-                $data['stock']->save();
-            }
-        } else {
-            $this->setError($product->name.' out of stock!');
-        }
-        return $bag;
-    }
-
-
-
-
-
-
 
     protected function makeOrderShipment(OrderProduct $orderProduct,int $allowedQuantity,int $pickup_address_id)
     {
-        return $orderProduct->shipment()->create([
-            'order_id' => $this->order->id,
+        // This assumes one shipment per order_product. You might group items going to the same address into one shipment.
+        // For simplicity, we create one per line item for now.
+        return $orderProduct->order->shipments()->create([
             'total_quantity' => $allowedQuantity,
             'pickup_address' => $pickup_address_id,
             'delivery_address' => $this->order->shipping_address_id,
-//            'cod' => $this->order->is_cod,
             'status' => OrderShipment::PROCESSING,
         ]);
     }
-
 
 
     protected function makeOrderInvoice(OrderShipment $orderShipment, OrderProduct $orderProduct): OrderInvoice

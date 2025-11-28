@@ -2,44 +2,110 @@
 
 namespace App\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Model;
-use App\Enums\GstTaxSlab;
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+use Mintreu\LaravelMoney\LaravelMoney;
 
-class GstTaxCast implements CastsAttributes
+enum GstTaxCast: string implements HasLabel
 {
-    /**
-     * Cast the stored value to the GstTaxSlab enum.
-     *
-     * @param  array<string, mixed>  $attributes
-     */
-    public function get(Model $model, string $key, mixed $value, array $attributes): ?GstTaxSlab
-    {
-        if (is_null($value)) {
-            return null;
-        }
+    private const GST_TYPE_CGST_SGST = 'CGST/SGST';
+    private const GST_TYPE_CGST_UTGST = 'CGST/UTGST';
+    private const GST_TYPE_IGST = 'IGST';
+    private const GST_TYPE_NONE = 'None';
 
-        return GstTaxSlab::tryFrom((int) $value) ?? GstTaxSlab::GST_0;
+    private const UNION_TERRITORY_STATES = [
+        'andaman and nicobar islands',
+        'chandigarh',
+        'dadra and nagar haveli and daman and diu',
+        'dadra and nagar haveli',
+        'daman and diu',
+        'delhi',
+        'lakshadweep',
+        'puducherry',
+        'jammu and kashmir',
+        'ladakh',
+    ];
+
+    case NONE = '0';
+    case GST_5 = '5';
+    case GST_12 = '12';
+    case GST_18 = '18';
+    case GST_28 = '28';
+    case GST_40 = '40'; // GST 2.0 - Luxury goods rate (effective Sept 22, 2025)
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::NONE => '0% GST (NO TAX)',
+            self::GST_5 => '5% GST',
+            self::GST_12 => '12% GST',
+            self::GST_18 => '18% GST',
+            self::GST_28 => '28% GST',
+            self::GST_40 => '40% GST (Luxury)',
+        };
     }
 
-    /**
-     * Prepare the value for storage.
-     *
-     * @param  array<string, mixed>  $attributes
-     */
-    public function set(Model $model, string $key, mixed $value, array $attributes): ?int
+    public function percentage(): int
     {
-        if (is_null($value)) {
-            return null;
-        }
-
-        if ($value instanceof GstTaxSlab) {
-            return $value->value;
-        }
-
-        // Attempt to create from integer or string value
-        $enum = GstTaxSlab::tryFrom((int) $value);
-
-        return $enum?->value;
+        return match ($this) {
+            self::NONE => 0,
+            self::GST_5 => 5,
+            self::GST_12 => 12,
+            self::GST_18 => 18,
+            self::GST_28 => 28,
+            self::GST_40 => 40,
+        };
     }
+
+    public static function determineTaxType(?string $customerState, ?string $warehouseState): string
+    {
+        $customer = self::normalizeState($customerState);
+        $warehouse = self::normalizeState($warehouseState);
+
+        if (! $customer || ! $warehouse) {
+            return self::GST_TYPE_NONE;
+        }
+
+        if ($customer === $warehouse) {
+            return self::isUnionTerritory($customer)
+                ? self::GST_TYPE_CGST_UTGST
+                : self::GST_TYPE_CGST_SGST;
+        }
+
+        return self::GST_TYPE_IGST;
+    }
+
+    private static function normalizeState(?string $state): ?string
+    {
+        return $state ? Str::of($state)->lower()->trim()->__toString() : null;
+    }
+
+    private static function isUnionTerritory(string $state): bool
+    {
+        return in_array($state, self::UNION_TERRITORY_STATES, true);
+    }
+
+    public function formatBreakdown($amount): HtmlString
+    {
+        $formattedAmount = LaravelMoney::format($amount);
+
+        if ($this === self::NONE) {
+            return new HtmlString($formattedAmount.' <small>(None)</small>');
+        }
+
+        if (str_starts_with($this->value, 'cs')) {
+            $halfTax = $amount / 2;
+
+            return new HtmlString($formattedAmount.' <small>(CGST: '.LaravelMoney::format($halfTax).', SGST: '.LaravelMoney::format($halfTax).')</small>');
+        }
+
+        if (str_starts_with($this->value, 'i')) {
+            return new HtmlString($formattedAmount.' <small>(IGST: '.$formattedAmount.')</small>');
+        }
+
+        return new HtmlString($formattedAmount.' <small>(None)</small>');
+    }
+
+
 }

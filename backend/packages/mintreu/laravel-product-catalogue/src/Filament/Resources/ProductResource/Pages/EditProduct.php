@@ -47,6 +47,7 @@ class EditProduct extends EditRecord
     }
 
 
+
     public function mount(int|string $record): void
     {
         parent::mount($record);
@@ -68,11 +69,14 @@ class EditProduct extends EditRecord
                 ->flatMap(fn($variant) => $variant->filterOptions)
                 ->unique('id');
 
-            // Group them by filter ID and collect option IDs (array of IDs per filter)
-            $filterOptionData = $variantFilterOptions
-                ->groupBy(fn($option) => $option->filter->id)
-                ->map(fn($group) => $group->pluck('id')->unique()->values()->toArray())
-                ->toArray();
+            if ($variantFilterOptions)
+            {
+                // Group them by filter ID and collect option IDs (array of IDs per filter)
+                $filterOptionData = $variantFilterOptions
+                    ->groupBy(fn($option) => $option->filter->id)
+                    ->map(fn($group) => $group->pluck('id')->unique()->values()->toArray())
+                    ->toArray();
+            }
         } else {
             // For non-configurable: single option per filter
             $filterOptionData = collect($this->record->filterOptions)
@@ -168,12 +172,8 @@ class EditProduct extends EditRecord
                                 Forms\Components\Grid::make(1)
                                     ->columnSpan(1)
                                     ->schema([
-                                        Forms\Components\Select::make('tax_code_id')
-                                            ->label('HSN Code')
-                                            ->relationship('tax_code','code')
-                                            ->live()
-                                            ->columnSpanFull()
-                                            ->required(),
+
+                                        
 
                                         Forms\Components\Toggle::make('is_tax_inclusive')->default(false),
                                         Forms\Components\Toggle::make('is_exempted')->default(false),

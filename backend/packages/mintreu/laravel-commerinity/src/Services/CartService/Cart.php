@@ -5,6 +5,7 @@ namespace Mintreu\LaravelCommerinity\Services\CartService;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Mintreu\LaravelGeokit\Models\Address;
 use Mintreu\LaravelMoney\LaravelMoney;
 
 /**
@@ -21,9 +22,10 @@ class Cart extends CartService
      * Get full structured metadata for the cart.
      *
      * @param bool $formatted
+     * @param Address|null $customerAddress
      * @return array
      */
-    public function getMeta(bool $formatted = false): array
+    public function getMeta(bool $formatted = false, ?Address $customerAddress = null): array
     {
 
         // Eager load cartable with media to avoid N+1 problem
@@ -33,26 +35,21 @@ class Cart extends CartService
         if ($this->cartItems)
         {
             $this->cartItems->load('cartable');
+            // Note: cheapestTier is being deprecated in favor of StockLocatorService,
+            // but left for now as per instructions.
             $this->cartItems->loadMissing([
                 'cartable.media',
                 'cartable.cheapestTier',
                 'cartable.sales' => fn($query) => $query
-                    //->with('sale')
                     ->where('starts_from', '<=', now())
                     ->where('ends_till', '>=', now())
-                //    ->where('target_id','=',$this->customer?->level_id)
                 ,
 
             ]);
 
-//            if (!is_null($this->getCouponCode()) && !$this->validCoupon)
-//            {
-//                $this->setCouponCode($this->getCouponCode());
-//            }
+            $voucherValidator = CartVoucherValidator::make($this, $this->getCouponCode(), $this->customer);
 
-            $voucherValidator = CartVoucherValidator::make($this,$this->getCouponCode(),$this->customer);
-
-            $cartMeta = $this->prepareMeta($voucherValidator,$formatted);
+            $cartMeta = $this->prepareMeta($voucherValidator, $formatted, $customerAddress);
 
            $itemMeta = $cartMeta;
 
@@ -69,9 +66,9 @@ class Cart extends CartService
     }
 
 
-    protected function prepareMeta(null|CartVoucherValidator $voucherValidator,bool $formatted = false): array
+    protected function prepareMeta(null|CartVoucherValidator $voucherValidator, bool $formatted = false, ?Address $customerAddress = null): array
     {
-        return $this->cartItems->map(fn($item) => CartLineService::make($this,$item,$voucherValidator)->getMeta($formatted))->toArray();
+        return $this->cartItems->map(fn($item) => CartLineService::make(cartService: $this, lineItem:  $item, customerAddress: $customerAddress, voucherValidator: $voucherValidator)->getMeta($formatted))->toArray();
     }
 
 

@@ -5,25 +5,33 @@ namespace Mintreu\LaravelProductCatalogue\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\ProductSupplier;
+use Mintreu\LaravelGeokit\Traits\HasAddress;
 
 class ProductTier extends Model
 {
-    use HasFactory;
+    use HasFactory,HasAddress;
 
     protected $fillable = [
         'product_id',
+        'init_quantity',
+        'sold_quantity',
         'min_quantity',
         'max_quantity',
         'wholesale_unit_quantity',
+        'product_supplier_id',
+        'purchase_invoice_id',
+        'landing_cost',
+        'profit_margin',
         'price',
-        'init_quantity',
-        'sold_quantity',
-        'address_id',
+        'address_id'
     ];
 
     protected $casts = [
         'in_stock' => 'boolean',
-//        'price' => 'float',
+        'landing_cost' => 'integer',
+        'price' => 'integer',
+        'profit_margin' => 'float',
     ];
 
     /*
@@ -37,10 +45,10 @@ class ProductTier extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
-//    public function address(): BelongsTo
-//    {
-//        return $this->belongsTo(Address::class, 'address_id');
-//    }
+    public function productSupplier(): BelongsTo
+    {
+        return $this->belongsTo(ProductSupplier::class, 'product_supplier_id');
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -79,7 +87,7 @@ class ProductTier extends Model
 
     public function getAvailableStockAttribute(): int
     {
-        return (int) $this->stock;
+        return (int) ($this->init_quantity - $this->sold_quantity);
     }
 
     public function getPricePerUnitAttribute(): float

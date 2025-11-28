@@ -1,19 +1,17 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\backup;
 
 use App\Casts\TaxTypeCast;
 use App\Models\TaxCode;
 use App\Models\User;
 use Exception;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Mintreu\LaravelCategory\Models\Category;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Models\Product;
-use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
 use Mintreu\LaravelProductCatalogue\Services\ProductManager;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
 

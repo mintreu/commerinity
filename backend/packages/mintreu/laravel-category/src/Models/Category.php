@@ -120,9 +120,10 @@ class Category extends Model implements HasMedia
     }
 
 
-
-
-
+    public function scopePublic($query)
+    {
+        return $query->where('status', true)->where('is_visible_on_front', true);
+    }
 
 
 }

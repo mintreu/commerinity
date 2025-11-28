@@ -7,6 +7,7 @@ use App\Http\Resources\CartResource;
 use Illuminate\Http\Request;
 use Mintreu\LaravelCommerinity\Models\VoucherCode;
 use Mintreu\LaravelCommerinity\Services\CartService\Cart;
+use Mintreu\LaravelGeokit\Models\Address;
 use Mintreu\LaravelProductCatalogue\Models\Product;
 
 class CartController extends Controller
@@ -41,14 +42,31 @@ class CartController extends Controller
     // 1. Get Cart
     public function index(Request $request)
     {
-
         $cart = new Cart($request->user());
         $cart->capture($request);
-        $cartMeta = $cart->getMeta();
+
+        $customerAddress = null;
+        $addressId = $request->query('address_id');
+
+        if ($addressId) {
+            $address = Address::find($addressId);
+
+            // Security Check: If a user is logged in, ensure the address belongs to them.
+            if ($address && $request->user()) {
+                if ($address->addressable_id == $request->user()->id && $address->addressable_type == get_class($request->user())) {
+                    $customerAddress = $address;
+                }
+            } elseif ($address) {
+                // For guest users, we'll use the address if it's found.
+                // Ownership cannot be verified for guests.
+                $customerAddress = $address;
+            }
+        }
+
+        // Pass the address (or null) to getMeta() for location-aware calculations
+        $cartMeta = $cart->getMeta(false, $customerAddress);
 
         // Any Suggestions For Cart Products
-
-
         return CartResource::make($cartMeta)->additional([
             'suggestions' => []
         ]);

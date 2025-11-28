@@ -5,15 +5,13 @@ This file provides a high-level overview and detailed specifics of the current p
 ## Project Name: Commerinity
 
 ## Technology Stack:
-- **Backend (Old)**: Laravel 12.35.1, PHP 8.3.22, MySQL (located in `backend/`)
-- **Backend (New)**: Laravel 12.x, PHP 8.2+, MySQL (located in `apiserver/`)
+- **Backend**: Laravel 12.x, PHP 8.2+, MySQL (located in `backend/`)
 - **Frontend**: Nuxt 3, Vue 3, TypeScript, Tailwind CSS v4 (located in `frontend/`)
-- **Admin Panel (Old)**: Filament 3.3.0
-- **Admin Panel (New)**: Filament 4.0 (intended, as per `apiserver/composer.json`)
+- **Admin Panel**: Filament 4.0 (intended, as per `backend/composer.json`)
 - **Authentication**: Laravel Sanctum 4.2.0
 - **Testing**: Pest 4.0.2, PHPUnit 12.3.5
 
-## Installed Packages (New `apiserver` project):
+## Installed Packages (Current `backend` project):
 - filament/filament: 4.0
 - filament/spatie-laravel-media-library-plugin: 4.0
 - laravel/framework: ^12.0
@@ -36,14 +34,14 @@ This file provides a high-level overview and detailed specifics of the current p
 Commerinity is a modular, scalable platform that combines Multi-Level Marketing (MLM), eCommerce, Marketing Automation, and Content Management into a unified system.
 
 ## Current Feature Goal:
-Implement a "WordPress-like" media manager for `spatie/laravel-medialibrary` within the new `apiserver` project's Filament v4 admin panel, integrated with the `RichEditor` component.
+Implement a "WordPress-like" media manager for `spatie/laravel-medialibrary` within the current `backend` project's Filament v4 admin panel, integrated with the `RichEditor` component.
 
 ## Key Folders for Deep Understanding (from gemini.md):
 - root/*
 - docs/*
 - plans/*
 - .gemini/*
-- apiserver/*
-- apiserver/app/*
-- apiserver/database/*
+- backend/*
+- backend/app/*
+- backend/database/*
 - client/* (or frontend/* if applicable)

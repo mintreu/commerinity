@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use Illuminate\Support\Facades\Storage;
 use Mintreu\LaravelGeokit\Seeder\GeoKitSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +17,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
+
+
         $this->call([
-            //GeoKitSeeder::class,
+            GeoKitSeeder::class,
 
             AdminSeeder::class,
             StageSeeder::class,
@@ -28,12 +31,13 @@ class DatabaseSeeder extends Seeder
 
             // MasterDemoProductSeeder::class,
 
-            TaxCodeSeeder::class,  // required for product
 
             //ProductSeeder::class,
             //ProductDemoSeeder::class,   // product seeder
 
             MasterDemoProductSeeder::class,
+
+            ProductTierSeeder::class,
 
 
             IntegrationSeeder::class,

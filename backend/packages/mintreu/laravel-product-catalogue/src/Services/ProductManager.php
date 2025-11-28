@@ -59,6 +59,7 @@ final class ProductManager
                     'filter_group_id' => $data['filter_group_id'],
                     'price' => $data['price'] ?? 0,
                     'reward_point' => $data['reward_point'] ?? 0,
+                    'tax_slab' => $data['tax_slab'] ?? null
                 ]));
 
                 // Attach filter options based on product type
@@ -566,7 +567,6 @@ final class ProductManager
                 'max_quantity' => $product->max_quantity,
                 'price'        => $product->price,
                 'reward_point' => $product->reward_point,
-                'tax_code_id' => $product->tax_code_id,
             ]);
 
             // Attach filter options to the new variant

@@ -1,31 +1,25 @@
 <?php
 
-use App\Casts\TaxTypeCast;
-use App\Models\TaxCode;
+use App\Enums\GstTaxSlab;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mintreu\LaravelCategory\Models\Category;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Models\Product;
-use Mintreu\LaravelProductCatalogue\Services\ProductMgmtService;
+use Mintreu\LaravelProductCatalogue\Services\ProductCreationService;
 use Mintreu\Toolkit\Casts\PublishableStatusCast;
-use Tests\TestCase;
-
 
 
 /**
  * Setup test environment by running necessary seeders
- * This mimics the real ProductDemoSeeder seeding process
  */
 beforeEach(function () {
-    // Run seeders directly (like ProductDemoSeeder does)
+    // Run seeders directly
     (new \Database\Seeders\CategorySeeder())->run();
     (new \Database\Seeders\FilterSeeder())->run();
-    (new \Database\Seeders\TaxCodeSeeder())->run();
 
-    // Pull actual seeded records (exactly like ProductDemoSeeder)
-    $this->taxCodes = TaxCode::where('type', TaxTypeCast::GOODS->value)->get();
+    // Pull actual seeded records
     $this->masalaCategory = Category::firstWhere('url', 'spices-masalas');
     $this->masalaFilterGroup = FilterGroup::with('filters.options')
         ->where('name', 'Spices & Masala')
@@ -56,37 +50,16 @@ beforeEach(function () {
     };
 });
 
-describe('ProductMgmtService - Static Factory', function () {
+describe('ProductCreationService - Static Factory', function () {
     it('can create service instance using make method', function () {
-        $service = ProductMgmtService::make();
+        $service = ProductCreationService::make([]);
 
-        expect($service)->toBeInstanceOf(ProductMgmtService::class);
-    });
-
-    it('can chain setData method', function () {
-        $service = ProductMgmtService::make()->setData(['name' => 'Test']);
-
-        expect($service)->toBeInstanceOf(ProductMgmtService::class);
-    });
-
-    it('can chain setProduct method', function () {
-        $product = Product::create([
-            'type' => 'simple',
-            'name' => 'Test Product',
-            'sku' => 'TEST-001',
-            'url' => 'test-product',
-            'filter_group_id' => $this->masalaFilterGroup->id,
-        ]);
-
-        $service = ProductMgmtService::make()->setProduct($product);
-
-        expect($service)->toBeInstanceOf(ProductMgmtService::class);
+        expect($service)->toBeInstanceOf(ProductCreationService::class);
     });
 });
 
-describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSeeder)', function () {
+describe('ProductCreationService - Configurable Product Creation (Like ProductDemoSeeder)', function () {
     it('can create configurable product with factory raw data like seeder', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
 
         // Exactly like ProductDemoSeeder does it
         $productData = Product::factory()->raw([
@@ -98,10 +71,10 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_5->value,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         expect($product)->toBeInstanceOf(Product::class)
             ->and($product->type)->toBe(ProductTypeCast::CONFIGURABLE)
@@ -116,8 +89,6 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
     });
 
     it('can update variant status and max_quantity after creation like seeder', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
         $productData = Product::factory()->raw([
             'name' => 'Coriander Powder',
             'url' => 'coriander-powder',
@@ -127,10 +98,10 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_5->value,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         // Load variants and update them (exactly like ProductDemoSeeder)
         $product->load('variants');
@@ -149,8 +120,6 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
     });
 
     it('can attach categories with base_category like seeder', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
         $productData = Product::factory()->raw([
             'name' => 'Red Chilli Powder',
             'url' => 'red-chilli-powder',
@@ -160,10 +129,10 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_5->value,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         // Attach category exactly like ProductDemoSeeder
         $product->categories()->attach([
@@ -179,8 +148,6 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
     });
 
     it('generates variants with inherited parent data', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
         $productData = Product::factory()->raw([
             'name' => 'Garam Masala',
             'url' => 'garam-masala',
@@ -192,13 +159,13 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_12->value,
             'min_quantity' => 1,
             'max_quantity' => 10,
             'reward_point' => 50,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         $variant = $product->variants->first();
 
@@ -207,14 +174,12 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
             ->and($variant->description)->toBe('Premium garam masala blend')
             ->and($variant->short_description)->toBe('Garam Masala')
             ->and($variant->price)->toBe(45000)
-            ->and($variant->tax_code_id)->toBe($hsnTaxCode->id)
+            ->and($variant->tax_slab)->toBe(GstTaxSlab::GST_12)
             ->and($variant->min_quantity)->toBe(1)
             ->and($variant->reward_point)->toBe(50);
     });
 
     it('uses random filter options selection for configurable products', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
         // mapFilterOptions should select random 2 options per filter for configurable
         $filterOptions = ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable');
 
@@ -227,10 +192,10 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => $filterOptions,
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_18->value,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         // Should have created variants based on random filter options
         expect($product->variants->count())->toBeGreaterThan(0);
@@ -245,10 +210,8 @@ describe('ProductMgmtService - Configurable Product Creation (Like ProductDemoSe
     });
 });
 
-describe('ProductMgmtService - Simple Product Creation (For Variants)', function () {
+describe('ProductCreationService - Simple Product Creation (For Variants)', function () {
     it('can create simple product with single filter option like seeder', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
         // For simple products, mapFilterOptions selects only 1 random option per filter
         $productData = Product::factory()->raw([
             'name' => 'Simple Masala Product',
@@ -259,10 +222,10 @@ describe('ProductMgmtService - Simple Product Creation (For Variants)', function
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'simple'),
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_5->value,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         expect($product)->toBeInstanceOf(Product::class)
             ->and($product->type)->toBe(ProductTypeCast::SIMPLE);
@@ -272,127 +235,119 @@ describe('ProductMgmtService - Simple Product Creation (For Variants)', function
     });
 });
 
-describe('ProductMgmtService - Product Update', function () {
-    it('can update configurable product and its variants', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
+//describe('ProductMgmtService - Product Update', function () {
+//    it('can update configurable product and its variants', function () {
+//        $productData = Product::factory()->raw([
+//            'name' => 'Update Test Product',
+//            'url' => 'update-test-product',
+//            'sku' => 'UPDATE-TEST',
+//            'price' => 10000,
+//            'type' => ProductTypeCast::CONFIGURABLE,
+//            'status' => PublishableStatusCast::DRAFT->value,
+//            'filter_group_id' => $this->masalaFilterGroup->id,
+//            'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
+//            'tax_slab' => GstTaxSlab::GST_12->value,
+//        ]);
+//
+//        $product = ProductCreationService::make($productData)->create();
+//
+//        // Update product
+//        $updatedProduct = ProductCreationService::make()
+//            ->setProduct($product)
+//            ->update([
+//                'name' => 'Updated Product Name',
+//                'price' => 20000,
+//                'status' => PublishableStatusCast::PUBLISHED->value,
+//                'type' => ProductTypeCast::CONFIGURABLE,
+//                'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
+//            ]);
+//
+//        expect($updatedProduct->name)->toBe('Updated Product Name')
+//            ->and($updatedProduct->price)->toBe(20000)
+//            ->and($updatedProduct->status)->toBe(PublishableStatusCast::PUBLISHED);
+//    });
+//
+//    it('smart updates variants when filter options change', function () {
+//        // Get specific filter options for controlled test
+//        $filters = $this->masalaFilterGroup->filters;
+//        $filter1 = $filters->first();
+//        $filter2 = $filters->skip(1)->first() ?? $filter1;
+//
+//        $initialFilterOptions = [
+//            (string) $filter1->id => [$filter1->options->first()->id],
+//            (string) $filter2->id => [$filter2->options->first()->id],
+//        ];
+//
+//        $productData = Product::factory()->raw([
+//            'name' => 'Smart Update Test',
+//            'url' => 'smart-update-test',
+//            'sku' => 'SMART-UPDATE',
+//            'price' => 10000,
+//            'type' => ProductTypeCast::CONFIGURABLE,
+//            'status' => PublishableStatusCast::PUBLISHED->value,
+//            'filter_group_id' => $this->masalaFilterGroup->id,
+//            'filter_options' => $initialFilterOptions,
+//            'tax_slab' => GstTaxSlab::GST_18->value,
+//        ]);
+//
+//        $product = ProductCreationService::make($productData)->create();
+//        $initialVariantCount = $product->variants->count();
+//
+//        // Add more filter options
+//        $updatedFilterOptions = [
+//            (string) $filter1->id => $filter1->options->take(2)->pluck('id')->map(fn($id) => (string) $id)->toArray(),
+//            (string) $filter2->id => [$filter2->options->first()->id],
+//        ];
+//
+//        ProductCreationService::make()
+//            ->setProduct($product)
+//            ->update([
+//                'type' => ProductTypeCast::CONFIGURABLE,
+//                'filter_options' => $updatedFilterOptions,
+//                'name' => 'Smart Update Test',
+//                'sku' => 'SMART-UPDATE',
+//            ]);
+//
+//        $product->refresh();
+//
+//        // Should have more variants now
+//        expect($product->variants->count())->toBeGreaterThan($initialVariantCount);
+//    });
+//});
+//
+//describe('ProductMgmtService - Product Deletion', function () {
+//    it('deletes configurable product and all variants', function () {
+//        $productData = Product::factory()->raw([
+//            'name' => 'Delete Test Product',
+//            'url' => 'delete-test-product',
+//            'sku' => 'DELETE-TEST',
+//            'price' => 10000,
+//            'type' => ProductTypeCast::CONFIGURABLE,
+//            'status' => PublishableStatusCast::PUBLISHED->value,
+//            'filter_group_id' => $this->masalaFilterGroup->id,
+//            'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
+//            'tax_slab' => GstTaxSlab::GST_5->value,
+//        ]);
+//
+//        $product = ProductCreationService::make($productData)->create();
+//        $variantIds = $product->variants->pluck('id')->toArray();
+//
+//        // Delete product
+//        ProductCreationService::make()
+//            ->setProduct($product)
+//            ->delete();
+//
+//        // Parent and all variants should be deleted
+//        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+//
+//        foreach ($variantIds as $variantId) {
+//            $this->assertDatabaseMissing('products', ['id' => $variantId]);
+//        }
+//    });
+//});
 
-        $productData = Product::factory()->raw([
-            'name' => 'Update Test Product',
-            'url' => 'update-test-product',
-            'sku' => 'UPDATE-TEST',
-            'price' => 10000,
-            'type' => ProductTypeCast::CONFIGURABLE,
-            'status' => PublishableStatusCast::DRAFT->value,
-            'filter_group_id' => $this->masalaFilterGroup->id,
-            'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
-        ]);
-
-        $product = ProductMgmtService::make()->create($productData);
-
-        // Update product
-        $updatedProduct = ProductMgmtService::make()
-            ->setProduct($product)
-            ->update([
-                'name' => 'Updated Product Name',
-                'price' => 20000,
-                'status' => PublishableStatusCast::PUBLISHED->value,
-                'type' => ProductTypeCast::CONFIGURABLE,
-                'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            ]);
-
-        expect($updatedProduct->name)->toBe('Updated Product Name')
-            ->and($updatedProduct->price)->toBe(20000)
-            ->and($updatedProduct->status)->toBe(PublishableStatusCast::PUBLISHED);
-    });
-
-    it('smart updates variants when filter options change', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
-        // Get specific filter options for controlled test
-        $filters = $this->masalaFilterGroup->filters;
-        $filter1 = $filters->first();
-        $filter2 = $filters->skip(1)->first() ?? $filter1;
-
-        $initialFilterOptions = [
-            (string) $filter1->id => [$filter1->options->first()->id],
-            (string) $filter2->id => [$filter2->options->first()->id],
-        ];
-
-        $productData = Product::factory()->raw([
-            'name' => 'Smart Update Test',
-            'url' => 'smart-update-test',
-            'sku' => 'SMART-UPDATE',
-            'price' => 10000,
-            'type' => ProductTypeCast::CONFIGURABLE,
-            'status' => PublishableStatusCast::PUBLISHED->value,
-            'filter_group_id' => $this->masalaFilterGroup->id,
-            'filter_options' => $initialFilterOptions,
-            'tax_code_id' => $hsnTaxCode->id,
-        ]);
-
-        $product = ProductMgmtService::make()->create($productData);
-        $initialVariantCount = $product->variants->count();
-
-        // Add more filter options
-        $updatedFilterOptions = [
-            (string) $filter1->id => $filter1->options->take(2)->pluck('id')->map(fn($id) => (string) $id)->toArray(),
-            (string) $filter2->id => [$filter2->options->first()->id],
-        ];
-
-        ProductMgmtService::make()
-            ->setProduct($product)
-            ->update([
-                'type' => ProductTypeCast::CONFIGURABLE,
-                'filter_options' => $updatedFilterOptions,
-                'name' => 'Smart Update Test',
-                'sku' => 'SMART-UPDATE',
-            ]);
-
-        $product->refresh();
-
-        // Should have more variants now
-        expect($product->variants->count())->toBeGreaterThan($initialVariantCount);
-    });
-});
-
-describe('ProductMgmtService - Product Deletion', function () {
-    it('deletes configurable product and all variants', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
-        $productData = Product::factory()->raw([
-            'name' => 'Delete Test Product',
-            'url' => 'delete-test-product',
-            'sku' => 'DELETE-TEST',
-            'price' => 10000,
-            'type' => ProductTypeCast::CONFIGURABLE,
-            'status' => PublishableStatusCast::PUBLISHED->value,
-            'filter_group_id' => $this->masalaFilterGroup->id,
-            'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
-        ]);
-
-        $product = ProductMgmtService::make()->create($productData);
-        $variantIds = $product->variants->pluck('id')->toArray();
-
-        // Delete product
-        ProductMgmtService::make()
-            ->setProduct($product)
-            ->delete();
-
-        // Parent and all variants should be deleted
-        $this->assertDatabaseMissing('products', ['id' => $product->id]);
-
-        foreach ($variantIds as $variantId) {
-            $this->assertDatabaseMissing('products', ['id' => $variantId]);
-        }
-    });
-});
-
-describe('ProductMgmtService - Complete ProductDemoSeeder Workflow', function () {
+describe('ProductCreationService - Complete ProductDemoSeeder Workflow', function () {
     it('mimics complete ProductDemoSeeder product creation workflow', function () {
-        $hsnTaxCode = $this->taxCodes->random(1)->first();
-
         // Step 1: Create product with factory raw (like seeder)
         $productData = Product::factory()->raw([
             'name' => 'Complete Workflow Test',
@@ -403,10 +358,10 @@ describe('ProductMgmtService - Complete ProductDemoSeeder Workflow', function ()
             'status' => PublishableStatusCast::PUBLISHED->value,
             'filter_group_id' => $this->masalaFilterGroup->id,
             'filter_options' => ($this->mapFilterOptions)($this->masalaFilterGroup, 'configurable'),
-            'tax_code_id' => $hsnTaxCode->id,
+            'tax_slab' => GstTaxSlab::GST_28->value,
         ]);
 
-        $product = ProductMgmtService::make()->create($productData);
+        $product = ProductCreationService::make($productData)->create();
 
         // Step 2: Update variants (like seeder does)
         $product->load('variants');

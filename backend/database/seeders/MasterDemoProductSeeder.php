@@ -2,15 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Casts\TaxTypeCast;
-use App\Models\TaxCode;
+
+use App\Casts\GstTaxCast;
+use App\Models\ProductSupplier;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Mintreu\LaravelCategory\Models\Category;
+use Mintreu\LaravelGeokit\Casts\AddressTypeCast;
+use Mintreu\LaravelGeokit\Models\Address;
 use Mintreu\LaravelProductCatalogue\Casts\ProductTypeCast;
 use Mintreu\LaravelProductCatalogue\Models\FilterGroup;
 use Mintreu\LaravelProductCatalogue\Models\Product;
@@ -68,7 +72,10 @@ class MasterDemoProductSeeder extends Seeder
         'snack-foods' => 'Food Products',
         'beverages' => 'Food Products',
         'cooking-baking-supplies' => 'Food Products',
+
         'spices-and-masalas' => 'Spices & Masala',
+        'spices-masalas' => 'Spices & Masala',
+
         'pet-supplies' => 'Food Products',
         'dog-supplies' => 'Food Products',
         'cat-supplies' => 'Food Products',
@@ -118,13 +125,13 @@ class MasterDemoProductSeeder extends Seeder
 
 
     protected $categories;
-    protected $taxCodes;
 
     public function __construct()
     {
         $this->filterGroups = $this->getFilterGroups();
-        $this->categories = Category::Public()->where('parent_id',null)->with('children')->get();
-        $this->taxCodes = TaxCode::where('type',TaxTypeCast::GOODS->value)->get();
+//        $this->categories = Category::public()->where('parent_id',null)->with('children')->get();
+        $this->categories = Category::public()->with('children')->get();
+
     }
 
 
@@ -133,14 +140,16 @@ class MasterDemoProductSeeder extends Seeder
      */
     public function run(): void
     {
+
         foreach ($this->categories as $category)
         {
             if (in_array($category->url,[
                 'spices-and-masalas',
+                'spices-masalas',
                 'ayurvedic-hair-care',
                 'ayurvedic-oral-care',
                 'hair-care',
-                'home-decor',
+               // 'home-decor',
                 'mens-fashion',
                 'womens-fashion',
                 'cases-covers'
@@ -175,8 +184,6 @@ class MasterDemoProductSeeder extends Seeder
                 $shortDesc = is_array($productInfo) ? $productInfo['short_description']  : $productInfo->short_description;
                 $desc = is_array($productInfo) ? $productInfo['description']  : $productInfo->description;
 
-                $hsnTaxCode = $this->taxCodes->random(1)->first();
-
                 $productData = Product::factory()->raw([
                     'name' => $name,
                     'url'   => $url,
@@ -186,7 +193,7 @@ class MasterDemoProductSeeder extends Seeder
                     'status' => PublishableStatusCast::PUBLISHED->value,
                     'filter_group_id' => $filterGroup->id,
                     'filter_options' => $this->mapFilterOptions($filterGroup, ProductTypeCast::SIMPLE->value),
-                    'tax_code_id' => $hsnTaxCode->id,
+                    'tax_slab' => fake()->randomElement(collect(GstTaxCast::cases())->mapWithKeys(fn($case) => [$case->value])->toArray()),
                     'short_description' => $shortDesc,
                     'description' => $desc
                 ]);
@@ -251,26 +258,37 @@ class MasterDemoProductSeeder extends Seeder
 
     // HELPER METHODS
 
-    protected function getMediaFromStorage(string $path): string
-    {
-        return storage_path('app/private/media/products/'.$path);
-    }
+//    protected function getMediaFromStorage(string $path): string
+//    {
+//        return storage_path('app/private/media/products/'.$path);
+//    }
 
 
     protected function attachMediaFiles(Product $product,Category $category)
     {
+        $dir = $category->url.'/'.$product->url.'/';
         // Add Media
-        $displayImagePath = $this->getMediaFromStorage($category->url.'/'.$product->url.'.png');
+        $displayImagePath = Storage::path('data/products/'.$dir.$product->url.'.png');
+
+
         if (file_exists($displayImagePath))
         {
             $product->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection('displayImage');
         }
-        $bannerImagePath = $this->getMediaFromStorage($category->url.'/'.$product->url.'.png');
-        if (file_exists($bannerImagePath))
+
+        $allImages = Storage::disk('local')->allFiles('data/products/'.$dir);
+
+
+        foreach ($allImages as $image)
         {
-            $product->addMedia($bannerImagePath)->preservingOriginal()->toMediaCollection('bannerImage');
+            if (file_exists(Storage::path($image)))
+            {
+                $product->addMedia(Storage::path($image))->preservingOriginal()->toMediaCollection('bannerImage');
+            }
         }
+
     }
+
 
 
 
@@ -310,21 +328,37 @@ class MasterDemoProductSeeder extends Seeder
 
     private function addStock(Product $product): void
     {
-        $stockRanges = [
-            [200, 300],
-            [50, 150],
-            [100, 200],
-        ];
-
-        foreach ($stockRanges as $range) {
-            $product->tiers()->create([
-                'init_quantity' => fake()->numberBetween($range[0], $range[1]),
-                'sold_quantity' => 0,
-                'min_quantity' => 1,
-                'max_quantity' => 10,
-                'price' => fake()->randomElement([12050,15000,8000,45000]),
-            ]);
-        }
+//        $stockRanges = [
+//            [200, 300],
+//            [50, 150],
+//            [100, 200],
+//        ];
+//
+//        foreach ($stockRanges as $range) {
+//
+//            $address = Address::factory()->create([
+//                'title' => fake()->word.' Pickup Address',
+//                'type'  => AddressTypeCast::PICKUP->value
+//            ]);
+//            $supplier = ProductSupplier::factory()->create([
+//                'name' => fake()->company.' Supplier',
+//            ]);
+//
+//            $product->tiers()->create([
+//                'init_quantity' => fake()->numberBetween($range[0], $range[1]),
+//                'sold_quantity' => 0,
+//                'min_quantity' => 1,
+//                'max_quantity' => 10,
+//
+//                'purchase_invoice_id' => fake()->randomDigit(),
+//
+//                'landing_cost' => $landing = fake()->randomElement([12050,15000,8000,45000]),
+//                'profit_margin' => $margin = fake()->randomElement([5,15,20,10]),  // tax %
+//                'price' => $landing + ($landing * $margin /100),
+//                'address_id' => $address->id,
+//                'product_supplier_id' => $supplier->id
+//            ]);
+//        }
     }
 
 
@@ -359,7 +393,7 @@ class MasterDemoProductSeeder extends Seeder
      */
     public function getCategoryTree(): array
     {
-        $json = Storage::disk('private')->get('data/categories/product-categories.json');
+        $json = Storage::disk('local')->get('data/categories/product-categories.json');
         return json_decode($json, true);
     }
 
@@ -368,7 +402,7 @@ class MasterDemoProductSeeder extends Seeder
      */
     public function getFilterGroups(): array
     {
-        $json = Storage::disk('private')->get('data/filters/filter-group.json');
+        $json = Storage::disk('local')->get('data/filters/filter-group.json');
         return json_decode($json, true);
     }
 
@@ -405,6 +439,8 @@ class MasterDemoProductSeeder extends Seeder
         if (! file_exists($fullPath)) {
             throw new Exception("File not found: {$path}. Full path: {$fullPath}");
         }
+
+
 
         $content = file_get_contents($fullPath);
         if (! $content) {

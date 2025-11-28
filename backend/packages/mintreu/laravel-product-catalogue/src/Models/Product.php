@@ -3,10 +3,11 @@
 namespace Mintreu\LaravelProductCatalogue\Models;
 
 
+use App\Casts\GstTaxCast;
+
 use App\Models\Order\OrderProduct;
 use App\Models\ProductEngagement;
 use App\Models\ProductWishlist;
-use App\Models\TaxCode;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -55,7 +56,7 @@ class Product extends Model implements HasMedia
         'status_feedback',  
         'view_count',
         'meta_data',
-        'tax_code_id',
+        'tax_slab',
         'is_tax_inclusive',
         'is_exempted',
         'is_downloadable',
@@ -78,7 +79,8 @@ class Product extends Model implements HasMedia
         'type' => ProductTypeCast::class,
         'status' => PublishableStatusCast::class,
         'min_quantity' => 'integer',
-        'wholesale_unit_quantity' => 'integer'
+        'wholesale_unit_quantity' => 'integer',
+        'tax_slab' => GstTaxCast::class
 
     ];
 
@@ -215,12 +217,6 @@ class Product extends Model implements HasMedia
     public function orders()
     {
         return $this->hasMany(OrderProduct::class,'product_id');
-    }
-
-
-    public function tax_code(): BelongsTo
-    {
-        return $this->belongsTo(config('laravel-product-catalogue.tax.model'),config('laravel-product-catalogue.tax.foreign_key'));
     }
 
 

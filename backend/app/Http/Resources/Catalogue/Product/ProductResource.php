@@ -19,6 +19,8 @@ class ProductResource extends ProductIndexResource
      */
     public function toArray(Request $request): array
     {
+
+
         return array_merge(parent::toArray($request), [
             'banner'           => $this->getMedia('bannerImage')->map->getFullUrl(),
             'short_description'=> $this->short_description,
