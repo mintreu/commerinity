@@ -2,12 +2,15 @@
 
 use App\Http\Controllers\WebPageController;
 use Illuminate\Support\Facades\Route;
+use App\Services\RewardPointService;
+use Mintreu\LaravelProductCatalogue\Models\ProductTier;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 //Route::get('{url}', [WebPageController::class, 'show'])->name('web.pages.show');
+
 
 
 

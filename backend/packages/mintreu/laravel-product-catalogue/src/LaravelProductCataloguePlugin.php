@@ -8,6 +8,7 @@ use Mintreu\LaravelProductCatalogue\Filament\Resources\CategoryResource;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterGroupResource;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\FilterResource;
 use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductResource;
+use Mintreu\LaravelProductCatalogue\Filament\Resources\ProductTierResource;
 
 class LaravelProductCataloguePlugin implements Plugin
 {
@@ -47,6 +48,7 @@ class LaravelProductCataloguePlugin implements Plugin
             $panel
                 ->resources([
                     ProductResource::class,
+                    ProductTierResource::class,
 
                     FilterGroupResource::class,
                     FilterResource::class

@@ -177,7 +177,7 @@ class ProductListController extends Controller
 
         $query = Product::select([
             'id','name','url','sku','view_count','type','status',
-            'filter_group_id','reward_point','parent_id','price'
+            'filter_group_id', 'parent_id','price'
         ])
             ->where('type', ProductTypeCast::CONFIGURABLE)
             ->where('status', PublishableStatusCast::PUBLISHED)

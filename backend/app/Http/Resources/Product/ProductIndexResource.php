@@ -26,7 +26,7 @@ class ProductIndexResource extends JsonResource
             'price' => LaravelMoney::format($this->price),
             'min_quantity' => $this->whenNotNull($this->min_quantity),
             'max_quantity' => $this->whenNotNull($this->max_quantity),
-            'reward_point' => $this->whenNotNull($this->reward_point),
+//            'reward_point' => $this->whenNotNull($this->calculateRewardPoint(null)),
             'returnable' => $this->whenNotNull($this->is_returnable),
             'views' => $this->view_count,
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),

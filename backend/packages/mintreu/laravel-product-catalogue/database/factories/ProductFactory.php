@@ -30,12 +30,9 @@ class ProductFactory extends Factory
             'url' => Str::slug($name) . '-' . Str::random(5),
             'type' => fake()->randomElement(collect(ProductTypeCast::cases())->pluck('value')->toArray()),
             'filter_group_id' => FilterGroup::inRandomOrder()->value('id'),
-//            'tenant_id' => null,
-//            'tenant_type' => null,
             'description' => fake()->paragraphs(5, true), // 5 paragraphs as a single string
             'short_description' => fake()->sentences(3, true), // 3 sentences as a single string
             'price' => fake()->numberBetween(100, 10000),
-            'reward_point' => fake()->randomFloat(2, 0, 100),
             'is_returnable' => fake()->boolean(),
             'min_quantity' => fake()->randomElement([1, 2, 3]),
             'max_quantity' => fake()->randomElement([3, 6, 10, 20]),

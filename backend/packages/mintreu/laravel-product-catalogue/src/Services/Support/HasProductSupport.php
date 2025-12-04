@@ -170,12 +170,14 @@ trait HasProductSupport
                 'url' => $variant['url'],
                 'status' => $parentProduct->status,
                 'description' => $productData['description'] ?? null,
+                'short_description' => $parentProduct->short_description,
                 'filter_group_id' => $productData['filter_group_id'],
                 'category_id' => $productData['category_id'] ?? null,
                 'min_quantity' => $parentProduct->min_quantity,
                 'max_quantity' => $parentProduct->max_quantity,
                 'price'        => $parentProduct->price,
-                'reward_point' => $parentProduct->reward_point
+                //'reward_point' => $parentProduct->reward_point,
+                'tax_slab' => $parentProduct->tax_slab->value
             ]);
 
             // Attach filter options to the new variant

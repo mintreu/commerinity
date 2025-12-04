@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mintreu\LaravelCategory\Models\Category;
 
@@ -25,7 +26,7 @@ class CategorySeeder extends Seeder
             ]);
 
             $this->attachMediaFromStorage($parentCategory,'displayImage');
-            $this->attachMediaFromStorage($parentCategory,'bannerImage');
+           // $this->attachMediaFromStorage($parentCategory,'bannerImage');
 
 
             if ($parentCategory && !empty($item->children))
@@ -38,7 +39,7 @@ class CategorySeeder extends Seeder
                     ]));
 
                     $this->attachMediaFromStorage($childrenCategory,'displayImage');
-                    $this->attachMediaFromStorage($childrenCategory,'bannerImage');
+                   // $this->attachMediaFromStorage($childrenCategory,'bannerImage');
 
 
                     if (!empty($child->children))
@@ -50,7 +51,7 @@ class CategorySeeder extends Seeder
                                 'url' => Str::slug($subChild->name),
                             ]));
                             $this->attachMediaFromStorage($subChildrenCategory,'displayImage');
-                            $this->attachMediaFromStorage($subChildrenCategory,'bannerImage');
+                           // $this->attachMediaFromStorage($subChildrenCategory,'bannerImage');
 
                         }
                     }
@@ -66,8 +67,8 @@ class CategorySeeder extends Seeder
 
     protected function attachMediaFromStorage(Category $category,string $collectionName = 'displayImage'): void
     {
-        $img = $collectionName === 'displayImage' ? 'display.jpeg' : 'banner.jpeg';
-        $displayImagePath = storage_path('app/private/media/categories/'.$category->url.'/'.$img);
+//        $displayImagePath = storage_path('app/private/data/categories/thumbnail/'.$category->url.'png');
+        $displayImagePath = Storage::path('data/categories/thumbnail/'.$category->url.'.png');
         if (file_exists($displayImagePath))
         {
             $category->addMedia($displayImagePath)->preservingOriginal()->toMediaCollection($collectionName);

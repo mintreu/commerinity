@@ -22,7 +22,15 @@
 return [
 
 
+    'tire' => [
 
+    ],
+
+    'reward' => [
+      'profit_margin_percentage' => 30,
+      'unit' => 'coin',
+      'conversion' => 100
+    ],
 
 
 //    'tax' => [

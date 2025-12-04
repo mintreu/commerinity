@@ -45,3 +45,6 @@ Implement a "WordPress-like" media manager for `spatie/laravel-medialibrary` wit
 - backend/app/*
 - backend/database/*
 - client/* (or frontend/* if applicable)
+
+## Important Note on Backend Directory:
+The Laravel application for this project is located in the `backend/` directory. Any references to `apiserver/` in general instructions should be disregarded for this specific project.

@@ -58,7 +58,6 @@ final class ProductManager
                     'type' => $case->value,
                     'filter_group_id' => $data['filter_group_id'],
                     'price' => $data['price'] ?? 0,
-                    'reward_point' => $data['reward_point'] ?? 0,
                     'tax_slab' => $data['tax_slab'] ?? null
                 ]));
 
@@ -563,10 +562,9 @@ final class ProductManager
                 'short_description' => $product->short_description ?? null,
                 'filter_group_id' => $product->filter_group_id,
                 'category_id' => $productData['category_id'] ?? null,
-                'min_quantity' => $product->min_quantity,
-                'max_quantity' => $product->max_quantity,
-                'price'        => $product->price,
-                'reward_point' => $product->reward_point,
+                'min_quantity' => $product?->min_quantity ?? 1,
+                'max_quantity' => $product?->max_quantity ?? 1,
+                'price'        => $product?->price ?? 0,
             ]);
 
             // Attach filter options to the new variant

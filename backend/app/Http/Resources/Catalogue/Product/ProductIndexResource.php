@@ -31,7 +31,7 @@ class ProductIndexResource extends JsonResource
             'rating' => $this->engagements_avg_rating,
             'review' => $this->review_count,
             'review_avg_helpful_votes' => $this->engagements_avg_helpful_votes,
-            'reward_point' => $this->reward_point,
+            'reward_point' => $this->calculateRewardPoint($this?->cheapestTier ?? null),
             'is_wishlisted' => $this->is_wishlisted,
             'price' => LaravelMoney::format($this->price),
             'sales' => $this->whenLoaded('sales',SaleIndexResource::collection($this->sales)),

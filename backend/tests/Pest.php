@@ -2,29 +2,18 @@
 
 /*
 |--------------------------------------------------------------------------
-| Test Case Configuration
+| Test Case
 |--------------------------------------------------------------------------
 |
-| Configure test cases for different test types with appropriate traits
-| and base classes for optimal testing experience.
+| The closure you provide to your test functions is always bound to a specific PHPUnit test
+| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
+| need to change it using the "pest()" function to bind a different classes or traits.
 |
 */
 
-// Increase timeout for long-running tests and coverage generation
-ini_set('max_execution_time', 3600);
-ini_set('memory_limit', '2048M');
-
-// Feature tests use RefreshDatabase for full database interactions
-uses(
-    Tests\TestCase::class,
-    Illuminate\Foundation\Testing\RefreshDatabase::class,
-)->in('Feature');
-
-// Unit tests don't need database refresh for better performance
-uses(Tests\TestCase::class)->in('Unit');
-
-// Architecture tests for code structure validation
-uses(Tests\TestCase::class)->in('Architecture');
+pest()->extend(Tests\TestCase::class)
+    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -43,11 +32,16 @@ expect()->extend('toBeOne', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Architecture Tests
+| Functions
 |--------------------------------------------------------------------------
 |
-| Architecture tests are available through the pestphp/pest-plugin-arch
-| package. Custom architecture rules can be defined in the Architecture/
-| directory to maintain code quality and enforce consistent patterns.
+| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
+| project that you don't want to repeat in every file. Here you can also expose helpers as
+| global functions to help you to reduce the number of lines of code in your test files.
 |
 */
+
+function something()
+{
+    // ..
+}

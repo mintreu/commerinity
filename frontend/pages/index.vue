@@ -64,7 +64,7 @@
     <!-- Component Sections -->
     <AffiliateBenefitsSection />
     <BestSaleProducts />
-    <FeaturedProductsSection />
+<!--    <FeaturedProductsSection />-->
 
     <div class="overflow-x-hidden mx-auto">
       <EnhancedFeaturesSection />

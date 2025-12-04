@@ -87,11 +87,11 @@ class ListProducts extends ListRecords
 
                                 MoneyColumn::make('price'),
 
-                                Tables\Columns\TextColumn::make('reward_point')
-                                    ->numeric()
-                                    ->badge()
-                                    ->suffix(' points')
-                                    ->sortable(),
+//                                Tables\Columns\TextColumn::make('reward_point')
+//                                    ->numeric()
+//                                    ->badge()
+//                                    ->suffix(' points')
+//                                    ->sortable(),
                             ]),
 
                             Tables\Columns\TextColumn::make('view_count')

@@ -30,7 +30,7 @@ class ProductExporter extends Exporter
             ExportColumn::make('price'),
             ExportColumn::make('min_quantity'),
             ExportColumn::make('max_quantity'),
-            ExportColumn::make('reward_point'),
+
             ExportColumn::make('is_returnable'),
             ExportColumn::make('parent_id'),
             ExportColumn::make('width'),

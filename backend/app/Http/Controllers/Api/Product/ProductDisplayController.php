@@ -139,7 +139,7 @@ class ProductDisplayController extends Controller
     {
         $query  = Product::select([
             'id','name','url','sku','view_count','type','status',
-            'filter_group_id','reward_point','parent_id','price'
+            'filter_group_id', 'parent_id','price'
         ])->with([
             'media' => fn($query) => $query->where('collection_name', 'displayImage'),
             'categories'
@@ -167,7 +167,7 @@ class ProductDisplayController extends Controller
     {
         $query = Product::select([
             'id','name','url','sku','view_count','type','status',
-            'filter_group_id','reward_point','parent_id','price'
+            'filter_group_id', 'parent_id','price'
         ])->with([
             'media' => fn($query) => $query->where('collection_name', 'displayImage'),
             'categories'

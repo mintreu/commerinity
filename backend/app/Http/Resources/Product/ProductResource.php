@@ -23,7 +23,7 @@ class ProductResource extends ProductIndexResource
             'hasParent' => !is_null($this->parent_id),
             'short_description' => $this->short_description,
             'description' => $this->description,
-            'reward_point' => $this->reward_point,
+            'reward_point' => $this->whenNotNull($this->calculateRewardPoint($this?->tiers?->first())),
             'thumbnail' => $this->getFirstMediaUrl('displayImage'),
             'banner' => $this->getMedia('bannerImage')->map(fn($media) => $media->getFullUrl()),
             'meta' => $this->meta_data,

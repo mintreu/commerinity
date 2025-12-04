@@ -7,6 +7,7 @@ use App\Casts\GstTaxCast;
 use App\Models\ProductSupplier;
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
@@ -148,10 +149,10 @@ class MasterDemoProductSeeder extends Seeder
                 'spices-masalas',
                 'ayurvedic-hair-care',
                 'ayurvedic-oral-care',
-                'hair-care',
+                //'hair-care',
                // 'home-decor',
                 'mens-fashion',
-                'womens-fashion',
+               // 'womens-fashion',
                 'cases-covers'
 
             ])){
@@ -434,7 +435,7 @@ class MasterDemoProductSeeder extends Seeder
     {
         // Debug the full path using the base disk instead of 'local'
         $fullPath = storage_path('app/'.$path);
-        echo "Looking for file at: {$fullPath}\n";
+       // echo "Looking for file at: {$fullPath}\n";
 
         if (! file_exists($fullPath)) {
             throw new Exception("File not found: {$path}. Full path: {$fullPath}");
@@ -454,6 +455,10 @@ class MasterDemoProductSeeder extends Seeder
 
         return $decoded;
     }
+
+
+
+
 
 
 }

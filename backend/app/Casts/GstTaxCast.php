@@ -46,6 +46,19 @@ enum GstTaxCast: string implements HasLabel
         };
     }
 
+    public function getFullLabel(): string
+    {
+        return match ($this) {
+            self::NONE => '0% • Tax Exempt / Zero Rated',
+            self::GST_5 => '5% • Essential Goods / Food / Healthcare',
+            self::GST_12 => '12% • Standard Rate (Electronics, Clothing)',
+            self::GST_18 => '18% • General GST (Services & Retail)',
+            self::GST_28 => '28% • Premium / Luxury / Tobacco / SUVs',
+            self::GST_40 => '40% • Luxury Goods (GST 2.0 • Effective Sept 2025)',
+        };
+    }
+
+
     public function percentage(): int
     {
         return match ($this) {

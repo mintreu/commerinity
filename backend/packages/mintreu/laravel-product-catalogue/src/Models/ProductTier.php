@@ -30,8 +30,9 @@ class ProductTier extends Model
     protected $casts = [
         'in_stock' => 'boolean',
         'landing_cost' => 'integer',
-        'price' => 'integer',
+        //'price' => 'integer',
         'profit_margin' => 'float',
+        'created_at' => 'datetime'
     ];
 
     /*
@@ -45,7 +46,7 @@ class ProductTier extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function productSupplier(): BelongsTo
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(ProductSupplier::class, 'product_supplier_id');
     }

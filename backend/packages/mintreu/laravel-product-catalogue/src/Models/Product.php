@@ -2,12 +2,11 @@
 
 namespace Mintreu\LaravelProductCatalogue\Models;
 
-
 use App\Casts\GstTaxCast;
-
 use App\Models\Order\OrderProduct;
 use App\Models\ProductEngagement;
 use App\Models\ProductWishlist;
+use App\Services\RewardPointService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +30,6 @@ class Product extends Model implements HasMedia
     /** @use HasFactory<ProductFactory> */
     use HasPackageModelFactory,HasRecursiveRelationships,InteractsWithMedia,HasCategory;
 
-
     protected $fillable = [
         'name',
         'parent_id',
@@ -39,13 +37,13 @@ class Product extends Model implements HasMedia
         'url',
         'hsn',
         'type',
+        'status',
         'filter_group_id',
         'tenant_id',
         'tenant_type',
         'description',
         'short_description',
         'price',
-        'reward_point',
         'min_quantity',
         'max_quantity',
         'is_returnable',
@@ -53,7 +51,7 @@ class Product extends Model implements HasMedia
         'height',  // can be removed later
         'length',  // can be removed later
         'weight',  // can be removed later
-        'status_feedback',  
+        'status_feedback',
         'view_count',
         'meta_data',
         'tax_slab',
@@ -70,7 +68,7 @@ class Product extends Model implements HasMedia
 
     protected $casts = [
         //'price' => LaravelMoneyCast::class,
-        'reward_point' => 'float',
+
         'is_returnable' => 'boolean',
         'is_downloadable' => 'boolean',
         'view_count' => 'integer',
@@ -141,10 +139,20 @@ class Product extends Model implements HasMedia
     }
 
 
+
+    public function calculateRewardPoint(?ProductTier $tier = null): float|int
+    {
+        return (new RewardPointService())->calculate($tier);
+    }
+
+
+
+
     public function tiers(): HasMany
     {
         return $this->hasMany(ProductTier::class,'product_id','id');
     }
+
 
 
     public function cheapestTier(): HasOne
@@ -202,7 +210,7 @@ class Product extends Model implements HasMedia
 
 
 	// need to use through config, upgrade needed here
-	
+
     public function engagements()
     {
         return $this->hasMany(ProductEngagement::class,'product_id');

@@ -27,18 +27,9 @@ class DatabaseSeeder extends Seeder
             FilterSeeder::class,  // required for product
             CategorySeeder::class,  // required for product
 
-            UserSeeder::class,
-
-            // MasterDemoProductSeeder::class,
-
-
-            //ProductSeeder::class,
-            //ProductDemoSeeder::class,   // product seeder
 
             MasterDemoProductSeeder::class,
-
             ProductTierSeeder::class,
-
 
             IntegrationSeeder::class,
             RecruitmentSeeder::class,
