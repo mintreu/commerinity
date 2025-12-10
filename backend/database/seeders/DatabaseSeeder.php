@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
             IntegrationSeeder::class,
             RecruitmentSeeder::class,
 
+            UserSeeder::class,
+
             PageSeeder::class,
             HelpDeskTopicSeeder::class,
 

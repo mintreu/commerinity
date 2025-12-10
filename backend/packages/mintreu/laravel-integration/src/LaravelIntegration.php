@@ -99,6 +99,7 @@ class LaravelIntegration
 
                 ClassContractValidator::throwUnless($instance, ProviderIntegrationContract::class);
 
+
                 $interface = match ($type) {
                     IntegrationTypeCast::PAYMENT->value  => PaymentIntegrationContract::class,
                     IntegrationTypeCast::PAYOUT->value   => PayoutProviderIntegrationContract::class,
@@ -107,11 +108,14 @@ class LaravelIntegration
                     default                              => ProviderIntegrationContract::class,
                 };
 
+
                 ClassContractValidator::throwUnless($instance, $interface);
 
                 $this->providersByType[$type][$key] = $instance;
             }
         }
+
+
     }
 
     public function getProviderInstance(string $type, ?string $provider = null)

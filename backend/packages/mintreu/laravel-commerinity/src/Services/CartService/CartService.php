@@ -73,6 +73,7 @@ class CartService
             return $this->customer->cart;
         }
 
+
         if ($this->hasGuest && $this->validToken) {
             return Cart::where('is_guest', true)
                 ->where('guest_id', $this->guestId)
@@ -86,6 +87,7 @@ class CartService
 
     public function add(Model|Product $item, int $quantity): void
     {
+
         if (is_null($this->customer) && !$this->hasGuest)
         {
             $this->setError('cart credential not validated!');

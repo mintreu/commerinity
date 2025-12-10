@@ -53,7 +53,11 @@ class OrderService
 
     public function place(Cart $cart,Address $billing, Address $shipping,string $provider): array
     {
+
+        dd(LaravelIntegration::make());
+
         $allAvailablePaymentProviders = LaravelIntegration::make()->getAvailableProviders(IntegrationTypeCast::PAYMENT->value);
+
         $defaultOnlinePayment = collect($allAvailablePaymentProviders)->where('default',true)->first();
 
         $this->provider = match ($provider) {
@@ -62,6 +66,7 @@ class OrderService
                 'cash', 'cod','cod-payment', 'cash-on-delivery' =>  $allAvailablePaymentProviders['cash-payment']['slug'],
                 default => throw new \InvalidArgumentException("Unsupported payment provider: {$this->provider}"),
             };
+
 
 
 
@@ -320,10 +325,10 @@ class OrderService
     private function processOrderConfirmation(): void
     {
         $this->order->orderProducts->each(function (OrderProduct $orderProduct) {
-            
+
             $orderProduct->loadMissing('productTier.address');
             $tier = $orderProduct->productTier;
-            
+
             if (!$tier) {
                 $this->setError("Could not find the stock source for product: {$orderProduct->product->name}. Order cannot be fulfilled.");
                 Log::error("Order-Product ID {$orderProduct->id} is missing a product_tier_id for order {$this->order->uuid}.");
@@ -344,7 +349,7 @@ class OrderService
             // Create shipment and invoice for this item from its stock location
             $pickupAddressId = $tier->address->id;
             $shipment = $this->makeOrderShipment($orderProduct, $orderProduct->quantity, $pickupAddressId);
-            
+
             if (!$shipment) {
                 Log::error("Shipment not generated for order_product {$orderProduct->id} in order {$this->order->uuid}");
                 return;

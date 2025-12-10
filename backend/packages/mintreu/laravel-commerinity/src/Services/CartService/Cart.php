@@ -31,6 +31,7 @@ class Cart extends CartService
         // Eager load cartable with media to avoid N+1 problem
         $this->cartItems = $this->items();
 
+
         $itemMeta = null;
         if ($this->cartItems)
         {

@@ -23,11 +23,11 @@ class UserSeeder extends Seeder
 
         $this->createDemoApplicant();
 
-//        User::factory()->create([
-//            'name' => 'Test User',
-//            'email' => 'demouser@example.com',
-//            'status'    => AuthStatusCast::DRAFT
-//        ]);
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'demouser@example.com',
+            'status'    => AuthStatusCast::DRAFT
+        ]);
 
 
 

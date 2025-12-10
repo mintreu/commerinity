@@ -543,8 +543,8 @@
                 <div class="text-sm text-slate-600 dark:text-slate-400">
                   <p>I agree to the
                     <a href="/terms" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">Terms of Service</a>
-                    and
-                    <a href="/privacy" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">Privacy Policy</a>
+<!--                    and-->
+<!--                    <a href="/privacy" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">Privacy Policy</a>-->
                   </p>
                 </div>
               </div>

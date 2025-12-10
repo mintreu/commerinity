@@ -32,6 +32,12 @@ class ProductTierSeeder extends Seeder
 
     private function addStock(\Mintreu\LaravelProductCatalogue\Models\Product $product): void
     {
+
+        $address = Address::factory(3)->create([
+            'title' => fake()->word.' Pickup Address',
+            'type'  => AddressTypeCast::PICKUP->value
+        ]);
+
         $stockRanges = [
             [200, 300],
             [50, 150],
@@ -40,10 +46,7 @@ class ProductTierSeeder extends Seeder
 
         foreach ($stockRanges as $range) {
 
-            $address = Address::factory()->create([
-                'title' => fake()->word.' Pickup Address',
-                'type'  => AddressTypeCast::PICKUP->value
-            ]);
+
             $supplier = ProductSupplier::factory()->create([
                 'name' => fake()->company.' Supplier',
             ]);
@@ -59,7 +62,7 @@ class ProductTierSeeder extends Seeder
                 'landing_cost' => $landing = fake()->randomElement([12050,15000,8000,45000]),
                 'profit_margin' => $margin = fake()->randomElement([5,15,20,10]),  // tax %
                 'price' => $landing + ($landing * $margin /100),
-                'address_id' => $address->id,
+                'address_id' => $address->random()->first()->id,
                 'product_supplier_id' => $supplier->id
             ]);
         }

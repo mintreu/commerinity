@@ -18,8 +18,10 @@ class OrderActionController extends Controller
 
     public function placeOrder(PlaceOrderRequest $request)
     {
+
         $validated = $request->validated();
         $customer = $request->user();
+
 
 
         if (!$customer)
@@ -57,9 +59,11 @@ class OrderActionController extends Controller
         $cartService = new Cart($customer);
         $cartService->capture($request);
 
+
         $orderService = OrderService::make();
         $result = $orderService->place(cart: $cartService,billing: $billingAddress,shipping: $shippingAddress,provider: $validated['payment_provider']);
 
+        dd($orderService,$result);
 
         return response()->json([
             'data' => [

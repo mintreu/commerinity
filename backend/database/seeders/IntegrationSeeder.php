@@ -95,7 +95,7 @@ class IntegrationSeeder extends Seeder
             'type' => IntegrationTypeCast::SMS,
             'key' => '',
             'secret' => '',
-            'status' => false,
+            'status' => true,
             'default' => true,
         ]);
 
