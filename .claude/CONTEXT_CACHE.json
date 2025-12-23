@@ -1,0 +1,88 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-12-11T00:00:00Z",
+  "api_patterns": {
+    "sanctum_fetch": {
+      "usage_count": 0,
+      "category": "frontend-api",
+      "snippet": "const config = useRuntimeConfig()\nawait useSanctumFetch(`${config.public.apiBase}/api/endpoint`, {\n  method: 'POST',\n  body: { data }\n})",
+      "notes": "CRITICAL: Always use useSanctumFetch, NOT $fetch or $api"
+    },
+    "api_response_success": {
+      "usage_count": 0,
+      "category": "backend-api",
+      "snippet": "return response()->json(['data' => $result], 200);",
+      "notes": "Standard success response format"
+    },
+    "api_response_error": {
+      "usage_count": 0,
+      "category": "backend-api",
+      "snippet": "return response()->json(['message' => 'Error message'], 422);",
+      "notes": "Standard error response format"
+    },
+    "form_request_validation": {
+      "usage_count": 0,
+      "category": "backend-validation",
+      "snippet": "public function rules(): array\n{\n    return [\n        'field' => ['required', 'string', 'max:255'],\n    ];\n}",
+      "notes": "Always use Form Request classes for validation"
+    }
+  },
+  "common_imports": {
+    "laravel_controller": "use Illuminate\\Http\\Request;\nuse Illuminate\\Http\\JsonResponse;\nuse Illuminate\\Support\\Facades\\Auth;",
+    "laravel_model": "use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\nuse Illuminate\\Database\\Eloquent\\Model;\nuse Illuminate\\Database\\Eloquent\\Relations\\BelongsTo;",
+    "nuxt_composables": "const config = useRuntimeConfig()\nconst { login, logout, user } = useSanctumAuth()",
+    "nuxt_ui_components": "import { UButton, UInput, UForm, UCard } from '#components'"
+  },
+  "test_templates": {
+    "pest_feature_test": {
+      "usage_count": 0,
+      "category": "testing",
+      "snippet": "it('description of test', function () {\n    // Arrange\n    $user = User::factory()->create();\n\n    // Act\n    $response = $this->postJson('/api/endpoint', ['data' => 'value']);\n\n    // Assert\n    $response->assertOk();\n    $response->assertJsonStructure(['data']);\n});",
+      "notes": "Use Pest syntax, specific assertions"
+    }
+  },
+  "enterprise_patterns": {
+    "strict_types_declaration": {
+      "usage_count": 0,
+      "category": "php-standards",
+      "snippet": "declare(strict_types=1);",
+      "notes": "REQUIRED in ALL PHP files"
+    },
+    "constructor_di_readonly": {
+      "usage_count": 0,
+      "category": "php-standards",
+      "snippet": "public function __construct(\n    private readonly ServiceInterface $service,\n    private readonly Repository $repo,\n) {}",
+      "notes": "Constructor property promotion + readonly + DI"
+    },
+    "final_class": {
+      "usage_count": 0,
+      "category": "php-standards",
+      "snippet": "final class ServiceName implements ServiceInterface\n{\n    // ...\n}",
+      "notes": "Use final when no inheritance needed"
+    }
+  },
+  "common_errors": {
+    "middleware_not_found": {
+      "error": "Unknown middleware '$auth' or 'auth'",
+      "cause": "@qirolab/nuxt-sanctum-authentication uses $auth and $guest prefixes",
+      "fix": "Always use middleware: ['$auth'] or middleware: ['$guest'] with $ prefix",
+      "prevention": "Check MIDDLEWARE_FIX.md when working with auth"
+    },
+    "sanctum_fetch_undefined": {
+      "error": "$fetch is not a function or useSanctumFetch undefined",
+      "cause": "Not using correct Sanctum composable",
+      "fix": "Import: const config = useRuntimeConfig(); Use: useSanctumFetch(...)",
+      "prevention": "Always check API_PATTERN.md before API calls"
+    }
+  },
+  "quick_commands": {
+    "run_tests": "php artisan test",
+    "run_specific_test": "php artisan test tests/Feature/ExampleTest.php",
+    "format_code": "vendor/bin/pint --dirty",
+    "run_dev_backend": "composer run dev",
+    "run_dev_frontend": "cd client && pnpm dev",
+    "create_migration": "php artisan make:migration create_table_name --no-interaction",
+    "create_model": "php artisan make:model ModelName -mf --no-interaction",
+    "create_controller": "php artisan make:controller Api/ControllerName --no-interaction"
+  }
+}

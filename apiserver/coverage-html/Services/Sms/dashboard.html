@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../_css/bootstrap.min.css?v=12.5.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/billboard.min.css?v=12.5.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/style.css?v=12.5.0" rel="stylesheet" type="text/css">
+  <link href="../../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../../index.html">C:\laragon\www\mintreu\server\commerinity\apiserver\app</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Services</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Sms</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classesCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#30">App\Services\Sms\Providers\Fast2SmsProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#10">App\Services\Sms\DTOs\DeliveryReport</a></td><td class="text-right">2%</td></tr>
+       <tr><td><a href="DTOs/BalanceInfo.php.html#10">App\Services\Sms\DTOs\BalanceInfo</a></td><td class="text-right">43%</td></tr>
+       <tr><td><a href="SmsService.php.html#27">App\Services\Sms\SmsService</a></td><td class="text-right">44%</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#21">App\Services\Sms\Providers\LogSmsProvider</a></td><td class="text-right">51%</td></tr>
+       <tr><td><a href="DTOs/SmsResponse.php.html#10">App\Services\Sms\DTOs\SmsResponse</a></td><td class="text-right">58%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#30">App\Services\Sms\Providers\Fast2SmsProvider</a></td><td class="text-right">0.0%</td><td class="text-right">64</td><td class="text-right">4160</td></tr>
+       <tr><td><a href="SmsService.php.html#27">App\Services\Sms\SmsService</a></td><td class="text-right">45.0%</td><td class="text-right">59</td><td class="text-right">638</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#10">App\Services\Sms\DTOs\DeliveryReport</a></td><td class="text-right">2.6%</td><td class="text-right">12</td><td class="text-right">144</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#21">App\Services\Sms\Providers\LogSmsProvider</a></td><td class="text-right">51.3%</td><td class="text-right">17</td><td class="text-right">50</td></tr>
+       <tr><td><a href="DTOs/BalanceInfo.php.html#10">App\Services\Sms\DTOs\BalanceInfo</a></td><td class="text-right">43.3%</td><td class="text-right">9</td><td class="text-right">23</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2 style="margin-top: 3rem;">Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodsCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="DTOs/BalanceInfo.php.html#57"><abbr title="App\Services\Sms\DTOs\BalanceInfo::error">error</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/BalanceInfo.php.html#85"><abbr title="App\Services\Sms\DTOs\BalanceInfo::getShortage">getShortage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/BalanceInfo.php.html#97"><abbr title="App\Services\Sms\DTOs\BalanceInfo::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#54"><abbr title="App\Services\Sms\DTOs\DeliveryReport::fromFast2Sms">fromFast2Sms</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#80"><abbr title="App\Services\Sms\DTOs\DeliveryReport::error">error</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#93"><abbr title="App\Services\Sms\DTOs\DeliveryReport::isDelivered">isDelivered</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#101"><abbr title="App\Services\Sms\DTOs\DeliveryReport::isFailed">isFailed</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#109"><abbr title="App\Services\Sms\DTOs\DeliveryReport::isPending">isPending</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#119"><abbr title="App\Services\Sms\DTOs\DeliveryReport::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/SmsResponse.php.html#94"><abbr title="App\Services\Sms\DTOs\SmsResponse::providerUnavailable">providerUnavailable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DTOs/SmsResponse.php.html#110"><abbr title="App\Services\Sms\DTOs\SmsResponse::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#54"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#62"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#67"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#72"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::isConfigured">isConfigured</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#77"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::isServiceable">isServiceable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#89"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::send">send</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#116"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendLegacy">sendLegacy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#136"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendDlt">sendDlt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#166"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getBalance">getBalance</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#213"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::canSend">canSend</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#218"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getDeliveryReport">getDeliveryReport</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#256"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getDeliveryReports">getDeliveryReports</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#267"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getLogs">getLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#303"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::setProviderModel">setProviderModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#308"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getProviderModel">getProviderModel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#316"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendDltFromRequest">sendDltFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#336"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendQuickSms">sendQuickSms</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#364"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::parseResponse">parseResponse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#397"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::httpClient">httpClient</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#411"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::formatPhoneNumbers">formatPhoneNumbers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#431"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::resolveTemplate">resolveTemplate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#464"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::updateProviderBalance">updateProviderBalance</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#477"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::invalidateBalanceCache">invalidateBalanceCache</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#486"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getApiKeyHash">getApiKeyHash</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#496"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::logError">logError</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#508"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::logBalanceWarning">logBalanceWarning</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#521"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getApiKey">getApiKey</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#529"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getSenderId">getSenderId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#537"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getEntityId">getEntityId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#545"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getPerSmsCost">getPerSmsCost</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#553"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getMinBalanceThreshold">getMinBalanceThreshold</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#71"><abbr title="App\Services\Sms\Providers\LogSmsProvider::sendLegacy">sendLegacy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#92"><abbr title="App\Services\Sms\Providers\LogSmsProvider::sendDlt">sendDlt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#140"><abbr title="App\Services\Sms\Providers\LogSmsProvider::getDeliveryReports">getDeliveryReports</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#151"><abbr title="App\Services\Sms\Providers\LogSmsProvider::getLogs">getLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#144"><abbr title="App\Services\Sms\SmsService::sendBulk">sendBulk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#195"><abbr title="App\Services\Sms\SmsService::getAllBalances">getAllBalances</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#217"><abbr title="App\Services\Sms\SmsService::getDeliveryReport">getDeliveryReport</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#264"><abbr title="App\Services\Sms\SmsService::getMonthlyProjection">getMonthlyProjection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#280"><abbr title="App\Services\Sms\SmsService::getAllExpenseProjections">getAllExpenseProjections</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#294"><abbr title="App\Services\Sms\SmsService::syncBalance">syncBalance</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#400"><abbr title="App\Services\Sms\SmsService::getBestProviderForBulk">getBestProviderForBulk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#495"><abbr title="App\Services\Sms\SmsService::sendBulkChunked">sendBulkChunked</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmsService.php.html#91"><abbr title="App\Services\Sms\SmsService::sendOtp">sendOtp</abbr></a></td><td class="text-right">27%</td></tr>
+       <tr><td><a href="SmsService.php.html#39"><abbr title="App\Services\Sms\SmsService::send">send</abbr></a></td><td class="text-right">40%</td></tr>
+       <tr><td><a href="DTOs/SmsRequest.php.html#130"><abbr title="App\Services\Sms\DTOs\SmsRequest::getVariablesAsPipeString">getVariablesAsPipeString</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="SmsService.php.html#480"><abbr title="App\Services\Sms\SmsService::updateLog">updateLog</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="SmsService.php.html#179"><abbr title="App\Services\Sms\SmsService::getBalance">getBalance</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="SmsService.php.html#377"><abbr title="App\Services\Sms\SmsService::getServiceableProviders">getServiceableProviders</abbr></a></td><td class="text-right">75%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3 style="margin-top: 2rem;">Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+         <th class="text-right">Complexity</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="SmsService.php.html#217"><abbr title="App\Services\Sms\SmsService::getDeliveryReport">getDeliveryReport</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">7</td><td class="text-right">56</td></tr>
+       <tr><td><a href="DTOs/DeliveryReport.php.html#54"><abbr title="App\Services\Sms\DTOs\DeliveryReport::fromFast2Sms">fromFast2Sms</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#166"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getBalance">getBalance</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#218"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getDeliveryReport">getDeliveryReport</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">6</td><td class="text-right">42</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#267"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getLogs">getLogs</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">5</td><td class="text-right">30</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#89"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::send">send</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#431"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::resolveTemplate">resolveTemplate</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="SmsService.php.html#294"><abbr title="App\Services\Sms\SmsService::syncBalance">syncBalance</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="SmsService.php.html#495"><abbr title="App\Services\Sms\SmsService::sendBulkChunked">sendBulkChunked</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">4</td><td class="text-right">20</td></tr>
+       <tr><td><a href="SmsService.php.html#39"><abbr title="App\Services\Sms\SmsService::send">send</abbr></a></td><td class="text-right">40.9%</td><td class="text-right">6</td><td class="text-right">13</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#77"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::isServiceable">isServiceable</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#136"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendDlt">sendDlt</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#316"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendDltFromRequest">sendDltFromRequest</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#411"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::formatPhoneNumbers">formatPhoneNumbers</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="SmsService.php.html#144"><abbr title="App\Services\Sms\SmsService::sendBulk">sendBulk</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">3</td><td class="text-right">12</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#116"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendLegacy">sendLegacy</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#256"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::getDeliveryReports">getDeliveryReports</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#336"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::sendQuickSms">sendQuickSms</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#364"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::parseResponse">parseResponse</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/Fast2SmsProvider.php.html#464"><abbr title="App\Services\Sms\Providers\Fast2SmsProvider::updateProviderBalance">updateProviderBalance</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#71"><abbr title="App\Services\Sms\Providers\LogSmsProvider::sendLegacy">sendLegacy</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/LogSmsProvider.php.html#140"><abbr title="App\Services\Sms\Providers\LogSmsProvider::getDeliveryReports">getDeliveryReports</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="SmsService.php.html#195"><abbr title="App\Services\Sms\SmsService::getAllBalances">getAllBalances</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="SmsService.php.html#264"><abbr title="App\Services\Sms\SmsService::getMonthlyProjection">getMonthlyProjection</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="SmsService.php.html#280"><abbr title="App\Services\Sms\SmsService::getAllExpenseProjections">getAllExpenseProjections</abbr></a></td><td class="text-right">0.0%</td><td class="text-right">2</td><td class="text-right">6</td></tr>
+       <tr><td><a href="SmsService.php.html#91"><abbr title="App\Services\Sms\SmsService::sendOtp">sendOtp</abbr></a></td><td class="text-right">27.3%</td><td class="text-right">2</td><td class="text-right">3</td></tr>
+       <tr><td><a href="SmsService.php.html#377"><abbr title="App\Services\Sms\SmsService::getServiceableProviders">getServiceableProviders</abbr></a></td><td class="text-right">75.0%</td><td class="text-right">3</td><td class="text-right">3</td></tr>
+       <tr><td><a href="DTOs/SmsRequest.php.html#130"><abbr title="App\Services\Sms\DTOs\SmsRequest::getVariablesAsPipeString">getVariablesAsPipeString</abbr></a></td><td class="text-right">66.7%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="SmsService.php.html#179"><abbr title="App\Services\Sms\SmsService::getBalance">getBalance</abbr></a></td><td class="text-right">75.0%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+       <tr><td><a href="SmsService.php.html#480"><abbr title="App\Services\Sms\SmsService::updateLog">updateLog</abbr></a></td><td class="text-right">66.7%</td><td class="text-right">2</td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 12.5.0</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.15</a> and <a href="https://phpunit.de/">PHPUnit 12.4.4</a> at Tue Dec 23 20:28:28 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../../_js/billboard.pkgd.min.js?v=12.5.0" type="text/javascript"></script>
+  <script type="application/json" id="complexity_class">[[0,64,"Providers\/Fast2SmsProvider.php.html#30","App\\Services\\Sms\\Providers\\Fast2SmsProvider","4160"],[2.631578947368421,12,"DTOs\/DeliveryReport.php.html#10","App\\Services\\Sms\\DTOs\\DeliveryReport","144.93"],[43.333333333333336,9,"DTOs\/BalanceInfo.php.html#10","App\\Services\\Sms\\DTOs\\BalanceInfo","23.74"],[44.97607655502392,59,"SmsService.php.html#27","App\\Services\\Sms\\SmsService","638.91"],[51.31578947368421,17,"Providers\/LogSmsProvider.php.html#21","App\\Services\\Sms\\Providers\\LogSmsProvider","50.35"],[58.139534883720934,6,"DTOs\/SmsResponse.php.html#10","App\\Services\\Sms\\DTOs\\SmsResponse","8.64"],[96.7741935483871,10,"DTOs\/SmsRequest.php.html#13","App\\Services\\Sms\\DTOs\\SmsRequest","10"]]</script>
+  <script type="application/json" id="complexity_method">[[0,1,"DTOs\/BalanceInfo.php.html#57","App\\Services\\Sms\\DTOs\\BalanceInfo::error","2"],[0,1,"DTOs\/BalanceInfo.php.html#85","App\\Services\\Sms\\DTOs\\BalanceInfo::getShortage","2"],[0,1,"DTOs\/BalanceInfo.php.html#97","App\\Services\\Sms\\DTOs\\BalanceInfo::toArray","2"],[0,6,"DTOs\/DeliveryReport.php.html#54","App\\Services\\Sms\\DTOs\\DeliveryReport::fromFast2Sms","42"],[0,1,"DTOs\/DeliveryReport.php.html#80","App\\Services\\Sms\\DTOs\\DeliveryReport::error","2"],[0,1,"DTOs\/DeliveryReport.php.html#93","App\\Services\\Sms\\DTOs\\DeliveryReport::isDelivered","2"],[0,1,"DTOs\/DeliveryReport.php.html#101","App\\Services\\Sms\\DTOs\\DeliveryReport::isFailed","2"],[0,1,"DTOs\/DeliveryReport.php.html#109","App\\Services\\Sms\\DTOs\\DeliveryReport::isPending","2"],[0,1,"DTOs\/DeliveryReport.php.html#119","App\\Services\\Sms\\DTOs\\DeliveryReport::toArray","2"],[0,1,"DTOs\/SmsResponse.php.html#94","App\\Services\\Sms\\DTOs\\SmsResponse::providerUnavailable","2"],[0,1,"DTOs\/SmsResponse.php.html#110","App\\Services\\Sms\\DTOs\\SmsResponse::toArray","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#54","App\\Services\\Sms\\Providers\\Fast2SmsProvider::__construct","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#62","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getSlug","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#67","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getName","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#72","App\\Services\\Sms\\Providers\\Fast2SmsProvider::isConfigured","2"],[0,3,"Providers\/Fast2SmsProvider.php.html#77","App\\Services\\Sms\\Providers\\Fast2SmsProvider::isServiceable","12"],[0,4,"Providers\/Fast2SmsProvider.php.html#89","App\\Services\\Sms\\Providers\\Fast2SmsProvider::send","20"],[0,2,"Providers\/Fast2SmsProvider.php.html#116","App\\Services\\Sms\\Providers\\Fast2SmsProvider::sendLegacy","6"],[0,3,"Providers\/Fast2SmsProvider.php.html#136","App\\Services\\Sms\\Providers\\Fast2SmsProvider::sendDlt","12"],[0,6,"Providers\/Fast2SmsProvider.php.html#166","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getBalance","42"],[0,1,"Providers\/Fast2SmsProvider.php.html#213","App\\Services\\Sms\\Providers\\Fast2SmsProvider::canSend","2"],[0,6,"Providers\/Fast2SmsProvider.php.html#218","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getDeliveryReport","42"],[0,2,"Providers\/Fast2SmsProvider.php.html#256","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getDeliveryReports","6"],[0,5,"Providers\/Fast2SmsProvider.php.html#267","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getLogs","30"],[0,1,"Providers\/Fast2SmsProvider.php.html#303","App\\Services\\Sms\\Providers\\Fast2SmsProvider::setProviderModel","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#308","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getProviderModel","2"],[0,3,"Providers\/Fast2SmsProvider.php.html#316","App\\Services\\Sms\\Providers\\Fast2SmsProvider::sendDltFromRequest","12"],[0,2,"Providers\/Fast2SmsProvider.php.html#336","App\\Services\\Sms\\Providers\\Fast2SmsProvider::sendQuickSms","6"],[0,2,"Providers\/Fast2SmsProvider.php.html#364","App\\Services\\Sms\\Providers\\Fast2SmsProvider::parseResponse","6"],[0,1,"Providers\/Fast2SmsProvider.php.html#397","App\\Services\\Sms\\Providers\\Fast2SmsProvider::httpClient","2"],[0,3,"Providers\/Fast2SmsProvider.php.html#411","App\\Services\\Sms\\Providers\\Fast2SmsProvider::formatPhoneNumbers","12"],[0,4,"Providers\/Fast2SmsProvider.php.html#431","App\\Services\\Sms\\Providers\\Fast2SmsProvider::resolveTemplate","20"],[0,2,"Providers\/Fast2SmsProvider.php.html#464","App\\Services\\Sms\\Providers\\Fast2SmsProvider::updateProviderBalance","6"],[0,1,"Providers\/Fast2SmsProvider.php.html#477","App\\Services\\Sms\\Providers\\Fast2SmsProvider::invalidateBalanceCache","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#486","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getApiKeyHash","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#496","App\\Services\\Sms\\Providers\\Fast2SmsProvider::logError","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#508","App\\Services\\Sms\\Providers\\Fast2SmsProvider::logBalanceWarning","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#521","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getApiKey","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#529","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getSenderId","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#537","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getEntityId","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#545","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getPerSmsCost","2"],[0,1,"Providers\/Fast2SmsProvider.php.html#553","App\\Services\\Sms\\Providers\\Fast2SmsProvider::getMinBalanceThreshold","2"],[0,2,"Providers\/LogSmsProvider.php.html#71","App\\Services\\Sms\\Providers\\LogSmsProvider::sendLegacy","6"],[0,1,"Providers\/LogSmsProvider.php.html#92","App\\Services\\Sms\\Providers\\LogSmsProvider::sendDlt","2"],[0,2,"Providers\/LogSmsProvider.php.html#140","App\\Services\\Sms\\Providers\\LogSmsProvider::getDeliveryReports","6"],[0,1,"Providers\/LogSmsProvider.php.html#151","App\\Services\\Sms\\Providers\\LogSmsProvider::getLogs","2"],[0,3,"SmsService.php.html#144","App\\Services\\Sms\\SmsService::sendBulk","12"],[0,2,"SmsService.php.html#195","App\\Services\\Sms\\SmsService::getAllBalances","6"],[0,7,"SmsService.php.html#217","App\\Services\\Sms\\SmsService::getDeliveryReport","56"],[0,2,"SmsService.php.html#264","App\\Services\\Sms\\SmsService::getMonthlyProjection","6"],[0,2,"SmsService.php.html#280","App\\Services\\Sms\\SmsService::getAllExpenseProjections","6"],[0,4,"SmsService.php.html#294","App\\Services\\Sms\\SmsService::syncBalance","20"],[0,1,"SmsService.php.html#400","App\\Services\\Sms\\SmsService::getBestProviderForBulk","2"],[0,4,"SmsService.php.html#495","App\\Services\\Sms\\SmsService::sendBulkChunked","20"],[27.27272727272727,2,"SmsService.php.html#91","App\\Services\\Sms\\SmsService::sendOtp","3.54"],[40.909090909090914,6,"SmsService.php.html#39","App\\Services\\Sms\\SmsService::send","13.43"],[66.66666666666666,2,"DTOs\/SmsRequest.php.html#130","App\\Services\\Sms\\DTOs\\SmsRequest::getVariablesAsPipeString","2.15"],[66.66666666666666,2,"SmsService.php.html#480","App\\Services\\Sms\\SmsService::updateLog","2.15"],[75,2,"SmsService.php.html#179","App\\Services\\Sms\\SmsService::getBalance","2.06"],[75,3,"SmsService.php.html#377","App\\Services\\Sms\\SmsService::getServiceableProviders","3.14"],[95.65217391304348,5,"SmsService.php.html#414","App\\Services\\Sms\\SmsService::getConfigBasedProvider","5"],[100,1,"DTOs\/BalanceInfo.php.html#22","App\\Services\\Sms\\DTOs\\BalanceInfo::__construct","1"],[100,2,"DTOs\/BalanceInfo.php.html#36","App\\Services\\Sms\\DTOs\\BalanceInfo::fromBalance","2"],[100,2,"DTOs\/BalanceInfo.php.html#69","App\\Services\\Sms\\DTOs\\BalanceInfo::canSend","2"],[100,1,"DTOs\/BalanceInfo.php.html#77","App\\Services\\Sms\\DTOs\\BalanceInfo::getRequiredBalance","1"],[100,1,"DTOs\/DeliveryReport.php.html#37","App\\Services\\Sms\\DTOs\\DeliveryReport::__construct","1"],[100,1,"DTOs\/SmsRequest.php.html#26","App\\Services\\Sms\\DTOs\\SmsRequest::__construct","1"],[100,1,"DTOs\/SmsRequest.php.html#41","App\\Services\\Sms\\DTOs\\SmsRequest::single","1"],[100,1,"DTOs\/SmsRequest.php.html#62","App\\Services\\Sms\\DTOs\\SmsRequest::otp","1"],[100,1,"DTOs\/SmsRequest.php.html#79","App\\Services\\Sms\\DTOs\\SmsRequest::bulk","1"],[100,1,"DTOs\/SmsRequest.php.html#98","App\\Services\\Sms\\DTOs\\SmsRequest::getRecipient","1"],[100,1,"DTOs\/SmsRequest.php.html#106","App\\Services\\Sms\\DTOs\\SmsRequest::getRecipientCount","1"],[100,1,"DTOs\/SmsRequest.php.html#114","App\\Services\\Sms\\DTOs\\SmsRequest::isBulk","1"],[100,1,"DTOs\/SmsRequest.php.html#122","App\\Services\\Sms\\DTOs\\SmsRequest::usesTemplate","1"],[100,1,"DTOs\/SmsResponse.php.html#24","App\\Services\\Sms\\DTOs\\SmsResponse::__construct","1"],[100,1,"DTOs\/SmsResponse.php.html#40","App\\Services\\Sms\\DTOs\\SmsResponse::success","1"],[100,1,"DTOs\/SmsResponse.php.html#61","App\\Services\\Sms\\DTOs\\SmsResponse::failure","1"],[100,1,"DTOs\/SmsResponse.php.html#80","App\\Services\\Sms\\DTOs\\SmsResponse::insufficientBalance","1"],[100,1,"Providers\/LogSmsProvider.php.html#25","App\\Services\\Sms\\Providers\\LogSmsProvider::getSlug","1"],[100,1,"Providers\/LogSmsProvider.php.html#30","App\\Services\\Sms\\Providers\\LogSmsProvider::getName","1"],[100,1,"Providers\/LogSmsProvider.php.html#35","App\\Services\\Sms\\Providers\\LogSmsProvider::isConfigured","1"],[100,1,"Providers\/LogSmsProvider.php.html#40","App\\Services\\Sms\\Providers\\LogSmsProvider::isServiceable","1"],[100,2,"Providers\/LogSmsProvider.php.html#45","App\\Services\\Sms\\Providers\\LogSmsProvider::send","2"],[100,1,"Providers\/LogSmsProvider.php.html#113","App\\Services\\Sms\\Providers\\LogSmsProvider::getBalance","1"],[100,1,"Providers\/LogSmsProvider.php.html#123","App\\Services\\Sms\\Providers\\LogSmsProvider::canSend","1"],[100,1,"Providers\/LogSmsProvider.php.html#128","App\\Services\\Sms\\Providers\\LogSmsProvider::getDeliveryReport","1"],[100,1,"Providers\/LogSmsProvider.php.html#161","App\\Services\\Sms\\Providers\\LogSmsProvider::setProviderModel","1"],[100,1,"Providers\/LogSmsProvider.php.html#166","App\\Services\\Sms\\Providers\\LogSmsProvider::getProviderModel","1"],[100,1,"SmsService.php.html#112","App\\Services\\Sms\\SmsService::sendWelcome","1"],[100,2,"SmsService.php.html#123","App\\Services\\Sms\\SmsService::sendSingle","2"],[100,1,"SmsService.php.html#209","App\\Services\\Sms\\SmsService::canSend","1"],[100,1,"SmsService.php.html#251","App\\Services\\Sms\\SmsService::getAnalytics","1"],[100,1,"SmsService.php.html#320","App\\Services\\Sms\\SmsService::getActiveProviderSlug","1"],[100,2,"SmsService.php.html#332","App\\Services\\Sms\\SmsService::getDefaultProvider","2"],[100,4,"SmsService.php.html#353","App\\Services\\Sms\\SmsService::getActiveProviders","4"],[100,2,"SmsService.php.html#456","App\\Services\\Sms\\SmsService::createLog","2"]]</script>
+  <script type="text/javascript" defer>
+  const barLabels = [
+    '0%',
+    '0-10%',
+    '10-20%',
+    '20-30%',
+    '30-40%',
+    '40-50%',
+    '50-60%',
+    '60-70%',
+    '70-80%',
+    '80-90%',
+    '90-100%',
+    '100%'
+  ];
+  const barConfig = (name, fullName, values) => ({
+    axis: {
+      x: {
+        type: "category",
+        categories: barLabels,
+      },
+      y: {
+        label: {
+          text: `#${name}`,
+          position: 'outer-top',
+        },
+      },
+    },
+    bindto: `#${name}CoverageDistribution`,
+    data: {
+      columns: [
+        [fullName].concat(values),
+      ],
+      colors: {
+        [fullName]: "rgba(69, 114, 167, 0.75)",
+      },
+      type: "bar",
+    },
+    bar: {
+      width: {
+        ratio: 0.9,
+      },
+    },
+    grid: {
+      focus: {
+        show: false,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">Coverage ${barLabels[data[0].x]}</th></tr>
+            <tr><td class="value">${data[0].value} ${name}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  bb.generate(
+    barConfig('classes', "Class Coverage", [1,1,0,0,0,2,2,0,0,0,1,0])
+  );
+  bb.generate(
+    barConfig('methods', "Method Coverage", [54,0,0,1,0,1,0,2,2,0,1,35])
+  );
+
+  const scatterConfig = (name, complexityData) => ({
+    axis: {
+      x: {
+        label: {
+          text: 'Code Coverage (in percent)',
+          position: 'outer-right',
+        },
+        tick: {
+          values: [0, 20, 40, 60, 80, 100],
+        },
+      },
+      y: {
+        label: {
+          text: 'Cyclomatic Complexity',
+          position: 'outer-top',
+        },
+        min: 0,
+        padding: {
+          bottom: 0,
+          top: 5,
+        },
+      },
+    },
+    bindto: `#${name}Complexity`,
+    data: {
+      columns: [
+        ["complexity_x"].concat(complexityData.map(d => d[0])),
+        ["complexity"].concat(complexityData.map(d => d[1])),
+      ],
+      onclick: function(data, element) {
+        window.location = complexityData[data.index][2];
+      },
+      type: "scatter",
+      xs: {
+        "complexity": "complexity_x",
+      },
+    },
+    grid: {
+      focus: {
+        show: true,
+        y: true,
+      },
+      x: {
+        show: true,
+      },
+      y: {
+        show: true,
+      },
+    },
+    legend: {
+      show: false,
+    },
+    tooltip: {
+      contents: function (data) {
+        const coverage = Math.round(data[0].x);
+        const complexity = data[0].value;
+        const targetName = complexityData[data[0].index][3];
+        const crap = complexityData[data[0].index][4];
+        return `<table class="bb-tooltip"><tbody>
+            <tr><th colspan="2">${targetName}</th></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Coverage</td><td class="name">${coverage}%</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Complexity</td><td class="value">${complexity}</td></tr>
+            <tr class="bb-tooltip-name-complexity"><td>Crap</td><td class="value">${crap}</td></tr>
+          </tbody></table>`;
+      },
+      grouped: false,
+    },
+  });
+  const classComplexityData = JSON.parse(document.getElementById('complexity_class').textContent);
+  bb.generate(
+    scatterConfig("class", classComplexityData)
+  );
+  const methodComplexityData = JSON.parse(document.getElementById('complexity_method').textContent);
+  bb.generate(
+    scatterConfig("method", methodComplexityData),
+  );
+  </script>
+ </body>
+</html>

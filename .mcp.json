@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "laravel-backend": {
+      "command": "cmd",
+      "args": ["/c", "cd", "apiserver", "&&", "php", "artisan", "boost:mcp"]
+    },
+    "nuxt-ui-remote": {
+      "type": "http",
+      "url": "https://ui.nuxt.com/mcp"
+    },
+	"Laravel Telescope MCP": {
+      "command": "npx",
+      "args": [
+        "-y", 
+        "mcp-remote", 
+        "http://127.0.0.1:8000/telescope-mcp",
+        "--allow-http"
+      ],
+      "env": { "NODE_TLS_REJECT_UNAUTHORIZED": "0" }
+    },
+
+    "frontend-filesystem": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-filesystem", "./client"]
+    },
+    "puppeteer": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "puppeteer-mcp-server"],
+      "env": {
+        "LOG_DIR": ".claude/puppeteer/logs"
+      }
+    },
+
+  }
+}

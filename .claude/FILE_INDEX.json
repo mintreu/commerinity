@@ -1,0 +1,156 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-12-11T00:00:00Z",
+  "generator": "intelligent-index-v1",
+  "project": {
+    "name": "Commerinity Pro",
+    "root": "C:/laragon/www/mintreu/server/commerinity_pro",
+    "type": ["laravel", "nuxt", "api", "frontend"]
+  },
+  "files": {
+    "apiserver/app/Models/User.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "model",
+      "summary": "User model with auth, MLM relationships, token management, UUID generation",
+      "exports": ["User"],
+      "imports": ["Authenticatable", "HasFactory", "Notifiable"],
+      "features": ["HasUnique", "MLM parent-child", "Originator system", "Onboarding"],
+      "relationships": ["parent", "children", "originator", "addresses", "kycs"],
+      "status": "stable"
+    },
+    "apiserver/app/Helpers/OtpManager.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "helper",
+      "summary": "Enterprise-grade OTP manager with rate limiting, hashing, cache-backed",
+      "exports": ["OtpManager"],
+      "features": ["generate", "verify", "clear", "rate-limiting"],
+      "dependencies": ["CacheContract", "Hasher"],
+      "status": "tested"
+    },
+    "apiserver/app/Http/Controllers/Api/OtpController.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "controller",
+      "summary": "OTP send/verify API endpoints with validation",
+      "exports": ["OtpController"],
+      "routes": ["POST /api/otp/send", "POST /api/otp/verify"],
+      "status": "functional"
+    },
+    "apiserver/app/Http/Controllers/Api/RegisterController.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "controller",
+      "summary": "User registration with mobile + OTP, optional referral",
+      "exports": ["RegisterController"],
+      "routes": ["POST /api/register"],
+      "status": "functional"
+    },
+    "apiserver/app/Http/Controllers/Api/LoginController.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "controller",
+      "summary": "Login with 4 methods (mobile/email + password/OTP), multi-device support",
+      "exports": ["LoginController"],
+      "routes": ["POST /api/login", "POST /api/logout", "POST /api/logout-all"],
+      "status": "functional"
+    },
+    "apiserver/app/Http/Controllers/Api/PasswordResetController.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "controller",
+      "summary": "Password reset flow (forgot + reset)",
+      "exports": ["PasswordResetController"],
+      "routes": ["POST /api/password/forgot", "POST /api/password/reset"],
+      "status": "functional"
+    },
+    "apiserver/app/Http/Controllers/Api/ProfileController.php": {
+      "hash": "pending",
+      "size": 0,
+      "type": "controller",
+      "summary": "User profile management (view, update, change password)",
+      "exports": ["ProfileController"],
+      "routes": ["GET /api/user/profile", "PUT /api/user/profile", "PUT /api/user/password"],
+      "status": "functional"
+    },
+    "client/app/pages/auth/login.vue": {
+      "hash": "pending",
+      "size": 0,
+      "type": "vue-page",
+      "summary": "Login page with dual auth (password/OTP), Nuxt UI components",
+      "components": ["UButton", "UInput", "UForm", "UCard"],
+      "api_calls": ["POST /api/login", "POST /api/otp/send", "POST /api/otp/verify"],
+      "middleware": ["$guest"],
+      "status": "functional"
+    },
+    "client/app/pages/auth/register.vue": {
+      "hash": "pending",
+      "size": 0,
+      "type": "vue-page",
+      "summary": "Registration with mobile + OTP, optional referral code",
+      "components": ["UButton", "UInput", "UForm"],
+      "api_calls": ["POST /api/otp/send", "POST /api/register"],
+      "middleware": ["$guest"],
+      "status": "functional"
+    },
+    "client/app/pages/profile/index.vue": {
+      "hash": "pending",
+      "size": 0,
+      "type": "vue-page",
+      "summary": "Profile view page with user details",
+      "components": ["UCard", "UButton"],
+      "api_calls": ["GET /api/user/profile"],
+      "middleware": ["$auth"],
+      "status": "functional"
+    },
+    "client/app/pages/profile/edit.vue": {
+      "hash": "pending",
+      "size": 0,
+      "type": "vue-page",
+      "summary": "Profile edit form",
+      "components": ["UForm", "UInput", "UButton"],
+      "api_calls": ["PUT /api/user/profile"],
+      "middleware": ["$auth"],
+      "status": "functional"
+    },
+    "CLAUDE.md": {
+      "hash": "pending",
+      "size": 17000,
+      "type": "documentation",
+      "summary": "Project instructions, refactoring rules, enterprise standards",
+      "sections": ["Token optimization", "Architecture", "Refactoring protocol", "Standards"],
+      "status": "reference"
+    },
+    "docs/QUICK_REF.md": {
+      "hash": "pending",
+      "size": 2000,
+      "type": "documentation",
+      "summary": "Minimal context map, documentation index",
+      "purpose": "Session start protocol, file map",
+      "status": "reference"
+    },
+    "docs/guides/API_PATTERN.md": {
+      "hash": "pending",
+      "size": 0,
+      "type": "documentation",
+      "summary": "Sanctum API calling pattern (useSanctumFetch required)",
+      "purpose": "Critical for all API work",
+      "status": "reference"
+    }
+  },
+  "stats": {
+    "total_files_indexed": 15,
+    "backend_files": 7,
+    "frontend_files": 4,
+    "doc_files": 3,
+    "test_files": 0
+  },
+  "quick_access": {
+    "auth_backend": ["OtpController", "RegisterController", "LoginController", "PasswordResetController"],
+    "auth_frontend": ["login.vue", "register.vue"],
+    "profile": ["ProfileController", "profile/index.vue", "profile/edit.vue"],
+    "core_models": ["User"],
+    "helpers": ["OtpManager"]
+  }
+}

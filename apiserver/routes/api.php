@@ -1,0 +1,325 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\OtpController;
+use App\Http\Controllers\Api\Auth\PasswordResetController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\BeneficiaryAccountController;
+use App\Http\Controllers\Api\CommissionController;
+use App\Http\Controllers\Api\KycController;
+use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\Api\NoticeController;
+use App\Http\Controllers\Api\Notification\NotificationController;
+use App\Http\Controllers\Api\Notification\PushSubscriptionController;
+use App\Http\Controllers\Api\OnboardingController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\PublicProfileController;
+use App\Http\Controllers\Api\RecruitmentController;
+use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\TrendController;
+use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\Webhooks\CashfreeWebhookController;
+use App\Http\Controllers\Api\Webhooks\RazorpayWebhookController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// ========================================
+// Health Check
+// ========================================
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'API is running',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
+// Debug route
+Route::get('/debug-auth-flow', [\App\Http\Controllers\DebugAuthController::class, 'testFlow']);
+
+// ========================================
+// Auth Routes - Public
+// ========================================
+
+// OTP
+Route::post('/auth/send-otp', [OtpController::class, 'send']);
+Route::post('/auth/verify-otp', [OtpController::class, 'verify']);
+
+// Registration
+Route::post('/auth/register', [RegisterController::class, 'register']);
+Route::post('/auth/register-email', [RegisterController::class, 'registerWithEmail']);
+
+// Login
+Route::post('/auth/login', [LoginController::class, 'login']); // Nuxt frontend
+Route::post('/auth/login-mobile', [LoginController::class, 'loginMobile']); // Android/iOS apps
+
+// Password Reset (rate limited: 5 attempts per hour)
+Route::middleware('throttle:password-reset')->group(function () {
+    Route::post('/auth/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('/auth/forgot-password-mobile', [PasswordResetController::class, 'forgotPasswordMobile']);
+});
+Route::post('/auth/reset-password', [PasswordResetController::class, 'resetPassword']);
+Route::post('/auth/reset-password-mobile', [PasswordResetController::class, 'resetPasswordMobile']);
+
+// ========================================
+// Protected Routes
+// ========================================
+
+Route::middleware('auth:sanctum')->group(function () {
+    // User Profile
+    Route::get('/user', function (Request $request) {
+        return (new \App\Http\Resources\UserResource($request->user()))->response();
+    });
+
+    // Profile Management
+    Route::put('/user/profile', [ProfileController::class, 'update']);
+    Route::put('/user/password', [ProfileController::class, 'changePassword']);
+
+    // Onboarding
+    Route::get('/onboarding/status', [OnboardingController::class, 'status']);
+    Route::put('/onboarding/profile', [OnboardingController::class, 'updateProfile']);
+    Route::post('/onboarding/verify-contact', [OnboardingController::class, 'verifyContact']);
+    Route::post('/onboarding/complete', [OnboardingController::class, 'complete']);
+
+    // Address Management
+    Route::get('/addresses', [AddressController::class, 'index']);
+    Route::post('/addresses', [AddressController::class, 'store']);
+    Route::get('/addresses/{address:uuid}', [AddressController::class, 'show']);
+    Route::put('/addresses/{address:uuid}', [AddressController::class, 'update']);
+    Route::delete('/addresses/{address:uuid}', [AddressController::class, 'destroy']);
+    Route::post('/addresses/{address:uuid}/default', [AddressController::class, 'setDefault']);
+
+    // KYC Management
+    Route::get('/kyc/status', [KycController::class, 'status']);
+    Route::post('/kyc/submit', [KycController::class, 'submit']);
+    Route::post('/kyc/{kyc}/resubmit', [KycController::class, 'resubmit']);
+
+    // Logout
+    Route::post('/auth/logout', [LoginController::class, 'logout']);
+    Route::post('/auth/logout-all', [LoginController::class, 'logoutAll']);
+
+    // ========================================
+    // Notifications
+    // ========================================
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/{id}', [NotificationController::class, 'destroy']);
+    });
+
+    // Push Subscriptions (WebPush/VAPID)
+    Route::prefix('push')->group(function () {
+        Route::post('/subscribe', [PushSubscriptionController::class, 'store']);
+        Route::post('/unsubscribe', [PushSubscriptionController::class, 'destroy']);
+    });
+
+    // ========================================
+    // Account Management
+    // ========================================
+    Route::delete('/account', [AccountController::class, 'destroy']);
+
+    // MLM Tree
+    Route::prefix('mlm')->group(function () {
+        Route::get('/stats', [AccountController::class, 'mlmStats']);
+        Route::get('/children', [AccountController::class, 'directChildren']);
+        Route::get('/upline', [AccountController::class, 'upline']);
+        Route::get('/tree', [AccountController::class, 'tree']);
+    });
+
+    // ========================================
+    // Commissions / Earnings
+    // ========================================
+    Route::prefix('commissions')->group(function () {
+        Route::get('/', [CommissionController::class, 'index']);
+        Route::get('/summary', [CommissionController::class, 'summary']);
+        Route::get('/by-type', [CommissionController::class, 'byType']);
+        Route::get('/monthly', [CommissionController::class, 'monthly']);
+        Route::get('/{uuid}', [CommissionController::class, 'show']);
+    });
+
+    // ========================================
+    // Wallet Management
+    // ========================================
+    Route::prefix('wallet')->group(function () {
+        // Basic wallet info
+        Route::get('/', [WalletController::class, 'show']);
+        Route::get('/balance', [WalletController::class, 'balance']);
+        Route::get('/stats', [WalletController::class, 'stats']);
+        Route::get('/transactions', [WalletController::class, 'transactions']);
+
+        // Security questions
+        Route::get('/security-questions', [WalletController::class, 'getSecurityQuestions']);
+        Route::get('/my-security-questions', [WalletController::class, 'getUserSecurityQuestions']);
+
+        // PIN Management
+        Route::post('/setup-pin', [WalletController::class, 'setupPin']);
+        Route::post('/request-pin-otp', [WalletController::class, 'requestPinChangeOtp']);
+        Route::post('/change-pin', [WalletController::class, 'changePin']);
+        Route::post('/verify-pin', [WalletController::class, 'verifyPin']);
+        Route::post('/verify-security-question', [WalletController::class, 'verifySecurityQuestion']);
+        Route::post('/reset-pin', [WalletController::class, 'resetPinWithToken']);
+
+        // Financial Transactions (PIN required)
+        Route::post('/send', [WalletController::class, 'sendMoney']);
+        Route::post('/withdraw', [WalletController::class, 'withdraw']);
+        Route::post('/pay', [WalletController::class, 'payViaWallet']);
+
+        // Beneficiary Accounts (Bank Accounts for withdrawals)
+        Route::prefix('beneficiaries')->group(function () {
+            Route::get('/', [BeneficiaryAccountController::class, 'index']);
+            Route::post('/', [BeneficiaryAccountController::class, 'store']);
+            Route::get('/types', [BeneficiaryAccountController::class, 'getAccountTypes']);
+            Route::post('/verify-ifsc', [BeneficiaryAccountController::class, 'verifyIfsc']);
+            Route::get('/{uuid}', [BeneficiaryAccountController::class, 'show']);
+            Route::delete('/{uuid}', [BeneficiaryAccountController::class, 'destroy']);
+            Route::post('/{uuid}/default', [BeneficiaryAccountController::class, 'setDefault']);
+            Route::post('/{uuid}/verify', [BeneficiaryAccountController::class, 'verify']);
+        });
+    });
+
+    // ========================================
+    // Job Applications (Protected)
+    // ========================================
+    Route::post('/careers/{slug}/apply', [RecruitmentController::class, 'apply']);
+    Route::get('/careers/{slug}/check-application', [RecruitmentController::class, 'checkApplication']);
+
+    Route::prefix('my-applications')->group(function () {
+        Route::get('/', [RecruitmentController::class, 'myApplications']);
+        Route::get('/{uuid}', [RecruitmentController::class, 'showApplication']);
+        Route::post('/{uuid}/withdraw', [RecruitmentController::class, 'withdrawApplication']);
+    });
+
+    // ========================================
+    // Subscription Management
+    // ========================================
+    Route::prefix('subscription')->group(function () {
+        Route::get('/plans', [SubscriptionController::class, 'plans']);
+        Route::get('/status', [SubscriptionController::class, 'status']);
+        Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
+        Route::get('/history', [SubscriptionController::class, 'history']);
+    });
+
+    // ========================================
+    // Dashboard Notices (Promotional messages from admin)
+    // ========================================
+    Route::prefix('notices')->group(function () {
+        Route::get('/', [NoticeController::class, 'index']);
+        Route::get('/{notice}', [NoticeController::class, 'show']);
+        Route::post('/{notice}/dismiss', [NoticeController::class, 'dismiss']);
+        Route::post('/{notice}/click', [NoticeController::class, 'click']);
+    });
+
+    // ========================================
+    // Public Profile (View other users in MLM tree)
+    // Visibility rules: upline can see downline, limited data
+    // ========================================
+    Route::prefix('users')->group(function () {
+        Route::get('/{user:uuid}/profile', [PublicProfileController::class, 'show']);
+        Route::get('/{user:uuid}/team', [PublicProfileController::class, 'team']);
+    });
+
+    // ========================================
+    // Messaging (For subscribed members only - Member, Promoter, Advisor, Mentor)
+    // Team communication - not for regular users
+    // ========================================
+    Route::prefix('messages')->group(function () {
+        Route::get('/', [MessageController::class, 'index']);
+        Route::get('/broadcasts', [MessageController::class, 'broadcasts']);
+        Route::get('/unread-count', [MessageController::class, 'unreadCount']);
+        Route::get('/recipients', [MessageController::class, 'availableRecipients']);
+        Route::post('/', [MessageController::class, 'create']);
+        Route::get('/{conversation}', [MessageController::class, 'show']);
+        Route::post('/{conversation}', [MessageController::class, 'store']);
+        Route::post('/{conversation}/read', [MessageController::class, 'markAsRead']);
+        Route::delete('/message/{message}', [MessageController::class, 'destroy']);
+    });
+
+    // ========================================
+    // Trends & Charts API
+    // ========================================
+    Route::prefix('trends')->group(function () {
+        // Dashboard summary
+        Route::get('/dashboard', [TrendController::class, 'dashboardSummary']);
+
+        // Wallet trends
+        Route::get('/wallet/balance', [TrendController::class, 'walletBalance']);
+        Route::get('/wallet/credit-debit', [TrendController::class, 'walletCreditDebit']);
+        Route::get('/wallet/activity', [TrendController::class, 'walletActivity']);
+        Route::get('/wallet/comparison', [TrendController::class, 'walletComparison']);
+
+        // Commission trends
+        Route::get('/commissions/earnings', [TrendController::class, 'commissionEarnings']);
+        Route::get('/commissions/by-type', [TrendController::class, 'commissionByType']);
+        Route::get('/commissions/comparison', [TrendController::class, 'commissionComparison']);
+
+        // Team trends
+        Route::get('/team/growth', [TrendController::class, 'teamGrowth']);
+        Route::get('/team/levels', [TrendController::class, 'teamLevels']);
+        Route::get('/team/activity', [TrendController::class, 'teamActivity']);
+    });
+
+    // ========================================
+    // Activity Tracking (Client-side logging)
+    // Activities are stored for admin analytics only
+    // ========================================
+    Route::prefix('activity')->group(function () {
+        Route::post('/track', [ActivityController::class, 'track']);
+        Route::post('/page-view', [ActivityController::class, 'trackPageView']);
+        Route::post('/action', [ActivityController::class, 'trackAction']);
+        Route::post('/batch', [ActivityController::class, 'trackBatch']);
+    });
+});
+
+// ========================================
+// Public Routes (No Auth Required)
+// ========================================
+
+// VAPID Public Key (needed for push notification registration)
+Route::get('/push/vapid-key', [PushSubscriptionController::class, 'vapidPublicKey']);
+
+// ========================================
+// Careers / Recruitment (Public)
+// ========================================
+Route::prefix('careers')->group(function () {
+    Route::get('/', [RecruitmentController::class, 'index']);
+    Route::get('/filters', [RecruitmentController::class, 'filters']);
+    Route::get('/{slug}', [RecruitmentController::class, 'show']);
+});
+
+// ========================================
+// Contact / Inquiry (Public)
+// ========================================
+Route::prefix('contact')->group(function () {
+    Route::post('/user', [\App\Http\Controllers\Api\InquiryController::class, 'storeUser']);
+    Route::post('/business', [\App\Http\Controllers\Api\InquiryController::class, 'storeBusiness']);
+});
+
+// ========================================
+// Webhooks (No Auth - Signature Verified)
+// ========================================
+Route::prefix('webhooks')->group(function () {
+    // Cashfree Payment Gateway
+    Route::post('/cashfree', [CashfreeWebhookController::class, 'handle']);
+    Route::post('/cashfree/payout', [CashfreeWebhookController::class, 'handlePayout']);
+
+    // Razorpay Payment Gateway
+    Route::post('/razorpay', [RazorpayWebhookController::class, 'handle']);
+});
+
+// ========================================
+// Helpdesk / Support Tickets
+// ========================================
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/helpdesk/tickets', [\App\Http\Controllers\Api\TicketController::class, 'index']);
+    Route::post('/helpdesk/tickets', [\App\Http\Controllers\Api\TicketController::class, 'store']);
+    Route::get('/helpdesk/tickets/{ticket:uuid}', [\App\Http\Controllers\Api\TicketController::class, 'show']);
+    Route::post('/helpdesk/tickets/{ticket:uuid}/reply', [\App\Http\Controllers\Api\TicketController::class, 'reply']);
+    Route::get('/helpdesk/topics/ticket', [\App\Http\Controllers\Api\TicketController::class, 'topics']);
+});

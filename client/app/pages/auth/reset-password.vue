@@ -1,0 +1,414 @@
+<template>
+  <div class="min-h-screen w-full flex relative overflow-hidden">
+    <!-- Left Side: Platform Features (Desktop Only) -->
+    <div class="hidden lg:flex lg:w-1/2 xl:w-3/5 relative z-10 flex-col justify-center p-12">
+      <!-- Background gradient overlay -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-600/6 via-indigo-600/4 to-purple-600/6 backdrop-blur-sm" />
+
+      <div class="relative z-10 max-w-lg">
+        <!-- Brand Logo & Name -->
+        <NuxtLink
+          to="/"
+          class="flex items-center gap-4 mb-12"
+        >
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl transform transition-transform hover:scale-105 duration-300">
+            <UIcon
+              name="i-lucide-hexagon"
+              class="w-8 h-8 text-white"
+            />
+          </div>
+          <div>
+            <h1 class="gradient-text-primary text-3xl font-bold">
+              Commerinity Pro
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 font-medium">Your Shopping Destination</p>
+          </div>
+        </NuxtLink>
+
+        <!-- Main Heading -->
+        <h2 class="text-5xl xl:text-6xl font-bold mb-8 leading-tight">
+          <span class="gradient-text-primary">
+            Create New
+          </span>
+          <br>
+          <span class="gradient-text-accent">
+            Password
+          </span>
+        </h2>
+
+        <!-- Description -->
+        <p class="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
+          Choose a strong password that you haven't used before. Make it memorable but secure.
+        </p>
+
+        <!-- Password Tips -->
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="mt-1">
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-5 h-5 text-green-500"
+              />
+            </div>
+            <div>
+              <h3 class="font-semibold text-slate-900 dark:text-white mb-1">
+                Strong Password
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                Use at least 8 characters with mixed case
+              </p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="mt-1">
+              <UIcon
+                name="i-lucide-shield-check"
+                class="w-5 h-5 text-blue-500"
+              />
+            </div>
+            <div>
+              <h3 class="font-semibold text-slate-900 dark:text-white mb-1">
+                Secure Account
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                Your password is encrypted and secure
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Reset Password Form -->
+    <div class="w-full lg:w-1/2 xl:w-2/5 relative z-10 flex items-center justify-center p-4 lg:p-8">
+      <div class="w-full max-w-md">
+        <!-- Reset Password Card -->
+        <div class="glass-card p-8">
+          <!-- Mobile: Branding (shown only on mobile) -->
+          <div class="lg:hidden text-center mb-8">
+            <div class="flex items-center justify-center mb-6">
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
+                <UIcon
+                  name="i-lucide-lock-keyhole"
+                  class="w-8 h-8 text-white"
+                />
+              </div>
+            </div>
+            <h1 class="gradient-text-primary text-3xl font-bold mb-3">
+              Reset Password
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+              Enter your new password below
+            </p>
+          </div>
+
+          <!-- Desktop: Simple Header -->
+          <div class="hidden lg:block text-center mb-8">
+            <h2 class="gradient-text-primary text-2xl font-bold mb-2">
+              Reset Password
+            </h2>
+            <p class="text-slate-600 dark:text-slate-400 text-sm">
+              Create a strong, secure password
+            </p>
+          </div>
+
+          <!-- Success Message -->
+          <div
+            v-if="success"
+            class="mb-6"
+          >
+            <div class="flex items-start gap-3 px-4 py-4 bg-green-50 dark:bg-green-900/20 border border-green-200/60 dark:border-green-800/60 rounded-xl text-green-700 dark:text-green-400">
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-5 h-5 flex-shrink-0 mt-0.5"
+              />
+              <div class="flex-1">
+                <p class="font-semibold mb-1">
+                  Password Reset Successful!
+                </p>
+                <p class="text-sm">
+                  Your password has been updated. You can now sign in with your new password.
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 text-center">
+              <NuxtLink to="/auth/login">
+                <UButton
+                  color="primary"
+                  size="lg"
+                  block
+                >
+                  <UIcon
+                    name="i-lucide-log-in"
+                    class="w-5 h-5"
+                  />
+                  Sign In
+                </UButton>
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- Invalid Token Message -->
+          <div
+            v-else-if="!token"
+            class="mb-6"
+          >
+            <div class="flex items-start gap-3 px-4 py-4 bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/60 rounded-xl text-red-700 dark:text-red-400">
+              <UIcon
+                name="i-lucide-alert-circle"
+                class="w-5 h-5 flex-shrink-0 mt-0.5"
+              />
+              <div class="flex-1">
+                <p class="font-semibold mb-1">
+                  Invalid Reset Link
+                </p>
+                <p class="text-sm">
+                  This password reset link is invalid or has expired. Please request a new one.
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 text-center">
+              <NuxtLink to="/auth/forgot-password">
+                <UButton
+                  color="primary"
+                  variant="soft"
+                  size="lg"
+                >
+                  <UIcon
+                    name="i-lucide-key-round"
+                    class="w-4 h-4"
+                  />
+                  Request New Link
+                </UButton>
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- Reset Password Form -->
+          <form
+            v-else-if="!success"
+            class="space-y-6"
+            @submit.prevent="handleResetPassword"
+          >
+            <!-- New Password -->
+            <div class="space-y-2">
+              <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <UIcon
+                  name="i-lucide-lock"
+                  class="w-4 h-4"
+                />
+                <span>New Password</span>
+              </label>
+              <div class="relative">
+                <input
+                  v-model="form.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  required
+                  placeholder="At least 8 characters"
+                  class="w-full px-4 py-3 pl-12 pr-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+                <UIcon
+                  name="i-lucide-key"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
+                />
+                <button
+                  type="button"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                  @click="showPassword = !showPassword"
+                >
+                  <UIcon
+                    :name="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                    class="w-4 h-4"
+                  />
+                </button>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="space-y-2">
+              <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <UIcon
+                  name="i-lucide-lock"
+                  class="w-4 h-4"
+                />
+                <span>Confirm Password</span>
+              </label>
+              <div class="relative">
+                <input
+                  v-model="form.password_confirmation"
+                  :type="showPasswordConfirm ? 'text' : 'password'"
+                  required
+                  placeholder="Re-enter your password"
+                  class="w-full px-4 py-3 pl-12 pr-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+                <UIcon
+                  name="i-lucide-key"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
+                />
+                <button
+                  type="button"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                  @click="showPasswordConfirm = !showPasswordConfirm"
+                >
+                  <UIcon
+                    :name="showPasswordConfirm ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                    class="w-4 h-4"
+                  />
+                </button>
+              </div>
+            </div>
+
+            <!-- Password Strength Indicator -->
+            <div
+              v-if="form.password"
+              class="space-y-2"
+            >
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-600 dark:text-slate-400">Password Strength:</span>
+                <span
+                  :class="passwordStrengthColor"
+                  class="font-semibold"
+                >{{ passwordStrengthText }}</span>
+              </div>
+              <div class="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  :class="passwordStrengthColor"
+                  :style="{ width: `${passwordStrength}%` }"
+                  class="h-full transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div
+              v-if="error"
+              class="flex items-center gap-3 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/60 rounded-xl text-red-600 dark:text-red-400 text-sm"
+            >
+              <UIcon
+                name="i-lucide-alert-circle"
+                class="w-5 h-5 flex-shrink-0"
+              />
+              <p>{{ error }}</p>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              :disabled="loading || form.password !== form.password_confirmation"
+              class="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <UIcon
+                :name="loading ? 'i-lucide-loader-2' : 'i-lucide-check'"
+                :class="{ 'animate-spin': loading }"
+                class="w-5 h-5"
+              />
+              <span>{{ loading ? 'Resetting...' : 'Reset Password' }}</span>
+            </button>
+          </form>
+
+          <!-- Back to Login Link -->
+          <div
+            v-if="!success && token"
+            class="mt-8 text-center"
+          >
+            <p class="text-sm text-slate-600 dark:text-slate-400">
+              Remember your password?
+              <NuxtLink
+                to="/auth/login"
+                class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
+              >
+                Sign In
+              </NuxtLink>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+definePageMeta({
+  layout: 'guest',
+  middleware: '$guest'
+})
+
+const route = useRoute()
+const config = useRuntimeConfig()
+
+const token = computed(() => route.query.token as string | undefined)
+
+const loading = ref(false)
+const success = ref(false)
+const error = ref<string | null>(null)
+const showPassword = ref(false)
+const showPasswordConfirm = ref(false)
+
+const form = reactive({
+  password: '',
+  password_confirmation: ''
+})
+
+const passwordStrength = computed(() => {
+  const password = form.password
+  if (!password) return 0
+
+  let strength = 0
+  if (password.length >= 8) strength += 25
+  if (password.length >= 12) strength += 25
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25
+  if (/\d/.test(password)) strength += 12.5
+  if (/[^a-zA-Z0-9]/.test(password)) strength += 12.5
+
+  return Math.min(100, strength)
+})
+
+const passwordStrengthText = computed(() => {
+  const strength = passwordStrength.value
+  if (strength < 25) return 'Weak'
+  if (strength < 50) return 'Fair'
+  if (strength < 75) return 'Good'
+  return 'Strong'
+})
+
+const passwordStrengthColor = computed(() => {
+  const strength = passwordStrength.value
+  if (strength < 25) return 'text-red-500 bg-red-500'
+  if (strength < 50) return 'text-amber-500 bg-amber-500'
+  if (strength < 75) return 'text-blue-500 bg-blue-500'
+  return 'text-green-500 bg-green-500'
+})
+
+const handleResetPassword = async () => {
+  if (form.password !== form.password_confirmation) {
+    error.value = 'Passwords do not match'
+    return
+  }
+
+  if (form.password.length < 8) {
+    error.value = 'Password must be at least 8 characters'
+    return
+  }
+
+  loading.value = true
+  error.value = null
+
+  try {
+    await $fetch(`${config.public.apiBase}/api/auth/reset-password`, {
+      method: 'POST',
+      body: {
+        token: token.value,
+        password: form.password,
+        password_confirmation: form.password_confirmation
+      }
+    })
+
+    success.value = true
+  } catch (err: unknown) {
+    const fetchError = err as { data?: { message?: string } }
+    error.value = fetchError.data?.message || 'Failed to reset password. The link may have expired.'
+  } finally {
+    loading.value = false
+  }
+}
+</script>

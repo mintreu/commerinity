@@ -1,0 +1,16 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+
+    level: 5
+
+    excludePaths:
+        - app/Filament/
+
+    ignoreErrors:
+        - '#Unsafe usage of new static#'
+
+    reportUnmatchedIgnoredErrors: false

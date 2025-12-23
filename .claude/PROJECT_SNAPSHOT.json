@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-12-10T18:00:00Z",
+  "project": {
+    "name": "Commerinity Pro",
+    "type": "full-stack",
+    "phase": "development",
+    "backend": {
+      "path": "apiserver/",
+      "framework": "Laravel 12",
+      "php_version": "8.3.22",
+      "status": "functional",
+      "components": {
+        "auth": {
+          "status": "complete",
+          "tests": "47/75 passing",
+          "features": ["token-based", "OTP", "multi-device", "password-reset"]
+        },
+        "filament": {
+          "status": "installed",
+          "version": "4.x",
+          "path": "/admin"
+        },
+        "api": {
+          "status": "partial",
+          "endpoints": ["auth", "onboarding", "user"],
+          "missing": ["products", "commission", "wallet"]
+        }
+      }
+    },
+    "frontend": {
+      "path": "client/",
+      "framework": "Nuxt 4.2.1",
+      "status": "functional",
+      "ssr": false,
+      "components": {
+        "auth": {
+          "status": "complete",
+          "pages": ["login", "register", "forgot-password"],
+          "middleware": "fixed ($auth, $guest)"
+        },
+        "dashboards": {
+          "status": "complete",
+          "types": ["customer", "vendor", "distributor", "partner", "admin"]
+        },
+        "onboarding": {
+          "status": "complete",
+          "flow": "multi-step profile completion"
+        }
+      }
+    }
+  },
+  "current_focus": {
+    "phase": "refactoring",
+    "priority": "membership-system",
+    "completed_today": [
+      "documentation-restructure",
+      "token-optimization-system",
+      "smart-context-design",
+      "membership-subscription-plan"
+    ],
+    "next": [
+      "membership-system-implementation",
+      "test-coverage-improvement",
+      "api-completion"
+    ]
+  },
+  "tech_stack": {
+    "backend": {
+      "core": "Laravel 12 + PHP 8.3.22",
+      "auth": "Sanctum v4",
+      "admin": "Filament v4",
+      "testing": "Pest v4",
+      "ui": "Livewire v3 + Tailwind CSS v4"
+    },
+    "frontend": {
+      "core": "Nuxt 4.2.1 + Vue 3",
+      "ui": "Nuxt UI v4",
+      "auth": "@qirolab/nuxt-sanctum-authentication",
+      "styles": "Tailwind CSS (via Nuxt UI)"
+    },
+    "database": "MySQL (sessions, cache, queues)"
+  },
+  "file_index": {
+    "backend_models": 2,
+    "backend_controllers": 5,
+    "backend_tests": 75,
+    "frontend_pages": 12,
+    "frontend_components": 8,
+    "migrations": 8
+  }
+}

@@ -1,0 +1,80 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\.7138fb78769cac020f16cc74f6a30ae1b4f13512-audit.json",
+    "files": [
+        {
+            "date": 1765199231593,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-08.log",
+            "hash": "092a35d61e034ba69d996c08c15be2bb68821de432f323ab1c2ea315a17d9746"
+        },
+        {
+            "date": 1765223850915,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-09.log",
+            "hash": "557745d079d3584a6fbdb96d02ffcb09888a1c507c92d2569a3d129e9bfc8b04"
+        },
+        {
+            "date": 1765311462884,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-10.log",
+            "hash": "4cbe9a9299461eeb0af3df5e513faa9be0b29152ab917e16080b7f9a7e63424f"
+        },
+        {
+            "date": 1765400364251,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-11.log",
+            "hash": "ee1c247cd5534d3ecbae8adf4157068fc78911270ae71119340e514e9865acee"
+        },
+        {
+            "date": 1765486067972,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-12.log",
+            "hash": "321b4e67d53a37061084e099865677b3d243803a96604ccd2835b64dc1e5f266"
+        },
+        {
+            "date": 1765570126336,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-13.log",
+            "hash": "529fa876f39b3816e5543fac987a9cc013b19ee31a43c3a890bf20281f76f8a4"
+        },
+        {
+            "date": 1765667370821,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-14.log",
+            "hash": "cb397cc974b5f9f6ecc2802c7b8dba4401c292d2a98c087a72901360690d0b4a"
+        },
+        {
+            "date": 1765745633589,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-15.log",
+            "hash": "9f562088a2f849d7e70eca63c2fe34db0692faabd1a9bc2f74b9a4986938ac7e"
+        },
+        {
+            "date": 1765827465683,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-16.log",
+            "hash": "83e49026b977751f40c4f4c912c0ed164801f7fb7cf595fa0190e1a7589f05e3"
+        },
+        {
+            "date": 1765915500983,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-17.log",
+            "hash": "09188bdc0a31f6ab7e840d25ee20dff094ea313c15bb11b6e389dc57af7c78f5"
+        },
+        {
+            "date": 1766140566403,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-19.log",
+            "hash": "c69c743dd26b029c0b6edf3d25788abb0e53e41849f10a58bbf929f7b65dbcbf"
+        },
+        {
+            "date": 1766182798446,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-20.log",
+            "hash": "5000b7f14dcc91db5ebe5dca6ff14c29c9ba32d3841e11056fcdc4a26cb09041"
+        },
+        {
+            "date": 1766261411297,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-21.log",
+            "hash": "ad9fa4e5e3a93afbcdd0ee40be693ece2e3cd65c26609bf1bae83f0ac23ff73f"
+        },
+        {
+            "date": 1766347832560,
+            "name": "C:\\laragon\\www\\mintreu\\server\\commerinity_pro\\logs\\mcp-puppeteer-2025-12-22.log",
+            "hash": "3d95f4d905100c8719c81cce9b97615c15d774bc4e059f8f22e1eae1f4a01c5a"
+        }
+    ],
+    "hashType": "sha256"
+}
