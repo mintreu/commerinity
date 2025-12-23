@@ -1,194 +1,125 @@
 {
-  "version": "3.0.0-FINAL",
-  "last_updated": "2025-12-23T02:30:00Z",
-  "migration_status": "READY_TO_MOVE",
-  "next_location": "C:/laragon/www/mintreu/server/commerinity",
+  "version": "4.0.0",
+  "last_updated": "2025-12-24T02:00:00Z",
+  "working_directory": "C:/laragon/www/mintreu/server/commerinity",
+  "migration_complete": true,
 
-  "CRITICAL_MIGRATION_INFO": {
-    "old_repo_cleaned": true,
-    "old_code_archived_to": "C:/laragon/www/mintreu/server/commerinity/old_project/",
-    "new_code_location": "C:/laragon/www/mintreu/server/commerinity_pro/",
-    "next_step": "Copy commerinity_pro/* to commerinity/ root",
-    "git_branch_ready": "dev (clean working tree)"
-  },
-
-  "PATH_CHANGES": {
-    "OLD_PATHS_BEFORE_MIGRATION": {
-      "current_project": "C:/laragon/www/mintreu/server/commerinity_pro/apiserver/",
-      "old_reference": "C:/laragon/www/mintreu/server/commerinity/backend/"
-    },
-    "NEW_PATHS_AFTER_MIGRATION": {
-      "current_project": "C:/laragon/www/mintreu/server/commerinity/apiserver/",
-      "old_reference": "C:/laragon/www/mintreu/server/commerinity/old_project/backend/"
-    },
-    "WORKING_DIRECTORY_AFTER_MIGRATION": "C:/laragon/www/mintreu/server/commerinity"
-  },
-
-  "ANTI_HALLUCINATION_RULES": {
-    "rule_1": "old_project/ is READ-ONLY reference (never modify)",
-    "rule_2": "ALWAYS work in apiserver/ and client/ (root of commerinity/)",
-    "rule_3": "NEVER use paths from commerinity_pro/ (will not exist)",
-    "rule_4": "NEVER use paths from backend/ or frontend/ (in old_project/)",
-    "rule_5": "Read MIGRATION_INSTRUCTIONS.md FIRST in new session"
-  },
-
-  "DOCUMENTS_CREATED_FOR_MIGRATION": {
-    "primary_memory": ".claude/REFACTOR_COMPLETE_HISTORY.md (10,000+ words)",
-    "anti_hallucination": ".claude/MIGRATION_INSTRUCTIONS.md (critical rules)",
-    "verification": ".claude/POST_MIGRATION_CHECKLIST.md (12 steps)",
-    "total_claude_files": 51,
-    "total_size": "828 KB"
+  "git_info": {
+    "repo_url": "https://github.com/mintreu/commerinity.git",
+    "current_branch": "dev",
+    "last_commit": "a388892",
+    "last_commit_message": "Initial commit: Refactored MLM platform with fixed migrations",
+    "status": "clean",
+    "auto_commit_enabled": true,
+    "auto_push_enabled": true,
+    "workflow": {
+      "before_commit": ["vendor/bin/pint --dirty"],
+      "commit_format": "Descriptive message\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>",
+      "push_immediately": true
+    }
   },
 
   "last_session": {
-    "date": "2025-12-23",
-    "focus": "Migration Preparation Complete",
+    "date": "2025-12-24",
+    "time": "02:00:00",
+    "duration": "~2 hours",
+    "focus": "Migration fixes and initial GitHub commit",
     "completed": [
-      "Created REFACTOR_COMPLETE_HISTORY.md (complete 15-day timeline)",
-      "Created MIGRATION_INSTRUCTIONS.md (anti-hallucination rules)",
-      "Created POST_MIGRATION_CHECKLIST.md (verification steps)",
-      "Verified old project cleaned (old_project/ folder created)",
-      "Verified new project ready (commerinity_pro/ complete)",
-      "Updated SESSION_MEMORY.json with migration info",
-      "Ready to move new project to old repo root"
-    ],
-    "next_session_instructions": [
-      "User will copy commerinity_pro/* to commerinity/ root",
-      "New location: C:/laragon/www/mintreu/server/commerinity",
-      "READ MIGRATION_INSTRUCTIONS.md IMMEDIATELY",
-      "Run POST_MIGRATION_CHECKLIST.md to verify",
-      "Then start implementing checkout/payout system"
+      "Fixed FAQ audience column (enum → morphable relationship)",
+      "Fixed helpdesk_conversations (ticket_id → helpdesk_id, added columns)",
+      "Fixed state code (Telangana TS → TG)",
+      "Fixed migration order (conversations after helpdesks)",
+      "Updated tests to work with morphable architecture",
+      "All 978 tests passing",
+      "Committed 1449 files to GitHub",
+      "Pushed to origin/dev successfully"
     ]
   },
 
   "test_status": {
-    "total_tests": 855,
-    "passed": 855,
-    "failed": 0,
-    "skipped": 22,
-    "assertions": 2080,
-    "duration": "235.55s",
-    "last_run": "2025-12-22",
-    "location_before_migration": "commerinity_pro/apiserver/tests/",
-    "location_after_migration": "commerinity/apiserver/tests/"
+    "backend": {
+      "total_tests": 978,
+      "passed": 978,
+      "failed": 0,
+      "skipped": 22,
+      "assertions": 2435,
+      "duration": "436.04s",
+      "last_run": "2025-12-24T02:00:00Z"
+    },
+    "frontend": {
+      "status": "TypeScript config issues (non-blocking)",
+      "runtime": "Working fine",
+      "note": "Need @types/node but not critical"
+    }
   },
 
-  "backend_structure": {
-    "location_before": "commerinity_pro/apiserver/",
-    "location_after": "commerinity/apiserver/",
-    "models": 17,
-    "controllers": 12,
-    "services": 17,
-    "tests": 855,
-    "migrations": 35
-  },
-
-  "frontend_structure": {
-    "location_before": "commerinity_pro/client/",
-    "location_after": "commerinity/client/",
-    "pages": 33,
-    "components": 20,
-    "composables": 5,
-    "layouts": 2
-  },
-
-  "feature_status": {
-    "auth_system": "complete",
-    "profile_management": "complete",
-    "wallet_system": "95% (needs checkout/payout)",
-    "address_management": "complete",
-    "kyc_system": "complete",
-    "notification_system": "complete",
-    "mlm_backend": "complete",
-    "mlm_frontend": "0% (pending)",
-    "dashboard_system": "complete",
-    "recruitment_system": "complete",
-    "helpdesk_system": "complete",
-    "messaging_system": "complete",
-    "activity_logging": "complete",
-    "payment_providers": "implemented (not tested)",
-    "admin_system": "80% complete",
-    "onboarding": "50% (backend ready, frontend missing)",
-    "ecommerce": "0% (deferred)"
-  },
-
-  "launch_blockers": [
+  "fixes_in_last_session": [
     {
-      "blocker": "Checkout Flow",
-      "status": "not_implemented",
-      "priority": "CRITICAL",
-      "estimated_days": 3,
-      "description": "Users can't pay for subscriptions, products, or fees via Cashfree/Razorpay"
+      "issue": "FAQ audience column architecture",
+      "old": "Simple enum string column",
+      "new": "Morphable relationship (nullableMorphs)",
+      "reason": "Allows FAQs to be targeted to specific users/roles/models",
+      "files_changed": [
+        "apiserver/database/migrations/2025_12_22_115516_create_helpdesk_faqs_table.php",
+        "apiserver/app/Models/Helpdesk/HelpdeskFaq.php",
+        "apiserver/database/seeders/HelpdeskFaqSeeder.php",
+        "apiserver/database/factories/HelpdeskFaqFactory.php",
+        "apiserver/tests/Feature/Api/HelpdeskModelTest.php"
+      ]
     },
     {
-      "blocker": "Payout Processing",
-      "status": "partially_implemented",
-      "priority": "CRITICAL",
-      "estimated_days": 2,
-      "description": "ProcessPayoutJob not wired to payment provider, withdrawals won't transfer"
+      "issue": "Helpdesk conversations foreign key",
+      "old": "Referenced 'tickets' table with ticket_id",
+      "new": "References 'helpdesks' table with helpdesk_id",
+      "added_columns": ["source (enum)", "is_internal (boolean)", "bot_metadata (json)"],
+      "made_nullable": "authorable_type/id (for bot messages)",
+      "files_changed": [
+        "apiserver/database/migrations/2025_12_23_014930_create_helpdesk_conversations_table.php"
+      ]
     },
     {
-      "blocker": "Add Money Flow",
-      "status": "not_implemented",
-      "priority": "HIGH",
-      "estimated_days": 1.5,
-      "description": "Users can't top-up wallets from external sources"
+      "issue": "State code error in seeder",
+      "old": "'TS' (invalid)",
+      "new": "'TG' (correct for Telangana)",
+      "files_changed": [
+        "apiserver/database/seeders/DemoMlmSeeder.php"
+      ]
     },
     {
-      "blocker": "MLM Frontend",
-      "status": "not_implemented",
-      "priority": "HIGH",
-      "estimated_days": 2,
-      "description": "No network tree, commission dashboard, members can't see team"
+      "issue": "Migration order dependency",
+      "old": "Conversations migration before helpdesks table",
+      "new": "Renamed to run after helpdesks table created",
+      "files_changed": [
+        "Renamed: 2025_12_22_115507 → 2025_12_23_014930"
+      ]
     }
   ],
 
-  "next_session_priorities": [
+  "next_session_tasks": [
     {
       "priority": 1,
-      "task": "Verify Migration Success",
-      "actions": [
-        "Check pwd = /c/laragon/www/mintreu/server/commerinity",
-        "Check ls shows apiserver/, client/, old_project/",
-        "Run php artisan test (should show 855 passing)",
-        "Read MIGRATION_INSTRUCTIONS.md",
-        "Run POST_MIGRATION_CHECKLIST.md"
+      "task": "Continue development work",
+      "subtasks": [
+        "Frontend dashboard implementation",
+        "MLM network tree visualization",
+        "Commission calculation display",
+        "Wallet management features"
       ]
     },
     {
       "priority": 2,
-      "task": "Checkout Flow Implementation",
-      "estimated_days": 3,
-      "actions": [
-        "Create CheckoutController (initiate, verify, callback)",
-        "Create checkout frontend pages (index, payment, success, failed)",
-        "Integrate Cashfree JS SDK",
-        "Test with sandbox",
-        "Document flow"
-      ]
-    },
-    {
-      "priority": 3,
-      "task": "Payout Processing",
-      "estimated_days": 2,
-      "actions": [
-        "Wire ProcessPayoutJob to CashfreePayoutProvider",
-        "Add retry logic",
-        "Test with sandbox",
-        "Test end-to-end withdrawal"
-      ]
-    },
-    {
-      "priority": 4,
-      "task": "Git Commit & Push",
-      "actions": [
-        "Create branch: refactor-v2",
-        "git add .",
-        "git commit with proper message",
-        "git push -u origin refactor-v2"
-      ]
+      "task": "Auto commit & push workflow",
+      "note": "Claude will handle all git operations automatically"
     }
   ],
+
+  "project_structure": {
+    "backend": "apiserver/ (Laravel 12)",
+    "frontend": "client/ (Nuxt 4)",
+    "old_reference": "old_project/ (read-only)",
+    "docs": "docs/, plans/",
+    "claude_memory": ".claude/"
+  },
 
   "tech_stack": {
     "backend": {
@@ -198,83 +129,80 @@
       "livewire": "v3",
       "sanctum": "v4",
       "pest": "v4",
-      "tailwind": "v4",
-      "location": "apiserver/"
+      "tailwind": "v4"
     },
     "frontend": {
       "nuxt": "4.2.1",
       "nuxt_ui": "v4",
       "ssr": false,
-      "package_manager": "npm",
-      "location": "client/"
+      "package_manager": "npm (NOT pnpm)"
     }
   },
 
-  "reference_projects": {
-    "old_commerinity": {
-      "location_before_migration": "C:/laragon/www/mintreu/server/commerinity/backend/",
-      "location_after_migration": "C:/laragon/www/mintreu/server/commerinity/old_project/backend/",
-      "purpose": "Business logic reference ONLY (read-only)",
-      "technology": "Laravel 11, Nuxt 3, Filament v3"
+  "important_conventions": {
+    "php": [
+      "Always declare(strict_types=1)",
+      "Constructor property promotion + readonly",
+      "Dependency injection (not facades in services)",
+      "Explicit return types",
+      "Run vendor/bin/pint --dirty before commits"
+    ],
+    "frontend": [
+      "Use npm ONLY (not pnpm)",
+      "Always use useSanctumFetch for API calls",
+      "Include full URL: ${config.public.apiBase}/api/endpoint",
+      "Use Nuxt UI v4 components",
+      "Respect ssr: false config"
+    ],
+    "git": [
+      "Auto commit after significant changes",
+      "Auto push to origin/dev",
+      "Run Pint before committing",
+      "Use descriptive commit messages"
+    ]
+  },
+
+  "feature_status": {
+    "auth_system": "✅ Complete",
+    "profile_management": "✅ Complete",
+    "wallet_system": "⚠️ 95% (needs checkout/payout)",
+    "address_management": "✅ Complete",
+    "kyc_system": "✅ Complete",
+    "notification_system": "✅ Complete",
+    "mlm_backend": "✅ Complete",
+    "mlm_frontend": "❌ 0% (pending)",
+    "dashboard_system": "✅ Complete",
+    "recruitment_system": "✅ Complete",
+    "helpdesk_system": "✅ Complete",
+    "messaging_system": "✅ Complete",
+    "activity_logging": "✅ Complete",
+    "admin_system": "⚠️ 80%",
+    "onboarding": "⚠️ 50%"
+  },
+
+  "launch_blockers": [
+    {
+      "blocker": "Checkout Flow",
+      "priority": "CRITICAL",
+      "estimated_days": 3
     },
-    "popkult_ecommerce": {
-      "location": "C:/laragon/www/iotron/popkult",
-      "purpose": "E-commerce patterns reference",
-      "technology": "Laravel 12"
+    {
+      "blocker": "Payout Processing",
+      "priority": "CRITICAL",
+      "estimated_days": 2
+    },
+    {
+      "blocker": "MLM Frontend",
+      "priority": "HIGH",
+      "estimated_days": 2
     }
-  },
-
-  "git_info": {
-    "repo_url": "https://github.com/mintreu/commerinity.git",
-    "current_branch": "dev",
-    "status": "clean working tree",
-    "ready_for_new_branch": true,
-    "suggested_branch": "refactor-v2"
-  },
-
-  "critical_files_to_read_first": [
-    ".claude/MIGRATION_INSTRUCTIONS.md (MUST READ FIRST - prevents hallucination)",
-    ".claude/REFACTOR_COMPLETE_HISTORY.md (complete context)",
-    ".claude/POST_MIGRATION_CHECKLIST.md (verify migration)",
-    ".claude/FEATURE_COMPLETENESS_AUDIT.md (what's done)",
-    ".claude/LAUNCH_BLOCKERS.md (what's missing)"
   ],
 
-  "money_service_pattern": {
-    "storage": "Always paisa (integer in DB)",
-    "display": "MoneyService::format($paisa) returns formatted rupees",
-    "never_use": "Custom Money casts (breaks Livewire/Filament)",
-    "tests_passing": 81
-  },
+  "critical_files_to_read_on_session_start": [
+    ".claude/SESSION_MEMORY.json (this file)",
+    ".claude/ACTIVITY_LOG.md (work history)",
+    ".claude/REFACTOR_COMPLETE_HISTORY.md (full context)"
+  ],
 
-  "api_pattern": {
-    "correct": "useSanctumFetch(`${config.public.apiBase}/api/endpoint`, {...})",
-    "never_use": ["$fetch('/api/endpoint')", "$api('/api/endpoint')"],
-    "base_url": "http://localhost:8000"
-  },
-
-  "commission_structure": {
-    "level_1": "5%",
-    "level_2": "4%",
-    "level_3": "3%",
-    "level_4": "2%",
-    "originator": "5% (agent)",
-    "total_max": "19%"
-  },
-
-  "security": {
-    "pin_attempts": "5 attempts per 15 minutes",
-    "otp_requests": "3 requests per 15 minutes",
-    "otp_demo_mode": "123456",
-    "hashing": "bcrypt for PIN, xxh3 for OTP"
-  },
-
-  "deployment_readiness": "95% complete, needs checkout/payout (3-5 days)",
-
-  "next_session_greeting": {
-    "message": "Welcome back! You're now in the MERGED repository at C:/laragon/www/mintreu/server/commerinity",
-    "first_action": "Read .claude/MIGRATION_INSTRUCTIONS.md to prevent path confusion",
-    "second_action": "Run .claude/POST_MIGRATION_CHECKLIST.md to verify migration success",
-    "third_action": "Start implementing checkout/payout system with full confidence"
-  }
+  "next_session_greeting": "Welcome back! Everything is committed and pushed to GitHub. Ready to continue development. I'll handle all git operations automatically from now on."
 }
