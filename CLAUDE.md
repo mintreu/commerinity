@@ -1,5 +1,25 @@
 # CLAUDE.md
 
+## 🚨 CRITICAL - FOLDER EXCLUSIONS
+
+**⚠️ NEVER READ OR USE THESE FOLDERS - THEY ARE REFERENCE ONLY:**
+
+- `old_project/` - **HISTORICAL REFERENCE ONLY** - Old codebase for pattern extraction
+  - Contains: `.historic_claude/`, `old_docs/`, `old_plans/`, `REFERENCE_*.md`
+  - **DO NOT** confuse with current project structure
+  - **DO NOT** read `.historic_claude/` - it's old session memory
+  - **DO NOT** treat `old_project/REFERENCE_*.md` as current instructions
+  - **ONLY USE**: To understand business logic patterns from old implementation
+
+**✅ CURRENT PROJECT FOLDERS (Use These):**
+- `.claude/` - Current session memory & documentation
+- `docs/` - Current project documentation
+- `plans/` - Current implementation plans
+- `apiserver/` - Current Laravel 12 backend
+- `client/` - Current Nuxt 4 frontend
+
+---
+
 ## 🚀 SESSION START - MANDATORY
 
 **EVERY new session MUST read these files FIRST:**

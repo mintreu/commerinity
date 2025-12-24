@@ -20,19 +20,21 @@
   },
 
   "last_session": {
-    "date": "2025-12-24",
-    "time": "02:00:00",
-    "duration": "~2 hours",
-    "focus": "Migration fixes and initial GitHub commit",
+    "date": "2025-12-25",
+    "time": "02:30:00",
+    "duration": "~1 hour",
+    "focus": "Analyzed old_project checkout system & reorganized folder structure",
     "completed": [
-      "Fixed FAQ audience column (enum → morphable relationship)",
-      "Fixed helpdesk_conversations (ticket_id → helpdesk_id, added columns)",
-      "Fixed state code (Telangana TS → TG)",
-      "Fixed migration order (conversations after helpdesks)",
-      "Updated tests to work with morphable architecture",
-      "All 978 tests passing",
-      "Committed 1449 files to GitHub",
-      "Pushed to origin/dev successfully"
+      "Analyzed old_project checkout & payment architecture",
+      "Extracted Cashfree integration patterns",
+      "Documented unified checkout flow (8-step pattern)",
+      "Created CHECKOUT_PAYMENT_ARCHITECTURE.md in .claude/context/",
+      "Renamed old_project/.claude → .historic_claude",
+      "Renamed old_project/CLAUDE.md → REFERENCE_ONLY.md",
+      "Renamed old_project/plans → old_plans",
+      "Renamed old_project/docs → old_docs",
+      "Updated root CLAUDE.md with folder exclusion warnings",
+      "Updated SESSION_MEMORY.json with clear structure"
     ]
   },
 
@@ -114,11 +116,23 @@
   ],
 
   "project_structure": {
-    "backend": "apiserver/ (Laravel 12)",
-    "frontend": "client/ (Nuxt 4)",
-    "old_reference": "old_project/ (read-only)",
-    "docs": "docs/, plans/",
-    "claude_memory": ".claude/"
+    "current": {
+      "backend": "apiserver/ (Laravel 12)",
+      "frontend": "client/ (Nuxt 4)",
+      "docs": "docs/ (current documentation)",
+      "plans": "plans/ (current plans)",
+      "claude_memory": ".claude/ (current session memory)"
+    },
+    "reference_only": {
+      "old_project": "old_project/ (REFERENCE ONLY - old codebase)",
+      "note": "⚠️ DO NOT confuse old_project structure with current project",
+      "renamed_folders": {
+        ".historic_claude": "old_project/.historic_claude (was .claude)",
+        "old_docs": "old_project/old_docs (was docs)",
+        "old_plans": "old_project/old_plans (was plans)",
+        "REFERENCE_*.md": "Renamed from CLAUDE.md, AGENTS.md, gemini.md"
+      }
+    }
   },
 
   "tech_stack": {
