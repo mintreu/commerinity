@@ -79,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Profile Management
     Route::put('/user/profile', [ProfileController::class, 'update']);
+    Route::post('/user/avatar', [ProfileController::class, 'uploadAvatar']);
     Route::put('/user/password', [ProfileController::class, 'changePassword']);
 
     // Onboarding

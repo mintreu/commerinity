@@ -34,7 +34,7 @@ const loadHistory = async () => {
 }
 
 const selectPlan = (planUuid: string) => {
-  if (status.value?.has_subscription) {
+  if (!status.value?.can_subscribe) {
     toast.add({
       title: 'Already Subscribed',
       description: 'You already have an active subscription. Upgrade feature coming soon.',
@@ -234,11 +234,11 @@ const tabs = [
           <div class="p-6 pt-0">
             <UButton
               block
-              :color="status?.has_subscription ? 'neutral' : 'primary'"
-              :disabled="status?.has_subscription"
+              :color="!status?.can_subscribe ? 'neutral' : 'primary'"
+              :disabled="!status?.can_subscribe"
               @click="selectPlan(plan.uuid)"
             >
-              {{ status?.has_subscription ? 'Current Plan Active' : 'Subscribe Now' }}
+              {{ !status?.can_subscribe ? 'Already Subscribed' : 'Subscribe Now' }}
             </UButton>
           </div>
         </div>

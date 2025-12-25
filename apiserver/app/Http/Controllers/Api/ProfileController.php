@@ -9,6 +9,7 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 final class ProfileController extends Controller
@@ -91,6 +92,34 @@ final class ProfileController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * Upload avatar for the authenticated user.
+     */
+    public function uploadAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048'], // 2MB max
+        ]);
+
+        $user = $request->user();
+
+        // Delete old avatar if exists
+        if ($user->hasMedia('avatar')) {
+            $user->clearMediaCollection('avatar');
+        }
+
+        // Add new avatar
+        $user->addMediaFromRequest('avatar')
+            ->toMediaCollection('avatar');
+
+        return response()->json([
+            'message' => 'Avatar uploaded successfully.',
+            'data' => [
+                'user' => new UserResource($user->fresh()),
+            ],
+        ]);
     }
 
     /**
