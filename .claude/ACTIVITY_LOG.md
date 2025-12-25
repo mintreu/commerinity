@@ -1222,3 +1222,173 @@ Auto-routes based on PaymentMethodCast:
 - Ready for continued development
 
 ---
+
+## 2025-12-25 (Continued)
+
+### 10:00 AM - Subscription Checkout System Planning Complete ✅
+
+#### Planning Session (1.5 hours)
+- **Action**: Comprehensive subscription checkout architecture planning
+- **Analysis**: Deep dive into old_project subscription patterns
+- **Created**: `plans/SUBSCRIPTION_CHECKOUT_PLAN.md` (650+ lines)
+
+#### Business Requirements Documented
+**4 Subscription Scenarios**:
+1. **Self-Subscribe** - Regular → Member via wallet/gateway
+2. **Member Gifts Promoter** - Member pays for target to become Promoter
+3. **Advisor Gifts Member** - Advisor pays from wallet only
+4. **Admin Gifts Any** - Admin can gift any subscription type
+
+**Key Business Rules**:
+- 5-hand limit (max 5 direct children per user)
+- Auto-placement uses breadth-first search
+- Only SUBSCRIBED users count toward limit
+- Advisor restrictions: wallet-only, cannot gift Promoter
+- Originator tracking via polymorphic relationship
+
+#### Backend Architecture Designed
+
+**New Services** (3 total):
+1. `SubscriptionCheckoutService` - Handles subscription creation & payment
+2. `MlmPlacementService` - Auto-placement algorithm (5-hand limit)
+3. `SubscriptionActivationService` - Post-payment activation & commission trigger
+
+**Controllers**:
+1. `SubscriptionController` - Self-subscribe endpoints
+2. `GiftSubscriptionController` - Gift subscription endpoints
+
+**Form Requests**:
+1. `SubscribeStageRequest` - Validation for self-subscribe
+2. `GiftSubscriptionRequest` - Validation for gifting (with advisor restrictions)
+
+#### MLM Auto-Placement Algorithm
+
+**Logic** (from old_project analysis):
+```
+1. If user has no parent_id → no placement needed
+2. Check parent's subscribed children count
+3. If < 5 children → place directly under parent
+4. If parent full → search descendants breadth-first
+5. Place in first available spot (orderBy('id'))
+```
+
+**Key Implementation**:
+- Uses `staudenmeir/laravel-adjacency-list` for tree operations
+- Only counts users with active subscriptions
+- Searches entire descendant tree efficiently
+
+#### Frontend Architecture
+
+**Composable**: `useSubscription.ts`
+- Methods: subscribe(), giftSubscription(), fetchStatus(), fetchStages()
+- State: currentSubscription, availableStages, loading
+
+**Pages**:
+1. `/dashboard/subscribe.vue` - Full subscription wizard
+2. `/admin/users/[id]/gift-subscription.vue` - Admin gifting interface
+
+#### Testing Strategy (40+ tests planned)
+1. `SubscriptionCheckoutTest.php` - 8 tests
+2. `GiftSubscriptionTest.php` - 7 tests
+3. `MlmPlacementServiceTest.php` - 6 tests
+4. `SubscriptionActivationTest.php` - 6 tests
+
+#### Implementation Timeline
+- **Day 1**: Backend Services (6-8h)
+- **Day 2**: Backend APIs (6-8h)
+- **Day 3**: Frontend (6-8h)
+- **Day 4**: Integration & Testing (4-6h)
+- **Total**: 3-4 days
+
+#### Key Technical Decisions
+- ✅ Use existing HasTransaction trait (supports all payment providers)
+- ✅ UserSubscription already has originator (polymorphic)
+- ✅ 5-hand limit hardcoded (config in old project)
+- ✅ Breadth-first search for fairness
+- ✅ 60-minute transaction expiry
+- ✅ Advisor can only gift Member subscriptions from wallet
+
+#### Current State Verified
+**Models Ready**:
+- ✅ UserSubscription (complete with CommissionTrigger interface)
+- ✅ Level (4 levels per stage, team capacity calculations)
+- ✅ Stage (pricing, commission config, matrix config)
+- ✅ HasTransaction trait (provider-agnostic payment)
+
+**Data Seeded**:
+- ✅ 4 stages (Starter, Premium, Gold, Platinum)
+- ✅ 16 levels (4 per stage)
+- ✅ 71+ demo users in MLM tree
+
+#### Status
+- ✅ Planning complete
+- ✅ Architecture designed
+- ✅ All scenarios documented
+- ✅ Test strategy ready
+- ⏳ Ready to begin implementation (Day 1)
+
+**Next**: Start Day 1 - Create MlmPlacementService with tests
+
+---
+
+### 15:30 PM - Subscription System Completed with Gateway Payment ✅
+
+#### Rename: originator → sponsor in UserSubscription
+- **Action**: Renamed fields to reflect who PAID for subscription
+- **Changes**:
+  - Migration: `nullableMorphs('originator')` → `nullableMorphs('sponsor')`
+  - Model: `sponsor_type`, `sponsor_id` (who paid)
+  - Service: `createSubscription()` now accepts `?User $sponsor`
+  - Added: `createSponsoredSubscription()` for gift subscriptions
+- **Files Modified**:
+  - `database/migrations/2025_12_11_225030_create_user_subscriptions_table.php`
+  - `app/Models/Membership/UserSubscription.php`
+  - `app/Services/Membership/SubscriptionService.php`
+  - `app/Http/Controllers/Api/SubscriptionController.php`
+  - `tests/Feature/Mlm/MlmJourneyTest.php`
+
+#### Added Payment Method Support
+- **Action**: Added wallet + gateway payment support to subscription
+- **Validation**: `payment_method` parameter (wallet, cashfree, razorpay)
+- **Logic**:
+  - Wallet payment: PIN verification, instant activation
+  - Gateway payment: Redirect to checkout, activate on webhook
+- **Auto-Placement**: Calls `UserMlmService::placeUser()` after payment
+- **Uses**: HasTransaction trait for unified payment flow
+
+#### Added HasTransaction to UserSubscription
+- **Files Modified**:
+  - `app/Models/Membership/UserSubscription.php`
+- **Constant**: `TRANSACTION_AMOUNT_COLUMN = 'amount'`
+- **Enables**: Gateway payments (Cashfree/Razorpay) for subscriptions
+
+#### Updated Payment Listener
+- **File**: `app/Listeners/Payment/HandlePaymentCompleted.php`
+- **Changes**:
+  1. Auto-placement: Calls `UserMlmService::placeUser()`
+  2. Activation: Calls `SubscriptionService::activateSubscription()`
+  3. Removed: Old hardcoded logic
+- **Flow**:
+  ```
+  Payment webhook → Auto-placement → Activate subscription → Trigger commissions
+  ```
+
+#### Test Results
+- **MlmJourneyTest**: ✅ ALL 22 tests passing (92 assertions)
+- **Total Tests**: ✅ **984 tests passing, 22 skipped, 2449 assertions** (373s)
+- **Migration**: ✅ Fresh migrate successful
+- **Database**: sponsor_type, sponsor_id fields created
+- **Code Quality**: ✅ Pint formatted (6 files, 1 style issue fixed)
+
+#### Key Distinctions (Documented)
+- **sponsor (UserSubscription)**: Who PAID for subscription (nullable morph)
+- **parent_id (User)**: MLM upline for commissions
+- **originator (User)**: Agent/advisor who recruited (nullable morph)
+
+#### Status
+- ✅ Subscription system COMPLETE (wallet + gateway)
+- ✅ Auto-placement integrated
+- ✅ All tests passing
+- ⏳ Ready for E2E testing with Cashfree
+
+---

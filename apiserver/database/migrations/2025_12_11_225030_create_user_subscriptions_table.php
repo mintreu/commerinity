@@ -51,8 +51,8 @@ return new class extends Migration
                 ->constrained('user_subscriptions')
                 ->nullOnDelete();
 
-            // Originator (who created this subscription - admin, user, system)
-            $table->nullableMorphs('originator');
+            // Sponsor (who paid for this subscription - nullable for self-paid)
+            $table->nullableMorphs('sponsor');
 
             // Metadata
             $table->json('metadata')->nullable();

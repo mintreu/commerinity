@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Casts\PaymentMethodCast;
 use App\Http\Controllers\Controller;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
+use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
+use App\Services\UserServices\UserMlmService;
 use App\Services\Wallet\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +28,8 @@ final class SubscriptionController extends Controller
 {
     public function __construct(
         private readonly UserWalletService $walletService,
+        private readonly SubscriptionService $subscriptionService,
+        private readonly UserMlmService $mlmService,
     ) {}
 
     /**
@@ -101,7 +106,7 @@ final class SubscriptionController extends Controller
     }
 
     /**
-     * Subscribe to a plan using wallet balance.
+     * Subscribe to a plan (wallet or gateway payment).
      *
      * POST /api/subscription/subscribe
      */
@@ -109,33 +114,18 @@ final class SubscriptionController extends Controller
     {
         $request->validate([
             'plan_uuid' => ['required', 'string', 'exists:stages,uuid'],
-            'pin' => ['required', 'string', 'size:6'],
+            'payment_method' => ['required', 'string', 'in:wallet,cashfree,razorpay'],
+            'pin' => ['required_if:payment_method,wallet', 'nullable', 'string', 'size:6'],
         ]);
 
         $user = $request->user();
-        $wallet = $this->walletService->getOrCreateWallet($user);
+        $paymentMethod = PaymentMethodCast::from($request->input('payment_method'));
 
         // Check if user already has active subscription
         if (UserSubscription::hasActiveSubscription($user->id)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You already have an active subscription. Please upgrade instead.',
-            ], 400);
-        }
-
-        // Verify PIN
-        if (! $wallet->hasPin()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please set up your wallet PIN first.',
-                'requires_pin_setup' => true,
-            ], 400);
-        }
-
-        if (! $wallet->verifyPin($request->input('pin'))) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid wallet PIN.',
             ], 400);
         }
 
@@ -150,59 +140,124 @@ final class SubscriptionController extends Controller
             ], 400);
         }
 
-        // Check wallet balance
-        if (! $wallet->hasSufficientBalance($stage->price)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Insufficient wallet balance.',
-                'required' => MoneyService::format($stage->price),
-                'available' => MoneyService::format($wallet->available_balance),
-            ], 400);
+        // Create subscription first (pending status)
+        $subscription = $this->subscriptionService->createSubscription($user, $stage);
+
+        // WALLET PAYMENT
+        if ($paymentMethod === PaymentMethodCast::WALLET) {
+            $wallet = $this->walletService->getOrCreateWallet($user);
+
+            // Verify PIN
+            if (! $wallet->hasPin() || ! $wallet->verifyPin($request->input('pin'))) {
+                $subscription->delete();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $wallet->hasPin() ? 'Invalid wallet PIN.' : 'Please set up your wallet PIN first.',
+                    'requires_pin_setup' => ! $wallet->hasPin(),
+                ], 400);
+            }
+
+            // Check balance
+            if (! $wallet->hasSufficientBalance($stage->price)) {
+                $subscription->delete();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient wallet balance.',
+                    'required' => MoneyService::format($stage->price),
+                    'available' => MoneyService::format($wallet->available_balance),
+                ], 400);
+            }
+
+            try {
+                // Debit wallet
+                $transaction = $this->walletService->debit(
+                    $wallet,
+                    $stage->price,
+                    'subscription',
+                    "Subscription to {$stage->name} plan"
+                );
+
+                $subscription->update([
+                    'base_price' => $stage->base_price,
+                    'discount' => $stage->discount,
+                    'tax_amount' => $stage->tax_amount,
+                    'amount' => $stage->price,
+                    'wallet_id' => $wallet->id,
+                    'transaction_id' => $transaction->id,
+                    'sponsor_type' => get_class($user), // Self-paid
+                    'sponsor_id' => $user->id,
+                ]);
+
+                // Auto-placement in MLM tree
+                if ($user->parent_id) {
+                    $sponsor = User::find($user->parent_id);
+                    $this->mlmService->placeUser($user, $sponsor);
+                }
+
+                // Activate subscription (triggers commissions)
+                $this->subscriptionService->activateSubscription($subscription, $transaction->id);
+                $subscription->refresh()->load(['stage', 'currentLevel']);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Subscription activated successfully!',
+                    'data' => [
+                        'subscription' => $this->formatSubscription($subscription),
+                        'transaction_reference' => $transaction->reference_number,
+                        'new_balance_formatted' => MoneyService::format($wallet->fresh()->available_balance),
+                    ],
+                ], 201);
+            } catch (\Exception $e) {
+                $subscription->delete();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to process subscription. Please try again.',
+                    'error' => app()->environment('local') ? $e->getMessage() : null,
+                ], 500);
+            }
         }
 
+        // GATEWAY PAYMENT (Cashfree/Razorpay)
         try {
-            // Debit wallet
-            $transaction = $this->walletService->debit(
-                $wallet,
-                $stage->price,
-                'subscription',
-                "Subscription to {$stage->name} plan"
-            );
-
-            // Create subscription
-            $subscription = UserSubscription::create([
-                'user_id' => $user->id,
-                'stage_id' => $stage->id,
+            // Update subscription with pricing details
+            $subscription->update([
                 'base_price' => $stage->base_price,
                 'discount' => $stage->discount,
                 'tax_amount' => $stage->tax_amount,
                 'amount' => $stage->price,
-                'wallet_id' => $wallet->id,
-                'transaction_id' => $transaction->id,
-                'originator_type' => get_class($user),
-                'originator_id' => $user->id,
+                'sponsor_type' => get_class($user), // Self-paid
+                'sponsor_id' => $user->id,
             ]);
 
-            // Activate subscription
-            $subscription->activate($transaction->id);
-            $subscription->load(['stage', 'currentLevel']);
-
-            // Trigger commission calculation (queued)
-            // CommissionCalculationJob::dispatch($subscription);
+            // Create payment transaction using HasTransaction trait
+            $transaction = $subscription->createDebitTransaction(
+                customer: $user,
+                paymentMethod: $paymentMethod,
+                redirectSuccessUrl: config('app.frontend_url').'/payment/success',
+                redirectFailureUrl: config('app.frontend_url').'/payment/failed',
+                wallet: $this->walletService->getOrCreateWallet($user),
+                purpose: "Subscription to {$stage->name} plan"
+            );
 
             return response()->json([
                 'success' => true,
-                'message' => 'Subscription activated successfully!',
+                'message' => 'Payment initiated. Please complete payment to activate subscription.',
                 'data' => [
-                    'subscription' => $this->formatSubscription($subscription),
-                    'transaction_reference' => $transaction->reference_number,
-                    'new_balance_formatted' => MoneyService::format($wallet->fresh()->available_balance),
+                    'checkout_url' => route('checkout.show', ['transaction' => $transaction->uuid]),
+                    'transaction_uuid' => $transaction->uuid,
+                    'expires_at' => $transaction->expires_at->toIso8601String(),
                 ],
             ], 201);
         } catch (\Exception $e) {
+            $subscription->delete();
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to process subscription. Please try again.',
+                'message' => 'Failed to initiate payment.',
+                'error' => app()->environment('local') ? $e->getMessage() : null,
             ], 500);
         }
     }

@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Services\MoneyService;
+use App\Traits\HasTransaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +30,11 @@ use Illuminate\Support\Str;
 class UserSubscription extends Model implements CommissionTrigger
 {
     use HasFactory;
+    use HasTransaction;
     use SoftDeletes;
+
+    // Amount column for HasTransaction trait
+    public const TRANSACTION_AMOUNT_COLUMN = 'amount';
 
     // Status constants
     public const STATUS_PENDING = 'pending';
@@ -63,8 +68,8 @@ class UserSubscription extends Model implements CommissionTrigger
         'expires_at',
         'status',
         'previous_subscription_id',
-        'originator_type',
-        'originator_id',
+        'sponsor_type',
+        'sponsor_id',
         'personal_pv',
         'team_pv',
         'total_commission_earned',
@@ -162,9 +167,9 @@ class UserSubscription extends Model implements CommissionTrigger
     }
 
     /**
-     * Get the originator (admin, user, or system that created this)
+     * Get the sponsor (who paid for this subscription)
      */
-    public function originator(): MorphTo
+    public function sponsor(): MorphTo
     {
         return $this->morphTo();
     }
@@ -217,8 +222,8 @@ class UserSubscription extends Model implements CommissionTrigger
             'is_upgrade' => $this->previous_subscription_id !== null
                 && $this->previousSubscription?->stage_id !== $this->stage_id,
             'subscription_type' => $this->getTriggerType(),
-            'originator_type' => $this->originator_type,
-            'originator_id' => $this->originator_id,
+            'sponsor_type' => $this->sponsor_type,
+            'sponsor_id' => $this->sponsor_id,
         ];
     }
 

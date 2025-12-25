@@ -43,10 +43,10 @@ function activateUserSubscription(
     User $user,
     Stage $stage,
     SubscriptionService $service,
-    ?User $originator = null
+    ?User $sponsor = null
 ): array {
-    $subscription = $originator
-        ? $service->createOriginatorSubscription($user, $stage, $originator)
+    $subscription = $sponsor
+        ? $service->createSponsoredSubscription($user, $stage, $sponsor)
         : $service->createSubscription($user, $stage);
 
     // Pass null for transaction ID in tests (no actual payment)
@@ -151,7 +151,7 @@ describe('Mode 2: Originator User Journey (Advisor)', function () {
             ->and($joinedUser->originator_type)->toBe('advisor');
     });
 
-    it('creates originator subscription with advisor tracking', function () {
+    it('creates sponsored subscription with sponsor tracking', function () {
         $stage = createStageWithLevels();
 
         $advisor = User::factory()->create([
@@ -169,10 +169,10 @@ describe('Mode 2: Originator User Journey (Advisor)', function () {
             'originator_id' => $advisor->id,
         ]);
 
-        $subscription = $service->createOriginatorSubscription($joinedUser, $stage, $advisor);
+        $subscription = $service->createSponsoredSubscription($joinedUser, $stage, $advisor);
 
-        expect($subscription->originator_type)->toBe(User::class)
-            ->and($subscription->originator_id)->toBe($advisor->id);
+        expect($subscription->sponsor_type)->toBe(User::class)
+            ->and($subscription->sponsor_id)->toBe($advisor->id);
     });
 
     it('generates originator commission when user subscribes', function () {
@@ -201,9 +201,8 @@ describe('Mode 2: Originator User Journey (Advisor)', function () {
             fn ($c) => $c->type === 'originator_joining'
         );
 
-        // If originator commissions are enabled, advisor should receive commission
-        // This test validates the flow works, actual commission depends on config
-        expect($result['subscription']->originator_id)->toBe($advisor->id);
+        // Verify sponsor tracking (advisor paid for subscription)
+        expect($result['subscription']->sponsor_id)->toBe($advisor->id);
     });
 });
 
@@ -541,8 +540,8 @@ describe('Complete User Journey Simulation', function () {
             $result = activateUserSubscription($user, $stage, $service, $advisor);
             $originatedUsers[] = $user;
 
-            // Verify originator tracking
-            expect($result['subscription']->originator_id)->toBe($advisor->id);
+            // Verify sponsor tracking (advisor paid for subscription)
+            expect($result['subscription']->sponsor_id)->toBe($advisor->id);
         }
 
         // 3. Check advisor's originated user count

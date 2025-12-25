@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
  * Subscription Service - Orchestrates membership subscription lifecycle
  *
  * Handles:
- * - New subscriptions (with originator tracking)
+ * - New subscriptions (with sponsor tracking - who paid)
  * - Subscription activation + commission triggering
  * - Level progression checks
  * - Renewals and upgrades
@@ -35,12 +35,12 @@ final class SubscriptionService
      *
      * @param  User  $user  The subscribing user
      * @param  Stage  $stage  The membership stage
-     * @param  User|null  $originator  The agent/advisor who originated this user (not sponsor)
+     * @param  User|null  $sponsor  Who paid for this subscription (nullable)
      */
     public function createSubscription(
         User $user,
         Stage $stage,
-        ?User $originator = null,
+        ?User $sponsor = null,
     ): UserSubscription {
         // Get first level of the stage
         $firstLevel = $stage->getFirstLevel();
@@ -54,8 +54,8 @@ final class SubscriptionService
             'stage_id' => $stage->id,
             'level_id' => $firstLevel->id,
             'status' => UserSubscription::STATUS_PENDING,
-            'originator_type' => $originator ? User::class : null,
-            'originator_id' => $originator?->id,
+            'sponsor_type' => $sponsor ? User::class : null,
+            'sponsor_id' => $sponsor?->id,
         ]);
     }
 
@@ -239,34 +239,22 @@ final class SubscriptionService
     }
 
     /**
-     * Create subscription for user with originator (agent/advisor) tracking
+     * Create subscription with sponsor tracking (who paid for it)
      *
-     * Originator is different from sponsor (parent_id):
-     * - Sponsor: The user who referred them (tracked via users.parent_id)
-     * - Originator: The agent/advisor who signed them up (tracked via users.originator_id)
+     * Note: Sponsor (who paid) is different from:
+     * - parent_id: MLM upline (for commissions)
+     * - originator: Agent/advisor who recruited (tracked on User model)
+     *
+     * Use cases:
+     * - Self-subscribe: sponsor = null (user paid themselves)
+     * - Gift subscription: sponsor = User who paid
      */
-    public function createOriginatorSubscription(
+    public function createSponsoredSubscription(
         User $user,
         Stage $stage,
-        User $originator,
+        User $sponsor,
     ): UserSubscription {
-        // Ensure originator has appropriate type (agent/advisor)
-        if (! in_array($originator->type, ['agent', 'advisor', 'admin'], true)) {
-            Log::channel('mlm')->warning('Non-agent/advisor used as originator', [
-                'originator_id' => $originator->id,
-                'originator_type' => $originator->type,
-            ]);
-        }
-
-        // Update user's originator if not set
-        if (! $user->originator_id) {
-            $user->update([
-                'originator_id' => $originator->id,
-                'originator_type' => $originator->type,
-            ]);
-        }
-
-        return $this->createSubscription($user, $stage, $originator);
+        return $this->createSubscription($user, $stage, $sponsor);
     }
 
     /**

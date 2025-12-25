@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Listeners\Payment;
 
 use App\Casts\JobApplicationStatusCast;
-use App\Casts\UserStatusCast;
-use App\Casts\UserTypeCast;
 use App\Events\PaymentCompleted;
 use App\Models\Membership\UserSubscription;
 use App\Models\Recruitment\JobApplication;
+use App\Models\User;
 use App\Models\Wallet;
-use App\Services\Mlm\CommissionProcessingService;
+use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
+use App\Services\UserServices\UserMlmService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -94,51 +94,34 @@ final class HandlePaymentCompleted
      */
     private function handleSubscriptionPayment(mixed $transaction, UserSubscription $subscription): void
     {
-        DB::transaction(function () use ($subscription) {
-            $subscription->load('user', 'level', 'stage');
+        DB::transaction(function () use ($transaction, $subscription) {
+            $subscription->load('user');
             $user = $subscription->user;
 
-            // 1. Mark subscription as paid
-            $subscription->update([
-                'is_paid' => true,
-                'paid_at' => now(),
-            ]);
+            // 1. Auto-placement in MLM tree (if has sponsor)
+            if ($user->parent_id) {
+                $sponsor = User::find($user->parent_id);
+                $mlmService = app(UserMlmService::class);
+                $mlmService->placeUser($user, $sponsor);
 
-            // 2. Update user status and type
-            $user->update([
-                'status' => UserStatusCast::ACTIVE,
-                'type' => UserTypeCast::MEMBER, // Upgrade to member
-                'level_id' => $subscription->level_id,
-                'stage_id' => $subscription->stage_id,
-            ]);
-
-            Log::info('Subscription activated', [
-                'user_id' => $user->id,
-                'subscription_id' => $subscription->id,
-                'level' => $subscription->level->name,
-                'stage' => $subscription->stage->name,
-            ]);
-
-            // 3. Trigger MLM commission calculations (if has sponsor)
-            if ($user->parent_id || $user->originator_id) {
-                try {
-                    $commissionService = app(CommissionProcessingService::class);
-                    $commissionService->processSubscriptionCommissions($subscription);
-
-                    Log::info('MLM commissions triggered for subscription', [
-                        'subscription_id' => $subscription->id,
-                        'user_id' => $user->id,
-                    ]);
-                } catch (\Exception $e) {
-                    // Don't fail the subscription if commission fails
-                    Log::error('Failed to process subscription commissions', [
-                        'subscription_id' => $subscription->id,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
+                Log::info('User placed in MLM tree', [
+                    'user_id' => $user->id,
+                    'sponsor_id' => $sponsor->id,
+                ]);
             }
 
-            // 4. Send confirmation notification
+            // 2. Activate subscription + trigger commissions
+            $subscriptionService = app(SubscriptionService::class);
+            $subscriptionService->activateSubscription($subscription, $transaction->id);
+
+            Log::info('Subscription activated via gateway payment', [
+                'user_id' => $user->id,
+                'subscription_id' => $subscription->id,
+                'transaction_id' => $transaction->uuid,
+                'payment_method' => $transaction->payment_method,
+            ]);
+
+            // 3. Send confirmation notification
             // $user->notify(new SubscriptionConfirmedNotification($subscription));
         });
     }

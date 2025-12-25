@@ -1,12 +1,12 @@
 
 
 [1;37;40mCode Coverage Report:         [0m
-[1;37;40m  2025-12-25 03:26:28         [0m
+[1;37;40m  2025-12-25 16:01:51         [0m
 [1;37;40m                              [0m
 [1;37;40m Summary:                     [0m
 [37;41m  Classes: 12.83% (39/304)    [0m
-[37;41m  Methods: 38.15% (745/1953)  [0m
-[37;41m  Lines:   40.73% (6867/16861)[0m
+[37;41m  Methods: 38.20% (746/1953)  [0m
+[37;41m  Lines:   40.66% (6861/16875)[0m
 
 App\Casts\AdminTypeCast
   [37;41mMethods:  12.50% ( 1/ 8)[0m   [37;41mLines:  14.81% (  8/ 54)[0m
@@ -229,7 +229,7 @@ App\Services\JobApplicationService
 App\Services\KycService
   [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;42mLines:  90.38% ( 47/ 52)[0m
 App\Services\Membership\SubscriptionService
-  [37;41mMethods:  10.00% ( 1/10)[0m   [30;43mLines:  67.55% (102/151)[0m
+  [37;41mMethods:  20.00% ( 2/10)[0m   [30;43mLines:  68.09% ( 96/141)[0m
 App\Services\Mlm\Calculators\BaseCommissionCalculator
   [37;41mMethods:  40.00% ( 4/10)[0m   [30;43mLines:  79.41% ( 27/ 34)[0m
 App\Services\Mlm\Calculators\LevelCommissionCalculator
