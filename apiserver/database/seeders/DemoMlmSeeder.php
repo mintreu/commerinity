@@ -437,7 +437,7 @@ final class DemoMlmSeeder extends Seeder
                     'user_id' => $user->id,
                     'genealogy_id' => $genealogy->id,
                     'from_user_id' => $this->getRandomUserId($user->id),
-                    'type' => $type->value,
+                    'type' => $type,
                     'level' => $type === CommissionTypeCast::LEVEL_COMMISSION ? rand(1, 4) : null,
                     'rate_percent' => rand(5, 15),
                     'base_amount' => $grossAmount,
@@ -587,18 +587,18 @@ final class DemoMlmSeeder extends Seeder
     private function getRandomCommissionStatus(): string
     {
         $statuses = [
-            CommissionStatusCast::PAID->value,
-            CommissionStatusCast::PAID->value,
-            CommissionStatusCast::PAID->value,
-            CommissionStatusCast::PENDING->value,
-            CommissionStatusCast::APPROVED->value,
-            CommissionStatusCast::PROCESSING->value,
+            CommissionStatusCast::PAID,
+            CommissionStatusCast::PAID,
+            CommissionStatusCast::PAID,
+            CommissionStatusCast::PENDING,
+            CommissionStatusCast::APPROVED,
+            CommissionStatusCast::PROCESSING,
         ];
 
         return $statuses[array_rand($statuses)];
     }
 
-    private function getCommissionDescription(CommissionTypeCast $type): string
+    private function getCommissionDescription(string $type): string
     {
         return match ($type) {
             CommissionTypeCast::SPONSOR_BONUS => 'Direct sponsor bonus for new member',

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1766678495">
-  <project timestamp="1766678495" name="Clover Coverage">
+<coverage generated="1766683190">
+  <project timestamp="1766683190" name="Clover Coverage">
     <package name="App\Casts">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Casts\AdminStatusCast.php">
         <class name="App\Casts\AdminStatusCast" namespace="App\Casts">
@@ -132,7 +132,7 @@
         <line num="17" type="method" name="getLabel" visibility="public" complexity="4" crap="4" count="11"/>
         <line num="19" type="stmt" count="11"/>
         <line num="20" type="stmt" count="11"/>
-        <line num="21" type="stmt" count="7"/>
+        <line num="21" type="stmt" count="8"/>
         <line num="22" type="stmt" count="11"/>
         <line num="23" type="stmt" count="11"/>
         <line num="26" type="method" name="getColor" visibility="public" complexity="4" crap="20" count="0"/>
@@ -671,8 +671,8 @@
         <line num="25" type="stmt" count="15"/>
         <line num="26" type="stmt" count="13"/>
         <line num="27" type="stmt" count="11"/>
-        <line num="28" type="stmt" count="7"/>
-        <line num="29" type="stmt" count="3"/>
+        <line num="28" type="stmt" count="10"/>
+        <line num="29" type="stmt" count="6"/>
         <line num="30" type="stmt" count="17"/>
         <line num="31" type="stmt" count="17"/>
         <line num="34" type="method" name="getColor" visibility="public" complexity="8" crap="72" count="0"/>
@@ -737,8 +737,8 @@
         <line num="18" type="method" name="getLabel" visibility="public" complexity="5" crap="5" count="17"/>
         <line num="20" type="stmt" count="17"/>
         <line num="21" type="stmt" count="17"/>
-        <line num="22" type="stmt" count="12"/>
-        <line num="23" type="stmt" count="8"/>
+        <line num="22" type="stmt" count="13"/>
+        <line num="23" type="stmt" count="10"/>
         <line num="24" type="stmt" count="17"/>
         <line num="25" type="stmt" count="17"/>
         <line num="28" type="method" name="getColor" visibility="public" complexity="5" crap="30" count="0"/>
@@ -11301,14 +11301,14 @@
         <line num="144" type="method" name="getMaskedAccountNumberAttribute" visibility="public" complexity="3" crap="3.04" count="9"/>
         <line num="146" type="stmt" count="9"/>
         <line num="147" type="stmt" count="3"/>
-        <line num="150" type="stmt" count="8"/>
-        <line num="151" type="stmt" count="8"/>
+        <line num="150" type="stmt" count="7"/>
+        <line num="151" type="stmt" count="7"/>
         <line num="152" type="stmt" count="0"/>
-        <line num="155" type="stmt" count="8"/>
+        <line num="155" type="stmt" count="7"/>
         <line num="161" type="method" name="getDisplayNameAttribute" visibility="public" complexity="2" crap="2" count="10"/>
         <line num="163" type="stmt" count="10"/>
         <line num="164" type="stmt" count="4"/>
-        <line num="167" type="stmt" count="8"/>
+        <line num="167" type="stmt" count="7"/>
         <line num="174" type="method" name="scopeVerified" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="176" type="stmt" count="0"/>
         <line num="179" type="method" name="scopeDefault" visibility="public" complexity="1" crap="2" count="0"/>

@@ -3,7 +3,7 @@
     <!-- Desktop Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out lg:translate-x-0',
+        'fixed inset-y-0 left-0 z-[60] w-72 transform transition-transform duration-300 ease-in-out lg:translate-x-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       ]"
     >
@@ -125,7 +125,7 @@
     <Transition name="fade">
       <div
         v-if="sidebarOpen"
-        class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+        class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm lg:hidden"
         @click="sidebarOpen = false"
       />
     </Transition>
