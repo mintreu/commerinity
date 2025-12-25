@@ -133,6 +133,22 @@ final readonly class PaymentResponse
     }
 
     /**
+     * Get TransactionStatusCast enum from status string
+     */
+    public function getStatusEnum(): \App\Casts\TransactionStatusCast
+    {
+        return match ($this->status) {
+            self::STATUS_PENDING => \App\Casts\TransactionStatusCast::PENDING,
+            self::STATUS_PROCESSING => \App\Casts\TransactionStatusCast::PROCESSING,
+            self::STATUS_COMPLETED => \App\Casts\TransactionStatusCast::COMPLETED,
+            self::STATUS_FAILED => \App\Casts\TransactionStatusCast::FAILED,
+            self::STATUS_CANCELLED => \App\Casts\TransactionStatusCast::CANCELLED,
+            self::STATUS_REFUNDED => \App\Casts\TransactionStatusCast::REFUNDED,
+            default => \App\Casts\TransactionStatusCast::PENDING,
+        };
+    }
+
+    /**
      * Convert to array
      *
      * @return array<string, mixed>

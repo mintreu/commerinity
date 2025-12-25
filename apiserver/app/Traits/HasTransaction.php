@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
+use App\Casts\PaymentMethodCast;
 use App\Casts\TransactionStatusCast;
 use App\Casts\TransactionTypeCast;
-use App\Models\Integration;
 use App\Models\Transaction;
 use App\Models\Wallet;
-use App\Services\Payment\CashfreeService;
+use App\Services\Payment\DTOs\PaymentInitiateRequest;
+use App\Services\Payment\PaymentService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\DB;
@@ -18,12 +19,12 @@ use Illuminate\Support\Str;
 /**
  * HasTransaction Trait
  *
- * Makes any model payable by adding polymorphic transaction relationship
- * and helper methods to create debit/credit transactions.
+ * Makes any model payable using the unified PaymentService architecture.
+ * Supports all providers: Native (wallet), Cashfree, Razorpay
  *
  * Usage:
  * - Add to model: use HasTransaction;
- * - Define constant: const TRANSACTION_AMOUNT_COLUMN = 'total'; // or 'amount'
+ * - Define constant: const TRANSACTION_AMOUNT_COLUMN = 'total';
  * - Create transaction: $model->createDebitTransaction(...)
  */
 trait HasTransaction
@@ -39,33 +40,33 @@ trait HasTransaction
     /**
      * Create a debit transaction (user pays)
      *
-     * @param  Model|array  $customer  Customer model or array with name/email/mobile
-     * @param  string  $redirectSuccessUrl  Where to redirect on success
-     * @param  string  $redirectFailureUrl  Where to redirect on failure
-     * @param  Wallet|null  $wallet  User's wallet (for wallet payments)
+     * @param  Model|array  $customer  Customer model or array
+     * @param  PaymentMethodCast  $paymentMethod  Payment method (wallet/cashfree/razorpay/etc)
+     * @param  string  $redirectSuccessUrl  Success redirect
+     * @param  string  $redirectFailureUrl  Failure redirect
+     * @param  Wallet|null  $wallet  User's wallet
      * @param  string|null  $purpose  Transaction description
-     * @param  string|null  $paymentProviderSlug  Provider slug (e.g., 'cashfree')
-     * @param  int  $expireAfterMinutes  Transaction expiry time
+     * @param  int  $expireAfterMinutes  Expiry time
      *
      * @throws \Exception
      */
     public function createDebitTransaction(
         Model|array $customer,
+        PaymentMethodCast $paymentMethod,
         string $redirectSuccessUrl,
         string $redirectFailureUrl,
         ?Wallet $wallet = null,
         ?string $purpose = null,
-        ?string $paymentProviderSlug = null,
         int $expireAfterMinutes = 60
     ): Transaction {
         return $this->createTransaction(
             customer: $customer,
             type: TransactionTypeCast::DEBIT,
+            paymentMethod: $paymentMethod,
             redirectSuccessUrl: $redirectSuccessUrl,
             redirectFailureUrl: $redirectFailureUrl,
             wallet: $wallet,
             purpose: $purpose,
-            paymentProviderSlug: $paymentProviderSlug,
             expireAfterMinutes: $expireAfterMinutes
         );
     }
@@ -75,11 +76,11 @@ trait HasTransaction
      *
      * @param  Model|array  $customer  Customer model or array
      * @param  int  $amount  Amount in paisa
+     * @param  PaymentMethodCast  $paymentMethod  Payment method
      * @param  string  $redirectSuccessUrl  Success redirect
      * @param  string  $redirectFailureUrl  Failure redirect
      * @param  Wallet|null  $wallet  User's wallet
      * @param  string|null  $purpose  Transaction description
-     * @param  string|null  $paymentProviderSlug  Provider slug
      * @param  int  $expireAfterMinutes  Expiry time
      *
      * @throws \Exception
@@ -87,68 +88,60 @@ trait HasTransaction
     public function createCreditTransaction(
         Model|array $customer,
         int $amount,
+        PaymentMethodCast $paymentMethod,
         string $redirectSuccessUrl,
         string $redirectFailureUrl,
         ?Wallet $wallet = null,
         ?string $purpose = null,
-        ?string $paymentProviderSlug = null,
         int $expireAfterMinutes = 60
     ): Transaction {
         return $this->createTransaction(
             customer: $customer,
             type: TransactionTypeCast::CREDIT,
+            paymentMethod: $paymentMethod,
             redirectSuccessUrl: $redirectSuccessUrl,
             redirectFailureUrl: $redirectFailureUrl,
             wallet: $wallet,
             purpose: $purpose,
-            paymentProviderSlug: $paymentProviderSlug,
             expireAfterMinutes: $expireAfterMinutes,
             amount: $amount
         );
     }
 
     /**
-     * Core transaction creation method
+     * Core transaction creation method using PaymentService
      *
      * @throws \Exception
      */
     protected function createTransaction(
         Model|array $customer,
         TransactionTypeCast $type,
+        PaymentMethodCast $paymentMethod,
         string $redirectSuccessUrl,
         string $redirectFailureUrl,
         ?Wallet $wallet = null,
         ?string $purpose = null,
-        ?string $paymentProviderSlug = null,
         int $expireAfterMinutes = 60,
         ?int $amount = null
     ): Transaction {
         return DB::transaction(function () use (
             $customer,
             $type,
+            $paymentMethod,
             $redirectSuccessUrl,
             $redirectFailureUrl,
             $wallet,
             $purpose,
-            $paymentProviderSlug,
             $expireAfterMinutes,
             $amount
         ) {
-            // 1. Get payment provider (default: Cashfree)
-            $integration = Integration::query()
-                ->ofType(Integration::TYPE_PAYMENT)
-                ->active()
-                ->when($paymentProviderSlug, fn ($q) => $q->bySlug($paymentProviderSlug))
-                ->when(! $paymentProviderSlug, fn ($q) => $q->where('is_default', true))
-                ->firstOrFail();
-
-            // 2. Resolve amount (from model or parameter)
+            // 1. Resolve amount
             $resolvedAmount = $amount ?? $this->resolveTransactionAmount();
 
-            // 3. Parse customer details
+            // 2. Parse customer details
             $customerData = $this->parseCustomerData($customer);
 
-            // 4. Create transaction record
+            // 3. Create transaction record
             $transaction = $this->transaction()->create([
                 'uuid' => 'TXN-'.Str::upper(Str::random(12)),
                 'wallet_id' => $wallet?->id,
@@ -156,9 +149,9 @@ trait HasTransaction
                 'status' => TransactionStatusCast::PENDING,
                 'amount' => $resolvedAmount,
                 'currency' => 'INR',
-                'integration_id' => $integration->id,
+                'payment_method' => $paymentMethod,
                 'purpose' => $purpose ?? 'Payment',
-                'description' => $customerData['name'].' - '.$purpose,
+                'description' => $customerData['name'].' - '.($purpose ?? 'Payment'),
                 'expires_at' => now()->addMinutes($expireAfterMinutes),
                 'is_verified' => false,
                 'metadata' => [
@@ -168,31 +161,47 @@ trait HasTransaction
                 ],
             ]);
 
-            // 5. Create Cashfree order and get payment session
-            $cashfreeService = app(CashfreeService::class);
-            $cashfreeOrder = $cashfreeService->createOrder(
-                transaction: $transaction,
-                integration: $integration,
-                customerData: $customerData,
-                redirectSuccessUrl: $redirectSuccessUrl,
-                redirectFailureUrl: $redirectFailureUrl
+            // 4. Use PaymentService to initiate payment (provider-agnostic)
+            $paymentService = app(PaymentService::class);
+
+            $paymentRequest = new PaymentInitiateRequest(
+                amountInPaisa: $resolvedAmount,
+                currency: 'INR',
+                method: $paymentMethod,
+                userId: $customerData['user_id'] ?? 0,
+                walletId: $wallet?->id ?? 0,
+                transactionId: $transaction->uuid,
+                customerName: $customerData['name'],
+                customerEmail: $customerData['email'],
+                customerPhone: $customerData['mobile'],
+                purpose: $purpose,
+                description: $transaction->description,
+                metadata: $transaction->metadata ?? [],
+                callbackUrl: $redirectSuccessUrl,
+                expiresInMinutes: $expireAfterMinutes
             );
 
-            // 6. Update transaction with Cashfree response
-            if ($cashfreeOrder['success']) {
+            $paymentResponse = $paymentService->initiate($paymentRequest);
+
+            // 5. Update transaction with provider response
+            if ($paymentResponse->success || $paymentResponse->status === 'pending') {
                 $transaction->update([
-                    'provider_order_id' => $cashfreeOrder['cf_order_id'],
-                    'checkout_url' => $cashfreeOrder['payment_session_id'], // ⚠️ Storing in checkout_url for now
-                    'provider_response' => $cashfreeOrder,
+                    'provider_order_id' => $paymentResponse->providerOrderId,
+                    'provider_transaction_id' => $paymentResponse->providerTransactionId,
+                    'checkout_url' => $paymentResponse->checkoutUrl, // payment_session_id stored here
+                    'status' => $paymentResponse->getStatusEnum(),
+                    'is_verified' => $paymentResponse->status === 'success',
+                    'verified_at' => $paymentResponse->status === 'success' ? now() : null,
+                    'provider_response' => $paymentResponse->metadata,
                 ]);
             } else {
-                // Failed to create order
+                // Failed to create payment
                 $transaction->update([
                     'status' => TransactionStatusCast::FAILED,
-                    'provider_response' => $cashfreeOrder,
+                    'provider_response' => $paymentResponse->metadata,
                 ]);
 
-                throw new \Exception('Failed to create Cashfree order: '.$cashfreeOrder['error']);
+                throw new \Exception('Failed to create payment: '.$paymentResponse->message);
             }
 
             return $transaction->fresh();
@@ -229,6 +238,7 @@ trait HasTransaction
     {
         if (is_array($customer)) {
             return [
+                'user_id' => $customer['id'] ?? 0,
                 'name' => $customer['name'] ?? 'Guest',
                 'email' => $customer['email'] ?? null,
                 'mobile' => $customer['mobile'] ?? null,
@@ -236,6 +246,7 @@ trait HasTransaction
         }
 
         return [
+            'user_id' => $customer->id ?? 0,
             'name' => $customer->name ?? 'User',
             'email' => $customer->email ?? null,
             'mobile' => $customer->mobile ?? null,

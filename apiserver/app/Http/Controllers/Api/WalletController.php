@@ -893,6 +893,7 @@ final class WalletController extends Controller
     {
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'], // ₹1 to ₹1,00,000
+            'payment_method' => ['nullable', 'string', 'in:wallet,cashfree,razorpay,upi,card'], // Optional payment method
         ]);
 
         $user = $request->user();
@@ -901,16 +902,20 @@ final class WalletController extends Controller
         // Convert rupees to paisa
         $amountInPaisa = (int) round($validated['amount'] * 100);
 
+        // Determine payment method (default: cashfree)
+        $paymentMethod = \App\Casts\PaymentMethodCast::tryFrom($validated['payment_method'] ?? 'cashfree')
+            ?? \App\Casts\PaymentMethodCast::CASHFREE;
+
         try {
             // Create transaction using HasTransaction trait
             $transaction = $wallet->createCreditTransaction(
                 customer: $user,
                 amount: $amountInPaisa,
+                paymentMethod: $paymentMethod, // ⭐ NOW SWITCHABLE!
                 redirectSuccessUrl: config('app.client_url').'/wallet?status=success',
                 redirectFailureUrl: config('app.client_url').'/wallet?status=failed',
                 wallet: $wallet,
                 purpose: 'Wallet TopUp',
-                paymentProviderSlug: 'cashfree', // Use Cashfree
                 expireAfterMinutes: 60
             );
 
@@ -922,6 +927,7 @@ final class WalletController extends Controller
                     'checkout_url' => config('app.client_url').'/checkout/'.$transaction->uuid,
                     'amount' => $transaction->amount,
                     'amount_formatted' => MoneyService::format($transaction->amount),
+                    'payment_method' => $transaction->payment_method->value,
                     'expires_at' => $transaction->expires_at,
                 ],
             ]);

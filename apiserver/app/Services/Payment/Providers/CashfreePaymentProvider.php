@@ -26,7 +26,7 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
 
     private const PRODUCTION_URL = 'https://api.cashfree.com/pg';
 
-    private const API_VERSION = '2023-08-01';
+    private const API_VERSION = '2025-01-01'; // Updated to latest API version
 
     private ?Integration $integration = null;
 
@@ -98,11 +98,13 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
                     message: 'Payment order created',
                     transactionId: $request->transactionId,
                     providerOrderId: $data['cf_order_id'] ?? null,
-                    checkoutUrl: $data['payment_link'] ?? null,
+                    checkoutUrl: $data['payment_session_id'] ?? null, // ⭐ CRITICAL - payment_session_id is the checkout URL
                     metadata: [
                         'payment_session_id' => $data['payment_session_id'] ?? null,
+                        'payment_link' => $data['payment_link'] ?? null,
                         'order_status' => $data['order_status'] ?? null,
                         'cf_order_id' => $data['cf_order_id'] ?? null,
+                        'order_expiry_time' => $data['order_expiry_time'] ?? null,
                     ]
                 );
             }
