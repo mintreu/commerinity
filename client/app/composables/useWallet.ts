@@ -348,6 +348,36 @@ export const useWallet = () => {
   const availableBalance = computed(() => wallet.value?.available_balance ?? 0)
   const availableBalanceFormatted = computed(() => wallet.value?.available_balance_formatted ?? '0.00')
 
+  /**
+   * Initiate wallet topup (add money)
+   */
+  const topup = async (amount: number) => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await useSanctumFetch(`${config.public.apiBase}/api/wallet/topup`, {
+        method: 'POST',
+        body: { amount }
+      })
+
+      if (response.success) {
+        // Redirect to checkout page
+        const checkoutUrl = response.data.checkout_url
+        window.location.href = checkoutUrl
+        return { success: true, data: response.data }
+      } else {
+        error.value = response.message || 'Failed to initiate topup'
+        return { success: false, message: error.value }
+      }
+    } catch (e: any) {
+      error.value = e.data?.message || 'Failed to initiate topup'
+      return { success: false, message: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     // State
     wallet,
@@ -379,6 +409,7 @@ export const useWallet = () => {
     resetPinWithToken,
     sendMoney,
     withdraw,
-    payViaWallet
+    payViaWallet,
+    topup // ⭐ NEW - Add money to wallet
   }
 }

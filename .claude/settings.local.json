@@ -21,7 +21,8 @@
       "mcp__frontend-filesystem__search_files",
       "mcp__frontend-filesystem__create_directory",
       "mcp__frontend-filesystem__read_multiple_files",
-      "mcp__frontend-filesystem__edit_file"
+      "mcp__frontend-filesystem__edit_file",
+      "Bash(php artisan tinker:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

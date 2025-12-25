@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\OtpController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\BeneficiaryAccountController;
+use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CommissionController;
 use App\Http\Controllers\Api\KycController;
 use App\Http\Controllers\Api\MessageController;
@@ -166,6 +167,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/verify-security-question', [WalletController::class, 'verifySecurityQuestion']);
         Route::post('/reset-pin', [WalletController::class, 'resetPinWithToken']);
 
+        // Payment Operations
+        Route::post('/topup', [WalletController::class, 'topup']); // ⭐ NEW - Add money
+
         // Financial Transactions (PIN required)
         Route::post('/send', [WalletController::class, 'sendMoney']);
         Route::post('/withdraw', [WalletController::class, 'withdraw']);
@@ -299,6 +303,14 @@ Route::prefix('careers')->group(function () {
 Route::prefix('contact')->group(function () {
     Route::post('/user', [\App\Http\Controllers\Api\InquiryController::class, 'storeUser']);
     Route::post('/business', [\App\Http\Controllers\Api\InquiryController::class, 'storeBusiness']);
+});
+
+// ========================================
+// Checkout (Public - no auth for checkout page display)
+// ========================================
+Route::prefix('checkout')->group(function () {
+    Route::get('/{transaction:uuid}', [CheckoutController::class, 'show']);
+    Route::get('/{transaction:uuid}/status', [CheckoutController::class, 'status']);
 });
 
 // ========================================

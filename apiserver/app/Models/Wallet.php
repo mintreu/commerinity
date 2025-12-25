@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Casts\WalletStatusCast;
 use App\Services\MoneyService;
+use App\Traits\HasTransaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,11 @@ use Illuminate\Support\Str;
 class Wallet extends Model
 {
     use HasFactory;
+    use HasTransaction; // ⭐ Makes wallet payable for topup
     use SoftDeletes;
+
+    // Define amount column for transactions
+    public const TRANSACTION_AMOUNT_COLUMN = 'balance';
 
     protected $fillable = [
         'uuid',

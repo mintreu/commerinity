@@ -883,4 +883,53 @@ final class WalletController extends Controller
 
         return $maskedName.'@'.$domain;
     }
+
+    /**
+     * Initiate wallet topup (add money)
+     *
+     * Creates transaction and returns checkout URL
+     */
+    public function topup(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'amount' => ['required', 'numeric', 'min:1', 'max:100000'], // ₹1 to ₹1,00,000
+        ]);
+
+        $user = $request->user();
+        $wallet = $this->walletService->getOrCreateWallet($user);
+
+        // Convert rupees to paisa
+        $amountInPaisa = (int) round($validated['amount'] * 100);
+
+        try {
+            // Create transaction using HasTransaction trait
+            $transaction = $wallet->createCreditTransaction(
+                customer: $user,
+                amount: $amountInPaisa,
+                redirectSuccessUrl: config('app.client_url').'/wallet?status=success',
+                redirectFailureUrl: config('app.client_url').'/wallet?status=failed',
+                wallet: $wallet,
+                purpose: 'Wallet TopUp',
+                paymentProviderSlug: 'cashfree', // Use Cashfree
+                expireAfterMinutes: 60
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Checkout initiated successfully',
+                'data' => [
+                    'transaction_id' => $transaction->uuid,
+                    'checkout_url' => config('app.client_url').'/checkout/'.$transaction->uuid,
+                    'amount' => $transaction->amount,
+                    'amount_formatted' => MoneyService::format($transaction->amount),
+                    'expires_at' => $transaction->expires_at,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to initiate checkout: '.$e->getMessage(),
+            ], 500);
+        }
+    }
 }
