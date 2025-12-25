@@ -411,8 +411,8 @@ final class DemoMlmSeeder extends Seeder
         $commissionTypes = [
             CommissionTypeCast::SPONSOR_BONUS,
             CommissionTypeCast::LEVEL_COMMISSION,
-            CommissionTypeCast::MILESTONE_BONUS,
-            CommissionTypeCast::PERFORMANCE_BONUS,
+            CommissionTypeCast::MATCHING_BONUS,
+            CommissionTypeCast::LEVEL_ACHIEVEMENT,
         ];
 
         foreach ($this->users as $user) {
@@ -479,7 +479,7 @@ final class DemoMlmSeeder extends Seeder
 
                 $purpose = $purposes[array_rand($purposes)];
                 $createdAt = now()->subDays(rand(1, 180));
-                $paymentMethods = [PaymentMethodCast::WALLET, PaymentMethodCast::BANK, PaymentMethodCast::UPI];
+                $paymentMethods = [PaymentMethodCast::WALLET, PaymentMethodCast::BANK_TRANSFER, PaymentMethodCast::UPI];
 
                 Transaction::create([
                     'wallet_id' => $wallet->id,
@@ -603,8 +603,8 @@ final class DemoMlmSeeder extends Seeder
         return match ($type) {
             CommissionTypeCast::SPONSOR_BONUS => 'Direct sponsor bonus for new member',
             CommissionTypeCast::LEVEL_COMMISSION => 'Level commission from team activity',
-            CommissionTypeCast::MILESTONE_BONUS => 'Milestone achievement bonus',
-            CommissionTypeCast::PERFORMANCE_BONUS => 'Performance bonus for exceeding targets',
+            CommissionTypeCast::MATCHING_BONUS => 'Matching bonus from downline earnings',
+            CommissionTypeCast::LEVEL_ACHIEVEMENT => 'Level achievement bonus',
             default => 'Commission earned',
         };
     }
