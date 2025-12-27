@@ -43,7 +43,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
     // Check if onboarding is complete
     const typedUser = user.value as User
-    if (typedUser.onboarded === false) {
+    // Use != true to catch both false and undefined
+    if (typedUser.onboarded !== true) {
       return navigateTo('/onboarding')
     }
   } catch (error) {

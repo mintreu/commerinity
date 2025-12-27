@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
  * - Calculate and distribute commissions
  * - Track originator (agent/advisor) commissions
  */
-final class UserMlmService
+final class UserMlmService implements \App\Contracts\Services\UserMlmServiceInterface
 {
     private readonly int $maxDirectChildren;
 

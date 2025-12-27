@@ -260,6 +260,17 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     }
 
     /**
+     * Register media collections for this model.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']);
+        // File size validation done in controller (2MB max)
+    }
+
+    /**
      * Configure activity logging options.
      */
     public function getActivitylogOptions(): LogOptions

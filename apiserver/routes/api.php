@@ -199,6 +199,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [RecruitmentController::class, 'myApplications']);
         Route::get('/{uuid}', [RecruitmentController::class, 'showApplication']);
         Route::post('/{uuid}/withdraw', [RecruitmentController::class, 'withdrawApplication']);
+        Route::post('/{uuid}/pay', [RecruitmentController::class, 'initiatePayment']);
     });
 
     // ========================================
@@ -285,6 +286,9 @@ Route::middleware('auth:sanctum')->group(function () {
 // ========================================
 // Public Routes (No Auth Required)
 // ========================================
+
+// Public Homepage Stats (cached, no auth)
+Route::get('/public/stats', [\App\Http\Controllers\Api\PublicStatsController::class, 'homepage']);
 
 // VAPID Public Key (needed for push notification registration)
 Route::get('/push/vapid-key', [PushSubscriptionController::class, 'vapidPublicKey']);

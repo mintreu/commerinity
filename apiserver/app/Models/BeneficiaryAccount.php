@@ -167,6 +167,18 @@ class BeneficiaryAccount extends Model
         return ($this->bank_name ?? 'Bank').' - '.$this->masked_account_number;
     }
 
+    /**
+     * Get masked account display for payouts (used in transaction descriptions)
+     */
+    public function getMaskedAccountDisplay(): string
+    {
+        if ($this->isUpi()) {
+            return 'UPI ('.$this->upi_id.')';
+        }
+
+        return ($this->bank_name ?? 'Bank').' '.$this->masked_account_number;
+    }
+
     // ========================================
     // Query Scopes
     // ========================================

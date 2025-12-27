@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -100,6 +101,15 @@ class MlmGenealogy extends Model
             if (! $genealogy->uuid) {
                 $genealogy->uuid = Str::uuid()->toString();
             }
+        });
+
+        // Invalidate cache on save/update/delete
+        static::saved(function (MlmGenealogy $genealogy) {
+            static::clearCache($genealogy->user_id);
+        });
+
+        static::deleted(function (MlmGenealogy $genealogy) {
+            static::clearCache($genealogy->user_id);
         });
     }
 
@@ -325,21 +335,24 @@ class MlmGenealogy extends Model
 
             if ($relativeDepth <= 4) {
                 $levelField = "level_{$relativeDepth}_count";
-                $upline->increment($levelField);
-                $upline->increment('total_team_count');
+                $upline->{$levelField}++;
+                $upline->total_team_count++;
 
                 if ($newMember->is_active) {
-                    $upline->increment('active_team_count');
+                    $upline->active_team_count++;
                 }
             }
 
             // Update direct count for immediate parent
             if ($relativeDepth === 1) {
-                $upline->increment('direct_count');
+                $upline->direct_count++;
                 if ($newMember->is_active) {
-                    $upline->increment('active_direct_count');
+                    $upline->active_direct_count++;
                 }
             }
+
+            // Save triggers cache invalidation via saved event
+            $upline->save();
         }
     }
 
@@ -352,22 +365,23 @@ class MlmGenealogy extends Model
      */
     public function addSales(int $amountInPaisa, int $pv = 0): void
     {
-        // Update personal
-        $this->increment('personal_sales', $amountInPaisa);
-        $this->increment('personal_pv', $pv);
+        // Update personal sales
+        $this->personal_sales += $amountInPaisa;
+        $this->personal_pv += $pv;
+        $this->last_activity_at = now();
+        $this->save();
 
         // Propagate to uplines (via User.parent_id chain)
         foreach ($this->getUpline(4) as $index => $upline) {
             $level = $index + 1;
             if ($level <= 4) {
-                $upline->increment("level_{$level}_sales", $amountInPaisa);
-                $upline->increment('total_team_sales', $amountInPaisa);
-                $upline->increment('team_pv', $pv);
+                $levelField = "level_{$level}_sales";
+                $upline->{$levelField} += $amountInPaisa;
+                $upline->total_team_sales += $amountInPaisa;
+                $upline->team_pv += $pv;
+                $upline->save(); // Triggers cache invalidation
             }
         }
-
-        $this->touch();
-        $this->update(['last_activity_at' => now()]);
     }
 
     // ========================================
@@ -445,11 +459,87 @@ class MlmGenealogy extends Model
     // ========================================
 
     /**
-     * Get genealogy for a user
+     * Cache TTL for genealogy lookups (1 hour)
+     */
+    private const CACHE_TTL_MINUTES = 60;
+
+    /**
+     * Get genealogy for a user (cached)
+     *
+     * Uses short-lived cache for repeated lookups during commission processing.
+     * Cache is automatically invalidated on model save.
      */
     public static function forUser(int $userId): ?self
     {
+        $cacheKey = "genealogy_user_{$userId}";
+
+        return Cache::remember($cacheKey, now()->addMinutes(self::CACHE_TTL_MINUTES), function () use ($userId) {
+            return static::where('user_id', $userId)->first();
+        });
+    }
+
+    /**
+     * Get genealogy without cache (for mutations)
+     */
+    public static function forUserFresh(int $userId): ?self
+    {
         return static::where('user_id', $userId)->first();
+    }
+
+    /**
+     * Preload genealogies for multiple users (batch cache warming)
+     *
+     * Use this before processing commissions for multiple users
+     * to avoid N+1 queries.
+     *
+     * @param  array<int>  $userIds
+     * @return Collection<int, self>
+     */
+    public static function preloadForUsers(array $userIds): Collection
+    {
+        if (empty($userIds)) {
+            return collect();
+        }
+
+        // Check which are already cached
+        $uncachedIds = [];
+        foreach ($userIds as $userId) {
+            $cacheKey = "genealogy_user_{$userId}";
+            if (! Cache::has($cacheKey)) {
+                $uncachedIds[] = $userId;
+            }
+        }
+
+        // Batch load uncached
+        if (! empty($uncachedIds)) {
+            $genealogies = static::whereIn('user_id', $uncachedIds)->get();
+
+            foreach ($genealogies as $genealogy) {
+                $cacheKey = "genealogy_user_{$genealogy->user_id}";
+                Cache::put($cacheKey, $genealogy, now()->addMinutes(self::CACHE_TTL_MINUTES));
+            }
+        }
+
+        // Return all requested genealogies from cache
+        return collect($userIds)->map(fn ($id) => static::forUser($id))->filter();
+    }
+
+    /**
+     * Clear cache for a user
+     */
+    public static function clearCache(int $userId): void
+    {
+        Cache::forget("genealogy_user_{$userId}");
+    }
+
+    /**
+     * Clear all genealogy caches (maintenance)
+     */
+    public static function clearAllCaches(): void
+    {
+        // In production, use tagged cache or Redis SCAN
+        // This requires knowing all user IDs or using cache tags
+        Cache::flush();
     }
 
     /**

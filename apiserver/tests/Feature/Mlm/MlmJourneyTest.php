@@ -11,8 +11,14 @@ use App\Services\Membership\SubscriptionService;
 use App\Services\Mlm\CommissionProcessorService;
 use Database\Factories\Membership\StageFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
+
+// Clear cache before each test to ensure clean state
+beforeEach(function () {
+    Cache::flush();
+});
 
 // =============================================================================
 // HELPER FUNCTIONS

@@ -123,47 +123,71 @@
           </div>
 
           <!-- Email -->
-          <div class="space-y-2">
-            <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              <UIcon
-                name="i-lucide-mail"
-                class="w-4 h-4"
-              />
-              <span>Email Address</span>
-              <span class="text-slate-500 text-xs">(Optional - requires verification if changed)</span>
-            </label>
-            <input
-              v-model="form.email"
-              type="email"
-              placeholder="you@example.com"
-              class="w-full px-4 py-3 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              :class="{ 'border-red-500': errors.email }"
-            >
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <UIcon name="i-lucide-mail" class="w-4 h-4" />
+                <span>Email Address</span>
+                <span class="text-red-500">*</span>
+                <span class="text-slate-500 text-xs">(requires verification if changed)</span>
+              </label>
+              <div class="relative group">
+                <input
+                  v-model="form.email"
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-semibold"
+                  :class="{
+                    'border-red-500 bg-red-50 dark:bg-red-900/20': errors.email,
+                  'border-green-300 bg-green-50 dark:bg-green-900/10': canChangeEmail && !errors.email,
+                  'border-blue-300 bg-blue-50 dark:bg-blue-900/10': !canChangeEmail
+                  }"
+                />
+                <NuxtLink
+                  to="/profile/change-email"
+                  class="absolute right-4 top-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+                >
+                  <UIcon name="i-lucide-edit-3" class="w-4 h-4" />
+                </NuxtLink>
+              </div>
+            </div>
             <p
               v-if="errors.email"
-              class="text-sm text-red-500"
+              class="text-sm text-red-500 mt-1"
             >
               {{ errors.email }}
             </p>
           </div>
 
           <!-- Mobile -->
-          <div class="space-y-2">
-            <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              <UIcon
-                name="i-lucide-smartphone"
-                class="w-4 h-4"
-              />
-              <span>Mobile Number</span>
-              <span class="text-slate-500 text-xs">(Optional - requires verification if changed)</span>
-            </label>
-            <input
-              v-model="form.mobile"
-              type="text"
-              placeholder="+919876543210"
-              class="w-full px-4 py-3 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              :class="{ 'border-red-500': errors.mobile }"
-            >
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <UIcon name="i-lucide-smartphone" class="w-4 h-4" />
+                <span>Mobile Number</span>
+                <span class="text-slate-500 text-xs">(requires verification if changed)</span>
+              </label>
+              <div class="relative group">
+                <input
+                  v-model="form.mobile"
+                  type="text"
+                  placeholder="+919876543210"
+                  class="w-full pl-12 pr-12 py-3 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-semibold"
+                  :class="{
+                    'border-red-500 bg-red-50 dark:bg-red-900/20': errors.mobile,
+                  'border-green-300 bg-green-50 dark:bg-green-900/10': canChangeMobile && !errors.mobile,
+                  'border-blue-300 bg-blue-50 dark:bg-blue-900/10': !canChangeMobile
+                  }"
+                />
+                <NuxtLink
+                  to="/profile/change-mobile"
+                  class="absolute right-4 top-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
+                >
+                  <UIcon name="i-lucide-edit-3" class="w-4 h-4" />
+                </NuxtLink>
+              </div>
+            </div>
             <p class="text-xs text-slate-500">
               International format required (e.g., +919876543210)
             </p>
@@ -355,12 +379,16 @@ const router = useRouter()
 const { refreshUser } = useSanctum()
 const currentUser = useCurrentUser()
 
+// Avatar upload form
+const avatarForm = useSanctumForm('POST', `${config.public.apiBase}/api/user/avatar`, {
+  avatar: null as File | null
+})
+
 // State
 const isLoading = ref(true)
 const avatarPreview = ref<string | null>(null)
 const avatarFile = ref<File | null>(null)
 const avatarError = ref<string | null>(null)
-const uploadingAvatar = ref(false)
 const loading = ref(false)
 const success = ref(false)
 const successMessage = ref('')
@@ -390,6 +418,18 @@ const form = reactive({
 const maxDate = computed(() => {
   const today = new Date()
   return today.toISOString().split('T')[0]
+})
+
+// Computed properties for showing edit button availability
+const canChangeEmail = computed(() => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(form.email)
+})
+
+const canChangeMobile = computed(() => {
+  // Indian mobile validation: starts with 6-9, 10 digits
+  const mobileRegex = /^\+91[6-9]\d{9}$/
+  return mobileRegex.test(form.mobile)
 })
 
 // Load profile data from the authenticated user (from Sanctum's useCurrentUser)
@@ -541,29 +581,19 @@ const handleAvatarChange = async (event: Event) => {
 const uploadAvatar = async () => {
   if (!avatarFile.value) return
 
-  uploadingAvatar.value = true
-  avatarError.value = null
-
   try {
-    const formData = new FormData()
-    formData.append('avatar', avatarFile.value)
-
-    const { useSanctumFetch } = useSanctum()
-
-    await useSanctumFetch(`${config.public.apiBase}/api/user/avatar`, {
-      method: 'POST',
-      body: formData
-    })
+    // Set avatar file and submit using Sanctum form
+    avatarForm.avatar = avatarFile.value
+    await avatarForm.submit()
 
     // Refresh user data to get new avatar URL
     await refreshUser()
     avatarFile.value = null
+    avatarPreview.value = null
   } catch (err: unknown) {
     const fetchError = err as { data?: { message?: string } }
     avatarError.value = fetchError.data?.message || 'Failed to upload avatar'
     avatarPreview.value = null
-  } finally {
-    uploadingAvatar.value = false
   }
 }
 

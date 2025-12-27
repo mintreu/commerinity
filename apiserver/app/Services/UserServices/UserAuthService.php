@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\NewAccessToken;
 
-final class UserAuthService
+final class UserAuthService implements \App\Contracts\Services\UserAuthServiceInterface
 {
     private readonly OtpManager $otpManager;
 

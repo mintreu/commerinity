@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Payment\Providers;
 
+use App\Casts\BeneficiaryStatusCast;
+use App\Casts\BeneficiaryTypeCast;
 use App\Casts\PaymentMethodCast;
 use App\Casts\TransactionStatusCast;
 use App\Casts\TransactionTypeCast;
@@ -14,6 +16,7 @@ use App\Services\Payment\Contracts\PayoutProviderInterface;
 use App\Services\Payment\DTOs\PayoutRequest;
 use App\Services\Payment\DTOs\PayoutResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * NativePayoutProvider - Handles manual bank/UPI payouts
@@ -217,6 +220,159 @@ final class NativePayoutProvider implements PayoutProviderInterface
         } catch (\Exception $e) {
             return PayoutResponse::failed('Failed to cancel payout: '.$e->getMessage());
         }
+    }
+
+    // ========================================
+    // Beneficiary Operations
+    // ========================================
+
+    /**
+     * Create beneficiary account (native = just store locally)
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{success: bool, beneficiary_id?: string, message?: string}
+     */
+    public function createBeneficiary(Wallet $wallet, array $data): array
+    {
+        try {
+            $type = BeneficiaryTypeCast::tryFrom($data['type'] ?? 'savings') ?? BeneficiaryTypeCast::SAVINGS;
+
+            $beneficiary = BeneficiaryAccount::create([
+                'wallet_id' => $wallet->id,
+                'type' => $type,
+                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
+                'account_number' => $data['account_number'] ?? null,
+                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
+                'bank_name' => $data['bank_name'] ?? null,
+                'bank_branch' => $data['bank_branch'] ?? null,
+                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
+                'status' => BeneficiaryStatusCast::ACTIVE, // Native provider auto-activates
+                'is_default' => $wallet->beneficiaries()->count() === 0,
+            ]);
+
+            Log::info('Native beneficiary created', [
+                'beneficiary_id' => $beneficiary->id,
+                'wallet_id' => $wallet->id,
+            ]);
+
+            return [
+                'success' => true,
+                'beneficiary_id' => (string) $beneficiary->id,
+                'message' => 'Beneficiary account created successfully',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Native beneficiary creation failed', [
+                'error' => $e->getMessage(),
+                'wallet_id' => $wallet->id,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to create beneficiary: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Update beneficiary account
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{success: bool, message?: string}
+     */
+    public function updateBeneficiary(BeneficiaryAccount $beneficiary, array $data): array
+    {
+        try {
+            $updateData = array_filter([
+                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
+                'account_number' => $data['account_number'] ?? null,
+                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
+                'bank_name' => $data['bank_name'] ?? null,
+                'bank_branch' => $data['bank_branch'] ?? null,
+                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
+            ], fn ($v) => $v !== null);
+
+            $beneficiary->update($updateData);
+
+            Log::info('Native beneficiary updated', ['beneficiary_id' => $beneficiary->id]);
+
+            return [
+                'success' => true,
+                'message' => 'Beneficiary account updated successfully',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Native beneficiary update failed', [
+                'error' => $e->getMessage(),
+                'beneficiary_id' => $beneficiary->id,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to update beneficiary: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Delete beneficiary account
+     *
+     * @return array{success: bool, message?: string}
+     */
+    public function deleteBeneficiary(BeneficiaryAccount $beneficiary): array
+    {
+        try {
+            $wasDefault = $beneficiary->is_default;
+            $walletId = $beneficiary->wallet_id;
+
+            $beneficiary->delete();
+
+            // Assign new default if needed
+            if ($wasDefault) {
+                BeneficiaryAccount::where('wallet_id', $walletId)
+                    ->first()
+                    ?->update(['is_default' => true]);
+            }
+
+            Log::info('Native beneficiary deleted', ['beneficiary_id' => $beneficiary->id]);
+
+            return [
+                'success' => true,
+                'message' => 'Beneficiary account deleted successfully',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Native beneficiary deletion failed', [
+                'error' => $e->getMessage(),
+                'beneficiary_id' => $beneficiary->id,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to delete beneficiary: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Get beneficiary details
+     *
+     * @return array{success: bool, data?: array<string, mixed>, message?: string}
+     */
+    public function getBeneficiary(BeneficiaryAccount $beneficiary): array
+    {
+        return [
+            'success' => true,
+            'data' => [
+                'id' => $beneficiary->id,
+                'uuid' => $beneficiary->uuid,
+                'type' => $beneficiary->type->value,
+                'holder_name' => $beneficiary->holder_name,
+                'account_number' => $this->maskAccountNumber($beneficiary->account_number),
+                'ifsc_code' => $beneficiary->ifsc_code,
+                'bank_name' => $beneficiary->bank_name,
+                'upi_id' => $beneficiary->upi_id,
+                'status' => $beneficiary->status->value,
+                'is_default' => $beneficiary->is_default,
+            ],
+        ];
     }
 
     /**

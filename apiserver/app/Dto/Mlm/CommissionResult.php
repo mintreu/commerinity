@@ -126,6 +126,32 @@ final readonly class CommissionResult
     }
 
     /**
+     * Generate idempotency key for deduplication
+     *
+     * Key format: {type}:{recipient_id}:{commissionable_type}:{commissionable_id}:{level}
+     * This ensures same commission isn't created twice even with retries.
+     */
+    public function getIdempotencyKey(): ?string
+    {
+        if (! $this->commissionableType || ! $this->commissionableId) {
+            return null;
+        }
+
+        $parts = [
+            $this->type,
+            $this->recipientId,
+            class_basename($this->commissionableType),
+            $this->commissionableId,
+        ];
+
+        if ($this->level !== null) {
+            $parts[] = "L{$this->level}";
+        }
+
+        return implode(':', $parts);
+    }
+
+    /**
      * Convert to array for model creation
      *
      * Note: Includes generated values that would normally come from model events
@@ -152,6 +178,7 @@ final readonly class CommissionResult
             'metadata' => $this->metadata,
             'commission_date' => now()->toDateString(),
             'period_key' => now()->format('Y-m'),
+            'idempotency_key' => $this->getIdempotencyKey(),
         ];
     }
 }

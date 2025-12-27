@@ -7,7 +7,7 @@ namespace App\Http\Resources;
 use App\Casts\KycStatusCast;
 use App\Casts\UserStatusCast;
 use App\Casts\UserTypeCast;
-use App\Services\UserPermissionService;
+use App\Services\UserServices\UserPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

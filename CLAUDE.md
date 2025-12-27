@@ -28,6 +28,78 @@
 2. `.claude/ACTIVITY_LOG.md` - Full work history
 3. `plans/FRONTEND_DASHBOARD_PLAN.md` - Current frontend plan
 
+**BEFORE FIXING ANYTHING:**
+1. ✅ **READ FULL APISERVER** - Use Explore agent to map what EXISTS before writing new code
+2. ✅ **CHECK OLD_PROJECT** - Reference ONLY for business logic patterns (NOT code copying)
+3. ✅ **UNDERSTAND INTEGRATIONS** - Most features exist, just need proper integration
+
+---
+
+## 🚨 GIT COMMIT/PUSH RULES - CRITICAL
+
+**NEVER commit or push until ALL these checks pass:**
+
+1. ✅ **Full Backend Tests** - Run `php artisan test` in apiserver/ and ensure ALL tests pass
+2. ✅ **Frontend Build** - Run `npm run build` in client/ and ensure no errors
+3. ✅ **Code Formatting** - Run `vendor/bin/pint --dirty` in apiserver/ before commit
+4. ✅ **Manual Browser Testing** - Test the actual feature end-to-end in browser (both apiserver + client)
+   - Test all user flows (create, edit, delete, view)
+   - Test error states and edge cases
+   - Verify no console errors
+   - Verify responsive design works
+5. ✅ **Feature Complete** - ALL related functionality must work end-to-end
+   - All buttons functional
+   - All forms submit correctly
+   - All API endpoints work
+   - All edge cases handled
+6. ✅ **Design Quality Check** - UI matches premium Mintreu design system
+
+**Commit/Push Protocol:**
+```bash
+# 1. Test backend thoroughly
+cd apiserver && php artisan test
+# WAIT: Fix any failing tests before proceeding
+
+# 2. Format code
+vendor/bin/pint --dirty
+
+# 3. Build frontend
+cd ../client && npm run build
+# WAIT: Fix any build errors before proceeding
+
+# 4. Manual test in browser - CRITICAL STEP
+# Open http://localhost:3000 and test:
+# - All forms submit correctly
+# - All buttons work
+# - Error handling works
+# - UI looks premium
+# - No console errors
+# WAIT: Fix any issues before proceeding
+
+# 5. ONLY THEN commit and push
+git add -A
+git commit -m "Clear description of COMPLETE feature"
+git push origin dev
+```
+
+**ABSOLUTELY BANNED ACTIONS - NEVER VIOLATE:**
+- ❌ Committing ANY untested code (even "small fixes")
+- ❌ Pushing incomplete or broken features
+- ❌ Committing without running `php artisan test`
+- ❌ Pushing without manual browser testing
+- ❌ Multiple commits for single feature (squash first)
+- ❌ Committing while tests are failing
+- ❌ Pushing without frontend build passing
+- ❌ Committing partial implementations ("I'll finish later")
+- ❌ ANY commits when user workflows are broken
+
+**MANDATORY - Before ANY Commit:**
+1. All tests MUST pass (100% pass rate)
+2. Frontend build MUST succeed with no errors
+3. Manual testing MUST be completed (no assumptions)
+4. Feature MUST be fully functional end-to-end
+5. Design MUST match Mintreu premium quality
+
 ---
 
 
@@ -397,7 +469,58 @@ I am **Claude-Expert**, enterprise AI engineer executing battle-tested refactori
 
 ### Critical Refactoring Rules
 
-1. **REFERENCE PROJECTS - SMART USAGE RULE**
+1. **🎨 MINTREU DESIGN SYSTEM - PRESERVE ABOVE ALL**
+
+   **CRITICAL - THIS IS REFACTORING, NOT REDISIGN:**
+   - **The app must continue to look like a premium 2025 fintech product**
+   - **old_project/frontend/ holds the Mintreu design system - preserve that quality**
+   - **Any refactor MUST maintain or enhance the existing look & feel**
+   - **DO NOT downgrade to generic Nuxt UI defaults**
+
+   **ABSOLUTE PRIORITIES:**
+   1. Preserve visual fidelity and UX quality
+   2. Reduce duplication with DRY principles
+   3. Improve structure, reuse, and DX (maintainability)
+   4. Extract reusable components WITHOUT changing visuals
+
+   **DESIGN & UX RULES (NON-NEGOTIABLE):**
+   - **DO NOT:**
+     - Remove gradients, glassmorphism, shadows, borders, spacing that define Mintreu look
+     - Replace complex glassmorphic/gradient cards with flat generic ones
+     - Change layout hierarchy in ways that noticeably alter UI
+     - Downgrade design to generic Nuxt UI defaults
+     - "Simplify" or "clean up" CSS by removing key Tailwind classes
+     - Introduce new design system, color palette, spacing unless explicitly asked
+
+   - **YOU MAY:**
+     - Extract repeated patterns into shared components (while keeping visuals)
+     - Use Nuxt UI for logic/behavior (dialogs, dropdowns, overlays, forms)
+     - Improve accessibility, semantics, responsiveness (if design stays visually equivalent)
+     - Wrap Nuxt UI primitives with Mintreu-styled components
+     - Use headless mode or full Tailwind overrides to preserve design
+
+   **NUXT UI USAGE GUIDELINES:**
+   - Prefer headless usage or full Tailwind overrides
+   - Use Nuxt UI for behavior only, style with existing Mintreu Tailwind classes
+   - Wrap Nuxt UI primitives with Mintreu-styled components (e.g., `<MintreuButton>`, `<MintreuCard>`)
+   - If Nuxt UI default style would change the look → headless mode OR full Tailwind override
+   - Check `nuxt-ui-remote` MCP server for component documentation
+
+   **COMPONENT NAMING:**
+   - Use clear naming reflecting Mintreu domain:
+     - `MintreuDashboardShell`, `MintreuKpiCard`, `MintreuTransactionsTable`
+     - `components/ui/` - Atoms (buttons, inputs)
+     - `components/dashboard/` - Dashboard-specific
+     - `components/forms/` - Form components
+   - Keep components small, focused, and reusable
+   - Single Responsibility Principle per component
+
+   **WHEN IN DOUBT:**
+   - If refactor conflicts with preserving premium look → Keep design unchanged
+   - Choose DRY after design fidelity (design first, then code quality)
+   - Leave inline comment noting trade-offs
+
+2. **REFERENCE PROJECTS - SMART USAGE RULE**
 
    **Old commerinity and other projects are REFERENCE ONLY:**
    - Use for understanding business logic and flow

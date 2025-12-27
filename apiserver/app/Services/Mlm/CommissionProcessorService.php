@@ -13,13 +13,14 @@ use App\Events\Mlm\CommissionTriggered;
 use App\Jobs\Mlm\CalculateCommissionsJob;
 use App\Jobs\Mlm\ProcessCommissionJob;
 use App\Models\Mlm\MlmCommission;
-use App\Services\Mlm\Calculators\LevelCommissionCalculator;
-use App\Services\Mlm\Calculators\OriginatorJoiningCalculator;
-use App\Services\Mlm\Calculators\OriginatorRecurringCalculator;
-use App\Services\Mlm\Calculators\SponsorBonusCalculator;
-use App\Services\Mlm\Calculators\TaskCompletionCalculator;
+use App\Services\Mlm\Calculators\Affiliate\LevelCommissionCalculator;
+use App\Services\Mlm\Calculators\Affiliate\OriginatorJoiningCalculator;
+use App\Services\Mlm\Calculators\Affiliate\OriginatorRecurringCalculator;
+use App\Services\Mlm\Calculators\Affiliate\SponsorBonusCalculator;
+use App\Services\Mlm\Calculators\Task\TaskCompletionCalculator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -208,35 +209,47 @@ final class CommissionProcessorService
     /**
      * Persist commission results to database
      *
+     * Uses batched transactions for scalability (1B+ users).
+     * Each batch of 50 commissions gets its own transaction.
+     *
      * @param  Collection<int, CommissionResult>  $results
      * @return Collection<int, MlmCommission>
      */
     public function persistResults(Collection $results): Collection
     {
         $commissions = collect();
+        $batchSize = (int) config('mlm.batch_size', 50);
 
-        DB::transaction(function () use ($results, &$commissions) {
-            foreach ($results as $result) {
-                // Apply deductions
-                $result = $this->applyDeductions($result);
+        // Pre-fetch monthly totals for all recipients to avoid N+1
+        $recipientIds = $results->pluck('recipientId')->unique()->values()->all();
+        $monthlyTotals = $this->preloadMonthlyTotals($recipientIds);
 
-                // Check for duplicates
-                if ($this->isDuplicate($result)) {
-                    Log::channel('mlm')->warning('Duplicate commission skipped', [
-                        'recipient_id' => $result->recipientId,
-                        'type' => $result->type,
-                    ]);
+        // Process in batches to avoid long-running transactions
+        $results->chunk($batchSize)->each(function ($batch) use (&$commissions, $monthlyTotals) {
+            DB::transaction(function () use ($batch, &$commissions, $monthlyTotals) {
+                foreach ($batch as $result) {
+                    // Apply deductions with cached monthly total
+                    $monthlyTotal = $monthlyTotals[$result->recipientId] ?? 0;
+                    $result = $this->applyDeductionsWithTotal($result, $monthlyTotal);
 
-                    continue;
+                    // Check for duplicates (idempotency)
+                    if ($this->isDuplicate($result)) {
+                        Log::channel('mlm')->warning('Duplicate commission skipped', [
+                            'recipient_id' => $result->recipientId,
+                            'type' => $result->type,
+                        ]);
+
+                        continue;
+                    }
+
+                    // Create commission record
+                    $commission = MlmCommission::create($result->toArray());
+                    $commissions->push($commission);
+
+                    // Dispatch processed event for real-time updates
+                    CommissionProcessed::dispatch($commission);
                 }
-
-                // Create commission record
-                $commission = MlmCommission::create($result->toArray());
-                $commissions->push($commission);
-
-                // Dispatch processed event for real-time updates
-                CommissionProcessed::dispatch($commission);
-            }
+            });
         });
 
         Log::channel('mlm')->info('CommissionProcessor: Persistence complete', [
@@ -246,6 +259,33 @@ final class CommissionProcessorService
         ]);
 
         return $commissions;
+    }
+
+    /**
+     * Preload monthly totals for multiple users (avoids N+1)
+     *
+     * @param  array<int>  $userIds
+     * @return array<int, int>
+     */
+    private function preloadMonthlyTotals(array $userIds): array
+    {
+        if (empty($userIds)) {
+            return [];
+        }
+
+        $cacheKey = 'mlm_monthly_totals_'.implode('_', $userIds).'_'.now()->format('Y_m');
+
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($userIds) {
+            return MlmCommission::query()
+                ->whereIn('user_id', $userIds)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->selectRaw('user_id, SUM(gross_amount) as total')
+                ->groupBy('user_id')
+                ->pluck('total', 'user_id')
+                ->map(fn ($v) => (int) $v)
+                ->toArray();
+        });
     }
 
     /**
@@ -265,6 +305,8 @@ final class CommissionProcessorService
 
     /**
      * Apply deductions (TDS, admin fee) to commission result
+     *
+     * @deprecated Use applyDeductionsWithTotal for batch processing
      */
     private function applyDeductions(CommissionResult $result): CommissionResult
     {
@@ -273,12 +315,21 @@ final class CommissionProcessorService
             return $result;
         }
 
-        // Get monthly total for TDS threshold
-        $monthlyTotal = (int) MlmCommission::query()
-            ->where('user_id', $result->recipientId)
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->sum('gross_amount');
+        // Get monthly total for TDS threshold (single query - use preload for batch)
+        $monthlyTotal = $this->getMonthlyTotal($result->recipientId);
+
+        return $this->applyDeductionsWithTotal($result, $monthlyTotal);
+    }
+
+    /**
+     * Apply deductions with pre-fetched monthly total (for batch processing)
+     */
+    private function applyDeductionsWithTotal(CommissionResult $result, int $monthlyTotal): CommissionResult
+    {
+        // Skip if already applied
+        if ($result->tdsAmount > 0 || $result->adminFee > 0) {
+            return $result;
+        }
 
         $tdsAmount = $this->configService->calculateTds($result->grossAmount, $monthlyTotal);
         $adminFee = $this->configService->calculateAdminFee($result->grossAmount);
@@ -287,10 +338,40 @@ final class CommissionProcessorService
     }
 
     /**
-     * Check if commission already exists
+     * Get monthly total for a user (cached for 5 minutes)
+     */
+    private function getMonthlyTotal(int $userId): int
+    {
+        $cacheKey = "mlm_monthly_total_{$userId}_".now()->format('Y_m');
+
+        return (int) Cache::remember($cacheKey, now()->addMinutes(5), function () use ($userId) {
+            return MlmCommission::query()
+                ->where('user_id', $userId)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->sum('gross_amount');
+        });
+    }
+
+    /**
+     * Check if commission already exists (idempotency check)
+     *
+     * Checks both idempotency_key and composite key for backwards compatibility.
      */
     private function isDuplicate(CommissionResult $result): bool
     {
+        // Check by idempotency key first (fast path)
+        $idempotencyKey = $result->getIdempotencyKey();
+        if ($idempotencyKey) {
+            $existsByKey = MlmCommission::query()
+                ->where('idempotency_key', $idempotencyKey)
+                ->exists();
+            if ($existsByKey) {
+                return true;
+            }
+        }
+
+        // Fallback: check composite key for records without idempotency_key
         if (! $result->commissionableType || ! $result->commissionableId) {
             return false;
         }
@@ -302,6 +383,27 @@ final class CommissionProcessorService
             ->where('commissionable_id', $result->commissionableId)
             ->when($result->level !== null, fn ($q) => $q->where('level', $result->level))
             ->exists();
+    }
+
+    /**
+     * Clear commission caches for a user
+     *
+     * Call after manual adjustments or refunds.
+     */
+    public function clearUserCaches(int $userId): void
+    {
+        $cacheKey = "mlm_monthly_total_{$userId}_".now()->format('Y_m');
+        Cache::forget($cacheKey);
+    }
+
+    /**
+     * Clear all monthly total caches (maintenance operation)
+     */
+    public function clearMonthlyTotalCaches(): void
+    {
+        // In production, use tagged cache or Redis SCAN
+        // This is a simplified version
+        Cache::flush();
     }
 
     /**

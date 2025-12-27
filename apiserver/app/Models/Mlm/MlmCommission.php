@@ -63,6 +63,7 @@ class MlmCommission extends Model
         'approved_by',
         'approved_at',
         'reversed_commission_id',
+        'idempotency_key', // For deduplication (unique index)
     ];
 
     protected function casts(): array

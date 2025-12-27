@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Log;
  * - Rate limiting to prevent abuse
  * - Track retry attempts per transaction
  */
-final class PaymentRetryService
+final class PaymentRetryService implements \App\Contracts\Services\PaymentRetryServiceInterface
 {
     /**
      * Rate limit: max retries per transaction per hour

@@ -112,7 +112,7 @@ class Kyc extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('documents')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'application/pdf'])
-            ->maxFilesize(5 * 1024 * 1024);
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'application/pdf']);
+        // File size validation done in controller (5MB max)
     }
 }

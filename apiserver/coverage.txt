@@ -1,5 +1,6 @@
 
 
+<<<<<<< Updated upstream
 [1;37;40mCode Coverage Report:      [0m
 [1;37;40m  2025-12-25 20:02:28      [0m
 [1;37;40m                           [0m
@@ -8,3 +9,59 @@
 [37;41m  Methods:  0.00% (0/1956) [0m
 [37;41m  Lines:    0.00% (0/16894)[0m
 
+=======
+[1;37;40mCode Coverage Report:        [0m
+[1;37;40m  2025-12-27 14:29:10        [0m
+[1;37;40m                             [0m
+[1;37;40m Summary:                    [0m
+[37;41m  Classes:  0.32% (1/315)    [0m
+[37;41m  Methods:  2.04% (42/2055)  [0m
+[37;41m  Lines:    1.22% (219/17947)[0m
+
+App\Filament\Resources\Activities\ActivityResource
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  50.00% (  5/ 10)[0m
+App\Filament\Resources\Geo\Countries\CountryResource
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;43mLines:  80.00% (  8/ 10)[0m
+App\Filament\Resources\JobApplications\JobApplicationResource
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  50.00% (  8/ 16)[0m
+App\Filament\Resources\Kycs\KycResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Membership\Levels\LevelResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Membership\Stages\StageResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Membership\UserSubscriptions\UserSubscriptionResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Mlm\MlmCommissions\MlmCommissionResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Mlm\MlmGenealogies\MlmGenealogyResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Recruitments\RecruitmentResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  57.14% (  8/ 14)[0m
+App\Filament\Resources\SmsLogs\SmsLogResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\SmsProviders\SmsProviderResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\SmsTemplates\SmsTemplateResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Transactions\TransactionResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Users\UserResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Wallets\WalletResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Jobs\Wallet\CheckPayoutStatusJob
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   1.27% (  1/ 79)[0m
+App\Models\Ecommerce\Category
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  73.33% ( 11/ 15)[0m
+App\Models\Ecommerce\Product
+  [37;41mMethods:   3.57% ( 1/28)[0m   [37;41mLines:  10.94% (  7/ 64)[0m
+App\Models\Ecommerce\ProductStock
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [30;43mLines:  66.67% ( 10/ 15)[0m
+App\Providers\AppServiceProvider
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [37;41mLines:  33.33% (  4/ 12)[0m
+App\Providers\Filament\AdminPanelProvider
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 35/ 35)[0m
+App\Providers\TelescopeServiceProvider
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  60.87% ( 14/ 23)[0m
+>>>>>>> Stashed changes

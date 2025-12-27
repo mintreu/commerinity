@@ -33,7 +33,7 @@ use RuntimeException;
  * - Chargeback: Forced return
  * - Adjustment: Admin corrections
  */
-final class UserWalletService
+final class UserWalletService implements \App\Contracts\Services\UserWalletServiceInterface
 {
     /**
      * Get or create wallet for any walletable model (User, Admin, etc.)
@@ -420,5 +420,275 @@ final class UserWalletService
         }
 
         $wallet->decrement('points', $points);
+    }
+
+    // ========================================
+    // PIN Management
+    // ========================================
+
+    /**
+     * Set wallet PIN (first time)
+     */
+    public function setPin(Wallet $wallet, string $pin): bool
+    {
+        if ($wallet->hasPin()) {
+            throw new RuntimeException('PIN already exists. Use changePin() to update.');
+        }
+
+        $this->validatePinFormat($pin);
+
+        $wallet->update(['pin' => \Illuminate\Support\Facades\Hash::make($pin)]);
+
+        return true;
+    }
+
+    /**
+     * Change wallet PIN
+     */
+    public function changePin(Wallet $wallet, string $currentPin, string $newPin): bool
+    {
+        if (! $this->verifyPin($wallet, $currentPin)) {
+            throw new RuntimeException('Current PIN is incorrect');
+        }
+
+        $this->validatePinFormat($newPin);
+
+        if ($currentPin === $newPin) {
+            throw new RuntimeException('New PIN must be different from current PIN');
+        }
+
+        $wallet->update(['pin' => \Illuminate\Support\Facades\Hash::make($newPin)]);
+
+        return true;
+    }
+
+    /**
+     * Verify wallet PIN
+     */
+    public function verifyPin(Wallet $wallet, string $pin): bool
+    {
+        if (! $wallet->hasPin()) {
+            return false;
+        }
+
+        return \Illuminate\Support\Facades\Hash::check($pin, $wallet->pin);
+    }
+
+    /**
+     * Reset wallet PIN (admin operation)
+     */
+    public function resetPin(Wallet $wallet, string $newPin, int $adminId): bool
+    {
+        $this->validatePinFormat($newPin);
+
+        $wallet->update([
+            'pin' => \Illuminate\Support\Facades\Hash::make($newPin),
+            'metadata' => array_merge($wallet->metadata ?? [], [
+                'pin_reset_at' => now()->toIso8601String(),
+                'pin_reset_by' => $adminId,
+            ]),
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Check if wallet has PIN set
+     */
+    public function hasPin(Wallet $wallet): bool
+    {
+        return $wallet->hasPin();
+    }
+
+    // ========================================
+    // P2P Transfer Operations
+    // ========================================
+
+    /**
+     * Send money to another user's wallet (P2P transfer)
+     */
+    public function sendMoney(
+        Wallet $senderWallet,
+        string $recipientIdentifier,
+        int $amountInPaisa,
+        ?string $note = null
+    ): array {
+        // Find recipient wallet by UUID or user mobile/email
+        $recipientWallet = $this->findWalletByIdentifier($recipientIdentifier);
+
+        if (! $recipientWallet) {
+            throw new RuntimeException('Recipient not found');
+        }
+
+        if ($senderWallet->id === $recipientWallet->id) {
+            throw new RuntimeException('Cannot send money to yourself');
+        }
+
+        // Use existing transfer method
+        return $this->transfer(
+            $senderWallet,
+            $recipientWallet,
+            $amountInPaisa,
+            'p2p_transfer',
+            $note ?? 'Money transfer'
+        );
+    }
+
+    /**
+     * Request money from another user
+     */
+    public function requestMoney(
+        Wallet $requesterWallet,
+        string $fromIdentifier,
+        int $amountInPaisa,
+        ?string $note = null
+    ): array {
+        $fromWallet = $this->findWalletByIdentifier($fromIdentifier);
+
+        if (! $fromWallet) {
+            throw new RuntimeException('User not found');
+        }
+
+        if ($requesterWallet->id === $fromWallet->id) {
+            throw new RuntimeException('Cannot request money from yourself');
+        }
+
+        // Create money request (stored in cache/database for notifications)
+        $requestId = 'REQ-'.now()->format('ymdHis').'-'.strtoupper(\Illuminate\Support\Str::random(6));
+
+        // Store request (you can use a MoneyRequest model if needed)
+        \Illuminate\Support\Facades\Cache::put(
+            "money_request:{$requestId}",
+            [
+                'id' => $requestId,
+                'requester_wallet_id' => $requesterWallet->id,
+                'from_wallet_id' => $fromWallet->id,
+                'amount' => $amountInPaisa,
+                'note' => $note,
+                'status' => 'pending',
+                'created_at' => now()->toIso8601String(),
+                'expires_at' => now()->addDays(7)->toIso8601String(),
+            ],
+            now()->addDays(7)
+        );
+
+        // TODO: Send notification to fromWallet owner
+
+        return [
+            'request_id' => $requestId,
+            'message' => 'Money request sent successfully',
+        ];
+    }
+
+    /**
+     * Convert points to wallet balance
+     */
+    public function convertPointsToBalance(Wallet $wallet, int $points): Transaction
+    {
+        if ($wallet->points < $points) {
+            throw new RuntimeException('Insufficient points');
+        }
+
+        // Conversion rate: config driven (default 10 points = Rs. 1 = 100 paisa)
+        $conversionRate = config('wallet.points_conversion_rate', 10);
+        $amountInPaisa = (int) floor($points / $conversionRate) * 100;
+
+        if ($amountInPaisa <= 0) {
+            throw new RuntimeException('Minimum '.$conversionRate.' points required for conversion');
+        }
+
+        return DB::transaction(function () use ($wallet, $points, $amountInPaisa) {
+            // Deduct points
+            $wallet->decrement('points', $points);
+
+            // Credit balance
+            $wallet->increment('balance', $amountInPaisa);
+            $wallet->increment('total_credited', $amountInPaisa);
+
+            // Create transaction record
+            return Transaction::create([
+                'wallet_id' => $wallet->id,
+                'type' => TransactionTypeCast::CREDIT,
+                'status' => TransactionStatusCast::COMPLETED,
+                'amount' => $amountInPaisa,
+                'fee' => 0,
+                'tax' => 0,
+                'net_amount' => $amountInPaisa,
+                'currency' => $wallet->currency,
+                'purpose' => 'points_conversion',
+                'description' => "Converted {$points} points to balance",
+                'is_verified' => true,
+                'verified_at' => now(),
+                'balance_after' => $wallet->balance,
+                'metadata' => ['points_converted' => $points],
+            ]);
+        });
+    }
+
+    /**
+     * Get wallet QR code data
+     */
+    public function getWalletQrCode(Wallet $wallet): array
+    {
+        $qrData = json_encode([
+            'type' => 'mintreu_wallet',
+            'uuid' => $wallet->uuid,
+            'currency' => $wallet->currency,
+        ]);
+
+        return [
+            'uuid' => $wallet->uuid,
+            'qr_data' => $qrData,
+        ];
+    }
+
+    // ========================================
+    // Private Helper Methods
+    // ========================================
+
+    /**
+     * Validate PIN format
+     */
+    private function validatePinFormat(string $pin): void
+    {
+        if (strlen($pin) < 4 || strlen($pin) > 6) {
+            throw new RuntimeException('PIN must be 4-6 digits');
+        }
+
+        if (! ctype_digit($pin)) {
+            throw new RuntimeException('PIN must contain only digits');
+        }
+
+        // Check for simple patterns
+        if (preg_match('/^(.)\1+$/', $pin)) {
+            throw new RuntimeException('PIN cannot be all same digits');
+        }
+
+        if (in_array($pin, ['123456', '654321', '111111', '000000', '123123'], true)) {
+            throw new RuntimeException('PIN is too simple');
+        }
+    }
+
+    /**
+     * Find wallet by identifier (UUID, mobile, or email)
+     */
+    private function findWalletByIdentifier(string $identifier): ?Wallet
+    {
+        // Try UUID first
+        $wallet = Wallet::where('uuid', $identifier)->first();
+        if ($wallet) {
+            return $wallet;
+        }
+
+        // Try finding user by mobile or email
+        $user = \App\Models\User::where('mobile', $identifier)
+            ->orWhere('email', $identifier)
+            ->first();
+
+        if ($user) {
+            return $this->getWallet($user);
+        }
+
+        return null;
     }
 }

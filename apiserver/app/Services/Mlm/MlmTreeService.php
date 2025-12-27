@@ -76,19 +76,21 @@ final class MlmTreeService
     /**
      * Find the nearest ancestor with available slots for new children.
      *
-     * Traverses up the tree from the deleted user's parent,
-     * checking each ancestor for available child slots.
+     * Uses HasRecursiveRelationships ancestors() for single CTE query.
+     * NO N+1 - fetches all ancestors in one query, then checks slots in memory.
      */
     public function findAvailableAncestor(User $startingUser): ?User
     {
-        $ancestor = $startingUser->parent;
+        // Single query using recursive CTE - no N+1
+        $ancestors = $startingUser->ancestors()
+            ->depthFirst()
+            ->withCount('children')
+            ->get();
 
-        while ($ancestor !== null) {
-            if ($this->hasAvailableSlots($ancestor)) {
+        foreach ($ancestors as $ancestor) {
+            if ($ancestor->children_count < $this->maxDirectChildren) {
                 return $ancestor;
             }
-
-            $ancestor = $ancestor->parent;
         }
 
         return null;
@@ -162,22 +164,132 @@ final class MlmTreeService
 
     /**
      * Calculate the depth of user's downline tree.
+     *
+     * Uses HasRecursiveRelationships for single CTE query.
+     * NO N+1 - gets max depth from descendants in one query.
      */
     private function calculateTreeDepth(User $user): int
     {
-        $maxDepth = 0;
+        // Single query using recursive CTE - no N+1
+        return (int) $user->descendants()
+            ->selectRaw('MAX(depth) as max_depth')
+            ->value('max_depth') ?? 0;
+    }
 
-        $children = $user->children;
+    /**
+     * Build tree data for D3.js visualization (flat array format).
+     *
+     * Matches old_project MemberTreeList pattern.
+     * Uses single recursive CTE query - NO N+1.
+     *
+     * @param  int  $maxDepth  Maximum depth to traverse (default 5)
+     * @param  int  $maxChildren  Max children per node (default 5)
+     * @return array<int, array<string, mixed>>
+     */
+    public function buildTreeData(User $user, int $maxDepth = 5, int $maxChildren = 5): array
+    {
+        $treeData = [];
 
-        if ($children->isEmpty()) {
-            return 0;
+        // Load root user with media
+        $user->loadMissing(['level', 'media']);
+
+        // Add root node
+        $treeData[] = $this->formatUserNode($user, null, 0);
+
+        // Get all descendants in single CTE query (NO N+1)
+        $descendants = $user->descendants()
+            ->whereDepth('<=', $maxDepth)
+            ->with(['level', 'media'])
+            ->depthFirst()
+            ->get()
+            ->groupBy('parent_id');
+
+        // Build tree recursively from pre-fetched data
+        $this->buildTreeFromDescendants($treeData, $descendants, $user->id, 1, $maxDepth, $maxChildren);
+
+        // Update hasChildren flags
+        $parentIds = collect($treeData)->pluck('parentId')->filter()->unique()->values();
+        foreach ($treeData as &$node) {
+            $node['hasChildren'] = $parentIds->contains($node['id']);
         }
+
+        return $treeData;
+    }
+
+    /**
+     * Build tree recursively from pre-fetched descendants (no additional queries).
+     */
+    private function buildTreeFromDescendants(
+        array &$treeData,
+        Collection $descendants,
+        int $parentId,
+        int $depth,
+        int $maxDepth,
+        int $maxChildren
+    ): void {
+        if ($depth > $maxDepth) {
+            return;
+        }
+
+        $children = $descendants->get($parentId, collect())->take($maxChildren);
 
         foreach ($children as $child) {
-            $childDepth = 1 + $this->calculateTreeDepth($child);
-            $maxDepth = max($maxDepth, $childDepth);
-        }
+            $treeData[] = $this->formatUserNode($child, $parentId, $depth);
 
-        return $maxDepth;
+            // Recurse for this child's children
+            $this->buildTreeFromDescendants($treeData, $descendants, $child->id, $depth + 1, $maxDepth, $maxChildren);
+        }
+    }
+
+    /**
+     * Format user node for D3.js tree visualization.
+     *
+     * @return array<string, mixed>
+     */
+    private function formatUserNode(User $user, ?int $parentId, int $depth): array
+    {
+        return [
+            'id' => $user->id,
+            'parentId' => $parentId,
+            'userId' => $user->id,
+            'uuid' => $user->uuid,
+            'name' => $user->name,
+            'email' => $user->email,
+            'image' => $user->getFirstMediaUrl('avatarImage') ?: null,
+            'level' => $user->level?->name ?? 'No Level',
+            'joinedOn' => $user->created_at?->format('d/m/Y'),
+            'depth' => $depth,
+            'hasChildren' => false, // Updated after building
+            'referral_code' => $user->referral_code,
+            'status' => $user->status?->value ?? 'draft',
+        ];
+    }
+
+    /**
+     * Get tree as JSON for D3.js.
+     */
+    public function getTreeJson(User $user, int $maxDepth = 5, int $maxChildren = 5): string
+    {
+        return json_encode($this->buildTreeData($user, $maxDepth, $maxChildren), JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Get tree statistics.
+     *
+     * @return array<string, mixed>
+     */
+    public function getTreeStatistics(User $user, int $maxDepth = 5): array
+    {
+        $treeData = $this->buildTreeData($user, $maxDepth);
+
+        return [
+            'total_members' => count($treeData),
+            'max_depth' => collect($treeData)->max('depth') ?? 0,
+            'root_user' => [
+                'id' => $user->id,
+                'uuid' => $user->uuid,
+                'name' => $user->name,
+            ],
+        ];
     }
 }

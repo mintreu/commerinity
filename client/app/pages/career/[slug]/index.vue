@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: 'guest'
+})
+
 const route = useRoute()
 const config = useRuntimeConfig()
 const { isLoggedIn } = useSanctum()
@@ -66,10 +70,6 @@ const job = computed(() => recruitment.value?.data)
 const hasApplied = computed(() => applicationCheck.value?.data?.has_applied ?? false)
 const existingApplication = computed(() => applicationCheck.value?.data?.application)
 
-function formatParagraph(text: string): string[] {
-  if (!text) return []
-  return text.split('\n').filter((p: string) => p.trim())
-}
 </script>
 
 <template>
@@ -135,11 +135,7 @@ function formatParagraph(text: string): string[] {
               </div>
             </template>
 
-            <div class="prose dark:prose-invert max-w-none">
-              <p v-for="(para, idx) in formatParagraph(job.description)" :key="idx">
-                {{ para }}
-              </p>
-            </div>
+            <RichContent :content="job.description" class="max-w-none" />
           </UCard>
 
           <UCard v-if="job.requirements?.length">

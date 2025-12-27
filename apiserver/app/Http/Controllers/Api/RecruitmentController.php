@@ -9,8 +9,8 @@ use App\Http\Requests\ApplyJobRequest;
 use App\Http\Resources\JobApplicationResource;
 use App\Http\Resources\RecruitmentResource;
 use App\Models\Recruitment\Recruitment;
-use App\Services\JobApplicationService;
-use App\Services\RecruitmentService;
+use App\Services\Recruitment\JobApplicationService;
+use App\Services\Recruitment\RecruitmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -204,6 +204,61 @@ class RecruitmentController extends Controller
             'data' => [
                 'has_applied' => $hasApplied,
                 'application' => $application ? new JobApplicationResource($application->load('recruitment')) : null,
+            ],
+        ]);
+    }
+
+    /**
+     * Initiate payment for an application awaiting payment.
+     *
+     * POST /api/my-applications/{uuid}/pay
+     */
+    public function initiatePayment(Request $request, string $uuid): JsonResponse
+    {
+        $request->validate([
+            'payment_method' => ['required', 'string', 'in:cashfree,razorpay'],
+        ]);
+
+        $application = JobApplicationService::findUserApplication($request->user(), $uuid);
+
+        if (! $application) {
+            return response()->json([
+                'message' => 'Application not found.',
+            ], 404);
+        }
+
+        if ($application->is_paid) {
+            return response()->json([
+                'message' => 'This application has already been paid.',
+            ], 400);
+        }
+
+        if ($application->status->value !== 'awaiting_payment') {
+            return response()->json([
+                'message' => 'This application is not awaiting payment.',
+            ], 400);
+        }
+
+        // Create payment transaction
+        $result = JobApplicationService::initiatePayment(
+            $application,
+            $request->user(),
+            $request->input('payment_method')
+        );
+
+        if (! $result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'Failed to initiate payment.',
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Payment initiated. Please complete payment.',
+            'data' => [
+                'checkout_url' => $result['checkout_url'],
+                'transaction_uuid' => $result['transaction_uuid'],
             ],
         ]);
     }

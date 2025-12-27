@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Payment\Providers;
 
+use App\Casts\BeneficiaryStatusCast;
+use App\Casts\BeneficiaryTypeCast;
 use App\Models\BeneficiaryAccount;
 use App\Models\Integration;
+use App\Models\Wallet;
 use App\Services\Payment\Contracts\PayoutProviderInterface;
 use App\Services\Payment\DTOs\PayoutRequest;
 use App\Services\Payment\DTOs\PayoutResponse;
@@ -449,5 +452,250 @@ final class RazorpayPayoutProvider implements PayoutProviderInterface
     public function clearCache(): void
     {
         $this->integration = null;
+    }
+
+    // ========================================
+    // PayoutProviderInterface Beneficiary Methods
+    // ========================================
+
+    /**
+     * Create beneficiary account with RazorpayX
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{success: bool, beneficiary_id?: string, message?: string}
+     */
+    public function createBeneficiary(Wallet $wallet, array $data): array
+    {
+        $integration = $this->getIntegration();
+        if (! $integration) {
+            return ['success' => false, 'message' => 'RazorpayX Payouts not configured'];
+        }
+
+        try {
+            $type = BeneficiaryTypeCast::tryFrom($data['type'] ?? 'savings') ?? BeneficiaryTypeCast::SAVINGS;
+
+            // Create local beneficiary record first
+            $beneficiary = BeneficiaryAccount::create([
+                'wallet_id' => $wallet->id,
+                'type' => $type,
+                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
+                'account_number' => $data['account_number'] ?? null,
+                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
+                'bank_name' => $data['bank_name'] ?? null,
+                'bank_branch' => $data['bank_branch'] ?? null,
+                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
+                'status' => BeneficiaryStatusCast::PENDING,
+                'is_default' => $wallet->beneficiaries()->count() === 0,
+            ]);
+
+            // Register with RazorpayX (Contact + Fund Account)
+            $result = $this->setupBeneficiary($beneficiary, $integration);
+
+            if ($result['success']) {
+                $beneficiary->update([
+                    'status' => BeneficiaryStatusCast::ACTIVE,
+                    'metadata' => array_merge($beneficiary->metadata ?? [], [
+                        'razorpay_contact_id' => $result['contact_id'],
+                        'razorpay_fund_account_id' => $result['fund_account_id'],
+                    ]),
+                ]);
+
+                return [
+                    'success' => true,
+                    'beneficiary_id' => (string) $beneficiary->id,
+                    'message' => 'Beneficiary created and registered with RazorpayX',
+                ];
+            }
+
+            // RazorpayX registration failed - keep as pending
+            Log::warning('RazorpayX beneficiary registration failed', [
+                'beneficiary_id' => $beneficiary->id,
+                'error' => $result['message'],
+            ]);
+
+            return [
+                'success' => true,
+                'beneficiary_id' => (string) $beneficiary->id,
+                'message' => 'Beneficiary created locally but registration pending: '.$result['message'],
+            ];
+        } catch (\Exception $e) {
+            Log::error('RazorpayX createBeneficiary exception', [
+                'error' => $e->getMessage(),
+                'wallet_id' => $wallet->id,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to create beneficiary: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Update beneficiary account
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{success: bool, message?: string}
+     */
+    public function updateBeneficiary(BeneficiaryAccount $beneficiary, array $data): array
+    {
+        $integration = $this->getIntegration();
+
+        // RazorpayX doesn't support updating fund accounts directly
+        // Sensitive changes require creating new contact + fund account
+        $needsReRegistration = isset($data['account_number']) || isset($data['ifsc']) || isset($data['ifsc_code']) || isset($data['upi_id']) || isset($data['upi_handle']);
+
+        try {
+            $updateData = array_filter([
+                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
+                'account_number' => $data['account_number'] ?? null,
+                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
+                'bank_name' => $data['bank_name'] ?? null,
+                'bank_branch' => $data['bank_branch'] ?? null,
+                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
+            ], fn ($v) => $v !== null);
+
+            if ($needsReRegistration) {
+                // Clear old RazorpayX IDs - new ones will be created
+                $metadata = $beneficiary->metadata ?? [];
+                unset($metadata['razorpay_contact_id'], $metadata['razorpay_fund_account_id']);
+                $updateData['metadata'] = $metadata;
+                $updateData['status'] = BeneficiaryStatusCast::PENDING;
+            }
+
+            $beneficiary->update($updateData);
+
+            // Re-register if needed
+            if ($needsReRegistration && $integration) {
+                $result = $this->setupBeneficiary($beneficiary->fresh(), $integration);
+                if ($result['success']) {
+                    $beneficiary->update([
+                        'status' => BeneficiaryStatusCast::ACTIVE,
+                        'metadata' => array_merge($beneficiary->metadata ?? [], [
+                            'razorpay_contact_id' => $result['contact_id'],
+                            'razorpay_fund_account_id' => $result['fund_account_id'],
+                        ]),
+                    ]);
+                }
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Beneficiary updated successfully',
+            ];
+        } catch (\Exception $e) {
+            Log::error('RazorpayX updateBeneficiary exception', [
+                'error' => $e->getMessage(),
+                'beneficiary_id' => $beneficiary->id,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to update beneficiary: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Delete beneficiary account
+     *
+     * RazorpayX doesn't support deleting contacts/fund accounts via API,
+     * so we just remove locally. The contact/fund account will remain in
+     * Razorpay but become orphaned.
+     *
+     * @return array{success: bool, message?: string}
+     */
+    public function deleteBeneficiary(BeneficiaryAccount $beneficiary): array
+    {
+        try {
+            $wasDefault = $beneficiary->is_default;
+            $walletId = $beneficiary->wallet_id;
+
+            $beneficiary->delete();
+
+            // Assign new default if needed
+            if ($wasDefault) {
+                BeneficiaryAccount::where('wallet_id', $walletId)
+                    ->first()
+                    ?->update(['is_default' => true]);
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Beneficiary deleted successfully',
+            ];
+        } catch (\Exception $e) {
+            Log::error('RazorpayX deleteBeneficiary exception', [
+                'error' => $e->getMessage(),
+                'beneficiary_id' => $beneficiary->id,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to delete beneficiary: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Get beneficiary details from RazorpayX
+     *
+     * @return array{success: bool, data?: array<string, mixed>, message?: string}
+     */
+    public function getBeneficiary(BeneficiaryAccount $beneficiary): array
+    {
+        $integration = $this->getIntegration();
+        $metadata = $beneficiary->metadata ?? [];
+
+        $localData = [
+            'id' => $beneficiary->id,
+            'uuid' => $beneficiary->uuid,
+            'type' => $beneficiary->type->value,
+            'holder_name' => $beneficiary->holder_name,
+            'account_number' => $beneficiary->account_number ? $this->maskAccountNumber($beneficiary->account_number) : null,
+            'ifsc_code' => $beneficiary->ifsc_code,
+            'bank_name' => $beneficiary->bank_name,
+            'upi_id' => $beneficiary->upi_id,
+            'status' => $beneficiary->status->value,
+            'is_default' => $beneficiary->is_default,
+            'razorpay_contact_id' => $metadata['razorpay_contact_id'] ?? null,
+            'razorpay_fund_account_id' => $metadata['razorpay_fund_account_id'] ?? null,
+        ];
+
+        // Try to get details from RazorpayX
+        $fundAccountId = $metadata['razorpay_fund_account_id'] ?? null;
+        if ($integration && $fundAccountId) {
+            try {
+                $response = Http::withBasicAuth(
+                    $integration->getCredential('key_id'),
+                    $integration->getCredential('key_secret')
+                )
+                    ->timeout(30)
+                    ->get(self::API_URL.'/fund_accounts/'.$fundAccountId);
+
+                if ($response->successful()) {
+                    $localData['provider_data'] = $response->json();
+                }
+            } catch (\Exception $e) {
+                Log::warning('RazorpayX getBeneficiary API failed', ['error' => $e->getMessage()]);
+            }
+        }
+
+        return [
+            'success' => true,
+            'data' => $localData,
+        ];
+    }
+
+    /**
+     * Mask account number for display
+     */
+    private function maskAccountNumber(string $accountNumber): string
+    {
+        if (strlen($accountNumber) < 4) {
+            return $accountNumber;
+        }
+
+        return str_repeat('*', strlen($accountNumber) - 4).substr($accountNumber, -4);
     }
 }

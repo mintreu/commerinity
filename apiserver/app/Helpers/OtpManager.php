@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use RuntimeException;
 
-final class OtpManager
+final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
 {
     public const CREDENTIAL_MOBILE = 'mobile';
 
@@ -255,5 +255,49 @@ final class OtpManager
         }
 
         return substr($credential, 0, 3).'***'.substr($credential, -2);
+    }
+
+    /**
+     * Check if OTP exists for credential
+     */
+    public function exists(string $credential): bool
+    {
+        return $this->retrieve($credential) !== null;
+    }
+
+    /**
+     * Get remaining attempts for credential
+     */
+    public function getRemainingAttempts(string $credential): int
+    {
+        $key = "otp_attempts:{$credential}";
+        $attempts = (int) $this->cache->get($key, 0);
+
+        return max(0, self::MAX_ATTEMPTS - $attempts);
+    }
+
+    /**
+     * Get cooldown seconds until next OTP can be sent
+     */
+    public function getCooldownSeconds(string $credential): int
+    {
+        $key = "otp_rate_limit:{$credential}";
+        $attempts = (int) $this->cache->get($key, 0);
+
+        if ($attempts >= 3) {
+            // Estimate remaining time - check TTL in cache
+            // Cache::ttl() isn't available for all drivers, so estimate from creation
+            return 15 * 60; // 15 minutes max
+        }
+
+        return 0;
+    }
+
+    /**
+     * Check if in demo mode
+     */
+    public function isDemoMode(): bool
+    {
+        return $this->isDemoMode;
     }
 }
