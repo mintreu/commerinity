@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models\Ecommerce;
 
-use App\Models\User;
-use Database\Factories\Ecommerce\ProductFactory;
-use App\Casts\GstTaxCast;
 use App\Casts\ProductStatusCast;
+use App\Models\Address;
+use App\Models\User;
 use Awcodes\Curator\Models\Media;
+use Database\Factories\Ecommerce\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Address;
 
 class Product extends Model
 {
@@ -36,24 +35,16 @@ class Product extends Model
         'category_id',
         'price',
         'view_count',
-        'gst_tax_type',
     ];
 
     protected function casts(): array
     {
         return [
             'view_count' => 'integer',
-            'status'    => ProductStatusCast::class,
-            'gst_tax_type' => GstTaxCast::class,
-            // Note: price stored as integer (paise) - no cast needed
-            // All money calculations handled by MoneyService
+            'price' => 'integer',
+            'status' => ProductStatusCast::class,
         ];
     }
-
-
-
-
-
 
     public function filterGroup(): BelongsTo
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models;
+declare(strict_types=1);
+
+namespace App\Models\Ecommerce;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Shipment;
 
 class OrderItem extends Model
 {
@@ -15,11 +15,15 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'stock_id',
         'product_name',
         'product_sku',
         'quantity',
         'unit_price',
         'total_price',
+        'bv',
+        'pv',
+        'reward_points',
     ];
 
     protected function casts(): array
@@ -28,12 +32,12 @@ class OrderItem extends Model
             'quantity' => 'integer',
             'unit_price' => 'integer',
             'total_price' => 'integer',
+            'bv' => 'integer',
+            'pv' => 'integer',
+            'reward_points' => 'integer',
         ];
     }
 
-    /**
-     * Relationships
-     */
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
@@ -44,10 +48,8 @@ class OrderItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function shipments(): BelongsToMany
+    public function stock(): BelongsTo
     {
-        return $this->belongsToMany(Shipment::class, 'shipment_items')
-            ->withPivot('quantity')
-            ->withTimestamps();
+        return $this->belongsTo(ProductStock::class, 'stock_id');
     }
 }

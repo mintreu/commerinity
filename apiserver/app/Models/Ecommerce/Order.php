@@ -1,23 +1,28 @@
 <?php
 
-namespace App\Models;
+declare(strict_types=1);
+
+namespace App\Models\Ecommerce;
 
 use App\Casts\OrderStatusCast;
+use App\Models\Address;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
-use App\Models\OrderInvoice;
-use App\Models\Shipment;
 
 class Order extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'uuid',
         'order_number',
-        'customer_id',
+        'customerable_type',
+        'customerable_id',
         'status',
         'subtotal',
         'shipping_cost',
@@ -26,9 +31,13 @@ class Order extends Model
         'total',
         'shipping_address_id',
         'billing_address_id',
+        'expire_at',
+        'voucher',
+        'tracking_id',
+        'payment_success',
+        'quantity',
         'notes',
         'admin_notes',
-        'expire_at',
     ];
 
     protected function casts(): array
@@ -40,7 +49,9 @@ class Order extends Model
             'tax' => 'integer',
             'discount' => 'integer',
             'total' => 'integer',
-            'expire_at' => 'datetime'
+            'quantity' => 'integer',
+            'payment_success' => 'boolean',
+            'expire_at' => 'datetime',
         ];
     }
 
@@ -49,11 +60,22 @@ class Order extends Model
      */
     protected static function booted(): void
     {
-        static::creating(function (Order $order) {
+        static::creating(function (Order $order): void {
+            if (empty($order->uuid)) {
+                $order->uuid = (string) Str::uuid();
+            }
             if (empty($order->order_number)) {
                 $order->order_number = self::generateOrderNumber();
             }
         });
+    }
+
+    /**
+     * Get route key name for URL binding
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
     /**
@@ -69,38 +91,49 @@ class Order extends Model
     }
 
     /**
-     * Relationships
+     * Polymorphic customer relationship (User or any other model)
      */
-    public function customer(): BelongsTo
+    public function customerable(): MorphTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->morphTo();
     }
 
+    /**
+     * Order items
+     */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function shipments(): HasMany
-    {
-        return $this->hasMany(Shipment::class);
-    }
-
+    /**
+     * Payments for this order
+     */
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function invoices(): HasMany
+    /**
+     * Transactions linked to this order
+     */
+    public function transactions(): HasMany
     {
-        return $this->hasMany(OrderInvoice::class);
+        return $this->hasMany(Transaction::class, 'transactionable_id')
+            ->where('transactionable_type', self::class);
     }
 
+    /**
+     * Shipping address
+     */
     public function shippingAddress(): BelongsTo
     {
         return $this->belongsTo(Address::class, 'shipping_address_id');
     }
 
+    /**
+     * Billing address
+     */
     public function billingAddress(): BelongsTo
     {
         return $this->belongsTo(Address::class, 'billing_address_id');
@@ -139,6 +172,12 @@ class Order extends Model
         return $query->where('status', OrderStatusCast::CANCELLED->value);
     }
 
+    public function scopeForCustomer($query, Model $customer)
+    {
+        return $query->where('customerable_type', $customer::class)
+            ->where('customerable_id', $customer->id);
+    }
+
     /**
      * Helper methods
      */
@@ -152,6 +191,21 @@ class Order extends Model
         return $this->getStatusValue() === OrderStatusCast::CONFIRMED->value;
     }
 
+    public function isProcessing(): bool
+    {
+        return $this->getStatusValue() === OrderStatusCast::PROCESSING->value;
+    }
+
+    public function isShipped(): bool
+    {
+        return $this->getStatusValue() === OrderStatusCast::SHIPPED->value;
+    }
+
+    public function isDelivered(): bool
+    {
+        return $this->getStatusValue() === OrderStatusCast::DELIVERED->value;
+    }
+
     public function isCancelled(): bool
     {
         return $this->getStatusValue() === OrderStatusCast::CANCELLED->value;
@@ -163,6 +217,11 @@ class Order extends Model
             OrderStatusCast::PENDING->value,
             OrderStatusCast::CONFIRMED->value,
         ], true);
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expire_at && $this->expire_at->isPast();
     }
 
     private function getStatusValue(): ?string

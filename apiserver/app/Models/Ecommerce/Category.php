@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Models\Ecommerce;
 
 use Database\Factories\Ecommerce\CategoryFactory;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-class Category extends Model
+class Category extends Model implements HasMedia
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory, HasRecursiveRelationships;
+    use HasFactory, HasRecursiveRelationships, InteractsWithMedia;
 
     protected static function booted(): void
     {
@@ -41,7 +41,6 @@ class Category extends Model
         'desc',
         'meta_data',
         'banners',
-        'category_image_id',
     ];
 
     protected function casts(): array
@@ -51,6 +50,15 @@ class Category extends Model
             'meta_data' => AsArrayObject::class,
             'banners' => AsArrayObject::class,
         ];
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('thumbnail')
+            ->singleFile();
+
+        $this->addMediaCollection('banner')
+            ->singleFile();
     }
 
     public function getRouteKeyName(): string
@@ -66,10 +74,5 @@ class Category extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
-    }
-
-    public function category_image(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'category_image_id');
     }
 }

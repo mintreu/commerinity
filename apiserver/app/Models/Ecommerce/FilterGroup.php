@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Ecommerce;
 
-use Database\Factories\FilterGroupFactory;
+use Database\Factories\Ecommerce\FilterGroupFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
