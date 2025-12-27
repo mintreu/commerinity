@@ -100,25 +100,12 @@ final class ProfileController extends Controller
     public function uploadAvatar(Request $request): JsonResponse
     {
         $request->validate([
-<<<<<<< Updated upstream
-            'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048'], // 2MB max
-=======
             'avatar' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:2048'], // 2MB max
->>>>>>> Stashed changes
         ]);
 
         $user = $request->user();
 
-<<<<<<< Updated upstream
-        // Delete old avatar if exists
-        if ($user->hasMedia('avatar')) {
-            $user->clearMediaCollection('avatar');
-        }
-
-        // Add new avatar
-=======
         // Clear existing avatar (singleFile collection will auto-replace)
->>>>>>> Stashed changes
         $user->addMediaFromRequest('avatar')
             ->toMediaCollection('avatar');
 

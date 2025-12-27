@@ -23,7 +23,10 @@
       "mcp__frontend-filesystem__read_multiple_files",
       "mcp__frontend-filesystem__edit_file",
       "Bash(php artisan tinker:*)",
-      "Bash(mysql:*)"
+      "Bash(mysql:*)",
+      "Bash(git add:*)",
+      "Bash(git clean:*)",
+      "Bash(git checkout:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
