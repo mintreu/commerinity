@@ -79,6 +79,11 @@ export default defineNuxtConfig({
       // Contact Information
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL || 'support@commerinity.com',
       supportPhone: process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 98765 43210',
+      companyAddress: process.env.NUXT_PUBLIC_COMPANY_ADDRESS || '123 Business Park, Tech Hub, City - 700001, India',
+
+      // Currency
+      currencyCode: process.env.NUXT_PUBLIC_CURRENCY_CODE || 'INR',
+      currencySymbol: process.env.NUXT_PUBLIC_CURRENCY_SYMBOL || '₹',
 
       // Theme Colors (for dynamic branding)
       primaryColor: process.env.NUXT_PUBLIC_PRIMARY_COLOR || '#a855f7',

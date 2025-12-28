@@ -343,6 +343,19 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // ========================================
+// Catalog / Products (Public)
+// ========================================
+Route::prefix('catalog')->group(function () {
+    Route::get('/products', [\App\Http\Controllers\Api\CatalogController::class, 'products']);
+    Route::get('/products/{product:url}', [\App\Http\Controllers\Api\CatalogController::class, 'show']);
+    Route::get('/categories', [\App\Http\Controllers\Api\CatalogController::class, 'categories']);
+    Route::get('/categories/{category:url}', [\App\Http\Controllers\Api\CatalogController::class, 'category']);
+    Route::get('/featured', [\App\Http\Controllers\Api\CatalogController::class, 'featured']);
+    Route::get('/search', [\App\Http\Controllers\Api\CatalogController::class, 'search']);
+    Route::get('/filters', [\App\Http\Controllers\Api\CatalogController::class, 'filters']);
+});
+
+// ========================================
 // Cart / Shopping (Supports Guest & Authenticated)
 // ========================================
 Route::prefix('cart')->group(function () {

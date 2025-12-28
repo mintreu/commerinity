@@ -16,6 +16,11 @@ export const useBranding = () => {
   // Contact Information
   const supportEmail = computed(() => config.public.supportEmail)
   const supportPhone = computed(() => config.public.supportPhone)
+  const companyAddress = computed(() => config.public.companyAddress)
+
+  // Currency
+  const currencyCode = computed(() => config.public.currencyCode || 'INR')
+  const currencySymbol = computed(() => config.public.currencySymbol || '₹')
 
   // Theme Colors (for dynamic styling)
   const primaryColor = computed(() => config.public.primaryColor)
@@ -142,6 +147,11 @@ export const useBranding = () => {
     // Contact
     supportEmail,
     supportPhone,
+    companyAddress,
+
+    // Currency
+    currencyCode,
+    currencySymbol,
 
     // Theme
     primaryColor,

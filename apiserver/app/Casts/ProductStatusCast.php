@@ -8,7 +8,6 @@ use Filament\Support\Contracts\HasLabel;
 
 enum ProductStatusCast: string implements HasColor, HasIcon, HasLabel
 {
-
     case DRAFT = 'Draft';
     case REVIEW = 'review';
     case NEEDS_ACTION = 'needs_action';
@@ -44,6 +43,11 @@ enum ProductStatusCast: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-
-
+    /**
+     * Check if product can be purchased (only PUBLISHED products)
+     */
+    public function isPurchasable(): bool
+    {
+        return $this === self::PUBLISHED;
+    }
 }
