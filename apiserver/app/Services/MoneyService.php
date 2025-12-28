@@ -71,7 +71,7 @@ final class MoneyService
     /**
      * Format Money using MoneyPHP's IntlMoneyFormatter
      */
-    public function format(MoneyPHP $money): string
+    public function formatMoney(MoneyPHP $money): string
     {
         static $formatter = null;
 
@@ -88,7 +88,19 @@ final class MoneyService
      */
     public function formatPaise(int $paise): string
     {
-        return $this->format(new MoneyPHP($paise, $this->currency));
+        return $this->formatMoney(new MoneyPHP($paise, $this->currency));
+    }
+
+    /**
+     * Format paisa as INR currency string (static helper)
+     */
+    public static function format(int|string|null $paise): string
+    {
+        if ($paise === null || $paise === '') {
+            return '₹0.00';
+        }
+
+        return (new self((int) $paise))->formatted();
     }
 
     /**
@@ -117,7 +129,7 @@ final class MoneyService
         return [
             'paise' => $paise,
             'rupees' => $rupeesString, // String, not float!
-            'formatted' => $this->format($money),
+            'formatted' => $this->formatMoney($money),
             'display_value' => $rupeesString,
         ];
     }
@@ -211,5 +223,36 @@ final class MoneyService
         $money = new self($value);
 
         return $money->formatted();
+    }
+
+    /**
+     * Convert paise to rupees as float
+     * Note: Use toRupeesString() for display to avoid float precision issues
+     */
+    public static function toRupees(int|string|null $paise): float
+    {
+        if ($paise === null || $paise === '') {
+            return 0.0;
+        }
+
+        return (int) $paise / 100;
+    }
+
+    /**
+     * Convert paise to rupees as string (precision-safe for display)
+     */
+    public static function toRupeesString(int|string|null $paise): string
+    {
+        if ($paise === null || $paise === '') {
+            return '0.00';
+        }
+
+        $amount = (int) $paise;
+        $negative = $amount < 0;
+        $absAmount = abs($amount);
+        $rupees = intdiv($absAmount, 100);
+        $remainder = $absAmount % 100;
+
+        return ($negative ? '-' : '').$rupees.'.'.str_pad((string) $remainder, 2, '0', STR_PAD_LEFT);
     }
 }

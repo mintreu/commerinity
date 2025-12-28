@@ -26,6 +26,8 @@ class Product extends Model
         'sku',
         'url',
         'status',
+        'is_returnable',
+        'return_days',
         'filter_group_id',
         'description',
         'short_description',
@@ -43,6 +45,8 @@ class Product extends Model
             'view_count' => 'integer',
             'price' => 'integer',
             'status' => ProductStatusCast::class,
+            'is_returnable' => 'boolean',
+            'return_days' => 'integer',
         ];
     }
 

@@ -20,3 +20,11 @@ Schedule::job(new CheckPayoutStatusJob)
     ->everyFifteenMinutes()
     ->name('check-payout-status')
     ->withoutOverlapping();
+
+// Complete delivered orders after return period expires (runs hourly)
+// Triggers MLM commissions on COMPLETED status
+Schedule::command('ecommerce:complete-orders')
+    ->hourly()
+    ->name('complete-delivered-orders')
+    ->withoutOverlapping()
+    ->runInBackground();

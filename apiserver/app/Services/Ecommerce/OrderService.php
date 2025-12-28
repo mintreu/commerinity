@@ -11,6 +11,7 @@ use App\Models\Ecommerce\OrderItem;
 use App\Models\Ecommerce\ProductStock;
 use App\Models\User;
 use App\Services\Ecommerce\CartService\CartService;
+use App\Services\Mlm\CommissionProcessorService;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,8 @@ class OrderService
     protected bool $asDraft = false;
 
     public function __construct(
-        protected CartService $cartService
+        protected CartService $cartService,
+        protected ?CommissionProcessorService $commissionProcessor = null
     ) {}
 
     /**
@@ -168,6 +170,7 @@ class OrderService
 
     /**
      * Confirm order (after payment)
+     * Note: MLM commissions are processed only when order is DELIVERED, not on confirmation
      */
     public function confirmOrder(Order $order): bool
     {
@@ -182,9 +185,6 @@ class OrderService
                 'status' => OrderStatusCast::CONFIRMED->value,
                 'payment_success' => true,
             ]);
-
-            // TODO: Trigger MLM commission calculation event
-            // event(new OrderConfirmedEvent($order));
 
             return true;
         } catch (Exception $e) {
@@ -243,19 +243,38 @@ class OrderService
 
     /**
      * Update order status
+     *
+     * Status Flow: PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED → COMPLETED
+     * MLM commissions are processed ONLY when order reaches COMPLETED status
+     * (after return period expires)
      */
     public function updateStatus(Order $order, OrderStatusCast $status): bool
     {
         try {
-            $order->update(['status' => $status->value]);
+            $updateData = ['status' => $status->value];
 
-            // Handle status-specific actions
+            // Set delivered_at and calculate return_period_ends_at when marking as DELIVERED
             if ($status === OrderStatusCast::DELIVERED) {
-                // Mark for commission processing
-                if (! $order->commission_processed) {
-                    // TODO: Process MLM commissions
-                    // $this->processCommissions($order);
-                }
+                $now = now();
+                $maxReturnDays = $order->getMaxReturnDays();
+
+                $updateData['delivered_at'] = $now;
+                $updateData['return_period_ends_at'] = $maxReturnDays > 0
+                    ? $now->copy()->addDays($maxReturnDays)
+                    : $now; // If no returnable products, complete immediately
+            }
+
+            // Set completed_at when marking as COMPLETED
+            if ($status === OrderStatusCast::COMPLETED) {
+                $updateData['completed_at'] = now();
+            }
+
+            $order->update($updateData);
+
+            // Process MLM commissions ONLY on COMPLETED (after return period)
+            // This ensures customer cannot return goods after commissions are paid
+            if ($status === OrderStatusCast::COMPLETED) {
+                $this->processOrderCommissions($order);
             }
 
             return true;
@@ -267,6 +286,81 @@ class OrderService
             ]);
 
             $this->errors[] = 'Failed to update order status';
+
+            return false;
+        }
+    }
+
+    /**
+     * Mark order as delivered
+     * Sets delivered_at and calculates return_period_ends_at based on product return days
+     * Commission processing happens later when order is COMPLETED (after return period)
+     */
+    public function markAsDelivered(Order $order): bool
+    {
+        return $this->updateStatus($order, OrderStatusCast::DELIVERED);
+    }
+
+    /**
+     * Mark order as completed and process commissions
+     * Should only be called after return period has expired
+     */
+    public function markAsCompleted(Order $order): bool
+    {
+        if (! $order->isDelivered()) {
+            $this->errors[] = 'Order must be delivered before it can be completed';
+
+            return false;
+        }
+
+        return $this->updateStatus($order, OrderStatusCast::COMPLETED);
+    }
+
+    /**
+     * Process MLM commissions for completed order
+     * Only processes for subscribed members with BV > 0
+     * Called when order status becomes COMPLETED (after return period)
+     */
+    public function processOrderCommissions(Order $order): bool
+    {
+        // Skip if already processed
+        if ($order->isCommissionProcessed()) {
+            return true;
+        }
+
+        // Skip if order cannot generate commissions
+        if (! $order->canGenerateCommission()) {
+            Log::info('Order skipped for commission - not eligible', [
+                'order_id' => $order->id,
+                'total_bv' => $order->total_bv,
+                'customer_type' => $order->customerable_type,
+            ]);
+
+            return true;
+        }
+
+        try {
+            // Get or create commission processor
+            $processor = $this->commissionProcessor ?? app(CommissionProcessorService::class);
+
+            // Process commissions asynchronously (via queue)
+            $processor->processAsync($order);
+
+            // Mark as processed
+            $order->markCommissionProcessed();
+
+            Log::info('Order commission processing queued', [
+                'order_id' => $order->id,
+                'total_bv' => $order->total_bv,
+                'customer_id' => $order->customerable_id,
+            ]);
+
+            return true;
+        } catch (Exception $e) {
+            Log::error('Order commission processing failed', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
 
             return false;
         }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\OtpController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\BeneficiaryAccountController;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CommissionController;
 use App\Http\Controllers\Api\KycController;
@@ -339,4 +340,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/helpdesk/tickets/{ticket:uuid}', [\App\Http\Controllers\Api\TicketController::class, 'show']);
     Route::post('/helpdesk/tickets/{ticket:uuid}/reply', [\App\Http\Controllers\Api\TicketController::class, 'reply']);
     Route::get('/helpdesk/topics/ticket', [\App\Http\Controllers\Api\TicketController::class, 'topics']);
+});
+
+// ========================================
+// Cart / Shopping (Supports Guest & Authenticated)
+// ========================================
+Route::prefix('cart')->group(function () {
+    // Guest credential (no auth required)
+    Route::post('/guest-credential', [CartController::class, 'guestCredential']);
+    Route::get('/count', [CartController::class, 'count']);
+    Route::get('/', [CartController::class, 'index']);
+    Route::post('/', [CartController::class, 'store']);
+    Route::put('/{productId}', [CartController::class, 'update']);
+    Route::delete('/{productId}', [CartController::class, 'destroy']);
+    Route::delete('/', [CartController::class, 'clear']);
 });
