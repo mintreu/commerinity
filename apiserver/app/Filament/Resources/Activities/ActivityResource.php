@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Activities;
 
+use App\Casts\AdminTypeCast;
 use App\Filament\Resources\Activities\Pages\ListActivities;
 use App\Filament\Resources\Activities\Pages\ViewActivity;
 use App\Filament\Resources\Activities\Schemas\ActivityInfolist;
 use App\Filament\Resources\Activities\Tables\ActivitiesTable;
+use App\Models\Admin;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -22,7 +24,7 @@ class ActivityResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'System';
 
-    protected static ?int $navigationSort = 99;
+    //    protected static ?int $navigationSort = 99;
 
     protected static ?string $navigationLabel = 'Activity Logs';
 
@@ -61,6 +63,6 @@ class ActivityResource extends Resource
 
     public static function canDelete($record): bool
     {
-        return false;
+        return filament()->auth()->user() instanceof Admin && filament()->auth()->user()->type == AdminTypeCast::SuperAdmin->value;
     }
 }

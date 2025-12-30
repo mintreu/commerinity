@@ -371,7 +371,8 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: '$auth',
-  title: 'Edit Profile'
+  title: 'Edit Profile',
+  layout: 'dashboard'
 })
 
 const config = useRuntimeConfig()
@@ -486,7 +487,7 @@ const handleUpdate = async () => {
   clearErrors()
 
   try {
-    const { useSanctumFetch } = useSanctum()
+    const { useSanctumFetch } = useSanctum()  // this is wrong
 
     const response = await useSanctumFetch<{
       message: string

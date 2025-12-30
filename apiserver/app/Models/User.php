@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Casts\GenderCast;
 use App\Casts\UserStatusCast;
 use App\Casts\UserTypeCast;
+use App\Models\Traits\HasProductEngagement;
+use App\Models\Traits\HasProductWishlist;
 use App\Traits\HasHelpdeskTickets;
 use App\Traits\HasJobApplications;
 use App\Traits\HasWallet;
@@ -35,6 +37,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     use HasFactory;
     use HasHelpdeskTickets;
     use HasJobApplications;
+    use HasProductEngagement;
+    use HasProductWishlist;
     use HasPushSubscriptions;
     use HasRecursiveRelationships;
     use HasWallet;

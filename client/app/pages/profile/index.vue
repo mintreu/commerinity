@@ -127,7 +127,8 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: '$auth',
-  title: 'Profile Settings'
+  title: 'Profile Settings',
+  layout: 'dashboard'
 })
 
 const { user, getUserTypeLabel } = useUserType()

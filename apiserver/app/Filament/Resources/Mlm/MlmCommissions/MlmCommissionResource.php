@@ -24,6 +24,10 @@ class MlmCommissionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static string|null|\UnitEnum $navigationGroup = 'Affiliate Mgmt';
+
+    protected static ?string $pluralModelLabel = 'Affiliate Commission';
+
     public static function form(Schema $schema): Schema
     {
         return MlmCommissionForm::configure($schema);

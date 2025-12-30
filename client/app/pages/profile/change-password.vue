@@ -297,7 +297,8 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: '$auth',
-  title: 'Change Password'
+  title: 'Change Password',
+  layout: 'dashboard'
 })
 
 const config = useRuntimeConfig()

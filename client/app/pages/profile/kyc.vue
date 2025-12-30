@@ -6,7 +6,7 @@
 
 definePageMeta({
   middleware: '$auth',
-  layout: 'default'
+  layout: 'dashboard'
 })
 
 const toast = useToast()

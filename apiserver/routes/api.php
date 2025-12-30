@@ -349,10 +349,23 @@ Route::prefix('catalog')->group(function () {
     Route::get('/products', [\App\Http\Controllers\Api\CatalogController::class, 'products']);
     Route::get('/products/{product:url}', [\App\Http\Controllers\Api\CatalogController::class, 'show']);
     Route::get('/categories', [\App\Http\Controllers\Api\CatalogController::class, 'categories']);
+    Route::get('/categories/featured', [\App\Http\Controllers\Api\CatalogController::class, 'featuredCategories']);
     Route::get('/categories/{category:url}', [\App\Http\Controllers\Api\CatalogController::class, 'category']);
     Route::get('/featured', [\App\Http\Controllers\Api\CatalogController::class, 'featured']);
+    Route::get('/on-sale', [\App\Http\Controllers\Api\CatalogController::class, 'onSale']);
     Route::get('/search', [\App\Http\Controllers\Api\CatalogController::class, 'search']);
     Route::get('/filters', [\App\Http\Controllers\Api\CatalogController::class, 'filters']);
+});
+
+// ========================================
+// Advertisements (Public)
+// ========================================
+Route::prefix('ads')->group(function () {
+    Route::get('/placements', [\App\Http\Controllers\Api\AdvertisementController::class, 'placements']);
+    Route::get('/page', [\App\Http\Controllers\Api\AdvertisementController::class, 'forPage']);
+    Route::get('/{placement}', [\App\Http\Controllers\Api\AdvertisementController::class, 'forPlacement']);
+    Route::get('/{placement}/{block}', [\App\Http\Controllers\Api\AdvertisementController::class, 'forBlock']);
+    Route::post('/{advertisement}/click', [\App\Http\Controllers\Api\AdvertisementController::class, 'recordClick']);
 });
 
 // ========================================
@@ -368,3 +381,27 @@ Route::prefix('cart')->group(function () {
     Route::delete('/{productId}', [CartController::class, 'destroy']);
     Route::delete('/', [CartController::class, 'clear']);
 });
+
+// ========================================
+// Product Reviews (Public read, Auth write)
+// ========================================
+Route::prefix('products/{product:url}/reviews')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\ProductEngagementController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\Api\ProductEngagementController::class, 'store']);
+});
+Route::prefix('reviews')->middleware('auth:sanctum')->group(function () {
+    Route::put('/{engagement}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'update']);
+    Route::delete('/{engagement}', [\App\Http\Controllers\Api\ProductEngagementController::class, 'destroy']);
+    Route::post('/{engagement}/helpful', [\App\Http\Controllers\Api\ProductEngagementController::class, 'markHelpful']);
+});
+
+// ========================================
+// Wishlist (Auth required)
+// ========================================
+Route::prefix('wishlist')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\WishlistController::class, 'index']);
+    Route::post('/{product:url}', [\App\Http\Controllers\Api\WishlistController::class, 'store']);
+    Route::delete('/{product:url}', [\App\Http\Controllers\Api\WishlistController::class, 'destroy']);
+    Route::post('/{product:url}/toggle', [\App\Http\Controllers\Api\WishlistController::class, 'toggle']);
+});
+Route::get('/wishlist/{product:url}/check', [\App\Http\Controllers\Api\WishlistController::class, 'check']);

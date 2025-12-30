@@ -80,6 +80,12 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             HelpdeskTopicSeeder::class,
             HelpdeskFaqSeeder::class,
+
+            // ═══════════════════════════════════════════════════════════
+            // E-COMMERCE - Categories and Filters
+            // ═══════════════════════════════════════════════════════════
+            CategorySeeder::class,
+            FilterSeeder::class,
         ]);
     }
 
@@ -118,6 +124,13 @@ class DatabaseSeeder extends Seeder
             // MLM NETWORK - Full MLM tree with commissions, genealogy
             // ═══════════════════════════════════════════════════════════
             DemoMlmSeeder::class,
+
+            // ═══════════════════════════════════════════════════════════
+            // E-COMMERCE DEMO DATA - Products with images and stock
+            // ═══════════════════════════════════════════════════════════
+            // ProductSeeder::class,
+            MasterDemoSeeder::class,
+            ProductStockSeeder::class,
         ]);
     }
 }

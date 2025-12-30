@@ -41,6 +41,7 @@ class Category extends Model implements HasMedia
         'desc',
         'meta_data',
         'banners',
+        'seo_meta',
     ];
 
     protected function casts(): array
@@ -48,6 +49,7 @@ class Category extends Model implements HasMedia
         return [
             'status' => 'boolean',
             'meta_data' => AsArrayObject::class,
+            'seo_meta' => 'array',
             'banners' => AsArrayObject::class,
         ];
     }

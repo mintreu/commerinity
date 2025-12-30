@@ -6,7 +6,8 @@
 
 definePageMeta({
   middleware: '$auth',
-  layout: 'default'
+  layout: 'dashboard'
+
 })
 
 const router = useRouter()

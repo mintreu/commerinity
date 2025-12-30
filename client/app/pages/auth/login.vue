@@ -254,15 +254,25 @@
                 <div class="relative">
                   <input
                     v-model="form.password"
-                    type="password"
+                    :type="showMobilePassword ? 'text' : 'password'"
                     required
                     placeholder="Enter your password"
-                    class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    class="w-full px-4 py-3 pl-12 pr-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   >
                   <UIcon
                     name="i-lucide-key"
                     class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
                   />
+                  <button
+                    type="button"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                    @click="showMobilePassword = !showMobilePassword"
+                  >
+                    <UIcon
+                      :name="showMobilePassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                      class="w-5 h-5"
+                    />
+                  </button>
                 </div>
               </div>
 
@@ -368,15 +378,25 @@
                 <div class="relative">
                   <input
                     v-model="form.password"
-                    type="password"
+                    :type="showEmailPassword ? 'text' : 'password'"
                     required
                     placeholder="Enter your password"
-                    class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    class="w-full px-4 py-3 pl-12 pr-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   >
                   <UIcon
                     name="i-lucide-key"
                     class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
                   />
+                  <button
+                    type="button"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                    @click="showEmailPassword = !showEmailPassword"
+                  >
+                    <UIcon
+                      :name="showEmailPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                      class="w-5 h-5"
+                    />
+                  </button>
                 </div>
               </div>
             </template>
@@ -460,6 +480,8 @@ const otpSent = ref(false)
 const sendingOtp = ref(false)
 const loading = ref(false)
 const error = ref<string | null>(null)
+const showMobilePassword = ref(false)
+const showEmailPassword = ref(false)
 
 const form = reactive({
   mobile: '',

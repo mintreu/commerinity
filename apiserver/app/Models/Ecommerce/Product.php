@@ -7,7 +7,6 @@ namespace App\Models\Ecommerce;
 use App\Casts\ProductStatusCast;
 use App\Models\Address;
 use App\Models\User;
-use Awcodes\Curator\Models\Media;
 use Database\Factories\Ecommerce\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,11 +14,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
+
+    use InteractsWithMedia;
 
     protected $fillable = [
         'name',
@@ -31,12 +34,12 @@ class Product extends Model
         'filter_group_id',
         'description',
         'short_description',
-        'product_display_id',
         'type',
         'parent_id',
         'category_id',
         'price',
         'view_count',
+        'seo_meta',
     ];
 
     protected function casts(): array
@@ -127,15 +130,37 @@ class Product extends Model
         return $this->siblingsAndSelf()->where('id', '!=', $this->id);
     }
 
-    public function productDisplay(): BelongsTo
+    /**
+     * Register media collections for Spatie Media Library
+     * Collection names match old_project for compatibility
+     */
+    public function registerMediaCollections(): void
     {
-        return $this->belongsTo(Media::class, 'product_display_id');
+        $this->addMediaCollection('displayImage')
+            ->singleFile()
+            ->useFallbackUrl('/images/product-placeholder.png');
+
+        $this->addMediaCollection('bannerImage');
     }
 
-    public function productGallery(): BelongsToMany
+    /**
+     * Register media conversions for responsive images
+     * Generate thumbnail and responsive srcsets for fast loading
+     */
+    public function registerMediaConversions(?\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
     {
-        return $this->belongsToMany(Media::class, 'product_gallery_media', 'product_id', 'media_id')
-            ->withTimestamps();
+        $this->addMediaConversion('thumb')
+            ->width(300)
+            ->height(300)
+            ->sharpen(10)
+            ->nonQueued();
+
+        // Only apply conversions to images in our collections
+        if ($media && in_array($media->collection_name, ['displayImage', 'bannerImage'])) {
+            $this->addMediaConversion('responsive')
+                ->withResponsiveImages()
+                ->nonQueued();
+        }
     }
 
     public function cartedBy(): BelongsToMany
@@ -282,7 +307,7 @@ class Product extends Model
      */
     public function getTotalStockAttribute(): int
     {
-        return $this->stocks_sum_in_stock_quantity ?? $this->totalStock();
+        return (int) ($this->stocks_sum_in_stock_quantity ?? $this->totalStock());
     }
 
     /**
@@ -291,6 +316,6 @@ class Product extends Model
      */
     public function getAvailableStockCountAttribute(): int
     {
-        return $this->available_stocks_count ?? $this->availableStocks()->count();
+        return (int) ($this->available_stocks_count ?? $this->availableStocks()->count());
     }
 }

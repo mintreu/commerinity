@@ -6,7 +6,7 @@
 
 definePageMeta({
   middleware: '$auth',
-  layout: 'default'
+  layout: 'dashboard'
 })
 
 const { plans, status, history, historyMeta, isLoading, fetchPlans, fetchStatus, fetchHistory, subscribe } = useSubscription()

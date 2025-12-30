@@ -31,7 +31,8 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: '$auth',
-  title: 'Change Email'
+  title: 'Change Email',
+  layout: 'dashboard'
 })
 
 const router = useRouter()

@@ -50,8 +50,7 @@ class CartController extends Controller
             $product = $cart->cartable;
 
             return [
-                'id' => $cart->id,
-                'product_id' => $product?->id,
+                'product_slug' => $product?->url,
                 'name' => $product?->name,
                 'sku' => $product?->sku,
                 'quantity' => $cart->quantity,
@@ -86,13 +85,13 @@ class CartController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_slug' => 'required|string|exists:products,url',
             'quantity' => 'required|integer|min:1|max:10',
         ]);
 
         $this->cartService->capture($request);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::where('url', $request->product_slug)->firstOrFail();
 
         // Check if product is purchasable
         if (! $product->status->isPurchasable()) {
@@ -124,7 +123,7 @@ class CartController extends Controller
     /**
      * Update cart item quantity
      */
-    public function update(Request $request, int $productId): JsonResponse
+    public function update(Request $request, string $productSlug): JsonResponse
     {
         $request->validate([
             'quantity' => 'required|integer|min:1|max:10',
@@ -132,7 +131,7 @@ class CartController extends Controller
 
         $this->cartService->capture($request);
 
-        $product = Product::findOrFail($productId);
+        $product = Product::where('url', $productSlug)->firstOrFail();
 
         $this->cartService->update($product, $request->quantity);
 
@@ -156,11 +155,11 @@ class CartController extends Controller
     /**
      * Remove item from cart
      */
-    public function destroy(Request $request, int $productId): JsonResponse
+    public function destroy(Request $request, string $productSlug): JsonResponse
     {
         $this->cartService->capture($request);
 
-        $product = Product::findOrFail($productId);
+        $product = Product::where('url', $productSlug)->firstOrFail();
 
         $this->cartService->delete($product);
 

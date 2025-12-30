@@ -1,12 +1,22 @@
 <script setup lang="ts">
+/**
+ * Homepage - Mintreu E-Commerce & MLM Platform
+ * Premium landing page with:
+ * - Hero Section
+ * - Real-time Stats
+ * - Featured Products (Trending + New Arrivals)
+ * - Category Showcase
+ * - Benefits & Features
+ * - CTA
+ */
 definePageMeta({
-  layout: 'guest'
+  layout: 'public'
 })
 
 useSeoMeta({
-  title: 'Mintreu - Your All-in-One Business Platform',
-  description: 'Transform your business dreams into reality with Mintreu. The ultimate platform combining Network Marketing, E-Commerce, and Career Opportunities — all in one powerful ecosystem.',
-  ogTitle: 'Mintreu - Your All-in-One Business Platform',
+  title: 'Commerinity Pro - MLM & E-Commerce Platform',
+  description: 'Transform your business dreams into reality with Commerinity Pro. The ultimate platform combining Network Marketing, E-Commerce, and Career Opportunities — all in one powerful ecosystem.',
+  ogTitle: 'Commerinity Pro - MLM & E-Commerce Platform',
   ogDescription: 'Join thousands of successful entrepreneurs. Network Marketing, E-Commerce & Career Opportunities all in one place.',
   ogImage: '/logo.png'
 })
@@ -20,10 +30,16 @@ useSeoMeta({
     <!-- Stats Section - Real data from API -->
     <HomeStatsSection />
 
-    <!-- Benefits Section - Static marketing content -->
+    <!-- Featured Products - Trending & New Arrivals -->
+    <HomeFeaturedProducts />
+
+    <!-- Category Showcase -->
+    <HomeCategoryShowcase />
+
+    <!-- Benefits Section - Why Join -->
     <HomeBenefitsSection />
 
-    <!-- Features Section - Static feature descriptions -->
+    <!-- Features Section - Platform Features -->
     <HomeFeaturesSection />
 
     <!-- CTA Section -->

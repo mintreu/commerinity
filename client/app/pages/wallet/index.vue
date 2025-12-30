@@ -6,7 +6,7 @@
 
 definePageMeta({
   middleware: '$auth',
-  layout: 'default'
+  layout: 'dashboard'
 })
 
 const { wallet, stats, transactions, loading, fetchWallet, fetchStats, fetchTransactions } = useWallet()

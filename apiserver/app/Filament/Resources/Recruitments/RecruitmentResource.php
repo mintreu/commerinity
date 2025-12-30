@@ -22,6 +22,8 @@ class RecruitmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static string|null|\UnitEnum $navigationGroup = 'Recruitment';
+
     public static function form(Schema $schema): Schema
     {
         return RecruitmentForm::configure($schema);

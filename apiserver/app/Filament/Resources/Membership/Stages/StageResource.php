@@ -24,6 +24,8 @@ class StageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static string|null|\UnitEnum $navigationGroup = 'LifeCycle';
+
     public static function form(Schema $schema): Schema
     {
         return StageForm::configure($schema);
