@@ -7,7 +7,7 @@
 The complete end-to-end subscription system with:
 - ✅ Wallet payment (instant activation)
 - ✅ Gateway payment (Cashfree/Razorpay checkout)
-- ✅ Auto-placement in MLM tree
+- ✅ Auto-placement in Affiliate tree
 - ✅ Sponsor tracking (who paid)
 - ✅ Commission triggering
 
@@ -18,7 +18,7 @@ The complete end-to-end subscription system with:
 **Why?**
 - `sponsor` in UserSubscription = who PAID for this subscription
 - `originator` in User model = agent/advisor who recruited (still exists)
-- `parent_id` in User model = MLM upline for commissions
+- `parent_id` in User model = Affiliate upline for commissions
 
 **Changes:**
 - Migration: `nullableMorphs('sponsor')`
@@ -190,7 +190,7 @@ Fix DemoMlmSeeder commission type and mobile sidebar z-index
 **Separation of Concerns:**
 - `SubscriptionController` - HTTP layer, validation
 - `SubscriptionService` - Business logic, activation
-- `UserMlmService` - MLM tree placement (BFS)
+- `UserMlmService` - Affiliate tree placement (BFS)
 - `CommissionProcessorService` - Commission calculations
 - `PaymentService` - Payment gateway abstraction
 

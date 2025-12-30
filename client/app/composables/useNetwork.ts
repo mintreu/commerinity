@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 
-export interface MlmStats {
+export interface AffiliateStats {
   genealogy: {
     uuid: string
     direct_count: number
@@ -53,7 +53,7 @@ export const useNetwork = () => {
   const config = useRuntimeConfig()
   const { useSanctumFetch } = useSanctum()
 
-  const stats: Ref<MlmStats | null> = ref(null)
+  const stats: Ref<AffiliateStats | null> = ref(null)
   const team: Ref<TeamMember[]> = ref([])
   const teamMeta: Ref<{ current_page: number; last_page: number; per_page: number; total: number } | null> = ref(null)
   const upline: Ref<UplineMember[]> = ref([])
@@ -64,8 +64,8 @@ export const useNetwork = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: MlmStats }>(
-        `${config.public.apiBase}/api/mlm/stats`
+      const response = await useSanctumFetch<{ success: boolean; data: AffiliateStats }>(
+        `${config.public.apiBase}/api/affiliate/stats`
       )
       if (response?.success) {
         stats.value = response.data
@@ -73,7 +73,7 @@ export const useNetwork = () => {
       return response
     }
     catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Failed to fetch MLM stats'
+      error.value = err instanceof Error ? err.message : 'Failed to fetch Affiliate stats'
       throw err
     }
     finally {
@@ -94,7 +94,7 @@ export const useNetwork = () => {
           per_page: number
           total: number
         }
-      }>(`${config.public.apiBase}/api/mlm/children?page=${page}&per_page=${perPage}`)
+      }>(`${config.public.apiBase}/api/affiliate/children?page=${page}&per_page=${perPage}`)
       if (response?.success) {
         team.value = response.data.data
         teamMeta.value = {
@@ -120,7 +120,7 @@ export const useNetwork = () => {
     error.value = null
     try {
       const response = await useSanctumFetch<{ success: boolean; data: UplineMember[] }>(
-        `${config.public.apiBase}/api/mlm/upline`
+        `${config.public.apiBase}/api/affiliate/upline`
       )
       if (response?.success) {
         upline.value = response.data

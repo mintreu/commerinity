@@ -18,7 +18,7 @@
 ╚══════════════════════════════════════════════════════════════════╝
 ```
 
-**Enterprise MLM Platform with 5×4 Matrix Structure**
+**Enterprise Affiliate Platform with 5×4 Matrix Structure**
 
 [![Progress](https://img.shields.io/badge/Backend-85%25-success)](#progress-tracker)
 [![Progress](https://img.shields.io/badge/Frontend-40%25-yellow)](#progress-tracker)
@@ -50,7 +50,7 @@
 </td>
 <td width="33%" align="center">
 
-### 🌳 [MLM Blueprint](./mlm/INDEX.md)
+### 🌳 [Affiliate Blueprint](./affiliate/INDEX.md)
 *Matrix, levels & commissions*
 
 ```
@@ -145,7 +145,7 @@ flowchart TB
             U5 -->|Master| U6
         end
 
-        subgraph MLM["🌳 MLM ENGINE"]
+        subgraph Affiliate["🌳 Affiliate ENGINE"]
             direction LR
             M1["📊 5×4 Matrix"]
             M2["🏆 4 Stages"]
@@ -162,12 +162,12 @@ flowchart TB
         end
     end
 
-    USERS --> MLM
-    MLM --> FINANCE
+    USERS --> Affiliate
+    Affiliate --> FINANCE
 
     style PLATFORM fill:#1a1a2e,stroke:#16213e,color:#fff
     style USERS fill:#0f3460,stroke:#1a1a2e,color:#fff
-    style MLM fill:#533483,stroke:#1a1a2e,color:#fff
+    style Affiliate fill:#533483,stroke:#1a1a2e,color:#fff
     style FINANCE fill:#e94560,stroke:#1a1a2e,color:#fff
 ```
 
@@ -216,8 +216,8 @@ docs/flowcharts/
 │   ├── mentor.md ................. Mentor privileges
 │   └── connections.md ............ How users interconnect
 │
-├── 🌳 mlm/ ....................... MLM System Documentation
-│   ├── INDEX.md .................. MLM overview
+├── 🌳 affiliate/ ....................... Affiliate System Documentation
+│   ├── INDEX.md .................. Affiliate overview
 │   ├── matrix.md ................. 5×4 Matrix explained
 │   ├── stages.md ................. Stage progression
 │   ├── levels.md ................. Level requirements
@@ -247,7 +247,7 @@ docs/flowcharts/
 ## Getting Started
 
 1. **New to the platform?** → Start with [User Ecosystem](./users/INDEX.md)
-2. **Understanding MLM?** → Read [MLM Blueprint](./mlm/INDEX.md)
+2. **Understanding Affiliate?** → Read [Affiliate Blueprint](./affiliate/INDEX.md)
 3. **Technical integration?** → Check [Business Flows](./flows/INDEX.md)
 4. **Admin operations?** → Visit [Admin Center](./admin/INDEX.md)
 5. **Development status?** → See [Progress Tracker](./PROGRESS.md)
@@ -256,7 +256,7 @@ docs/flowcharts/
 
 <div align="center">
 
-**[👥 Users](./users/INDEX.md)** • **[🌳 MLM](./mlm/INDEX.md)** • **[💼 Flows](./flows/INDEX.md)** • **[🛡️ Admin](./admin/INDEX.md)** • **[📊 Progress](./PROGRESS.md)** • **[❓ FAQ](./FAQ.md)**
+**[👥 Users](./users/INDEX.md)** • **[🌳 Affiliate](./affiliate/INDEX.md)** • **[💼 Flows](./flows/INDEX.md)** • **[🛡️ Admin](./admin/INDEX.md)** • **[📊 Progress](./PROGRESS.md)** • **[❓ FAQ](./FAQ.md)**
 
 ---
 

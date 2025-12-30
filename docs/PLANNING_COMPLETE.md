@@ -9,7 +9,7 @@
 
 ### **Context & References** (`.claude/`)
 ✅ **context/DECISIONS.md** - Architectural decisions
-✅ **references/old-commerinity/** - 10 files, 50+ pages (MLM + E-commerce)
+✅ **references/old-commerinity/** - 10 files, 50+ pages (Affiliate + E-commerce)
 ✅ **references/popkult-ecommerce/** - 2 files (Modern e-commerce patterns)
 ✅ **references/PRODUCT_SYSTEM_COMPARISON.md** - Best of both
 
@@ -19,7 +19,7 @@
 ✅ **00-MASTER-PLAN.md** - 20-week roadmap
 ✅ **01-ARCHITECTURE.md** - System design
 ✅ **03-PRODUCT-SYSTEM.md** - Product + Multi-warehouse + Rewards
-✅ **04-COMMISSION-SYSTEM.md** - MLM commission calculation
+✅ **04-COMMISSION-SYSTEM.md** - Affiliate commission calculation
 ✅ **07-FRONTEND-NUXT4.md** - Clean Nuxt 4 architecture
 ✅ **README.md** - Plans overview
 
@@ -145,7 +145,7 @@ After 20 weeks, you'll have:
 
 ✅ **Zero float arithmetic** (MoneyPHP precision)
 ✅ **Multi-warehouse inventory** (enterprise-grade)
-✅ **Product-based commissions** (MLM rewards)
+✅ **Product-based commissions** (Affiliate rewards)
 ✅ **80%+ test coverage** (safe to deploy)
 ✅ **Premium UI/UX** (glassmorphism preserved)
 ✅ **Performance** (<500KB bundle, Lighthouse >90)

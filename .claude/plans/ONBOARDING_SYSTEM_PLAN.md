@@ -246,7 +246,7 @@ if (user.type === 'promoter' || wants_wallet_access) {
 }
 
 if (joining_via_referral) {
-  show_mlm_intro = true // Explain MLM benefits
+  show_affiliate_intro = true // Explain Affiliate benefits
 }
 ```
 
@@ -264,7 +264,7 @@ interface OnboardingStep {
   required: boolean  // NEW: Mark truly required vs optional
   completed: boolean
   path: string
-  requiredFor: string[] // NEW: "wallet", "mlm", "orders", etc.
+  requiredFor: string[] // NEW: "wallet", "affiliate", "orders", etc.
 }
 ```
 
@@ -286,7 +286,7 @@ const onboardingSteps = [
     description: 'For faster checkout and delivery',
     icon: 'i-lucide-map-pin',
     required: false, // Optional initially
-    requiredFor: ['orders', 'mlm'], // Required when placing order
+    requiredFor: ['orders', 'affiliate'], // Required when placing order
     path: '/onboarding/address'
   },
   {
@@ -1078,7 +1078,7 @@ class User extends Authenticatable
 - ✅ Shop (browse products)
 - ⚠️ Cart (yes, but can't checkout without address)
 - ❌ Wallet (no, needs KYC)
-- ❌ MLM Features (no, needs full profile)
+- ❌ Affiliate Features (no, needs full profile)
 
 ---
 
@@ -1089,7 +1089,7 @@ class User extends Authenticatable
 
 **Access Granted**:
 - ✅ Full dashboard
-- ✅ MLM features (referral sharing)
+- ✅ Affiliate features (referral sharing)
 - ⚠️ Still can't checkout (needs address)
 
 ---
@@ -1222,7 +1222,7 @@ it('completes full onboarding flow', function () {
 > "Verify your identity to unlock wallet, earn commissions, and withdraw earnings"
 
 **Subscription Step**:
-> "Join as a member for exclusive discounts, priority support, and MLM benefits"
+> "Join as a member for exclusive discounts, priority support, and Affiliate benefits"
 
 ---
 

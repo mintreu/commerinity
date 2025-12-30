@@ -3,7 +3,7 @@
 **Location**: `C:\laragon\www\mintreu\server\commerinity`
 
 ## Project Type
-**Comprehensive MLM + E-commerce Platform** built with Laravel 12 + Nuxt 3
+**Comprehensive Affiliate + E-commerce Platform** built with Laravel 12 + Nuxt 3
 
 ## Architecture
 **Decoupled Monorepo Architecture**:
@@ -26,7 +26,7 @@
 - **Framework**: Nuxt 3.17.6
 - **Vue**: 3.5.17
 - **Styling**: Tailwind CSS 3.4.17
-- **Charts**: ECharts + D3.js (for MLM tree visualization)
+- **Charts**: ECharts + D3.js (for Affiliate tree visualization)
 - **PWA**: @vite-pwa/nuxt
 - **Animations**: GSAP 3.13.0
 
@@ -56,7 +56,7 @@
 
 ## Core Features
 
-### 1. Multi-Level Marketing (MLM)
+### 1. Multi-Level Marketing (Affiliate)
 - Hierarchical user tree (binary/unilevel structure)
 - Referral system with codes
 - Lifecycle stages & levels (Bronze, Silver, Gold, etc.)

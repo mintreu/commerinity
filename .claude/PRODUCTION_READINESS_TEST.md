@@ -14,7 +14,7 @@
 - Wallet System (15 endpoints)
 - Address Management
 - KYC System
-- MLM System (backend complete)
+- Affiliate System (backend complete)
 - Recruitment System (37 tests)
 - Messaging System
 - Activity Logging
@@ -71,9 +71,9 @@
 - [ ] **VERIFY**: Payment CTA shows with amount
 - [ ] Click "Complete Payment" → redirect to payment URL
 
-#### **FLOW 5: Member User (MLM)**
+#### **FLOW 5: Member User (Affiliate)**
 - [ ] Login as Member (has subscription)
-- [ ] Dashboard shows MLM stats (DashboardMember component)
+- [ ] Dashboard shows Affiliate stats (DashboardMember component)
 - [ ] View network/team
 - [ ] View earnings/commissions
 - [ ] Access messaging (subscription-gated feature)
@@ -148,13 +148,13 @@
 
 **Reference**: `docs/flowcharts/COMPETITOR_FLOW_ANALYSIS.md`
 
-### Indian MLM Competitors
+### Indian Affiliate Competitors
 - Vestige, Modicare, Amway India, Forever Living
 - **Our Advantage**: Better UX, faster dashboard, real-time updates
 
 ### Global E-commerce
 - Shopify, WooCommerce patterns
-- **Our Advantage**: Integrated MLM + E-commerce in one platform
+- **Our Advantage**: Integrated Affiliate + E-commerce in one platform
 
 ---
 

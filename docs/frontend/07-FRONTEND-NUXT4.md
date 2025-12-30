@@ -71,7 +71,7 @@ client/app/
 │       │   ├── RevenueChart.vue
 │       │   └── ActivityFeed.vue
 │       │
-│       └── mlm/
+│       └── affiliate/
 │           ├── GenealgyTree.vue  # D3.js org chart
 │           ├── CommissionCard.vue
 │           └── ReferralLink.vue
@@ -678,7 +678,7 @@ export default defineNuxtConfig({
 <script setup>
 // Only import when needed
 const GenealgyTree = defineAsyncComponent(() =>
-  import('~/components/features/mlm/GenealgyTree.vue')
+  import('~/components/features/affiliate/GenealgyTree.vue')
 )
 
 const showTree = ref(false)

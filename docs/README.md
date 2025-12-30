@@ -1,6 +1,6 @@
 # Commerinity Pro - Refactoring Plans
 
-**Project**: Enterprise-Grade MLM + E-commerce Platform
+**Project**: Enterprise-Grade Affiliate + E-commerce Platform
 **Approach**: Fresh rebuild with battle-tested patterns
 **Timeline**: 20 weeks (5 months)
 **Status**: 🟢 Ready to start development
@@ -14,7 +14,7 @@
 1. **00-MASTER-PLAN.md** - Overall strategy, 20-week timeline, success criteria
 2. **01-ARCHITECTURE.md** - System design, folder structure, technology stack
 3. **03-PRODUCT-SYSTEM.md** - Product catalog with multi-warehouse & rewards
-4. **04-COMMISSION-SYSTEM.md** - MLM commission calculation with reversal
+4. **04-COMMISSION-SYSTEM.md** - Affiliate commission calculation with reversal
 
 ### 📋 **To Be Created** (As Needed During Development)
 
@@ -45,7 +45,7 @@
 - **Database**: MySQL
 
 ### Reference Projects
-- **Old Commerinity**: MLM, Wallet, Premium UI
+- **Old Commerinity**: Affiliate, Wallet, Premium UI
 - **Popkult**: Product system, Multi-warehouse, Clean architecture
 
 ---
@@ -56,7 +56,7 @@
 1. Start with **00-MASTER-PLAN.md** (big picture)
 2. Read **01-ARCHITECTURE.md** (structure)
 3. Read **03-PRODUCT-SYSTEM.md** (product implementation)
-4. Read **04-COMMISSION-SYSTEM.md** (MLM rewards)
+4. Read **04-COMMISSION-SYSTEM.md** (Affiliate rewards)
 
 ### Context Files
 - `.claude/context/DECISIONS.md` - Architectural decisions
@@ -76,7 +76,7 @@
 - Shipping (Native + Shiprocket)
 - GST compliance
 
-### MLM (Network Marketing)
+### Affiliate (Network Marketing)
 - Referral tree (adjacency list)
 - **Product-based commissions** ⭐
 - Membership lifecycle (stages/levels)

@@ -57,7 +57,7 @@ app/
 - **Styling**: Tailwind CSS 4.1.17
 - **Auth**: `@qirolab/nuxt-sanctum-authentication` ⭐
 - **Animations**: GSAP (preserve from old)
-- **Charts**: ECharts, D3.js (MLM tree)
+- **Charts**: ECharts, D3.js (Affiliate tree)
 
 ---
 
@@ -115,10 +115,10 @@ const { data } = await useSanctumFetch('/api/orders')
 
 ## 🎯 **Project Type**
 
-**MLM + E-commerce + Essential Features**
+**Affiliate + E-commerce + Essential Features**
 
 ### Core Features:
-1. **MLM System**
+1. **Affiliate System**
    - Referral tree (binary/unilevel)
    - Multi-tier commissions
    - Membership lifecycle (stages/levels)
@@ -170,7 +170,7 @@ When purchase happens:
 
 ### 1. Old Commerinity (Primary Reference)
 **Location**: `C:\laragon\www\mintreu\server\commerinity\`
-**Use For**: MLM, Wallet, Premium UI, Content, Support
+**Use For**: Affiliate, Wallet, Premium UI, Content, Support
 **Documentation**: `.claude/references/old-commerinity/`
 
 ### 2. Popkult (E-commerce Reference)

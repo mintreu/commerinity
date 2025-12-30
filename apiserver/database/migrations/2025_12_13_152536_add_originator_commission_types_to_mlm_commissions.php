@@ -15,7 +15,7 @@ return new class extends Migration
     public function up(): void
     {
         // Modify enum to include originator commission types
-        DB::statement("ALTER TABLE mlm_commissions MODIFY COLUMN type ENUM(
+        DB::statement("ALTER TABLE affiliate_commissions MODIFY COLUMN type ENUM(
             'sponsor_bonus',
             'level_commission',
             'matching_bonus',
@@ -37,7 +37,7 @@ return new class extends Migration
     public function down(): void
     {
         // Revert to original enum values
-        DB::statement("ALTER TABLE mlm_commissions MODIFY COLUMN type ENUM(
+        DB::statement("ALTER TABLE affiliate_commissions MODIFY COLUMN type ENUM(
             'sponsor_bonus',
             'level_commission',
             'matching_bonus',

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Member Dashboard Component
- * MLM-focused dashboard for subscribed members
+ * Affiliate-focused dashboard for subscribed members
  * Shows earnings, referrals, network overview, and progress to next level
  * PWA-optimized with mobile-first design
  */
@@ -10,7 +10,7 @@ import type { User } from '~/types/user'
 
 const user = useCurrentUser() as Ref<User | null>
 const { formatCurrency } = useBranding()
-const { fetchDashboardSummary } = useTrends()
+const { fetchDashboardSummary, fetchCommissionEarnings } = useTrends()
 const { wallet, fetchWallet } = useWallet()
 
 // Stats with real data
@@ -273,30 +273,15 @@ const openShareModal = () => {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
       <!-- Left: Earnings & Network -->
       <div class="lg:col-span-2 space-y-4 md:space-y-6">
-        <!-- Monthly Earnings Chart Placeholder -->
+        <!-- Monthly Earnings Chart (Real Data) -->
         <div class="glass-card p-4 md:p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">
-              Earnings Overview
-            </h2>
-            <div class="flex gap-1">
-              <UButton size="xs" variant="soft" color="primary">Week</UButton>
-              <UButton size="xs" variant="ghost">Month</UButton>
-            </div>
-          </div>
-
-          <!-- Chart Placeholder -->
-          <div class="h-40 md:h-48 bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-violet-900/20 dark:to-fuchsia-900/20 rounded-xl flex items-center justify-center">
-            <div class="text-center">
-              <UIcon name="i-lucide-bar-chart-3" class="w-10 h-10 text-violet-400 mx-auto mb-2" />
-              <p class="text-sm text-slate-600 dark:text-slate-400">
-                Earnings chart coming soon
-              </p>
-              <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                This month: {{ formatCurrency(stats.monthlyEarnings) }}
-              </p>
-            </div>
-          </div>
+          <CommonChartsTrendChart
+            type="line"
+            :fetch-method="fetchCommissionEarnings"
+            title="Earnings Overview"
+            height="180"
+            show-controls
+          />
         </div>
 
         <!-- Top Referrals -->

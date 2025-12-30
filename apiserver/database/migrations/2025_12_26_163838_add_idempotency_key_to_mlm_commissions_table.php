@@ -19,12 +19,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mlm_commissions', function (Blueprint $table) {
+        Schema::table('affiliate_commissions', function (Blueprint $table) {
             $table->string('idempotency_key', 255)->nullable()->after('metadata');
-            $table->unique('idempotency_key', 'mlm_commissions_idempotency_key_unique');
+            $table->unique('idempotency_key', 'affiliate_commissions_idempotency_key_unique');
 
             // Add index for faster monthly total queries
-            $table->index(['user_id', 'created_at'], 'mlm_commissions_user_created_idx');
+            $table->index(['user_id', 'created_at'], 'affiliate_commissions_user_created_idx');
         });
     }
 
@@ -33,9 +33,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mlm_commissions', function (Blueprint $table) {
-            $table->dropUnique('mlm_commissions_idempotency_key_unique');
-            $table->dropIndex('mlm_commissions_user_created_idx');
+        Schema::table('affiliate_commissions', function (Blueprint $table) {
+            $table->dropUnique('affiliate_commissions_idempotency_key_unique');
+            $table->dropIndex('affiliate_commissions_user_created_idx');
             $table->dropColumn('idempotency_key');
         });
     }

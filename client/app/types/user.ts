@@ -34,7 +34,7 @@ export interface TeamSummary {
 export interface UserPermissions {
   can_withdraw: boolean
   can_refer: boolean
-  can_access_mlm: boolean
+  can_access_affiliate: boolean
   can_access_team: boolean
 }
 
@@ -60,7 +60,7 @@ export interface User {
   email_verified_at: string | null
   mobile_verified_at: string | null
 
-  // MLM Tree
+  // Affiliate Tree
   referral_code: string
   parent?: ParentInfo | null
   hasParent: boolean
@@ -83,7 +83,7 @@ export interface User {
   // KYC Status
   kyc_status: KycStatus
 
-  // Team Summary (for MLM users only)
+  // Team Summary (for Affiliate users only)
   team_summary?: TeamSummary | null
 
   // Permissions (computed based on type/status)

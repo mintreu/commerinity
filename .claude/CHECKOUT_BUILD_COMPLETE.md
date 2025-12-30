@@ -31,7 +31,7 @@
    - ✅ Routes to wallet/subscription/recruitment handlers
    - ✅ Updates wallet balance
    - ✅ Activates subscriptions
-   - ✅ Triggers MLM commissions
+   - ✅ Triggers Affiliate commissions
    - ✅ DB transactions for safety
 
 4. **`app/Http/Controllers/Api/CheckoutController.php`** (110 lines)
@@ -134,7 +134,7 @@ HandlePaymentCompleted listener
   ↓
 match ($payable) {
     Wallet => Update balance
-    UserSubscription => Activate + MLM
+    UserSubscription => Activate + Affiliate
     JobApplication => Submit
 }
 ```

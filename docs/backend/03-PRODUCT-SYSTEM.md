@@ -7,7 +7,7 @@
 
 1. ✅ **Multi-warehouse inventory** (from Popkult)
 2. ✅ **Smart variant management** (from Commerinity)
-3. ✅ **Product-based commissions** (for MLM rewards)
+3. ✅ **Product-based commissions** (for Affiliate rewards)
 4. ✅ **3-tier filtering** (flexible attributes)
 5. ✅ **Money precision** (MoneyPHP, paise storage)
 6. ✅ **Performance optimized** (query scopes, N+1 prevention)
@@ -51,7 +51,7 @@ Schema::create('products', function (Blueprint $table) {
     $table->boolean('is_returnable')->default(true);
     $table->decimal('weight', 8, 2)->nullable(); // For shipping
 
-    // === MLM REWARD CONFIGURATION ⭐ ===
+    // === Affiliate REWARD CONFIGURATION ⭐ ===
     $table->decimal('affiliate_commission_rate', 5, 2)->default(0); // e.g., 5.00 = 5%
     $table->json('team_commission_rates')->nullable(); // {1: 3, 2: 2, 3: 1}
     $table->unsignedInteger('business_volume_points')->default(0);
@@ -181,7 +181,7 @@ class Product extends Model
         'price', 'gst_tax_type',
         'min_quantity', 'max_quantity', 'is_returnable',
         'weight', 'product_display_id', 'view_count',
-        // MLM Rewards
+        // Affiliate Rewards
         'affiliate_commission_rate',
         'team_commission_rates',
         'business_volume_points',
@@ -698,7 +698,7 @@ class StockService
 ```php
 // When creating/editing product in Filament:
 
-Section::make('MLM Rewards Configuration')
+Section::make('Affiliate Rewards Configuration')
     ->schema([
         TextInput::make('affiliate_commission_rate')
             ->label('Affiliate Commission (%)')
@@ -886,7 +886,7 @@ Route::prefix('categories')->group(function () {
 Product System =
   Popkult's foundation (clean, multi-warehouse)
   + Commerinity's smart updates (signature-based)
-  + MLM reward integration (commission rates per product)
+  + Affiliate reward integration (commission rates per product)
   + Enterprise patterns (service layer, query scopes)
 ```
 

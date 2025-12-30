@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tax_amount')->default(0);
             $table->unsignedBigInteger('price')->default(0); // Final price
 
-            // MLM Configuration
+            // Affiliate Configuration
             $table->unsignedInteger('max_team_members')->default(780); // 5^1 + 5^2 + 5^3 + 5^4
 
             // Commission configuration (JSON for flexibility)

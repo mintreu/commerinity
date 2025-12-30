@@ -278,7 +278,7 @@ const fetchStats = async () => {
         active_referrals: number
         total_earnings_formatted: string
       }
-    }>(`${config.public.apiBase}/api/mlm/stats`)
+    }>(`${config.public.apiBase}/api/affiliate/stats`)
 
     if (response?.success) {
       stats.totalReferrals = response.data.total_referrals || 0

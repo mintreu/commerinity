@@ -34,18 +34,14 @@ const layoutToUse = computed(() => {
 
 <template>
 
-  <dashboard
-    v-if="isLoggedIn"
-  >
+  <NuxtLayout v-if="isLoggedIn" name="dashboard">
     <slot />
-  </dashboard>
+  </NuxtLayout>
 
   <!-- Guest View: Landing page with carousels -->
-  <public
-    v-else
-  >
+  <NuxtLayout v-else name="public">
     <slot />
-  </public>
+  </NuxtLayout>
 
 
 

@@ -1,5 +1,5 @@
 # MASTER REFACTORING PLAN
-## Commerinity Pro - Enterprise-Grade MLM + E-commerce Platform
+## Commerinity Pro - Enterprise-Grade Affiliate + E-commerce Platform
 
 **Project Type**: Fresh rebuild with battle-tested patterns
 **Timeline**: 20 weeks (5 months)
@@ -9,9 +9,9 @@
 
 ## 🎯 **Project Vision**
 
-Build a **world-class MLM + E-commerce platform** that combines:
+Build a **world-class Affiliate + E-commerce platform** that combines:
 - ✅ **Best e-commerce patterns** from Popkult (multi-warehouse, money precision)
-- ✅ **Complete MLM system** from Old Commerinity (referral tree, commissions)
+- ✅ **Complete Affiliate system** from Old Commerinity (referral tree, commissions)
 - ✅ **Premium UI/UX** from Old Commerinity (glassmorphism design)
 - ✅ **Modern stack** (Laravel 12, Nuxt 4, Filament 4, Pest 4)
 - ✅ **Enterprise standards** (80%+ test coverage, API docs, monitoring)
@@ -44,7 +44,7 @@ app/
 - TypeScript throughout
 
 ### Key Features
-1. **MLM System** - Referral tree, multi-tier commissions, lifecycle stages
+1. **Affiliate System** - Referral tree, multi-tier commissions, lifecycle stages
 2. **E-commerce** - Multi-warehouse, product variants, cart, orders
 3. **Digital Wallet** - P2P transfers, commissions, withdrawals
 4. **Product Rewards** - Commission on product purchases ⭐
@@ -86,7 +86,7 @@ app/
 
 ---
 
-### **PHASE 2: MLM & Financial Systems** (Weeks 7-11)
+### **PHASE 2: Affiliate & Financial Systems** (Weeks 7-11)
 
 #### Week 7-8: User Hierarchy & Membership
 - [ ] User models (User, Customer, Admin, Staff, Distributor)
@@ -95,7 +95,7 @@ app/
 - [ ] Level task system (LevelTask, UserTaskProgress)
 - [ ] MembershipService
 - [ ] Filament MembershipResource
-- [ ] **Tests: 100% MLM tree operations**
+- [ ] **Tests: 100% Affiliate tree operations**
 
 #### Week 9-10: Commission System ⭐
 - [ ] Commission models (Commission, AffiliateCommission, TeamCommission, BusinessCommission)
@@ -180,7 +180,7 @@ app/
 - [ ] Order tracking
 - [ ] User dashboard
 
-#### Week 19: MLM Pages
+#### Week 19: Affiliate Pages
 - [ ] Genealogy tree (D3.js)
 - [ ] Commission dashboard
 - [ ] Wallet management
@@ -280,7 +280,7 @@ plans/
 ├── 01-architecture.md                   # System architecture
 ├── 02-database-schema.md                # Complete schema design
 ├── 03-product-system.md                 # Product + Stock + Rewards
-├── 04-commission-system.md              # MLM commission logic
+├── 04-commission-system.md              # Affiliate commission logic
 ├── 05-wallet-system.md                  # Digital wallet
 ├── 06-service-layer.md                  # Service architecture
 ├── 07-frontend-design.md                # UI/UX design system

@@ -160,7 +160,7 @@ php artisan test  # YES! Run commands in current project
 1. **Checkout flow** (3 days) ← START HERE
 2. **Payout processing** (2 days)
 3. **Add money flow** (1.5 days)
-4. **MLM frontend** (2 days)
+4. **Affiliate frontend** (2 days)
 5. **E-commerce** (deferred)
 
 ### Total to Launch: 3-5 days

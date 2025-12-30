@@ -15,7 +15,7 @@
 ║                              P R O                                       ║
 ║                                                                          ║
 ║        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━        ║
-║                    ENTERPRISE MLM PLATFORM                               ║
+║                    ENTERPRISE Affiliate PLATFORM                               ║
 ║                      A Mintreu Project                                   ║
 ║        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━        ║
 ║                                                                          ║
@@ -63,7 +63,7 @@
 
 ### What is Commerinity Pro?
 
-**Commerinity Pro** is an enterprise-grade Multi-Level Marketing (MLM) platform built with cutting-edge technology, designed for the Indian market with global scalability.
+**Commerinity Pro** is an enterprise-grade Multi-Level Marketing (Affiliate) platform built with cutting-edge technology, designed for the Indian market with global scalability.
 
 **Key Differentiators:**
 - 🚀 Modern tech stack (Laravel 12, Nuxt 4, Filament 4)
@@ -80,7 +80,7 @@
 ┌────────────────────────┐
 │   QUICK FACTS          │
 ├────────────────────────┤
-│ Industry: MLM/Network  │
+│ Industry: Affiliate/Network  │
 │ Market: India (Global) │
 │ Model: SaaS Platform   │
 │ Stage: MVP Ready       │
@@ -97,13 +97,13 @@
 
 ## The Problem
 
-### Current MLM Software Market Issues
+### Current Affiliate Software Market Issues
 
 ```mermaid
 %%{init: {'theme': 'base'}}%%
 
 mindmap
-  root((MLM Software<br/>Problems))
+  root((Affiliate Software<br/>Problems))
     Outdated Tech
       Legacy PHP
       No Modern UI
@@ -346,7 +346,7 @@ quadrantChart
 │  ✅ Developer as founder        │                                 │
 ├─────────────────────────────────┼─────────────────────────────────┤
 │         OPPORTUNITIES           │           THREATS               │
-│  🚀 Growing MLM market in India │  ⚡ Established competitors     │
+│  🚀 Growing Affiliate market in India │  ⚡ Established competitors     │
 │  🚀 Digital India push          │  ⚡ Price wars possibility      │
 │  🚀 Compliance regulations      │  ⚡ Copycat products            │
 │  🚀 White-label licensing       │  ⚡ Regulatory changes          │
@@ -483,19 +483,19 @@ MARKETING MIX
 
 DIGITAL (60% of budget)
 ├── Content Marketing (Blog, YouTube)
-├── SEO (MLM software keywords)
+├── SEO (Affiliate software keywords)
 ├── LinkedIn Ads (B2B targeting)
 ├── Google Ads (Search intent)
 └── Webinars & Demos
 
 DIRECT (25% of budget)
-├── MLM Industry Events
+├── Affiliate Industry Events
 ├── Networking Groups
 ├── Cold Outreach
 └── Referral Program
 
 PARTNERSHIPS (15% of budget)
-├── MLM Consultants
+├── Affiliate Consultants
 ├── Business Formation Services
 └── Accounting Firms
 ```
@@ -614,7 +614,7 @@ Year 3 (Exit scenario):
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
 │  1️⃣  MARKET TIMING                                                       │
-│      • MLM industry growing 10% YoY in India                            │
+│      • Affiliate industry growing 10% YoY in India                            │
 │      • Legacy software market ripe for disruption                       │
 │      • Digital compliance requirements increasing                        │
 │                                                                          │
@@ -634,8 +634,8 @@ Year 3 (Exit scenario):
 │      • API-first = integration opportunities                            │
 │                                                                          │
 │  5️⃣  EXIT OPPORTUNITIES                                                  │
-│      • Acquisition by larger MLM software company                       │
-│      • Strategic acquisition by MLM company (vertical integration)      │
+│      • Acquisition by larger Affiliate software company                       │
+│      • Strategic acquisition by Affiliate company (vertical integration)      │
 │      • PE/VC buyout in growth stage                                     │
 │                                                                          │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -660,7 +660,7 @@ Year 3 (Exit scenario):
 ```
 ┌────────────────────────────────────────────────────────────┐
 │                                                            │
-│   "Building the future of MLM technology, one commit      │
+│   "Building the future of Affiliate technology, one commit      │
 │    at a time."                                            │
 │                                         — Krishanu        │
 │                                                            │
@@ -669,7 +669,7 @@ Year 3 (Exit scenario):
 
 ---
 
-**[👥 Users](./users/INDEX.md)** • **[🌳 MLM](./mlm/INDEX.md)** • **[💼 Flows](./flows/INDEX.md)** • **[🛡️ Admin](./admin/INDEX.md)** • **[📊 Progress](./PROGRESS.md)**
+**[👥 Users](./users/INDEX.md)** • **[🌳 Affiliate](./affiliate/INDEX.md)** • **[💼 Flows](./flows/INDEX.md)** • **[🛡️ Admin](./admin/INDEX.md)** • **[📊 Progress](./PROGRESS.md)**
 
 </div>
 

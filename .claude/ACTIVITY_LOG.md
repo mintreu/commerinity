@@ -1,14 +1,14 @@
 # Claude Activity Log
 
-## 2025-12-28 - ORDER RETURN PERIOD + MLM COMMISSION FIX
+## 2025-12-28 - ORDER RETURN PERIOD + Affiliate COMMISSION FIX
 
 ### 17:00 - Order Return Period & Commission Trigger Fix
 
-**Task**: Fix MLM commission trigger to fire after return period (COMPLETED) instead of on DELIVERED
+**Task**: Fix Affiliate commission trigger to fire after return period (COMPLETED) instead of on DELIVERED
 
 **Problem Identified**:
 1. MoneyService tests were failing (82 tests) due to expecting methods that didn't exist
-2. MLM commission was triggering on DELIVERED - but customer can return products!
+2. Affiliate commission was triggering on DELIVERED - but customer can return products!
 
 **Solution Implemented**:
 
@@ -29,13 +29,13 @@
 4. **Added COMPLETED Status** (`OrderStatusCast.php`):
    - New flow: PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED → COMPLETED
    - DELIVERED: Customer received goods, return period starts
-   - COMPLETED: Return period ended, order finalized, MLM commissions trigger
+   - COMPLETED: Return period ended, order finalized, Affiliate commissions trigger
 
 5. **Created Scheduler Command** (`app/Console/Commands/Ecommerce/CompleteDeliveredOrders.php`):
    - Command: `ecommerce:complete-orders`
    - Runs hourly via scheduler
    - Finds DELIVERED orders where `return_period_ends_at <= now()`
-   - Transitions to COMPLETED and triggers MLM commissions
+   - Transitions to COMPLETED and triggers Affiliate commissions
 
 6. **Updated OrderService** (`app/Services/Ecommerce/OrderService.php`):
    - `markAsDelivered()`: Sets `delivered_at` and calculates `return_period_ends_at`
@@ -62,7 +62,7 @@
 
 ### 12:00 - E-commerce Backend System Complete
 
-**Task**: Complete e-commerce backend end-to-end (Sale, Cart, Order, Shipment, MLM integration)
+**Task**: Complete e-commerce backend end-to-end (Sale, Cart, Order, Shipment, Affiliate integration)
 
 **Files Created**:
 
@@ -86,10 +86,10 @@
    - `config/cart.php`
 
 3. **OrderService**:
-   - `app/Services/Ecommerce/OrderService.php` (cart-to-order, MLM commission integration)
-   - `database/migrations/2025_12_28_100005_add_mlm_fields_to_order_items.php`
+   - `app/Services/Ecommerce/OrderService.php` (cart-to-order, Affiliate commission integration)
+   - `database/migrations/2025_12_28_100005_add_affiliate_fields_to_order_items.php`
    - Updated `app/Models/Ecommerce/Order.php` (implements CommissionTrigger)
-   - Updated `app/Models/Ecommerce/OrderItem.php` (MLM fields)
+   - Updated `app/Models/Ecommerce/OrderItem.php` (Affiliate fields)
 
 4. **Shipment System**:
    - `database/migrations/2025_12_27_230617_create_shipments_table.php`
@@ -109,7 +109,7 @@
 ```
 Cart → Order (PENDING) → Payment → CONFIRMED → PROCESSING → SHIPPED → DELIVERED
                                                                           ↓
-                                                    MLM Commission (for subscribed members)
+                                                    Affiliate Commission (for subscribed members)
 ```
 
 **Key Design Decisions**:
@@ -156,8 +156,8 @@ Cart → Order (PENDING) → Payment → CONFIRMED → PROCESSING → SHIPPED �
 | Address Management | COMPLETE |
 | KYC System | COMPLETE |
 | Notification System | COMPLETE |
-| MLM Backend | COMPLETE |
-| MLM Frontend | PENDING (tree viz) |
+| Affiliate Backend | COMPLETE |
+| Affiliate Frontend | PENDING (tree viz) |
 | Dashboard System | COMPLETE (5 types) |
 | Recruitment System | COMPLETE |
 | Helpdesk System | COMPLETE |

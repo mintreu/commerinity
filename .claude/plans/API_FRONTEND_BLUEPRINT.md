@@ -189,7 +189,7 @@ Pattern: {base}/{version}/{resource}/{action}
 v1/ (Current - Stable)
 ├── auth/           Authentication endpoints
 ├── user/           User profile & settings
-├── mlm/            MLM tree & commissions
+├── affiliate/            Affiliate tree & commissions
 ├── shop/           E-commerce (products, orders)
 ├── wallet/         Transactions & wallet
 ├── notifications/  Push & in-app notifications
@@ -273,15 +273,15 @@ POST   /api/v1/auth/logout-all              Logout all devices
 POST   /api/v1/auth/refresh-token           Refresh token (optional)
 
 ┌─────────────────────────────────────────────────────────┐
-│ MLM SYSTEM (Type: PROMOTER, ADVISOR, MENTOR)           │
+│ Affiliate SYSTEM (Type: PROMOTER, ADVISOR, MENTOR)           │
 ├─────────────────────────────────────────────────────────┤
 
-GET    /api/v1/mlm/tree                     My MLM tree (ancestors + descendants)
-GET    /api/v1/mlm/downline                 Direct downline
-GET    /api/v1/mlm/team-stats               Team statistics
-GET    /api/v1/mlm/commissions              Commission history
-GET    /api/v1/mlm/earnings                 Earnings summary
-POST   /api/v1/mlm/validate-referral        Validate referral code
+GET    /api/v1/affiliate/tree                     My Affiliate tree (ancestors + descendants)
+GET    /api/v1/affiliate/downline                 Direct downline
+GET    /api/v1/affiliate/team-stats               Team statistics
+GET    /api/v1/affiliate/commissions              Commission history
+GET    /api/v1/affiliate/earnings                 Earnings summary
+POST   /api/v1/affiliate/validate-referral        Validate referral code
 
 ┌─────────────────────────────────────────────────────────┐
 │ E-COMMERCE CART & ORDERS (All User Types)              │
@@ -349,7 +349,7 @@ POST   /api/v1/membership/renew             Renew subscription
 POST   /api/v1/membership/upgrade           Upgrade plan
 
 ┌─────────────────────────────────────────────────────────┐
-│ PROMOTER-ONLY (Type: PROMOTER - MLM Participants)      │
+│ PROMOTER-ONLY (Type: PROMOTER - Affiliate Participants)      │
 ├─────────────────────────────────────────────────────────┤
 
 GET    /api/v1/promoter/dashboard           Promoter dashboard data
@@ -416,9 +416,9 @@ URL: /admin (Laravel routes, not API)
 │  ├── Exclusive Deals                                      │
 │  └── Community Access                                     │
 │                                                            │
-│  PROMOTER User (type: promoter - MLM Active)             │
+│  PROMOTER User (type: promoter - Affiliate Active)             │
 │  ├── All MEMBER features +                               │
-│  ├── MLM Dashboard                                        │
+│  ├── Affiliate Dashboard                                        │
 │  │   ├── Team Tree View                                  │
 │  │   ├── Downline List                                   │
 │  │   ├── Commission Reports                              │
@@ -483,8 +483,8 @@ client/
 │   │   ├── dashboard/
 │   │   │   ├── index.vue                  # Main dashboard (type-based)
 │   │   │   ├── membership.vue             # MEMBER only
-│   │   │   ├── mlm/
-│   │   │   │   ├── tree.vue               # PROMOTER MLM tree
+│   │   │   ├── affiliate/
+│   │   │   │   ├── tree.vue               # PROMOTER Affiliate tree
 │   │   │   │   ├── team.vue               # Downline list
 │   │   │   │   ├── commissions.vue        # Commission reports
 │   │   │   │   └── analytics.vue          # Performance
@@ -547,7 +547,7 @@ client/
 │   │   ├── auth.ts                        # Authentication state
 │   │   ├── user.ts                        # User profile state
 │   │   ├── cart.ts                        # Shopping cart
-│   │   ├── mlm.ts                         # MLM tree data
+│   │   ├── affiliate.ts                         # Affiliate tree data
 │   │   ├── wallet.ts                      # Wallet balance
 │   │   ├── notifications.ts               # Notification center
 │   │   └── 2fa.ts                         # 2FA state
@@ -575,7 +575,7 @@ client/
     <MenuItem to="/shop" icon="shopping-bag">Shop</MenuItem>
     <MenuItem to="/about" icon="info">About</MenuItem>
     <MenuItem to="/blog" icon="newspaper">Blog</MenuItem>
-    <MenuItem to="/join-us" icon="users">Join MLM</MenuItem>
+    <MenuItem to="/join-us" icon="users">Join Affiliate</MenuItem>
 
     <div class="ml-auto">
       <Button to="/login" variant="ghost">Login</Button>
@@ -619,22 +619,22 @@ client/
 </template>
 ```
 
-### **PROMOTER User Navigation** (All MEMBER + MLM)
+### **PROMOTER User Navigation** (All MEMBER + Affiliate)
 
 ```vue
 <template>
   <nav>
     <!-- All MEMBER items + -->
-    <MenuItem to="/dashboard/mlm" icon="hierarchy">MLM Dashboard</MenuItem>
+    <MenuItem to="/dashboard/affiliate" icon="hierarchy">Affiliate Dashboard</MenuItem>
 
     <Submenu label="Team" icon="users">
-      <MenuItem to="/dashboard/mlm/tree">Tree View</MenuItem>
-      <MenuItem to="/dashboard/mlm/downline">Downline</MenuItem>
-      <MenuItem to="/dashboard/mlm/invite">Invite Members</MenuItem>
+      <MenuItem to="/dashboard/affiliate/tree">Tree View</MenuItem>
+      <MenuItem to="/dashboard/affiliate/downline">Downline</MenuItem>
+      <MenuItem to="/dashboard/affiliate/invite">Invite Members</MenuItem>
     </Submenu>
 
     <Submenu label="Earnings" icon="dollar-sign">
-      <MenuItem to="/dashboard/mlm/commissions">Commissions</MenuItem>
+      <MenuItem to="/dashboard/affiliate/commissions">Commissions</MenuItem>
       <MenuItem to="/dashboard/wallet">Wallet</MenuItem>
       <MenuItem to="/dashboard/wallet/withdraw">Withdraw</MenuItem>
     </Submenu>
@@ -685,7 +685,7 @@ client/
 │  Notification Triggers:                        │
 │  ├── New order placed                          │
 │  ├── Order shipped                             │
-│  ├── New downline member (MLM)                 │
+│  ├── New downline member (Affiliate)                 │
 │  ├── Commission earned                         │
 │  ├── Wallet transaction                        │
 │  ├── System announcements                      │
@@ -796,7 +796,7 @@ export const useWebPush = () => {
    - Default: 15 items per page
    - Products: 24 per page
    - Orders: 10 per page
-   - MLM tree: 50 nodes per level
+   - Affiliate tree: 50 nodes per level
 ```
 
 ### **Frontend Optimization**
@@ -804,7 +804,7 @@ export const useWebPush = () => {
 ```
 1. Code Splitting
    - Lazy load dashboard pages
-   - Lazy load MLM components
+   - Lazy load Affiliate components
    - Lazy load charts/heavy components
 
 2. Image Optimization
@@ -956,7 +956,7 @@ export const useWebPush = () => {
 
 ### **Phase 5: Dashboards** (Week 4)
 1. Dashboard layouts by type
-2. MLM tree visualization
+2. Affiliate tree visualization
 3. Commission tables
 4. Wallet integration
 5. Analytics charts
@@ -1007,7 +1007,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       <MenuItem v-if="isMemberOrAbove" to="/dashboard">Dashboard</MenuItem>
 
       <!-- Promoter+ -->
-      <MenuItem v-if="isPromoterOrAbove" to="/dashboard/mlm">MLM</MenuItem>
+      <MenuItem v-if="isPromoterOrAbove" to="/dashboard/affiliate">Affiliate</MenuItem>
 
       <!-- Advisor+ -->
       <MenuItem v-if="isAdvisor" to="/dashboard/advisor">Recruitment</MenuItem>
@@ -1049,7 +1049,7 @@ Get User:           < 100ms
 OTP Send:           < 300ms
 Product List:       < 200ms
 Cart Operations:    < 150ms
-MLM Tree (50 nodes): < 500ms
+Affiliate Tree (50 nodes): < 500ms
 ```
 
 ### **Frontend Metrics**

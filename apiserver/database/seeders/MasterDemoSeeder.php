@@ -352,9 +352,10 @@ class MasterDemoSeeder extends Seeder
         foreach ($products as $index => $product) {
             $isPercent = random_int(0, 1) === 1;
             $discountAmount = random_int(5, 20);
-            $salePrice = null;
 
-            if (! $isPercent) {
+            if ($isPercent) {
+                $salePrice = (int) round($product->price * (1 - ($discountAmount / 100)));
+            } else {
                 $salePrice = max(0, $product->price - ($discountAmount * 100));
             }
 

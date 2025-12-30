@@ -6,7 +6,7 @@
 
 Your existing models already capture ALL business activity:
 - `transactions` → All money movement (revenue, expenses, transfers)
-- `mlm_commissions` → All commission types (with `commissionable` morph)
+- `affiliate_commissions` → All commission types (with `commissionable` morph)
 - `user_subscriptions` → Membership revenue
 - `wallets` → All balances (user, admin - via morph)
 - `users` → Customer data
@@ -29,7 +29,7 @@ Your existing models already capture ALL business activity:
 | `business_snapshots` | Cached daily/monthly aggregates | Performance (avoid recalculating) |
 
 ### NO New Tables For:
-- ❌ Ledger entries (use `transactions` + `mlm_commissions`)
+- ❌ Ledger entries (use `transactions` + `affiliate_commissions`)
 - ❌ Revenue tracking (calculate from existing data)
 - ❌ Expense tracking (calculate from existing data)
 - ❌ Balance sheet (calculate from wallets + transactions)
@@ -65,9 +65,9 @@ Transaction::completed()
 Current purposes + Future:
 ```php
 // Current
-'subscription'           // MLM membership
+'subscription'           // Affiliate membership
 'wallet_topup'          // User adds money
-'commission_credit'     // MLM commission to user
+'commission_credit'     // Affiliate commission to user
 
 // Future - Just add as you launch services
 'job_application_fee'   // Job portal
@@ -84,7 +84,7 @@ Current purposes + Future:
 All expenses are already tracked:
 
 ```php
-// MLM Commissions paid (expense)
+// Affiliate Commissions paid (expense)
 MlmCommission::paid()
     ->whereNotIn('type', [CommissionTypeCast::REVERSAL, CommissionTypeCast::INCOME_DEDUCTION])
     ->sum('net_amount');
@@ -242,7 +242,7 @@ Schema::create('business_snapshots', function (Blueprint $table) {
     $table->json('revenue_breakdown')->nullable();  // by purpose
     $table->json('expense_breakdown')->nullable();  // by type
     $table->json('user_metrics')->nullable();       // counts, growth
-    $table->json('mlm_metrics')->nullable();        // commission stats
+    $table->json('affiliate_metrics')->nullable();        // commission stats
     
     $table->timestamps();
     
@@ -270,8 +270,8 @@ When you add new services, just add new `purpose` values:
 return [
     'revenue_purposes' => [
         // Current
-        'subscription' => ['label' => 'Membership', 'category' => 'mlm'],
-        'subscription_renewal' => ['label' => 'Renewal', 'category' => 'mlm'],
+        'subscription' => ['label' => 'Membership', 'category' => 'affiliate'],
+        'subscription_renewal' => ['label' => 'Renewal', 'category' => 'affiliate'],
         
         // Future - Just add here when you launch
         'job_application_fee' => ['label' => 'Job Application', 'category' => 'jobs'],
@@ -281,7 +281,7 @@ return [
     ],
     
     'expense_types' => [
-        'mlm_commission' => ['label' => 'MLM Commissions', 'source' => 'mlm_commissions'],
+        'affiliate_commission' => ['label' => 'Affiliate Commissions', 'source' => 'affiliate_commissions'],
         'admin_salary' => ['label' => 'Admin Profit Share', 'source' => 'admin_profit_distributions'],
         'refund' => ['label' => 'Refunds', 'source' => 'transactions'],
         'gateway_fee' => ['label' => 'Payment Gateway', 'source' => 'transactions.fee'],
@@ -443,7 +443,7 @@ public static function canView(): bool
 ## 11. Questions Answered
 
 1. **Revenue Sources**: From `transactions.purpose` field - extensible
-2. **Expense Categories**: From `mlm_commissions` + `transactions` (fees, refunds)
+2. **Expense Categories**: From `affiliate_commissions` + `transactions` (fees, refunds)
 3. **Historical Data**: Calculate from existing transactions, cache in snapshots
 4. **Future Services**: Just add new `purpose` values to config
 

@@ -165,7 +165,7 @@ The issue was that `app.vue` was using default Nuxt UI template which overrode o
 4. Implement password reset pages
 5. Add footer component
 6. Build e-commerce features
-7. Implement MLM commission system
+7. Implement Affiliate commission system
 
 ---
 

@@ -17,8 +17,8 @@ const toast = useToast()
 const { isLoggedIn } = useSanctum()
 const { isMember, isPromoter } = useUserType()
 
-// Only member and promoter can see MLM benefits (BV/PV)
-const canSeeMlmBenefits = computed(() => isMember.value || isPromoter.value)
+// Only member and promoter can see Affiliate benefits (BV/PV)
+const canSeeAffiliateBenefits = computed(() => isMember.value || isPromoter.value)
 
 // Types
 interface ProductData {
@@ -382,8 +382,8 @@ onMounted(() => {
               </p>
             </div>
 
-            <!-- MLM Benefits - Only visible to Member/Promoter -->
-            <div v-if="canSeeMlmBenefits && (product.bv > 0 || product.pv > 0 || product.reward_points > 0)" class="flex flex-wrap gap-2">
+            <!-- Affiliate Benefits - Only visible to Member/Promoter -->
+            <div v-if="canSeeAffiliateBenefits && (product.bv > 0 || product.pv > 0 || product.reward_points > 0)" class="flex flex-wrap gap-2">
               <span v-if="product.bv > 0" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
                 <UIcon name="i-lucide-trending-up" class="w-4 h-4 mr-1" />{{ product.bv }} BV
               </span>

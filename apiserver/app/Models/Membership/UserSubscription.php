@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Membership;
 
-use App\Contracts\Mlm\CommissionTrigger;
+use App\Contracts\Affiliate\CommissionTrigger;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 /**
  * UserSubscription Model - Tracks user membership subscriptions
  *
- * Implements CommissionTrigger to trigger MLM commissions when subscription is activated.
+ * Implements CommissionTrigger to trigger Affiliate commissions when subscription is activated.
  * Supports:
  * - New subscriptions (joining)
  * - Renewals

@@ -11,7 +11,7 @@ use InvalidArgumentException;
 /**
  * Commission Type Cast
  *
- * Defines the types of commissions in the MLM system.
+ * Defines the types of commissions in the Affiliate system.
  */
 final class CommissionTypeCast implements CastsAttributes
 {
@@ -72,7 +72,7 @@ final class CommissionTypeCast implements CastsAttributes
     /** Commission for achieving a milestone/goal */
     public const MILESTONE_BONUS = 'milestone_bonus';
 
-    /** Commission for referral conversion (non-MLM referral) */
+    /** Commission for referral conversion (non-Affiliate referral) */
     public const REFERRAL_BONUS = 'referral_bonus';
 
     /** Commission for performance/KPI achievement */
@@ -87,7 +87,7 @@ final class CommissionTypeCast implements CastsAttributes
     public static function values(): array
     {
         return [
-            // Member (MLM tree)
+            // Member (Affiliate tree)
             self::SPONSOR_BONUS,
             self::LEVEL_COMMISSION,
             self::MATCHING_BONUS,
@@ -140,7 +140,7 @@ final class CommissionTypeCast implements CastsAttributes
     }
 
     /**
-     * Get member commission types (MLM tree based)
+     * Get member commission types (Affiliate tree based)
      */
     public static function memberTypes(): array
     {
@@ -198,22 +198,22 @@ final class CommissionTypeCast implements CastsAttributes
     public static function configKey(string $type): ?string
     {
         return match ($type) {
-            self::SPONSOR_BONUS => 'mlm.member_commissions.sponsor_bonus.enabled',
-            self::LEVEL_COMMISSION => 'mlm.member_commissions.level_commission.enabled',
-            self::MATCHING_BONUS => 'mlm.member_commissions.matching_bonus.enabled',
-            self::LEVEL_ACHIEVEMENT => 'mlm.member_commissions.level_achievement.enabled',
-            self::POOL_BONUS => 'mlm.member_commissions.pool_bonus.enabled',
-            self::PURCHASE_COMMISSION => 'mlm.member_commissions.purchase_commission.enabled',
-            self::RENEWAL_BONUS => 'mlm.member_commissions.renewal_bonus.enabled',
-            self::ORIGINATOR_JOINING => 'mlm.originator_commissions.joining_commission.enabled',
-            self::ORIGINATOR_RECURRING => 'mlm.originator_commissions.recurring_commission.enabled',
-            self::AGENT_SALARY => 'mlm.agent_salary.enabled',
-            self::INCOME_DEDUCTION => 'mlm.income_deduction.enabled',
-            self::TASK_COMPLETION => 'mlm.task_commissions.task_completion.enabled',
-            self::MILESTONE_BONUS => 'mlm.task_commissions.milestone_bonus.enabled',
-            self::REFERRAL_BONUS => 'mlm.task_commissions.referral_bonus.enabled',
-            self::PERFORMANCE_BONUS => 'mlm.task_commissions.performance_bonus.enabled',
-            self::CUSTOM => 'mlm.task_commissions.custom.enabled',
+            self::SPONSOR_BONUS => 'affiliate.member_commissions.sponsor_bonus.enabled',
+            self::LEVEL_COMMISSION => 'affiliate.member_commissions.level_commission.enabled',
+            self::MATCHING_BONUS => 'affiliate.member_commissions.matching_bonus.enabled',
+            self::LEVEL_ACHIEVEMENT => 'affiliate.member_commissions.level_achievement.enabled',
+            self::POOL_BONUS => 'affiliate.member_commissions.pool_bonus.enabled',
+            self::PURCHASE_COMMISSION => 'affiliate.member_commissions.purchase_commission.enabled',
+            self::RENEWAL_BONUS => 'affiliate.member_commissions.renewal_bonus.enabled',
+            self::ORIGINATOR_JOINING => 'affiliate.originator_commissions.joining_commission.enabled',
+            self::ORIGINATOR_RECURRING => 'affiliate.originator_commissions.recurring_commission.enabled',
+            self::AGENT_SALARY => 'affiliate.agent_salary.enabled',
+            self::INCOME_DEDUCTION => 'affiliate.income_deduction.enabled',
+            self::TASK_COMPLETION => 'affiliate.task_commissions.task_completion.enabled',
+            self::MILESTONE_BONUS => 'affiliate.task_commissions.milestone_bonus.enabled',
+            self::REFERRAL_BONUS => 'affiliate.task_commissions.referral_bonus.enabled',
+            self::PERFORMANCE_BONUS => 'affiliate.task_commissions.performance_bonus.enabled',
+            self::CUSTOM => 'affiliate.task_commissions.custom.enabled',
             default => null,
         };
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Mlm\MlmCommission;
+use App\Models\Affiliate\AffiliateCommission;
 use App\Models\Recruitment\Recruitment;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -77,7 +77,7 @@ final class PublicStatsController extends Controller
      */
     private function getTotalPayouts(): array
     {
-        $totalPaisa = MlmCommission::where('status', 'processed')->sum('amount');
+        $totalPaisa = AffiliateCommission::where('status', 'processed')->sum('amount');
         $totalRupees = $totalPaisa / 100;
 
         return [

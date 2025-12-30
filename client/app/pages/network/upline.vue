@@ -21,7 +21,7 @@ const isLoading = ref(false)
 const fetchParent = async () => {
   isLoading.value = true
   try {
-    const response = await useSanctumFetch(`${config.public.apiBase}/api/mlm/upline`, {
+    const response = await useSanctumFetch(`${config.public.apiBase}/api/affiliate/upline`, {
       method: 'GET'
     })
 

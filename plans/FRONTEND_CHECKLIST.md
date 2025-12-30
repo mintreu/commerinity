@@ -365,7 +365,7 @@ editForm: {
 
 ---
 
-# 4. MLM NETWORK SYSTEM
+# 4. Affiliate NETWORK SYSTEM
 
 ## 4.1 My Team/Community (`/dashboard/myteam`)
 
@@ -929,7 +929,7 @@ interface CartResponse {
 | useSubscription | Plans & subscription | [x] |
 | useNetwork | Network/community data | [x] |
 | useCommissions | Commission calculations | [x] |
-| useMlmTree | MLM genealogy visualization | [x] |
+| useMlmTree | Affiliate genealogy visualization | [x] |
 | useMessages | Messaging system | [~] |
 | useHelpdesk | Support tickets | [~] |
 | useNotices | System notices | [x] |
@@ -1040,7 +1040,7 @@ interface CartResponse {
 | Authentication | 20 features | 18 features | 90% |
 | Dashboard | 18 features | 17 features | 95% |
 | Wallet | 35 features | 33 features | 95% |
-| Network/MLM | 25 features | 24 features | 95% |
+| Network/Affiliate | 25 features | 24 features | 95% |
 | Subscription | 30 features | 28 features | 93% |
 | E-Commerce | 40 features | 5 features | 12% |
 | Career | 15 features | 0 features | 0% |

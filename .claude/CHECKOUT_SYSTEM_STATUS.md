@@ -207,7 +207,7 @@ User clicks "Subscribe to Member"
   → Frontend redirects to /checkout/{transaction}
   → User pays
   → Webhook → PaymentCompleted
-  → Listener activates subscription, assigns level, adds to MLM network
+  → Listener activates subscription, assigns level, adds to Affiliate network
   → User redirected to dashboard as MEMBER
 ```
 
@@ -242,7 +242,7 @@ User applies for job with fee
 
 ### **Easiest First** (Recommended)
 1. **Wallet Topup** - Simplest, no complex business logic
-2. **Subscription Checkout** - Medium complexity, triggers MLM
+2. **Subscription Checkout** - Medium complexity, triggers Affiliate
 3. **Recruitment Payment** - Already mostly done
 
 ### **File Creation Order**

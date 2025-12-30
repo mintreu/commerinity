@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const features = [
   {
-    title: 'Smart MLM System',
+    title: 'Smart Affiliate System',
     description: 'Advanced network marketing platform with real-time tracking, commission calculations, and comprehensive team management tools.',
     icon: 'i-lucide-network',
     features: ['Real-time analytics dashboard', 'Automated commission payouts', 'Multi-tier team structure'],

@@ -27,7 +27,9 @@
       "Bash(git add:*)",
       "Bash(git clean:*)",
       "Bash(git checkout:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:filamentphp.com)",
+      "Bash(php artisan:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -356,14 +356,14 @@ final class MessageController extends Controller
 
     /**
      * Get list of users the authenticated user can message.
-     * Only users in MLM network (parent/children) can message each other.
+     * Only users in Affiliate network (parent/children) can message each other.
      */
     public function availableRecipients(Request $request): JsonResponse
     {
         $user = $request->user();
         $search = $request->input('search');
 
-        // Get users from MLM network (parent and direct referrals)
+        // Get users from Affiliate network (parent and direct referrals)
         $parentId = $user->genealogy?->parent_id;
         $childrenIds = $user->referrals()->pluck('id')->toArray();
 

@@ -1,5 +1,5 @@
 # COMPLETE REFACTOR HISTORY - Commerinity Pro
-**Project:** MLM + E-commerce Platform Refactor
+**Project:** Affiliate + E-commerce Platform Refactor
 **Duration:** December 8, 2025 - December 23, 2025 (15 days)
 **Status:** 95% Complete - Ready for Checkout/Payout Implementation
 **Next Session Location:** `C:\laragon\www\mintreu\server\commerinity` (old git repo)
@@ -100,13 +100,13 @@ This document is created before **merging refactored code into the old GitHub re
 
 ---
 
-### 2. User Model & MLM Structure ✅ COMPLETE (100%)
+### 2. User Model & Affiliate Structure ✅ COMPLETE (100%)
 
 **Models:**
 - ✅ `app/Models/User.php` - Complete user model with:
   - UUID generation: `REG2025` + 12 chars
   - Referral code: 8 chars unique
-  - MLM parent-child relationships
+  - Affiliate parent-child relationships
   - Originator system (agent recruitment)
   - Onboarding status tracking
   - 5 user types: Regular, Member, Promoter, Advisor, Mentor
@@ -117,9 +117,9 @@ This document is created before **merging refactored code into the old GitHub re
 - ✅ `app/Casts/GenderCast.php` - Male, Female, Other, Prefer Not to Say
 - ✅ `app/Casts/KycStatusCast.php` - NOT_SUBMITTED, PENDING, VERIFIED, REJECTED
 
-**MLM Relationships:**
+**Affiliate Relationships:**
 ```php
-// Parent-Child (MLM Tree)
+// Parent-Child (Affiliate Tree)
 $user->parent;     // Direct upline
 $user->children;   // Direct downline
 
@@ -302,7 +302,7 @@ PaymentService (main orchestrator)
 
 ---
 
-### 5. MLM System ✅ COMPLETE (Backend 100%, Frontend 0%)
+### 5. Affiliate System ✅ COMPLETE (Backend 100%, Frontend 0%)
 
 **Backend Models:**
 - ✅ `app/Models/MlmGenealogy.php` - Tree structure tracking
@@ -314,7 +314,7 @@ PaymentService (main orchestrator)
 
 - ✅ `app/Models/MlmCommission.php` - Commission records
   - 8 commission types:
-    - level_1, level_2, level_3, level_4 (MLM tree)
+    - level_1, level_2, level_3, level_4 (Affiliate tree)
     - sponsor_bonus, matching_bonus
     - originator (agent commission)
     - performance_bonus
@@ -322,7 +322,7 @@ PaymentService (main orchestrator)
   - Status: pending, approved, paid, cancelled
   - Related transaction tracking
 
-- ✅ `app/Models/Membership/Level.php` - MLM ranks
+- ✅ `app/Models/Membership/Level.php` - Affiliate ranks
 - ✅ `app/Models/Membership/Stage.php` - Subscription stages
   - Basic: ₹250 (PV: 25)
   - Premium: ₹500 (PV: 50)
@@ -335,9 +335,9 @@ PaymentService (main orchestrator)
   - Auto-renewal tracking
   - Commission eligibility
 
-**MLM Configuration:**
+**Affiliate Configuration:**
 ```php
-// config/mlm.php (from old project, documented)
+// config/affiliate.php (from old project, documented)
 'commissions' => [
     'level_1' => 5,  // 5% to direct sponsor
     'level_2' => 4,  // 4% to level 2 upline
@@ -392,8 +392,8 @@ PaymentService (main orchestrator)
   - Transactions created
 
 **Documentation:**
-- ✅ `.claude/plans/MLM_MATRIX_5X4_SYSTEM.md`
-- ✅ `.claude/plans/MLM_MEMBERSHIP_ENTERPRISE_PLAN.md`
+- ✅ `.claude/plans/Affiliate_MATRIX_5X4_SYSTEM.md`
+- ✅ `.claude/plans/Affiliate_MEMBERSHIP_ENTERPRISE_PLAN.md`
 
 **Test Coverage:** Included in overall 855 tests
 
@@ -409,7 +409,7 @@ PaymentService (main orchestrator)
 **Frontend Components:**
 - ✅ `client/app/pages/dashboard/index.vue` - Dynamic loader
 - ✅ `client/app/components/dashboard/DashboardRegular.vue` - E-commerce focused
-- ✅ `client/app/components/dashboard/DashboardMember.vue` - MLM member
+- ✅ `client/app/components/dashboard/DashboardMember.vue` - Affiliate member
 - ✅ `client/app/components/dashboard/DashboardPromoter.vue` - Team leader
 - ✅ `client/app/components/dashboard/DashboardAdvisor.vue` - Professional advisor
 - ✅ `client/app/components/dashboard/DashboardMentor.vue` - Expert mentor
@@ -649,7 +649,7 @@ trackAction('button_clicked', { button: 'share' })
 - ✅ Wallet management
 - ✅ Transaction logs
 - ✅ KYC verification
-- ✅ MLM genealogy viewer
+- ✅ Affiliate genealogy viewer
 - ✅ SMS logs & providers
 - ✅ Membership management
 - ✅ Activity logs viewer
@@ -874,7 +874,7 @@ apiserver/
 │   │   │   ├── Contracts/
 │   │   │   ├── DTOs/
 │   │   │   └── Providers/  # 6 providers
-│   │   ├── Mlm/            # MLM services
+│   │   ├── Mlm/            # Affiliate services
 │   │   ├── Trends/         # Analytics services (6)
 │   │   └── UserServices/   # User-specific services
 │   └── ...
@@ -940,7 +940,7 @@ client/
 
 **Authentication (43 tests):**
 - OtpManagerTest: 10 tests (rate limiting, hashing, demo mode)
-- User model: 33 tests (UUID, referral codes, MLM relationships)
+- User model: 33 tests (UUID, referral codes, Affiliate relationships)
 - Registration: 15 tests
 - Login: 27 tests (4 methods)
 - Password Reset: 20 tests
@@ -969,7 +969,7 @@ client/
 - Withdrawal tests
 - Payment status tests
 
-**MLM System (tests included in overall):**
+**Affiliate System (tests included in overall):**
 - Commission calculation tests
 - Tree structure tests
 - Genealogy tests
@@ -1019,7 +1019,7 @@ tests/
 2. **User Management** - UUID, referral codes, relationships
 3. **Wallet System** - P2P transfers, PIN security, balance tracking
 4. **Transaction Tracking** - Full audit trail
-5. **MLM Backend** - Commission processing, tree structure
+5. **Affiliate Backend** - Commission processing, tree structure
 6. **Dashboard System** - 5 type-specific dashboards
 7. **Recruitment System** - End-to-end job applications
 8. **Helpdesk System** - Ticketing and FAQ
@@ -1048,7 +1048,7 @@ tests/
    - Users can't top-up wallets from external sources
    - **Estimated:** 1.5 days (reuse checkout)
 
-4. **MLM Frontend** (HIGH PRIORITY)
+4. **Affiliate Frontend** (HIGH PRIORITY)
    - No network tree visualization
    - No commission dashboard
    - Members can't see their team
@@ -1082,8 +1082,8 @@ tests/
 - ✅ `OLD_COMMERINITY_DESIGN.md` (design system from old project)
 
 **Planning Documents:**
-- ✅ `MLM_MATRIX_5X4_SYSTEM.md` (MLM architecture)
-- ✅ `MLM_MEMBERSHIP_ENTERPRISE_PLAN.md` (membership system)
+- ✅ `Affiliate_MATRIX_5X4_SYSTEM.md` (Affiliate architecture)
+- ✅ `Affiliate_MEMBERSHIP_ENTERPRISE_PLAN.md` (membership system)
 - ✅ `ONBOARDING_ENTERPRISE_FINAL.md` (650 lines, onboarding flow)
 - ✅ `API_FRONTEND_BLUEPRINT.md` (full-stack architecture)
 
@@ -1147,13 +1147,13 @@ tests/
 3. Fix any issues
 4. Deploy v1.0
 
-### Short-term (Week 2): MLM Frontend
+### Short-term (Week 2): Affiliate Frontend
 
 **Day 7-8: Network Visualization**
 1. Choose library (D3.js or vue-flow)
 2. Build tree visualization component
 3. Add downline list/table
-4. Integrate with existing MLM backend
+4. Integrate with existing Affiliate backend
 
 **Day 9-10: Commission Dashboard**
 1. Commission breakdown UI
@@ -1393,7 +1393,7 @@ git push origin development
 ### 10. Priority After Migration
 1. **Checkout flow** (3 days) - HIGHEST PRIORITY
 2. **Payout wiring** (2 days) - SECOND PRIORITY
-3. **MLM frontend** (2 days) - THIRD PRIORITY
+3. **Affiliate frontend** (2 days) - THIRD PRIORITY
 4. **E-commerce** (later) - DEFERRED
 
 ---
@@ -1403,7 +1403,7 @@ git push origin development
 ### Code
 - ✅ 855 tests passing
 - ✅ Complete wallet system
-- ✅ Complete MLM backend
+- ✅ Complete Affiliate backend
 - ✅ Complete dashboard system
 - ✅ Complete recruitment system
 - ✅ Complete helpdesk system
@@ -1439,11 +1439,11 @@ git push origin development
 ### Feature Completeness
 - ✅ **Auth:** 100% complete
 - ✅ **Wallet:** 95% complete (needs checkout/payout)
-- ✅ **MLM Backend:** 100% complete
+- ✅ **Affiliate Backend:** 100% complete
 - ✅ **Dashboard:** 100% complete
 - ✅ **Recruitment:** 100% complete
 - ✅ **Helpdesk:** 100% complete
-- ⚠️ **MLM Frontend:** 0% (high priority)
+- ⚠️ **Affiliate Frontend:** 0% (high priority)
 - ❌ **E-commerce:** 0% (deferred)
 
 ### Performance
@@ -1467,7 +1467,7 @@ git push origin development
 
 ### Phase 1: MVP Launch (Week 1-2)
 - Complete checkout/payout
-- Complete MLM frontend
+- Complete Affiliate frontend
 - Launch with subscriptions + recruitment
 - **Revenue streams:** Subscriptions, recruitment fees
 
@@ -1545,7 +1545,7 @@ After migration:
 
 **What's Left:**
 - 3-6 days of checkout/payout work
-- 2 days of MLM frontend
+- 2 days of Affiliate frontend
 - Then launch v1.0 with subscriptions + recruitment
 
 **This refactor is a SUCCESS. Now let's finish strong!**

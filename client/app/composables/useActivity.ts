@@ -228,10 +228,10 @@ export function useActivity() {
   }
 
   /**
-   * Track network/MLM tree view
+   * Track network/Affiliate tree view
    */
   const trackNetworkView = (): Promise<void> => {
-    return track('network_view', 'User viewed network/MLM tree')
+    return track('network_view', 'User viewed network/Affiliate tree')
   }
 
   /**

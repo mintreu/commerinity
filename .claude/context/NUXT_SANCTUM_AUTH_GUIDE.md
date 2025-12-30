@@ -202,7 +202,7 @@ await login(credentials, {}, async (response, user) => {
 
     // Type-based redirect
     if (user?.type === 'PROMOTER') {
-        return await navigateTo('/mlm/dashboard')
+        return await navigateTo('/affiliate/dashboard')
     } else if (user?.type === 'MEMBER') {
         return await navigateTo('/member/dashboard')
     }
@@ -291,7 +291,7 @@ definePageMeta({
 export default defineNuxtConfig({
     routeRules: {
         '/dashboard/**': { middleware: ['$auth'] },
-        '/mlm/**': { middleware: ['$auth'] },
+        '/affiliate/**': { middleware: ['$auth'] },
         '/member/**': { middleware: ['$auth'] },
     }
 })
@@ -405,7 +405,7 @@ const handleLogin = async () => {
         await login(creds, {}, async (response, user) => {
             // Type-based redirect
             if (user?.type === 'PROMOTER') {
-                return await navigateTo('/mlm/dashboard')
+                return await navigateTo('/affiliate/dashboard')
             } else if (user?.type === 'MEMBER') {
                 return await navigateTo('/member/dashboard')
             }
@@ -516,7 +516,7 @@ watch(user, (newUser) => {
     const typeRoutes = {
         'REGULAR': '/dashboard',
         'MEMBER': '/member/dashboard',
-        'PROMOTER': '/mlm/dashboard',
+        'PROMOTER': '/affiliate/dashboard',
         'ADVISOR': '/advisor/recruitment',
         'MENTOR': '/mentor/overview',
     }
@@ -661,7 +661,7 @@ const loadCart = async () => {
         <!-- Member Dashboard -->
         <DashboardMember v-else-if="user?.type === 'MEMBER'" />
 
-        <!-- Promoter MLM Dashboard -->
+        <!-- Promoter Affiliate Dashboard -->
         <DashboardPromoter v-else-if="user?.type === 'PROMOTER'" />
 
         <!-- Advisor Recruitment Tools -->
@@ -895,7 +895,7 @@ const handleLogin = async () => {
             const typeRoutes = {
                 'REGULAR': '/dashboard',
                 'MEMBER': '/member/dashboard',
-                'PROMOTER': '/mlm/dashboard',
+                'PROMOTER': '/affiliate/dashboard',
                 'ADVISOR': '/advisor/recruitment',
                 'MENTOR': '/mentor/overview',
             }

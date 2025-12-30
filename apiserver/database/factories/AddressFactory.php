@@ -29,12 +29,12 @@ class AddressFactory extends Factory
             ?? Block::factory()->forState($state)->create();
 
         return [
-            'title' => fake()->randomElement(['Home', 'Office', 'Work', 'Other']),
+            'title' => fake()->randomElement(['Home', 'Work', 'Other']),
             'person_name' => fake()->name(),
             'person_email' => fake()->safeEmail(),
             'person_mobile' => fake()->numerify('##########'),
             'alternate_contact' => fake()->boolean(30) ? fake()->numerify('##########') : null,
-            'type' => 'home',
+            'type' => \App\Casts\AddressTypeCast::HOME,
             'address_1' => fake()->streetAddress(),
             'address_2' => fake()->boolean(40) ? fake()->secondaryAddress() : null,
             'landmark' => fake()->boolean(50) ? fake()->randomElement([
@@ -79,13 +79,13 @@ class AddressFactory extends Factory
     }
 
     /**
-     * Create office address.
+     * Create work address.
      */
-    public function office(): static
+    public function work(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'office',
-            'title' => 'Office',
+            'type' => \App\Casts\AddressTypeCast::WORK,
+            'title' => 'Work',
         ]);
     }
 

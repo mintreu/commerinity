@@ -404,7 +404,7 @@ onboarded: false
 
 1. **Mobile is Primary**: Always require mobile, email is optional
 2. **OTP is Mandatory**: All registrations require OTP verification
-3. **Referral Code**: Optional for MLM parent linking
+3. **Referral Code**: Optional for Affiliate parent linking
 4. **Token Strategy**: One token per device, multiple sessions allowed
 5. **Password Reset**: Two methods (email token, mobile OTP)
 6. **Rate Limiting**: Prevent brute force on OTP and login

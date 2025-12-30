@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
-use App\Services\UserServices\UserMlmService;
+use App\Services\UserServices\UserAffiliateService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Log;
  *
  * Handles:
  * - Wallet TopUp → Update balance
- * - Subscription → Activate membership + MLM
+ * - Subscription → Activate membership + Affiliate
  * - JobApplication → Submit application
  * - Order → Confirm order (future)
  */
@@ -90,7 +90,7 @@ final class HandlePaymentCompleted
     }
 
     /**
-     * Handle subscription payment (activate membership + MLM)
+     * Handle subscription payment (activate membership + Affiliate)
      */
     private function handleSubscriptionPayment(mixed $transaction, UserSubscription $subscription): void
     {
@@ -98,13 +98,13 @@ final class HandlePaymentCompleted
             $subscription->load('user');
             $user = $subscription->user;
 
-            // 1. Auto-placement in MLM tree (if has sponsor)
+            // 1. Auto-placement in Affiliate tree (if has sponsor)
             if ($user->parent_id) {
                 $sponsor = User::find($user->parent_id);
-                $mlmService = app(UserMlmService::class);
-                $mlmService->placeUser($user, $sponsor);
+                $affiliateService = app(UserAffiliateService::class);
+                $affiliateService->placeUser($user, $sponsor);
 
-                Log::info('User placed in MLM tree', [
+                Log::info('User placed in Affiliate tree', [
                     'user_id' => $user->id,
                     'sponsor_id' => $sponsor->id,
                 ]);

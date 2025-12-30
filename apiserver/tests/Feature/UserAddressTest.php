@@ -64,7 +64,7 @@ test('user onboarding requires email or mobile verification', function () {
     expect($user->fresh()->isOnboardingComplete())->toBeTrue();
 });
 
-test('user can have mlm parent relationship', function () {
+test('user can have affiliate parent relationship', function () {
     $parent = User::factory()->create();
     $child = User::factory()->create(['parent_id' => $parent->id]);
 
@@ -73,7 +73,7 @@ test('user can have mlm parent relationship', function () {
         ->and($parent->children->first()->id)->toBe($child->id);
 });
 
-test('user can have multiple mlm children', function () {
+test('user can have multiple affiliate children', function () {
     $parent = User::factory()->create();
     User::factory()->count(5)->create(['parent_id' => $parent->id]);
 

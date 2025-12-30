@@ -98,7 +98,7 @@
 4. Test order status workflow
 
 ### Day 4-5
-1. Add MLM integration (BV/PV on products)
+1. Add Affiliate integration (BV/PV on products)
 2. Product commission triggering
 3. Member pricing
 4. Reward points system

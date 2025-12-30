@@ -224,7 +224,7 @@ describe('ProductStock Scopes', function () {
 });
 
 describe('ProductStock Factory', function () {
-    it('creates stock with calculated MLM values', function () {
+    it('creates stock with calculated Affiliate values', function () {
         $stock = ProductStock::factory()->create();
 
         expect($stock->bv)->toBeGreaterThan(0)

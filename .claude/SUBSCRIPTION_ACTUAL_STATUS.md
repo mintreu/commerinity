@@ -15,7 +15,7 @@
    - Level progression checks
    - Renewal & upgrade logic
 
-2. **UserMlmService** - MLM operations
+2. **UserMlmService** - Affiliate operations
    - **BFS auto-placement algorithm** (5-hand limit) ✅
    - Find available slot in tree
    - Place user correctly
@@ -56,7 +56,7 @@
   - Handles subscription payment
   - Handles recruitment payment
   - Updates user type to MEMBER
-  - Triggers MLM commissions
+  - Triggers Affiliate commissions
 
 ---
 
@@ -136,8 +136,8 @@ private function handleSubscriptionPayment($transaction, $subscription): void
 
     // ADD THIS:
     if ($user->parent_id) {
-        $mlmService = app(UserMlmService::class);
-        $mlmService->placeUser($user, $user->parent, $subscription->originator);
+        $affiliateService = app(UserMlmService::class);
+        $affiliateService->placeUser($user, $user->parent, $subscription->originator);
     }
 }
 ```
@@ -164,7 +164,7 @@ private function handleSubscriptionPayment($transaction, $subscription): void
 
 ### Should Have (Post-Launch)
 3. ⏳ Gift subscription (3h)
-4. ⏳ MLM frontend visualization (2 days)
+4. ⏳ Affiliate frontend visualization (2 days)
 
 ---
 

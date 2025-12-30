@@ -35,10 +35,10 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Commerinity Pro - MLM & E-Commerce Platform',
+      title: 'Commerinity Pro - Affiliate & E-Commerce Platform',
       titleTemplate: '%s | Commerinity Pro',
       meta: [
-        { name: 'description', content: 'Commerinity Pro - Premium MLM & E-Commerce Platform. Shop smart, earn more, grow your network.' },
+        { name: 'description', content: 'Commerinity Pro - Premium Affiliate & E-Commerce Platform. Shop smart, earn more, grow your network.' },
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
         { name: 'theme-color', content: '#a855f7' },

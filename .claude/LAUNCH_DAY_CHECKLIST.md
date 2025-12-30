@@ -10,16 +10,16 @@
 | Wallet | READY | PIN, Topup, Send, Withdraw |
 | Subscription | READY | Wallet + Gateway payment |
 | Checkout | READY | Cashfree/Razorpay integrated |
-| MLM Backend | READY | Auto-placement, commissions |
-| MLM Frontend | NOT READY | Tree visualization missing |
+| Affiliate Backend | READY | Auto-placement, commissions |
+| Affiliate Frontend | NOT READY | Tree visualization missing |
 | E-commerce | 70% | Models done, Cart service pending |
 | Dashboard | READY | 5 type-specific dashboards |
 
 ## Launch Blockers (Must Fix)
 
-1. **MLM Tree Visualization** - HIGH PRIORITY
+1. **Affiliate Tree Visualization** - HIGH PRIORITY
    - Frontend needs network tree component
-   - Genealogy API exists: `/api/mlm/genealogy`
+   - Genealogy API exists: `/api/affiliate/genealogy`
 
 2. **E-commerce Cart** - MEDIUM PRIORITY
    - Models exist, need CartService
@@ -61,7 +61,7 @@ old_project/backend/app/Filament/Resources/Sales/SaleResource.php
 
 - `MoneyService` - Currency formatting (enterprise version)
 - `SubscriptionService` - Subscription management
-- `UserMlmService` - MLM operations
+- `UserMlmService` - Affiliate operations
 - `PaymentService` - Provider-agnostic payments
 - `WalletService` - Wallet operations
 

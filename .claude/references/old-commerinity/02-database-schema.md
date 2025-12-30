@@ -10,7 +10,7 @@
 ### User Management
 
 #### `users`
-**Purpose**: Main user table with MLM hierarchy
+**Purpose**: Main user table with Affiliate hierarchy
 
 **Key Columns**:
 - `id` (bigint, PK)
@@ -18,7 +18,7 @@
 - `name`, `email`, `mobile`
 - `password`
 - `referral_code` (string, unique, 8 chars uppercase)
-- `parent_id` (bigint, FK to users) - MLM tree structure
+- `parent_id` (bigint, FK to users) - Affiliate tree structure
 - `originator_type`, `originator_id` - Polymorphic (who recruited)
 - `type` - User type enum (regular/premium)
 - `status` - Auth status enum (draft/active/suspended)
@@ -272,7 +272,7 @@ Bank/UPI details for payouts
 - `status` (pending/approved/rejected)
 - Uses Spatie Media Library for document uploads
 
-### Incentives (MLM Commission System)
+### Incentives (Affiliate Commission System)
 
 #### `incentives`
 Base incentive records
@@ -413,7 +413,7 @@ Database-backed sessions
 - **transactable**: Transactions for Orders or Wallet operations
 
 ### Hierarchical Relations (Adjacency List)
-- **users.parent_id** - MLM tree structure
+- **users.parent_id** - Affiliate tree structure
 - **categories.parent_id** - Category hierarchy
 - **products.parent_id** - Product variants
 
@@ -444,7 +444,7 @@ Database-backed sessions
 
 ### Recommended Indexes
 - `users.referral_code` - UNIQUE
-- `users.parent_id` - For MLM tree queries
+- `users.parent_id` - For Affiliate tree queries
 - `users.email` - UNIQUE
 - `products.sku` - UNIQUE
 - `products.url` - UNIQUE

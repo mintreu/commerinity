@@ -34,7 +34,7 @@ final class UserResource extends JsonResource
             'email_verified' => ! is_null($this->email_verified_at),
             'mobile_verified' => $this->hasVerifiedMobile(),
 
-            // MLM Tree
+            // Affiliate Tree
             'referral_code' => $this->referral_code,
             'parent' => $this->when($this->parent, fn () => [
                 'uuid' => $this->parent->uuid,
@@ -60,8 +60,8 @@ final class UserResource extends JsonResource
             // KYC Status
             'kyc_status' => $this->kyc?->status->value ?? KycStatusCast::NOT_SUBMITTED->value,
 
-            // Team Summary (for MLM users) - computed on demand
-            'team_summary' => $this->when($this->isMlmUser(), fn () => [
+            // Team Summary (for Affiliate users) - computed on demand
+            'team_summary' => $this->when($this->isAffiliateUser(), fn () => [
                 'direct_count' => $this->children()->count(),
                 'active_count' => $this->children()
                     ->whereIn('type', [UserTypeCast::MEMBER, UserTypeCast::PROMOTER])
@@ -76,15 +76,15 @@ final class UserResource extends JsonResource
             'permissions' => [
                 'can_withdraw' => $this->canWithdraw(),
                 'can_refer' => $this->canRefer(),
-                'can_access_mlm' => $this->canAccessMlm(),
+                'can_access_affiliate' => $this->canAccessAffiliate(),
                 'can_access_team' => $this->canAccessTeam(),
             ],
 
             // Feature Flags (for UI rendering)
             'features' => [
                 'show_wallet' => $this->shouldShowWallet(),
-                'show_network' => $this->isMlmUser(),
-                'show_earnings' => $this->isMlmUser(),
+                'show_network' => $this->isAffiliateUser(),
+                'show_earnings' => $this->isAffiliateUser(),
                 'show_team' => $this->canAccessTeam(),
                 'show_training' => $this->canAccessTraining(),
                 'show_upgrade_prompt' => $this->shouldShowUpgradePrompt(),
@@ -93,9 +93,9 @@ final class UserResource extends JsonResource
     }
 
     /**
-     * Check if user is an MLM participant (Member, Promoter, or higher)
+     * Check if user is an Affiliate participant (Member, Promoter, or higher)
      */
-    private function isMlmUser(): bool
+    private function isAffiliateUser(): bool
     {
         return in_array($this->type, [
             UserTypeCast::MEMBER,
@@ -110,7 +110,7 @@ final class UserResource extends JsonResource
      */
     private function canWithdraw(): bool
     {
-        return $this->isMlmUser()
+        return $this->isAffiliateUser()
             && $this->status === UserStatusCast::ACTIVE
             && $this->hasApprovedKyc();
     }
@@ -124,11 +124,11 @@ final class UserResource extends JsonResource
     }
 
     /**
-     * Check if user can access MLM features
+     * Check if user can access Affiliate features
      */
-    private function canAccessMlm(): bool
+    private function canAccessAffiliate(): bool
     {
-        return $this->isMlmUser() && $this->status === UserStatusCast::ACTIVE;
+        return $this->isAffiliateUser() && $this->status === UserStatusCast::ACTIVE;
     }
 
     /**
@@ -159,7 +159,7 @@ final class UserResource extends JsonResource
      */
     private function shouldShowWallet(): bool
     {
-        return $this->isMlmUser();
+        return $this->isAffiliateUser();
     }
 
     /**

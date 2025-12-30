@@ -4,7 +4,7 @@
 
 ### What Was Accomplished
 
-Successfully completed the **end-to-end subscription system** with full payment gateway integration and auto-placement in MLM tree.
+Successfully completed the **end-to-end subscription system** with full payment gateway integration and auto-placement in Affiliate tree.
 
 ### Key Features Delivered
 
@@ -84,7 +84,7 @@ User → API Request → Create Transaction → Redirect to Checkout
 ```
 ✅ Successfully generated 71 demo users
 ✅ Created subscriptions with sponsors
-✅ Generated MLM commissions
+✅ Generated Affiliate commissions
 ✅ Updated genealogy statistics
 ✅ Created wallet transactions
 ```
@@ -145,7 +145,7 @@ User → API Request → Create Transaction → Redirect to Checkout
 **Separation of Concerns**:
 - `SubscriptionController` - HTTP layer, validation
 - `SubscriptionService` - Business logic, activation
-- `UserMlmService` - MLM tree placement (BFS)
+- `UserMlmService` - Affiliate tree placement (BFS)
 - `CommissionProcessorService` - Commission calculations
 - `PaymentService` - Payment gateway abstraction
 
@@ -173,7 +173,7 @@ HandlePaymentCompleted Listener
 
 3. **Test Failures**
    - Fixed field name assertions (originator → sponsor)
-   - All MLM journey tests now passing
+   - All Affiliate journey tests now passing
 
 ### Git Commit
 
@@ -188,7 +188,7 @@ Complete subscription system with gateway payment and auto-placement
 - Renamed originator → sponsor in UserSubscription (nullable morph to track who paid)
 - Added payment_method parameter (wallet, cashfree, razorpay)
 - Integrated HasTransaction trait to UserSubscription for gateway payments
-- Auto-placement in MLM tree after payment completion (BFS algorithm)
+- Auto-placement in Affiliate tree after payment completion (BFS algorithm)
 - Fixed DemoMlmSeeder enum errors (milestone_bonus/performance_bonus → matching_bonus/level_achievement)
 - Fixed mobile sidebar z-index issue (sidebar z-60, overlay z-50)
 

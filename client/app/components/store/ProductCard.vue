@@ -3,7 +3,7 @@
  * Smart Product Card Component
  * Adapts based on authentication status and user type:
  * - Guest/Regular: Shows pricing, rewards CTA
- * - Member/Promoter: Shows BV/PV, reward points (MLM benefits)
+ * - Member/Promoter: Shows BV/PV, reward points (Affiliate benefits)
  * - Advisor/Mentor: Shows rewards but no BV/PV (company employees)
  */
 import type { Product } from '~/types/catalog'
@@ -24,8 +24,8 @@ const props = withDefaults(defineProps<Props>(), {
 const { isLoggedIn } = useSanctum()
 const { isMember, isPromoter } = useUserType()
 
-// Check if user can earn MLM benefits (only member and promoter)
-const canEarnMlmBenefits = computed(() => isMember.value || isPromoter.value)
+// Check if user can earn Affiliate benefits (only member and promoter)
+const canEarnAffiliateBenefits = computed(() => isMember.value || isPromoter.value)
 
 // Cart functionality
 const { addToCart: addToCartComposable } = useCart()
@@ -114,9 +114,9 @@ const truncatedDescription = computed(() => {
         {{ product.sale_name }}
       </div>
 
-      <!-- MLM Badge - Only for Member/Promoter -->
+      <!-- Affiliate Badge - Only for Member/Promoter -->
       <div
-        v-if="canEarnMlmBenefits && product.bv > 0"
+        v-if="canEarnAffiliateBenefits && product.bv > 0"
         class="absolute top-3 right-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg"
       >
         {{ product.bv }} BV
@@ -180,8 +180,8 @@ const truncatedDescription = computed(() => {
         </span>
       </div>
 
-      <!-- MLM Benefits - Only for Member/Promoter -->
-      <div v-if="canEarnMlmBenefits" class="mt-auto">
+      <!-- Affiliate Benefits - Only for Member/Promoter -->
+      <div v-if="canEarnAffiliateBenefits" class="mt-auto">
         <!-- Reward Points -->
         <div
           v-if="product.reward_points > 0"

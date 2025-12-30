@@ -11,7 +11,7 @@ use App\Models\Ecommerce\OrderItem;
 use App\Models\Ecommerce\ProductStock;
 use App\Models\User;
 use App\Services\Ecommerce\CartService\CartService;
-use App\Services\Mlm\CommissionProcessorService;
+use App\Services\Affiliate\CommissionProcessorService;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -170,7 +170,7 @@ class OrderService
 
     /**
      * Confirm order (after payment)
-     * Note: MLM commissions are processed only when order is DELIVERED, not on confirmation
+     * Note: Affiliate commissions are processed only when order is DELIVERED, not on confirmation
      */
     public function confirmOrder(Order $order): bool
     {
@@ -245,7 +245,7 @@ class OrderService
      * Update order status
      *
      * Status Flow: PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED → COMPLETED
-     * MLM commissions are processed ONLY when order reaches COMPLETED status
+     * Affiliate commissions are processed ONLY when order reaches COMPLETED status
      * (after return period expires)
      */
     public function updateStatus(Order $order, OrderStatusCast $status): bool
@@ -271,7 +271,7 @@ class OrderService
 
             $order->update($updateData);
 
-            // Process MLM commissions ONLY on COMPLETED (after return period)
+            // Process Affiliate commissions ONLY on COMPLETED (after return period)
             // This ensures customer cannot return goods after commissions are paid
             if ($status === OrderStatusCast::COMPLETED) {
                 $this->processOrderCommissions($order);
@@ -317,7 +317,7 @@ class OrderService
     }
 
     /**
-     * Process MLM commissions for completed order
+     * Process Affiliate commissions for completed order
      * Only processes for subscribed members with BV > 0
      * Called when order status becomes COMPLETED (after return period)
      */

@@ -10,7 +10,7 @@ use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
-use App\Services\UserServices\UserMlmService;
+use App\Services\UserServices\UserAffiliateService;
 use App\Services\Wallet\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ final class SubscriptionController extends Controller
     public function __construct(
         private readonly UserWalletService $walletService,
         private readonly SubscriptionService $subscriptionService,
-        private readonly UserMlmService $mlmService,
+        private readonly UserAffiliateService $affiliateService,
     ) {}
 
     /**
@@ -190,10 +190,10 @@ final class SubscriptionController extends Controller
                     'sponsor_id' => $user->id,
                 ]);
 
-                // Auto-placement in MLM tree
+                // Auto-placement in Affiliate tree
                 if ($user->parent_id) {
                     $sponsor = User::find($user->parent_id);
-                    $this->mlmService->placeUser($user, $sponsor);
+                    $this->affiliateService->placeUser($user, $sponsor);
                 }
 
                 // Activate subscription (triggers commissions)

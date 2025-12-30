@@ -397,7 +397,7 @@ client/app/
 3. **Navigation Pages Created** ✅
    - **Public Pages**: Store, Categories, Career, Blogs, About, Contact
    - **User Pages**: Profile, Shop, Orders
-   - **MLM Pages**: Network (referral code + stats), Earnings (commission tracking)
+   - **Affiliate Pages**: Network (referral code + stats), Earnings (commission tracking)
    - **Promoter Pages**: Promotions, Marketing
    - **Advisor Pages**: Team, Reports, Training
    - **Mentor Pages**: Leadership, Analytics

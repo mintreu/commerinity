@@ -12,10 +12,10 @@
       "hash": "pending",
       "size": 0,
       "type": "model",
-      "summary": "User model with auth, MLM relationships, token management, UUID generation",
+      "summary": "User model with auth, Affiliate relationships, token management, UUID generation",
       "exports": ["User"],
       "imports": ["Authenticatable", "HasFactory", "Notifiable"],
-      "features": ["HasUnique", "MLM parent-child", "Originator system", "Onboarding"],
+      "features": ["HasUnique", "Affiliate parent-child", "Originator system", "Onboarding"],
       "relationships": ["parent", "children", "originator", "addresses", "kycs"],
       "status": "stable"
     },

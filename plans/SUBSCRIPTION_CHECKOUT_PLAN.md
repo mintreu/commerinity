@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-Complete subscription checkout system with multiple payment scenarios, auto-placement logic, and MLM commission triggering.
+Complete subscription checkout system with multiple payment scenarios, auto-placement logic, and Affiliate commission triggering.
 
 **Created**: 2025-12-25
 **Status**: Planning
@@ -16,7 +16,7 @@ Complete subscription checkout system with multiple payment scenarios, auto-plac
 **Flow**: Regular user clicks "Subscribe Now" → Checkout → Payment → Becomes Member
 - **User Status**: Regular (type: REGULAR, no parent_id initially)
 - **Payment Options**: Wallet OR Online Gateway (Cashfree/Razorpay)
-- **Auto-Placement**: IF user has `parent_id` null → stays null (no MLM)
+- **Auto-Placement**: IF user has `parent_id` null → stays null (no Affiliate)
 - **Auto-Placement**: IF user has `parent_id` → find available spot in tree
 - **Level Assignment**: Assign first level of first stage (e.g., "Starter Bronze")
 - **Commission Trigger**: YES (trigger upline commissions if in tree)
@@ -78,7 +78,7 @@ previous_subscription_id (FK → user_subscriptions.id) - For renewals
 
 ### users Table
 ```sql
-parent_id            (FK → users.id) - MLM parent
+parent_id            (FK → users.id) - Affiliate parent
 originator_id        (bigint, nullable) - Who recruited/paid
 originator_type      (string, nullable) - Polymorphic
 type                 (enum: REGULAR, MEMBER, PROMOTER, ADVISOR, MENTOR)
@@ -191,7 +191,7 @@ protected function searchDescendants(User $parent): ?User
 **Responsibilities**:
 - Activate subscription after payment
 - Update user type/status/level
-- Place user in MLM tree
+- Place user in Affiliate tree
 - Trigger commissions
 - Send notifications
 
@@ -505,7 +505,7 @@ it('allows regular user to subscribe with wallet payment')
 it('allows regular user to subscribe with cashfree payment')
 it('prevents subscribing if already has active subscription')
 it('assigns first level when subscribing')
-it('places user in MLM tree if has parent_id')
+it('places user in Affiliate tree if has parent_id')
 it('finds available parent when direct parent is full')
 it('calculates correct pricing with tax and discount')
 it('expires transaction after 60 minutes')
@@ -518,7 +518,7 @@ it('allows member to gift promoter subscription')
 it('prevents advisor from gifting promoter subscription')
 it('requires advisor to use wallet payment only')
 it('sets originator correctly on target subscription')
-it('places target under gifter in MLM tree')
+it('places target under gifter in Affiliate tree')
 it('prevents gifting to user with active subscription')
 ```
 
@@ -536,7 +536,7 @@ it('handles deep trees (5+ levels)')
 it('activates subscription after payment confirmed')
 it('updates user type from REGULAR to MEMBER')
 it('updates user level_id to subscription level')
-it('places user in MLM tree')
+it('places user in Affiliate tree')
 it('triggers upline commissions')
 it('sends activation notification')
 ```
@@ -577,7 +577,7 @@ it('sends activation notification')
 ### Must Have (Launch Blockers)
 - ✅ Regular user can subscribe and become Member
 - ✅ Payment works via wallet AND Cashfree
-- ✅ User gets placed in MLM tree correctly
+- ✅ User gets placed in Affiliate tree correctly
 - ✅ 5-hand limit enforced with auto-placement
 - ✅ Level assigned correctly
 - ✅ Commissions triggered after subscription
@@ -611,7 +611,7 @@ it('sends activation notification')
 ### Data Already Seeded:
 - Stages: 4 stages (Starter, Premium, Gold, Platinum) via StageSeeder
 - Levels: 16 levels (4 per stage) via LevelSeeder
-- Demo users: 71+ users in MLM tree via DemoMlmSeeder
+- Demo users: 71+ users in Affiliate tree via DemoMlmSeeder
 
 ---
 
@@ -622,7 +622,7 @@ After implementation, we should achieve:
 - ✅ 40+ new subscription tests passing
 - ✅ Zero TypeScript errors in frontend
 - ✅ Successfully process test subscription via Cashfree sandbox
-- ✅ MLM tree auto-placement working correctly
+- ✅ Affiliate tree auto-placement working correctly
 - ✅ Commissions calculated and distributed
 
 ---

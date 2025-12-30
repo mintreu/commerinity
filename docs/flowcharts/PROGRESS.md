@@ -42,7 +42,7 @@ Overall                  ██████████████░░░░�
 | 📱 **SMS Service** | ✅ Complete | ✅ 6/6 | 8 | Multi-provider |
 | 👥 **User Management** | ✅ Complete | ⚠️ 4/6 | 15 | Factories done |
 | 💳 **Membership** | ✅ Complete | ✅ 5/5 | 10 | Stages, Levels |
-| 🌳 **MLM Core** | ✅ Complete | ✅ 22/22 | 18 | Full journey |
+| 🌳 **Affiliate Core** | ✅ Complete | ✅ 22/22 | 18 | Full journey |
 | 💰 **Commission** | ✅ Complete | ✅ 8/8 | 12 | All calculators |
 | 👛 **Wallet** | ✅ Complete | ⚠️ 3/5 | 8 | Basic ops done |
 | 📋 **KYC** | ✅ Complete | ⚠️ 2/4 | 6 | Needs more tests |
@@ -87,7 +87,7 @@ Overall                  ██████████████░░░░�
 %%{init: {'theme': 'base'}}%%
 
 pie title Test Distribution
-    "MLM Journey" : 22
+    "Affiliate Journey" : 22
     "Authentication" : 8
     "SMS Service" : 6
     "Membership" : 5
@@ -99,7 +99,7 @@ pie title Test Distribution
 
 | Category | Tests | Assertions | Status |
 |----------|-------|------------|--------|
-| **MLM Journey** | 22 | 92 | ✅ All Passing |
+| **Affiliate Journey** | 22 | 92 | ✅ All Passing |
 | **Authentication** | 8 | 35 | ✅ All Passing |
 | **SMS Service** | 6 | 24 | ✅ All Passing |
 | **Membership** | 5 | 18 | ✅ All Passing |
@@ -122,8 +122,8 @@ gantt
     section Backend
     Authentication      :done,    auth, 2024-12-01, 7d
     SMS Service         :done,    sms, after auth, 5d
-    MLM Core           :done,    mlm, after sms, 10d
-    Commission Engine   :done,    comm, after mlm, 7d
+    Affiliate Core           :done,    affiliate, after sms, 10d
+    Commission Engine   :done,    comm, after affiliate, 7d
     Wallet System       :done,    wallet, after comm, 5d
     section Admin
     Filament Setup      :done,    fil, 2024-12-05, 3d
@@ -136,7 +136,7 @@ gantt
     Financial Pages     :         ffin, after fteam, 7d
     section Testing
     Unit Tests          :done,    unit, 2024-12-08, 5d
-    MLM Journey Tests   :done,    mlmtest, after unit, 3d
+    Affiliate Journey Tests   :done,    affiliatetest, after unit, 3d
     E2E Tests           :         e2e, after fdash, 5d
 ```
 
@@ -146,7 +146,7 @@ gantt
 
 | Date | Module | Action | Status |
 |------|--------|--------|--------|
-| Dec 13 | MLM Tests | 22 journey tests created | ✅ Pass |
+| Dec 13 | Affiliate Tests | 22 journey tests created | ✅ Pass |
 | Dec 13 | Migrations | Added originator commission types | ✅ Done |
 | Dec 13 | Factories | Updated Stage, Level, Subscription | ✅ Done |
 | Dec 13 | Services | Created SubscriptionService | ✅ Done |

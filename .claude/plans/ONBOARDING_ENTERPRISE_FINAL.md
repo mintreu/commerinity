@@ -362,7 +362,7 @@ if (!$user->hasVerifiedKyc()) {
 │  │ ✓ Exclusive discounts          │     │
 │  │ ✓ Early access to sales        │     │
 │  │ ✓ Priority support             │     │
-│  │ ✓ MLM commission boost         │     │
+│  │ ✓ Affiliate commission boost         │     │
 │  │ ✓ Member-only products         │     │
 │  └────────────────────────────────┘     │
 │                                          │
@@ -1752,7 +1752,7 @@ const requiredSteps = computed(() => {
 
   return {
     profile: true, // Always required
-    address: type !== 'regular', // Required for MLM users
+    address: type !== 'regular', // Required for Affiliate users
     kyc: ['promoter', 'advisor', 'mentor'].includes(type), // Required for payouts
     subscription: false // Always optional
   }
@@ -1943,7 +1943,7 @@ $dropOffRates = [
 > **Why verify your identity?**
 > - Unlock digital wallet
 > - Earn and withdraw commissions
-> - Participate in MLM rewards
+> - Participate in Affiliate rewards
 > - Secure your account (fraud prevention)
 
 ### **Step 4: Subscription**

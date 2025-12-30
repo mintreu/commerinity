@@ -642,11 +642,16 @@ I am **Claude-Expert**, enterprise AI engineer executing battle-tested refactori
    ```
    Features/
    ├── Auth/           # Can be disabled
-   ├── MLM/            # Can be disabled
+   ├── Affiliate/      # Renamed from MLM
    ├── Ecommerce/      # Can be disabled
    ├── Wallet/         # Can be disabled
    └── Content/        # Can be disabled
    ```
+
+   **Affiliate System Rule (Critical):**
+   - **NEVER** use the term "MLM" in code, comments, or UI.
+   - **ALWAYS** use the term "Affiliate" (e.g., `AffiliateGenealogy`, `AffiliateService`).
+   - The "MLM" feature category is renamed to "Affiliate".
 
    **Each feature must:**
    - Have clear boundaries (contracts/interfaces)

@@ -23,7 +23,7 @@ Root/
 - `docs/backend/00-MASTER-PLAN.md` - Overall project roadmap
 - `docs/backend/01-ARCHITECTURE.md` - System architecture & patterns
 - `docs/backend/03-PRODUCT-SYSTEM.md` - Product/inventory system
-- `docs/backend/04-COMMISSION-SYSTEM.md` - MLM commission logic
+- `docs/backend/04-COMMISSION-SYSTEM.md` - Affiliate commission logic
 - `docs/backend/BUILD_BACKEND.md` - Backend build script
 - `docs/backend/address-system-implementation.md` - Address system plan
 - `docs/backend/onboarding-process.md` - User onboarding flow

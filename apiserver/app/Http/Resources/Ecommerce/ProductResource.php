@@ -64,7 +64,7 @@ final class ProductResource extends JsonResource
             'stock_quantity' => $this->total_stock,
             // Stats
             'view_count' => $this->view_count,
-            // MLM points from FIFO stock
+            // Affiliate points from FIFO stock
             'bv' => $stock?->bv ?? 0,
             'pv' => $stock?->pv ?? 0,
             'reward_points' => $stock?->reward_points ?? 0,

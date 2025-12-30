@@ -603,7 +603,7 @@ public function validate(Transaction $transaction)
             'level_id' => $this->subscription->level->id
         ]);
 
-        // ✅ ADD TO MLM NETWORK
+        // ✅ ADD TO Affiliate NETWORK
         $networkService = NetworkService::make($this->user);
         $networkService->addToNetwork();
 
@@ -995,7 +995,7 @@ cashfree.checkout({ paymentSessionId, returnUrl })
    Handles PaymentCompleted event
    Routes to:
    - Wallet topup → Update balance
-   - Subscription → Activate + MLM
+   - Subscription → Activate + Affiliate
    - Order → Confirm order
    - JobApplication → Submit
    ```

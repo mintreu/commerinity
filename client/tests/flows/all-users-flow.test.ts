@@ -101,7 +101,7 @@ describe('All User Types - Authentication', () => {
         expect(userData.permissions).toBeDefined()
         expect(typeof userData.permissions.can_withdraw).toBe('boolean')
         expect(typeof userData.permissions.can_refer).toBe('boolean')
-        expect(typeof userData.permissions.can_access_mlm).toBe('boolean')
+        expect(typeof userData.permissions.can_access_affiliate).toBe('boolean')
         expect(typeof userData.permissions.can_access_team).toBe('boolean')
 
         // Features object
@@ -208,17 +208,17 @@ describe('User Permissions by Type', () => {
     const user = await getUser(result.token!)
 
     expect(user.type).toBe('regular')
-    expect(user.permissions.can_access_mlm).toBe(false)
+    expect(user.permissions.can_access_affiliate).toBe(false)
     expect(user.features.show_wallet).toBe(false)
     expect(user.features.show_upgrade_prompt).toBe(true)
   })
 
-  it('Member user should have MLM permissions', async () => {
+  it('Member user should have Affiliate permissions', async () => {
     const result = await login('member@demo.com', 'password')
     const user = await getUser(result.token!)
 
     expect(user.type).toBe('member')
-    expect(user.permissions.can_access_mlm).toBe(true)
+    expect(user.permissions.can_access_affiliate).toBe(true)
     expect(user.features.show_wallet).toBe(true)
     expect(user.features.show_network).toBe(true)
     expect(user.features.show_earnings).toBe(true)
@@ -247,7 +247,7 @@ describe('User Permissions by Type', () => {
     const user = await getUser(result.token!)
 
     expect(user.type).toBe('mentor')
-    expect(user.permissions.can_access_mlm).toBe(true)
+    expect(user.permissions.can_access_affiliate).toBe(true)
     expect(user.permissions.can_access_team).toBe(true)
     expect(user.features.show_wallet).toBe(true)
     expect(user.features.show_network).toBe(true)

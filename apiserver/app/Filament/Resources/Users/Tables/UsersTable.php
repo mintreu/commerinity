@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Users\Tables;
 
 use Filament\Actions\BulkActionGroup;
@@ -7,7 +9,10 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class UsersTable
@@ -16,66 +21,66 @@ class UsersTable
     {
         return $table
             ->columns([
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable(),
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->collection('avatar')
+                    ->circular()
+                    ->toggleable(),
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
                     ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(),
                 TextColumn::make('mobile')
-                    ->searchable(),
-                TextColumn::make('mobile_verified_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('referral_code')
-                    ->searchable(),
-                TextColumn::make('parent.name')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('originator_type')
-                    ->searchable(),
-                TextColumn::make('originator_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('gender')
-                    ->searchable(),
-                TextColumn::make('dob')
-                    ->date()
-                    ->sortable(),
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(),
                 TextColumn::make('type')
-                    ->searchable(),
-                TextColumn::make('status')
-                    ->searchable(),
-                IconColumn::make('onboarded')
-                    ->boolean(),
-                TextColumn::make('subscribed_at')
-                    ->dateTime()
+                    ->badge()
+                    ->searchable()
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
+                TextColumn::make('status')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
+                IconColumn::make('onboarded')
+                    ->boolean()
+                    ->label('Onboarded')
+                    ->toggleable(),
+                TextColumn::make('referral_code')
+                    ->searchable()
+                    ->toggleable()
+                    ->copyable(),
+                TextColumn::make('parent.name')
+                    ->label('Referrer')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('gender')
+                    ->badge()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('type')
+                    ->multiple()
+                    ->options(\App\Casts\UserTypeCast::class),
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->options(\App\Casts\UserStatusCast::class),
+                TernaryFilter::make('onboarded'),
+                SelectFilter::make('gender')
+                    ->options(\App\Casts\GenderCast::class),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

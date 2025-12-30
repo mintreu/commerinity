@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Mlm\MlmTreeService;
+use App\Services\Affiliate\AffiliateTreeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 final class AccountController extends Controller
 {
     public function __construct(
-        private readonly MlmTreeService $mlmTreeService,
+        private readonly AffiliateTreeService $affiliateTreeService,
     ) {}
 
     /**
@@ -39,12 +39,12 @@ final class AccountController extends Controller
 
         try {
             $reassignmentResult = DB::transaction(function () use ($user) {
-                $reassignmentResult = $this->mlmTreeService->reassignChildrenOnDeletion($user);
+                $reassignmentResult = $this->affiliateTreeService->reassignChildrenOnDeletion($user);
                 $user->tokens()->delete();
                 if (method_exists($user, 'pushSubscriptions')) {
                     $user->pushSubscriptions()->delete();
                 }
-                if (config('mlm.deletion.soft_delete_users', true)) {
+                if (config('affiliate.deletion.soft_delete_users', true)) {
                     if (method_exists($user, 'trashed')) {
                         $user->delete();
                     } else {
@@ -63,7 +63,7 @@ final class AccountController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Account deleted successfully',
-                'data' => ['mlm_reassignment' => ['children_reassigned' => $reassignmentResult['reassigned']]],
+                'data' => ['affiliate_reassignment' => ['children_reassigned' => $reassignmentResult['reassigned']]],
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -74,12 +74,12 @@ final class AccountController extends Controller
     }
 
     /**
-     * Get MLM tree statistics for the authenticated user.
+     * Get Affiliate tree statistics for the authenticated user.
      */
-    public function mlmStats(Request $request): JsonResponse
+    public function affiliateStats(Request $request): JsonResponse
     {
         $user = $request->user();
-        $stats = $this->mlmTreeService->getTreeStats($user);
+        $stats = $this->affiliateTreeService->getTreeStats($user);
 
         return response()->json(['success' => true, 'data' => $stats]);
     }
@@ -103,7 +103,7 @@ final class AccountController extends Controller
     public function upline(Request $request): JsonResponse
     {
         $user = $request->user();
-        $upline = $this->mlmTreeService->getUpline($user)
+        $upline = $this->affiliateTreeService->getUpline($user)
             ->map(fn ($ancestor) => [
                 'id' => $ancestor->id,
                 'uuid' => $ancestor->uuid,

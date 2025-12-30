@@ -7,7 +7,7 @@ This directory contains comprehensive analysis and documentation of the old Comm
 ```
 .claude/references/
 ├── README.md                       # This file
-├── old-commerinity/               # MLM + E-commerce reference (Backend + Frontend)
+├── old-commerinity/               # Affiliate + E-commerce reference (Backend + Frontend)
 │   ├── 01-overview.md             # Project overview and architecture
 │   ├── 02-database-schema.md      # Complete database schema documentation
 │   ├── 03-api-endpoints.md        # All API endpoints with details
@@ -48,7 +48,7 @@ This directory contains comprehensive analysis and documentation of the old Comm
 ## Old Project Summary
 
 ### What It Is
-- **Full-stack MLM + E-commerce platform**
+- **Full-stack Affiliate + E-commerce platform**
 - **Backend**: Laravel 12 + Filament 3.3 Admin
 - **Frontend**: Nuxt 3 + Tailwind CSS (Custom components, no UI framework)
 - **Design**: Premium glassmorphism aesthetic with GSAP animations

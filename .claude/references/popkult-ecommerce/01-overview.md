@@ -336,7 +336,7 @@ PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED
 | **Tax** | GST compliance (CGST/SGST/IGST) | Basic tax slab |
 | **Variants** | Parent-child with filter options | Parent-child with filter options |
 | **Stock** | Computed columns, constraints | Basic quantity field |
-| **MLM** | ❌ Not present | ✅ Full MLM system |
+| **Affiliate** | ❌ Not present | ✅ Full Affiliate system |
 | **Wallet** | ❌ Not present | ✅ Digital wallet |
 | **Commission** | ❌ Not present | ✅ Incentive system |
 | **Membership** | ❌ Not present | ✅ Lifecycle stages |
@@ -357,7 +357,7 @@ For the refactoring project, combine:
 - Scoping system
 
 **From Old Commerinity**:
-- MLM system
+- Affiliate system
 - Digital wallet
 - Commission calculation
 - Membership lifecycle

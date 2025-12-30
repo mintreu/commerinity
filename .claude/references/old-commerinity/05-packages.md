@@ -571,7 +571,7 @@ Toolkit provides dynamic factory resolution for testing
 ### Integration Points
 - Cart system: commerinity + product-catalogue
 - Payment flow: transaction + commerinity (orders)
-- MLM system: Custom app code + toolkit utilities
+- Affiliate system: Custom app code + toolkit utilities
 - Support system: helpdesk package
 - Content: penpress package
 - Location: geokit package

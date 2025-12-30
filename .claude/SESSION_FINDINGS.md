@@ -53,7 +53,7 @@
 ### API Routes Summary (routes/api.php)
 
 **Total Routes:** 43 endpoints in 8 groups
-- Auth, Profile, Onboarding, Addresses, KYC, MLM, Commissions, Wallet, Subscriptions, Trends, Careers, Notifications, WebPush, Contact, Webhooks
+- Auth, Profile, Onboarding, Addresses, KYC, Affiliate, Commissions, Wallet, Subscriptions, Trends, Careers, Notifications, WebPush, Contact, Webhooks
 
 **MISSING Routes:**
 - /api/messages/* (messaging)
@@ -68,7 +68,7 @@
 - SmsProviderSeeder, SmsTemplateSeeder
 
 **NEED TO CREATE:**
-- DemoMlmSeeder (full MLM tree with subscriptions, commissions, team)
+- DemoMlmSeeder (full Affiliate tree with subscriptions, commissions, team)
 
 ---
 
@@ -76,7 +76,7 @@
 
 ### 1. DemoMlmSeeder.php
 - Create 50+ demo users with realistic data
-- Build MLM tree (3-4 levels deep)
+- Build Affiliate tree (3-4 levels deep)
 - Add subscriptions at different stages/levels
 - Generate commissions (various types)
 - Create wallet transactions
@@ -117,7 +117,7 @@
 - Support for images, videos, CTAs
 
 ### 6. Profile Visibility Rules
-- Parent can see: avatar, name, affiliate info, MLM stats, minimal address
+- Parent can see: avatar, name, affiliate info, Affiliate stats, minimal address
 - Parent can drill down to children's team
 - No privacy disclosure (hide sensitive data)
 - Create API endpoint with visibility rules
@@ -149,7 +149,7 @@
 - `apiserver/app/Services/Membership/SubscriptionService.php`
 - `apiserver/app/Services/MoneyService.php`
 
-### MLM Commission Types (from MlmCommission model)
+### Affiliate Commission Types (from MlmCommission model)
 1. sponsor_bonus
 2. level_commission
 3. originator_joining_bonus

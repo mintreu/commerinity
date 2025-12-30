@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Mlm\MlmGenealogy;
+use App\Models\Affiliate\AffiliateGenealogy;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 /**
  * PublicProfileController
  *
- * Handles viewing profiles of other users based on MLM relationship.
+ * Handles viewing profiles of other users based on Affiliate relationship.
  * Visibility rules:
  * - Parent (sponsor) can view limited info about their children (direct referrals)
  * - Parent can drill down to see children's children
@@ -23,7 +23,7 @@ final class PublicProfileController extends Controller
 {
     /**
      * View a user's public profile.
-     * Only accessible to users in the same MLM tree (upline can see downline).
+     * Only accessible to users in the same Affiliate tree (upline can see downline).
      */
     public function show(Request $request, User $user): JsonResponse
     {
@@ -96,7 +96,7 @@ final class PublicProfileController extends Controller
         }
 
         // Check if viewer is in target's upline (viewer is upline of target)
-        $targetGenealogy = MlmGenealogy::where('user_id', $target->id)->first();
+        $targetGenealogy = AffiliateGenealogy::where('user_id', $target->id)->first();
         if ($targetGenealogy && $this->isInPath($viewer->id, $targetGenealogy->path ?? '')) {
             return 'upline';
         }
@@ -130,7 +130,7 @@ final class PublicProfileController extends Controller
      */
     private function isInDownline(User $viewer, User $target): bool
     {
-        $targetGenealogy = MlmGenealogy::where('user_id', $target->id)->first();
+        $targetGenealogy = AffiliateGenealogy::where('user_id', $target->id)->first();
 
         if (! $targetGenealogy || ! $targetGenealogy->path) {
             return false;
@@ -165,9 +165,9 @@ final class PublicProfileController extends Controller
             ]);
         }
 
-        // MLM stats (visible to upline)
-        $genealogy = MlmGenealogy::where('user_id', $user->id)->first();
-        $data['mlm_stats'] = [
+        // Affiliate stats (visible to upline)
+        $genealogy = AffiliateGenealogy::where('user_id', $user->id)->first();
+        $data['affiliate_stats'] = [
             'level' => $genealogy?->depth ?? 0,
             'direct_referrals' => $genealogy?->direct_count ?? 0,
             'team_size' => $genealogy?->total_descendants ?? 0,

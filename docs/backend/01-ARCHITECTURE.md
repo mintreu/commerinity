@@ -1,5 +1,5 @@
 # Architecture Design
-## Enterprise-Grade MLM + E-commerce Platform
+## Enterprise-Grade Affiliate + E-commerce Platform
 
 ---
 
@@ -57,7 +57,7 @@ apiserver/
     │   ├── Cart/               # Cart, CartItems
     │   ├── Payment/            # Payments, Transactions
     │   ├── Wallet/             # Wallet, WalletTransactions
-    │   ├── Commission/         # Commissions (MLM)
+    │   ├── Commission/         # Commissions (Affiliate)
     │   ├── Membership/         # Stages, Levels, Subscriptions
     │   ├── Shipping/           # Shipments
     │   ├── Content/            # Posts, Pages
@@ -145,7 +145,7 @@ client/
     │   ├── cart/               # Cart components
     │   ├── order/              # Order tracking
     │   ├── dashboard/          # Dashboard widgets
-    │   └── mlm/                # Genealogy tree, commission charts
+    │   └── affiliate/                # Genealogy tree, commission charts
     │
     ├── composables/
     │   ├── useCart.ts          # Cart state
@@ -302,7 +302,7 @@ CommissionService->calculate(Order)
 ### External Packages (Battle-Tested)
 - **moneyphp/money** - Currency precision
 - **filament/filament** - Admin panel
-- **staudenmeir/laravel-adjacency-list** - MLM tree
+- **staudenmeir/laravel-adjacency-list** - Affiliate tree
 - **awcodes/filament-curator** - Media management
 - **awcodes/filament-tiptap-editor** - Rich text
 - **barryvdh/laravel-dompdf** - PDF generation

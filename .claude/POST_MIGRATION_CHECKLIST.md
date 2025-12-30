@@ -71,8 +71,8 @@ ls -la context/
 ```bash
 ls -la plans/
 ```
-- ✅ `MLM_MATRIX_5X4_SYSTEM.md`
-- ✅ `MLM_MEMBERSHIP_ENTERPRISE_PLAN.md`
+- ✅ `Affiliate_MATRIX_5X4_SYSTEM.md`
+- ✅ `Affiliate_MEMBERSHIP_ENTERPRISE_PLAN.md`
 - ✅ `ONBOARDING_ENTERPRISE_FINAL.md`
 - ✅ `API_FRONTEND_BLUEPRINT.md`
 
@@ -238,7 +238,7 @@ BREAKING CHANGES:
 
 NEW FEATURES:
 - Complete wallet system (855 tests passing)
-- MLM 5x4 matrix with 4-level commissions
+- Affiliate 5x4 matrix with 4-level commissions
 - Recruitment system
 - Helpdesk/ticketing system
 - Activity logging

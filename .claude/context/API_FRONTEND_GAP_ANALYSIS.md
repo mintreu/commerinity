@@ -81,7 +81,7 @@ POST /api/auth/logout-all        ✅ Logout all devices
 ```
 ✅ /shop/index.vue               SKELETON (no products)
 ✅ /orders/index.vue             SKELETON (no order data)
-✅ /network/index.vue            SKELETON (no MLM tree)
+✅ /network/index.vue            SKELETON (no Affiliate tree)
 ✅ /earnings/index.vue           SKELETON (no earnings data)
 ✅ /team/index.vue               SKELETON (no team data)
 ✅ /promotions/index.vue         SKELETON
@@ -292,7 +292,7 @@ POST /api/auth/logout-all        ✅ Logout all devices
 #### Referral System (2 endpoints)
 ```
 ❌ GET  /api/user/referral         Get user's referral code & stats
-❌ GET  /api/user/downline         Get MLM downline (children)
+❌ GET  /api/user/downline         Get Affiliate downline (children)
 ```
 
 #### Device Management (2 endpoints)
@@ -333,7 +333,7 @@ POST /api/auth/logout-all        ✅ Logout all devices
 ❌ /profile/referral.vue           View & share referral code
 ❌ /profile/devices.vue            Manage active sessions
 ❌ /orders/[id].vue                Order details page
-❌ /network/tree.vue               MLM tree visualization
+❌ /network/tree.vue               Affiliate tree visualization
 ❌ /network/downline.vue           Referrals list
 ```
 
@@ -475,8 +475,8 @@ FRONTEND:
    - orders_count
    - pending_orders
    - wallet_balance
-   - total_earnings (for MLM types)
-   - downline_count (for MLM types)
+   - total_earnings (for Affiliate types)
+   - downline_count (for Affiliate types)
    - recent_orders (last 5)
 ```
 
@@ -542,8 +542,8 @@ FRONTEND:
 - ✅ Type-specific dashboards (skeleton)
 - ❌ Real statistics
 - ❌ Recent orders
-- ❌ Earnings data (for MLM)
-- ❌ Network data (for MLM)
+- ❌ Earnings data (for Affiliate)
+- ❌ Network data (for Affiliate)
 
 ### API Endpoints
 - ✅ 9 auth endpoints

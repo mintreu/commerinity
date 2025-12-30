@@ -128,9 +128,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // ========================================
     Route::delete('/account', [AccountController::class, 'destroy']);
 
-    // MLM Tree
-    Route::prefix('mlm')->group(function () {
-        Route::get('/stats', [AccountController::class, 'mlmStats']);
+    // Affiliate Tree
+    Route::prefix('affiliate')->group(function () {
+        Route::get('/stats', [AccountController::class, 'affiliateStats']);
         Route::get('/children', [AccountController::class, 'directChildren']);
         Route::get('/upline', [AccountController::class, 'upline']);
         Route::get('/tree', [AccountController::class, 'tree']);
@@ -224,7 +224,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ========================================
-    // Public Profile (View other users in MLM tree)
+    // Public Profile (View other users in Affiliate tree)
     // Visibility rules: upline can see downline, limited data
     // ========================================
     Route::prefix('users')->group(function () {

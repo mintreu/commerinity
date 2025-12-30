@@ -14,7 +14,7 @@ final class HelpdeskSeeder extends Seeder
         $topics = [
             ['name' => 'Account & Login', 'slug' => 'account-login', 'description' => 'Issues related to account access, login problems, password reset'],
             ['name' => 'Wallet & Payments', 'slug' => 'wallet-payments', 'description' => 'Questions about wallet balance, transactions, withdrawals'],
-            ['name' => 'MLM & Commissions', 'slug' => 'mlm-commissions', 'description' => 'Network questions, commission calculations, genealogy'],
+            ['name' => 'Affiliate & Commissions', 'slug' => 'affiliate-commissions', 'description' => 'Network questions, commission calculations, genealogy'],
             ['name' => 'Technical Support', 'slug' => 'technical-support', 'description' => 'App errors, bugs, technical issues'],
             ['name' => 'General Inquiry', 'slug' => 'general-inquiry', 'description' => 'General questions and other topics'],
         ];

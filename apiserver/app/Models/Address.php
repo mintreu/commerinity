@@ -47,6 +47,7 @@ class Address extends Model
     protected function casts(): array
     {
         return [
+            'type' => \App\Casts\AddressTypeCast::class,
             'default' => 'boolean',
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',

@@ -10,7 +10,7 @@ enum UserTypeCast: string implements HasColor, HasIcon, HasLabel
 {
     case REGULAR = 'regular';     // Default - non-subscribed customer
     case MEMBER = 'member';       // Subscribed with active membership
-    case PROMOTER = 'promoter';   // Actively refers others (MLM participant)
+    case PROMOTER = 'promoter';   // Actively refers others (Affiliate participant)
     case ADVISOR = 'advisor';     // Company-appointed, gets salary
     case MENTOR = 'mentor';       // Trains users, gets training fees
     case APPLICANT = 'applicant'; // Applied for mentor/advisor role

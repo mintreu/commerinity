@@ -1,4 +1,4 @@
-# Commerinity Pro - Enterprise MLM Platform
+# Commerinity Pro - Enterprise Affiliate Platform
 ## Project Valuation & Pricing Document
 
 <div align="center">
@@ -16,7 +16,7 @@
 ║                        P R O   E N T E R P R I S E +                         ║
 ║                                                                              ║
 ║         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━         ║
-║              NEXT-GENERATION MLM & COMMISSION MANAGEMENT PLATFORM            ║
+║              NEXT-GENERATION Affiliate & COMMISSION MANAGEMENT PLATFORM            ║
 ║                        Project Valuation & Pricing                           ║
 ║         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━         ║
 ║                                                                              ║
@@ -24,7 +24,7 @@
 ```
 
 **Document Type:** Project Valuation, Pricing & Competitive Analysis
-**Project:** Commerinity Pro - Enterprise+ MLM Platform
+**Project:** Commerinity Pro - Enterprise+ Affiliate Platform
 **Prepared By:** Mintreu Development Team
 **Document Date:** December 2025
 **Version:** 2.0
@@ -51,7 +51,7 @@
 
 ### What is Commerinity Pro?
 
-Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built with the latest technology stack that surpasses all existing competitors in quality, security, and scalability.
+Commerinity Pro is a **next-generation, enterprise+ grade Affiliate platform** built with the latest technology stack that surpasses all existing competitors in quality, security, and scalability.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────┐
@@ -99,7 +99,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │                                                                                │
 │   PHASE 1: Foundation & Core Development (12 months)                          │
 │   ══════════════════════════════════════════════════                          │
-│   • MLM business logic research & implementation                              │
+│   • Affiliate business logic research & implementation                              │
 │   • Core architecture design                                                   │
 │   • User management & authentication system                                    │
 │   • Database architecture & optimization                                       │
@@ -190,7 +190,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 
 ## 3. Competitor Brand Comparison
 
-### 3.1 Global MLM Software Brands - Pricing Analysis
+### 3.1 Global Affiliate Software Brands - Pricing Analysis
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────┐
@@ -208,7 +208,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │   • Tech: Proprietary, older stack                                             │
 │   • Clients: 1,000+ launches in 140 countries                                  │
 │                                                                                │
-│   Epixel MLM Software (India/Global)                                          │
+│   Epixel Affiliate Software (India/Global)                                          │
 │   ──────────────────────────────────                                           │
 │   • Setup: Custom pricing (estimated $15,000 - $50,000)                        │
 │   • Monthly: $500 - $2,000/month (modules add-on)                              │
@@ -216,7 +216,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │   • Tech: PHP 7.x-8.0, older frameworks                                        │
 │   • Clients: 100+ companies in 88 countries                                    │
 │                                                                                │
-│   ProMLM iCON (USA)                                                            │
+│   ProAffiliate iCON (USA)                                                            │
 │   ─────────────────                                                            │
 │   • Monthly: $1,599/month (no setup fee disclosed)                             │
 │   • 5-Year TCO: $95,940+                                                       │
@@ -228,7 +228,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │   MID TIER ($1,000 - $20,000 setup)                                           │
 │   ═════════════════════════════════                                            │
 │                                                                                │
-│   Infinite MLM Software (India)                                                │
+│   Infinite Affiliate Software (India)                                                │
 │   ─────────────────────────────                                                │
 │   • Basic: $699 one-time                                                       │
 │   • Advanced: $2,000 one-time                                                  │
@@ -236,7 +236,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │   • Tech: Laravel (older versions), PHP 7.x-8.0                               │
 │   • Clients: 3,000+ clients in 80+ countries                                   │
 │                                                                                │
-│   ARM MLM Software (India)                                                     │
+│   ARM Affiliate Software (India)                                                     │
 │   ────────────────────────                                                     │
 │   • Starting: $799 - $999 one-time                                             │
 │   • Enterprise: Custom pricing                                                 │
@@ -271,7 +271,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │                           FEATURE COMPARISON: COMMERINITY PRO vs COMPETITORS                             │
 ├──────────────────────────┬────────────┬────────────┬────────────┬────────────┬─────────────────────────┤
 │ FEATURE                  │ Infinite   │ Epixel     │ ByDesign   │ Ventaforce │ COMMERINITY PRO         │
-│                          │ MLM        │ MLM        │ Tech       │            │ (Enterprise+)           │
+│                          │ Affiliate        │ Affiliate        │ Tech       │            │ (Enterprise+)           │
 ├──────────────────────────┼────────────┼────────────┼────────────┼────────────┼─────────────────────────┤
 │ TECHNOLOGY STACK                                                                                        │
 ├──────────────────────────┼────────────┼────────────┼────────────┼────────────┼─────────────────────────┤
@@ -288,7 +288,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │ Code Architecture        │ Standard   │ Standard   │ Standard   │ Standard   │ ✅ SOLID, DI, Readonly  │
 │ Security Auditable       │ ⚠️         │ ⚠️         │ ⚠️         │ ✅ CMMI-3  │ ✅ Enterprise+ Grade    │
 ├──────────────────────────┼────────────┼────────────┼────────────┼────────────┼─────────────────────────┤
-│ MLM FEATURES                                                                                            │
+│ Affiliate FEATURES                                                                                            │
 ├──────────────────────────┼────────────┼────────────┼────────────┼────────────┼─────────────────────────┤
 │ Compensation Plans       │ 6+ types   │ 10+ types  │ 8+ types   │ 12+ types  │ ✅ All types + Custom   │
 │ Real-time Commission     │ ⚠️ Hourly  │ ✅ Instant │ ✅ Instant │ ✅ Instant │ ✅ Instant + Auditable  │
@@ -337,7 +337,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │                                                                                │
 │   ─────────────────────────────────────────────────────────────────────────   │
 │                                                                                │
-│   Epixel MLM Software                                                          │
+│   Epixel Affiliate Software                                                          │
 │   ───────────────────                                                          │
 │   Setup:                     $30,000                                           │
 │   Monthly ($1,000 × 60):     $60,000                                           │
@@ -348,7 +348,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │                                                                                │
 │   ─────────────────────────────────────────────────────────────────────────   │
 │                                                                                │
-│   ProMLM iCON                                                                  │
+│   ProAffiliate iCON                                                                  │
 │   ───────────                                                                  │
 │   Monthly ($1,599 × 60):     $95,940                                           │
 │   Setup & Customization:     $20,000                                           │
@@ -357,7 +357,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │                                                                                │
 │   ─────────────────────────────────────────────────────────────────────────   │
 │                                                                                │
-│   Infinite MLM (Enterprise)                                                    │
+│   Infinite Affiliate (Enterprise)                                                    │
 │   ─────────────────────────                                                    │
 │   License:                   $5,000                                            │
 │   Customization:             $30,000                                           │
@@ -430,7 +430,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 ║                                                                                ║
 ║  ────────────────────────────────────────────────────────────────────────────  ║
 ║                                                                                ║
-║  3. MLM GENEALOGY SYSTEM                                                       ║
+║  3. Affiliate GENEALOGY SYSTEM                                                       ║
 ║     ────────────────────────                                                   ║
 ║     • Tree structure (5×4 matrix configurable)                                 ║
 ║     • Sponsor chain management                                                 ║
@@ -611,7 +611,7 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 ║                                                                                ║
 ║     Module Value:                               $6,000         ₹4,98,000       ║
 ║                                                                                ║
-║  5. TEAM/MLM PAGES                                                             ║
+║  5. TEAM/Affiliate PAGES                                                             ║
 ║     • Tree visualization, Team list, Referrals                                 ║
 ║                                                                                ║
 ║     Module Value:                               $10,000        ₹8,30,000       ║
@@ -1102,8 +1102,8 @@ Commerinity Pro is a **next-generation, enterprise+ grade MLM platform** built w
 │                                                                                │
 │  │ Vendor              │ Automated Tests │ Test Framework │                   │
 │  │─────────────────────│─────────────────│────────────────│                   │
-│  │ Infinite MLM        │ ⚠️ Basic/Unknown │ Unknown        │                   │
-│  │ Epixel MLM          │ ⚠️ Unknown       │ Unknown        │                   │
+│  │ Infinite Affiliate        │ ⚠️ Basic/Unknown │ Unknown        │                   │
+│  │ Epixel Affiliate          │ ⚠️ Unknown       │ Unknown        │                   │
 │  │ ByDesign            │ ⚠️ Unknown       │ Proprietary    │                   │
 │  │ Ventaforce          │ ⚠️ Unknown       │ Unknown        │                   │
 │  │ COMMERINITY PRO     │ ✅ 127+ Tests   │ Pest v4        │                   │
@@ -1242,12 +1242,12 @@ Founder, Mintreu / Commerinity Pro
 ## Sources & References
 
 ### Competitor Pricing Research
-- [Epixel MLM Software Pricing](https://www.epixelmlmsoftware.com/pricing) - Custom enterprise pricing
-- [Infinite MLM Software Pricing](https://infinitemlmsoftware.com/pricing.php) - $699-$2,000+ one-time
-- [ARM MLM Software Pricing](https://www.armmlm.com/mlm-software-price/) - $799-$999+ one-time
-- [ByDesign Technologies](https://bydesign.com/what-does-mlm-software-cost/) - $20,000-$35,000 setup + $2,500-$4,000/month
-- [Ventaforce MLM](https://www.ventaforce.com/) - $3,000+ starting
-- [MLM Software Pricing Guide 2025](https://infinitemlmsoftware.com/blog/mlm-software-pricing-guide/)
+- [Epixel Affiliate Software Pricing](https://www.epixelaffiliatesoftware.com/pricing) - Custom enterprise pricing
+- [Infinite Affiliate Software Pricing](https://infiniteaffiliatesoftware.com/pricing.php) - $699-$2,000+ one-time
+- [ARM Affiliate Software Pricing](https://www.armaffiliate.com/affiliate-software-price/) - $799-$999+ one-time
+- [ByDesign Technologies](https://bydesign.com/what-does-affiliate-software-cost/) - $20,000-$35,000 setup + $2,500-$4,000/month
+- [Ventaforce Affiliate](https://www.ventaforce.com/) - $3,000+ starting
+- [Affiliate Software Pricing Guide 2025](https://infiniteaffiliatesoftware.com/blog/affiliate-software-pricing-guide/)
 
 ### Development Cost Research
 - [FullStack Labs - Software Development Price Guide 2025](https://www.fullstack.com/labs/resources/blog/software-development-price-guide-hourly-rate-comparison)
@@ -1256,6 +1256,6 @@ Founder, Mintreu / Commerinity Pro
 - [Laravel Development Cost Guide](https://www.icoderzsolutions.com/blog/laravel-development-cost/)
 
 ### Industry Standards
-- [Capterra MLM Software Reviews](https://www.capterra.com/mlm-software/)
-- [G2 MLM Software Comparison](https://www.g2.com/categories/mlm-software)
-- [Startups.com - MLM Software Providers](https://www.startups.com/questions/8581/what-are-the-best-mlm-software-providers-and-what-are-their-typical-costs-and)
+- [Capterra Affiliate Software Reviews](https://www.capterra.com/affiliate-software/)
+- [G2 Affiliate Software Comparison](https://www.g2.com/categories/affiliate-software)
+- [Startups.com - Affiliate Software Providers](https://www.startups.com/questions/8581/what-are-the-best-affiliate-software-providers-and-what-are-their-typical-costs-and)

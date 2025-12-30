@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Homepage - Mintreu E-Commerce & MLM Platform
+ * Homepage - Mintreu E-Commerce & Affiliate Platform
  * Premium landing page with:
  * - Hero Section
  * - Real-time Stats
@@ -14,9 +14,9 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Commerinity Pro - MLM & E-Commerce Platform',
+  title: 'Commerinity Pro - Affiliate & E-Commerce Platform',
   description: 'Transform your business dreams into reality with Commerinity Pro. The ultimate platform combining Network Marketing, E-Commerce, and Career Opportunities — all in one powerful ecosystem.',
-  ogTitle: 'Commerinity Pro - MLM & E-Commerce Platform',
+  ogTitle: 'Commerinity Pro - Affiliate & E-Commerce Platform',
   ogDescription: 'Join thousands of successful entrepreneurs. Network Marketing, E-Commerce & Career Opportunities all in one place.',
   ogImage: '/logo.png'
 })

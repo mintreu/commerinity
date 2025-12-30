@@ -2,7 +2,7 @@
 
 ## Core Business Models
 
-### 1. Multi-Level Marketing (MLM) System
+### 1. Multi-Level Marketing (Affiliate) System
 
 #### Referral & Recruitment
 **Flow**:
@@ -12,7 +12,7 @@
 3. User B registers using User A's referral_code
 4. User B's parent_id = User A's user_id
 5. User A becomes User B's originator
-6. MLM tree structure established
+6. Affiliate tree structure established
 ```
 
 **Key Points**:

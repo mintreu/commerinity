@@ -78,7 +78,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the user has a parent (MLM upline).
+     * Indicate that the user has a parent (Affiliate upline).
      */
     public function withParent($parentId): static
     {

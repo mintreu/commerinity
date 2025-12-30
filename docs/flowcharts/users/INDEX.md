@@ -9,7 +9,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**[← Back to Hub](../README.md)** • **[MLM →](../mlm/INDEX.md)** • **[Flows →](../flows/INDEX.md)**
+**[← Back to Hub](../README.md)** • **[Affiliate →](../affiliate/INDEX.md)** • **[Flows →](../flows/INDEX.md)**
 
 </div>
 
@@ -55,7 +55,7 @@ flowchart TB
 
 ## User Types Comparison
 
-| Type | Icon | Access | MLM | Earnings | Requirements |
+| Type | Icon | Access | Affiliate | Earnings | Requirements |
 |------|------|--------|-----|----------|--------------|
 | **Visitor** | 🌐 | Public pages only | ❌ | ❌ | None |
 | **Regular** | 👤 | Dashboard (limited) | ❌ | ❌ | Registration |
@@ -75,7 +75,7 @@ flowchart LR
     subgraph CONNECTIONS["🔗 HOW USERS CONNECT"]
         direction TB
 
-        subgraph SPONSOR["SPONSOR RELATIONSHIP<br/>(MLM Upline)"]
+        subgraph SPONSOR["SPONSOR RELATIONSHIP<br/>(Affiliate Upline)"]
             S1["Parent User"]
             S2["Child User"]
             S1 -->|"parent_id"| S2
@@ -109,7 +109,7 @@ flowchart LR
 
 | Aspect | Sponsor (parent_id) | Originator (originator_id) |
 |--------|--------------------|-----------------------------|
-| **Who** | MLM upline member | Advisor who signed them up |
+| **Who** | Affiliate upline member | Advisor who signed them up |
 | **Relationship** | Team/genealogy tree | Business acquisition |
 | **Commission** | Sponsor bonus, level commission | Originator joining/recurring |
 | **Can be same?** | Yes, advisor can be own sponsor | Yes |
@@ -194,7 +194,7 @@ flowchart LR
 
 | Previous | Up | Next |
 |----------|----|----|
-| - | [🏠 Hub](../README.md) | [🌳 MLM](../mlm/INDEX.md) |
+| - | [🏠 Hub](../README.md) | [🌳 Affiliate](../affiliate/INDEX.md) |
 
 ---
 

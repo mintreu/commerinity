@@ -1,5 +1,5 @@
 # Commission & Reward System
-## MLM Commission Calculation with Product Rewards
+## Affiliate Commission Calculation with Product Rewards
 
 ---
 
@@ -353,7 +353,7 @@ class CommissionCalculator
     {
         $commissions = [];
 
-        // Get all ancestors (MLM tree)
+        // Get all ancestors (Affiliate tree)
         $ancestors = $customer->ancestors()->get(); // Adjacency list
 
         foreach ($ancestors as $index => $ancestor) {

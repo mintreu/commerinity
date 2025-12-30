@@ -10,7 +10,7 @@
 
 **What**: Multi-tier membership subscription system with stage-based progression (Bronze → Silver → Gold → Platinum → Diamond), level-based tasks, and feature unlocking.
 
-**Why**: Core MLM business model - users subscribe to stages/levels to unlock earning potential, features, and commission rates.
+**Why**: Core Affiliate business model - users subscribe to stages/levels to unlock earning potential, features, and commission rates.
 
 **Reference**: Old commerinity has complete implementation - we'll build better with current tech stack.
 
@@ -845,7 +845,7 @@ it('checks upgrade eligibility correctly', function () {
 ### Phase 5: Integration (Day 7)
 - [ ] Connect to payment system
 - [ ] Connect to commission system (update rates based on level)
-- [ ] Connect to MLM tree (restrict team size by level)
+- [ ] Connect to Affiliate tree (restrict team size by level)
 - [ ] Test end-to-end flows
 
 ---
@@ -857,7 +857,7 @@ it('checks upgrade eligibility correctly', function () {
 **Implementation Without This Plan**:
 - Read old commerinity code (50KB)
 - Read commission system docs (12KB)
-- Read MLM docs (15KB)
+- Read Affiliate docs (15KB)
 - Research best practices (30KB)
 - Trial and error (50KB+)
 - **Total**: 157KB+ tokens

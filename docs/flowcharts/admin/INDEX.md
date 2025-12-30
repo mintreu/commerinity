@@ -32,7 +32,7 @@ flowchart TB
             U3["KYC Verification"]
         end
 
-        subgraph MLM["🌳 MLM MANAGEMENT"]
+        subgraph Affiliate["🌳 Affiliate MANAGEMENT"]
             M1["Stages"]
             M2["Levels"]
             M3["Commissions"]
@@ -53,12 +53,12 @@ flowchart TB
             S4["Settings"]
         end
 
-        DASH --> USERS & MLM & FINANCE & SYSTEM
+        DASH --> USERS & Affiliate & FINANCE & SYSTEM
     end
 
     style DASH fill:#e74c3c,stroke:#c0392b,color:#fff
     style USERS fill:#3498db,stroke:#2980b9,color:#fff
-    style MLM fill:#2ecc71,stroke:#27ae60,color:#fff
+    style Affiliate fill:#2ecc71,stroke:#27ae60,color:#fff
     style FINANCE fill:#f39c12,stroke:#d68910,color:#fff
     style SYSTEM fill:#9b59b6,stroke:#8e44ad,color:#fff
 ```
@@ -95,7 +95,7 @@ flowchart TB
 │       ├── Approve/Reject
 │       └── View Documents
 │
-├── 🌳 MLM Management ────────────────── /admin/mlm
+├── 🌳 Affiliate Management ────────────────── /admin/affiliate
 │   ├── 🏆 Stages ─────────────────────── /admin/stages
 │   │   ├── Create Stage
 │   │   ├── Set Pricing
@@ -107,13 +107,13 @@ flowchart TB
 │   │   ├── Set Requirements
 │   │   └── Configure Bonuses
 │   │
-│   ├── 💰 Commissions ────────────────── /admin/mlm-commissions
+│   ├── 💰 Commissions ────────────────── /admin/affiliate-commissions
 │   │   ├── View All Commissions
 │   │   ├── Filter by Type
 │   │   ├── Export Reports
 │   │   └── Manual Adjustments
 │   │
-│   └── 🌲 Genealogy ──────────────────── /admin/mlm-genealogies
+│   └── 🌲 Genealogy ──────────────────── /admin/affiliate-genealogies
 │       ├── Tree Visualization
 │       ├── User Statistics
 │       └── Team Analysis
@@ -284,8 +284,8 @@ flowchart TB
 | **UserSubscriptionResource** | `/admin/user-subscriptions` | CRUD, Status Filter | ✅ Ready |
 | **StageResource** | `/admin/stages` | CRUD, Pricing Config | ✅ Ready |
 | **LevelResource** | `/admin/levels` | CRUD, Requirements | ✅ Ready |
-| **MlmCommissionResource** | `/admin/mlm-commissions` | View, Filter, Export | ✅ Ready |
-| **MlmGenealogyResource** | `/admin/mlm-genealogies` | View, Stats | ✅ Ready |
+| **MlmCommissionResource** | `/admin/affiliate-commissions` | View, Filter, Export | ✅ Ready |
+| **MlmGenealogyResource** | `/admin/affiliate-genealogies` | View, Stats | ✅ Ready |
 | **WalletResource** | `/admin/wallets` | View, Manual Ops | ✅ Ready |
 | **TransactionResource** | `/admin/transactions` | View, Filter | ✅ Ready |
 | **KycResource** | `/admin/kycs` | Approve/Reject | ✅ Ready |

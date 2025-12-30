@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Casts\CommissionStatusCast;
 use App\Http\Controllers\Controller;
-use App\Models\Mlm\MlmCommission;
+use App\Models\Affiliate\AffiliateCommission;
 use App\Services\MoneyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,23 +31,23 @@ final class CommissionController extends Controller
         $user = $request->user();
 
         // Get total earnings (all time)
-        $totalEarnings = MlmCommission::where('user_id', $user->id)
+        $totalEarnings = AffiliateCommission::where('user_id', $user->id)
             ->where('status', CommissionStatusCast::PAID)
             ->sum('net_amount');
 
         // Get pending earnings
-        $pendingEarnings = MlmCommission::where('user_id', $user->id)
+        $pendingEarnings = AffiliateCommission::where('user_id', $user->id)
             ->whereIn('status', [CommissionStatusCast::PENDING, CommissionStatusCast::APPROVED])
             ->sum('net_amount');
 
         // Get this month's earnings
-        $thisMonthEarnings = MlmCommission::where('user_id', $user->id)
+        $thisMonthEarnings = AffiliateCommission::where('user_id', $user->id)
             ->where('status', CommissionStatusCast::PAID)
             ->where('period_key', now()->format('Y-m'))
             ->sum('net_amount');
 
         // Get last month's earnings
-        $lastMonthEarnings = MlmCommission::where('user_id', $user->id)
+        $lastMonthEarnings = AffiliateCommission::where('user_id', $user->id)
             ->where('status', CommissionStatusCast::PAID)
             ->where('period_key', now()->subMonth()->format('Y-m'))
             ->sum('net_amount');
@@ -58,7 +58,7 @@ final class CommissionController extends Controller
             : ($thisMonthEarnings > 0 ? 100 : 0);
 
         // Get commission count
-        $totalCommissions = MlmCommission::where('user_id', $user->id)
+        $totalCommissions = AffiliateCommission::where('user_id', $user->id)
             ->where('status', CommissionStatusCast::PAID)
             ->count();
 
@@ -95,7 +95,7 @@ final class CommissionController extends Controller
 
         $user = $request->user();
 
-        $query = MlmCommission::where('user_id', $user->id)
+        $query = AffiliateCommission::where('user_id', $user->id)
             ->with(['fromUser:id,uuid,name'])
             ->orderByDesc('created_at');
 
@@ -137,7 +137,7 @@ final class CommissionController extends Controller
     {
         $user = $request->user();
 
-        $commission = MlmCommission::where('uuid', $uuid)
+        $commission = AffiliateCommission::where('uuid', $uuid)
             ->where('user_id', $user->id)
             ->with(['fromUser:id,uuid,name,email', 'paidViaTransaction'])
             ->first();
@@ -168,7 +168,7 @@ final class CommissionController extends Controller
 
         $user = $request->user();
 
-        $query = MlmCommission::where('user_id', $user->id)
+        $query = AffiliateCommission::where('user_id', $user->id)
             ->where('status', CommissionStatusCast::PAID);
 
         if ($request->filled('period')) {
@@ -206,7 +206,7 @@ final class CommissionController extends Controller
         $user = $request->user();
         $months = $request->input('months', 12);
 
-        $earnings = MlmCommission::where('user_id', $user->id)
+        $earnings = AffiliateCommission::where('user_id', $user->id)
             ->where('status', CommissionStatusCast::PAID)
             ->where('commission_date', '>=', now()->subMonths($months)->startOfMonth())
             ->selectRaw('period_key, SUM(net_amount) as total, COUNT(*) as count')
@@ -229,7 +229,7 @@ final class CommissionController extends Controller
     /**
      * Format commission for API response.
      */
-    private function formatCommission(MlmCommission $commission, bool $detailed = false): array
+    private function formatCommission(AffiliateCommission $commission, bool $detailed = false): array
     {
         $data = [
             'uuid' => $commission->uuid,

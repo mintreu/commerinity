@@ -1,7 +1,7 @@
 # Complete Admin & Activity Logging System
 
 > **Status**: SAVED FOR FUTURE IMPLEMENTATION
-> **Implement After**: MLM, E-commerce, Recruitment, User Journey, Task System complete
+> **Implement After**: Affiliate, E-commerce, Recruitment, User Journey, Task System complete
 > **Created**: 2025-12-15
 
 ---
@@ -348,7 +348,7 @@ return new class extends Migration
             $table->unsignedInteger('total_transactions')->default(0);
             $table->unsignedBigInteger('total_volume')->default(0);
 
-            // MLM specific
+            // Affiliate specific
             $table->unsignedInteger('new_subscriptions')->default(0);
             $table->unsignedInteger('renewals')->default(0);
             $table->unsignedInteger('upgrades')->default(0);

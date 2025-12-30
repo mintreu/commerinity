@@ -61,9 +61,9 @@ final class UserPermissionService implements UserPermissionServiceInterface
      * Permissions for users with active subscription (Member+).
      */
     private const SUBSCRIBED_PERMISSIONS = [
-        'mlm.view',
-        'mlm.tree',
-        'mlm.referrals',
+        'affiliate.view',
+        'affiliate.tree',
+        'affiliate.referrals',
         'commissions.view',
         'earnings.view',
         'network.view',
@@ -76,7 +76,7 @@ final class UserPermissionService implements UserPermissionServiceInterface
      * Permissions for Promoter stage and above.
      */
     private const PROMOTER_PERMISSIONS = [
-        'mlm.team_extended',
+        'affiliate.team_extended',
         'commissions.level',
     ];
 
@@ -84,7 +84,7 @@ final class UserPermissionService implements UserPermissionServiceInterface
      * Permissions for Mentor stage and above.
      */
     private const MENTOR_PERMISSIONS = [
-        'mlm.deep_tree',
+        'affiliate.deep_tree',
         'team.management',
     ];
 
@@ -92,7 +92,7 @@ final class UserPermissionService implements UserPermissionServiceInterface
      * Permissions for Advisor stage.
      */
     private const ADVISOR_PERMISSIONS = [
-        'mlm.full_tree',
+        'affiliate.full_tree',
         'reports.advanced',
         'team.full_management',
     ];
@@ -248,9 +248,9 @@ final class UserPermissionService implements UserPermissionServiceInterface
             'wallet_send' => $this->hasPermission('wallet.send'),
             'wallet_withdraw' => $this->hasPermission('wallet.withdraw'),
 
-            // MLM/Network
-            'mlm_view' => $this->hasPermission('mlm.view'),
-            'mlm_tree' => $this->hasPermission('mlm.tree'),
+            // Affiliate/Network
+            'affiliate_view' => $this->hasPermission('affiliate.view'),
+            'affiliate_tree' => $this->hasPermission('affiliate.tree'),
             'network_view' => $this->hasPermission('network.view'),
             'commissions_view' => $this->hasPermission('commissions.view'),
 
@@ -269,7 +269,7 @@ final class UserPermissionService implements UserPermissionServiceInterface
             'beneficiary_manage' => $this->hasPermission('beneficiary.manage'),
 
             // Computed flags
-            'is_subscribed' => $this->hasPermission('mlm.view'),
+            'is_subscribed' => $this->hasPermission('affiliate.view'),
             'is_kyc_verified' => $this->hasPermission('wallet.send'),
             'is_onboarded' => $this->hasPermission('wallet.view'),
         ];

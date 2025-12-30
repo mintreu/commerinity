@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * Each stock record represents a purchase/inventory entry:
  * - Tracks landing cost, profit margin for accurate pricing
- * - BV/PV/reward_points for MLM commission calculations
+ * - BV/PV/reward_points for Affiliate commission calculations
  * - Batch/lot tracking for inventory management
  * - FIFO consumption for sales
  *
@@ -65,7 +65,7 @@ class ProductStock extends Model
         'min_quantity',
         'max_quantity',
         'wholesale_unit_quantity',
-        // MLM Fields
+        // Affiliate Fields
         'bv',
         'pv',
         'reward_points',
@@ -97,7 +97,7 @@ class ProductStock extends Model
             'min_quantity' => 'integer',
             'max_quantity' => 'integer',
             'wholesale_unit_quantity' => 'integer',
-            // MLM
+            // Affiliate
             'bv' => 'integer',
             'pv' => 'integer',
             'reward_points' => 'integer',
@@ -222,11 +222,11 @@ class ProductStock extends Model
     }
 
     // ========================================
-    // MLM Commission Helpers
+    // Affiliate Commission Helpers
     // ========================================
 
     /**
-     * Check if this stock can generate MLM commissions
+     * Check if this stock can generate Affiliate commissions
      */
     public function canGenerateCommission(): bool
     {
@@ -234,7 +234,7 @@ class ProductStock extends Model
     }
 
     /**
-     * Get commissionable amount for MLM calculations
+     * Get commissionable amount for Affiliate calculations
      * Uses BV if set, otherwise calculates from price
      */
     public function getCommissionableAmount(): int

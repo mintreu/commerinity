@@ -14,7 +14,7 @@ use Illuminate\Database\Seeder;
  * Creates realistic stock entries with:
  * - Random quantities between 50-500 units
  * - Proper landing cost based on product price
- * - MLM points (BV, PV, reward points)
+ * - Affiliate points (BV, PV, reward points)
  * - FIFO priority ordering
  */
 class ProductStockSeeder extends Seeder
@@ -56,7 +56,7 @@ class ProductStockSeeder extends Seeder
         $landingCost = (int) ($productPrice * 0.6); // 60% of price (40% margin)
         $profitMargin = 40.00;
 
-        // MLM calculations
+        // Affiliate calculations
         $profit = $productPrice - $landingCost;
         $bv = (int) ($profit * 0.10); // 10% of profit as BV
         $pv = (int) ($profit * 0.05); // 5% of profit as PV

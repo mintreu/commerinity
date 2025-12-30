@@ -215,28 +215,30 @@ onMounted(() => {
 <template>
   <div class="max-w-4xl mx-auto space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
           My Addresses
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Manage your delivery addresses
+        <p class="text-base text-slate-500 dark:text-slate-400 mt-1">
+          Manage your delivery and billing addresses for a faster checkout.
         </p>
       </div>
       <UButton
         icon="i-lucide-plus"
         color="primary"
+        size="lg"
+        class="rounded-xl shadow-lg shadow-primary-500/20"
         @click="openAddModal"
       >
-        Add Address
+        Add New Address
       </UButton>
     </div>
 
     <!-- Loading State -->
     <div
       v-if="loading"
-      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6"
     >
       <div
         v-for="i in 2"
@@ -244,9 +246,9 @@ onMounted(() => {
         class="glass-card p-6 animate-pulse"
       >
         <div class="flex items-start gap-4">
-          <div class="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-xl" />
-          <div class="flex-1 space-y-3">
-            <div class="h-4 w-24 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div class="w-14 h-14 bg-slate-200 dark:bg-slate-700 rounded-2xl" />
+          <div class="flex-1 space-y-4">
+            <div class="h-5 w-32 bg-slate-200 dark:bg-slate-700 rounded" />
             <div class="h-3 w-full bg-slate-200 dark:bg-slate-700 rounded" />
             <div class="h-3 w-3/4 bg-slate-200 dark:bg-slate-700 rounded" />
           </div>
@@ -257,13 +259,13 @@ onMounted(() => {
     <!-- Empty State -->
     <div
       v-else-if="addresses.length === 0"
-      class="glass-card p-12"
+      class="glass-card p-16 text-center"
     >
       <CommonEmptyState
         icon="i-lucide-map-pin"
-        title="No addresses yet"
-        description="Add your first delivery address to make checkout faster"
-        action-label="Add Address"
+        title="No saved addresses"
+        description="Looks like you haven't added any addresses yet. Add one now to start shopping."
+        action-label="Add Your First Address"
         @action="openAddModal"
       />
     </div>
@@ -271,46 +273,47 @@ onMounted(() => {
     <!-- Addresses Grid -->
     <div
       v-else
-      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6"
     >
       <div
         v-for="address in addresses"
         :key="address.uuid"
         :class="[
-          'glass-card p-5 relative transition-all',
-          address.default ? 'ring-2 ring-blue-500 dark:ring-blue-400' : ''
+          'glass-card p-6 relative transition-all duration-300 hover:shadow-xl group',
+          address.default ? 'ring-2 ring-primary-500 dark:ring-primary-400 bg-primary-50/10' : 'hover:border-primary-500/50'
         ]"
       >
         <!-- Default Badge -->
         <div
           v-if="address.default"
-          class="absolute top-3 right-3"
+          class="absolute top-4 right-4"
         >
           <UBadge
             color="primary"
             variant="solid"
-            size="xs"
+            size="sm"
+            class="rounded-lg px-2.5"
           >
             Default
           </UBadge>
         </div>
 
-        <div class="flex items-start gap-4">
+        <div class="flex items-start gap-5">
           <!-- Type Icon -->
           <div
             :class="[
-              'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0',
-              address.type === 'home' ? 'bg-blue-100 dark:bg-blue-900/30' :
-              address.type === 'work' ? 'bg-green-100 dark:bg-green-900/30' :
+              'w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-300 group-hover:scale-110',
+              address.type === 'home' ? 'bg-primary-100 dark:bg-primary-900/30' :
+              address.type === 'work' ? 'bg-success-100 dark:bg-success-900/30' :
               'bg-slate-100 dark:bg-slate-800'
             ]"
           >
             <UIcon
               :name="getTypeIcon(address.type)"
               :class="[
-                'w-6 h-6',
-                address.type === 'home' ? 'text-blue-600 dark:text-blue-400' :
-                address.type === 'work' ? 'text-green-600 dark:text-green-400' :
+                'w-7 h-7',
+                address.type === 'home' ? 'text-primary-600 dark:text-primary-400' :
+                address.type === 'work' ? 'text-success-600 dark:text-success-400' :
                 'text-slate-600 dark:text-slate-400'
               ]"
             />
@@ -318,158 +321,196 @@ onMounted(() => {
 
           <!-- Address Details -->
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-semibold text-slate-900 dark:text-white truncate">
+            <div class="flex items-center gap-2 mb-2">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white truncate">
                 {{ address.title || address.type }}
               </h3>
               <UBadge
                 :color="getTypeColor(address.type) as any"
-                variant="soft"
+                variant="subtle"
                 size="xs"
+                class="capitalize rounded-md"
               >
                 {{ address.type }}
               </UBadge>
             </div>
 
-            <p class="text-sm text-slate-700 dark:text-slate-300 font-medium">
-              {{ address.person_name }}
-            </p>
-            <p class="text-sm text-slate-600 dark:text-slate-400">
-              {{ address.address_1 }}
-            </p>
-            <p
-              v-if="address.address_2"
-              class="text-sm text-slate-600 dark:text-slate-400"
-            >
-              {{ address.address_2 }}
-            </p>
-            <p class="text-sm text-slate-600 dark:text-slate-400">
-              {{ address.city }}, {{ address.state_code }} - {{ address.postal_code }}
-            </p>
-            <p class="text-sm text-slate-500 dark:text-slate-500 mt-1">
-              <UIcon
-                name="i-lucide-phone"
-                class="w-3 h-3 inline mr-1"
-              />
-              {{ address.person_mobile }}
-            </p>
+            <div class="space-y-1">
+              <p class="text-sm text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-2">
+                <UIcon name="i-lucide-user" class="w-3.5 h-3.5 text-slate-400" />
+                {{ address.person_name }}
+              </p>
+              <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                {{ address.address_1 }}
+                <span v-if="address.address_2">, {{ address.address_2 }}</span>
+              </p>
+              <p v-if="address.landmark" class="text-sm text-slate-500 dark:text-slate-500 italic">
+                Landmark: {{ address.landmark }}
+              </p>
+              <p class="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                {{ address.city }}, {{ address.state_code }} - {{ address.postal_code }}
+              </p>
+              <p class="text-sm text-primary-600 dark:text-primary-400 font-bold mt-2 flex items-center gap-2">
+                <UIcon name="i-lucide-phone" class="w-3.5 h-3.5" />
+                {{ address.person_mobile }}
+              </p>
+            </div>
           </div>
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-3 mt-6 pt-5 border-t border-slate-100 dark:border-slate-800">
           <UButton
             v-if="!address.default"
-            variant="soft"
+            variant="ghost"
             color="primary"
-            size="xs"
+            size="sm"
+            class="font-semibold"
             @click="setDefaultAddress(address.uuid)"
           >
-            Set as Default
+            Mark as Default
           </UButton>
           <div class="flex-1" />
-          <UButton
-            icon="i-lucide-pencil"
-            variant="ghost"
-            color="neutral"
-            size="xs"
-            @click="openEditModal(address)"
-          />
-          <UButton
-            icon="i-lucide-trash-2"
-            variant="ghost"
-            color="error"
-            size="xs"
-            :loading="deletingId === address.uuid"
-            @click="deleteAddress(address.uuid)"
-          />
+          <UTooltip text="Edit Address">
+            <UButton
+              icon="i-lucide-pencil"
+              variant="subtle"
+              color="neutral"
+              size="sm"
+              class="rounded-lg"
+              @click="openEditModal(address)"
+            />
+          </UTooltip>
+          <UTooltip text="Delete Address">
+            <UButton
+              icon="i-lucide-trash-2"
+              variant="subtle"
+              color="error"
+              size="sm"
+              class="rounded-lg"
+              :loading="deletingId === address.uuid"
+              @click="deleteAddress(address.uuid)"
+            />
+          </UTooltip>
         </div>
       </div>
     </div>
 
-    <!-- Add Address Modal -->
-    <UModal v-model:open="showAddModal">
+    <!-- Address Form Modal (Shared for Add/Edit) -->
+    <UModal
+      :model-value="showAddModal || showEditModal"
+      @update:model-value="val => { if(!val) { showAddModal = false; showEditModal = false; } }"
+      :ui="{ width: 'sm:max-w-2xl' }"
+    >
       <template #content>
-        <UCard>
+        <UCard :ui="{ body: { padding: 'p-8' }, header: { padding: 'px-8 py-6' }, footer: { padding: 'px-8 py-6' } }">
           <template #header>
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+            <div class="flex items-center gap-4">
+              <div
+                :class="[
+                  'w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner',
+                  showEditModal ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-primary-100 dark:bg-primary-900/30'
+                ]"
+              >
                 <UIcon
-                  name="i-lucide-map-pin-plus"
-                  class="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  :name="showEditModal ? 'i-lucide-pencil' : 'i-lucide-map-pin-plus'"
+                  :class="['w-6 h-6', showEditModal ? 'text-amber-600 dark:text-amber-400' : 'text-primary-600 dark:text-primary-400']"
                 />
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
-                  Add New Address
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+                  {{ showEditModal ? 'Edit Address' : 'Add New Address' }}
                 </h3>
                 <p class="text-sm text-slate-500 dark:text-slate-400">
-                  Enter your delivery address details
+                  {{ showEditModal ? 'Update your existing address information' : 'Enter the details for your new delivery location' }}
                 </p>
               </div>
             </div>
           </template>
 
-          <div class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-6">
+            <!-- Row 1: Title & Type -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UFormField
-                label="Address Title"
+                label="Address Label"
+                description="e.g. Home, Office, Parents"
                 :error="formErrors.title"
+                required
               >
                 <UInput
                   v-model="formData.title"
-                  placeholder="e.g. Home, Office"
+                  placeholder="Give this address a name"
+                  size="lg"
+                  class="w-full"
                 />
               </UFormField>
               <UFormField
-                label="Type"
+                label="Address Type"
                 :error="formErrors.type"
+                required
               >
                 <USelect
                   v-model="formData.type"
                   :items="addressTypeOptions"
+                  size="lg"
+                  class="w-full"
                 />
               </UFormField>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <!-- Row 2: Name & Mobile -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UFormField
-                label="Full Name"
+                label="Recipient's Full Name"
                 :error="formErrors.person_name"
+                required
               >
                 <UInput
                   v-model="formData.person_name"
-                  placeholder="Recipient name"
+                  placeholder="Who's receiving the package?"
+                  size="lg"
+                  icon="i-lucide-user"
+                  class="w-full"
                 />
               </UFormField>
               <UFormField
-                label="Mobile Number"
+                label="Contact Number"
                 :error="formErrors.person_mobile"
+                required
               >
                 <UInput
                   v-model="formData.person_mobile"
-                  placeholder="10-digit mobile"
+                  placeholder="10-digit mobile number"
+                  size="lg"
+                  icon="i-lucide-phone"
+                  class="w-full"
                 />
               </UFormField>
             </div>
 
+            <!-- Address Lines -->
             <UFormField
-              label="Address Line 1"
+              label="Flat / House / Building"
               :error="formErrors.address_1"
+              required
             >
               <UInput
                 v-model="formData.address_1"
-                placeholder="House/Flat No., Building Name"
+                placeholder="Complete house address"
+                size="lg"
+                class="w-full"
               />
             </UFormField>
 
             <UFormField
-              label="Address Line 2 (Optional)"
+              label="Street / Area / Colony (Optional)"
               :error="formErrors.address_2"
             >
               <UInput
                 v-model="formData.address_2"
-                placeholder="Street, Area"
+                placeholder="Area details"
+                size="lg"
+                class="w-full"
               />
             </UFormField>
 
@@ -479,205 +520,73 @@ onMounted(() => {
             >
               <UInput
                 v-model="formData.landmark"
-                placeholder="Near..."
+                placeholder="Any famous nearby place"
+                size="lg"
+                icon="i-lucide-flag"
+                class="w-full"
               />
             </UFormField>
 
-            <div class="grid grid-cols-3 gap-4">
+            <!-- Row 3: City, PIN, State -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <UFormField
                 label="City"
                 :error="formErrors.city"
+                required
               >
                 <UInput
                   v-model="formData.city"
                   placeholder="City"
+                  size="lg"
+                  class="w-full"
                 />
               </UFormField>
               <UFormField
                 label="PIN Code"
                 :error="formErrors.postal_code"
+                required
               >
                 <UInput
                   v-model="formData.postal_code"
                   placeholder="6-digit PIN"
+                  size="lg"
+                  class="w-full"
                 />
               </UFormField>
               <UFormField
-                label="State Code"
+                label="State"
                 :error="formErrors.state_code"
+                required
               >
                 <UInput
                   v-model="formData.state_code"
                   placeholder="e.g. WB"
+                  size="lg"
+                  class="w-full"
                 />
               </UFormField>
             </div>
           </div>
 
           <template #footer>
-            <div class="flex justify-end gap-3">
+            <div class="flex flex-col sm:flex-row justify-end gap-4">
               <UButton
                 variant="ghost"
                 color="neutral"
-                @click="showAddModal = false"
+                size="lg"
+                class="sm:px-8"
+                @click="() => { showAddModal = false; showEditModal = false; }"
               >
                 Cancel
               </UButton>
               <UButton
                 color="primary"
+                size="lg"
+                class="sm:px-12 rounded-xl shadow-lg shadow-primary-500/20"
                 :loading="submitting"
-                @click="createAddress"
+                @click="showEditModal ? updateAddress() : createAddress()"
               >
-                Save Address
-              </UButton>
-            </div>
-          </template>
-        </UCard>
-      </template>
-    </UModal>
-
-    <!-- Edit Address Modal -->
-    <UModal v-model:open="showEditModal">
-      <template #content>
-        <UCard>
-          <template #header>
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-                <UIcon
-                  name="i-lucide-pencil"
-                  class="w-5 h-5 text-amber-600 dark:text-amber-400"
-                />
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
-                  Edit Address
-                </h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400">
-                  Update your address details
-                </p>
-              </div>
-            </div>
-          </template>
-
-          <div class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-              <UFormField
-                label="Address Title"
-                :error="formErrors.title"
-              >
-                <UInput
-                  v-model="formData.title"
-                  placeholder="e.g. Home, Office"
-                />
-              </UFormField>
-              <UFormField
-                label="Type"
-                :error="formErrors.type"
-              >
-                <USelect
-                  v-model="formData.type"
-                  :items="addressTypeOptions"
-                />
-              </UFormField>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <UFormField
-                label="Full Name"
-                :error="formErrors.person_name"
-              >
-                <UInput
-                  v-model="formData.person_name"
-                  placeholder="Recipient name"
-                />
-              </UFormField>
-              <UFormField
-                label="Mobile Number"
-                :error="formErrors.person_mobile"
-              >
-                <UInput
-                  v-model="formData.person_mobile"
-                  placeholder="10-digit mobile"
-                />
-              </UFormField>
-            </div>
-
-            <UFormField
-              label="Address Line 1"
-              :error="formErrors.address_1"
-            >
-              <UInput
-                v-model="formData.address_1"
-                placeholder="House/Flat No., Building Name"
-              />
-            </UFormField>
-
-            <UFormField
-              label="Address Line 2 (Optional)"
-              :error="formErrors.address_2"
-            >
-              <UInput
-                v-model="formData.address_2"
-                placeholder="Street, Area"
-              />
-            </UFormField>
-
-            <UFormField
-              label="Landmark (Optional)"
-              :error="formErrors.landmark"
-            >
-              <UInput
-                v-model="formData.landmark"
-                placeholder="Near..."
-              />
-            </UFormField>
-
-            <div class="grid grid-cols-3 gap-4">
-              <UFormField
-                label="City"
-                :error="formErrors.city"
-              >
-                <UInput
-                  v-model="formData.city"
-                  placeholder="City"
-                />
-              </UFormField>
-              <UFormField
-                label="PIN Code"
-                :error="formErrors.postal_code"
-              >
-                <UInput
-                  v-model="formData.postal_code"
-                  placeholder="6-digit PIN"
-                />
-              </UFormField>
-              <UFormField
-                label="State Code"
-                :error="formErrors.state_code"
-              >
-                <UInput
-                  v-model="formData.state_code"
-                  placeholder="e.g. WB"
-                />
-              </UFormField>
-            </div>
-          </div>
-
-          <template #footer>
-            <div class="flex justify-end gap-3">
-              <UButton
-                variant="ghost"
-                color="neutral"
-                @click="showEditModal = false"
-              >
-                Cancel
-              </UButton>
-              <UButton
-                color="primary"
-                :loading="submitting"
-                @click="updateAddress"
-              >
-                Update Address
+                {{ showEditModal ? 'Update Address' : 'Save Address' }}
               </UButton>
             </div>
           </template>

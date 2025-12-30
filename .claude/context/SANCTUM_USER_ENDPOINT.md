@@ -93,7 +93,7 @@ class UserIndexResource extends JsonResource
             'email_verified' => !is_null($this->email_verified_at),
             'mobile_verified' => !is_null($this->mobile_verified_at),
 
-            // MLM
+            // Affiliate
             'referral_code' => $this->referral_code,
             'parent_id' => $this->parent_id,
             'hasParent' => !is_null($this->parent_id),
@@ -133,7 +133,7 @@ const { user } = useSanctum()
 user.value.referral_code  // For sharing
 user.value.avatar         // For navbar
 user.value.level_id       // For membership check
-user.value.hasParent      // For MLM logic
+user.value.hasParent      // For Affiliate logic
 user.value.email_verified // For verification prompt
 ```
 
@@ -240,7 +240,7 @@ console.log(user.value.level_id)
 **Old Commerinity Strategy** ⭐⭐⭐:
 1. Override `/api/user` with custom controller
 2. Return via Resource (UserIndexResource)
-3. Include essential data (verification, MLM, membership)
+3. Include essential data (verification, Affiliate, membership)
 4. Separate `/api/user/profile` for full data
 5. Frontend gets everything in ONE call
 

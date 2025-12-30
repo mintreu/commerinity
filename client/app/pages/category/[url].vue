@@ -17,7 +17,7 @@ const toast = useToast()
 const { isLoggedIn } = useSanctum()
 const user = useCurrentUser()
 const { isMember, isPromoter } = useUserType()
-const canSeeMlmBenefits = computed(() => isMember.value || isPromoter.value)
+const canSeeAffiliateBenefits = computed(() => isMember.value || isPromoter.value)
 
 // Cart composable
 const { addToCart: addToCartComposable, cartCount } = useCart()
@@ -458,7 +458,7 @@ const clearPriceFilter = () => {
 
                     <!-- BV Badge - Only for Member/Promoter -->
                     <div
-                      v-if="canSeeMlmBenefits && product.bv > 0"
+                      v-if="canSeeAffiliateBenefits && product.bv > 0"
                       class="absolute top-2 right-2 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded"
                     >
                       {{ product.bv }} BV
@@ -512,9 +512,9 @@ const clearPriceFilter = () => {
                       {{ product.sale_name }}
                     </div>
 
-                    <!-- MLM Benefits - Only for Member/Promoter -->
+                    <!-- Affiliate Benefits - Only for Member/Promoter -->
                     <div
-                      v-if="canSeeMlmBenefits && product.reward_points > 0"
+                      v-if="canSeeAffiliateBenefits && product.reward_points > 0"
                       class="text-xs text-emerald-600 dark:text-emerald-400 mb-3"
                     >
                       Earn {{ product.reward_points }} reward points

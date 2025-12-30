@@ -254,7 +254,7 @@ FilterIndexResource
 | **Scoping** | ✅ Custom scopes | ❌ Direct queries |
 | **API Resources** | ✅ Transformers | ⚠️ Partial |
 | **Enums** | ✅ Type-safe | ✅ Custom casts |
-| **MLM** | ❌ Not present | ✅ Full system |
+| **Affiliate** | ❌ Not present | ✅ Full system |
 | **Wallet** | ❌ Not present | ✅ Digital wallet |
 | **Content** | ❌ Minimal | ✅ Blog/CMS |
 
@@ -329,7 +329,7 @@ FilterIndexResource
 ## What NOT to Copy
 
 ### Missing Features (We Have These)
-- ❌ MLM System
+- ❌ Affiliate System
 - ❌ Digital Wallet
 - ❌ Commission Calculation
 - ❌ Membership Lifecycle
@@ -645,7 +645,7 @@ Popkult demonstrates **modern e-commerce best practices** with:
 ✅ API-first design
 
 **Combined with Old Commerinity's**:
-- MLM system
+- Affiliate system
 - Digital wallet
 - Premium UI/UX
 - Content management

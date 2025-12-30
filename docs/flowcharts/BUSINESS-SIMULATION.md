@@ -16,7 +16,7 @@
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**[← Hub](./README.md)** • **[MLM](./mlm/INDEX.md)** • **[Flows](./flows/INDEX.md)**
+**[← Hub](./README.md)** • **[Affiliate](./affiliate/INDEX.md)** • **[Flows](./flows/INDEX.md)**
 
 </div>
 
@@ -107,7 +107,7 @@ STAGE PRICING:
 │ Level 4 Commission       │ 2%      │ ₹5.00    │ ₹10.00   │ ₹20.00   │
 │ Originator Commission    │ 5%      │ ₹12.50   │ ₹25.00   │ ₹50.00   │
 ├──────────────────────────┼─────────┼──────────┼──────────┼──────────┤
-│ MAX MLM PAYOUT           │ 14%     │ ₹35.00   │ ₹70.00   │ ₹140.00  │
+│ MAX Affiliate PAYOUT           │ 14%     │ ₹35.00   │ ₹70.00   │ ₹140.00  │
 │ + ORIGINATOR             │ +5%     │ +₹12.50  │ +₹25.00  │ +₹50.00  │
 │ MAX TOTAL PAYOUT         │ 19%     │ ₹47.50   │ ₹95.00   │ ₹190.00  │
 └──────────────────────────┴─────────┴──────────┴──────────┴──────────┘
@@ -134,7 +134,7 @@ COMPANY RETAINS (Stage 1 example):
 ## 2.1 User Growth Assumptions
 
 ```
-GROWTH MODEL: Realistic Indian Affiliate/MLM Market
+GROWTH MODEL: Realistic Indian Affiliate/Affiliate Market
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ASSUMPTIONS:
@@ -183,7 +183,7 @@ GROWTH PHASES:
 ## 2.3 User Distribution by Type
 
 ```
-USER TYPE DISTRIBUTION (Typical MLM Platform)
+USER TYPE DISTRIBUTION (Typical Affiliate Platform)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌───────────────────┬────────────┬─────────────────────────────────────────────┐
@@ -282,7 +282,7 @@ Note: Stage 1 = 50% × Paid Users × ₹250
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    ANNUAL COMMISSION PAYOUTS (NORMAL)                       │
 │             Estimated at ~8.5% Weighted Average of Revenue                  │
-│             (Max 14% MLM + 5% Originator, but not all trigger full depth)   │
+│             (Max 14% Affiliate + 5% Originator, but not all trigger full depth)   │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │ YEAR │ TOTAL REV    │ LEVEL 1-4  │ ORIGINATOR │ TOTAL PAYOUT │ PAYOUT %   │
@@ -603,7 +603,7 @@ E-COMMERCE REVENUE STREAM (Starting Year 2)
 │   ├── Launch: Q1 2027                                                      │
 │   ├── Average Order Value (AOV): ₹500                                      │
 │   ├── Platform Commission: 10-15%                                          │
-│   ├── Purchase Commission to MLM: 5% of product price                      │
+│   ├── Purchase Commission to Affiliate: 5% of product price                      │
 │   └── GST on Products: Variable (5%, 12%, 18%, 28%)                        │
 │                                                                             │
 │   PRODUCT CATEGORIES:                                                       │
@@ -617,7 +617,7 @@ E-COMMERCE REVENUE STREAM (Starting Year 2)
 E-COMMERCE PROJECTION (NORMAL SCENARIO):
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ YEAR │ ORDERS/MO │ AOV    │ GMV         │ PLATFORM FEE │ MLM COMMISSION │
+│ YEAR │ ORDERS/MO │ AOV    │ GMV         │ PLATFORM FEE │ Affiliate COMMISSION │
 │ ─────┼───────────┼────────┼─────────────┼──────────────┼─────────────── │
 │ 2027 │ 200       │ ₹500   │ ₹12,00,000  │ ₹1,44,000    │ ₹60,000        │
 │ 2028 │ 500       │ ₹550   │ ₹33,00,000  │ ₹3,96,000    │ ₹1,65,000      │
@@ -641,14 +641,14 @@ E-COMMERCE TRANSACTION FLOWS
    │ On Delivery Confirmation:                                               │
    │ ├── Vendor receives: Product Price - Platform Fee - GST                │
    │ ├── Platform receives: Commission (10-15%)                              │
-   │ └── MLM Tree receives: Purchase Commission (5% to uplines)              │
+   │ └── Affiliate Tree receives: Purchase Commission (5% to uplines)              │
    └─────────────────────────────────────────────────────────────────────────┘
 
 2. PRODUCT REFUND
    ┌─────────────────────────────────────────────────────────────────────────┐
    │ Customer Request → Admin Review → Approved?                             │
    │ ├── YES → Refund to Wallet (not original payment method)               │
-   │ │         Commission Reversal (clawback from MLM recipients)            │
+   │ │         Commission Reversal (clawback from Affiliate recipients)            │
    │ └── NO  → Rejection with reason                                         │
    │                                                                         │
    │ REFUND TO WALLET: Can be used for future purchases or withdrawal       │
@@ -697,7 +697,7 @@ TASK-BASED REWARDS SYSTEM
 │   │ ─────────────────────────────┼──────────┼─────────────────────────── │  │
 │   │ Daily Login                  │ ₹2       │ Daily (max 30/month)       │  │
 │   │ Share on Social Media        │ ₹5       │ Weekly (max 4/month)       │  │
-│   │ Refer a Friend (non-MLM)     │ ₹25      │ Per referral               │  │
+│   │ Refer a Friend (non-Affiliate)     │ ₹25      │ Per referral               │  │
 │   │ Leave Product Review         │ ₹10      │ Per verified purchase      │  │
 │   │ Complete Survey              │ ₹15      │ Monthly                    │  │
 │   │ ─────────────────────────────┼──────────┼─────────────────────────── │  │
@@ -789,7 +789,7 @@ ALL TRANSACTION TYPES IN SYSTEM
 │      ├── Product Order (debit)                                             │
 │      ├── Order Refund (credit to wallet)                                   │
 │      ├── Vendor Settlement (platform to vendor)                            │
-│      └── Purchase Commission (to MLM tree)                                 │
+│      └── Purchase Commission (to Affiliate tree)                                 │
 │                                                                             │
 │   5. RECRUITMENT TRANSACTIONS (Active)                                     │
 │      └── Advisor Application Fee: ₹200 (one-time, non-refundable)          │
@@ -915,7 +915,7 @@ UNIFIED CHECKOUT FLOW
 │   ┌─────────────────────────────────────────────────────────────────────┐  │
 │   │                    EVENT LISTENERS                                   │  │
 │   ├─────────────────────────────────────────────────────────────────────┤  │
-│   │ HandleSubscriptionPayment   → Activate subscription, process MLM    │  │
+│   │ HandleSubscriptionPayment   → Activate subscription, process Affiliate    │  │
 │   │ HandleOrderPayment          → Update order status, notify vendor    │  │
 │   │ HandleWalletTopup           → Credit wallet balance                 │  │
 │   │ SendPaymentNotification     → Email/SMS to user                     │  │
@@ -1150,7 +1150,7 @@ KPIs TO TRACK WEEKLY
 │   └── Advisors/Agents:         4,000 (2%)                                  │
 │                                                                             │
 │   Paid Subscribers:            1,56,000 (78%)                              │
-│   Active MLM Participants:     1,40,000 (70%)                              │
+│   Active Affiliate Participants:     1,40,000 (70%)                              │
 │                                                                             │
 │   FINANCIAL METRICS                                                        │
 │   ═══════════════════════════════════════════════════════════════════════  │
@@ -1287,7 +1287,7 @@ PRINCIPLE: Use SMS only when CRITICAL. Prefer in-app/push/email for others.
 
 | Previous | Up | Next |
 |----------|----|----|
-| [Flows](./flows/INDEX.md) | [Hub](./README.md) | [MLM](./mlm/INDEX.md) |
+| [Flows](./flows/INDEX.md) | [Hub](./README.md) | [Affiliate](./affiliate/INDEX.md) |
 
 ---
 

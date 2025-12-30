@@ -64,7 +64,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
-            // MEMBERSHIP SYSTEM - Stages and Levels for MLM
+            // MEMBERSHIP SYSTEM - Stages and Levels for Affiliate
             // ═══════════════════════════════════════════════════════════
             StageSeeder::class,
             LevelSeeder::class,
@@ -121,9 +121,9 @@ class DatabaseSeeder extends Seeder
             TransactionSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
-            // MLM NETWORK - Full MLM tree with commissions, genealogy
+            // Affiliate NETWORK - Full Affiliate tree with commissions, genealogy
             // ═══════════════════════════════════════════════════════════
-            DemoMlmSeeder::class,
+            DemoAffiliateSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
             // E-COMMERCE DEMO DATA - Products with images and stock

@@ -18,7 +18,7 @@ definePageMeta({
 const config = useRuntimeConfig()
 const { user } = useSanctum()
 const toast = useToast()
-const { treeData, stats, isLoading, currentReferralCode, totalMembers, activeMembers, maxDepth, currentViewingName, fetchTree, fetchStats, resetToOwnTree, viewMemberTree } = useMlmTree()
+const { treeData, stats, isLoading, currentReferralCode, totalMembers, activeMembers, maxDepth, currentViewingName, fetchTree, fetchStats, resetToOwnTree, viewMemberTree } = useAffiliateTree()
 
 // State
 const currentView = ref<'chart' | 'list'>('list')

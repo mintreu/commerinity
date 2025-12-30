@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 /**
- * Stage Model - Represents a membership tier in the MLM system
+ * Stage Model - Represents a membership tier in the Affiliate system
  *
  * Each stage contains 4 levels (Bronze, Silver, Gold, Diamond)
  * with a 5^n matrix structure (5 direct, 25, 125, 625 = 780 max team)

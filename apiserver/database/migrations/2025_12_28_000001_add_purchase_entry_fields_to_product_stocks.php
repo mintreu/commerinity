@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Schema;
  * Each stock record represents a purchase/inventory entry with:
  * - landing_cost: Total cost to acquire (purchase price + shipping + duties)
  * - profit_margin: Percentage profit margin for this batch
- * - bv/pv/reward_points: MLM values calculated from profit_margin
+ * - bv/pv/reward_points: Affiliate values calculated from profit_margin
  * - supplier tracking via purchase_invoice_id
  *
- * MLM Commission Logic:
- * - BV (Business Volume) = Points for MLM commission calculations
+ * Affiliate Commission Logic:
+ * - BV (Business Volume) = Points for Affiliate commission calculations
  * - PV (Personal Volume) = Points for personal sales tracking
  * - reward_points = Points customer earns on purchase
  * - These are SET at purchase entry time based on profit_margin/landing_cost
@@ -42,17 +42,17 @@ return new class extends Migration
             $table->unsignedInteger('wholesale_unit_quantity')->nullable()->after('max_quantity')
                 ->comment('Unit quantity for wholesale orders');
 
-            // MLM Commission Fields (calculated from profit_margin at entry time)
+            // Affiliate Commission Fields (calculated from profit_margin at entry time)
             $table->unsignedInteger('bv')->default(0)->after('wholesale_unit_quantity')
-                ->comment('Business Volume for MLM commissions');
+                ->comment('Business Volume for Affiliate commissions');
             $table->unsignedInteger('pv')->default(0)->after('bv')
-                ->comment('Personal Volume for MLM tracking');
+                ->comment('Personal Volume for Affiliate tracking');
             $table->unsignedInteger('reward_points')->default(0)->after('pv')
                 ->comment('Reward points customer earns');
             $table->decimal('commission_rate', 5, 2)->nullable()->after('reward_points')
                 ->comment('Override commission % (null = use level default)');
             $table->boolean('is_commissionable')->default(true)->after('commission_rate')
-                ->comment('Whether this stock generates MLM commissions');
+                ->comment('Whether this stock generates Affiliate commissions');
 
             // Supplier/Invoice Tracking
             $table->foreignId('supplier_id')->nullable()->after('is_commissionable')
@@ -71,7 +71,7 @@ return new class extends Migration
             $table->text('notes')->nullable()->after('batch_number')
                 ->comment('Internal notes for this stock entry');
 
-            // Indexes for MLM queries
+            // Indexes for Affiliate queries
             $table->index('is_commissionable');
             $table->index(['bv', 'pv']);
             $table->index('supplier_id');

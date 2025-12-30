@@ -1,18 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Casts\GenderCast;
 use App\Casts\UserStatusCast;
 use App\Casts\UserTypeCast;
+use App\Models\Traits\HasAddress;
 use App\Models\Traits\HasBeneficiary;
+use App\Models\Traits\HasFingerprint;
 use App\Models\Traits\HasProductEngagement;
 use App\Models\Traits\HasProductWishlist;
 use App\Models\Traits\HasSaleAccess;
+use App\Models\Traits\HasUnique;
 use App\Models\Traits\HasVoucherAccess;
 use App\Models\Traits\HasWallet;
 use App\Traits\HasHelpdeskTickets;
 use App\Traits\HasJobApplications;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,13 +39,16 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-class User extends Authenticatable implements HasMedia, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasMedia, MustVerifyEmail
 {
+    use HasAddress;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens;
 
     use HasBeneficiary;
     use HasFactory;
+    use HasFingerprint;
     use HasHelpdeskTickets;
     use HasJobApplications;
     use HasProductEngagement;
@@ -46,6 +56,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     use HasPushSubscriptions;
     use HasRecursiveRelationships;
     use HasSaleAccess;
+    use HasUnique;
     use HasVoucherAccess;
     use HasWallet;
     use InteractsWithMedia;
@@ -133,7 +144,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     }
 
     /**
-     * MLM Parent (upline) relationship
+     * Affiliate Parent (upline) relationship
      */
     public function parent(): BelongsTo
     {
@@ -141,7 +152,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     }
 
     /**
-     * MLM Children (downline) relationship
+     * Affiliate Children (downline) relationship
      */
     public function children(): HasMany
     {
@@ -254,11 +265,11 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     }
 
     /**
-     * MLM Genealogy record (one per user)
+     * Affiliate Genealogy record (one per user)
      */
     public function genealogy(): HasOne
     {
-        return $this->hasOne(Mlm\MlmGenealogy::class);
+        return $this->hasOne(Affiliate\AffiliateGenealogy::class);
     }
 
     /**
@@ -267,6 +278,19 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    /**
+     * Determine if the user can access the Filament panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Allow access only to Active users who are Advisors or Mentors (Management roles)
+        // Adjust this logic if there's a specific 'is_admin' column or similar
+        return $this->status === UserStatusCast::ACTIVE && (
+            $this->type === UserTypeCast::ADVISOR ||
+            $this->type === UserTypeCast::MENTOR
+        );
     }
 
     /**

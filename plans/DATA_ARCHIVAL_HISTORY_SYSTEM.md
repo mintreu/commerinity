@@ -4,7 +4,7 @@
 
 At 10 crore (100 million) users with 5+ years of data:
 - `transactions` table: 500M+ records
-- `mlm_commissions` table: 200M+ records  
+- `affiliate_commissions` table: 200M+ records  
 - `user_subscriptions`: 150M+ records
 - Query performance degrades exponentially
 - Backup/restore becomes nightmare
@@ -23,7 +23,7 @@ At 10 crore (100 million) users with 5+ years of data:
 │  • Full CRUD operations                                                │
 │  • Real-time queries                                                   │
 │  • User-facing APIs                                                    │
-│  • Tables: transactions, mlm_commissions, etc.                         │
+│  • Tables: transactions, affiliate_commissions, etc.                         │
 │                                                                         │
 │  ↓ Monthly archival job moves data older than 1 year ↓                 │
 │                                                                         │
@@ -55,7 +55,7 @@ At 10 crore (100 million) users with 5+ years of data:
 
 Keep existing tables as-is. They hold **last 1 year** of data:
 - `transactions`
-- `mlm_commissions`
+- `affiliate_commissions`
 - `user_subscriptions`
 - `wallets` (always hot - current balances)
 
@@ -194,7 +194,7 @@ Schema::create('monthly_business_summaries', function (Blueprint $table) {
     $table->unsignedInteger('cancellations')->default(0);
     $table->unsignedBigInteger('subscription_revenue')->default(0);
     
-    // MLM metrics
+    // Affiliate metrics
     $table->unsignedBigInteger('total_commissions_paid')->default(0);
     $table->unsignedInteger('commission_recipients')->default(0);
     $table->json('commissions_by_type'); // {sponsor: X, level: Y, ...}
@@ -284,7 +284,7 @@ Schema::create('user_lifetime_stats', function (Blueprint $table) {
     $table->unsignedInteger('total_referrals')->default(0);
     $table->unsignedInteger('active_referrals')->default(0);
     
-    // MLM stats
+    // Affiliate stats
     $table->unsignedTinyInteger('highest_level_achieved')->default(1);
     $table->unsignedBigInteger('team_total_volume')->default(0);
     

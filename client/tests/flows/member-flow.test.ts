@@ -5,7 +5,7 @@ import { describe, it, expect, beforeAll } from 'vitest'
  *
  * Tests the complete flow for a MEMBER user type:
  * - Login with member credentials
- * - Dashboard access with MLM features
+ * - Dashboard access with Affiliate features
  * - Wallet operations
  * - Commission viewing
  * - Network/Team viewing
@@ -79,7 +79,7 @@ describe('Member User Complete Flow', () => {
 
     it('should have member permissions', () => {
       expect(user.permissions).toBeDefined()
-      expect(user.permissions.can_access_mlm).toBe(true)
+      expect(user.permissions.can_access_affiliate).toBe(true)
     })
 
     it('should have member features enabled', () => {
@@ -133,9 +133,9 @@ describe('Member User Complete Flow', () => {
     })
   })
 
-  describe('Step 4: MLM/Network Access', () => {
-    it('should view MLM stats', async () => {
-      const response = await fetch(`${apiBase}/api/mlm/stats`, {
+  describe('Step 4: Affiliate/Network Access', () => {
+    it('should view Affiliate stats', async () => {
+      const response = await fetch(`${apiBase}/api/affiliate/stats`, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Accept': 'application/json'
@@ -146,7 +146,7 @@ describe('Member User Complete Flow', () => {
     })
 
     it('should view team members (children)', async () => {
-      const response = await fetch(`${apiBase}/api/mlm/children`, {
+      const response = await fetch(`${apiBase}/api/affiliate/children`, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Accept': 'application/json'

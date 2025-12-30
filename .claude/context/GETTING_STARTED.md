@@ -2,7 +2,7 @@
 
 ## Overview
 
-Commerinity Pro is an enterprise MLM + E-commerce platform with:
+Commerinity Pro is an enterprise Affiliate + E-commerce platform with:
 - **Backend**: Laravel 12 + Sanctum (Token-based auth)
 - **Frontend**: Nuxt 4 + Nuxt UI
 - **Authentication**: Mobile-first OTP system with type-based dashboards
@@ -165,7 +165,7 @@ The system has 5 user types, each with a unique dashboard and navigation:
 - Orders
 
 ### 2. Member (`/dashboard/member`)
-**MLM member with referral capabilities**
+**Affiliate member with referral capabilities**
 
 **Features**:
 - Team members count
@@ -423,7 +423,7 @@ SANCTUM_STATEFUL_DOMAINS=  # Should be EMPTY for token mode
 3. **Password Reset**: Implement forgot password flow
 4. **Profile Management**: Create profile edit page
 5. **E-commerce Features**: Product catalog, cart, checkout
-6. **MLM Features**: Team management, commission tracking
+6. **Affiliate Features**: Team management, commission tracking
 
 ## Key Files Reference
 

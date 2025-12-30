@@ -108,7 +108,7 @@ test('can update user status from draft to active', function () {
 });
 
 // ========================================
-// MLM Parent-Child Relationship Tests
+// Affiliate Parent-Child Relationship Tests
 // ========================================
 
 test('user can have a parent (upline)', function () {
@@ -129,7 +129,7 @@ test('user can have multiple children (downline)', function () {
         ->toContain($child2->id);
 });
 
-test('user can join MLM tree using referral code', function () {
+test('user can join Affiliate tree using referral code', function () {
     $parent = User::factory()->create(['referral_code' => 'TESTCODE']);
 
     // Simulate joining via referral code
@@ -148,7 +148,7 @@ test('team head has no parent', function () {
         ->and($teamHead->parent)->toBeNull();
 });
 
-test('can build multi-level MLM tree', function () {
+test('can build multi-level Affiliate tree', function () {
     $level1 = User::factory()->create();                        // Team Head
     $level2 = User::factory()->withParent($level1->id)->create(); // Direct child
     $level3 = User::factory()->withParent($level2->id)->create(); // Grandchild
@@ -224,22 +224,22 @@ test('agent can track all originated users', function () {
 
 test('originator and parent are independent systems', function () {
     $agent = User::factory()->withType(UserTypeCast::ADVISOR->value)->create();
-    $mlmParent = User::factory()->withType(UserTypeCast::PROMOTER->value)->create();
+    $affiliateParent = User::factory()->withType(UserTypeCast::PROMOTER->value)->create();
 
     $recruited = User::factory()->create([
         'originator_type' => User::class,
         'originator_id' => $agent->id,     // Agent recruited this user
-        'parent_id' => $mlmParent->id,     // But placed under different MLM parent
+        'parent_id' => $affiliateParent->id,     // But placed under different Affiliate parent
     ]);
 
     // Originator is agent (for salary calculation)
     expect($recruited->originator->id)->toBe($agent->id)
-        // Parent is MLM upline (for commission calculation)
-        ->and($recruited->parent->id)->toBe($mlmParent->id)
-        // Agent is NOT in MLM commission tree
+        // Parent is Affiliate upline (for commission calculation)
+        ->and($recruited->parent->id)->toBe($affiliateParent->id)
+        // Agent is NOT in Affiliate commission tree
         ->and($agent->originatedUsers->contains($recruited))->toBeTrue()
-        // But MLM parent has recruited in their downline
-        ->and($mlmParent->children->contains($recruited))->toBeTrue();
+        // But Affiliate parent has recruited in their downline
+        ->and($affiliateParent->children->contains($recruited))->toBeTrue();
 });
 
 // ========================================

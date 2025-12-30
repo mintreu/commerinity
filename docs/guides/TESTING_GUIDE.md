@@ -362,5 +362,5 @@ Test on mobile by accessing:
 1. **Complete Password Reset** - Add forgot password pages
 2. **Profile Management** - Add profile edit functionality
 3. **E-Commerce** - Add product catalog
-4. **MLM Features** - Add team management
+4. **Affiliate Features** - Add team management
 5. **Mobile App** - React Native/Flutter integration

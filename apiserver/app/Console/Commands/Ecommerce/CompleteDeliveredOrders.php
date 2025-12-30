@@ -6,7 +6,7 @@ namespace App\Console\Commands\Ecommerce;
 
 use App\Casts\OrderStatusCast;
 use App\Models\Ecommerce\Order;
-use App\Services\Mlm\CommissionProcessorService;
+use App\Services\Affiliate\CommissionProcessorService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
  * after their return period has expired.
  *
  * Order Flow:
- * DELIVERED → (return period expires) → COMPLETED → (MLM commission triggered)
+ * DELIVERED → (return period expires) → COMPLETED → (Affiliate commission triggered)
  */
 class CompleteDeliveredOrders extends Command
 {
@@ -26,7 +26,7 @@ class CompleteDeliveredOrders extends Command
                             {--dry-run : Show what would be processed without making changes}
                             {--limit=100 : Maximum number of orders to process per run}';
 
-    protected $description = 'Complete delivered orders after return period expires and trigger MLM commissions';
+    protected $description = 'Complete delivered orders after return period expires and trigger Affiliate commissions';
 
     public function __construct(
         private readonly CommissionProcessorService $commissionProcessor,
@@ -77,12 +77,12 @@ class CompleteDeliveredOrders extends Command
                     $this->line("  ✓ Completed order #{$order->order_number}");
                     $completed++;
 
-                    // Process MLM commission if eligible
+                    // Process Affiliate commission if eligible
                     if ($order->canGenerateCommission() && ! $order->isCommissionProcessed()) {
                         $this->commissionProcessor->processCommission($order);
                         $order->markCommissionProcessed();
                         $commissionsProcessed++;
-                        $this->line("    → MLM commission processed (BV: {$order->total_bv})");
+                        $this->line("    → Affiliate commission processed (BV: {$order->total_bv})");
                     }
                 });
             } catch (\Throwable $e) {

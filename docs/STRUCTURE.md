@@ -19,7 +19,7 @@ Root/
     │   ├── 00-MASTER-PLAN.md           # Overall roadmap
     │   ├── 01-ARCHITECTURE.md          # System architecture
     │   ├── 03-PRODUCT-SYSTEM.md        # Product/inventory
-    │   ├── 04-COMMISSION-SYSTEM.md     # MLM commissions
+    │   ├── 04-COMMISSION-SYSTEM.md     # Affiliate commissions
     │   ├── BUILD_BACKEND.md            # Build script
     │   ├── address-system-implementation.md
     │   └── onboarding-process.md

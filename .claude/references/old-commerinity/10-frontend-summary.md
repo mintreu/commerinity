@@ -91,7 +91,7 @@ Hero: rounded-3xl (1.5rem)
 
 ### Charts (Keep Custom)
 - [x] Orders Trend Chart - ECharts integration
-- [x] D3 Visualizations - MLM tree
+- [x] D3 Visualizations - Affiliate tree
 
 ## Animation Inventory
 

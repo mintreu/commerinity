@@ -373,7 +373,7 @@ MembershipSubscriptionService::make($user)->validate($transaction);
 // - Update user status to SUBSCRIBED
 // - Update user type to MEMBER
 // - Assign level_id
-// - Add to MLM network
+// - Add to Affiliate network
 // - Trigger commission calculations
 // - Send confirmation notification
 ```

@@ -15,14 +15,14 @@
 
   "last_session": {
     "date": "2025-12-28",
-    "focus": "Order Return Period + MLM Commission Fix",
+    "focus": "Order Return Period + Affiliate Commission Fix",
     "completed": [
       "Fixed MoneyService tests (rewrote to match popkult version + added static toRupees/toRupeesString)",
       "Added is_returnable and return_days columns to products table",
       "Added COMPLETED status to OrderStatusCast (DELIVERED → COMPLETED flow)",
       "Added delivered_at, return_period_ends_at, completed_at to orders table",
       "Created ecommerce:complete-orders scheduler command",
-      "MLM commission now triggers on COMPLETED (not DELIVERED)",
+      "Affiliate commission now triggers on COMPLETED (not DELIVERED)",
       "All 958 tests passing (22 skipped)"
     ],
     "in_progress": [
@@ -52,8 +52,8 @@
     "address_management": "COMPLETE",
     "kyc_system": "COMPLETE",
     "notification_system": "COMPLETE",
-    "mlm_backend": "COMPLETE",
-    "mlm_frontend": "PENDING - tree visualization needed",
+    "affiliate_backend": "COMPLETE",
+    "affiliate_frontend": "PENDING - tree visualization needed",
     "dashboard_system": "COMPLETE - 5 type-specific dashboards",
     "recruitment_system": "COMPLETE",
     "helpdesk_system": "COMPLETE",
@@ -83,7 +83,7 @@
       "ProductStatusCast", "GstTaxCast", "OrderStatusCast", "ShipmentStatusCast",
       "SaleActionTypeCast", "VoucherActionTypeCast", "ConditionMatchingCast"
     ],
-    "mlm_integration": "Order implements CommissionTrigger - commissions on DELIVERED status",
+    "affiliate_integration": "Order implements CommissionTrigger - commissions on DELIVERED status",
     "tests_passing": "18/18 ProductStockTest"
   },
 
@@ -91,7 +91,7 @@
     "cart_flow": "CartService with FIFO stock allocation, location priority (same state first), guest support",
     "order_flow": "PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED → COMPLETED",
     "return_period": "Products can have is_returnable=true and return_days (default 7). Order stays DELIVERED until return period expires, then becomes COMPLETED.",
-    "commission_trigger": "COMPLETED status triggers MLM commissions (after return period) for subscribed members with BV > 0",
+    "commission_trigger": "COMPLETED status triggers Affiliate commissions (after return period) for subscribed members with BV > 0",
     "shipment_providers": ["native (manual)", "shiprocket (API integration)"]
   },
 

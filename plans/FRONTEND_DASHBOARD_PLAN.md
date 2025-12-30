@@ -13,8 +13,8 @@ Based on research from [The Alien Design](https://www.thealien.design/insights/f
 6. **Trust Indicators** - Security badges, verification status
 7. **Micro-interactions** - Fun, engaging elements to reduce cognitive load
 
-### MLM Portal UX Insights
-From [Prime MLM Software](https://primemlmsoftware.com/what-distributors-expect-in-their-mlm-user-portal-ux-insights/) and [Epixel MLM](https://www.epixelmlmsoftware.com/product-updates/customizable-mlm-dashboard):
+### Affiliate Portal UX Insights
+From [Prime Affiliate Software](https://primeaffiliatesoftware.com/what-distributors-expect-in-their-affiliate-user-portal-ux-insights/) and [Epixel Affiliate](https://www.epixelaffiliatesoftware.com/product-updates/customizable-affiliate-dashboard):
 
 1. **At-a-glance metrics** - PV/BV, rank status, commission tracking
 2. **Smart dashboards** - Modular widgets, personalized views
@@ -36,9 +36,9 @@ From [Nuxt Blog](https://nuxt.com/blog/v4) and [Nuxt Performance Guide](https://
 
 ## Project Vision
 
-**Commerinity Pro** is a fintech-style MLM + E-commerce platform that:
+**Commerinity Pro** is a fintech-style Affiliate + E-commerce platform that:
 - Appears as a premium e-commerce site to regular users
-- Unlocks MLM features progressively as users upgrade
+- Unlocks Affiliate features progressively as users upgrade
 - Guides users through their financial journey (not forcing, guiding)
 - Uses gamification to encourage task completion
 - Provides personalized dashboards based on user type and status
@@ -48,7 +48,7 @@ From [Nuxt Blog](https://nuxt.com/blog/v4) and [Nuxt Performance Guide](https://
 ```
 Regular (Guest Shopper)
     ↓ Subscribe for membership
-Member (MLM Participant)
+Member (Affiliate Participant)
     ↓ Pay for descendant's subscription
 Promoter (Team Builder)
     ↓ Apply for job (future)
@@ -488,7 +488,7 @@ NUXT_PUBLIC_ENABLE_GAMIFICATION="true"
 {
   "name": "Commerinity Pro",
   "short_name": "CMP",
-  "description": "MLM & E-Commerce Platform",
+  "description": "Affiliate & E-Commerce Platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -563,7 +563,7 @@ NUXT_PUBLIC_ENABLE_GAMIFICATION="true"
 ## Sources
 
 - [Fintech UX Design Trends 2024](https://www.thealien.design/insights/fintech-ux-design-trends)
-- [MLM Portal UX Insights](https://primemlmsoftware.com/what-distributors-expect-in-their-mlm-user-portal-ux-insights/)
+- [Affiliate Portal UX Insights](https://primeaffiliatesoftware.com/what-distributors-expect-in-their-affiliate-user-portal-ux-insights/)
 - [Nuxt 4.0 Announcement](https://nuxt.com/blog/v4)
 - [Nuxt Performance Best Practices](https://nuxt.com/docs/4.x/guide/best-practices/performance)
-- [Epixel MLM Dashboard](https://www.epixelmlmsoftware.com/product-updates/customizable-mlm-dashboard)
+- [Epixel Affiliate Dashboard](https://www.epixelaffiliatesoftware.com/product-updates/customizable-affiliate-dashboard)

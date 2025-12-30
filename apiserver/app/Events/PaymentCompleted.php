@@ -16,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
  * Fired when a payment is successfully completed and confirmed.
  * Listeners can:
  * - Activate subscriptions
- * - Process MLM commissions
+ * - Process Affiliate commissions
  * - Send confirmation notifications
  * - Update order status
  */

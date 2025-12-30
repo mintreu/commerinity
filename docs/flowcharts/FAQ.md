@@ -17,26 +17,26 @@
 
 ## Quick Navigation
 
-- [For Users (Why Join?)](#-for-users-why-join-our-mlm)
+- [For Users (Why Join?)](#-for-users-why-join-our-affiliate)
 - [For Business Owners](#-for-business-owners-why-use-our-platform)
 - [Subscription & Pricing](#-subscription--pricing)
-- [MLM & Commissions](#-mlm--commissions)
+- [Affiliate & Commissions](#-affiliate--commissions)
 - [Technical Questions](#-technical-questions)
 - [Security & Compliance](#-security--compliance)
 - [Getting Started](#-getting-started)
 
 ---
 
-## 👥 For Users: Why Join Our MLM?
+## 👥 For Users: Why Join Our Affiliate?
 
-### Q: Why should I join Commerinity Pro instead of other MLM companies?
+### Q: Why should I join Commerinity Pro instead of other Affiliate companies?
 
 <details>
 <summary><b>Click to expand answer</b></summary>
 
-**Unlike traditional MLM companies, we offer:**
+**Unlike traditional Affiliate companies, we offer:**
 
-| Aspect | Commerinity Pro | Traditional MLM |
+| Aspect | Commerinity Pro | Traditional Affiliate |
 |--------|-----------------|-----------------|
 | **Product Focus** | Real e-commerce products + services | Often just recruitment |
 | **Commission Speed** | Real-time, instant credit | Weekly/Monthly payouts |
@@ -70,7 +70,7 @@ PYRAMID SCHEME (Illegal)          vs    COMMERINITY PRO (Legal)
 ❌ No real products                ✅ Full e-commerce marketplace
 ❌ Unlimited depth (unsustainable) ✅ 4-level depth limit
 ❌ Top-heavy rewards               ✅ Fair distribution across levels
-❌ No retail customers             ✅ Non-MLM customers can buy products
+❌ No retail customers             ✅ Non-Affiliate customers can buy products
 ❌ Mandatory large inventory       ✅ No inventory requirement
 ❌ Hidden costs                    ✅ Transparent pricing
 ```
@@ -158,7 +158,7 @@ COMMERINITY PRO ECOSYSTEM
 └── Mentorship Access
 
 🎓 EDUCATION (Available)
-├── MLM Success Courses
+├── Affiliate Success Courses
 ├── Business Building Training
 ├── Financial Literacy
 └── Skill Development
@@ -195,7 +195,7 @@ KEY DIFFERENCE: You earn on REAL purchases, not just recruitment!
 
 3. **Product Reselling**
    - Buy at member price, sell at retail
-   - No MLM structure needed
+   - No Affiliate structure needed
    - Traditional business model
 
 4. **Learning & Community**
@@ -263,13 +263,13 @@ KEY DIFFERENCE: You earn on REAL purchases, not just recruitment!
 <details>
 <summary><b>Click to expand answer</b></summary>
 
-**Complete MLM Business Solution:**
+**Complete Affiliate Business Solution:**
 
 | Module | Features | Included |
 |--------|----------|----------|
 | **User Portal** | Registration, Dashboard, Team View, Earnings | ✅ |
 | **Admin Panel** | Full management, Reports, Settings | ✅ |
-| **MLM Engine** | 5×4 Matrix, Commissions, Genealogy | ✅ |
+| **Affiliate Engine** | 5×4 Matrix, Commissions, Genealogy | ✅ |
 | **Wallet System** | Balance, Transactions, Withdrawals | ✅ |
 | **KYC Module** | Document upload, Verification workflow | ✅ |
 | **SMS/Email** | OTP, Notifications, Marketing | ✅ |
@@ -309,7 +309,7 @@ DAY 1-2: SETUP
 └── Basic configuration
 
 DAY 3: CONFIGURATION
-├── MLM plan setup
+├── Affiliate plan setup
 ├── Commission rates configuration
 ├── Payment gateway integration
 └── SMS/Email setup
@@ -341,7 +341,7 @@ TOTAL: 5-7 DAYS (vs 4-6 weeks industry average!)
 <summary><b>Click to expand answer</b></summary>
 
 ```
-MEMBERSHIP PLANS (For MLM Members)
+MEMBERSHIP PLANS (For Affiliate Members)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌─────────────┬─────────────┬─────────────┬─────────────┐
@@ -416,7 +416,7 @@ WHAT YOU PAY
 
 ---
 
-## 🌳 MLM & Commissions
+## 🌳 Affiliate & Commissions
 
 ### Q: How does the 5×4 matrix work?
 
@@ -517,12 +517,12 @@ If User E joins under you (Level 1), you get:
 SPONSOR vs ORIGINATOR
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SPONSOR (MLM Upline)
+SPONSOR (Affiliate Upline)
 ├── Relationship: Parent in genealogy tree
 ├── How assigned: Via referral code/link
 ├── Commission type: Sponsor bonus + Level commission
 ├── Requirement: Must be an active member
-└── Purpose: MLM team building
+└── Purpose: Affiliate team building
 
 ORIGINATOR (Business Acquisition)
 ├── Relationship: Who brought them to the platform
@@ -638,7 +638,7 @@ GET  /api/subscriptions     - List plans
 POST /api/subscriptions     - Create subscription
 POST /api/subscriptions/activate - Activate after payment
 
-TEAM/MLM
+TEAM/Affiliate
 GET  /api/team              - Get team tree
 GET  /api/team/stats        - Team statistics
 GET  /api/genealogy         - Full genealogy
@@ -880,6 +880,6 @@ SUPPORT HOURS:
 
 <div align="center">
 
-**[👥 Users](./users/INDEX.md)** • **[🌳 MLM](./mlm/INDEX.md)** • **[💼 Flows](./flows/INDEX.md)** • **[🛡️ Admin](./admin/INDEX.md)** • **[📊 Progress](./PROGRESS.md)**
+**[👥 Users](./users/INDEX.md)** • **[🌳 Affiliate](./affiliate/INDEX.md)** • **[💼 Flows](./flows/INDEX.md)** • **[🛡️ Admin](./admin/INDEX.md)** • **[📊 Progress](./PROGRESS.md)**
 
 </div>

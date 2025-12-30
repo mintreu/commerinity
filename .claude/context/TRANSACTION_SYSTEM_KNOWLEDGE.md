@@ -38,7 +38,7 @@ LEVEL COMMISSIONS (on subscription amount):
 ├── Level 3: 3%
 ├── Level 4: 2%
 ├── Originator: 5% (if advisor recruited)
-└── MAX TOTAL: 19% (14% MLM + 5% originator)
+└── MAX TOTAL: 19% (14% Affiliate + 5% originator)
 
 TYPICAL WEIGHTED PAYOUT: ~8.5% (based on network structure)
 - Not all subscribers have 4 levels of uplines
@@ -77,7 +77,7 @@ $transaction = Transaction::create([
 
 // ON CONFIRMATION:
 // 1. Activate subscription
-// 2. Process MLM commissions (levels 1-4)
+// 2. Process Affiliate commissions (levels 1-4)
 // 3. Process originator commission (if applicable)
 // 4. Update genealogy stats
 ```
@@ -174,7 +174,7 @@ $order = Transaction::create([
     'metadata' => [
         'vendor_id' => $vendor->id,
         'platform_fee' => 15000, // 15% of order
-        'mlm_commission' => 5000, // 5% to uplines
+        'affiliate_commission' => 5000, // 5% to uplines
         'gst_details' => [...],
     ],
 ]);
@@ -427,14 +427,14 @@ class HandleSubscriptionPayment
         // 1. Activate subscription
         $subscription->update(['status' => 'active', 'activated_at' => now()]);
 
-        // 2. Process MLM commissions
-        $this->processMLMCommissions($subscription);
+        // 2. Process Affiliate commissions
+        $this->processAffiliateCommissions($subscription);
 
         // 3. Update genealogy
         $this->updateGenealogyStats($subscription->user);
     }
 
-    private function processMLMCommissions(UserSubscription $sub): void
+    private function processAffiliateCommissions(UserSubscription $sub): void
     {
         $user = $sub->user;
         $amount = $sub->amount; // in paisa
@@ -612,7 +612,7 @@ enum TransactionStatus: string
     case OnHold = 'on_hold';
 }
 
-// config/mlm.php
+// config/affiliate.php
 return [
     'commissions' => [
         'level_1' => 5,

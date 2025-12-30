@@ -30,7 +30,7 @@ Schema::create('users', function (Blueprint $table) {
     $table->timestamp('email_verified_at')->nullable();
     $table->timestamp('mobile_verified_at')->nullable();
 
-    // MLM Tree
+    // Affiliate Tree
     $table->string('referral_code')->unique();
     $table->foreignId('parent_id')
         ->nullable()
@@ -78,7 +78,7 @@ enum UserType: string
 {
     case REGULAR   = 'regular';    // Default - non-subscribed customer
     case MEMBER    = 'member';     // Subscribed with active membership
-    case PROMOTER  = 'promoter';   // Actively refers others (MLM participant)
+    case PROMOTER  = 'promoter';   // Actively refers others (Affiliate participant)
     case ADVISOR   = 'advisor';    // Company-appointed, gets salary
     case MENTOR    = 'mentor';     // Trains users, gets training fees
     case APPLICANT = 'applicant';  // Applied for mentor/advisor role
@@ -100,17 +100,17 @@ enum UserType: string
    - Member dashboard features
 
 3. **Promoter**:
-   - Actively recruiting in MLM
+   - Actively recruiting in Affiliate
    - Gets team commissions
    - Promoter dashboard with team analytics
    - Can upgrade to higher levels
 
-4. **Advisor** (Company Employee - OUTSIDE MLM):
+4. **Advisor** (Company Employee - OUTSIDE Affiliate):
    - Company-appointed agent
-   - Recruits members to join MLM
-   - Assists MLM team heads with onboarding
+   - Recruits members to join Affiliate
+   - Assists Affiliate team heads with onboarding
    - Gets fixed salary based on recruitment targets
-   - Does NOT participate in MLM commissions
+   - Does NOT participate in Affiliate commissions
    - Dashboard shows recruitment performance
 
 5. **Mentor**:
@@ -168,13 +168,13 @@ enum UserStatus: string
 
 ## 🔄 **Two Separate Systems Explained**
 
-### **System 1: MLM Tree (parent_id + referral_code)**
+### **System 1: Affiliate Tree (parent_id + referral_code)**
 ```
 Anyone can refer others using their referral_code
 ↓
 New user joins with referral code
 ↓
-parent_id is set (MLM upline relationship)
+parent_id is set (Affiliate upline relationship)
 ↓
 Commissions flow through this tree
 ```
@@ -192,19 +192,19 @@ originator_id is set (tracks Agent's performance)
 Agent gets salary based on recruitment targets
 ```
 
-**Participants**: ADVISOR only (OUTSIDE MLM)
+**Participants**: ADVISOR only (OUTSIDE Affiliate)
 
 ### **Example Scenario**
 ```
-Agent John recruits Alice to join MLM under Bob's team:
+Agent John recruits Alice to join Affiliate under Bob's team:
 - Alice.originator = John (Agent) → John's salary calculation
-- Alice.parent_id = Bob (Promoter) → Bob's MLM commissions
+- Alice.parent_id = Bob (Promoter) → Bob's Affiliate commissions
 - Alice.referral_code = "ABC123" → Alice can refer others
 
 Result:
 - John gets salary for recruiting Alice
-- Bob gets MLM commissions from Alice's purchases
-- Alice participates in MLM, can refer others
+- Bob gets Affiliate commissions from Alice's purchases
+- Alice participates in Affiliate, can refer others
 ```
 
 ---
@@ -278,7 +278,7 @@ $table->foreignId('level_id')->nullable()->constrained()->nullOnDelete();
 // Phase 3: Avatar (Spatie Media Library)
 // Uses media library collection 'avatarImage'
 
-// Phase 4: MLM Analytics (if needed)
+// Phase 4: Affiliate Analytics (if needed)
 $table->integer('total_referrals')->default(0);
 $table->integer('active_team_size')->default(0);
 ```

@@ -6,11 +6,11 @@ namespace App\Services\Trends;
 
 use App\Casts\CommissionStatusCast;
 use App\Casts\CommissionTypeCast;
-use App\Models\Mlm\MlmCommission;
+use App\Models\Affiliate\AffiliateCommission;
 use Flowframe\Trend\Trend;
 
 /**
- * CommissionTrendService - MLM Commission trends and analytics
+ * CommissionTrendService - Affiliate Commission trends and analytics
  *
  * Charts:
  * - Earnings over time
@@ -34,7 +34,7 @@ final class CommissionTrendService extends BaseTrendService
         $dates = $this->parsePeriod($period, $startDate, $endDate);
         $interval = $this->getIntervalForPeriod($period, $interval);
 
-        $query = MlmCommission::query()
+        $query = AffiliateCommission::query()
             ->where('user_id', $userId)
             ->where('status', CommissionStatusCast::PAID);
 
@@ -87,7 +87,7 @@ final class CommissionTrendService extends BaseTrendService
     ): array {
         $dates = $this->parsePeriod($period, $startDate, $endDate);
 
-        $query = MlmCommission::query()
+        $query = AffiliateCommission::query()
             ->where('user_id', $userId)
             ->where('status', CommissionStatusCast::PAID)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']]);
@@ -160,7 +160,7 @@ final class CommissionTrendService extends BaseTrendService
         $dates = $this->parsePeriod($period, $startDate, $endDate);
         $interval = $this->getIntervalForPeriod($period, $interval);
 
-        $baseQuery = fn () => MlmCommission::query()
+        $baseQuery = fn () => AffiliateCommission::query()
             ->where('user_id', $userId)
             ->where('type', '!=', CommissionTypeCast::REVERSAL);
 
@@ -231,7 +231,7 @@ final class CommissionTrendService extends BaseTrendService
     ): array {
         $dates = $this->parsePeriod($period, $startDate, $endDate);
 
-        $query = MlmCommission::query()
+        $query = AffiliateCommission::query()
             ->where('user_id', $userId)
             ->where('type', '!=', CommissionTypeCast::REVERSAL)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']]);
@@ -297,7 +297,7 @@ final class CommissionTrendService extends BaseTrendService
         $dates = $this->parsePeriod($period, $startDate, $endDate);
         $interval = $this->getIntervalForPeriod($period, $interval);
 
-        $query = MlmCommission::query()
+        $query = AffiliateCommission::query()
             ->where('status', CommissionStatusCast::PAID)
             ->where('type', '!=', CommissionTypeCast::REVERSAL);
 
@@ -314,7 +314,7 @@ final class CommissionTrendService extends BaseTrendService
 
         // TDS collected
         $tdsTrend = Trend::query(
-            MlmCommission::query()
+            AffiliateCommission::query()
                 ->where('status', CommissionStatusCast::PAID)
                 ->where('tds_amount', '>', 0)
         )
@@ -366,7 +366,7 @@ final class CommissionTrendService extends BaseTrendService
     ): array {
         $dates = $this->parsePeriod($period, $startDate, $endDate);
 
-        $topEarners = MlmCommission::query()
+        $topEarners = AffiliateCommission::query()
             ->where('status', CommissionStatusCast::PAID)
             ->where('type', '!=', CommissionTypeCast::REVERSAL)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']])

@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Casts\AddressTypeCast;
 
 /**
  * Seed addresses for demo users.
@@ -28,7 +29,7 @@ class AddressSeeder extends Seeder
         $addresses = [
             [
                 'title' => 'Home',
-                'type' => 'home',
+                'type' => AddressTypeCast::HOME,
                 'address_1' => '42, Sunrise Apartments',
                 'address_2' => 'MG Road, Sector 15',
                 'landmark' => 'Near Central Mall',
@@ -39,8 +40,8 @@ class AddressSeeder extends Seeder
                 'default' => true,
             ],
             [
-                'title' => 'Office',
-                'type' => 'office',
+                'title' => 'Work',
+                'type' => AddressTypeCast::WORK,
                 'address_1' => 'Tower B, Floor 5',
                 'address_2' => 'Cyber City, DLF Phase 2',
                 'landmark' => 'Near IFFCO Chowk Metro',
@@ -52,7 +53,7 @@ class AddressSeeder extends Seeder
             ],
             [
                 'title' => 'Home',
-                'type' => 'home',
+                'type' => AddressTypeCast::HOME,
                 'address_1' => '15, Green Valley Society',
                 'address_2' => 'Andheri West',
                 'landmark' => 'Near DN Nagar Metro',
@@ -64,7 +65,7 @@ class AddressSeeder extends Seeder
             ],
             [
                 'title' => 'Home',
-                'type' => 'home',
+                'type' => AddressTypeCast::HOME,
                 'address_1' => '78, Koramangala 4th Block',
                 'address_2' => 'Near Forum Mall',
                 'landmark' => 'Opposite to Jyoti Nivas College',
@@ -76,7 +77,7 @@ class AddressSeeder extends Seeder
             ],
             [
                 'title' => 'Home',
-                'type' => 'home',
+                'type' => AddressTypeCast::HOME,
                 'address_1' => '23, Anna Nagar East',
                 'address_2' => 'Near Roundtana',
                 'landmark' => 'Behind Tower Park',
@@ -88,7 +89,7 @@ class AddressSeeder extends Seeder
             ],
             [
                 'title' => 'Home',
-                'type' => 'home',
+                'type' => AddressTypeCast::HOME,
                 'address_1' => '156, Salt Lake Sector V',
                 'address_2' => 'Bidhan Nagar',
                 'landmark' => 'Near City Centre 2',

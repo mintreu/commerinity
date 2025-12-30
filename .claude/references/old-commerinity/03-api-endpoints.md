@@ -383,7 +383,7 @@ GET    /payment                  - Get payment gateway info (minimal)
 ## Missing/Recommended Endpoints
 
 1. **Incentive Details** (`/api/incentives/{uuid}`)
-2. **Team Tree** (`/api/team/tree`) - MLM genealogy
+2. **Team Tree** (`/api/team/tree`) - Affiliate genealogy
 3. **Level Progress** (`/api/lifecycle/progress`) - Task completion
 4. **Wallet History** (`/api/wallet/transactions`)
 5. **KYC Submission** (`/api/kyc/submit`)

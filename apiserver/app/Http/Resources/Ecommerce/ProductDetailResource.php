@@ -75,7 +75,7 @@ final class ProductDetailResource extends JsonResource
             // Return policy
             'is_returnable' => $this->is_returnable,
             'return_days' => $this->return_days,
-            // MLM points from FIFO stock
+            // Affiliate points from FIFO stock
             'bv' => $stock?->bv ?? 0,
             'pv' => $stock?->pv ?? 0,
             'reward_points' => $stock?->reward_points ?? 0,

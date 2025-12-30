@@ -38,7 +38,7 @@ Frontend (client/):
 ```
 
 **Why Critical**: 
-- This is MLM + E-commerce platform
+- This is Affiliate + E-commerce platform
 - Users need to shop to earn commissions
 - 40% of revenue from product sales
 - All competitors have this
@@ -47,7 +47,7 @@ Frontend (client/):
 
 ---
 
-### 2. MLM NETWORK FRONTEND
+### 2. Affiliate NETWORK FRONTEND
 **Status**: Backend 100%, Frontend 0%
 **Impact**: HIGH - Members can't see their team
 
@@ -59,14 +59,14 @@ Frontend (client/):
 - [ ] /commissions (earnings breakdown)
 - [ ] /commissions/history (commission history)
 - [ ] /rank-progress (level advancement)
-- [ ] useMLM composable
+- [ ] useAffiliate composable
 ```
 
 **Why Important**:
 - Members PAID for subscription
 - Need to see their network/earnings
 - Referral system useless without visibility
-- Core MLM functionality
+- Core Affiliate functionality
 
 **Estimate**: 2 days
 
@@ -126,12 +126,12 @@ Frontend (client/):
 ✅ Recruitment
 ✅ Admin panel
 ❌ **E-commerce (BLOCKER)**
-❌ **MLM network pages (BLOCKER)**
+❌ **Affiliate network pages (BLOCKER)**
 ❌ **Checkout flow (BLOCKER)**
 
 ### Launch Timeline
 - **With 3 blockers fixed**: 7-8 days
-- **MVP launch (limited)**: Could launch WITHOUT e-commerce if pure MLM recruitment model
+- **MVP launch (limited)**: Could launch WITHOUT e-commerce if pure Affiliate recruitment model
 - **Full launch (recommended)**: Fix all 3 blockers = production ready
 
 ---
@@ -142,13 +142,13 @@ Frontend (client/):
 Fix all 3 blockers → Complete platform
 
 ### Option 2: SOFT LAUNCH (NOW)
-- Launch with recruitment + MLM only
+- Launch with recruitment + Affiliate only
 - Add e-commerce in Phase 2
 - Risk: Missing revenue stream
 
 ### Option 3: PRIORITY FIX (5 days)  
 Fix E-commerce + Checkout → Launch
-Add MLM frontend pages post-launch
+Add Affiliate frontend pages post-launch
 
 ---
 

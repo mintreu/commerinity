@@ -38,7 +38,7 @@ class ProductStockFactory extends Factory
             'min_quantity' => 1,
             'max_quantity' => null,
             'wholesale_unit_quantity' => null,
-            // MLM Fields
+            // Affiliate Fields
             'bv' => ProductStock::calculateBvFromProfit($profit),
             'pv' => ProductStock::calculateBvFromProfit($profit, 8.0), // 8% for PV
             'reward_points' => ProductStock::calculateRewardPoints($profit),
@@ -64,7 +64,7 @@ class ProductStockFactory extends Factory
     }
 
     /**
-     * Configure stock with no MLM commissions
+     * Configure stock with no Affiliate commissions
      */
     public function nonCommissionable(): static
     {
@@ -79,7 +79,7 @@ class ProductStockFactory extends Factory
     /**
      * Configure stock with specific BV/PV values
      */
-    public function withMlmValues(int $bv, int $pv, int $rewardPoints): static
+    public function withAffiliateValues(int $bv, int $pv, int $rewardPoints): static
     {
         return $this->state(fn (array $attributes) => [
             'bv' => $bv,

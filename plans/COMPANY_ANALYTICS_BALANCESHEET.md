@@ -20,7 +20,7 @@ A comprehensive business intelligence system for admins to track company finance
 - Churn Rate
 - User Type Distribution
 
-### C. MLM/Network Perspective
+### C. Affiliate/Network Perspective
 - Network Growth
 - Commission Payouts
 - Level-wise Performance
@@ -65,7 +65,7 @@ LIABILITIES
 │   ├── User Wallet Balances (total all user wallets)
 │   ├── Pending Withdrawals
 │   ├── Admin Profit Shares (unpaid)
-│   ├── Commission Payouts (pending MLM)
+│   ├── Commission Payouts (pending Affiliate)
 │   └── Refunds Pending
 │
 └── Long-Term Liabilities
@@ -175,7 +175,7 @@ Schema::create('company_financial_snapshots', function (Blueprint $table) {
     $table->json('revenue_breakdown')->nullable();
     $table->json('expense_breakdown')->nullable();
     $table->json('user_metrics')->nullable();
-    $table->json('mlm_metrics')->nullable();
+    $table->json('affiliate_metrics')->nullable();
     
     $table->timestamps();
     
@@ -245,7 +245,7 @@ return [
         'REV-403' => ['name' => 'Other Income', 'type' => 'revenue', 'category' => 'non_operating'],
         
         // EXPENSES (5xx)
-        'EXP-500' => ['name' => 'MLM Commissions', 'type' => 'expense', 'category' => 'operating'],
+        'EXP-500' => ['name' => 'Affiliate Commissions', 'type' => 'expense', 'category' => 'operating'],
         'EXP-501' => ['name' => 'Admin Salaries', 'type' => 'expense', 'category' => 'operating'],
         'EXP-502' => ['name' => 'Gateway Fees', 'type' => 'expense', 'category' => 'operating'],
         'EXP-503' => ['name' => 'Refunds', 'type' => 'expense', 'category' => 'operating'],
@@ -344,7 +344,7 @@ class BusinessAnalyticsService
     // User analytics
     public function getUserAnalytics(string $period = 'month'): array;
     
-    // MLM analytics
+    // Affiliate analytics
     public function getMlmAnalytics(string $period = 'month'): array;
     
     // Revenue analytics
@@ -371,7 +371,7 @@ class BusinessAnalyticsService
 | RevenueChartWidget | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | UserGrowthWidget | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | TransactionVolumeWidget | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| MLMPerformanceWidget | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| AffiliatePerformanceWidget | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | GoalProgressWidget | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | AdminTeamWidget | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | PersonalEarningsWidget | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -623,7 +623,7 @@ Schedule::job(new UpdateBusinessGoalProgress())
 - **Churn Rate**: Lost users / Total users
 - **MRR** (Monthly Recurring Revenue): From subscriptions
 
-### MLM KPIs
+### Affiliate KPIs
 - **Network Depth**: Average levels in tree
 - **Commission Payout Ratio**: Commissions / Revenue
 - **Active Distributor Rate**: Active / Total distributors
@@ -678,7 +678,7 @@ Schedule::job(new UpdateBusinessGoalProgress())
 3. RevenueChartWidget
 4. UserGrowthWidget
 5. GoalProgressWidget
-6. MLMPerformanceWidget
+6. AffiliatePerformanceWidget
 
 ### Phase 5: Filament Pages (Day 8-9)
 1. BalanceSheet page
@@ -705,7 +705,7 @@ Schedule::job(new UpdateBusinessGoalProgress())
 | Expense Details | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | User Metrics | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Transaction Volume | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| MLM Tree Stats | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Affiliate Tree Stats | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Goal Progress | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Admin Payouts | ✅ | Own | Own | Own | Own | Own |
 
@@ -742,7 +742,7 @@ Schedule::job(new UpdateBusinessGoalProgress())
 │ │    (Pie Chart)                │ │                               ││
 │ │                               │ │  ▓▓▓▓▓▓▓░░░ Revenue: 78%    ││
 │ │  🟢 Subscriptions: 45%       │ │  ▓▓▓▓▓░░░░░ Users: 52%       ││
-│ │  🔵 Transaction Fees: 35%    │ │  ▓▓▓▓▓▓▓▓░░ MLM: 85%         ││
+│ │  🔵 Transaction Fees: 35%    │ │  ▓▓▓▓▓▓▓▓░░ Affiliate: 85%         ││
 │ │  🟡 Other: 20%               │ │                               ││
 │ └───────────────────────────────┘ └───────────────────────────────┘│
 │                                                                     │
@@ -767,7 +767,7 @@ Schedule::job(new UpdateBusinessGoalProgress())
    - Service charges?
 
 2. **Expense Categories**: What are the main expenses?
-   - MLM commissions?
+   - Affiliate commissions?
    - Payment gateway fees?
    - Admin salaries/profit shares?
    - Operational costs?

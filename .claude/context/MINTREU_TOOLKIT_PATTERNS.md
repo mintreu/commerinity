@@ -146,11 +146,11 @@ test('does not regenerate UUID if already set', function () {
 
 ---
 
-## 🔄 Pattern 4: MLM & Originator System
+## 🔄 Pattern 4: Affiliate & Originator System
 
 ### Two Separate Systems
 
-#### System 1: MLM Tree (`parent_id` + `referral_code`)
+#### System 1: Affiliate Tree (`parent_id` + `referral_code`)
 ```php
 // Joining via referral code
 $parentUser = User::where('referral_code', $referralCode)->first();
@@ -366,7 +366,7 @@ From toolkit README:
 1. ✅ Document toolkit patterns (this file)
 2. ⏳ Write comprehensive User model tests
    - UUID/referral code generation
-   - Parent-child MLM relationships
+   - Parent-child Affiliate relationships
    - Originator scenarios (Agent recruitment)
    - Type/status change notifications
 3. ⏳ Test recursive relationship queries

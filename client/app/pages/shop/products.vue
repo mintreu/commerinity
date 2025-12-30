@@ -10,7 +10,7 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Shop - Mintreu',
-  description: 'Explore our premium products. Quality products at great prices with MLM rewards.'
+  description: 'Explore our premium products. Quality products at great prices with Affiliate rewards.'
 })
 
 const config = useRuntimeConfig()

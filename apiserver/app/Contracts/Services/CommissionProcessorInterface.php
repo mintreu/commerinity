@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Contracts\Services;
 
-use App\Contracts\Mlm\CommissionableEntity;
-use App\Contracts\Mlm\CommissionCalculator;
-use App\Dto\Mlm\CommissionResult;
+use App\Contracts\Affiliate\CommissionableEntity;
+use App\Contracts\Affiliate\CommissionCalculator;
+use App\Dto\Affiliate\CommissionResult;
 use App\Models\User;
 use Illuminate\Support\Collection;
 

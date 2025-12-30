@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Ecommerce;
 
 use App\Casts\OrderStatusCast;
-use App\Contracts\Mlm\CommissionTrigger;
+use App\Contracts\Affiliate\CommissionTrigger;
 use App\Models\Address;
 use App\Models\Membership\UserSubscription;
 use App\Models\Transaction;
@@ -18,9 +18,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 
 /**
- * Order Model - E-commerce orders with MLM commission support
+ * Order Model - E-commerce orders with Affiliate commission support
  *
- * Implements CommissionTrigger for purchase-based MLM commissions.
+ * Implements CommissionTrigger for purchase-based Affiliate commissions.
  * Commissions are calculated on total_bv (Business Volume) for subscribed members only.
  */
 class Order extends Model implements CommissionTrigger
@@ -374,11 +374,11 @@ class Order extends Model implements CommissionTrigger
     }
 
     // ========================================
-    // MLM Helper Methods
+    // Affiliate Helper Methods
     // ========================================
 
     /**
-     * Check if this order can generate MLM commissions
+     * Check if this order can generate Affiliate commissions
      * Only orders from subscribed members with BV > 0 qualify
      */
     public function canGenerateCommission(): bool
@@ -421,7 +421,7 @@ class Order extends Model implements CommissionTrigger
     }
 
     /**
-     * Get customer's active subscription (for MLM context)
+     * Get customer's active subscription (for Affiliate context)
      */
     public function getCustomerSubscription(): ?UserSubscription
     {

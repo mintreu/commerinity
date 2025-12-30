@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->string('password');
 
-            // MLM Tree
+            // Affiliate Tree
             $table->string('referral_code', 8)->nullable();
             $table->unique('referral_code', 'users_referral_code_unique');
 

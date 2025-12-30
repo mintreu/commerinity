@@ -9,7 +9,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**[← MLM](../mlm/INDEX.md)** • **[Hub](../README.md)** • **[Admin →](../admin/INDEX.md)**
+**[← Affiliate](../affiliate/INDEX.md)** • **[Hub](../README.md)** • **[Admin →](../admin/INDEX.md)**
 
 </div>
 
@@ -102,7 +102,7 @@ OTP Code ─────────────► OtpManager.verify() ──�
 Profile Data ─────────► User::create() ────────────► User Record
                              │
                              ▼
-Referral Code ────────► Set parent_id ─────────────► MLM Link Created
+Referral Code ────────► Set parent_id ─────────────► Affiliate Link Created
 (optional)
 ```
 
@@ -429,7 +429,7 @@ flowchart TB
 %%{init: {'theme': 'base'}}%%
 
 journey
-    title Complete MLM Member Journey
+    title Complete Affiliate Member Journey
     section Registration
       Visit Website: 3: Visitor
       Click Register: 4: Visitor
@@ -458,7 +458,7 @@ journey
 
 | Previous | Up | Next |
 |----------|----|----|
-| [🌳 MLM](../mlm/INDEX.md) | [🏠 Hub](../README.md) | [🛡️ Admin](../admin/INDEX.md) |
+| [🌳 Affiliate](../affiliate/INDEX.md) | [🏠 Hub](../README.md) | [🛡️ Admin](../admin/INDEX.md) |
 
 ---
 

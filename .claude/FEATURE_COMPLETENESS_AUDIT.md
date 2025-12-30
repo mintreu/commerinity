@@ -24,7 +24,7 @@
 - ✅ Beneficiary bank account management
 - ✅ Payment gateway integration (Cashfree, Razorpay webhooks)
 
-### MLM System (Backend Complete)
+### Affiliate System (Backend Complete)
 - ✅ 5x4 Matrix system
 - ✅ Parent-child genealogy tracking
 - ✅ Commission processing (8 types)
@@ -70,7 +70,7 @@
 - ✅ Wallet management
 - ✅ Transaction logs
 - ✅ KYC verification
-- ✅ MLM genealogy viewer
+- ✅ Affiliate genealogy viewer
 - ✅ SMS logs & providers
 - ✅ Membership management
 - ✅ Activity logs viewer
@@ -104,21 +104,21 @@
 - [ ] Payment integration for products
 - [ ] Inventory management
 
-**Impact**: BLOCKING - This is core MLM e-commerce feature
+**Impact**: BLOCKING - This is core Affiliate e-commerce feature
 **Reference**: Old commerinity has this, popkult-ecommerce has patterns
 
-#### 2. **MLM Frontend Pages** 🟠
+#### 2. **Affiliate Frontend Pages** 🟠
 **Status**: Backend complete, Frontend missing
 **Needed**:
 - [ ] Network/Team tree visualization
 - [ ] Downline list with drill-down
 - [ ] Commission dashboard (detailed breakdown)
 - [ ] Earnings history
-- [ ] MLM rank/level progress
+- [ ] Affiliate rank/level progress
 - [ ] Team performance metrics
 
 **Impact**: HIGH - Members need to see their network
-**Reference**: Check `.claude/plans/MLM_*.md`
+**Reference**: Check `.claude/plans/Affiliate_*.md`
 
 #### 3. **Payment Checkout Pages** 🟠
 **Status**: Webhooks exist, checkout flow missing
@@ -156,7 +156,7 @@
 - [ ] Testimonials
 
 **Impact**: MEDIUM - First impression for visitors
-**Standard**: Every MLM site has this
+**Standard**: Every Affiliate site has this
 
 #### 6. **Reports & Analytics** 🟡
 **Status**: Trend services exist, UI missing
@@ -181,7 +181,7 @@
 - [ ] Product catalogs (downloadable)
 
 **Impact**: LOW - Content-driven
-**Standard**: Most MLM platforms have this
+**Standard**: Most Affiliate platforms have this
 
 #### 8. **Events & Webinars** 🟢
 **Needed**:
@@ -191,7 +191,7 @@
 - [ ] Reminders
 
 **Impact**: LOW - Community engagement
-**Standard**: Premium MLM platforms
+**Standard**: Premium Affiliate platforms
 
 #### 9. **Gamification** 🟢
 **Needed**:
@@ -201,7 +201,7 @@
 - [ ] Challenges
 
 **Impact**: LOW - Engagement booster
-**Standard**: Modern MLM platforms
+**Standard**: Modern Affiliate platforms
 
 #### 10. **Multi-language Support** 🟢
 **Needed**:
@@ -226,7 +226,7 @@ Admin Panel:        100% ✅
 Recruitment:        100% ✅
 
 E-commerce:          0% 🔴 BLOCKING
-MLM Frontend:       20% 🟠 HIGH PRIORITY
+Affiliate Frontend:       20% 🟠 HIGH PRIORITY
 Payment Checkout:   30% 🟠 HIGH PRIORITY
 Onboarding:         50% 🟡 MEDIUM
 Landing Pages:       0% 🟡 MEDIUM
@@ -241,7 +241,7 @@ Reports/Charts:     40% 🟡 MEDIUM
 
 ### Must Have (Block Launch)
 1. **E-commerce Product System** (3-4 days)
-2. **MLM Frontend Pages** (2 days)
+2. **Affiliate Frontend Pages** (2 days)
 3. **Payment Checkout Flow** (1-2 days)
 
 ### Should Have (Launch with Limited Features)
@@ -261,7 +261,7 @@ Reports/Charts:     40% 🟡 MEDIUM
 
 1. **RUN LIGHTHOUSE NOW** - Check current scores
 2. **BUILD E-COMMERCE** - Top priority, blocking launch
-3. **MLM FRONTEND** - Members need network visibility
+3. **Affiliate FRONTEND** - Members need network visibility
 4. **CHECKOUT PAGES** - Complete payment flow
 
 ---

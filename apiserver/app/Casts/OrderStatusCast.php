@@ -15,7 +15,7 @@ use Filament\Support\Contracts\HasLabel;
  * PENDING → CONFIRMED → PROCESSING → SHIPPED → DELIVERED → COMPLETED
  *
  * - DELIVERED: Order delivered to customer, return period starts
- * - COMPLETED: Return period ended, order finalized, MLM commissions triggered
+ * - COMPLETED: Return period ended, order finalized, Affiliate commissions triggered
  */
 enum OrderStatusCast: string implements HasColor, HasIcon, HasLabel
 {
@@ -76,7 +76,7 @@ enum OrderStatusCast: string implements HasColor, HasIcon, HasLabel
     }
 
     /**
-     * Check if this status allows MLM commission processing
+     * Check if this status allows Affiliate commission processing
      */
     public function canTriggerCommission(): bool
     {

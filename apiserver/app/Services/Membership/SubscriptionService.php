@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Membership;
 
-use App\Events\Mlm\SubscriptionActivated;
+use App\Events\Affiliate\SubscriptionActivated;
 use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
-use App\Models\Mlm\MlmGenealogy;
+use App\Models\Affiliate\AffiliateGenealogy;
 use App\Models\User;
-use App\Services\Mlm\CommissionProcessorService;
+use App\Services\Affiliate\CommissionProcessorService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -94,7 +94,7 @@ final class SubscriptionService
                 $results['genealogy'] = $genealogy;
 
                 // 3. Update upline counters
-                MlmGenealogy::incrementUplineCounters($user->id);
+                AffiliateGenealogy::incrementUplineCounters($user->id);
 
                 // 4. Add sales to genealogy (personal + propagate to uplines)
                 $genealogy->addSales($subscription->amount, $subscription->stage?->pv ?? 0);
@@ -108,7 +108,7 @@ final class SubscriptionService
                 SubscriptionActivated::dispatch($subscription, $results['commissions']);
             });
 
-            Log::channel('mlm')->info('Subscription activated', [
+            Log::channel('affiliate')->info('Subscription activated', [
                 'subscription_id' => $subscription->id,
                 'user_id' => $subscription->user_id,
                 'stage' => $subscription->stage?->name,
@@ -117,7 +117,7 @@ final class SubscriptionService
             ]);
 
         } catch (\Throwable $e) {
-            Log::channel('mlm')->error('Subscription activation failed', [
+            Log::channel('affiliate')->error('Subscription activation failed', [
                 'subscription_id' => $subscription->id,
                 'error' => $e->getMessage(),
             ]);
@@ -132,9 +132,9 @@ final class SubscriptionService
     /**
      * Ensure genealogy record exists for user
      */
-    private function ensureGenealogyRecord(User $user, UserSubscription $subscription): MlmGenealogy
+    private function ensureGenealogyRecord(User $user, UserSubscription $subscription): AffiliateGenealogy
     {
-        $genealogy = MlmGenealogy::forUser($user->id);
+        $genealogy = AffiliateGenealogy::forUser($user->id);
 
         if ($genealogy) {
             // Update existing genealogy with new stage/level
@@ -144,7 +144,7 @@ final class SubscriptionService
         }
 
         // Create new genealogy record
-        return MlmGenealogy::createForUser($user->id);
+        return AffiliateGenealogy::createForUser($user->id);
     }
 
     /**
@@ -157,7 +157,7 @@ final class SubscriptionService
             return null;
         }
 
-        $genealogy = MlmGenealogy::forUser($user->id);
+        $genealogy = AffiliateGenealogy::forUser($user->id);
         if (! $genealogy) {
             return null;
         }
@@ -183,7 +183,7 @@ final class SubscriptionService
             $subscription->promoteToLevel($nextLevel, $stats);
             $genealogy->updateStageLevel($subscription->stage_id, $nextLevel->id);
 
-            Log::channel('mlm')->info('User promoted to next level', [
+            Log::channel('affiliate')->info('User promoted to next level', [
                 'user_id' => $user->id,
                 'new_level' => $nextLevel->full_name,
                 'stats' => $stats,
@@ -205,7 +205,7 @@ final class SubscriptionService
             return ['error' => 'No active subscription'];
         }
 
-        $genealogy = MlmGenealogy::forUser($user->id);
+        $genealogy = AffiliateGenealogy::forUser($user->id);
         if (! $genealogy) {
             return ['error' => 'No genealogy record'];
         }
@@ -242,7 +242,7 @@ final class SubscriptionService
      * Create subscription with sponsor tracking (who paid for it)
      *
      * Note: Sponsor (who paid) is different from:
-     * - parent_id: MLM upline (for commissions)
+     * - parent_id: Affiliate upline (for commissions)
      * - originator: Agent/advisor who recruited (tracked on User model)
      *
      * Use cases:

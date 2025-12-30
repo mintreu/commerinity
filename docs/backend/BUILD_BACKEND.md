@@ -57,7 +57,7 @@ public function up(): void
         $table->string('mobile', 15)->nullable()->unique()->after('email');
         $table->timestamp('mobile_verified_at')->nullable()->after('email_verified_at');
 
-        // MLM fields
+        // Affiliate fields
         $table->string('referral_code', 8)->unique()->after('mobile_verified_at');
         $table->foreignId('parent_id')->nullable()->constrained('users')->nullOnDelete()->after('referral_code');
 

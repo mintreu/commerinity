@@ -69,7 +69,7 @@ private function handleSubscriptionPayment(mixed $transaction, UserSubscription 
     // Mark as paid
     // Upgrade user to MEMBER
     // Assign level/stage
-    // Trigger MLM commissions
+    // Trigger Affiliate commissions
 }
 ```
 
@@ -159,7 +159,7 @@ const checkout = async (stageId: number, levelId: number, paymentMethod: string 
 - Completes payment via Cashfree
 - Webhook confirms payment
 - User upgraded to MEMBER ✅
-- MLM commissions triggered ✅
+- Affiliate commissions triggered ✅
 - Redirects to dashboard
 
 **Time**: 30 minutes
@@ -341,14 +341,14 @@ async function submitApplication() {
 ## 🎯 **Next Session Plan**
 
 ### **Order of Implementation**:
-1. **Subscription First** (more complex, has MLM integration)
+1. **Subscription First** (more complex, has Affiliate integration)
 2. **Recruitment Second** (simpler, just status update)
 
 ### **Testing Strategy**:
 - Write tests BEFORE implementation
 - Test each payment method (wallet, cashfree, razorpay)
 - Verify webhook handling
-- Verify business logic (subscription activation, MLM commissions)
+- Verify business logic (subscription activation, Affiliate commissions)
 
 ---
 

@@ -54,12 +54,12 @@
 4. **Snapshot Pattern**: OrderItem captures product data at order time
 5. **Provider Pattern**: Payment/Shipping providers are swappable
 
-### From old_project (MLM-Specific):
+### From old_project (Affiliate-Specific):
 1. **Polymorphic Cart**: cartable + ownerable supports any model
 2. **HasTransaction Trait**: Already exists in our project!
 3. **Order UUID**: Year-prefixed format (YYYY-XXXX...)
 4. **Voucher System**: Complex rule engine (to copy next)
-5. **Reward Points**: Products can grant MLM rewards
+5. **Reward Points**: Products can grant Affiliate rewards
 
 ### Key Architecture Decisions:
 - ✅ NO separate payments table (use existing transactions)
@@ -89,7 +89,7 @@
 6. Test full checkout flow
 
 ### Finally:
-1. Add MLM layer (ProductMLMAttribute model)
+1. Add Affiliate layer (ProductAffiliateAttribute model)
 2. Product commission triggering (on OrderPaid event)
 3. BV/PV tracking
 4. Member pricing
@@ -181,7 +181,7 @@
 - Cart service & API (2 hours)
 - Vouchers & sales (3 hours)
 - Orders & checkout (3 hours)
-- MLM integration (4 hours)
+- Affiliate integration (4 hours)
 - Frontend (8 hours)
 
 **Total**: ~20 hours remaining (2-3 days of focused work)

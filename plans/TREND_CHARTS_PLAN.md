@@ -19,7 +19,7 @@ All trend data accessed via **TrendService classes** for:
 |-----------|-------------|
 | **Regular** | Own wallet, transactions |
 | **Member** | + Team basic stats, referral counts |
-| **Promoter** | + MLM commissions, downline stats, level progress |
+| **Promoter** | + Affiliate commissions, downline stats, level progress |
 | **Advisor** | + Originated users, salary insights, team performance |
 | **Mentor** | + Training insights (future) |
 | **Admin** | ALL data + platform-wide analytics |
@@ -34,7 +34,7 @@ app/Services/Trends/
 ├── UserTrendService.php          # User registration, activity trends
 ├── WalletTrendService.php        # Wallet balance, transactions
 ├── TransactionTrendService.php   # Transaction volume, methods, status
-├── CommissionTrendService.php    # MLM commission trends
+├── CommissionTrendService.php    # Affiliate commission trends
 ├── TeamTrendService.php          # Downline, referral trends
 └── AdminTrendService.php         # Platform-wide aggregates
 ```
@@ -474,7 +474,7 @@ GET /api/v1/admin/trends/kyc/status
 8. [ ] Implement credit/debit trends endpoint
 9. [ ] Implement transaction volume endpoint
 
-### Phase 3: MLM Trends
+### Phase 3: Affiliate Trends
 10. [ ] Create CommissionTrendService
 11. [ ] Create TeamTrendService
 12. [ ] Implement commission endpoints

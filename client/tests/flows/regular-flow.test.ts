@@ -5,7 +5,7 @@ import { describe, it, expect, beforeAll } from 'vitest'
  *
  * Tests the complete flow for a REGULAR user type:
  * - Login with regular credentials
- * - Limited dashboard (no MLM)
+ * - Limited dashboard (no Affiliate)
  * - Basic wallet access
  * - Profile management
  * - Career/Job browsing
@@ -74,7 +74,7 @@ describe('Regular User Complete Flow', () => {
 
     it('should have limited permissions', () => {
       expect(user.permissions).toBeDefined()
-      expect(user.permissions.can_access_mlm).toBe(false)
+      expect(user.permissions.can_access_affiliate).toBe(false)
     })
 
     it('should show upgrade prompt', () => {

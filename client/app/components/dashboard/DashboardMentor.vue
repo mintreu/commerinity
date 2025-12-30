@@ -9,17 +9,39 @@ import type { User } from '~/types/user'
 
 const user = useCurrentUser() as Ref<User | null>
 const { formatCurrency } = useBranding()
+const { fetchCommissionEarnings } = useTrends()
 
-// Mock data - will be replaced with API calls
+// Real data for stats
 const stats = ref({
-  totalMentees: 86,
-  activeMentees: 42,
-  monthlyIncome: 125600,
-  pendingPayouts: 28500,
+  totalMentees: 0,
+  activeMentees: 0,
+  monthlyIncome: 0,
+  pendingPayouts: 0,
   sessions: 12,
   programs: 4,
   avgRating: 4.9,
   completionRate: 92
+})
+
+const loading = ref(true)
+
+// Fetch real data
+onMounted(async () => {
+  try {
+    const { fetchDashboardSummary } = useTrends()
+    const response = await fetchDashboardSummary('month')
+    if (response?.success && response.data) {
+      const { wallet, team, commissions } = response.data
+      stats.value.monthlyIncome = wallet?.current?.credits || 0
+      stats.value.totalMentees = team?.total_members || 0
+      stats.value.activeMentees = team?.active_members || 0
+      stats.value.pendingPayouts = commissions?.current?.pending || 0
+    }
+  } catch (e) {
+    console.error('Failed to load mentor stats:', e)
+  } finally {
+    loading.value = false
+  }
 })
 
 const activePrograms = ref([
@@ -355,42 +377,15 @@ const topMentees = ref([
           </div>
         </div>
 
-        <!-- Revenue Chart Placeholder -->
+        <!-- Revenue Chart (Real Data) -->
         <div class="glass-card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
-              Revenue Overview
-            </h2>
-            <UButtonGroup size="sm">
-              <UButton
-                variant="soft"
-                color="primary"
-              >
-                Month
-              </UButton>
-              <UButton variant="ghost">
-                Quarter
-              </UButton>
-              <UButton variant="ghost">
-                Year
-              </UButton>
-            </UButtonGroup>
-          </div>
-
-          <div class="h-48 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl flex items-center justify-center">
-            <div class="text-center">
-              <UIcon
-                name="i-lucide-trending-up"
-                class="w-12 h-12 text-purple-400 mx-auto mb-2"
-              />
-              <p class="text-sm text-slate-600 dark:text-slate-400">
-                Revenue chart coming soon
-              </p>
-              <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                This month: {{ formatCurrency(stats.monthlyIncome) }}
-              </p>
-            </div>
-          </div>
+          <CommonChartsTrendChart
+            type="line"
+            :fetch-method="fetchCommissionEarnings"
+            title="Revenue Overview"
+            height="180"
+            show-controls
+          />
         </div>
       </div>
 

@@ -22,7 +22,7 @@ Schedule::job(new CheckPayoutStatusJob)
     ->withoutOverlapping();
 
 // Complete delivered orders after return period expires (runs hourly)
-// Triggers MLM commissions on COMPLETED status
+// Triggers Affiliate commissions on COMPLETED status
 Schedule::command('ecommerce:complete-orders')
     ->hourly()
     ->name('complete-delivered-orders')

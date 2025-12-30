@@ -61,7 +61,7 @@ Schema::create('admin_activity_logs', function (Blueprint $table) {
 Schema::create('admin_permissions', function (Blueprint $table) {
     $table->id();
     $table->string('name', 100)->unique(); // users.view, users.edit, reports.export
-    $table->string('group', 50); // users, reports, finance, mlm
+    $table->string('group', 50); // users, reports, finance, affiliate
     $table->string('description');
     $table->timestamps();
 });
@@ -84,7 +84,7 @@ Schema::create('admin_permission_assignments', function (Blueprint $table) {
 'permissions' => [
     'users' => ['view', 'create', 'edit', 'delete', 'export', 'impersonate'],
     'finance' => ['view_revenue', 'view_expenses', 'view_profit', 'manage_distributions'],
-    'mlm' => ['view_tree', 'manage_commissions', 'approve_payouts'],
+    'affiliate' => ['view_tree', 'manage_commissions', 'approve_payouts'],
     'admins' => ['view', 'create', 'edit', 'delete', 'change_permissions'],
     'reports' => ['view', 'export', 'schedule'],
     'settings' => ['view', 'edit'],
@@ -270,7 +270,7 @@ $table->foreignId('department_id')->nullable()->constrained('admin_departments')
 - Support (handles user issues)
 - Finance (handles payouts, reports)
 - Operations (handles KYC, verifications)
-- MLM (handles commission issues)
+- Affiliate (handles commission issues)
 - Technical (handles system issues)
 
 ---
@@ -283,7 +283,7 @@ $table->foreignId('department_id')->nullable()->constrained('admin_departments')
 Schema::create('admin_scheduled_reports', function (Blueprint $table) {
     $table->id();
     $table->foreignId('admin_id')->constrained()->cascadeOnDelete();
-    $table->string('report_type', 50); // daily_summary, weekly_finance, monthly_mlm
+    $table->string('report_type', 50); // daily_summary, weekly_finance, monthly_affiliate
     $table->string('frequency', 20); // daily, weekly, monthly
     $table->string('delivery_method', 20)->default('email'); // email, in_app, both
     $table->json('parameters')->nullable(); // Custom filters
@@ -298,7 +298,7 @@ Schema::create('admin_scheduled_reports', function (Blueprint $table) {
 - Daily summary (transactions, new users)
 - Weekly finance report
 - Monthly P&L statement
-- MLM commission report
+- Affiliate commission report
 - User growth report
 
 ---

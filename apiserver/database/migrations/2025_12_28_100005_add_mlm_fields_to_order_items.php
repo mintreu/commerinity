@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('order_items', function (Blueprint $table) {
-            // MLM fields for commission calculation
+            // Affiliate fields for commission calculation
             $table->unsignedInteger('bv')->default(0)->after('total_price')->comment('Business Volume');
             $table->unsignedInteger('pv')->default(0)->after('bv')->comment('Personal Volume');
             $table->unsignedInteger('reward_points')->default(0)->after('pv');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('stock_id')->nullable()->after('product_id')->constrained('product_stocks')->nullOnDelete();
         });
 
-        // Add MLM totals to orders table
+        // Add Affiliate totals to orders table
         Schema::table('orders', function (Blueprint $table) {
             $table->unsignedInteger('total_bv')->default(0)->after('total')->comment('Total Business Volume');
             $table->unsignedInteger('total_pv')->default(0)->after('total_bv')->comment('Total Personal Volume');

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Casts\CommissionStatusCast;
 use App\Casts\CommissionTypeCast;
-use App\Models\Mlm\MlmCommission;
+use App\Models\Affiliate\AffiliateCommission;
 use App\Models\User;
 use App\Services\Trends\CommissionTrendService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,7 +19,7 @@ beforeEach(function () {
 describe('CommissionTrendService Earnings Trend', function () {
     it('returns user earnings trend', function () {
         // Create paid commissions
-        MlmCommission::factory()->count(3)->create([
+        AffiliateCommission::factory()->count(3)->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PAID,
@@ -39,14 +39,14 @@ describe('CommissionTrendService Earnings Trend', function () {
     });
 
     it('only includes paid commissions', function () {
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PENDING,
@@ -77,14 +77,14 @@ describe('CommissionTrendService Earnings Trend', function () {
 
 describe('CommissionTrendService Earnings By Type', function () {
     it('returns breakdown by commission type', function () {
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::LEVEL_COMMISSION,
             'status' => CommissionStatusCast::PAID,
@@ -103,14 +103,14 @@ describe('CommissionTrendService Earnings By Type', function () {
     });
 
     it('excludes reversal type from earnings', function () {
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::REVERSAL,
             'status' => CommissionStatusCast::PAID,
@@ -130,14 +130,14 @@ describe('CommissionTrendService Earnings By Type', function () {
 
 describe('CommissionTrendService Pending vs Paid', function () {
     it('returns pending vs paid comparison', function () {
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'type' => CommissionTypeCast::SPONSOR_BONUS,
             'status' => CommissionStatusCast::PENDING,
@@ -159,13 +159,13 @@ describe('CommissionTrendService Pending vs Paid', function () {
 
 describe('CommissionTrendService Status Distribution', function () {
     it('returns commission status distribution', function () {
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'status' => CommissionStatusCast::PENDING,
             'net_amount' => 50000,
@@ -187,14 +187,14 @@ describe('CommissionTrendService Platform Stats (Admin)', function () {
         // Create commissions for multiple users
         $otherUser = User::factory()->create();
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $this->user->id,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
             'tds_amount' => 10000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $otherUser->id,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 200000,
@@ -219,19 +219,19 @@ describe('CommissionTrendService Top Earners', function () {
         $user2 = User::factory()->create();
         $user3 = User::factory()->create();
 
-        MlmCommission::factory()->count(2)->create([
+        AffiliateCommission::factory()->count(2)->create([
             'user_id' => $this->user->id,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->count(3)->create([
+        AffiliateCommission::factory()->count(3)->create([
             'user_id' => $user2->id,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 100000,
         ]);
 
-        MlmCommission::factory()->create([
+        AffiliateCommission::factory()->create([
             'user_id' => $user3->id,
             'status' => CommissionStatusCast::PAID,
             'net_amount' => 50000,

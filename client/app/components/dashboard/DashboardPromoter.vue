@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Promoter Dashboard Component
- * Team leader dashboard with advanced MLM metrics
+ * Team leader dashboard with advanced Affiliate metrics
  * Shows team performance, leaderboards, challenges, and recruitment goals
  */
 
@@ -9,17 +9,40 @@ import type { User } from '~/types/user'
 
 const user = useCurrentUser() as Ref<User | null>
 const { formatCurrency, formatCompactNumber } = useBranding()
+const { fetchTeamGrowth } = useTrends()
 
-// Mock data - will be replaced with API calls
+// Real data - will be replaced with API calls
 const stats = ref({
-  totalEarnings: 85200,
-  monthlyEarnings: 15600,
-  teamSize: 156,
-  activeTeam: 42,
+  totalEarnings: 0,
+  monthlyEarnings: 0,
+  teamSize: 0,
+  activeTeam: 0,
   targetProgress: 78,
-  walletBalance: 22500,
-  pendingPayout: 8500,
+  walletBalance: 0,
+  pendingPayout: 0,
   leaderboardRank: 12
+})
+
+const loading = ref(true)
+
+// Fetch real data
+onMounted(async () => {
+  try {
+    const { fetchDashboardSummary } = useTrends()
+    const response = await fetchDashboardSummary('month')
+    if (response?.success && response.data) {
+      const { wallet, team, commissions } = response.data
+      stats.value.monthlyEarnings = wallet?.current?.credits || 0
+      stats.value.totalEarnings = commissions?.current?.total || 0
+      stats.value.pendingPayout = commissions?.current?.pending || 0
+      stats.value.teamSize = team?.total_members || 0
+      stats.value.activeTeam = team?.active_members || 0
+    }
+  } catch (e) {
+    console.error('Failed to load promoter stats:', e)
+  } finally {
+    loading.value = false
+  }
 })
 
 const challenges = ref([
@@ -289,42 +312,15 @@ const quickActions = computed(() => [
           </div>
         </div>
 
-        <!-- Team Growth Chart Placeholder -->
+        <!-- Team Growth Chart (Real Data) -->
         <div class="glass-card p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
-              Team Growth
-            </h2>
-            <UButtonGroup size="sm">
-              <UButton
-                variant="soft"
-                color="primary"
-              >
-                This Month
-              </UButton>
-              <UButton variant="ghost">
-                Quarter
-              </UButton>
-              <UButton variant="ghost">
-                Year
-              </UButton>
-            </UButtonGroup>
-          </div>
-
-          <div class="h-48 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl flex items-center justify-center">
-            <div class="text-center">
-              <UIcon
-                name="i-lucide-line-chart"
-                class="w-12 h-12 text-blue-400 mx-auto mb-2"
-              />
-              <p class="text-sm text-slate-600 dark:text-slate-400">
-                Team growth chart coming soon
-              </p>
-              <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                +{{ stats.activeTeam }} active members this month
-              </p>
-            </div>
-          </div>
+          <CommonChartsTrendChart
+            type="bar"
+            :fetch-method="fetchTeamGrowth"
+            title="Team Growth"
+            height="180"
+            show-controls
+          />
         </div>
       </div>
 
