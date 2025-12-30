@@ -18,13 +18,22 @@ use Illuminate\Support\Facades\Log;
  * - Configurable products with variants
  * - Automatic variant generation and management
  * - Cascading deletion for configurable products
+ *
+ * Usage:
+ *   ProductManager::create([...data...]);
+ *   ProductManager::update($product, [...data...]);
+ *   ProductManager::delete($product);
  */
 final class ProductManager
 {
-    use \App\Services\Ecommerce\Support\HasProductSupport;
-
     /**
      * Create a new product (Simple or Configurable)
+     *
+     * @param  array  $data  Product data including:
+     *                       - name, sku, url, status, type, filter_group_id, category_id, price
+     *                       - description, short_description (optional)
+     *                       - filter_options (optional): [filter_id => [option_ids]]
+     * @param  bool  $reload  Whether to return fresh model with relationships
      */
     public static function create(array $data, bool $reload = false): ?Product
     {
@@ -43,22 +52,29 @@ final class ProductManager
                 $filterOptions = $data['filter_options'] ?? [];
                 unset($data['filter_options']);
 
-                $record = Product::create(array_merge($data, [
+                $record = Product::create([
                     'name' => $data['name'],
                     'sku' => $data['sku'],
                     'url' => $data['url'],
                     'status' => $data['status'] ?? 'draft',
                     'type' => $case->value,
                     'filter_group_id' => $data['filter_group_id'],
+                    'category_id' => $data['category_id'] ?? null,
                     'price' => $data['price'] ?? 0,
-                ]));
+                    'description' => $data['description'] ?? null,
+                    'short_description' => $data['short_description'] ?? null,
+                    'is_returnable' => $data['is_returnable'] ?? false,
+                    'return_days' => $data['return_days'] ?? 0,
+                ]);
 
                 if (! empty($filterOptions)) {
+                    $instance = new self;
+
                     if (in_array($case->value, [ProductTypeCast::SIMPLE->value])) {
-                        $this->attachFilterOptionsToProduct($record, $filterOptions);
+                        $instance->attachFilterOptionsToProduct($record, $filterOptions);
                     } elseif ($case->value === ProductTypeCast::CONFIGURABLE->value) {
-                        $this->attachFilterOptionsToParent($record, $filterOptions);
-                        $this->generateProductVariants($record, $data, $filterOptions);
+                        $instance->attachFilterOptionsToParent($record, $filterOptions);
+                        $instance->generateProductVariants($record, $data, $filterOptions);
                     }
                 }
 
@@ -77,6 +93,9 @@ final class ProductManager
 
     /**
      * Update an existing product
+     *
+     * @param  array  $data  Update data
+     * @param  bool  $reload  Whether to return fresh model
      */
     public static function update(Product $product, array $data, bool $reload = false): ?Product
     {
@@ -94,25 +113,40 @@ final class ProductManager
                 $filterOptions = $data['filter_options'] ?? [];
                 unset($data['filter_options']);
 
-                $product->update($data);
+                $product->update([
+                    'name' => $data['name'] ?? $product->name,
+                    'sku' => $data['sku'] ?? $product->sku,
+                    'url' => $data['url'] ?? $product->url,
+                    'status' => $data['status'] ?? $product->status,
+                    'type' => $data['type'] ?? $product->type,
+                    'filter_group_id' => $data['filter_group_id'] ?? $product->filter_group_id,
+                    'category_id' => $data['category_id'] ?? $product->category_id,
+                    'price' => $data['price'] ?? $product->price,
+                    'description' => $data['description'] ?? $product->description,
+                    'short_description' => $data['short_description'] ?? $product->short_description,
+                    'is_returnable' => $data['is_returnable'] ?? $product->is_returnable,
+                    'return_days' => $data['return_days'] ?? $product->return_days,
+                ]);
+
+                $instance = new self;
 
                 if ($case->value === ProductTypeCast::CONFIGURABLE->value) {
                     if ($recreateVariants) {
                         $product->variants()->each(fn ($variant) => $variant->delete());
 
                         if (! empty($filterOptions)) {
-                            $this->attachFilterOptionsToParent($product, $filterOptions);
-                            $this->generateProductVariants($product, $data, $filterOptions);
+                            $instance->attachFilterOptionsToParent($product, $filterOptions);
+                            $instance->generateProductVariants($product, $data, $filterOptions);
                         }
                     } else {
                         if (! empty($filterOptions)) {
-                            $this->smartUpdateVariants($product, $data, $filterOptions);
+                            $instance->smartUpdateVariants($product, $data, $filterOptions);
                         }
                     }
-                    $this->updateProductFilterOptionToParent($product, $filterOptions);
+                    $instance->updateProductFilterOptionToParent($product, $filterOptions);
                 } else {
                     if (! empty($filterOptions)) {
-                        $this->updateProductFilterOption($product, $filterOptions);
+                        $instance->updateProductFilterOption($product, $filterOptions);
                     }
                 }
 
@@ -289,9 +323,9 @@ final class ProductManager
                 'short_description' => $parentProduct->short_description,
                 'filter_group_id' => $productData['filter_group_id'],
                 'category_id' => $productData['category_id'] ?? null,
-                'min_quantity' => $parentProduct->min_quantity,
-                'max_quantity' => $parentProduct->max_quantity,
                 'price' => $parentProduct->price,
+                'is_returnable' => $parentProduct->is_returnable,
+                'return_days' => $parentProduct->return_days,
             ]);
 
             $this->attachFilterOptionsToProduct($variantProduct, $variant['filter_option_ids']);
