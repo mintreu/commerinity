@@ -6,6 +6,7 @@ namespace App\Models\Ecommerce;
 
 use App\Casts\ProductStatusCast;
 use App\Models\Address;
+use App\Models\Traits\HasSaleAccess;
 use App\Models\User;
 use Database\Factories\Ecommerce\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,7 @@ class Product extends Model implements HasMedia
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
 
+    use HasSaleAccess;
     use InteractsWithMedia;
 
     protected $fillable = [
