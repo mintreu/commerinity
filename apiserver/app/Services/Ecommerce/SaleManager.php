@@ -6,12 +6,15 @@ namespace App\Services\Ecommerce;
 
 use App\Casts\SaleActionTypeCast;
 use App\Models\Ecommerce\Category;
+use App\Models\Ecommerce\FilterGroup;
 use App\Models\Ecommerce\Product;
 use App\Models\Ecommerce\Sale;
 use App\Models\Ecommerce\SaleProduct;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Sale Manager Service
@@ -19,10 +22,16 @@ use Illuminate\Support\Facades\DB;
  * Handles sale product indexing and price calculations.
  * Replaces the need for manual sale_price updates by generating
  * sale_product records for all matching products.
+ *
+ * Also provides condition options for Filament form schemas.
  */
 final class SaleManager
 {
     protected array $category;
+
+    protected array $filterGroup;
+
+    protected Collection $filters;
 
     public function __construct()
     {
@@ -30,12 +39,115 @@ final class SaleManager
             ->where('status', true)
             ->pluck('name', 'id')
             ->toArray();
+
+        $this->filterGroup = FilterGroup::all()->pluck('name', 'id')->toArray();
+
+        $this->filters = \App\Models\Ecommerce\Filter::with('options')
+            ->has('options')
+            ->get();
     }
 
     public static function make(): static
     {
         return new self;
     }
+
+    // ==================== Filament Form Condition Methods ====================
+
+    /**
+     * Get available condition options for Filament form schema
+     * Used in SaleResource Create/Edit pages
+     */
+    public function getCondition(): Collection
+    {
+        $collection = collect([
+            [
+                'key' => 'product',
+                'label' => trans('catalog-rules.product-filter'),
+                'children' => $this->getChildren(),
+            ],
+        ]);
+
+        $conditions = collect();
+        $conditions = $collection->map(function ($item) use ($conditions) {
+            return $conditions->merge($item['children']);
+        });
+
+        return $conditions[0] ?? collect();
+    }
+
+    /**
+     * Get children condition options
+     */
+    private function getChildren(): Collection
+    {
+        $result = collect([
+            [
+                'key' => 'product|category_id',
+                'type' => 'multiselect',
+                'operator' => $this->getOperator('multiselect'),
+                'label' => trans('Categories'),
+                'options' => $this->category,
+            ],
+            [
+                'key' => 'product|price',
+                'type' => 'number',
+                'operator' => $this->getOperator('number'),
+                'label' => trans('Price'),
+                'options' => null,
+            ],
+        ]);
+
+        return $result->merge($this->getStaticFilters());
+    }
+
+    /**
+     * Get static filter options from filter groups
+     */
+    private function getStaticFilters(): array
+    {
+        $attrBag = [];
+        $allFilters = $this->filters;
+
+        foreach ($allFilters as $filter) {
+            $key = 'filter|'.$filter->name;
+            $attrBag[] = [
+                'key' => Str::lower($key),
+                'type' => $filter->type,
+                'operator' => $this->getOperator(Str::lower($filter->type)),
+                'label' => trans(Str::ucfirst($filter->name)),
+                'options' => $filter->options->pluck('value', 'id')->toArray(),
+            ];
+        }
+
+        return $attrBag;
+    }
+
+    /**
+     * Get operators based on attribute type
+     */
+    protected function getOperator(string $operatorType): array
+    {
+        return match ($operatorType) {
+            'text' => [
+                '=' => 'Contain',
+                '!=' => 'Not Contain',
+            ],
+            'number' => [
+                '=' => 'Equal With',
+                '>' => 'Greater than',
+                '<' => 'Less than',
+                '!=' => 'Not Equal',
+            ],
+            'select', 'multiselect' => [
+                '=' => 'Equal With',
+                '!=' => 'Not Equal',
+            ],
+            default => [],
+        };
+    }
+
+    // ==================== Sale Product Indexing Methods ====================
 
     /**
      * Reindex all sale products - clean and rebuild

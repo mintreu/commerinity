@@ -5,11 +5,14 @@ namespace App\Models;
 use App\Casts\GenderCast;
 use App\Casts\UserStatusCast;
 use App\Casts\UserTypeCast;
+use App\Models\Traits\HasBeneficiary;
 use App\Models\Traits\HasProductEngagement;
 use App\Models\Traits\HasProductWishlist;
+use App\Models\Traits\HasSaleAccess;
+use App\Models\Traits\HasVoucherAccess;
+use App\Models\Traits\HasWallet;
 use App\Traits\HasHelpdeskTickets;
 use App\Traits\HasJobApplications;
-use App\Traits\HasWallet;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +37,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens;
 
+    use HasBeneficiary;
     use HasFactory;
     use HasHelpdeskTickets;
     use HasJobApplications;
@@ -41,6 +45,8 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     use HasProductWishlist;
     use HasPushSubscriptions;
     use HasRecursiveRelationships;
+    use HasSaleAccess;
+    use HasVoucherAccess;
     use HasWallet;
     use InteractsWithMedia;
     use LogsActivity;
