@@ -7,7 +7,6 @@ namespace Database\Seeders;
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Models\Ecommerce\Category;
-use App\Models\Ecommerce\Filter;
 use App\Models\Ecommerce\FilterGroup;
 use App\Models\Ecommerce\Product;
 use App\Models\Ecommerce\ProductEngagement;
@@ -16,20 +15,18 @@ use App\Models\Ecommerce\ProductWishlist;
 use App\Models\Ecommerce\Sale;
 use App\Models\Ecommerce\SaleProduct;
 use App\Models\User;
+use App\Services\Ecommerce\ProductManager;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
- * MasterDemoSeeder - Seeds complete demo data for testing
+ * MasterDemoSeeder - Seeds complete demo data using ProductManager
  *
  * Seeds:
- * - Products with images
- * - Product variants (configurable products)
- * - Stock entries with MLM points
- * - Reviews and ratings
- * - Wishlists
+ * - Products with variants (using ProductManager)
+ * - Media attachments
+ * - Stock entries
  * - Sales/promotions
  * - Filter options on products
  */
@@ -68,21 +65,17 @@ class MasterDemoSeeder extends Seeder
     {
         $this->command->info('');
         $this->command->info('============================================');
-        $this->command->info(' MASTER DEMO SEEDER - Complete Data Seeding');
+        $this->command->info(' MASTER DEMO SEEDER - Using ProductManager');
         $this->command->info('============================================');
         $this->command->info('');
 
-        // 1. Create test user if not exists
-        $testUser = $this->getOrCreateTestUser();
-        $this->command->info("User: {$testUser->email}");
-
-        // 2. Seed products for each category
+        // Seed products for each category
         $totalProducts = 0;
         foreach ($this->categoriesToSeed as $categoryUrl) {
             $this->command->info("\nProcessing category: {$categoryUrl}");
 
             try {
-                $count = $this->seedCategoryProducts($categoryUrl, $testUser);
+                $count = $this->seedCategoryProducts($categoryUrl);
                 $totalProducts += $count;
                 $this->command->info("  Seeded {$count} products");
             } catch (Exception $e) {
@@ -90,11 +83,11 @@ class MasterDemoSeeder extends Seeder
             }
         }
 
-        // 3. Create sales/promotions
+        // Create sales/promotions
         $this->createSales();
         $this->command->info("\nCreated sales/promotions");
 
-        // 4. Summary
+        // Summary
         $this->command->info('');
         $this->command->info('============================================');
         $this->command->info(' SEEDING COMPLETE');
@@ -108,19 +101,7 @@ class MasterDemoSeeder extends Seeder
         $this->command->info('');
     }
 
-    protected function getOrCreateTestUser(): User
-    {
-        return User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => bcrypt('password'),
-                'email_verified_at' => now(),
-            ]
-        );
-    }
-
-    protected function seedCategoryProducts(string $categoryUrl, User $testUser): int
+    protected function seedCategoryProducts(string $categoryUrl): int
     {
         $category = Category::where('url', $categoryUrl)->first();
         if (! $category) {
@@ -150,7 +131,7 @@ class MasterDemoSeeder extends Seeder
         $seeded = 0;
         foreach ($products as $productData) {
             try {
-                $product = $this->createProduct($productData, $category, $filterGroup);
+                $product = $this->createProductWithManager($productData, $category, $filterGroup);
 
                 // Add media
                 $this->attachMediaFiles($product, $category);
@@ -158,22 +139,14 @@ class MasterDemoSeeder extends Seeder
                 // Add stock
                 $this->addStock($product);
 
-                // Add filter options
-                $this->attachFilterOptions($product, $filterGroup);
-
-                // Create variants for configurable products
-                if ($this->isConfigurable($productData)) {
-                    $this->createVariants($product, $filterGroup, $category);
-                }
-
                 // Add review (random chance)
                 if (random_int(1, 100) <= 70) { // 70% chance
-                    $this->addReview($product, $testUser);
+                    $this->addReview($product);
                 }
 
                 // Add to wishlist (random chance)
                 if (random_int(1, 100) <= 40) { // 40% chance
-                    $this->addToWishlist($product, $testUser);
+                    $this->addToWishlist($product);
                 }
 
                 $seeded++;
@@ -186,34 +159,66 @@ class MasterDemoSeeder extends Seeder
         return $seeded;
     }
 
-    protected function createProduct(object $data, Category $category, FilterGroup $filterGroup): Product
+    /**
+     * Create product using ProductManager (like old_project)
+     */
+    protected function createProductWithManager(object $data, Category $category, FilterGroup $filterGroup): Product
     {
-        $isConfigurable = $this->isConfigurable($data);
+        // Build filter_options using mapFilterOptions (like old_project)
+        $filterOptions = $this->mapFilterOptions($filterGroup, ProductTypeCast::CONFIGURABLE->value);
 
-        return Product::updateOrCreate(
-            ['sku' => $data->sku],
-            [
-                'name' => $data->name,
-                'url' => $data->url,
-                'status' => ProductStatusCast::PUBLISHED->value,
-                'type' => $isConfigurable
-                    ? ProductTypeCast::CONFIGURABLE->value
-                    : ProductTypeCast::SIMPLE->value,
-                'price' => $data->price ?? random_int(5000, 150000), // in paise
-                'short_description' => $data->short_description ?? null,
-                'description' => $data->description ?? null,
-                'category_id' => $category->id,
-                'filter_group_id' => $filterGroup->id,
-                'is_returnable' => true,
-                'return_days' => 7,
-                'view_count' => random_int(10, 500),
-            ]
-        );
+        // Prepare data for ProductManager
+        $productData = [
+            'name' => $data->name,
+            'sku' => $data->sku,
+            'url' => $data->url,
+            'status' => ProductStatusCast::PUBLISHED->value,
+            'type' => ProductTypeCast::CONFIGURABLE->value,
+            'filter_group_id' => $filterGroup->id,
+            'category_id' => $category->id,
+            'price' => $data->price ?? random_int(5000, 150000),
+            'short_description' => $data->short_description ?? null,
+            'description' => $data->description ?? null,
+            'is_returnable' => true,
+            'return_days' => 7,
+            'filter_options' => $filterOptions,
+        ];
+
+        // Use ProductManager to create product with variants
+        $product = ProductManager::create($productData);
+
+        // Attach category after creation (ProductManager doesn't handle this)
+        $product->category_id = $category->id;
+        $product->save();
+
+        return $product;
     }
 
-    protected function isConfigurable(object $data): bool
+    /**
+     * Map filter options for product (from old_project MasterDemoProductSeeder)
+     */
+    protected function mapFilterOptions(FilterGroup $filterGroup, string $productType): array
     {
-        return isset($data->configurable) && $data->configurable;
+        $isConfigurable = $productType === ProductTypeCast::CONFIGURABLE->value;
+
+        return $filterGroup->filters->mapWithKeys(function ($filter) use ($isConfigurable) {
+            $options = $filter->options;
+
+            if ($options->isEmpty()) {
+                return [(string) $filter->id => []];
+            }
+
+            if ($isConfigurable) {
+                $selected = $options->random(min(2, $options->count()))->pluck('id')->values()->toArray();
+            } else {
+                $selected = [$options->random()->id];
+            }
+
+            // Cast to string to match form data format
+            $selected = array_map('strval', $selected);
+
+            return [(string) $filter->id => $selected];
+        })->toArray();
     }
 
     protected function attachMediaFiles(Product $product, Category $category): void
@@ -283,97 +288,14 @@ class MasterDemoSeeder extends Seeder
         ]);
     }
 
-    protected function attachFilterOptions(Product $product, FilterGroup $filterGroup): void
+    protected function addReview(Product $product): void
     {
-        // Skip if already has filter options
-        if ($product->filterOptions()->exists()) {
+        $user = User::firstWhere('email', 'test@example.com');
+        if (! $user) {
             return;
         }
 
-        foreach ($filterGroup->filters as $filter) {
-            if ($filter->options->isEmpty()) {
-                continue;
-            }
-
-            // Pick 1-2 random options for simple products
-            $options = $filter->options->random(min(2, $filter->options->count()));
-
-            // Attach with filter_id pivot data
-            foreach ($options as $option) {
-                $product->filterOptions()->attach($option->id, [
-                    'filter_id' => $filter->id,
-                ]);
-            }
-        }
-    }
-
-    protected function createVariants(Product $parent, FilterGroup $filterGroup, Category $category): void
-    {
-        // Skip if variants already exist
-        if ($parent->variants()->exists()) {
-            return;
-        }
-
-        // Get filter with most options (usually color or size)
-        $variantFilter = $filterGroup->filters
-            ->sortByDesc(fn ($f) => $f->options->count())
-            ->first();
-
-        if (! $variantFilter || $variantFilter->options->count() < 2) {
-            return;
-        }
-
-        // Create up to 3 variants
-        $variantOptions = $variantFilter->options->take(3);
-        $index = 1;
-
-        foreach ($variantOptions as $option) {
-            $variantName = "{$parent->name} - {$option->value}";
-            $variantSku = "{$parent->sku}-V{$index}";
-            $variantUrl = Str::slug("{$parent->url}-{$option->value}");
-
-            // Price variation (95-110% of parent price)
-            $variantPrice = (int) ($parent->price * (random_int(95, 110) / 100));
-
-            $variant = Product::create([
-                'name' => $variantName,
-                'sku' => $variantSku,
-                'url' => $variantUrl,
-                'status' => ProductStatusCast::PUBLISHED->value,
-                'type' => ProductTypeCast::SIMPLE->value,
-                'price' => $variantPrice,
-                'parent_id' => $parent->id,
-                'category_id' => $category->id,
-                'filter_group_id' => $parent->filter_group_id,
-                'short_description' => $parent->short_description,
-                'is_returnable' => true,
-                'return_days' => 7,
-                'view_count' => 0,
-            ]);
-
-            // Attach the specific filter option to this variant
-            $variant->filterOptions()->attach($option->id, [
-                'filter_id' => $variantFilter->id,
-            ]);
-
-            // Add stock for variant
-            $this->addStock($variant);
-
-            // Copy parent's display image
-            $parentMedia = $parent->getFirstMedia('displayImage');
-            if ($parentMedia) {
-                $variant->addMediaFromUrl($parentMedia->getUrl())
-                    ->preservingOriginal()
-                    ->toMediaCollection('displayImage');
-            }
-
-            $index++;
-        }
-    }
-
-    protected function addReview(Product $product, User $user): void
-    {
-        // Check if review already exists for this product
+        // Check if review already exists
         if (ProductEngagement::where('product_id', $product->id)
             ->where('authorable_id', $user->id)
             ->where('authorable_type', User::class)
@@ -385,14 +307,19 @@ class MasterDemoSeeder extends Seeder
             'product_id' => $product->id,
             'authorable_id' => $user->id,
             'authorable_type' => User::class,
-            'rating' => random_int(3, 5), // 3-5 stars
+            'rating' => random_int(3, 5),
             'review' => $this->reviewTexts[array_rand($this->reviewTexts)],
             'helpful_votes' => random_int(0, 50),
         ]);
     }
 
-    protected function addToWishlist(Product $product, User $user): void
+    protected function addToWishlist(Product $product): void
     {
+        $user = User::firstWhere('email', 'test@example.com');
+        if (! $user) {
+            return;
+        }
+
         ProductWishlist::firstOrCreate([
             'product_id' => $product->id,
             'authorable_id' => $user->id,
@@ -407,19 +334,19 @@ class MasterDemoSeeder extends Seeder
             return;
         }
 
-        // Create site-wide sale using correct enum values
+        // Create site-wide sale
         $siteSale = Sale::create([
             'name' => 'New Year Sale',
-            'condition_type' => 'match_any', // Correct enum value
-            'action_type' => 'by_percent',    // Correct enum value
-            'discount_amount' => 10, // 10% off
+            'condition_type' => 'match_any',
+            'action_type' => 'by_percent',
+            'discount_amount' => 10,
             'starts_from' => now()->subDays(5),
             'ends_till' => now()->addDays(30),
             'status' => true,
             'sort_order' => 1,
         ]);
 
-        // Create product-specific sales for random products
+        // Create product-specific sales
         $products = Product::whereNull('parent_id')->inRandomOrder()->limit(10)->get();
 
         foreach ($products as $index => $product) {
@@ -427,9 +354,8 @@ class MasterDemoSeeder extends Seeder
             $discountAmount = random_int(5, 20);
             $salePrice = null;
 
-            // Calculate sale_price if action_type is by_fixed
             if (! $isPercent) {
-                $salePrice = max(0, $product->price - ($discountAmount * 100)); // Convert Rs to paise
+                $salePrice = max(0, $product->price - ($discountAmount * 100));
             }
 
             SaleProduct::create([
