@@ -72,8 +72,7 @@ const handleSendOtp = async () => {
       toast.add({
         title: 'OTP Sent',
         description: `Demo OTP: ${response.otp}`,
-        color: 'success',
-        timeout: 0
+        color: 'success'
       })
     } else {
       toast.add({

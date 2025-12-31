@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Trends;
 
 use App\Casts\UserTypeCast;
+use App\Models\Affiliate\AffiliateGenealogy;
 use App\Models\User;
 use Flowframe\Trend\Trend;
 
@@ -286,6 +287,63 @@ final class TeamTrendService extends BaseTrendService
                 'this_month' => $thisMonthReferrals,
                 'last_month' => $lastMonthReferrals,
                 'growth_rate' => $growthRate,
+            ],
+            'meta' => [
+                'generated_at' => now()->toIso8601String(),
+            ],
+        ];
+    }
+
+    /**
+     * Get team summary for dashboard
+     * Used by dashboardSummary API endpoint
+     */
+    public function getTeamSummary(int $userId): array
+    {
+        // Direct referrals count
+        $directCount = User::where('parent_id', $userId)->count();
+
+        // Active members (Member, Promoter, Advisor, Mentor)
+        $activeCount = User::where('parent_id', $userId)
+            ->whereIn('type', [
+                UserTypeCast::MEMBER,
+                UserTypeCast::PROMOTER,
+                UserTypeCast::ADVISOR,
+                UserTypeCast::MENTOR,
+            ])
+            ->count();
+
+        // Total team size (all descendants)
+        $descendants = User::whereHas('ancestors', function ($query) use ($userId) {
+            $query->where('id', $userId);
+        })->count();
+
+        // Level distribution from genealogy if available
+        $levels = [
+            'level_1' => $directCount,
+            'level_2' => 0,
+            'level_3' => 0,
+            'level_4' => 0,
+        ];
+
+        // Try to get more detailed info from genealogy table
+        $genealogy = AffiliateGenealogy::forUser($userId);
+        if ($genealogy) {
+            $levels = [
+                'level_1' => $genealogy->level_1_count ?? $directCount,
+                'level_2' => $genealogy->level_2_count ?? 0,
+                'level_3' => $genealogy->level_3_count ?? 0,
+                'level_4' => $genealogy->level_4_count ?? 0,
+            ];
+        }
+
+        return [
+            'success' => true,
+            'data' => [
+                'total_members' => $descendants + 1, // Including self
+                'active_members' => $activeCount,
+                'direct_referrals' => $directCount,
+                'levels' => $levels,
             ],
             'meta' => [
                 'generated_at' => now()->toIso8601String(),

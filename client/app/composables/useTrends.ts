@@ -134,6 +134,14 @@ export const useTrends = () => {
   }
 
   // ========================================
+  // Transaction Trends
+  // ========================================
+
+  const fetchTransactionVolume = async (params: TrendParams = {}) => {
+    return fetchTrend('transactions/volume', params)
+  }
+
+  // ========================================
   // Commission Trends
   // ========================================
 
@@ -327,6 +335,9 @@ export const useTrends = () => {
     fetchWalletCreditDebit,
     fetchWalletActivity,
     fetchWalletComparison,
+
+    // Transactions
+    fetchTransactionVolume,
 
     // Commissions
     fetchCommissionEarnings,

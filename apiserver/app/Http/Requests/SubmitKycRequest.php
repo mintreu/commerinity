@@ -39,6 +39,9 @@ final class SubmitKycRequest extends FormRequest
                 'mimes:jpeg,png,pdf',
                 'max:5120',
             ],
+            'pan_image' => ['required_without:id', 'file', 'mimes:jpeg,png', 'max:5120'],
+            'aadhaar_image' => ['required_without:id', 'file', 'mimes:jpeg,png', 'max:5120'],
+            'gst_image' => ['nullable', 'file', 'mimes:jpeg,png', 'max:5120'],
         ];
 
         if ($kycType === 'business') {

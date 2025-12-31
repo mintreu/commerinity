@@ -59,7 +59,6 @@ export interface SubscriptionStatus {
 
 export const useSubscription = () => {
   const config = useRuntimeConfig()
-  const { useSanctumFetch } = useSanctum()
 
   const plans: Ref<SubscriptionPlan[]> = ref([])
   const status: Ref<SubscriptionStatus | null> = ref(null)

@@ -161,7 +161,7 @@ defineExpose({ refresh: loadData })
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="!chartData.labels.length" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+      <div v-else-if="!chartData.labels?.length" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
         <UIcon name="i-lucide-bar-chart-3" class="w-10 h-10 text-slate-300 mb-2" />
         <p class="text-sm text-slate-500">No data available for this period</p>
       </div>

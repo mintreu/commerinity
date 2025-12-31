@@ -10,8 +10,9 @@ import type { User } from '~/types/user'
 
 const user = useCurrentUser() as Ref<User | null>
 const { formatCurrency } = useBranding()
-const { fetchDashboardSummary, fetchCommissionEarnings } = useTrends()
+const { fetchDashboardSummary, fetchCommissionEarnings, fetchTransactionVolume } = useTrends()
 const { wallet, fetchWallet } = useWallet()
+const { fetchTeam, team } = useNetwork()
 
 // Stats with real data
 const stats = ref({
@@ -40,13 +41,16 @@ const levelProgress = ref({
 })
 
 const loading = ref(true)
+const recentCommissions = ref<any[]>([])
 
 // Fetch real data from API
 onMounted(async () => {
   try {
     await Promise.all([
       fetchWallet(),
-      loadDashboardData()
+      fetchTeam(1, 5), // Get top 5 referrals
+      loadDashboardData(),
+      loadRecentCommissions()
     ])
   } catch (e) {
     console.error('Failed to load dashboard data:', e)
@@ -54,6 +58,24 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+const loadRecentCommissions = async () => {
+  try {
+    const response = await useSanctumFetch<any>(`${useRuntimeConfig().public.apiBase}/api/commissions?per_page=5`)
+    if (response?.success) {
+      recentCommissions.value = response.data.map((c: any) => ({
+        id: c.uuid,
+        type: 'commission' as const,
+        title: c.type_label,
+        description: `From ${c.from_user?.name || 'Network'}`,
+        amount: c.net_amount / 100, // paisa to rupees
+        timestamp: new Date(c.created_at)
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to load recent commissions:', e)
+  }
+}
 
 const loadDashboardData = async () => {
   // Fetch dashboard summary
@@ -93,32 +115,6 @@ watch(wallet, (newWallet) => {
   }
 }, { immediate: true })
 
-const recentCommissions = ref([
-  {
-    id: 1,
-    type: 'commission' as const,
-    title: 'Direct Referral Commission',
-    description: 'From Rahul Sharma\'s purchase',
-    amount: 450,
-    timestamp: new Date(Date.now() - 3600000)
-  },
-  {
-    id: 2,
-    type: 'commission' as const,
-    title: 'Level 2 Commission',
-    description: 'From network purchase',
-    amount: 150,
-    timestamp: new Date(Date.now() - 86400000)
-  },
-  {
-    id: 3,
-    type: 'referral' as const,
-    title: 'New Referral Joined',
-    description: 'Priya Patel joined your network',
-    timestamp: new Date(Date.now() - 172800000)
-  }
-])
-
 const quickActions = computed(() => [
   {
     label: 'Share',
@@ -136,20 +132,14 @@ const quickActions = computed(() => [
     label: 'Withdraw',
     icon: 'i-lucide-wallet',
     to: '/wallet/withdraw',
-    color: 'purple' as const
+    color: 'primary' as const
   },
   {
     label: 'Shop',
     icon: 'i-lucide-shopping-bag',
     to: '/shop',
-    color: 'amber' as const
+    color: 'warning' as const
   }
-])
-
-const topReferrals = ref([
-  { name: 'Rahul Sharma', orders: 8, earnings: 1200, avatar: '' },
-  { name: 'Priya Patel', orders: 5, earnings: 750, avatar: '' },
-  { name: 'Amit Kumar', orders: 4, earnings: 600, avatar: '' }
 ])
 
 const showShareModal = ref(false)
@@ -200,7 +190,7 @@ const openShareModal = () => {
         title="Active Referrals"
         :value="`${stats.activeReferrals}/${stats.referrals}`"
         icon="i-lucide-users"
-        color="purple"
+        color="primary"
         to="/network"
         :loading="loading"
       />
@@ -208,7 +198,7 @@ const openShareModal = () => {
         title="Pending"
         :value="formatCurrency(stats.pendingCommission)"
         icon="i-lucide-clock"
-        color="amber"
+        color="warning"
         :loading="loading"
       />
     </div>
@@ -273,6 +263,17 @@ const openShareModal = () => {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
       <!-- Left: Earnings & Network -->
       <div class="lg:col-span-2 space-y-4 md:space-y-6">
+        <!-- Order Volume Chart -->
+        <div class="glass-card p-4 md:p-6">
+          <CommonChartsTrendChart
+            type="line"
+            :fetch-method="fetchTransactionVolume"
+            title="Order Volume"
+            height="180"
+            show-controls
+          />
+        </div>
+
         <!-- Monthly Earnings Chart (Real Data) -->
         <div class="glass-card p-4 md:p-6">
           <CommonChartsTrendChart
@@ -297,23 +298,26 @@ const openShareModal = () => {
 
           <div class="space-y-3">
             <div
-              v-for="(referral, index) in topReferrals"
-              :key="referral.name"
+              v-for="(member, index) in team"
+              :key="member.uuid"
               class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl"
             >
               <div class="flex items-center gap-3">
                 <span class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold">
                   {{ index + 1 }}
                 </span>
-                <UAvatar :alt="referral.name" size="sm" />
+                <UAvatar :alt="member.name" size="sm" />
                 <div>
-                  <p class="text-sm font-medium text-slate-900 dark:text-white">{{ referral.name }}</p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400">{{ referral.orders }} orders</p>
+                  <p class="text-sm font-medium text-slate-900 dark:text-white">{{ member.name }}</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 capitalize">{{ member.type }}</p>
                 </div>
               </div>
-              <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                +{{ formatCurrency(referral.earnings) }}
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Joined {{ formatDate(member.created_at, 'short') }}
               </p>
+            </div>
+            <div v-if="team.length === 0 && !loading" class="text-center py-4 text-sm text-slate-500">
+              No referrals yet. Share your code to grow!
             </div>
           </div>
         </div>

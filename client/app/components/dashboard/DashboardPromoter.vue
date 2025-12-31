@@ -7,9 +7,10 @@
 
 import type { User } from '~/types/user'
 
-const user = useCurrentUser() as Ref<User | null>
-const { formatCurrency, formatCompactNumber } = useBranding()
-const { fetchTeamGrowth } = useTrends()
+const { user } = useUserType()
+const { formatCurrency, formatCompactNumber, formatDate } = useBranding()
+const { fetchTeamGrowth, fetchTransactionVolume, fetchDashboardSummary } = useTrends()
+const { fetchTeam, team } = useNetwork()
 
 // Real data - will be replaced with API calls
 const stats = ref({
@@ -24,19 +25,24 @@ const stats = ref({
 })
 
 const loading = ref(true)
+const recentActivity = ref<any[]>([])
 
 // Fetch real data
 onMounted(async () => {
   try {
-    const { fetchDashboardSummary } = useTrends()
-    const response = await fetchDashboardSummary('month')
-    if (response?.success && response.data) {
-      const { wallet, team, commissions } = response.data
+    const [summaryRes, teamRes, activityRes] = await Promise.all([
+      fetchDashboardSummary('month'),
+      fetchTeam(1, 5),
+      loadRecentActivity()
+    ])
+
+    if (summaryRes?.success && summaryRes.data) {
+      const { wallet, team: teamData, commissions } = summaryRes.data
       stats.value.monthlyEarnings = wallet?.current?.credits || 0
       stats.value.totalEarnings = commissions?.current?.total || 0
       stats.value.pendingPayout = commissions?.current?.pending || 0
-      stats.value.teamSize = team?.total_members || 0
-      stats.value.activeTeam = team?.active_members || 0
+      stats.value.teamSize = teamData?.total_members || 0
+      stats.value.activeTeam = teamData?.active_members || 0
     }
   } catch (e) {
     console.error('Failed to load promoter stats:', e)
@@ -45,55 +51,31 @@ onMounted(async () => {
   }
 })
 
-const challenges = ref([
-  {
-    id: 1,
-    title: 'Recruit 5 New Members',
-    progress: 3,
-    target: 5,
-    reward: 5000,
-    deadline: 'Dec 31, 2025'
-  },
-  {
-    id: 2,
-    title: 'Team Sales Target',
-    progress: 72000,
-    target: 100000,
-    reward: 2000,
-    deadline: 'Dec 31, 2025'
+const loadRecentActivity = async () => {
+  try {
+    const response = await useSanctumFetch<any>(`${useRuntimeConfig().public.apiBase}/api/commissions?per_page=5`)
+    if (response?.success) {
+      recentActivity.value = response.data.map((c: any) => ({
+        id: c.uuid,
+        type: 'commission' as const,
+        title: c.type_label,
+        description: `From ${c.from_user?.name || 'Network'}`,
+        amount: c.net_amount / 100,
+        timestamp: new Date(c.created_at)
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to load activity:', e)
   }
-])
+}
+
+const challenges = ref<any[]>([])
 
 const teamPerformance = ref([
   { name: 'Vikash Gupta', role: 'Member', sales: 28500, recruits: 5 },
   { name: 'Sneha Reddy', role: 'Member', sales: 24200, recruits: 3 },
   { name: 'Karan Singh', role: 'Member', sales: 19800, recruits: 4 },
   { name: 'Pooja Sharma', role: 'Member', sales: 16500, recruits: 2 }
-])
-
-const recentActivity = ref([
-  {
-    id: 1,
-    type: 'commission' as const,
-    title: 'Team Bonus',
-    description: 'Weekly team performance',
-    amount: 2500,
-    timestamp: new Date(Date.now() - 3600000)
-  },
-  {
-    id: 2,
-    type: 'referral' as const,
-    title: 'New Team Member',
-    description: 'Vikash Gupta joined your team',
-    timestamp: new Date(Date.now() - 86400000)
-  },
-  {
-    id: 3,
-    type: 'level_up' as const,
-    title: 'Achievement Unlocked',
-    description: 'Gold Level Promoter',
-    timestamp: new Date(Date.now() - 172800000)
-  }
 ])
 
 const quickActions = computed(() => [
@@ -263,17 +245,14 @@ const quickActions = computed(() => [
                     Member
                   </th>
                   <th class="text-right py-3 px-2 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Sales
-                  </th>
-                  <th class="text-right py-3 px-2 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Recruits
+                    Joined
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr
-                  v-for="(member, index) in teamPerformance"
-                  :key="member.name"
+                  v-for="(member, index) in team"
+                  :key="member.uuid"
                   class="border-b border-slate-100 dark:border-slate-800 last:border-0"
                 >
                   <td class="py-3 px-2">
@@ -288,23 +267,19 @@ const quickActions = computed(() => [
                         <p class="font-medium text-slate-900 dark:text-white">
                           {{ member.name }}
                         </p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
-                          {{ member.role }}
+                        <p class="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                          {{ member.type }}
                         </p>
                       </div>
                     </div>
                   </td>
-                  <td class="py-3 px-2 text-right font-medium text-slate-900 dark:text-white">
-                    {{ formatCurrency(member.sales) }}
+                  <td class="py-3 px-2 text-right text-xs text-slate-500 dark:text-slate-400">
+                    {{ formatDate(member.created_at, 'short') }}
                   </td>
-                  <td class="py-3 px-2 text-right">
-                    <UBadge
-                      color="primary"
-                      variant="soft"
-                      size="xs"
-                    >
-                      {{ member.recruits }} recruits
-                    </UBadge>
+                </tr>
+                <tr v-if="team.length === 0 && !loading">
+                  <td colspan="2" class="py-6 text-center text-sm text-slate-500">
+                    No team members found. Start recruiting!
                   </td>
                 </tr>
               </tbody>
@@ -318,6 +293,17 @@ const quickActions = computed(() => [
             type="bar"
             :fetch-method="fetchTeamGrowth"
             title="Team Growth"
+            height="180"
+            show-controls
+          />
+        </div>
+
+        <!-- Order Volume Chart (Real Data) -->
+        <div class="glass-card p-6">
+          <CommonChartsTrendChart
+            type="line"
+            :fetch-method="fetchTransactionVolume"
+            title="Order Volume"
             height="180"
             show-controls
           />

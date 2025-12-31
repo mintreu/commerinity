@@ -23,7 +23,7 @@
             class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <UAvatar
-              :src="user?.avatar_url"
+              :src="user?.avatar"
               :alt="user?.name"
               size="sm"
               class="ring-2 ring-violet-200 dark:ring-violet-800"
@@ -132,7 +132,7 @@
               @click="mobileMenuOpen = false"
             >
               <UAvatar
-                :src="user?.avatar_url"
+                :src="user?.avatar"
                 :alt="user?.name"
                 size="lg"
                 class="ring-2 ring-violet-200 dark:ring-violet-800"

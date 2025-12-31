@@ -334,4 +334,32 @@ final class TrendController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Get transaction volume trend (amount and count).
+     *
+     * GET /api/trends/transactions/volume
+     */
+    public function transactionVolume(Request $request): JsonResponse
+    {
+        $request->validate([
+            'period' => ['sometimes', 'string', 'in:today,yesterday,week,last_week,month,last_month,quarter,year,last_year,custom'],
+            'interval' => ['sometimes', 'string', 'in:hour,day,week,month,year'],
+            'start_date' => ['sometimes', 'date'],
+            'end_date' => ['sometimes', 'date', 'after_or_equal:start_date'],
+        ]);
+
+        $user = $request->user();
+        $wallet = $this->walletService->getOrCreateWallet($user);
+
+        return response()->json(
+            $this->transactionTrendService->getVolumeTrend(
+                period: $request->input('period', 'month'),
+                interval: $request->input('interval'),
+                startDate: $request->input('start_date'),
+                endDate: $request->input('end_date'),
+                walletId: $wallet->id,
+            )
+        );
+    }
 }

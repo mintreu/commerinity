@@ -1,5 +1,12 @@
 <template>
   <UApp :toaster="toasterConfig">
+    <!-- Global Loader -->
+    <AppLoader
+      :show="isLoading"
+      :message="loadingMessage"
+      full-screen
+    />
+
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -8,6 +15,24 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
+const router = useRouter()
+const { isLoading, loadingMessage, startLoading, stopLoading } = useLoading()
+
+// Handle route navigation loading
+router.beforeEach((to, from, next) => {
+  // Only show loader for actual page changes, not just hash changes
+  if (to.path !== from.path) {
+    startLoading()
+  }
+  next()
+})
+
+router.afterEach(() => {
+  // Add a tiny delay for smoother transition
+  setTimeout(() => {
+    stopLoading()
+  }, 300)
+})
 
 // Toast configuration - bottom-right position, 5 second duration
 const toasterConfig = {

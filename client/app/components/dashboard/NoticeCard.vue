@@ -54,7 +54,7 @@ const typeStyles = {
     bg: 'bg-purple-50 dark:bg-purple-900/20',
     border: 'border-purple-200 dark:border-purple-800',
     icon: 'text-purple-600 dark:text-purple-400',
-    button: 'purple' as const
+    button: 'primary' as const
   }
 }
 

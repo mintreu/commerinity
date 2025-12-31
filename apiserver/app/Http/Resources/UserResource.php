@@ -57,6 +57,36 @@ final class UserResource extends JsonResource
             'hasLevel' => ! is_null($this->level_id),
             'level_id' => $this->level_id,
 
+            // Genealogy Data (for Affiliate users)
+            'genealogy' => $this->when($this->genealogy, fn () => [
+                'personal_pv' => $this->genealogy->personal_pv,
+                'team_pv' => $this->genealogy->team_pv,
+                'direct_count' => $this->genealogy->direct_count,
+                'active_direct_count' => $this->genealogy->active_direct_count,
+                'total_team_count' => $this->genealogy->total_team_count,
+                'personal_sales' => $this->genealogy->personal_sales,
+                'total_team_sales' => $this->genealogy->total_team_sales,
+                'level_1_count' => $this->genealogy->level_1_count,
+                'level_2_count' => $this->genealogy->level_2_count,
+                'level_3_count' => $this->genealogy->level_3_count,
+                'level_4_count' => $this->genealogy->level_4_count,
+                'stage' => $this->when($this->genealogy->currentStage, fn () => [
+                    'uuid' => $this->genealogy->currentStage->uuid,
+                    'name' => $this->genealogy->currentStage->name,
+                    'pv' => $this->genealogy->currentStage->pv,
+                    'bv' => $this->genealogy->currentStage->bv,
+                ]),
+                'level' => $this->when($this->genealogy->currentLevel, fn () => [
+                    'uuid' => $this->genealogy->currentLevel->uuid,
+                    'name' => $this->genealogy->currentLevel->name,
+                    'full_name' => $this->genealogy->currentLevel->full_name,
+                    'global_rank' => $this->genealogy->currentLevel->global_rank,
+                    'level_number' => $this->genealogy->currentLevel->level_number,
+                    'badge_icon' => $this->genealogy->currentLevel->badge_icon,
+                    'badge_color' => $this->genealogy->currentLevel->badge_color,
+                ]),
+            ]),
+
             // KYC Status
             'kyc_status' => $this->kyc?->status->value ?? KycStatusCast::NOT_SUBMITTED->value,
 

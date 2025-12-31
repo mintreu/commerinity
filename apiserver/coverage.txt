@@ -1,23 +1,15 @@
 
 
-[1;37;40mCode Coverage Report:         [0m
-[1;37;40m  2025-12-30 13:19:43         [0m
-[1;37;40m                              [0m
-[1;37;40m Summary:                     [0m
-[37;41m  Classes:  0.24% (1/419)     [0m
-[37;41m  Methods:  3.62% (97/2679)   [0m
-[37;41m  Lines:    7.10% (1686/23760)[0m
+[1;37;40mCode Coverage Report:        [0m
+[1;37;40m  2025-12-30 23:56:35        [0m
+[1;37;40m                             [0m
+[1;37;40m Summary:                    [0m
+[37;41m  Classes:  0.24% (1/420)    [0m
+[37;41m  Methods:  2.60% (70/2688)  [0m
+[37;41m  Lines:    2.31% (555/24031)[0m
 
-App\Casts\CommissionStatusCast
-  [37;41mMethods:  11.76% ( 2/17)[0m   [37;41mLines:  48.94% ( 23/ 47)[0m
-App\Casts\CommissionTypeCast
-  [37;41mMethods:  11.76% ( 2/17)[0m   [37;41mLines:  41.28% ( 45/109)[0m
-App\Casts\PaymentMethodCast
-  [37;41mMethods:   0.00% ( 0/ 8)[0m   [37;41mLines:  13.79% (  8/ 58)[0m
-App\Casts\TransactionStatusCast
-  [37;41mMethods:   0.00% ( 0/ 6)[0m   [37;41mLines:  16.28% (  7/ 43)[0m
 App\Casts\UserTypeCast
-  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:  29.17% (  7/ 24)[0m
+  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:  25.00% (  6/ 24)[0m
 App\Console\Commands\Ecommerce\CompleteDeliveredOrders
   [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:   2.04% (  1/ 49)[0m
 App\Filament\Resources\Activities\ActivityResource
@@ -68,16 +60,8 @@ App\Filament\Resources\Wallets\WalletResource
   [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
 App\Jobs\Wallet\CheckPayoutStatusJob
   [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   1.27% (  1/ 79)[0m
-App\Models\Affiliate\AffiliateCommission
-  [37;41mMethods:   5.77% ( 3/52)[0m   [37;41mLines:   9.02% ( 24/266)[0m
-App\Models\Kyc
-  [37;41mMethods:   7.14% ( 1/14)[0m   [37;41mLines:  17.24% (  5/ 29)[0m
-App\Models\Transaction
-  [37;41mMethods:   8.33% ( 2/24)[0m   [37;41mLines:  41.82% ( 23/ 55)[0m
 App\Models\User
   [37;41mMethods:  14.29% ( 3/21)[0m   [30;43mLines:  51.52% ( 34/ 66)[0m
-App\Models\Wallet
-  [37;41mMethods:  15.00% ( 3/20)[0m   [37;41mLines:  38.46% ( 15/ 39)[0m
 App\Providers\AppServiceProvider
   [30;43mMethods:  66.67% ( 2/ 3)[0m   [37;41mLines:  33.33% (  4/ 12)[0m
 App\Providers\Filament\AdminPanelProvider
@@ -98,15 +82,7 @@ App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator
   [37;41mMethods:  16.67% ( 1/ 6)[0m   [37;41mLines:   2.86% (  1/ 35)[0m
 App\Services\Affiliate\CommissionProcessorService
   [37;41mMethods:  15.00% ( 3/20)[0m   [37;41mLines:   5.43% ( 10/184)[0m
-App\Services\Trends\AdminTrendService
-  [37;41mMethods:  37.50% ( 3/ 8)[0m   [30;42mLines:  91.06% (275/302)[0m
 App\Services\Trends\BaseTrendService
-  [30;43mMethods:  60.00% ( 6/10)[0m   [30;43mLines:  76.92% ( 90/117)[0m
-App\Services\Trends\CommissionTrendService
-  [30;43mMethods:  62.50% ( 5/ 8)[0m   [30;42mLines:  94.76% (271/286)[0m
+  [37;41mMethods:  30.00% ( 3/10)[0m   [30;43mLines:  61.54% ( 72/117)[0m
 App\Services\Trends\TeamTrendService
-  [37;41mMethods:  50.00% ( 3/ 6)[0m   [30;42mLines:  93.96% (171/182)[0m
-App\Services\Trends\TransactionTrendService
-  [37;41mMethods:  28.57% ( 2/ 7)[0m   [30;42mLines:  90.77% (236/260)[0m
-App\Services\Trends\WalletTrendService
-  [37;41mMethods:  20.00% ( 1/ 5)[0m   [30;43mLines:  84.11% (180/214)[0m
+  [37;41mMethods:  42.86% ( 3/ 7)[0m   [30;43mLines:  77.73% (171/220)[0m

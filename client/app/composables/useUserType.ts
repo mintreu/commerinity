@@ -73,12 +73,22 @@ export const useUserType = () => {
         label: 'Dashboard',
         icon: 'i-lucide-layout-dashboard',
         to: '/dashboard'
+      },
+      {
+        label: 'Wallet',
+        icon: 'i-lucide-wallet',
+        to: '/wallet'
+      },
+      {
+        label: 'Transactions',
+        icon: 'i-lucide-history',
+        to: '/wallet/transactions'
       }
     ]
 
     // Add Subscribe Now for regular users (highlighted)
     if (user.value.type === UserType.REGULAR) {
-      baseItems.push({
+      baseItems.splice(1, 0, {
         label: 'Subscribe Now',
         icon: 'i-lucide-crown',
         to: '/subscription',
@@ -98,6 +108,11 @@ export const useUserType = () => {
           label: 'Orders',
           icon: 'i-lucide-package',
           to: '/orders'
+        },
+        {
+          label: 'KYC',
+          icon: 'i-lucide-shield-check',
+          to: '/profile/kyc'
         }
       ],
       [UserType.MEMBER]: [
@@ -115,11 +130,6 @@ export const useUserType = () => {
           label: 'My Network',
           icon: 'i-lucide-users',
           to: '/network'
-        },
-        {
-          label: 'Wallet',
-          icon: 'i-lucide-wallet',
-          to: '/wallet'
         },
         {
           label: 'Earnings',

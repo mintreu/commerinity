@@ -443,6 +443,59 @@ final class CommissionTrendService extends BaseTrendService
     }
 
     /**
+     * Get commission comparison stats (current vs previous period)
+     * Used for dashboard summary
+     */
+    public function getComparisonStats(int $userId, string $period = 'month'): array
+    {
+        $dates = $this->parsePeriod($period);
+
+        $currentQuery = AffiliateCommission::query()
+            ->where('user_id', $userId)
+            ->where('status', '!=', CommissionStatusCast::REVERSAL)
+            ->whereBetween('commission_date', [$dates['start'], $dates['end']]);
+
+        $previousStart = $dates['start']->copy()->subDays($dates['days']);
+        $previousEnd = $dates['start']->copy()->subDay();
+
+        $previousQuery = AffiliateCommission::query()
+            ->where('user_id', $userId)
+            ->where('status', '!=', CommissionStatusCast::REVERSAL)
+            ->whereBetween('commission_date', [$previousStart, $previousEnd]);
+
+        $currentTotal = (int) ($currentQuery->sum('net_amount') ?? 0);
+        $previousTotal = (int) ($previousQuery->sum('net_amount') ?? 0);
+
+        $currentPending = (int) ($currentQuery->whereIn('status', [
+            CommissionStatusCast::PENDING,
+            CommissionStatusCast::APPROVED,
+        ])->sum('net_amount') ?? 0);
+
+        return [
+            'success' => true,
+            'data' => [
+                'current' => [
+                    'total' => $currentTotal,
+                    'pending' => $currentPending,
+                    'paid' => $currentTotal - $currentPending,
+                ],
+                'previous' => [
+                    'total' => $previousTotal,
+                ],
+                'changes' => [
+                    'total_change' => $previousTotal > 0
+                        ? round((($currentTotal - $previousTotal) / $previousTotal) * 100, 1)
+                        : 0,
+                ],
+            ],
+            'meta' => [
+                'period' => $period,
+                'generated_at' => now()->toIso8601String(),
+            ],
+        ];
+    }
+
+    /**
      * Get status colors
      */
     private function getStatusColors(): array

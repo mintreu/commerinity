@@ -57,6 +57,16 @@ final class KycService
             'submitted_at' => now(),
         ]);
 
+        if (request()->hasFile('pan_image')) {
+            $kyc->addMediaFromRequest('pan_image')->toMediaCollection('pan_image');
+        }
+        if (request()->hasFile('aadhaar_image')) {
+            $kyc->addMediaFromRequest('aadhaar_image')->toMediaCollection('aadhaar_image');
+        }
+        if (request()->hasFile('gst_image')) {
+            $kyc->addMediaFromRequest('gst_image')->toMediaCollection('gst_image');
+        }
+
         if ($documents) {
             $this->attachDocuments($kyc, $documents);
         }
@@ -86,6 +96,19 @@ final class KycService
             'reviewed_at' => null,
             'reviewed_by' => null,
         ]);
+
+        if (request()->hasFile('pan_image')) {
+            $kyc->clearMediaCollection('pan_image');
+            $kyc->addMediaFromRequest('pan_image')->toMediaCollection('pan_image');
+        }
+        if (request()->hasFile('aadhaar_image')) {
+            $kyc->clearMediaCollection('aadhaar_image');
+            $kyc->addMediaFromRequest('aadhaar_image')->toMediaCollection('aadhaar_image');
+        }
+        if (request()->hasFile('gst_image')) {
+            $kyc->clearMediaCollection('gst_image');
+            $kyc->addMediaFromRequest('gst_image')->toMediaCollection('gst_image');
+        }
 
         $kyc->clearMediaCollection('documents');
 

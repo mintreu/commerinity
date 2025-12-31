@@ -206,6 +206,11 @@
 <script setup lang="ts">
 import type { StepperItem } from '@nuxt/ui'
 import type { User } from '~/types/user'
+import OnboardingStepWelcome from '~/components/onboarding/OnboardingStepWelcome.vue'
+import OnboardingStepProfile from '~/components/onboarding/OnboardingStepProfile.vue'
+import OnboardingStepContact from '~/components/onboarding/OnboardingStepContact.vue'
+import OnboardingStepAddress from '~/components/onboarding/OnboardingStepAddress.vue'
+import OnboardingStepKyc from '~/components/onboarding/OnboardingStepKyc.vue'
 
 definePageMeta({
   layout: 'guest',
@@ -323,11 +328,11 @@ const stepItems = computed<StepperItem[]>(() => [
 // Current step component for mobile view
 const currentStepComponent = computed(() => {
   switch (currentStep.value) {
-    case 0: return resolveComponent('OnboardingStepWelcome')
-    case 1: return resolveComponent('OnboardingStepProfile')
-    case 2: return resolveComponent('OnboardingStepContact')
-    case 3: return resolveComponent('OnboardingStepAddress')
-    case 4: return resolveComponent('OnboardingStepKyc')
+    case 0: return OnboardingStepWelcome
+    case 1: return OnboardingStepProfile
+    case 2: return OnboardingStepContact
+    case 3: return OnboardingStepAddress
+    case 4: return OnboardingStepKyc
     default: return null
   }
 })

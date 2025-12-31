@@ -61,7 +61,7 @@ const onboardingProgress = computed(() => {
         <!-- Avatar -->
         <div class="relative shrink-0">
           <UAvatar
-            :src="user?.avatar_url"
+            :src="user?.avatar"
             :alt="user?.name || 'User'"
             size="lg"
             class="ring-2 ring-violet-200 dark:ring-violet-800"

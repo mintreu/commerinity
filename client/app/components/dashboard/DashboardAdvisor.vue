@@ -7,9 +7,10 @@
 
 import type { User } from '~/types/user'
 
-const user = useCurrentUser() as Ref<User | null>
-const { formatCurrency } = useBranding()
-const { fetchCommissionEarnings } = useTrends()
+const { user } = useUserType()
+const { formatCurrency, formatDate } = useBranding()
+const { fetchCommissionEarnings, fetchTransactionVolume, fetchDashboardSummary } = useTrends()
+const { fetchTeam, team } = useNetwork()
 
 // Real data for stats
 const stats = ref({
@@ -17,24 +18,30 @@ const stats = ref({
   activeClients: 0,
   monthlyIncome: 0,
   pendingPayouts: 0,
-  appointments: 8,
-  consultations: 156,
-  avgRating: 4.8
+  appointments: 0,
+  consultations: 0,
+  avgRating: 5.0
 })
 
 const loading = ref(true)
+const upcomingAppointments = ref<any[]>([])
+const recentActivity = ref<any[]>([])
 
 // Fetch real data
 onMounted(async () => {
   try {
-    const { fetchDashboardSummary } = useTrends()
-    const response = await fetchDashboardSummary('month')
-    if (response?.success && response.data) {
-      const { wallet, team, commissions } = response.data
+    const [summaryRes, teamRes, activityRes] = await Promise.all([
+      fetchDashboardSummary('month'),
+      fetchTeam(1, 5),
+      loadRecentActivity()
+    ])
+
+    if (summaryRes?.success && summaryRes.data) {
+      const { wallet, team: teamData, commissions } = summaryRes.data
       stats.value.monthlyIncome = wallet?.current?.credits || 0
       stats.value.pendingPayouts = commissions?.current?.pending || 0
-      stats.value.totalClients = team?.total_members || 0
-      stats.value.activeClients = team?.active_members || 0
+      stats.value.totalClients = teamData?.total_members || 0
+      stats.value.activeClients = teamData?.active_members || 0
     }
   } catch (e) {
     console.error('Failed to load advisor stats:', e)
@@ -43,58 +50,23 @@ onMounted(async () => {
   }
 })
 
-const upcomingAppointments = ref([
-  {
-    id: 1,
-    client: 'Rahul Sharma',
-    type: 'Financial Planning',
-    time: '10:00 AM',
-    date: 'Today',
-    duration: '45 min'
-  },
-  {
-    id: 2,
-    client: 'Priya Patel',
-    type: 'Investment Review',
-    time: '2:30 PM',
-    date: 'Today',
-    duration: '30 min'
-  },
-  {
-    id: 3,
-    client: 'Amit Kumar',
-    type: 'Portfolio Analysis',
-    time: '11:00 AM',
-    date: 'Tomorrow',
-    duration: '60 min'
+const loadRecentActivity = async () => {
+  try {
+    const response = await useSanctumFetch<any>(`${useRuntimeConfig().public.apiBase}/api/commissions?per_page=5`)
+    if (response?.success) {
+      recentActivity.value = response.data.map((c: any) => ({
+        id: c.uuid,
+        type: 'commission' as const,
+        title: c.type_label,
+        description: `From ${c.from_user?.name || 'Network'}`,
+        amount: c.net_amount / 100,
+        timestamp: new Date(c.created_at)
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to load activity:', e)
   }
-])
-
-const recentActivity = ref([
-  {
-    id: 1,
-    type: 'commission' as const,
-    title: 'Advisory Fee',
-    description: 'From Rahul Sharma consultation',
-    amount: 2500,
-    timestamp: new Date(Date.now() - 3600000)
-  },
-  {
-    id: 2,
-    type: 'kyc' as const,
-    title: 'Client Onboarded',
-    description: 'Priya Patel completed KYC',
-    timestamp: new Date(Date.now() - 86400000)
-  },
-  {
-    id: 3,
-    type: 'commission' as const,
-    title: 'Referral Bonus',
-    description: 'New client from network',
-    amount: 1500,
-    timestamp: new Date(Date.now() - 172800000)
-  }
-])
+}
 
 const quickActions = computed(() => [
   {
@@ -126,11 +98,7 @@ const quickActions = computed(() => [
   }
 ])
 
-const topClients = ref([
-  { name: 'Rahul Sharma', consultations: 12, revenue: 28500 },
-  { name: 'Priya Patel', consultations: 8, revenue: 19200 },
-  { name: 'Amit Kumar', consultations: 6, revenue: 15600 }
-])
+const topClients = ref<any[]>([])
 </script>
 
 <template>
@@ -308,6 +276,17 @@ const topClients = ref([
             type="line"
             :fetch-method="fetchCommissionEarnings"
             title="Income Overview"
+            height="180"
+            show-controls
+          />
+        </div>
+
+        <!-- Order Volume (Real Data) -->
+        <div class="glass-card p-6">
+          <CommonChartsTrendChart
+            type="line"
+            :fetch-method="fetchTransactionVolume"
+            title="Order Volume"
             height="180"
             show-controls
           />

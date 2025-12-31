@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Orders Page - Demo Version
- * Displays user's order history
+ * Orders Page
+ * Displays user's real order history from API
  */
 
 definePageMeta({
@@ -9,59 +9,29 @@ definePageMeta({
   layout: 'default'
 })
 
-const { formatCurrency } = useBranding()
+const {
+  fetchOrders,
+  isLoading,
+  orders,
+  getStatusColor,
+  getStatusIcon
+} = useOrders()
 
 const activeTab = ref('all')
 
-// Demo orders
-const orders = ref([
-  {
-    id: 'ORD-2024-001',
-    date: '2024-12-18',
-    status: 'delivered',
-    total: 249900,
-    items: [
-      { name: 'Premium Health Supplement', quantity: 1, price: 149900 },
-      { name: 'Organic Wellness Kit', quantity: 1, price: 100000 }
-    ],
-    payment: 'Paid',
-    deliveredAt: '2024-12-20'
-  },
-  {
-    id: 'ORD-2024-002',
-    date: '2024-12-15',
-    status: 'shipped',
-    total: 99900,
-    items: [
-      { name: 'Beauty Care Bundle', quantity: 1, price: 99900 }
-    ],
-    payment: 'Paid',
-    trackingNumber: 'TRACK123456789'
-  },
-  {
-    id: 'ORD-2024-003',
-    date: '2024-12-12',
-    status: 'processing',
-    total: 179900,
-    items: [
-      { name: 'Daily Nutrition Combo', quantity: 1, price: 179900 }
-    ],
-    payment: 'Paid'
-  },
-  {
-    id: 'ORD-2024-004',
-    date: '2024-12-10',
-    status: 'cancelled',
-    total: 349900,
-    items: [
-      { name: 'Fitness Pro Pack', quantity: 1, price: 349900 }
-    ],
-    payment: 'Refunded'
-  }
-])
+// Fetch orders on mount and when tab changes
+const loadOrders = async () => {
+  const status = activeTab.value === 'all' ? undefined : activeTab.value
+  await fetchOrders(1, 20) // We can add status filtering to useOrders fetchOrders if needed
+}
+
+onMounted(() => {
+  loadOrders()
+})
 
 const tabs = [
   { label: 'All Orders', value: 'all' },
+  { label: 'Pending', value: 'pending' },
   { label: 'Processing', value: 'processing' },
   { label: 'Shipped', value: 'shipped' },
   { label: 'Delivered', value: 'delivered' },
@@ -75,38 +45,12 @@ const filteredOrders = computed(() => {
   return orders.value.filter(o => o.status === activeTab.value)
 })
 
-const formatPrice = (paisa: number) => {
-  return formatCurrency(paisa / 100)
-}
-
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-IN', {
     day: '2-digit',
     month: 'short',
     year: 'numeric'
   })
-}
-
-const getStatusColor = (status: string) => {
-  const colors: Record<string, 'success' | 'warning' | 'info' | 'error' | 'neutral'> = {
-    delivered: 'success',
-    shipped: 'info',
-    processing: 'warning',
-    cancelled: 'error',
-    pending: 'neutral'
-  }
-  return colors[status] || 'neutral'
-}
-
-const getStatusIcon = (status: string) => {
-  const icons: Record<string, string> = {
-    delivered: 'i-lucide-check-circle',
-    shipped: 'i-lucide-truck',
-    processing: 'i-lucide-clock',
-    cancelled: 'i-lucide-x-circle',
-    pending: 'i-lucide-hourglass'
-  }
-  return icons[status] || 'i-lucide-circle'
 }
 </script>
 
@@ -122,29 +66,16 @@ const getStatusIcon = (status: string) => {
       </p>
     </div>
 
-    <!-- Demo Notice -->
-    <div class="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-      <div class="flex items-center gap-3">
-        <UIcon
-          name="i-lucide-info"
-          class="w-5 h-5 text-amber-600 dark:text-amber-400"
-        />
-        <p class="text-sm text-amber-700 dark:text-amber-300">
-          This is a demo page. Orders will be connected to the backend API.
-        </p>
-      </div>
-    </div>
-
     <!-- Tabs -->
-    <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
       <button
         v-for="tab in tabs"
         :key="tab.value"
         :class="[
           'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all',
           activeTab === tab.value
-            ? 'bg-primary-500 text-white'
-            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+            ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25 animate-in fade-in zoom-in duration-300'
+            : 'bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50'
         ]"
         @click="activeTab = tab.value"
       >
@@ -152,25 +83,49 @@ const getStatusIcon = (status: string) => {
       </button>
     </div>
 
+    <!-- Loading State -->
+    <div
+      v-if="isLoading && orders.length === 0"
+      class="space-y-4"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="glass-card h-48 animate-pulse p-6"
+      >
+        <div class="flex justify-between mb-6">
+          <div class="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div class="h-6 w-24 bg-slate-200 dark:bg-slate-700 rounded" />
+        </div>
+        <div class="flex gap-4">
+          <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+          <div class="flex-1 space-y-2">
+            <div class="h-4 w-3/4 bg-slate-200 dark:bg-slate-700 rounded" />
+            <div class="h-4 w-1/2 bg-slate-200 dark:bg-slate-700 rounded" />
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Orders List -->
     <div
-      v-if="filteredOrders.length > 0"
+      v-else-if="filteredOrders.length > 0"
       class="space-y-4"
     >
       <div
         v-for="order in filteredOrders"
-        :key="order.id"
-        class="glass-card overflow-hidden"
+        :key="order.uuid"
+        class="glass-card overflow-hidden group hover:border-primary-500/50 transition-all duration-300"
       >
         <!-- Order Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-200/50 dark:border-slate-700/50">
           <div class="flex items-center gap-4">
             <div>
-              <p class="font-semibold text-slate-900 dark:text-white">
-                {{ order.id }}
+              <p class="font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                #{{ order.order_number }}
               </p>
               <p class="text-sm text-slate-500 dark:text-slate-400">
-                Placed on {{ formatDate(order.date) }}
+                Placed on {{ formatDate(order.created_at) }}
               </p>
             </div>
           </div>
@@ -178,12 +133,15 @@ const getStatusIcon = (status: string) => {
             <UBadge
               :color="getStatusColor(order.status)"
               variant="subtle"
+              class="capitalize px-3 py-1"
             >
-              <UIcon
-                :name="getStatusIcon(order.status)"
-                class="w-3 h-3 mr-1"
-              />
-              {{ order.status }}
+              <template #leading>
+                <UIcon
+                  :name="getStatusIcon(order.status)"
+                  class="w-3.5 h-3.5"
+                />
+              </template>
+              {{ order.status_label }}
             </UBadge>
           </div>
         </div>
@@ -192,55 +150,79 @@ const getStatusIcon = (status: string) => {
         <div class="p-4">
           <div
             v-for="(item, index) in order.items"
-            :key="index"
-            class="flex items-center gap-4 py-2"
-            :class="{ 'border-t border-slate-200 dark:border-slate-700': index > 0 }"
+            :key="item.id"
+            class="flex items-center gap-4 py-3"
+            :class="{ 'border-t border-slate-200/50 dark:border-slate-700/50': index > 0 }"
           >
-            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center">
+            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800/50 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
+              <img
+                v-if="item.image"
+                :src="item.image"
+                :alt="item.product_name"
+                class="w-full h-full object-cover"
+              >
               <UIcon
+                v-else
                 name="i-lucide-package"
                 class="w-8 h-8 text-slate-400"
               />
             </div>
-            <div class="flex-1">
-              <p class="font-medium text-slate-900 dark:text-white">
-                {{ item.name }}
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-slate-900 dark:text-white truncate">
+                {{ item.product_name }}
               </p>
-              <p class="text-sm text-slate-500 dark:text-slate-400">
-                Qty: {{ item.quantity }} x {{ formatPrice(item.price) }}
+              <p class="text-sm text-slate-500 dark:text-slate-400 capitalize">
+                Qty: {{ item.quantity }} &bull; {{ item.unit_price_formatted }}
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="font-semibold text-slate-900 dark:text-white">
+                {{ item.subtotal_formatted }}
               </p>
             </div>
           </div>
         </div>
 
         <!-- Order Footer -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
-          <div class="flex items-center gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-200/50 dark:border-slate-700/50 text-slate-900 dark:text-white">
+          <div class="flex items-center gap-6">
             <div class="text-sm">
               <span class="text-slate-500 dark:text-slate-400">Payment:</span>
-              <span class="font-medium text-slate-900 dark:text-white ml-1">{{ order.payment }}</span>
+              <span class="font-medium ml-1 flex items-center gap-1">
+                <UIcon
+                  :name="order.payment_success ? 'i-lucide-check-circle-2' : 'i-lucide-clock-3'"
+                  class="w-4 h-4"
+                  :class="order.payment_success ? 'text-emerald-500' : 'text-amber-500'"
+                />
+                {{ order.payment_status }}
+              </span>
             </div>
             <div
-              v-if="order.trackingNumber"
+              v-if="order.tracking_id"
               class="text-sm"
             >
               <span class="text-slate-500 dark:text-slate-400">Tracking:</span>
-              <span class="font-medium text-primary-600 dark:text-primary-400 ml-1">{{ order.trackingNumber }}</span>
+              <span class="font-medium text-primary-600 dark:text-primary-400 ml-1">{{ order.tracking_id }}</span>
             </div>
           </div>
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-6">
             <div class="text-right">
-              <p class="text-sm text-slate-500 dark:text-slate-400">
-                Total
+              <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+                Order Total
               </p>
-              <p class="text-xl font-bold text-slate-900 dark:text-white">
-                {{ formatPrice(order.total) }}
+              <p class="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
+                {{ order.total_formatted }}
               </p>
             </div>
             <UButton
+              :to="`/orders/${order.uuid}`"
               color="primary"
               variant="soft"
+              class="transition-transform active:scale-95"
             >
+              <template #trailing>
+                <UIcon name="i-lucide-arrow-right" />
+              </template>
               View Details
             </UButton>
           </div>
@@ -251,24 +233,29 @@ const getStatusIcon = (status: string) => {
     <!-- Empty State -->
     <div
       v-else
-      class="glass-card p-12 text-center"
+      class="glass-card p-16 text-center animate-in fade-in slide-in-from-bottom-4 duration-500"
     >
-      <UIcon
-        name="i-lucide-package-open"
-        class="w-16 h-16 mx-auto text-slate-400 mb-4"
-      />
-      <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+      <div class="w-20 h-20 mx-auto bg-slate-100 dark:bg-slate-800/50 rounded-full flex items-center justify-center mb-6">
+        <UIcon
+          name="i-lucide-package-open"
+          class="w-10 h-10 text-slate-400"
+        />
+      </div>
+      <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
         No orders found
       </h3>
-      <p class="text-slate-500 dark:text-slate-400 mb-6">
-        {{ activeTab === 'all' ? "You haven't placed any orders yet" : `No ${activeTab} orders` }}
+      <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">
+        {{ activeTab === 'all' ? "You haven't placed any orders yet. Explore our shop to find something you love!" : `It looks like you don't have any orders marked as ${activeTab} at the moment.` }}
       </p>
       <NuxtLink to="/shop">
-        <UButton color="primary">
-          <UIcon
-            name="i-lucide-shopping-bag"
-            class="w-4 h-4 mr-2"
-          />
+        <UButton
+          color="primary"
+          size="lg"
+          class="px-8 shadow-lg shadow-primary-500/25"
+        >
+          <template #leading>
+            <UIcon name="i-lucide-shopping-bag" />
+          </template>
           Start Shopping
         </UButton>
       </NuxtLink>

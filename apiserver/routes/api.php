@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\CommissionController;
 use App\Http\Controllers\Api\KycController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NoticeController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Notification\PushSubscriptionController;
 use App\Http\Controllers\Api\OnboardingController;
@@ -261,6 +262,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/wallet/activity', [TrendController::class, 'walletActivity']);
         Route::get('/wallet/comparison', [TrendController::class, 'walletComparison']);
 
+        // Transaction trends
+        Route::get('/transactions/volume', [TrendController::class, 'transactionVolume']);
+
         // Commission trends
         Route::get('/commissions/earnings', [TrendController::class, 'commissionEarnings']);
         Route::get('/commissions/by-type', [TrendController::class, 'commissionByType']);
@@ -405,3 +409,12 @@ Route::prefix('wishlist')->middleware('auth:sanctum')->group(function () {
     Route::post('/{product:url}/toggle', [\App\Http\Controllers\Api\WishlistController::class, 'toggle']);
 });
 Route::get('/wishlist/{product:url}/check', [\App\Http\Controllers\Api\WishlistController::class, 'check']);
+
+// ========================================
+// Orders (Auth required)
+// ========================================
+Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::get('/stats', [OrderController::class, 'stats']);
+    Route::get('/{uuid}', [OrderController::class, 'show']);
+});
