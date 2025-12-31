@@ -87,7 +87,7 @@ async function handleNotificationClick(notification: { id: string; read_at: stri
     await markAsRead(notification.id)
   }
 
-  if (notification.data.action_url) {
+  if (notification.data?.action_url) {
     navigateTo(notification.data.action_url)
   }
 }
@@ -223,7 +223,7 @@ watch(currentPage, () => {
               :class="notification.read_at ? 'bg-muted/20' : 'bg-primary/20'"
             >
               <UIcon
-                :name="notification.data.icon || 'i-lucide-bell'"
+                :name="notification.data?.icon ?? 'i-lucide-bell'"
                 class="h-5 w-5"
                 :class="notification.read_at ? 'text-muted' : 'text-primary'"
               />
@@ -238,13 +238,13 @@ watch(currentPage, () => {
                   class="font-medium"
                   :class="notification.read_at ? 'text-muted' : 'text-highlighted'"
                 >
-                  {{ notification.data.title || 'Notification' }}
+                  {{ notification.data?.title ?? 'Notification' }}
                 </p>
                 <p
-                  v-if="notification.data.message || notification.data.body"
+                  v-if="notification.data?.message || notification.data?.body"
                   class="text-sm text-muted mt-1"
                 >
-                  {{ notification.data.message || notification.data.body }}
+                  {{ notification.data?.message || notification.data?.body }}
                 </p>
                 <p class="text-xs text-muted/70 mt-2">
                   {{ formatTime(notification.created_at) }}

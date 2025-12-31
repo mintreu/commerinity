@@ -11,7 +11,7 @@ definePageMeta({
 
 const router = useRouter()
 const toast = useToast()
-const { wallet, fetchWallet } = useWallet()
+const { wallet, fetchWallet, topup } = useWallet()
 
 const loading = ref(false)
 const selectedAmount = ref<number | null>(null)
@@ -71,12 +71,16 @@ const proceedToPayment = async () => {
     return
   }
 
-  // TODO: Integrate with payment gateway (Razorpay/Cashfree)
-  toast.add({
-    title: 'Coming Soon',
-    description: 'Payment gateway integration is in progress',
-    color: 'primary'
-  })
+  loading.value = true
+  const result = await topup(finalAmount.value)
+  loading.value = false
+  if (!result.success) {
+    toast.add({
+      title: 'Failed',
+      description: result.message || 'Unable to start payment',
+      color: 'error'
+    })
+  }
 }
 </script>
 

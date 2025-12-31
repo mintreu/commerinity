@@ -15,7 +15,7 @@ interface Props {
     label?: string
     isPositive?: boolean
   }
-  color?: 'primary' | 'success' | 'warning' | 'danger' | 'purple' | 'amber'
+  color?: 'primary' | 'success' | 'warning' | 'danger' | 'error' | 'purple' | 'amber'
   loading?: boolean
   to?: string
   compact?: boolean
@@ -48,6 +48,12 @@ const colorClasses = computed(() => {
       accent: 'text-amber-600 dark:text-amber-400'
     },
     danger: {
+      icon: 'bg-gradient-to-br from-red-500 to-rose-600',
+      iconSoft: 'bg-red-100 dark:bg-red-900/30',
+      trend: 'text-red-600 dark:text-red-400',
+      accent: 'text-red-600 dark:text-red-400'
+    },
+    error: {
       icon: 'bg-gradient-to-br from-red-500 to-rose-600',
       iconSoft: 'bg-red-100 dark:bg-red-900/30',
       trend: 'text-red-600 dark:text-red-400',

@@ -52,7 +52,7 @@ async function handleNotificationClick(notification: { id: string; read_at: stri
     await markAsRead(notification.id)
   }
 
-  if (notification.data.action_url) {
+  if (notification.data?.action_url) {
     navigateTo(notification.data.action_url)
   }
 
@@ -131,7 +131,7 @@ async function handleMarkAllAsRead() {
                 <!-- Icon -->
                 <div class="shrink-0">
                   <UIcon
-                    :name="notification.data.icon || 'i-lucide-bell'"
+                    :name="notification.data?.icon ?? 'i-lucide-bell'"
                     class="h-5 w-5"
                     :class="notification.read_at ? 'text-muted' : 'text-primary'"
                   />
@@ -143,13 +143,13 @@ async function handleMarkAllAsRead() {
                     class="text-sm font-medium truncate"
                     :class="notification.read_at ? 'text-muted' : 'text-highlighted'"
                   >
-                    {{ notification.data.title || 'Notification' }}
+                    {{ notification.data?.title ?? 'Notification' }}
                   </p>
                   <p
-                    v-if="notification.data.message || notification.data.body"
+                    v-if="notification.data?.message || notification.data?.body"
                     class="text-xs text-muted truncate mt-0.5"
                   >
-                    {{ notification.data.message || notification.data.body }}
+                    {{ notification.data?.message || notification.data?.body }}
                   </p>
                   <p class="text-xs text-muted/70 mt-1">
                     {{ formatTime(notification.created_at) }}

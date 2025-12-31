@@ -223,7 +223,7 @@ definePageMeta({
 
 const router = useRouter()
 const config = useRuntimeConfig()
-const { refreshUser } = useSanctum()
+const { refreshUser, user } = useSanctum()
 const toast = useToast()
 
 // Get default signup mode from config
@@ -249,16 +249,18 @@ const handleRegistrationSuccess = async (token: string) => {
     color: 'success'
   })
 
-  // Check for intended redirect URL first
+  const typedUser = user.value as any
+  if (!typedUser || typedUser.onboarded !== true) {
+    await router.push('/onboarding')
+    return
+  }
   const { getAndClearRedirectUrl } = useRedirectUrl()
   const intendedUrl = getAndClearRedirectUrl()
-
   if (intendedUrl) {
     await router.push(intendedUrl)
-  } else {
-    // Redirect to onboarding or dashboard
-    const { getDashboardRoute } = useUserType()
-    await router.push(getDashboardRoute())
+    return
   }
+  const { getDashboardRoute } = useUserType()
+  await router.push(getDashboardRoute())
 }
 </script>

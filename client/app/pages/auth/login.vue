@@ -470,7 +470,7 @@ definePageMeta({
   middleware: '$guest'
 })
 
-const { login } = useSanctum()
+const { login, user, refreshUser } = useSanctum()
 const router = useRouter()
 const config = useRuntimeConfig()
 
@@ -565,19 +565,23 @@ const handleLogin = async () => {
     }
 
     await login(credentials)
+    await refreshUser()
 
     // Check for intended redirect URL (stored before auth redirect)
     const { getAndClearRedirectUrl } = useRedirectUrl()
     const intendedUrl = getAndClearRedirectUrl()
 
-    if (intendedUrl) {
-      // Redirect to the page user originally wanted to visit
-      await router.push(intendedUrl)
-    } else {
-      // Default: redirect to dashboard
-      const { getDashboardRoute } = useUserType()
-      await router.push(getDashboardRoute())
+    const typedUser = user.value as any
+    if (!typedUser || typedUser.onboarded !== true) {
+      await router.push('/onboarding')
+      return
     }
+    if (intendedUrl) {
+      await router.push(intendedUrl)
+      return
+    }
+    const { getDashboardRoute } = useUserType()
+    await router.push(getDashboardRoute())
   } catch (err: unknown) {
     // Handle different error response formats
     const fetchError = err as {

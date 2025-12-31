@@ -78,7 +78,7 @@ const handleSubscribe = async () => {
         color: 'warning',
         icon: 'i-lucide-shield-alert'
       })
-      navigateTo('/wallet/pin-setup')
+      navigateTo('/wallet/setup-pin')
       return
     }
 
@@ -160,7 +160,7 @@ const tabs = [
             </p>
           </div>
           <UButton
-            to="/wallet/topup"
+            to="/wallet/add"
             variant="ghost"
             color="primary"
             class="mt-4 p-0 hover:bg-transparent text-sm font-bold"

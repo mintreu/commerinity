@@ -77,15 +77,15 @@ function handleCtaClick(notice: Notice) {
   <div
     :class="[
       'relative rounded-xl border p-4 transition-all duration-200',
-      typeStyles[notice.type].bg,
-      typeStyles[notice.type].border
+      notice?.type && typeStyles[notice.type] ? typeStyles[notice.type].bg : 'bg-slate-50 dark:bg-slate-900/20',
+      notice?.type && typeStyles[notice.type] ? typeStyles[notice.type].border : 'border-slate-200 dark:border-slate-800'
     ]"
   >
     <!-- Dismiss button -->
     <button
       type="button"
       class="absolute top-2 right-2 p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
-      @click="emit('dismiss', notice.uuid)"
+      @click="emit('dismiss', notice?.uuid)"
     >
       <UIcon
         name="i-lucide-x"
@@ -99,12 +99,12 @@ function handleCtaClick(notice: Notice) {
         <div
           :class="[
             'w-10 h-10 rounded-xl flex items-center justify-center',
-            typeStyles[notice.type].bg
+            notice?.type && typeStyles[notice.type] ? typeStyles[notice.type].bg : 'bg-slate-50 dark:bg-slate-900/20'
           ]"
         >
           <UIcon
-            :name="notice.icon || notice.type_icon"
-            :class="['w-5 h-5', typeStyles[notice.type].icon]"
+            :name="notice?.icon || notice?.type_icon || 'i-lucide-info'"
+            :class="['w-5 h-5', notice?.type && typeStyles[notice.type] ? typeStyles[notice.type].icon : 'text-slate-500']"
           />
         </div>
       </div>
@@ -112,22 +112,22 @@ function handleCtaClick(notice: Notice) {
       <!-- Content -->
       <div class="flex-1 min-w-0 pr-6">
         <h3 class="font-semibold text-slate-900 dark:text-white">
-          {{ notice.title }}
+          {{ notice?.title }}
         </h3>
         <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
-          {{ notice.content }}
+          {{ notice?.content }}
         </p>
 
         <!-- CTA Button -->
         <UButton
-          v-if="notice.cta_text"
+          v-if="notice?.cta_text"
           size="sm"
-          :color="typeStyles[notice.type].button"
+          :color="notice?.type && typeStyles[notice.type] ? typeStyles[notice.type].button : ('primary' as any)"
           variant="soft"
           class="mt-3"
           @click="handleCtaClick(notice)"
         >
-          {{ notice.cta_text }}
+          {{ notice?.cta_text }}
           <UIcon name="i-lucide-arrow-right" class="w-4 h-4 ml-1" />
         </UButton>
       </div>
