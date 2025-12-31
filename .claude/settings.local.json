@@ -29,7 +29,8 @@
       "Bash(git checkout:*)",
       "Bash(curl:*)",
       "WebFetch(domain:filamentphp.com)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "WebFetch(domain:www.cashfree.com)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -137,6 +137,14 @@ final class PaymentService
     }
 
     /**
+     * Initiate a payment (alias for consistency with trait usage)
+     */
+    public function initiate(PaymentInitiateRequest $request): PaymentResponse
+    {
+        return $this->initiatePayment($request);
+    }
+
+    /**
      * Verify a payment
      */
     public function verifyPayment(PaymentVerifyRequest $request, ?string $providerSlug = null): PaymentResponse

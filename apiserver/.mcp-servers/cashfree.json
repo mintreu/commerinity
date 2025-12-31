@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "cashfree-remote": {
+      "url": "https://mcp.cashfree.com/v1/sse",
+      "headers": {
+        "x-cf-api-key": "${CASH_FREE_KEY}",
+        "x-cf-api-secret": "${CASH_FREE_SECRET}"
+      },
+      "enabled": true
+    },
+    "cashfree-local": {
+      "command": "node",
+      "args": ["${CASHFREE_MCP_PATH}/src/index.js"],
+      "env": {
+        "PAYMENTS_APP_ID": "${CASH_FREE_KEY}",
+        "PAYMENTS_APP_SECRET": "${CASH_FREE_SECRET}",
+        "PAYOUTS_APP_ID": "${CASH_FREE_PAYOUTS_APP_ID}",
+        "PAYOUTS_APP_SECRET": "${CASH_FREE_PAYOUTS_APP_SECRET}",
+        "ENV": "sandbox"
+      },
+      "enabled": false
+    }
+  }
+}

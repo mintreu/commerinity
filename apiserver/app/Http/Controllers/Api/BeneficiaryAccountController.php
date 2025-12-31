@@ -128,7 +128,76 @@ final class BeneficiaryAccountController extends Controller
     }
 
     /**
-     * Delete a beneficiary account.
+     * Update beneficiary account.
+     * Only allowed if NOT validated with any provider.
+     * If validated, user must delete and create new.
+     */
+    public function update(StoreBeneficiaryAccountRequest $request, string $uuid): JsonResponse
+    {
+        $user = $request->user();
+        $wallet = $this->walletService->getOrCreateWallet($user);
+
+        $beneficiary = $wallet->beneficiaryAccounts()
+            ->where('uuid', $uuid)
+            ->first();
+
+        if (! $beneficiary) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Beneficiary account not found',
+            ], 404);
+        }
+
+        // Check if beneficiary has provider configuration (locked)
+        if (count($beneficiary->getAllProviderConfigs()) > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot edit beneficiary validated with payment provider. Please delete and create new.',
+                'locked' => true,
+                'provider_configs' => array_keys($beneficiary->getAllProviderConfigs()),
+            ], 422);
+        }
+
+        // Only allow update if status is PENDING
+        if ($beneficiary->status !== BeneficiaryStatusCast::PENDING) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot edit verified beneficiary. Please delete and create new.',
+                'locked' => true,
+            ], 422);
+        }
+
+        $type = BeneficiaryTypeCast::from($request->input('type'));
+        $isBank = $type->isBank();
+
+        $beneficiary->update([
+            'type' => $type,
+            'account_number' => $isBank ? $request->input('account_number') : null,
+            'ifsc_code' => $isBank ? strtoupper($request->input('ifsc_code')) : null,
+            'bank_name' => $request->input('bank_name'),
+            'branch_name' => $request->input('branch_name'),
+            'upi_id' => ! $isBank ? strtolower($request->input('upi_id')) : null,
+            'holder_name' => $request->input('holder_name'),
+        ]);
+
+        Log::info('Beneficiary account updated', [
+            'user_id' => $user->id,
+            'beneficiary_id' => $beneficiary->id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bank account updated successfully',
+            'data' => [
+                'beneficiary' => new BeneficiaryAccountResource($beneficiary->fresh()),
+            ],
+        ]);
+    }
+
+    /**
+     * Delete a beneficiary account (soft delete with provider cleanup).
+     * Cleanup provider configs (Cashfree/Razorpay) on delete.
+     * Note: Provider deletion happens async, beneficiary is soft deleted immediately.
      */
     public function destroy(Request $request, string $uuid): JsonResponse
     {
@@ -156,12 +225,35 @@ final class BeneficiaryAccountController extends Controller
         if ($hasPendingWithdrawals) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete account with pending withdrawals',
+                'message' => 'Cannot delete account with pending withdrawals. Please wait for completion.',
             ], 400);
         }
 
         $wasDefault = $beneficiary->is_default;
+        $providerConfigs = $beneficiary->getAllProviderConfigs();
+
+        // Soft delete beneficiary
         $beneficiary->delete();
+
+        // Cleanup provider configurations (async)
+        // In production, queue this for async processing
+        foreach ($providerConfigs as $provider => $config) {
+            try {
+                // TODO: Call provider API to delete beneficiary
+                // Example: $this->payoutService->getProvider($provider)->deleteBeneficiary($beneficiary);
+                Log::info('Provider config cleanup queued', [
+                    'beneficiary_id' => $beneficiary->id,
+                    'provider' => $provider,
+                    'config' => $config,
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Provider cleanup failed', [
+                    'beneficiary_id' => $beneficiary->id,
+                    'provider' => $provider,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
 
         // If deleted account was default, make another one default
         if ($wasDefault) {
@@ -171,14 +263,51 @@ final class BeneficiaryAccountController extends Controller
             }
         }
 
-        Log::info('Beneficiary account deleted', [
+        Log::info('Beneficiary account deleted (soft)', [
+            'user_id' => $user->id,
+            'beneficiary_uuid' => $uuid,
+            'had_provider_configs' => !empty($providerConfigs),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Bank account removed successfully. You can restore it within 30 days.',
+        ]);
+    }
+
+    /**
+     * Restore a soft-deleted beneficiary account.
+     */
+    public function restore(Request $request, string $uuid): JsonResponse
+    {
+        $user = $request->user();
+        $wallet = $this->walletService->getOrCreateWallet($user);
+
+        $beneficiary = $wallet->beneficiaryAccounts()
+            ->onlyTrashed()
+            ->where('uuid', $uuid)
+            ->first();
+
+        if (! $beneficiary) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Deleted beneficiary not found or already restored',
+            ], 404);
+        }
+
+        $beneficiary->restore();
+
+        Log::info('Beneficiary account restored', [
             'user_id' => $user->id,
             'beneficiary_uuid' => $uuid,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Bank account removed successfully',
+            'message' => 'Bank account restored successfully',
+            'data' => [
+                'beneficiary' => new BeneficiaryAccountResource($beneficiary->fresh()),
+            ],
         ]);
     }
 

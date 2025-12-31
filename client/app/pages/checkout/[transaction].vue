@@ -12,6 +12,38 @@
         </UCard>
       </div>
 
+      <!-- Already Completed State -->
+      <div v-else-if="isAlreadyCompleted" class="max-w-2xl mx-auto">
+        <UCard>
+          <div class="flex flex-col items-center justify-center py-12 gap-4">
+            <Icon name="heroicons:check-circle" class="w-16 h-16 text-green-500" />
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Payment Completed</h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center">
+              This transaction has already been processed successfully.
+            </p>
+            <UButton color="primary" variant="soft" @click="navigateTo('/dashboard')">
+              Return to Dashboard
+            </UButton>
+          </div>
+        </UCard>
+      </div>
+
+      <!-- Expired State -->
+      <div v-else-if="isExpired" class="max-w-2xl mx-auto">
+        <UCard>
+          <div class="flex flex-col items-center justify-center py-12 gap-4">
+            <Icon name="heroicons:clock" class="w-16 h-16 text-orange-500" />
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Payment Expired</h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center">
+              This payment link has expired. Please initiate a new payment.
+            </p>
+            <UButton color="gray" variant="soft" @click="navigateTo('/wallet')">
+              Return to Wallet
+            </UButton>
+          </div>
+        </UCard>
+      </div>
+
       <!-- Error State -->
       <div v-else-if="error" class="max-w-2xl mx-auto">
         <UCard>
@@ -85,8 +117,34 @@
               <h2 class="text-xl font-semibold">Complete Payment</h2>
             </template>
 
-            <!-- Cashfree Payment UI Container -->
-            <div class="min-h-[400px] flex flex-col items-center justify-center">
+            <!-- ⭐ Payment Success / Processing State -->
+            <div v-if="paymentSuccess" class="min-h-[400px] flex flex-col items-center justify-center">
+              <Icon name="heroicons:check-circle" class="w-16 h-16 text-green-500 mx-auto" />
+              <h3 class="text-xl font-semibold mt-4">Payment Successful!</h3>
+              <p class="text-gray-600 dark:text-gray-400 mt-2">Your payment has been processed.</p>
+              <p class="text-sm text-gray-500 mt-1">Redirecting...</p>
+            </div>
+
+            <!-- ⭐ Payment Verification State -->
+            <div v-else-if="isVerifying" class="min-h-[400px] flex flex-col items-center justify-center">
+              <Icon name="svg-spinners:ring-resize" class="w-12 h-12 text-primary mx-auto" />
+              <h3 class="text-lg font-semibold mt-4">Verifying Payment...</h3>
+              <p class="text-gray-600 dark:text-gray-400 mt-2">Please wait while we confirm your payment.</p>
+              <p class="text-sm text-gray-500 mt-1">Do not close this page.</p>
+            </div>
+
+            <!-- ⭐ Payment Failed State -->
+            <div v-else-if="paymentFailed" class="min-h-[400px] flex flex-col items-center justify-center">
+              <Icon name="heroicons:x-circle" class="w-16 h-16 text-red-500 mx-auto" />
+              <h3 class="text-xl font-semibold mt-4">Payment Failed</h3>
+              <p class="text-gray-600 dark:text-gray-400 mt-2">{{ paymentFailureReason }}</p>
+              <UButton color="primary" class="mt-4" @click="initiateCashfreePayment" :loading="isProcessing">
+                Try Again
+              </UButton>
+            </div>
+
+            <!-- ⭐ Ready to Pay State -->
+            <div v-else class="min-h-[400px] flex flex-col items-center justify-center">
               <div v-if="!paymentInitialized" class="text-center space-y-4">
                 <Icon name="svg-spinners:ring-resize" class="w-12 h-12 text-primary mx-auto" />
                 <p class="text-gray-600 dark:text-gray-400">Initializing payment gateway...</p>
@@ -96,7 +154,7 @@
                 <Icon name="heroicons:credit-card" class="w-16 h-16 text-primary mx-auto" />
                 <h3 class="text-lg font-semibold">Pay {{ checkoutData.transaction.amount_formatted }}</h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                  Click the button below to complete your payment
+                  Click the button below to complete your payment securely.
                 </p>
                 <UButton
                   id="cashfree-pay-button"
@@ -106,7 +164,7 @@
                   :loading="isProcessing"
                 >
                   <Icon name="heroicons:lock-closed" class="w-5 h-5 mr-2" />
-                  Pay via Cashfree
+                  Pay via {{ checkoutData.payment.provider }}
                 </UButton>
               </div>
             </div>
@@ -126,6 +184,11 @@
  * - Subscription purchase
  * - Order checkout
  * - Recruitment fees
+ *
+ * Features:
+ * - Polling verification (works without webhooks)
+ * - Auto-redirect on success/failure
+ * - Payment status tracking
  */
 
 definePageMeta({
@@ -144,6 +207,17 @@ const checkoutData = ref<any>(null)
 const paymentInitialized = ref(false)
 const isProcessing = ref(false)
 
+// ⭐ New states for payment flow
+const paymentSuccess = ref(false)
+const paymentFailed = ref(false)
+const paymentFailureReason = ref('')
+const isVerifying = ref(false)
+const isAlreadyCompleted = ref(false)
+const isExpired = ref(false)
+
+// Polling timer
+let statusPollTimer: ReturnType<typeof setInterval> | null = null
+
 // Cashfree instance
 let cashfree: any = null
 
@@ -157,6 +231,22 @@ async function fetchCheckoutData() {
 
     if (response.success) {
       checkoutData.value = response.data
+
+      // ⭐ Check if already completed
+      if (checkoutData.value.transaction.is_verified) {
+        isAlreadyCompleted.value = true
+        return
+      }
+
+      // Check if expired
+      if (checkoutData.value.transaction.expires_at) {
+        const expiry = new Date(checkoutData.value.transaction.expires_at)
+        if (expiry < new Date()) {
+          isExpired.value = true
+          return
+        }
+      }
+
       await loadCashfreeSDK()
     } else {
       error.value = true
@@ -199,7 +289,7 @@ function initializeCashfree() {
   paymentInitialized.value = true
 }
 
-// Initiate Cashfree payment
+// ⭐ Initiate Cashfree payment with verification
 async function initiateCashfreePayment() {
   if (!cashfree) {
     toast.add({
@@ -229,24 +319,24 @@ async function initiateCashfreePayment() {
 
     if (result.error) {
       console.error('Cashfree error:', result.error)
+      paymentFailed.value = true
+      paymentFailureReason.value = result.error.message || 'Payment failed'
       toast.add({
         title: 'Payment Failed',
         description: result.error.message || 'Payment failed',
         color: 'error'
       })
-
-      // Redirect to failure URL after delay
-      setTimeout(() => {
-        window.location.href = checkoutData.value.redirect.failure_url
-      }, 2000)
     }
 
     if (result.redirect) {
       console.log('Payment redirect triggered')
-      // Cashfree will handle redirect
+      // ⭐ Start polling for payment status after redirect
+      startPaymentVerification()
     }
   } catch (e: any) {
     console.error('Payment error:', e)
+    paymentFailed.value = true
+    paymentFailureReason.value = e.message || 'Failed to process payment'
     toast.add({
       title: 'Payment Error',
       description: e.message || 'Failed to process payment',
@@ -255,6 +345,68 @@ async function initiateCashfreePayment() {
   } finally {
     isProcessing.value = false
   }
+}
+
+// ⭐ Verify payment status (works without webhooks)
+async function verifyPaymentStatus(): Promise<boolean> {
+  try {
+    const transactionId = route.params.transaction
+    const response = await $fetch(`${config.public.apiBase}/api/checkout/${transactionId}/status`)
+
+    if (response.success && response.data.is_verified) {
+      return true
+    }
+
+    // Check if expired
+    if (response.data.is_expired) {
+      stopPaymentVerification()
+      isExpired.value = true
+      return false
+    }
+
+    return false
+  } catch (e: any) {
+    console.error('Status check error:', e)
+    return false
+  }
+}
+
+// ⭐ Start polling for payment verification
+function startPaymentVerification() {
+  isVerifying.value = true
+  paymentFailed.value = false
+
+  // Immediately check status
+  checkAndConfirmPayment()
+
+  // Then poll every 3 seconds
+  statusPollTimer = setInterval(() => {
+    checkAndConfirmPayment()
+  }, 3000)
+}
+
+// ⭐ Check and confirm payment
+async function checkAndConfirmPayment() {
+  const isVerified = await verifyPaymentStatus()
+
+  if (isVerified) {
+    stopPaymentVerification()
+    paymentSuccess.value = true
+
+    // Redirect to success page after delay
+    setTimeout(() => {
+      window.location.href = checkoutData.value.redirect.success_url
+    }, 2000)
+  }
+}
+
+// ⭐ Stop polling
+function stopPaymentVerification() {
+  if (statusPollTimer) {
+    clearInterval(statusPollTimer)
+    statusPollTimer = null
+  }
+  isVerifying.value = false
 }
 
 // Helper functions
@@ -282,9 +434,24 @@ function formatExpiryTime(expiresAt: string) {
   return `${minutes}m ${seconds}s`
 }
 
+// ⭐ Check for return_url query params (user returned from Cashfree)
+function checkReturnUrlParams() {
+  const query = route.query
+  if (query.payment_status === 'success' || query.cf_payment_id) {
+    // User returned from Cashfree - start verification
+    startPaymentVerification()
+  }
+}
+
 // Lifecycle
 onMounted(() => {
   fetchCheckoutData()
+  checkReturnUrlParams()
+})
+
+// Cleanup
+onUnmounted(() => {
+  stopPaymentVerification()
 })
 </script>
 

@@ -14,6 +14,7 @@ use App\Models\Integration;
 use App\Models\Transaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -38,8 +39,11 @@ final class CashfreeWebhookController
 {
     /**
      * Handle incoming Cashfree webhook
+     *
+     * CRITICAL: Cashfree requires plain text "OK" response with HTTP 200.
+     * JSON responses will cause webhook verification to fail.
      */
-    public function handle(Request $request): JsonResponse
+    public function handle(Request $request): Response
     {
         // 1. Verify webhook signature
         if (! $this->verifySignature($request)) {
@@ -47,7 +51,8 @@ final class CashfreeWebhookController
                 'ip' => $request->ip(),
             ]);
 
-            return response()->json(['error' => 'Invalid signature'], 401);
+            // Still return 200 to prevent retries on invalid signature
+            return response('OK', 200);
         }
 
         // 2. Parse event type
@@ -76,11 +81,12 @@ final class CashfreeWebhookController
                 'error' => $e->getMessage(),
             ]);
 
-            // Return 200 anyway to prevent retries
-            return response()->json(['status' => 'error', 'message' => 'Handler failed']);
+            // Return 200 anyway to prevent retries (Cashfree requirement)
+            return response('OK', 200);
         }
 
-        return response()->json(['status' => 'ok']);
+        // CRITICAL: Return plain text "OK", NOT JSON
+        return response('OK', 200);
     }
 
     /**

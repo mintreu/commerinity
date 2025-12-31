@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Casts\OrderStatusCast;
+use App\Http\Controllers\Controller;
 use App\Models\Ecommerce\Order;
 use App\Models\Ecommerce\OrderItem;
 use App\Services\MoneyService;

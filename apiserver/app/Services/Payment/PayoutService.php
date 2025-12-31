@@ -125,7 +125,113 @@ final class PayoutService
     }
 
     // ========================================
-    // Payout Operations
+    // WALLET CREDIT OPERATIONS (Admin -> User)
+    // ========================================
+
+    /**
+     * Credit user wallet (for commissions, affiliate payouts, refunds, bonuses)
+     *
+     * This is used by admin/system to add funds to user wallets.
+     *
+     * @param  int  $amountInPaisa  Amount in smallest currency unit
+     * @param  string  $type  Payout type: commission, affiliate, refund, bonus, manual
+     * @param  string|null  $description  Transaction description
+     * @param  string|null  $referenceId  External reference ID
+     * @param  array<string, mixed>  $metadata  Additional metadata
+     */
+    public function creditWallet(
+        Wallet $wallet,
+        int $amountInPaisa,
+        string $type,
+        ?string $description = null,
+        ?string $referenceId = null,
+        array $metadata = [],
+    ): array {
+        // Validate inputs
+        if ($amountInPaisa < 100) {
+            return ['success' => false, 'message' => 'Minimum credit amount is ₹1'];
+        }
+
+        $validTypes = ['commission', 'affiliate', 'refund', 'bonus', 'manual'];
+        if (! in_array($type, $validTypes)) {
+            return ['success' => false, 'message' => 'Invalid credit type. Allowed: '.implode(', ', $validTypes)];
+        }
+
+        // Validate wallet
+        if (! $wallet->canTransact()) {
+            return ['success' => false, 'message' => 'Wallet is not active'];
+        }
+
+        return DB::transaction(function () use ($wallet, $amountInPaisa, $type, $description, $referenceId, $metadata) {
+            // Create credit transaction
+            $transaction = Transaction::create([
+                'wallet_id' => $wallet->id,
+                'transactionable_type' => Wallet::class,
+                'transactionable_id' => $wallet->id,
+                'type' => TransactionTypeCast::CREDIT,
+                'status' => TransactionStatusCast::COMPLETED,
+                'amount' => $amountInPaisa,
+                'purpose' => ucfirst($type),
+                'description' => $description ?? "Wallet credited via {$type}",
+                'payment_method' => PaymentMethodCast::INTERNAL,
+                'reference_id' => $referenceId,
+                'metadata' => array_merge($metadata, [
+                    'credit_type' => $type,
+                    'source' => 'admin_payout',
+                ]),
+            ]);
+
+            // Update wallet balance
+            $wallet->update([
+                'balance' => $wallet->balance + $amountInPaisa,
+            ]);
+
+            Log::info('Wallet credited via payout', [
+                'wallet_id' => $wallet->id,
+                'user_id' => $wallet->user_id,
+                'amount' => $amountInPaisa,
+                'type' => $type,
+                'transaction_id' => $transaction->id,
+            ]);
+
+            return [
+                'success' => true,
+                'transaction_id' => $transaction->uuid,
+                'amount' => $amountInPaisa,
+                'wallet_balance' => $wallet->fresh()->balance,
+                'message' => 'Wallet credited successfully',
+            ];
+        });
+    }
+
+    /**
+     * Credit wallet by user ID (convenience method)
+     */
+    public function creditWalletByUserId(
+        int $userId,
+        int $amountInPaisa,
+        string $type,
+        ?string $description = null,
+        ?string $referenceId = null,
+        array $metadata = [],
+    ): array {
+        $user = User::find($userId);
+
+        if (! $user) {
+            return ['success' => false, 'message' => 'User not found'];
+        }
+
+        $wallet = $user->wallet;
+
+        if (! $wallet) {
+            return ['success' => false, 'message' => 'User wallet not found'];
+        }
+
+        return $this->creditWallet($wallet, $amountInPaisa, $type, $description, $referenceId, $metadata);
+    }
+
+    // ========================================
+    // Payout Operations (User -> Bank)
     // ========================================
 
     public function initiate(PayoutRequest $request): PayoutResponse
@@ -154,6 +260,7 @@ final class PayoutService
      * Send money to a beneficiary (withdrawal/payout)
      *
      * This is the main method to transfer funds from wallet to beneficiary bank/UPI.
+     * Auto-creates provider config if missing before initiating payout.
      *
      * @param  int  $amountInPaisa  Amount in smallest currency unit
      * @param  string|null  $description  Optional description
@@ -184,6 +291,29 @@ final class PayoutService
             return PayoutResponse::failed('Beneficiary account is not verified for payouts');
         }
 
+        // Get default provider
+        $provider = $this->getDefaultProvider();
+        if (! $provider) {
+            return PayoutResponse::failed('No payout provider available');
+        }
+
+        // Ensure provider config exists, create if missing
+        $providerSlug = $provider->getSlug();
+        if (! $beneficiary->hasProviderConfig($providerSlug)) {
+            Log::info('Creating provider config for beneficiary', [
+                'beneficiary_id' => $beneficiary->id,
+                'provider' => $providerSlug,
+            ]);
+
+            $configResult = $this->createProviderConfig($beneficiary, $provider);
+            if (! $configResult['success']) {
+                return PayoutResponse::failed('Failed to create provider configuration: '.$configResult['message']);
+            }
+
+            // Update beneficiary status to ACTIVE after successful config creation
+            $beneficiary->update(['status' => BeneficiaryStatusCast::VERIFIED]);
+        }
+
         // Determine payment method based on beneficiary type
         $method = $beneficiary->isUpi()
             ? PaymentMethodCast::PAYOUT_UPI
@@ -203,6 +333,7 @@ final class PayoutService
             metadata: [
                 'beneficiary_id' => $beneficiary->id,
                 'beneficiary_type' => $beneficiary->type->value,
+                'provider' => $providerSlug,
             ],
         );
 
@@ -211,9 +342,55 @@ final class PayoutService
             'beneficiary_id' => $beneficiary->id,
             'amount' => $amountInPaisa,
             'method' => $method->value,
+            'provider' => $providerSlug,
         ]);
 
         return $this->initiate($request);
+    }
+
+    /**
+     * Create provider configuration for beneficiary
+     *
+     * This calls the provider's createBeneficiary method and stores the config.
+     *
+     * @return array{success: bool, message?: string}
+     */
+    private function createProviderConfig(
+        BeneficiaryAccount $beneficiary,
+        PayoutProviderInterface $provider
+    ): array {
+        $data = [
+            'type' => $beneficiary->type->value,
+            'holder_name' => $beneficiary->holder_name,
+            'account_number' => $beneficiary->account_number,
+            'ifsc' => $beneficiary->ifsc_code,
+            'bank_name' => $beneficiary->bank_name,
+            'upi_id' => $beneficiary->upi_id,
+        ];
+
+        $result = $provider->createBeneficiary($beneficiary->wallet, $data);
+
+        if ($result['success']) {
+            // Extract provider-specific data and store in beneficiary metadata
+            $providerConfig = [
+                'beneficiary_id' => $result['beneficiary_id'] ?? null,
+                'created_at' => now()->toIso8601String(),
+            ];
+
+            // Add provider-specific fields from result
+            if (isset($result['data'])) {
+                $providerConfig = array_merge($providerConfig, $result['data']);
+            }
+
+            $beneficiary->setProviderConfig($provider->getSlug(), $providerConfig);
+
+            Log::info('Provider config created successfully', [
+                'beneficiary_id' => $beneficiary->id,
+                'provider' => $provider->getSlug(),
+            ]);
+        }
+
+        return $result;
     }
 
     /**

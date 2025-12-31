@@ -15,6 +15,7 @@ use App\Services\Payment\DTOs\PayoutResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * CashfreePayoutProvider - Cashfree Payouts API Integration
@@ -666,6 +667,186 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
         $this->integration = null;
         if ($this->integration) {
             Cache::forget(self::TOKEN_CACHE_KEY.'_'.$this->integration->id);
+        }
+    }
+
+    // ========================================
+    // CASHGRAM (Payout Links)
+    // ========================================
+
+    /**
+     * Create a Cashgram (one-time payout link)
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{success: bool, cashgram_id?: string, link?: string, message?: string}
+     */
+    public function createCashgram(array $data): array
+    {
+        $integration = $this->getIntegration();
+        if (! $integration) {
+            return ['success' => false, 'message' => 'Cashfree Payouts not configured'];
+        }
+
+        try {
+            $cashgramId = $data['cashgram_id'] ?? 'CASHGRAM-'.Str::random(8);
+
+            $payload = [
+                'cashgramId' => $cashgramId,
+                'amount' => (float) $data['amount'], // Amount in rupees
+                'phone' => $this->formatPhone($data['phone'] ?? null),
+                'email' => $data['email'] ?? null,
+                'name' => $data['name'] ?? 'Recipient',
+                'remark' => $data['remark'] ?? $data['purpose'] ?? 'Payout',
+                'notifyCustomer' => $data['notify_customer'] ?? $data['notifyCustomer'] ?? 1,
+            ];
+
+            // Add expiry if provided
+            if (! empty($data['expire_by']) || ! empty($data['expireBy'])) {
+                $payload['expireBy'] = $data['expire_by'] ?? $data['expireBy'];
+            }
+
+            $response = Http::withHeaders($this->getAuthHeaders($integration))
+                ->timeout(30)
+                ->post($this->getBaseUrl($integration).'/createCashgram', $payload);
+
+            $result = $response->json();
+
+            if ($response->successful() && ($result['status'] ?? '') === 'SUCCESS') {
+                Log::info('Cashgram created', [
+                    'cashgram_id' => $cashgramId,
+                    'amount' => $data['amount'],
+                ]);
+
+                return [
+                    'success' => true,
+                    'cashgram_id' => $cashgramId,
+                    'link' => $result['data']['link'] ?? null,
+                    'reference_id' => $result['data']['referenceId'] ?? null,
+                    'message' => 'Cashgram created successfully',
+                ];
+            }
+
+            Log::error('Cashgram creation failed', [
+                'response' => $result,
+                'cashgram_id' => $cashgramId,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => $result['message'] ?? 'Failed to create Cashgram',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Cashgram creation exception', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Cashgram error: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Get Cashgram status
+     *
+     * @return array{success: bool, status?: string, message?: string}
+     */
+    public function getCashgramStatus(string $cashgramId): array
+    {
+        $integration = $this->getIntegration();
+        if (! $integration) {
+            return ['success' => false, 'message' => 'Cashfree Payouts not configured'];
+        }
+
+        try {
+            $response = Http::withHeaders($this->getAuthHeaders($integration))
+                ->timeout(30)
+                ->get($this->getBaseUrl($integration).'/getCashgramStatus', [
+                    'cashgramId' => $cashgramId,
+                ]);
+
+            $result = $response->json();
+
+            if ($response->successful()) {
+                $status = $result['data']['status'] ?? 'UNKNOWN';
+
+                Log::info('Cashgram status retrieved', [
+                    'cashgram_id' => $cashgramId,
+                    'status' => $status,
+                ]);
+
+                return [
+                    'success' => true,
+                    'status' => $status,
+                    'data' => $result['data'] ?? null,
+                    'message' => 'Status retrieved',
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => $result['message'] ?? 'Failed to get Cashgram status',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Cashgram status exception', [
+                'error' => $e->getMessage(),
+                'cashgram_id' => $cashgramId,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Status check error: '.$e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Deactivate a Cashgram
+     *
+     * @return array{success: bool, message?: string}
+     */
+    public function deactivateCashgram(string $cashgramId): array
+    {
+        $integration = $this->getIntegration();
+        if (! $integration) {
+            return ['success' => false, 'message' => 'Cashfree Payouts not configured'];
+        }
+
+        try {
+            $response = Http::withHeaders($this->getAuthHeaders($integration))
+                ->timeout(30)
+                ->post($this->getBaseUrl($integration).'/deactivateCashgram', [
+                    'cashgramId' => $cashgramId,
+                ]);
+
+            $result = $response->json();
+
+            if ($response->successful()) {
+                Log::info('Cashgram deactivated', [
+                    'cashgram_id' => $cashgramId,
+                ]);
+
+                return [
+                    'success' => true,
+                    'message' => 'Cashgram deactivated successfully',
+                ];
+            }
+
+            return [
+                'success' => false,
+                'message' => $result['message'] ?? 'Failed to deactivate Cashgram',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Cashgram deactivation exception', [
+                'error' => $e->getMessage(),
+                'cashgram_id' => $cashgramId,
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Deactivation error: '.$e->getMessage(),
+            ];
         }
     }
 }

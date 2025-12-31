@@ -209,6 +209,52 @@ class Wallet extends Model
     }
 
     // ========================================
+    // Withdrawal Configuration
+    // ========================================
+
+    /**
+     * Get withdrawal threshold enabled status
+     */
+    public function isWithdrawalThresholdEnabled(): bool
+    {
+        return $this->metadata['withdrawal']['threshold_enabled'] ?? true;
+    }
+
+    /**
+     * Get minimum withdrawal amount in paisa
+     */
+    public function getMinimumWithdrawalAmount(): int
+    {
+        return $this->metadata['withdrawal']['minimum_amount'] ?? 10000; // Default: ₹100
+    }
+
+    /**
+     * Set withdrawal configuration
+     */
+    public function setWithdrawalConfig(bool $thresholdEnabled, int $minimumAmount): void
+    {
+        $metadata = $this->metadata ?? [];
+        $metadata['withdrawal'] = [
+            'threshold_enabled' => $thresholdEnabled,
+            'minimum_amount' => $minimumAmount,
+        ];
+        $this->metadata = $metadata;
+        $this->save();
+    }
+
+    /**
+     * Check if amount meets minimum withdrawal threshold
+     */
+    public function meetsWithdrawalThreshold(int $amountInPaisa): bool
+    {
+        if (! $this->isWithdrawalThresholdEnabled()) {
+            return true;
+        }
+
+        return $amountInPaisa >= $this->getMinimumWithdrawalAmount();
+    }
+
+    // ========================================
     // Query Scopes
     // ========================================
 

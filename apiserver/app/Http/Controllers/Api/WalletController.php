@@ -537,6 +537,17 @@ final class WalletController extends Controller
         // Convert rupees to paisa
         $amountInPaisa = (int) ($request->input('amount') * 100);
 
+        // Check minimum withdrawal threshold from wallet config
+        if (! $wallet->meetsWithdrawalThreshold($amountInPaisa)) {
+            $minimumAmount = MoneyService::format($wallet->getMinimumWithdrawalAmount());
+
+            return response()->json([
+                'success' => false,
+                'message' => "Minimum withdrawal amount is {$minimumAmount}",
+                'minimum_amount' => $wallet->getMinimumWithdrawalAmount(),
+            ], 400);
+        }
+
         if (! $wallet->hasSufficientBalance($amountInPaisa)) {
             return response()->json([
                 'success' => false,

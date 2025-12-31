@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Notification\PushSubscriptionController;
 use App\Http\Controllers\Api\OnboardingController;
+use App\Http\Controllers\Api\PayoutController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PublicProfileController;
 use App\Http\Controllers\Api\RecruitmentController;
@@ -185,10 +186,27 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/types', [BeneficiaryAccountController::class, 'getAccountTypes']);
             Route::post('/verify-ifsc', [BeneficiaryAccountController::class, 'verifyIfsc']);
             Route::get('/{uuid}', [BeneficiaryAccountController::class, 'show']);
+            Route::put('/{uuid}', [BeneficiaryAccountController::class, 'update']);
             Route::delete('/{uuid}', [BeneficiaryAccountController::class, 'destroy']);
+            Route::post('/{uuid}/restore', [BeneficiaryAccountController::class, 'restore']);
             Route::post('/{uuid}/default', [BeneficiaryAccountController::class, 'setDefault']);
             Route::post('/{uuid}/verify', [BeneficiaryAccountController::class, 'verify']);
         });
+    });
+
+    // ========================================
+    // Payouts (Cashfree Payout System)
+    // ========================================
+    Route::prefix('payouts')->group(function () {
+        // Admin: Credit user wallet (commissions, affiliate, refunds)
+        Route::post('/to-wallet', [PayoutController::class, 'payoutToWallet']);
+
+        // Cashgram (Admin/Distributor - payout links)
+        Route::post('/cashgram', [PayoutController::class, 'createCashgram']);
+        Route::get('/cashgram/{cashgramId}/status', [PayoutController::class, 'cashgramStatus']);
+
+        // Admin Utility
+        Route::get('/balance', [PayoutController::class, 'getBalance']);
     });
 
     // ========================================

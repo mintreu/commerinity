@@ -180,6 +180,67 @@ class BeneficiaryAccount extends Model
     }
 
     // ========================================
+    // Provider Configuration Management
+    // ========================================
+
+    /**
+     * Get provider configuration for a specific provider
+     *
+     * @param  string  $provider  Provider slug (cashfree, razorpay, native)
+     * @return array<string, mixed>|null
+     */
+    public function getProviderConfig(string $provider): ?array
+    {
+        return $this->metadata['providers'][$provider] ?? null;
+    }
+
+    /**
+     * Check if provider configuration exists
+     */
+    public function hasProviderConfig(string $provider): bool
+    {
+        return isset($this->metadata['providers'][$provider]);
+    }
+
+    /**
+     * Set provider configuration
+     *
+     * @param  string  $provider  Provider slug (cashfree, razorpay, native)
+     * @param  array<string, mixed>  $config  Provider-specific configuration
+     */
+    public function setProviderConfig(string $provider, array $config): void
+    {
+        $metadata = $this->metadata ?? [];
+        $metadata['providers'][$provider] = array_merge(
+            $metadata['providers'][$provider] ?? [],
+            $config
+        );
+        $this->metadata = $metadata;
+        $this->save();
+    }
+
+    /**
+     * Get all provider configurations
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function getAllProviderConfigs(): array
+    {
+        return $this->metadata['providers'] ?? [];
+    }
+
+    /**
+     * Remove provider configuration
+     */
+    public function removeProviderConfig(string $provider): void
+    {
+        $metadata = $this->metadata ?? [];
+        unset($metadata['providers'][$provider]);
+        $this->metadata = $metadata;
+        $this->save();
+    }
+
+    // ========================================
     // Query Scopes
     // ========================================
 

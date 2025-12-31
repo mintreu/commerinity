@@ -1,17 +1,23 @@
 
 
-[1;37;40mCode Coverage Report:        [0m
-[1;37;40m  2025-12-30 23:56:35        [0m
-[1;37;40m                             [0m
-[1;37;40m Summary:                    [0m
-[37;41m  Classes:  0.24% (1/420)    [0m
-[37;41m  Methods:  2.60% (70/2688)  [0m
-[37;41m  Lines:    2.31% (555/24031)[0m
+[1;37;40mCode Coverage Report:         [0m
+[1;37;40m  2025-12-31 20:18:56         [0m
+[1;37;40m                              [0m
+[1;37;40m Summary:                     [0m
+[37;41m  Classes:  0.94% (4/425)     [0m
+[37;41m  Methods:  6.08% (166/2730)  [0m
+[37;41m  Lines:    5.53% (1367/24699)[0m
 
-App\Casts\UserTypeCast
-  [37;41mMethods:   0.00% ( 0/ 3)[0m   [37;41mLines:  25.00% (  6/ 24)[0m
+App\Casts\BeneficiaryStatusCast
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [30;43mLines:  57.89% ( 11/ 19)[0m
+App\Casts\BeneficiaryTypeCast
+  [30;43mMethods:  60.00% ( 3/ 5)[0m   [37;41mLines:  41.18% (  7/ 17)[0m
+App\Casts\WalletStatusCast
+  [37;41mMethods:  20.00% ( 1/ 5)[0m   [37;41mLines:   5.00% (  1/ 20)[0m
 App\Console\Commands\Ecommerce\CompleteDeliveredOrders
   [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:   2.04% (  1/ 49)[0m
+App\Events\PaymentCompleted
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:  25.00% (  1/  4)[0m
 App\Filament\Resources\Activities\ActivityResource
   [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  50.00% (  5/ 10)[0m
 App\Filament\Resources\Addresses\AddressResource
@@ -58,12 +64,38 @@ App\Filament\Resources\Users\UserResource
   [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
 App\Filament\Resources\Wallets\WalletResource
   [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Helpers\OtpManager
+  [37;41mMethods:   4.76% ( 1/21)[0m   [37;41mLines:   1.02% (  1/ 98)[0m
+App\Http\Controllers\Api\BeneficiaryAccountController
+  [37;41mMethods:  45.45% ( 5/11)[0m   [30;43mLines:  50.55% (138/273)[0m
+App\Http\Controllers\Api\CheckoutController
+  [37;41mMethods:  20.00% ( 1/ 5)[0m   [30;43mLines:  53.85% ( 77/143)[0m
+App\Http\Controllers\Api\WalletController
+  [37;41mMethods:   4.17% ( 1/24)[0m   [37;41mLines:   5.65% ( 31/549)[0m
+App\Http\Requests\StoreBeneficiaryAccountRequest
+  [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 70/ 70)[0m
+App\Http\Resources\BeneficiaryAccountResource
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 23/ 23)[0m
 App\Jobs\Wallet\CheckPayoutStatusJob
   [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   1.27% (  1/ 79)[0m
+App\Jobs\Wallet\ProcessPayoutJob
+  [37;41mMethods:  16.67% ( 1/ 6)[0m   [30;43mLines:  50.47% ( 54/107)[0m
+App\Listeners\Payment\HandlePaymentCompleted
+  [37;41mMethods:   0.00% ( 0/ 4)[0m   [37;41mLines:  12.31% (  8/ 65)[0m
+App\Models\BeneficiaryAccount
+  [37;41mMethods:  34.78% ( 8/23)[0m   [30;43mLines:  52.73% ( 29/ 55)[0m
+App\Models\Integration
+  [37;41mMethods:  48.00% (12/25)[0m   [30;43mLines:  56.60% ( 30/ 53)[0m
+App\Models\Transaction
+  [37;41mMethods:  20.83% ( 5/24)[0m   [37;41mLines:  47.27% ( 26/ 55)[0m
 App\Models\User
   [37;41mMethods:  14.29% ( 3/21)[0m   [30;43mLines:  51.52% ( 34/ 66)[0m
+App\Models\Wallet
+  [37;41mMethods:  33.33% ( 8/24)[0m   [37;41mLines:  39.22% ( 20/ 51)[0m
+App\Observers\TransactionObserver
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;43mLines:  69.23% ( 18/ 26)[0m
 App\Providers\AppServiceProvider
-  [30;43mMethods:  66.67% ( 2/ 3)[0m   [37;41mLines:  33.33% (  4/ 12)[0m
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [37;41mLines:  38.46% (  5/ 13)[0m
 App\Providers\Filament\AdminPanelProvider
   [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 35/ 35)[0m
 App\Providers\TelescopeServiceProvider
@@ -82,7 +114,33 @@ App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator
   [37;41mMethods:  16.67% ( 1/ 6)[0m   [37;41mLines:   2.86% (  1/ 35)[0m
 App\Services\Affiliate\CommissionProcessorService
   [37;41mMethods:  15.00% ( 3/20)[0m   [37;41mLines:   5.43% ( 10/184)[0m
-App\Services\Trends\BaseTrendService
-  [37;41mMethods:  30.00% ( 3/10)[0m   [30;43mLines:  61.54% ( 72/117)[0m
-App\Services\Trends\TeamTrendService
-  [37;41mMethods:  42.86% ( 3/ 7)[0m   [30;43mLines:  77.73% (171/220)[0m
+App\Services\MoneyService
+  [37;41mMethods:   4.55% ( 1/22)[0m   [37;41mLines:  19.12% ( 13/ 68)[0m
+App\Services\Payment\DTOs\PaymentInitiateRequest
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [37;41mLines:   5.56% (  2/ 36)[0m
+App\Services\Payment\DTOs\PaymentResponse
+  [37;41mMethods:  44.44% ( 4/ 9)[0m   [30;43mLines:  62.00% ( 31/ 50)[0m
+App\Services\Payment\DTOs\PaymentVerifyRequest
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [37;41mLines:   6.67% (  1/ 15)[0m
+App\Services\Payment\DTOs\PayoutRequest
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   3.57% (  1/ 28)[0m
+App\Services\Payment\DTOs\PayoutResponse
+  [30;42mMethods: 100.00% ( 6/ 6)[0m   [30;42mLines: 100.00% ( 35/ 35)[0m
+App\Services\Payment\PaymentService
+  [37;41mMethods:  20.83% ( 5/24)[0m   [37;41mLines:  30.00% ( 33/110)[0m
+App\Services\Payment\Providers\CashfreePaymentProvider
+  [30;43mMethods:  53.33% ( 8/15)[0m   [30;43mLines:  69.95% (149/213)[0m
+App\Services\Payment\Providers\CashfreePayoutProvider
+  [37;41mMethods:  32.00% ( 8/25)[0m   [37;41mLines:  19.11% ( 86/450)[0m
+App\Services\Payment\Providers\NativePaymentProvider
+  [37;41mMethods:  18.18% ( 2/11)[0m   [37;41mLines:   4.67% (  7/150)[0m
+App\Services\Payment\Providers\NativePayoutProvider
+  [37;41mMethods:  15.38% ( 2/13)[0m   [37;41mLines:  20.79% ( 42/202)[0m
+App\Services\Payment\Providers\RazorpayPaymentProvider
+  [37;41mMethods:  21.43% ( 3/14)[0m   [37;41mLines:   4.07% ( 10/246)[0m
+App\Services\Payment\Providers\RazorpayPayoutProvider
+  [37;41mMethods:  15.79% ( 3/19)[0m   [37;41mLines:   2.62% ( 10/382)[0m
+App\Services\UserServices\UserWalletService
+  [37;41mMethods:   4.17% ( 1/24)[0m   [37;41mLines:   4.78% ( 15/314)[0m
+App\Traits\HasTransaction
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  73.39% ( 80/109)[0m
