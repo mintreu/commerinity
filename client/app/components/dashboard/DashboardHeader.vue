@@ -22,7 +22,17 @@ const props = withDefaults(defineProps<Props>(), {
 const { getGreeting, formatDate } = useBranding()
 const { getUserTypeLabel, getUserTypeBadgeColor } = useUserType()
 
-const greeting = computed(() => getGreeting(props.user?.name?.split(' ')[0]))
+const greeting = computed(() => {
+  const hour = new Date().getHours()
+  const firstName = props.user?.name?.split(' ')[0] || 'User'
+
+  let timeStr = 'Morning'
+  if (hour >= 12 && hour < 17) timeStr = 'Afternoon'
+  else if (hour >= 17 && hour < 22) timeStr = 'Evening'
+  else if (hour >= 22 || hour < 5) timeStr = 'Night'
+
+  return `Good ${timeStr}, ${firstName}!`
+})
 const today = computed(() => formatDate(new Date(), 'long'))
 const typeLabel = computed(() => getUserTypeLabel())
 const typeBadgeColor = computed(() => getUserTypeBadgeColor())
@@ -39,7 +49,7 @@ const onboardingProgress = computed(() => {
 
   // Email verified
   steps++
-  if (props.user.email_verified) completed++
+  if (props.user.email_verified_at) completed++
 
   // Gender & DOB
   steps++
@@ -91,13 +101,13 @@ const onboardingProgress = computed(() => {
 
             <!-- Level Badge (if applicable) -->
             <UBadge
-              v-if="showLevel && user?.hasLevel"
+              v-if="showLevel && user?.current_level"
               color="warning"
               variant="soft"
               size="xs"
             >
               <UIcon name="i-lucide-crown" class="w-3 h-3 mr-1" />
-              Level {{ user.level_id }}
+              {{ user.current_level.name }}
             </UBadge>
           </div>
         </div>
