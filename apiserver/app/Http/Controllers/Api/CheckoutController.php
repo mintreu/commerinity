@@ -206,8 +206,8 @@ final class CheckoutController extends Controller
         // Call Cashfree API to verify payment status
         $verifyResponse = $this->cashfreeProvider->verify(
             new \App\Services\Payment\DTOs\PaymentVerifyRequest(
-                orderId: $providerOrderId,
-                amountInPaisa: $transaction->amount,
+                orderId: $transaction->uuid,
+                providerOrderId: $providerOrderId,
             )
         );
 
