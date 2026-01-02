@@ -19,6 +19,10 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
 {
     case HOME = 'home';
     case WORK = 'work';
+    case DELIVERY = 'delivery';
+    case PICKUP = 'pickup';
+    case HUB = 'hub';
+    case SERVICE_POINT = 'service_point';
     case OTHER = 'other';
 
     /**
@@ -29,6 +33,10 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::HOME => 'success',
             self::WORK => Color::Emerald,
+            self::DELIVERY => Color::Blue,
+            self::PICKUP => Color::Amber,
+            self::HUB => Color::Purple,
+            self::SERVICE_POINT => Color::Teal,
             self::OTHER => Color::Sky,
         };
     }
@@ -41,6 +49,10 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::HOME => 'heroicon-s-home',
             self::WORK => 'heroicon-o-building-office',
+            self::DELIVERY => 'heroicon-o-truck',
+            self::PICKUP => 'heroicon-o-shopping-bag',
+            self::HUB => 'heroicon-o-building-storefront',
+            self::SERVICE_POINT => 'heroicon-o-map',
             self::OTHER => 'heroicon-s-map-pin',
         };
     }
@@ -53,6 +65,10 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::HOME => 'Home',
             self::WORK => 'Work',
+            self::DELIVERY => 'Delivery',
+            self::PICKUP => 'Pickup',
+            self::HUB => 'Hub',
+            self::SERVICE_POINT => 'Service Point',
             self::OTHER => 'Other',
         };
     }

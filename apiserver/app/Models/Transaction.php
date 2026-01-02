@@ -34,13 +34,22 @@ class Transaction extends Model
         'net_amount',
         'currency',
         'payment_method',
+        'checkout_type',
         'integration_id',
-        'provider_order_id',
+        'provider_gen_id',
+        'provider_gen_session',
+        'provider_gen_link',
+        'provider_gen_qr',
         'provider_transaction_id',
         'provider_signature',
-        'checkout_url',
+        'provider_generated_sign',
+//        'checkout_url',  // not required
         'qr_code_url',
-        'is_verified',
+        'success_url',
+        'success_redirect_url',
+        'failure_url',
+        'failure_redirect_url',
+        'verified',
         'verified_at',
         'description',
         'purpose',
@@ -64,7 +73,7 @@ class Transaction extends Model
             'type' => TransactionTypeCast::class,
             'status' => TransactionStatusCast::class,
             'payment_method' => PaymentMethodCast::class,
-            'is_verified' => 'boolean',
+            'verified' => 'boolean',
             'verified_at' => 'datetime',
             'expires_at' => 'datetime',
             'metadata' => 'array',
@@ -116,7 +125,7 @@ class Transaction extends Model
      */
     public function integration(): BelongsTo
     {
-        return $this->belongsTo(Integration::class);
+        return $this->belongsTo(Integration::class,'integration_id');
     }
 
     /**
@@ -160,7 +169,7 @@ class Transaction extends Model
      */
     public function isVerified(): bool
     {
-        return $this->is_verified;
+        return $this->verified;
     }
 
     /**
@@ -189,7 +198,7 @@ class Transaction extends Model
      */
     public function markAsVerified(): void
     {
-        $this->is_verified = true;
+        $this->verified = true;
         $this->verified_at = now();
         $this->save();
     }
@@ -269,6 +278,26 @@ class Transaction extends Model
     public function scopeByPaymentMethod($query, PaymentMethodCast $method)
     {
         return $query->where('payment_method', $method);
+    }
+
+    // ========================================
+    // Redirect URLs
+    // ========================================
+
+    /**
+     * Get redirect URL on successful payment
+     */
+    public function redirectOnSuccess(): string
+    {
+        return $this->success_url ?? config('app.frontend_url').'/wallet?status=success';
+    }
+
+    /**
+     * Get redirect URL on failed payment
+     */
+    public function redirectOnFailure(): string
+    {
+        return $this->failure_url ?? config('app.frontend_url').'/wallet?status=failed';
     }
 
     // ========================================

@@ -271,7 +271,7 @@ final class BeneficiaryAccountController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Bank account removed successfully. You can restore it within 30 days.',
+            'message' => 'Bank account removed successfully',
         ]);
     }
 

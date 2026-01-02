@@ -83,4 +83,24 @@ return [
         ],
     ],
 
+    'payment' => [
+      'cashfree' => [
+          'key' => env('CASH_FREE_PAYMENT_KEY'),
+          'secret' => env('CASH_FREE_PAYMENT_SECRET'),
+          'sandbox' => env('APP_ENV') == 'local',
+          'webhook' => env('CASH_FREE_PAYMENT_WEBHOOK'),
+      ]
+    ],
+
+    'payout' => [
+        'cashfree' => [
+            'key' => env('CASH_FREE_PAYOUT_KEY'),
+            'secret' => env('CASH_FREE_PAYOUT_SECRET'),
+            'sandbox' => env('APP_ENV') == 'local',
+            'webhook' => env('CASH_FREE_PAYOUT_WEBHOOK'),
+        ]
+    ],
+
+
+
 ];

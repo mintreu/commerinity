@@ -58,6 +58,8 @@ class DatabaseSeeder extends Seeder
             StateSeeder::class,
             BlockSeeder::class,
 
+            IntegrationSeeder::class,
+
             // ═══════════════════════════════════════════════════════════
             // ADMINISTRATION - Admin users and roles
             // ═══════════════════════════════════════════════════════════

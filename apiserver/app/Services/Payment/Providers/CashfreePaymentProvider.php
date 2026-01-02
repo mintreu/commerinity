@@ -57,10 +57,14 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
      */
     public function initiate(PaymentInitiateRequest $request): PaymentResponse
     {
+
         $integration = $this->getIntegration();
+
         if (! $integration) {
             return PaymentResponse::failed('Cashfree not configured');
         }
+
+
 
         try {
             $response = Http::withHeaders($this->getHeaders($integration))
@@ -70,23 +74,23 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
                     'order_amount' => $request->getAmountInRupees(),
                     'order_currency' => $request->currency,
                     'customer_details' => [
-                        'customer_id' => (string) $request->userId,
+                        'customer_id' => $request->userFingerprint ?? (string) $request->userId,
                         'customer_phone' => $this->formatPhone($request->customerPhone),
                         'customer_email' => $request->customerEmail ?? 'customer@mintreu.com',
                         'customer_name' => $request->customerName ?? 'Customer',
                     ],
                     'order_meta' => [
-                        'return_url' => $request->callbackUrl
-                            ? $request->callbackUrl.'?order_id={order_id}'
-                            : config('app.url').'/payment/callback?order_id={order_id}',
-                        'notify_url' => config('app.url').'/api/webhooks/cashfree',
+                        'return_url' => route('transaction.validate', ['transaction' => $request->transactionId]),
+                        'notify_url' => route('transaction.failure', ['transaction' => $request->transactionId])
                     ],
                     'order_note' => $request->description ?? $request->purpose ?? 'Payment',
                     'order_expiry_time' => now()->addMinutes($request->expiresInMinutes ?? 30)->toIso8601String(),
                 ]);
 
+
             if ($response->successful()) {
                 $data = $response->json();
+
 
                 Log::info('Cashfree order created', [
                     'order_id' => $request->transactionId,
@@ -98,13 +102,18 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
                     message: 'Payment order created',
                     transactionId: $request->transactionId,
                     providerOrderId: $data['cf_order_id'] ?? null,
-                    checkoutUrl: $data['payment_session_id'] ?? null, // ⭐ CRITICAL - payment_session_id is the checkout URL
+                    checkoutUrl: route('checkout',['transaction' => $request->transactionId]),
                     metadata: [
                         'payment_session_id' => $data['payment_session_id'] ?? null,
                         'payment_link' => $data['payment_link'] ?? null,
                         'order_status' => $data['order_status'] ?? null,
                         'cf_order_id' => $data['cf_order_id'] ?? null,
                         'order_expiry_time' => $data['order_expiry_time'] ?? null,
+                        'integration_id' => $this->getIntegration()->id,
+                        // Store for transaction update
+                        'provider_gen_id' => $data['cf_order_id'] ?? null,
+                        'provider_gen_session' => $data['payment_session_id'] ?? null,
+                        'provider_gen_link' => $data['payment_link'] ?? null,
                     ]
                 );
             }
@@ -316,8 +325,8 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
     private function getHeaders(Integration $integration): array
     {
         return [
-            'x-client-id' => $integration->getCredential('app_id'),
-            'x-client-secret' => $integration->getCredential('secret_key'),
+            'x-client-id' => $integration->getCredential('key'),
+            'x-client-secret' => $integration->getCredential('secret'),
             'x-api-version' => self::API_VERSION,
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',

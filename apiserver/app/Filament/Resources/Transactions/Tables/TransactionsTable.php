@@ -63,7 +63,7 @@ class TransactionsTable
                     ->searchable(),
                 TextColumn::make('qr_code_url')
                     ->searchable(),
-                IconColumn::make('is_verified')
+                IconColumn::make('verified')
                     ->boolean(),
                 TextColumn::make('verified_at')
                     ->dateTime()

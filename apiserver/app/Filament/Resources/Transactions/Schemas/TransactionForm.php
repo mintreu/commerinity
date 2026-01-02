@@ -61,7 +61,7 @@ class TransactionForm
                 TextInput::make('provider_signature'),
                 TextInput::make('checkout_url'),
                 TextInput::make('qr_code_url'),
-                Toggle::make('is_verified')
+                Toggle::make('verified')
                     ->required(),
                 DateTimePicker::make('verified_at'),
                 TextInput::make('description'),

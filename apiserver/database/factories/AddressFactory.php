@@ -90,12 +90,20 @@ class AddressFactory extends Factory
     }
 
     /**
-     * Create warehouse address (standalone).
+     * Create office address (alias for work).
+     */
+    public function office(): static
+    {
+        return $this->work();
+    }
+
+    /**
+     * Create warehouse/hub address (standalone).
      */
     public function warehouse(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'warehouse',
+            'type' => \App\Casts\AddressTypeCast::HUB,
             'title' => 'Warehouse - '.fake()->city(),
             'addressable_type' => null,
             'addressable_id' => null,
@@ -104,12 +112,12 @@ class AddressFactory extends Factory
     }
 
     /**
-     * Create store address (standalone).
+     * Create store/service point address (standalone).
      */
     public function storeAddress(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'store',
+            'type' => \App\Casts\AddressTypeCast::SERVICE_POINT,
             'title' => 'Store - '.fake()->city(),
             'addressable_type' => null,
             'addressable_id' => null,

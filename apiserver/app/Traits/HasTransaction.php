@@ -7,6 +7,7 @@ namespace App\Traits;
 use App\Casts\PaymentMethodCast;
 use App\Casts\TransactionStatusCast;
 use App\Casts\TransactionTypeCast;
+use App\Models\Integration;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Services\Payment\DTOs\PaymentInitiateRequest;
@@ -141,7 +142,9 @@ trait HasTransaction
             // 2. Parse customer details
             $customerData = $this->parseCustomerData($customer);
 
-            // 3. Create transaction record
+
+            // 3. Create transaction record using MorphOne relationship from trait
+            // Automatically sets transactionable_type and transactionable_id
             $transaction = $this->transaction()->create([
                 'uuid' => 'TXN-'.Str::upper(Str::random(12)),
                 'wallet_id' => $wallet?->id,
@@ -153,21 +156,29 @@ trait HasTransaction
                 'purpose' => $purpose ?? 'Payment',
                 'description' => $customerData['name'].' - '.($purpose ?? 'Payment'),
                 'expires_at' => now()->addMinutes($expireAfterMinutes),
-                'is_verified' => false,
+                'verified' => false,
+                'integration_id' => null,
+                'success_url' => $redirectSuccessUrl,
+                'failure_url' =>$redirectFailureUrl,
                 'metadata' => [
                     'customer' => $customerData,
-                    'redirect_success_url' => $redirectSuccessUrl,
-                    'redirect_failure_url' => $redirectFailureUrl,
+//                    'redirect_success_url' => $redirectSuccessUrl,
+//                    'redirect_failure_url' => $redirectFailureUrl,
                 ],
             ]);
 
+
+
             // 4. Use PaymentService to initiate payment (provider-agnostic)
             $paymentService = app(PaymentService::class);
+
+            $callbackUrl = route('transaction.validate', ['transaction' => $transaction->uuid]);
 
             $paymentRequest = new PaymentInitiateRequest(
                 amountInPaisa: $resolvedAmount,
                 currency: 'INR',
                 method: $paymentMethod,
+                userFingerprint: $customerData['user_fingerprint'],
                 userId: $customerData['user_id'] ?? 0,
                 walletId: $wallet?->id ?? 0,
                 transactionId: $transaction->uuid,
@@ -177,7 +188,7 @@ trait HasTransaction
                 purpose: $purpose,
                 description: $transaction->description,
                 metadata: $transaction->metadata ?? [],
-                callbackUrl: $redirectSuccessUrl,
+                callbackUrl: $callbackUrl,
                 expiresInMinutes: $expireAfterMinutes
             );
 
@@ -188,11 +199,15 @@ trait HasTransaction
                 $transaction->update([
                     'provider_order_id' => $paymentResponse->providerOrderId,
                     'provider_transaction_id' => $paymentResponse->providerTransactionId,
-                    'checkout_url' => $paymentResponse->checkoutUrl, // payment_session_id stored here
+                    'provider_gen_id' => $paymentResponse->metadata['provider_gen_id'] ?? null,
+                    'provider_gen_session' => $paymentResponse->metadata['provider_gen_session'] ?? null,
+                    'provider_gen_link' => $paymentResponse->metadata['provider_gen_link'] ?? null,
+                    'checkout_type' => 'web',
                     'status' => $paymentResponse->getStatusEnum(),
-                    'is_verified' => $paymentResponse->status === 'success',
+                    'verified' => $paymentResponse->status === 'success',
                     'verified_at' => $paymentResponse->status === 'success' ? now() : null,
                     'provider_response' => $paymentResponse->metadata,
+                    'integration_id' => $paymentResponse->metadata['integration_id']  // required must need
                 ]);
             } else {
                 // Failed to create payment
@@ -239,14 +254,18 @@ trait HasTransaction
         if (is_array($customer)) {
             return [
                 'user_id' => $customer['id'] ?? 0,
+                'user_fingerprint' => $customer['fingerprint'] ?? null,
                 'name' => $customer['name'] ?? 'Guest',
                 'email' => $customer['email'] ?? null,
                 'mobile' => $customer['mobile'] ?? null,
             ];
         }
 
+        $fingerprint = method_exists($customer, 'fingerprint') ? $customer->fingerprint() : null;
+
         return [
             'user_id' => $customer->id ?? 0,
+            'user_fingerprint' => $fingerprint,
             'name' => $customer->name ?? 'User',
             'email' => $customer->email ?? null,
             'mobile' => $customer->mobile ?? null,

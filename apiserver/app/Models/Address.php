@@ -107,19 +107,19 @@ class Address extends Model
     }
 
     /**
-     * Scope for warehouse addresses
+     * Scope for warehouse/hub addresses
      */
     public function scopeWarehouses($query)
     {
-        return $query->standalone()->where('type', 'warehouse');
+        return $query->standalone()->where('type', \App\Casts\AddressTypeCast::HUB);
     }
 
     /**
-     * Scope for store/pickup addresses
+     * Scope for store/service point addresses
      */
     public function scopeStores($query)
     {
-        return $query->standalone()->where('type', 'store');
+        return $query->standalone()->where('type', \App\Casts\AddressTypeCast::SERVICE_POINT);
     }
 
     /**

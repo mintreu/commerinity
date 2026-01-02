@@ -12,7 +12,7 @@ definePageMeta({
 const router = useRouter()
 const toast = useToast()
 const { user } = useSanctum()
-const { wallet, fetchWallet, requestPinChangeOtp, resetPinWithToken, verifySecurityQuestion, getUserSecurityQuestions } = useWallet()
+const { wallet, fetchWallet, requestPinChangeOtp, changePin, resetPinWithToken, verifySecurityQuestion, fetchUserSecurityQuestions } = useWallet()
 
 const step = ref(1) // 1: Choose method, 2: Verify, 3: New PIN
 const loading = ref(false)
@@ -21,8 +21,8 @@ const selectedOtpMethod = ref<'mobile' | 'email'>('mobile')
 const maskedCredential = ref('')
 const resendTimer = ref(0)
 const verificationToken = ref('')
-const securityQuestions = ref<Array<{ id: number; question: string }>>([])
-const selectedQuestion = ref<number | null>(null)
+const securityQuestions = ref<Array<{ key: string; label: string }>>([])
+const selectedQuestion = ref<string | null>(null)
 
 // Form data
 const formData = ref({
@@ -55,9 +55,9 @@ onMounted(async () => {
   }
 
   // Load security questions
-  const questions = await getUserSecurityQuestions()
-  if (questions && questions.length > 0) {
-    securityQuestions.value = questions
+  const response = await fetchUserSecurityQuestions()
+  if (response && response.questions && response.questions.length > 0) {
+    securityQuestions.value = response.questions
   }
 })
 
@@ -83,7 +83,7 @@ const selectMethod = async (method: 'otp' | 'security') => {
   if (method === 'otp') {
     step.value = 2
   } else if (method === 'security' && securityQuestions.value.length > 0) {
-    selectedQuestion.value = securityQuestions.value[0].id
+    selectedQuestion.value = securityQuestions.value[0].key
     step.value = 2
   } else {
     toast.add({
@@ -170,8 +170,8 @@ const handleVerifyOtp = async () => {
     return
   }
 
-  // For OTP verification, we'll get a token and move to step 3
-  verificationToken.value = formData.value.otp // In real implementation, this would be a server-provided token
+  // For OTP flow, we just move to step 3 to set new PIN
+  // The actual verification happens when submitting the new PIN
   step.value = 3
   nextTick(() => {
     pinInputs.value[0]?.focus()
@@ -247,13 +247,25 @@ const handleSubmit = async () => {
   if (!validateForm()) return
 
   loading.value = true
-  const result = await resetPinWithToken({
-    token: verificationToken.value,
-    method: verificationMethod.value === 'otp' ? selectedOtpMethod.value : 'security',
-    otp: verificationMethod.value === 'otp' ? formData.value.otp : undefined,
-    new_pin: formData.value.new_pin,
-    confirm_pin: formData.value.confirm_pin
-  })
+
+  let result
+  if (verificationMethod.value === 'otp') {
+    // For OTP: Use changePin which verifies OTP + sets PIN
+    result = await changePin({
+      otp: formData.value.otp,
+      method: selectedOtpMethod.value,
+      new_pin: formData.value.new_pin,
+      confirm_pin: formData.value.confirm_pin
+    })
+  } else {
+    // For security question: Use resetPinWithToken
+    result = await resetPinWithToken({
+      reset_token: verificationToken.value,
+      new_pin: formData.value.new_pin,
+      confirm_pin: formData.value.confirm_pin
+    })
+  }
+
   loading.value = false
 
   if (result.success) {
@@ -536,7 +548,7 @@ const hasSecurityQuestions = computed(() => securityQuestions.value.length > 0)
             </label>
             <USelect
               v-model="selectedQuestion"
-              :items="securityQuestions.map(q => ({ value: q.id, label: q.question }))"
+              :items="securityQuestions.map(q => ({ value: q.key, label: q.label }))"
               class="mb-4"
             />
 

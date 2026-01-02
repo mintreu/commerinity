@@ -27,17 +27,13 @@ test('wallet system initial state - fresh user has empty wallet', function () {
     expect($wallet->hasPin())->toBeFalse();
 });
 
-test('wallet setup - user can set PIN with security questions', function () {
+test('wallet setup - user can set PIN (no security questions)', function () {
     $user = User::factory()->create();
     $wallet = Wallet::factory()->for($user, 'walletable')->create(['balance' => 5000000]);
 
     $response = $this->actingAs($user)->postJson('/api/wallet/setup-pin', [
         'pin' => '123456',
         'confirm_pin' => '123456',
-        'security_question_1' => 'pet_name',
-        'security_answer_1' => 'Fluffy',
-        'security_question_2' => 'birth_city',
-        'security_answer_2' => 'New York',
     ]);
 
     $response->assertSuccessful();
@@ -63,7 +59,6 @@ test('wallet balance retrieval - formatted amounts and summaries', function () {
                 'wallet' => ['uuid', 'balance', 'balance_formatted', 'hold_balance', 'available_balance', 'total_credited', 'total_debited', 'points'],
                 'summary',
                 'requires_pin_setup',
-                'has_security_questions',
             ],
         ]);
 
@@ -243,7 +238,6 @@ test('wallet stats calculation', function () {
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 1000000,
-            'is_verified' => true,
             'verified_at' => now()->subMonths($i),
         ]);
     }
@@ -265,10 +259,12 @@ test('checkout data structure includes all payment session fields', function () 
         'status' => TransactionStatusCast::PENDING,
         'amount' => 5000000,
         'purpose' => 'Wallet TopUp',
-        'checkout_url' => 'https://sandbox.cashfree.com/pg/checkout/123',
+        'provider_gen_session' => 'test_session_id_123',
+        'provider_gen_link' => 'https://sandbox.cashfree.com/pg/checkout/123',
         'provider_order_id' => 'CF_ORDER_123',
         'expires_at' => now()->addHours(1),
         'metadata' => ['customer' => ['name' => $user->name, 'email' => $user->email, 'mobile' => $user->mobile]],
+        'verified' => false,
     ]);
 
     $response = $this->actingAs($user)->getJson("/api/checkout/{$transaction->uuid}");
@@ -284,7 +280,7 @@ test('checkout data structure includes all payment session fields', function () 
 
     $data = $response->json('data');
     expect($data['transaction']['uuid'])->toBe($transaction->uuid);
-    expect($data['payment']['payment_session_id'])->toBe($transaction->checkout_url);
+    expect($data['payment']['payment_session_id'])->toBe($transaction->provider_gen_session);
 });
 
 test('checkout polling endpoint works without webhook verification', function () {

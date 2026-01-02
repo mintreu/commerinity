@@ -341,6 +341,23 @@ Route::prefix('checkout')->group(function () {
     Route::get('/{transaction:uuid}/status', [CheckoutController::class, 'status']);
 });
 
+
+
+// ========================
+// 💳 TRANSACTION ROUTES
+// ========================
+Route::prefix('_transaction')
+    ->group(function () {
+        Route::get('/validate/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'confirmTransaction'])->name('transaction.validate');
+        Route::get('/failed/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'failureTransaction'])->name('transaction.failure');
+    });
+
+
+
+
+
+
+
 // ========================================
 // Webhooks (No Auth - Signature Verified)
 // ========================================

@@ -100,7 +100,7 @@ final class NativePaymentProvider implements PaymentProviderInterface
                     'parent_transaction_id' => $transaction->id,
                     'description' => 'Refund: '.($reason ?? 'User requested'),
                     'purpose' => 'refund',
-                    'is_verified' => true,
+                    'verified' => true,
                     'verified_at' => now(),
                 ]);
 
@@ -175,7 +175,7 @@ final class NativePaymentProvider implements PaymentProviderInterface
                     'payment_method' => PaymentMethodCast::WALLET,
                     'description' => $request->description,
                     'purpose' => $request->purpose,
-                    'is_verified' => true,
+                    'verified' => true,
                     'verified_at' => now(),
                     'balance_after' => $wallet->balance,
                     'metadata' => $request->metadata,
@@ -209,7 +209,7 @@ final class NativePaymentProvider implements PaymentProviderInterface
                 'payment_method' => $request->method,
                 'description' => $request->description,
                 'purpose' => $request->purpose,
-                'is_verified' => false,
+                'verified' => false,
                 'expires_at' => $request->expiresInMinutes
                     ? now()->addMinutes($request->expiresInMinutes)
                     : null,
@@ -251,7 +251,7 @@ final class NativePaymentProvider implements PaymentProviderInterface
                 // Update transaction
                 $transaction->update([
                     'status' => TransactionStatusCast::COMPLETED,
-                    'is_verified' => true,
+                    'verified' => true,
                     'verified_at' => now(),
                     'balance_after' => $wallet->balance,
                 ]);

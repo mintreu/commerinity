@@ -18,7 +18,6 @@ const { wallet, fetchWallet, requestPinChangeOtp, changePin } = useWallet()
 const step = ref(1) // 1: Request OTP, 2: Verify & Change
 const loading = ref(false)
 const otpSent = ref(false)
-const selectedMethod = ref<'mobile' | 'email'>('mobile')
 const maskedCredential = ref('')
 const resendTimer = ref(0)
 
@@ -69,7 +68,7 @@ const startResendTimer = () => {
 // Request OTP
 const handleRequestOtp = async () => {
   loading.value = true
-  const result = await requestPinChangeOtp(selectedMethod.value)
+  const result = await requestPinChangeOtp()
   loading.value = false
 
   if (result.success) {
@@ -79,7 +78,7 @@ const handleRequestOtp = async () => {
     step.value = 2
     toast.add({
       title: 'OTP Sent',
-      description: `Verification code sent to your ${selectedMethod.value}`,
+      description: 'Verification code sent to your mobile',
       color: 'success'
     })
     nextTick(() => {
@@ -183,7 +182,6 @@ const handleSubmit = async () => {
   loading.value = true
   const result = await changePin({
     otp: formData.value.otp,
-    method: selectedMethod.value,
     new_pin: formData.value.new_pin,
     confirm_pin: formData.value.confirm_pin
   })
@@ -210,9 +208,6 @@ const handleSubmit = async () => {
   }
 }
 
-// Check if method available
-const hasMobile = computed(() => !!user.value?.mobile)
-const hasEmail = computed(() => !!user.value?.email)
 </script>
 
 <template>
@@ -246,103 +241,17 @@ const hasEmail = computed(() => !!user.value?.email)
         v-if="step === 1"
         class="p-6 space-y-6"
       >
-        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-6">
           <div class="flex gap-3">
-            <UIcon
-              name="i-lucide-info"
-              class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0"
-            />
+            <UIcon name="i-lucide-info" class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
             <p class="text-sm text-blue-700 dark:text-blue-300">
-              For security, we'll send a verification code to confirm it's you before changing your PIN.
+              For security, we'll send a verification code to your mobile before changing your PIN.
             </p>
           </div>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-            Send verification code via
-          </label>
-          <div class="space-y-3">
-            <div
-              v-if="hasMobile"
-              :class="[
-                'p-4 border-2 rounded-xl cursor-pointer transition-all flex items-center gap-4',
-                selectedMethod === 'mobile'
-                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
-                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
-              ]"
-              @click="selectedMethod = 'mobile'"
-            >
-              <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center">
-                <UIcon
-                  name="i-lucide-smartphone"
-                  class="w-5 h-5 text-slate-600 dark:text-slate-400"
-                />
-              </div>
-              <div class="flex-1">
-                <p class="font-medium text-slate-900 dark:text-white">
-                  Mobile SMS
-                </p>
-                <p class="text-sm text-slate-500 dark:text-slate-400">
-                  +91 {{ user?.mobile?.substring(0, 3) }}****{{ user?.mobile?.substring(7) }}
-                </p>
-              </div>
-              <div
-                v-if="selectedMethod === 'mobile'"
-                class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center"
-              >
-                <UIcon
-                  name="i-lucide-check"
-                  class="w-4 h-4 text-white"
-                />
-              </div>
-            </div>
-
-            <div
-              v-if="hasEmail"
-              :class="[
-                'p-4 border-2 rounded-xl cursor-pointer transition-all flex items-center gap-4',
-                selectedMethod === 'email'
-                  ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
-                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
-              ]"
-              @click="selectedMethod = 'email'"
-            >
-              <div class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center">
-                <UIcon
-                  name="i-lucide-mail"
-                  class="w-5 h-5 text-slate-600 dark:text-slate-400"
-                />
-              </div>
-              <div class="flex-1">
-                <p class="font-medium text-slate-900 dark:text-white">
-                  Email
-                </p>
-                <p class="text-sm text-slate-500 dark:text-slate-400">
-                  {{ user?.email?.substring(0, 3) }}***@{{ user?.email?.split('@')[1] }}
-                </p>
-              </div>
-              <div
-                v-if="selectedMethod === 'email'"
-                class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center"
-              >
-                <UIcon
-                  name="i-lucide-check"
-                  class="w-4 h-4 text-white"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <UButton
-          color="primary"
-          size="lg"
-          block
-          :loading="loading"
-          @click="handleRequestOtp"
-        >
-          Send Verification Code
+        <UButton color="primary" size="lg" block :loading="loading" @click="handleRequestOtp">
+          Send OTP to Mobile
         </UButton>
       </div>
 

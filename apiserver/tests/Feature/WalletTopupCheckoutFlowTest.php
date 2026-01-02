@@ -67,6 +67,7 @@ test('user can initiate wallet topup and get checkout url', function () {
     expect($transaction->purpose)->toBe('Wallet TopUp');
     expect($transaction->status->value)->toBe('pending');
     expect($transaction->wallet_id)->toBe($wallet->id);
+    expect($transaction->provider_gen_session)->toBe('test_session_123');
 });
 
 test('checkout page returns transaction data correctly', function () {
@@ -169,7 +170,7 @@ test('wallet balance updates after successful payment', function () {
     // Simulate payment completion (via webhook or verification)
     $transaction->update([
         'status' => \App\Casts\TransactionStatusCast::COMPLETED,
-        'is_verified' => true,
+        'verified' => true,
         'verified_at' => now(),
     ]);
 
@@ -215,7 +216,7 @@ test('completed transactions show error message', function () {
         'status' => \App\Casts\TransactionStatusCast::COMPLETED,
         'amount' => 10000,
         'purpose' => 'Wallet TopUp',
-        'is_verified' => true,
+        'verified' => true,
         'verified_at' => now(),
     ]);
 

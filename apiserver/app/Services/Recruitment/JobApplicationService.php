@@ -16,7 +16,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Payment\DTOs\PaymentInitiateRequest;
 use App\Services\Payment\PaymentService;
-use App\Services\Wallet\UserWalletService;
+use App\Services\UserServices\UserWalletService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -272,7 +272,7 @@ final class JobApplicationService implements JobApplicationServiceInterface
                 'purpose' => 'Job Application Fee',
                 'description' => "{$user->name} - Application for {$application->recruitment->title}",
                 'expires_at' => now()->addMinutes(60),
-                'is_verified' => false,
+                'verified' => false,
                 'metadata' => [
                     'customer' => [
                         'user_id' => $user->id,

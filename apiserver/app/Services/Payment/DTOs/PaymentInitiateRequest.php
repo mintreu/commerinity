@@ -33,6 +33,7 @@ final readonly class PaymentInitiateRequest
         public int $amountInPaisa,
         public string $currency,
         public PaymentMethodCast $method,
+        public ?string $userFingerprint = null,
         public int $userId,
         public int $walletId,
         public string $transactionId,
@@ -59,6 +60,7 @@ final readonly class PaymentInitiateRequest
             method: $data['method'] instanceof PaymentMethodCast
                 ? $data['method']
                 : PaymentMethodCast::from($data['method']),
+            userFingerprint: (string) ($data['user_fingerprint'] ?? $data['user_id']),
             userId: (int) $data['user_id'],
             walletId: (int) $data['wallet_id'],
             transactionId: $data['transaction_id'],
@@ -85,6 +87,7 @@ final readonly class PaymentInitiateRequest
             'currency' => $this->currency,
             'method' => $this->method->value,
             'user_id' => $this->userId,
+            'user_fingerprint' => $this->userFingerprint,
             'wallet_id' => $this->walletId,
             'transaction_id' => $this->transactionId,
             'customer_name' => $this->customerName,

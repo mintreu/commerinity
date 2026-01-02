@@ -106,7 +106,7 @@ test('address warehouses scope filters warehouse type standalone', function () {
     $warehouses = Address::warehouses()->get();
 
     expect($warehouses)->toHaveCount(1)
-        ->and($warehouses->first()->type)->toBe('warehouse');
+        ->and($warehouses->first()->type)->toBe(\App\Casts\AddressTypeCast::HUB);
 });
 
 test('address stores scope filters store type standalone', function () {
@@ -116,7 +116,7 @@ test('address stores scope filters store type standalone', function () {
     $stores = Address::stores()->get();
 
     expect($stores)->toHaveCount(1)
-        ->and($stores->first()->type)->toBe('store');
+        ->and($stores->first()->type)->toBe(\App\Casts\AddressTypeCast::SERVICE_POINT);
 });
 
 test('address userAddresses scope filters user-owned addresses', function () {
@@ -137,7 +137,7 @@ test('address byType scope filters by type', function () {
     $homeAddresses = Address::byType('home')->get();
 
     expect($homeAddresses)->toHaveCount(1)
-        ->and($homeAddresses->first()->type)->toBe('home');
+        ->and($homeAddresses->first()->type)->toBe(\App\Casts\AddressTypeCast::HOME);
 });
 
 test('address default scope filters default addresses', function () {

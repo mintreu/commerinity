@@ -8,7 +8,10 @@ use App\Helpers\OtpManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
 use App\Http\Resources\WalletResource;
+use App\Models\Ecommerce\Order;
+use App\Models\Integration;
 use App\Services\MoneyService;
+use App\Services\TransactionService\WalletService;
 use App\Services\UserServices\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,23 +19,13 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use Minishlink\WebPush\Subscription;
 
 final class WalletController extends Controller
 {
     private const PIN_CHANGE_RATE_LIMIT = 3; // Max 3 PIN changes per hour
 
     private const PIN_VERIFY_RATE_LIMIT = 5; // Max 5 PIN attempts per 15 minutes
-
-    private const SECURITY_QUESTIONS = [
-        'pet_name' => 'What is the name of your first pet?',
-        'birth_city' => 'In which city were you born?',
-        'favorite_book' => 'What is your favorite book or novel?',
-        'mother_maiden' => "What is your mother's maiden name?",
-        'first_school' => 'What was the name of your first school?',
-        'favorite_movie' => 'What is your favorite movie?',
-        'childhood_friend' => 'What is the name of your childhood best friend?',
-        'favorite_teacher' => 'Who was your favorite teacher?',
-    ];
 
     public function __construct(
         private readonly UserWalletService $walletService,
@@ -53,7 +46,6 @@ final class WalletController extends Controller
                 'wallet' => new WalletResource($wallet),
                 'summary' => $this->walletService->getWalletSummary($wallet),
                 'requires_pin_setup' => ! $wallet->hasPin() || $this->isDefaultPin($wallet),
-                'has_security_questions' => $this->hasSecurityQuestions($wallet),
             ],
         ]);
     }
@@ -101,21 +93,6 @@ final class WalletController extends Controller
         ]);
     }
 
-    /**
-     * Get available security questions.
-     */
-    public function getSecurityQuestions(): JsonResponse
-    {
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'questions' => collect(self::SECURITY_QUESTIONS)->map(fn ($label, $key) => [
-                    'key' => $key,
-                    'label' => $label,
-                ])->values(),
-            ],
-        ]);
-    }
 
     /**
      * Set up wallet PIN for first time (no verification required).
@@ -126,10 +103,6 @@ final class WalletController extends Controller
         $request->validate([
             'pin' => ['required', 'string', 'size:6', 'regex:/^[0-9]+$/'],
             'confirm_pin' => ['required', 'string', 'same:pin'],
-            'security_question_1' => ['required', 'string', 'in:'.implode(',', array_keys(self::SECURITY_QUESTIONS))],
-            'security_answer_1' => ['required', 'string', 'min:2', 'max:100'],
-            'security_question_2' => ['required', 'string', 'in:'.implode(',', array_keys(self::SECURITY_QUESTIONS)), 'different:security_question_1'],
-            'security_answer_2' => ['required', 'string', 'min:2', 'max:100'],
         ]);
 
         $user = $request->user();
@@ -146,28 +119,26 @@ final class WalletController extends Controller
         // Set PIN
         $wallet->setPin($request->input('pin'));
 
-        // Store security questions (hashed answers)
-        $this->setSecurityQuestions($wallet, [
-            $request->input('security_question_1') => $request->input('security_answer_1'),
-            $request->input('security_question_2') => $request->input('security_answer_2'),
-        ]);
-
         return response()->json([
             'success' => true,
-            'message' => 'Wallet PIN and security questions set successfully',
+            'message' => 'Wallet PIN set successfully',
         ]);
     }
 
     /**
-     * Request OTP for PIN change.
+     * Request OTP for PIN change (mobile only).
      */
     public function requestPinChangeOtp(Request $request): JsonResponse
     {
-        $request->validate([
-            'method' => ['required', 'string', 'in:mobile,email'],
-        ]);
-
         $user = $request->user();
+
+        // Mobile is mandatory
+        if (! $user->mobile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mobile number is required for OTP verification',
+            ], 400);
+        }
 
         // Rate limit OTP requests
         $rateLimitKey = "wallet-pin-otp:{$user->id}";
@@ -180,25 +151,15 @@ final class WalletController extends Controller
             ], 429);
         }
 
-        $method = $request->input('method');
-        $credential = $method === 'mobile' ? $user->mobile : $user->email;
-
-        if (! $credential) {
-            return response()->json([
-                'success' => false,
-                'message' => ucfirst($method).' not available for this account',
-            ], 400);
-        }
-
         try {
-            $this->otpManager->generate($credential);
+            $this->otpManager->generate($user->mobile);
             RateLimiter::hit($rateLimitKey, 3600); // 1 hour window
 
             return response()->json([
                 'success' => true,
-                'message' => 'OTP sent to your '.$method,
+                'message' => 'OTP sent to your mobile',
                 'data' => [
-                    'credential_masked' => $this->maskCredential($credential, $method),
+                    'credential_masked' => $this->maskCredential($user->mobile, 'mobile'),
                 ],
             ]);
         } catch (\RuntimeException $e) {
@@ -210,13 +171,12 @@ final class WalletController extends Controller
     }
 
     /**
-     * Change PIN with OTP verification.
+     * Change PIN with OTP verification (mobile only).
      */
     public function changePin(Request $request): JsonResponse
     {
         $request->validate([
             'otp' => ['required', 'string', 'size:6'],
-            'method' => ['required', 'string', 'in:mobile,email'],
             'new_pin' => ['required', 'string', 'size:6', 'regex:/^[0-9]+$/'],
             'confirm_pin' => ['required', 'string', 'same:new_pin'],
         ]);
@@ -224,20 +184,17 @@ final class WalletController extends Controller
         $user = $request->user();
         $wallet = $this->walletService->getOrCreateWallet($user);
 
-        // Get credential based on method
-        $method = $request->input('method');
-        $credential = $method === 'mobile' ? $user->mobile : $user->email;
-
-        if (! $credential) {
+        // Mobile is mandatory
+        if (! $user->mobile) {
             return response()->json([
                 'success' => false,
-                'message' => ucfirst($method).' not available for this account',
+                'message' => 'Mobile number is required for OTP verification',
             ], 400);
         }
 
         // Verify OTP
         try {
-            $verified = $this->otpManager->verify($credential, $request->input('otp'));
+            $verified = $this->otpManager->verify($user->mobile, $request->input('otp'));
             if (! $verified) {
                 return response()->json([
                     'success' => false,
@@ -263,7 +220,7 @@ final class WalletController extends Controller
         $wallet->setPin($request->input('new_pin'));
 
         // Clear OTP after successful PIN change
-        $this->otpManager->clear($credential);
+        $this->otpManager->clear($user->mobile);
 
         return response()->json([
             'success' => true,
@@ -326,96 +283,6 @@ final class WalletController extends Controller
         ]);
     }
 
-    /**
-     * Verify security question answer (for account recovery).
-     */
-    public function verifySecurityQuestion(Request $request): JsonResponse
-    {
-        $request->validate([
-            'question_key' => ['required', 'string', 'in:'.implode(',', array_keys(self::SECURITY_QUESTIONS))],
-            'answer' => ['required', 'string'],
-        ]);
-
-        $user = $request->user();
-        $wallet = $this->walletService->getOrCreateWallet($user);
-
-        // Rate limit security question attempts
-        $rateLimitKey = "wallet-security:{$user->id}";
-        if (RateLimiter::tooManyAttempts($rateLimitKey, 3)) {
-            $seconds = RateLimiter::availableIn($rateLimitKey);
-
-            return response()->json([
-                'success' => false,
-                'message' => "Too many attempts. Try again in {$seconds} seconds.",
-            ], 429);
-        }
-
-        $verified = $this->verifySecurityAnswer(
-            $wallet,
-            $request->input('question_key'),
-            $request->input('answer')
-        );
-
-        if (! $verified) {
-            RateLimiter::hit($rateLimitKey, 1800); // 30 minute window
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Security answer incorrect',
-            ], 401);
-        }
-
-        RateLimiter::clear($rateLimitKey);
-
-        // Generate temporary token for PIN reset
-        $resetToken = $this->generatePinResetToken($wallet);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Security question verified',
-            'data' => [
-                'reset_token' => $resetToken,
-                'expires_in' => 300, // 5 minutes
-            ],
-        ]);
-    }
-
-    /**
-     * Reset PIN using security question token.
-     */
-    public function resetPinWithToken(Request $request): JsonResponse
-    {
-        $request->validate([
-            'reset_token' => ['required', 'string'],
-            'new_pin' => ['required', 'string', 'size:6', 'regex:/^[0-9]+$/'],
-            'confirm_pin' => ['required', 'string', 'same:new_pin'],
-        ]);
-
-        $user = $request->user();
-        $wallet = $this->walletService->getOrCreateWallet($user);
-
-        // Verify reset token
-        $tokenKey = "wallet-pin-reset:{$wallet->id}";
-        $storedToken = Cache::get($tokenKey);
-
-        if (! $storedToken || ! hash_equals($storedToken, $request->input('reset_token'))) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid or expired reset token',
-            ], 401);
-        }
-
-        // Set new PIN
-        $wallet->setPin($request->input('new_pin'));
-
-        // Clear reset token
-        Cache::forget($tokenKey);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'PIN reset successfully',
-        ]);
-    }
 
     /**
      * Send money to another user (requires PIN verification).
@@ -637,8 +504,8 @@ final class WalletController extends Controller
         if ($request->filled('reference_type') && $request->filled('reference_id')) {
             // Map reference types to models
             $modelMap = [
-                'order' => \App\Models\Order::class,
-                'subscription' => \App\Models\Subscription::class,
+                'order' => Order::class,
+                'subscription' => Subscription::class,
             ];
 
             $modelClass = $modelMap[$request->input('reference_type')] ?? null;
@@ -676,32 +543,6 @@ final class WalletController extends Controller
     /**
      * Get user's security questions (keys only, not answers).
      */
-    public function getUserSecurityQuestions(Request $request): JsonResponse
-    {
-        $user = $request->user();
-        $wallet = $this->walletService->getOrCreateWallet($user);
-
-        $metadata = $wallet->metadata ?? [];
-        $userQuestions = $metadata['security_questions'] ?? [];
-
-        $questions = [];
-        foreach (array_keys($userQuestions) as $key) {
-            if (isset(self::SECURITY_QUESTIONS[$key])) {
-                $questions[] = [
-                    'key' => $key,
-                    'label' => self::SECURITY_QUESTIONS[$key],
-                ];
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'questions' => $questions,
-                'has_questions' => count($questions) >= 2,
-            ],
-        ]);
-    }
 
     /**
      * Get wallet statistics (for dashboard cards).
@@ -823,59 +664,6 @@ final class WalletController extends Controller
         return Hash::check('123456', $wallet->pin);
     }
 
-    /**
-     * Check if wallet has security questions set.
-     */
-    private function hasSecurityQuestions(\App\Models\Wallet $wallet): bool
-    {
-        $metadata = $wallet->metadata ?? [];
-
-        return isset($metadata['security_questions']) && count($metadata['security_questions']) >= 2;
-    }
-
-    /**
-     * Set security questions for wallet.
-     */
-    private function setSecurityQuestions(\App\Models\Wallet $wallet, array $questionsAnswers): void
-    {
-        $metadata = $wallet->metadata ?? [];
-
-        $hashedQuestions = [];
-        foreach ($questionsAnswers as $questionKey => $answer) {
-            $hashedQuestions[$questionKey] = Hash::make(strtolower(trim($answer)));
-        }
-
-        $metadata['security_questions'] = $hashedQuestions;
-        $wallet->metadata = $metadata;
-        $wallet->save();
-    }
-
-    /**
-     * Verify security question answer.
-     */
-    private function verifySecurityAnswer(\App\Models\Wallet $wallet, string $questionKey, string $answer): bool
-    {
-        $metadata = $wallet->metadata ?? [];
-
-        if (! isset($metadata['security_questions'][$questionKey])) {
-            return false;
-        }
-
-        return Hash::check(strtolower(trim($answer)), $metadata['security_questions'][$questionKey]);
-    }
-
-    /**
-     * Generate temporary PIN reset token.
-     */
-    private function generatePinResetToken(\App\Models\Wallet $wallet): string
-    {
-        $token = bin2hex(random_bytes(32));
-        $tokenKey = "wallet-pin-reset:{$wallet->id}";
-
-        Cache::put($tokenKey, $token, now()->addMinutes(5));
-
-        return $token;
-    }
 
     /**
      * Mask credential for display.
@@ -904,18 +692,21 @@ final class WalletController extends Controller
     {
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'], // ₹1 to ₹1,00,000
-            'payment_method' => ['nullable', 'string', 'in:wallet,cashfree,razorpay,upi,card'], // Optional payment method
+           // 'payment_method' => ['nullable', 'string', 'in:wallet,cashfree,razorpay,upi,card'], // Optional payment method
         ]);
 
         $user = $request->user();
+
         $wallet = $this->walletService->getOrCreateWallet($user);
 
         // Convert rupees to paisa
         $amountInPaisa = (int) round($validated['amount'] * 100);
 
         // Determine payment method (default: cashfree)
-        $paymentMethod = \App\Casts\PaymentMethodCast::tryFrom($validated['payment_method'] ?? 'cashfree')
+        $paymentMethod = \App\Casts\PaymentMethodCast::tryFrom($validated['payment_method']?? 'cashfree')
             ?? \App\Casts\PaymentMethodCast::CASHFREE;
+
+
 
         try {
             // Create transaction using HasTransaction trait
@@ -930,12 +721,14 @@ final class WalletController extends Controller
                 expireAfterMinutes: 60
             );
 
+
             return response()->json([
                 'success' => true,
                 'message' => 'Checkout initiated successfully',
                 'data' => [
                     'transaction_id' => $transaction->uuid,
-                    'checkout_url' => config('app.client_url').'/checkout/'.$transaction->uuid,
+                    //'checkout_url' => config('app.client_url').'/checkout/'.$transaction->uuid, // dont checkout in nuxt side
+                    'checkout_url' => route('checkout',['transaction' => $transaction->uuid]),  // always checkout with apiserver side
                     'amount' => $transaction->amount,
                     'amount_formatted' => MoneyService::format($transaction->amount),
                     'payment_method' => $transaction->payment_method->value,

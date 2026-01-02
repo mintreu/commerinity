@@ -76,6 +76,13 @@ class Wallet extends Model
         return $this->morphTo();
     }
 
+
+    // alish use for checkout
+    public function customer()
+    {
+        return $this->walletable();
+    }
+
     /**
      * Get all transactions for this wallet
      */

@@ -87,7 +87,7 @@ final class NativePayoutProvider implements PayoutProviderInterface
                     'payment_method' => $request->method,
                     'description' => $request->description ?? 'Withdrawal to '.$beneficiary->type->getLabel(),
                     'purpose' => $request->purpose ?? 'withdrawal',
-                    'is_verified' => false,
+                    'verified' => false,
                     'balance_after' => $wallet->balance,
                     'metadata' => array_merge($request->metadata, [
                         'beneficiary_id' => $beneficiary->id,
@@ -165,7 +165,7 @@ final class NativePayoutProvider implements PayoutProviderInterface
 
                 $transaction->update([
                     'status' => TransactionStatusCast::COMPLETED,
-                    'is_verified' => true,
+                    'verified' => true,
                     'verified_at' => now(),
                     'metadata' => $metadata,
                 ]);

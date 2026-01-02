@@ -38,7 +38,7 @@ class TransactionResource extends JsonResource
             'reference_number' => $this->reference_number,
             'balance_after' => $this->balance_after,
             'balance_after_formatted' => MoneyService::format($this->balance_after ?? 0),
-            'is_verified' => $this->is_verified,
+            'is_verified' => $this->verified,
             'is_positive' => $this->type->isPositive(),
             'formatted_amount' => $this->formatted_amount,
             'verified_at' => $this->verified_at?->toIso8601String(),

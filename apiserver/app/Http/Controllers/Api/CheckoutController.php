@@ -39,7 +39,7 @@ final class CheckoutController extends Controller
         $transaction->load(['integration', 'transactionable']);
 
         // Check if transaction is already completed
-        if ($transaction->is_verified) {
+        if ($transaction->verified) {
             return response()->json([
                 'success' => false,
                 'message' => 'This transaction has already been completed',
@@ -47,7 +47,7 @@ final class CheckoutController extends Controller
                     'transaction' => [
                         'uuid' => $transaction->uuid,
                         'status' => $transaction->status->value,
-                        'is_verified' => true,
+                        'verified' => true,
                     ],
                 ],
             ], 400);
@@ -66,8 +66,8 @@ final class CheckoutController extends Controller
             ], 400);
         }
 
-        // Get payment session ID from checkout_url (temporary storage)
-        $paymentSessionId = $transaction->checkout_url;
+        // Get payment session ID from provider_gen_session
+        $paymentSessionId = $transaction->provider_gen_session;
 
         // Get redirect URLs from metadata
         $metadata = $transaction->metadata ?? [];
@@ -87,7 +87,7 @@ final class CheckoutController extends Controller
                     'status' => $transaction->status->value,
                     'type' => $transaction->type->value,
                     'expires_at' => $transaction->expires_at,
-                    'is_verified' => $transaction->is_verified,
+                    'verified' => $transaction->verified,
                 ],
                 'payment' => [
                     'provider' => $transaction->integration?->name ?? 'Cashfree',
@@ -113,13 +113,13 @@ final class CheckoutController extends Controller
     public function status(Request $request, Transaction $transaction): JsonResponse
     {
         // If already verified locally, return success
-        if ($transaction->is_verified) {
+        if ($transaction->verified) {
             return response()->json([
                 'success' => true,
                 'data' => [
                     'transaction_id' => $transaction->uuid,
                     'status' => $transaction->status->value,
-                    'is_verified' => true,
+                    'verified' => true,
                     'verified_at' => $transaction->verified_at,
                     'is_expired' => false,
                 ],
@@ -133,7 +133,7 @@ final class CheckoutController extends Controller
                 'data' => [
                     'transaction_id' => $transaction->uuid,
                     'status' => $transaction->status->value,
-                    'is_verified' => false,
+                    'verified' => false,
                     'is_expired' => true,
                 ],
             ]);
@@ -150,7 +150,7 @@ final class CheckoutController extends Controller
             'data' => [
                 'transaction_id' => $transaction->uuid,
                 'status' => $transaction->status->value,
-                'is_verified' => $transaction->is_verified,
+                'verified' => $transaction->verified,
                 'verified_at' => $transaction->verified_at,
                 'is_expired' => $transaction->expires_at && $transaction->expires_at->isPast(),
             ],
@@ -174,7 +174,7 @@ final class CheckoutController extends Controller
             'data' => [
                 'transaction_id' => $transaction->uuid,
                 'status' => $transaction->status->value,
-                'is_verified' => $transaction->is_verified,
+                'verified' => $transaction->verified,
                 'verified_at' => $transaction->verified_at,
                 'message' => $result['message'] ?? null,
             ],
@@ -189,7 +189,7 @@ final class CheckoutController extends Controller
     private function verifyWithCashfree(Transaction $transaction): array
     {
         // Only verify if not already verified
-        if ($transaction->is_verified) {
+        if ($transaction->verified) {
             return ['verified' => true, 'message' => 'Already verified'];
         }
 
@@ -222,7 +222,7 @@ final class CheckoutController extends Controller
         if ($verifyResponse->isCompleted()) {
             $transaction->update([
                 'status' => TransactionStatusCast::COMPLETED,
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'provider_transaction_id' => $verifyResponse->providerTransactionId,
                 'provider_response' => $verifyResponse->metadata,

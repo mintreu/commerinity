@@ -44,8 +44,11 @@ return new class extends Migration
             $table->string('provider_order_id')->nullable(); // Provider's order/payment ID
             $table->string('provider_transaction_id')->nullable(); // Provider's transaction reference
             $table->string('provider_signature')->nullable(); // Signature for verification
-            $table->string('checkout_url')->nullable(); // Payment link
+            //$table->string('checkout_url')->nullable(); // Payment link  not required
             $table->string('qr_code_url')->nullable(); // QR code for payment
+
+            $table->string('success_url')->nullable(); // success redirect after checkout
+            $table->string('failure_url')->nullable();  // failure redirect after checkout
 
             // Verification
             $table->boolean('is_verified')->default(false);

@@ -126,7 +126,7 @@ class TransactionSeeder extends Seeder
                     'currency' => 'INR',
                     'description' => $txnType['description'],
                     'status' => $status,
-                    'is_verified' => $isVerified,
+                    'verified' => $isVerified,
                     'verified_at' => $isVerified ? now()->subDays(rand(1, 30)) : null,
                     'metadata' => [
                         'source' => 'demo_seeder',

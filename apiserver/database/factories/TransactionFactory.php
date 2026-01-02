@@ -46,9 +46,13 @@ class TransactionFactory extends Factory
             'provider_order_id' => null,
             'provider_transaction_id' => null,
             'provider_signature' => null,
-            'checkout_url' => null,
+            'provider_gen_id' => null,
+            'provider_gen_session' => null,
+            'provider_gen_link' => null,
+            'provider_gen_qr' => null,
+            'provider_generated_sign' => null,
             'qr_code_url' => null,
-            'is_verified' => false,
+            'verified' => false,
             'verified_at' => null,
             'description' => null,
             'purpose' => null,
@@ -176,7 +180,7 @@ class TransactionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => TransactionStatusCast::PENDING,
-            'is_verified' => false,
+            'verified' => false,
         ]);
     }
 
@@ -197,7 +201,7 @@ class TransactionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => TransactionStatusCast::COMPLETED,
-            'is_verified' => true,
+            'verified' => true,
             'verified_at' => now(),
         ]);
     }
@@ -326,7 +330,7 @@ class TransactionFactory extends Factory
             'provider_order_id' => $orderId ?? 'order_'.fake()->uuid(),
             'provider_transaction_id' => $transactionId ?? 'pay_'.fake()->uuid(),
             'provider_signature' => $signature ?? fake()->sha256(),
-            'is_verified' => true,
+            'verified' => true,
             'verified_at' => now(),
         ]);
     }

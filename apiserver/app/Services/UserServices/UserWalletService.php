@@ -106,7 +106,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'currency' => $wallet->currency,
                 'purpose' => $purpose,
                 'description' => $description,
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
             ]);
@@ -152,7 +152,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'currency' => $wallet->currency,
                 'purpose' => $purpose,
                 'description' => $description,
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
             ]);
@@ -192,7 +192,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'currency' => $wallet->currency,
                 'purpose' => $purpose,
                 'description' => $description ?? 'Funds held',
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
             ]);
@@ -231,7 +231,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'purpose' => $purpose,
                 'description' => 'Funds released',
                 'parent_transaction_id' => $holdTransaction?->id,
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
             ]);
@@ -313,7 +313,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'purpose' => 'refund',
                 'description' => $reason ?? 'Refund processed',
                 'parent_transaction_id' => $originalTransaction->id,
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
             ]);
@@ -363,7 +363,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'currency' => $wallet->currency,
                 'purpose' => 'adjustment',
                 'description' => "Admin adjustment: {$reason}",
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
                 'metadata' => ['admin_id' => $adminId],
@@ -617,7 +617,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
                 'currency' => $wallet->currency,
                 'purpose' => 'points_conversion',
                 'description' => "Converted {$points} points to balance",
-                'is_verified' => true,
+                'verified' => true,
                 'verified_at' => now(),
                 'balance_after' => $wallet->balance,
                 'metadata' => ['points_converted' => $points],

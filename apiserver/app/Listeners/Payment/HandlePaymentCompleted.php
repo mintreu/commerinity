@@ -73,7 +73,7 @@ final class HandlePaymentCompleted
             $topupAmount = MoneyService::make($transaction->amount);
 
             // Add money to wallet
-            $newBalance = $currentBalance->plus($topupAmount->getAmount());
+            $newBalance = $currentBalance->add($topupAmount->getAmount());
 
             $wallet->update([
                 'balance' => $newBalance->getAmount(),
@@ -134,7 +134,7 @@ final class HandlePaymentCompleted
         DB::transaction(function () use ($transaction, $application) {
             // Change status from awaiting_payment to submitted
             $application->update([
-                'status' => JobApplicationStatusCast::SUBMITTED,
+                'status' => JobApplicationStatusCast::Submitted,
                 'paid_at' => now(),
             ]);
 

@@ -61,8 +61,8 @@ interface Transaction {
 }
 
 interface SecurityQuestion {
-  key: string
-  label: string
+  key: string  // Question key (e.g., 'mothers_maiden_name')
+  label: string  // Question label/text
 }
 
 interface WalletStats {
@@ -187,12 +187,11 @@ export const useWallet = () => {
     }
   }
 
-  // Request PIN change OTP
-  const requestPinChangeOtp = async (method: 'mobile' | 'email') => {
+  // Request PIN change OTP (mobile only)
+  const requestPinChangeOtp = async () => {
     try {
       const response = await useSanctumFetch(`${config.public.apiBase}/api/wallet/request-pin-otp`, {
-        method: 'POST',
-        body: { method }
+        method: 'POST'
       })
       return { success: true, data: response.data, message: response.message }
     } catch (e: any) {
@@ -200,10 +199,9 @@ export const useWallet = () => {
     }
   }
 
-  // Change PIN
+  // Change PIN (mobile OTP only)
   const changePin = async (data: {
     otp: string
-    method: 'mobile' | 'email'
     new_pin: string
     confirm_pin: string
   }) => {

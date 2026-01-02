@@ -48,6 +48,7 @@ class Integration extends Model
     {
         return [
             'settings' => 'array',
+            'credentials' => 'array',
             'is_sandbox' => 'boolean',
             'is_active' => 'boolean',
             'is_default' => 'boolean',
