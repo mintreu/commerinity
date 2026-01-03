@@ -421,7 +421,7 @@ final class RazorpayPayoutProvider implements PayoutProviderInterface
     {
         if ($this->integration === null) {
             $this->integration = Integration::query()
-                ->bySlug('razorpay')
+                ->bySlug('razorpay-payout')
                 ->ofType(Integration::TYPE_PAYOUT)
                 ->active()
                 ->first();
@@ -461,34 +461,19 @@ final class RazorpayPayoutProvider implements PayoutProviderInterface
     /**
      * Create beneficiary account with RazorpayX
      *
-     * @param  array<string, mixed>  $data
+     * @param  BeneficiaryAccount $beneficiary  The beneficiary account to register
+     * @param  ?Integration  $integration  Optional integration override
      * @return array{success: bool, beneficiary_id?: string, message?: string}
      */
-    public function createBeneficiary(Wallet $wallet, array $data): array
+    public function createBeneficiary(BeneficiaryAccount $beneficiary, ?Integration $integration = null): array
     {
-        $integration = $this->getIntegration();
+        $integration = $integration ?? $this->getIntegration();
         if (! $integration) {
             return ['success' => false, 'message' => 'RazorpayX Payouts not configured'];
         }
 
         try {
-            $type = BeneficiaryTypeCast::tryFrom($data['type'] ?? 'savings') ?? BeneficiaryTypeCast::SAVINGS;
-
-            // Create local beneficiary record first
-            $beneficiary = BeneficiaryAccount::create([
-                'wallet_id' => $wallet->id,
-                'type' => $type,
-                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
-                'account_number' => $data['account_number'] ?? null,
-                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
-                'bank_name' => $data['bank_name'] ?? null,
-                'bank_branch' => $data['bank_branch'] ?? null,
-                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
-                'status' => BeneficiaryStatusCast::PENDING,
-                'is_default' => $wallet->beneficiaries()->count() === 0,
-            ]);
-
-            // Register with RazorpayX (Contact + Fund Account)
+            // Register existing beneficiary with RazorpayX (Contact + Fund Account)
             $result = $this->setupBeneficiary($beneficiary, $integration);
 
             if ($result['success']) {
@@ -500,33 +485,38 @@ final class RazorpayPayoutProvider implements PayoutProviderInterface
                     ]),
                 ]);
 
+                Log::info('RazorpayX beneficiary registered', [
+                    'beneficiary_id' => $beneficiary->id,
+                    'contact_id' => $result['contact_id'],
+                    'fund_account_id' => $result['fund_account_id'],
+                ]);
+
                 return [
                     'success' => true,
                     'beneficiary_id' => (string) $beneficiary->id,
-                    'message' => 'Beneficiary created and registered with RazorpayX',
+                    'message' => 'Beneficiary registered with RazorpayX successfully',
                 ];
             }
 
-            // RazorpayX registration failed - keep as pending
+            // RazorpayX registration failed
             Log::warning('RazorpayX beneficiary registration failed', [
                 'beneficiary_id' => $beneficiary->id,
                 'error' => $result['message'],
             ]);
 
             return [
-                'success' => true,
-                'beneficiary_id' => (string) $beneficiary->id,
-                'message' => 'Beneficiary created locally but registration pending: '.$result['message'],
+                'success' => false,
+                'message' => 'Failed to register with RazorpayX: '.$result['message'],
             ];
         } catch (\Exception $e) {
             Log::error('RazorpayX createBeneficiary exception', [
                 'error' => $e->getMessage(),
-                'wallet_id' => $wallet->id,
+                'beneficiary_id' => $beneficiary->id,
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Failed to create beneficiary: '.$e->getMessage(),
+                'message' => 'Failed to register beneficiary: '.$e->getMessage(),
             ];
         }
     }

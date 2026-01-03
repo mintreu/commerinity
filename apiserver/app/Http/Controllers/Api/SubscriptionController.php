@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Casts\PaymentMethodCast;
 use App\Http\Controllers\Controller;
+use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Services\Membership\SubscriptionService;
@@ -40,6 +41,7 @@ final class SubscriptionController extends Controller
     public function plans(): JsonResponse
     {
         $stages = Stage::query()
+            ->with(['levels' => fn ($q) => $q->active()->orderBy('level_number')])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get()
@@ -60,6 +62,16 @@ final class SubscriptionController extends Controller
                 'benefits' => $stage->benefits ?? [],
                 'max_team_members' => $stage->max_team_members,
                 'is_default' => $stage->is_default,
+                'levels' => $stage->levels->map(fn (Level $level) => [
+                    'uuid' => $level->uuid,
+                    'name' => $level->name,
+                    'level_number' => $level->level_number,
+                    'slug' => $level->slug,
+                    'team_member_limit' => $level->team_member_limit,
+                    'validity_days' => $level->validity_days,
+                    'badge_icon' => $level->badge_icon,
+                    'badge_color' => $level->badge_color,
+                ])->values(),
             ]);
 
         return response()->json([

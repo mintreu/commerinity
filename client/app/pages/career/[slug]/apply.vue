@@ -10,6 +10,7 @@ const router = useRouter()
 const config = useRuntimeConfig()
 const toast = useToast()
 const { user } = useSanctum()
+const { formatDate } = useBranding()
 
 const slug = route.params.slug as string
 
@@ -31,10 +32,10 @@ interface Address {
   label: string
   address_line_1: string
   address_line_2: string | null
-  city: string
-  state: string
-  pincode: string
-  country: string
+  city: string | Record<string, unknown> | null
+  state: string | Record<string, unknown> | null
+  pincode: string | number | null
+  country: string | Record<string, unknown> | null
   default: boolean
 }
 
@@ -86,7 +87,7 @@ watch(addresses, (addrs) => {
 
 const addressOptions = computed(() => {
   return addresses.value.map((addr: Address) => ({
-    label: `${addr.label} - ${addr.address_line_1}, ${addr.city}`,
+    label: `${addr.label} - ${addr.address_line_1}${getAddressPartLabel(addr.city) ? `, ${getAddressPartLabel(addr.city)}` : ''}`,
     value: addr.id
   }))
 })
@@ -113,6 +114,8 @@ function removeSkill(index: number) {
 
 const submitting = ref(false)
 const validationErrors = ref<Record<string, string[]>>({})
+const referenceName = ref('')
+const referenceContact = ref('')
 
 async function submitApplication() {
   if (submitting.value) return
@@ -135,6 +138,13 @@ async function submitApplication() {
     const payload: Record<string, unknown> = {
       guardian_name: guardianName.value,
       address_id: selectedAddressId.value
+    }
+
+    if (referenceName.value.trim()) {
+      payload.reference_name = referenceName.value.trim()
+    }
+    if (referenceContact.value.trim()) {
+      payload.reference_contact = referenceContact.value.trim()
     }
 
     const validEducations = educations.value.filter(
@@ -180,7 +190,7 @@ async function submitApplication() {
       router.push(`/career/applications/${response.data.application.uuid}`)
     }
   } catch (err: unknown) {
-    const error = err as { data?: { message?: string; errors?: Record<string, string[]> } }
+    const error = err as { data?: { message?: string, errors?: Record<string, string[]> } }
 
     if (error.data?.errors) {
       validationErrors.value = error.data.errors
@@ -197,13 +207,44 @@ async function submitApplication() {
 }
 
 // Format full address for display
+function getAddressPartLabel(value: unknown): string {
+  if (value === null || value === undefined) return ''
+  if (typeof value === 'string') return value
+  if (typeof value === 'number') return value.toString()
+  if (typeof value === 'object') {
+    const v = value as Record<string, unknown>
+    const candidates = [v.name, v.label, v.title, v.value]
+    const first = candidates.find(c => typeof c === 'string' && c.trim().length > 0) as string | undefined
+    return first || ''
+  }
+  return ''
+}
+
 function formatFullAddress(addr: Address | null): string {
   if (!addr) return ''
-  const parts = [addr.address_line_1]
+  const parts: string[] = []
+  if (addr.address_line_1) parts.push(addr.address_line_1)
   if (addr.address_line_2) parts.push(addr.address_line_2)
-  parts.push(addr.city, addr.state, addr.pincode)
-  if (addr.country) parts.push(addr.country)
-  return parts.join(', ')
+  const city = getAddressPartLabel(addr.city)
+  const state = getAddressPartLabel(addr.state)
+  const pincode = getAddressPartLabel(addr.pincode)
+  const country = getAddressPartLabel(addr.country)
+  if (city) parts.push(city)
+  if (state) parts.push(state)
+  if (pincode) parts.push(pincode)
+  if (country) parts.push(country)
+  return parts.filter(Boolean).join(', ')
+}
+
+function formatGender(gender: string | null | undefined): string {
+  if (!gender) return 'Not provided'
+  const map: Record<string, string> = { male: 'Male', female: 'Female', other: 'Other' }
+  return map[gender] || gender
+}
+
+function formatDob(dob: string | null | undefined): string {
+  if (!dob) return 'Not provided'
+  return formatDate(dob, 'medium')
 }
 </script>
 
@@ -320,11 +361,17 @@ function formatFullAddress(addr: Address | null): string {
               </p>
             </div>
 
-            <!-- Member ID -->
             <div class="space-y-1">
-              <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Member ID</label>
+              <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Gender</label>
               <p class="text-base font-medium text-gray-900 dark:text-white">
-                {{ typedUser?.referral_code || 'N/A' }}
+                {{ formatGender(typedUser?.gender) }}
+              </p>
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Date of Birth</label>
+              <p class="text-base font-medium text-gray-900 dark:text-white">
+                {{ formatDob(typedUser?.dob) }}
               </p>
             </div>
           </div>
@@ -340,18 +387,29 @@ function formatFullAddress(addr: Address | null): string {
         <!-- Address Section -->
         <UCard>
           <template #header>
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-green-600 dark:text-green-400" />
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                  <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Communication Address
+                  </h2>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Select the address for official correspondence
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Communication Address
-                </h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  Select the address for official correspondence
-                </p>
-              </div>
+
+              <UButton
+                to="/addresses"
+                variant="soft"
+                size="sm"
+                icon="i-lucide-plus"
+              >
+                Add Address
+              </UButton>
             </div>
           </template>
 
@@ -361,6 +419,7 @@ function formatFullAddress(addr: Address | null): string {
               label="Select Address"
               :error="validationErrors.address_id?.[0]"
               required
+              class="w-full"
             >
               <USelect
                 v-model="selectedAddressId"
@@ -368,6 +427,7 @@ function formatFullAddress(addr: Address | null): string {
                 placeholder="Choose an address"
                 size="lg"
                 :disabled="submitting"
+                :ui="{ base: 'w-full' }"
               />
             </UFormField>
 
@@ -431,12 +491,15 @@ function formatFullAddress(addr: Address | null): string {
               hint="Required for verification purposes"
               :error="validationErrors.guardian_name?.[0]"
               required
+              class="w-full"
             >
               <UInput
                 v-model="guardianName"
                 placeholder="Enter guardian or parent name"
                 size="lg"
                 :disabled="submitting"
+                class="w-full"
+                :ui="{ base: 'w-full' }"
               />
             </UFormField>
 
@@ -582,6 +645,47 @@ function formatFullAddress(addr: Address | null): string {
               <p v-else class="text-sm text-gray-500 dark:text-gray-400 italic">
                 No skills added. Click "Add Skill" to showcase your abilities.
               </p>
+            </div>
+
+            <div>
+              <div class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                  Reference
+                </h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Add a reference contact (optional)
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <UFormField
+                  label="Reference Name"
+                  :error="validationErrors.reference_name?.[0]"
+                  class="w-full"
+                >
+                  <UInput
+                    v-model="referenceName"
+                    placeholder="Enter reference name"
+                    :disabled="submitting"
+                    class="w-full"
+                    :ui="{ base: 'w-full' }"
+                  />
+                </UFormField>
+
+                <UFormField
+                  label="Reference Contact"
+                  :error="validationErrors.reference_contact?.[0]"
+                  class="w-full"
+                >
+                  <UInput
+                    v-model="referenceContact"
+                    placeholder="Enter reference phone"
+                    :disabled="submitting"
+                    class="w-full"
+                    :ui="{ base: 'w-full' }"
+                  />
+                </UFormField>
+              </div>
             </div>
 
             <UDivider />

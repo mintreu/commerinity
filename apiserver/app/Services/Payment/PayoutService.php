@@ -555,12 +555,13 @@ final class PayoutService
     // ========================================
 
     /**
-     * Create beneficiary via the default provider
+     * Register beneficiary with payout provider
      *
-     * @param  array<string, mixed>  $data
+     * @param  BeneficiaryAccount  $beneficiary  The beneficiary account to register
+     * @param  string|null  $providerSlug  Optional provider slug override
      * @return array{success: bool, beneficiary_id?: string, message?: string}
      */
-    public function createBeneficiary(Wallet $wallet, array $data, ?string $providerSlug = null): array
+    public function createBeneficiary(BeneficiaryAccount $beneficiary, ?string $providerSlug = null): array
     {
         $provider = $providerSlug ? $this->getProvider($providerSlug) : $this->getDefaultProvider();
 
@@ -570,12 +571,13 @@ final class PayoutService
             return ['success' => false, 'message' => 'No payout provider available'];
         }
 
-        Log::info('Creating beneficiary via provider', [
+        Log::info('Registering beneficiary with provider', [
             'provider' => $provider->getSlug(),
-            'wallet_id' => $wallet->id,
+            'beneficiary_id' => $beneficiary->id,
+            'wallet_id' => $beneficiary->wallet_id,
         ]);
 
-        return $provider->createBeneficiary($wallet, $data);
+        return $provider->createBeneficiary($beneficiary);
     }
 
     /**
@@ -648,7 +650,7 @@ final class PayoutService
      */
     public function getBeneficiaries(Wallet $wallet): Collection
     {
-        return $wallet->beneficiaries()->orderByDesc('is_default')->orderByDesc('created_at')->get();
+        return $wallet->beneficiaryAccounts()->orderByDesc('is_default')->orderByDesc('created_at')->get();
     }
 
     /**
@@ -656,7 +658,7 @@ final class PayoutService
      */
     public function getDefaultBeneficiary(Wallet $wallet): ?BeneficiaryAccount
     {
-        return $wallet->beneficiaries()->where('is_default', true)->first();
+        return $wallet->beneficiaryAccounts()->where('is_default', true)->first();
     }
 
     /**

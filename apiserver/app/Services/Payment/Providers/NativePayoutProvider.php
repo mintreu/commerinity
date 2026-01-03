@@ -10,6 +10,7 @@ use App\Casts\PaymentMethodCast;
 use App\Casts\TransactionStatusCast;
 use App\Casts\TransactionTypeCast;
 use App\Models\BeneficiaryAccount;
+use App\Models\Integration;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Services\Payment\Contracts\PayoutProviderInterface;
@@ -227,43 +228,35 @@ final class NativePayoutProvider implements PayoutProviderInterface
     // ========================================
 
     /**
-     * Create beneficiary account (native = just store locally)
+     * Create beneficiary account (native = just store locally, auto-verify)
      *
-     * @param  array<string, mixed>  $data
+     * @param  BeneficiaryAccount $beneficiary  The beneficiary account to register
+     * @param  ?Integration  $integration  Optional integration override (unused for native)
      * @return array{success: bool, beneficiary_id?: string, message?: string}
      */
-    public function createBeneficiary(Wallet $wallet, array $data): array
+    public function createBeneficiary(BeneficiaryAccount $beneficiary, ?Integration $integration = null): array
     {
         try {
-            $type = BeneficiaryTypeCast::tryFrom($data['type'] ?? 'savings') ?? BeneficiaryTypeCast::SAVINGS;
-
-            $beneficiary = BeneficiaryAccount::create([
-                'wallet_id' => $wallet->id,
-                'type' => $type,
-                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
-                'account_number' => $data['account_number'] ?? null,
-                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
-                'bank_name' => $data['bank_name'] ?? null,
-                'bank_branch' => $data['bank_branch'] ?? null,
-                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
-                'status' => BeneficiaryStatusCast::ACTIVE, // Native provider auto-activates
-                'is_default' => $wallet->beneficiaries()->count() === 0,
+            // For native provider, just mark as verified (no external API)
+            $beneficiary->update([
+                'status' => BeneficiaryStatusCast::VERIFIED,
+                'provider_beneficiary_id' => 'NATIVE-' . $beneficiary->id,
             ]);
 
-            Log::info('Native beneficiary created', [
+            Log::info('Native beneficiary verified', [
                 'beneficiary_id' => $beneficiary->id,
-                'wallet_id' => $wallet->id,
+                'wallet_id' => $beneficiary->wallet_id,
             ]);
 
             return [
                 'success' => true,
                 'beneficiary_id' => (string) $beneficiary->id,
-                'message' => 'Beneficiary account created successfully',
+                'message' => 'Beneficiary account verified successfully',
             ];
         } catch (\Exception $e) {
-            Log::error('Native beneficiary creation failed', [
+            Log::error('Native beneficiary verification failed', [
                 'error' => $e->getMessage(),
-                'wallet_id' => $wallet->id,
+                'beneficiary_id' => $beneficiary->id,
             ]);
 
             return [

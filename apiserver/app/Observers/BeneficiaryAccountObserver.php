@@ -6,6 +6,7 @@ namespace App\Observers;
 
 use App\Casts\BeneficiaryStatusCast;
 use App\Models\BeneficiaryAccount;
+use App\Services\BeneficiaryAccountService;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -45,6 +46,8 @@ final class BeneficiaryAccountObserver
     {
         $originalStatus = $beneficiaryAccount->getOriginal('status');
         $newStatus = $beneficiaryAccount->status;
+
+        $this->syncToCashfree($beneficiaryAccount);
 
         // Log the update
         Log::info('Beneficiary account updated', [
@@ -125,6 +128,8 @@ final class BeneficiaryAccountObserver
      */
     private function syncToCashfree(BeneficiaryAccount $beneficiaryAccount): void
     {
+            BeneficiaryAccountService::make($beneficiaryAccount)->sync();
+
         // This would call CashfreePayoutProvider::createBeneficiary()
         // For now, just log - actual implementation in PayoutService
         Log::info('Syncing beneficiary to Cashfree', [

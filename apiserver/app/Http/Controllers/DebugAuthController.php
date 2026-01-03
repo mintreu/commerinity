@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\BeneficiaryAccount;
 use App\Models\User;
+use App\Services\BeneficiaryAccountService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -106,4 +108,15 @@ class DebugAuthController extends Controller
             ], 500);
         }
     }
+
+
+
+    public function index(Request $request)
+    {
+        $beneficiary = BeneficiaryAccount::find(1);
+
+        dd(BeneficiaryAccountService::make($beneficiary)->sync());
+    }
+
+
 }

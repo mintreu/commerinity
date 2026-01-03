@@ -18,22 +18,18 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
- * CashfreePayoutProvider - Cashfree Payouts API Integration
+ * CashfreePayoutProvider - Cashfree Payouts v2 API Integration
  *
  * Default payout provider for India.
  * Supports: Bank Transfer (IMPS/NEFT/RTGS), UPI
  *
- * @see https://docs.cashfree.com/reference/payout-apis
+ * @see https://www.cashfree.com/docs/api-reference/payouts/v2/payouts-api-v2-new
  */
 final class CashfreePayoutProvider implements PayoutProviderInterface
 {
-    private const SANDBOX_URL = 'https://payout-gamma.cashfree.com/payout/v1';
+    private const SANDBOX_URL = 'https://payout-gamma.cashfree.com/payout/v1.2';
 
-    private const PRODUCTION_URL = 'https://payout-api.cashfree.com/payout/v1';
-
-    private const TOKEN_CACHE_KEY = 'cashfree_payout_token';
-
-    private const TOKEN_CACHE_TTL = 300; // 5 minutes (token valid for 5 mins)
+    private const PRODUCTION_URL = 'https://payout-api.cashfree.com/payout/v1.2';
 
     private ?Integration $integration = null;
 
@@ -88,39 +84,47 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
             $beneficiary->update(['provider_beneficiary_id' => $addResult['bene_id']]);
         }
 
-        // Step 3: Request transfer
+        // Step 3: Request transfer using v2 API
         try {
-            $transferMode = $beneficiary->isUpi() ? 'upi' : 'banktransfer';
+            $payload = [
+                'transfer_id' => $request->transactionId,
+                'transfer_amount' => $request->getAmountInRupees(),
+                'bene_id' => $beneficiary->provider_beneficiary_id,
+                'remarks' => substr($request->description ?? $request->purpose ?? 'Payout', 0, 70),
+            ];
+
+            // Add transfer mode for bank transfers
+            if ($beneficiary->isBank()) {
+                // IMPS for amounts <= 200000, NEFT otherwise
+                $payload['transfer_mode'] = $request->getAmountInRupees() <= 200000 ? 'banktransfer' : 'banktransfer';
+            }
 
             $response = Http::withHeaders($this->getAuthHeaders($integration))
                 ->timeout(30)
-                ->post($this->getBaseUrl($integration).'/requestTransfer', [
-                    'beneId' => $beneficiary->provider_beneficiary_id,
-                    'amount' => $request->getAmountInRupees(),
-                    'transferId' => $request->transactionId,
-                    'transferMode' => $transferMode,
-                    'remarks' => $request->description ?? $request->purpose ?? 'Payout',
-                ]);
+                ->post($this->getBaseUrl($integration).'/transfers', $payload);
 
             $data = $response->json();
 
             if ($response->successful() && ($data['status'] ?? '') === 'SUCCESS') {
+                $transferData = $data['data'] ?? [];
+
                 Log::info('Cashfree payout initiated', [
                     'transfer_id' => $request->transactionId,
-                    'reference_id' => $data['data']['referenceId'] ?? null,
-                    'status' => $data['status'] ?? null,
+                    'cf_transfer_id' => $transferData['transfer_id'] ?? null,
+                    'status' => $transferData['transfer_status'] ?? null,
                 ]);
 
                 return PayoutResponse::success(
-                    status: PayoutResponse::STATUS_PROCESSING,
+                    status: $this->mapStatus($transferData['transfer_status'] ?? 'PENDING'),
                     message: 'Payout initiated successfully',
                     transactionId: $request->transactionId,
-                    providerPayoutId: $data['data']['referenceId'] ?? null,
-                    metadata: $data
+                    providerPayoutId: $transferData['cf_transfer_id'] ?? null,
+                    utrNumber: $transferData['transfer_utr'] ?? null,
+                    metadata: $transferData
                 );
             }
 
-            $errorMessage = $data['message'] ?? 'Transfer request failed';
+            $errorMessage = $data['message'] ?? $data['subCode'] ?? 'Transfer request failed';
             Log::error('Cashfree payout failed', [
                 'response' => $data,
                 'transfer_id' => $request->transactionId,
@@ -138,7 +142,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
     }
 
     /**
-     * Check payout status
+     * Check payout status using v2 API
      */
     public function checkStatus(string $payoutId): PayoutResponse
     {
@@ -150,18 +154,16 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
         try {
             $response = Http::withHeaders($this->getAuthHeaders($integration))
                 ->timeout(30)
-                ->get($this->getBaseUrl($integration).'/getTransferStatus', [
-                    'transferId' => $payoutId,
-                ]);
+                ->get($this->getBaseUrl($integration).'/transfers/'.$payoutId);
 
             if ($response->successful()) {
                 $data = $response->json();
-                $transfer = $data['data']['transfer'] ?? [];
+                $transfer = $data['data'] ?? [];
 
-                $providerStatus = $transfer['status'] ?? 'UNKNOWN';
+                $providerStatus = $transfer['transfer_status'] ?? 'UNKNOWN';
                 $status = $this->mapStatus($providerStatus);
 
-                Log::info('Cashfree payout status', [
+                Log::info('Cashfree payout status retrieved', [
                     'transfer_id' => $payoutId,
                     'provider_status' => $providerStatus,
                     'mapped_status' => $status,
@@ -171,8 +173,8 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
                     status: $status,
                     message: 'Status retrieved',
                     transactionId: $payoutId,
-                    providerPayoutId: $transfer['referenceId'] ?? null,
-                    utrNumber: $transfer['utr'] ?? null,
+                    providerPayoutId: $transfer['cf_transfer_id'] ?? null,
+                    utrNumber: $transfer['transfer_utr'] ?? null,
                     metadata: $transfer
                 );
             }
@@ -313,69 +315,58 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
     /**
      * Create beneficiary account with Cashfree
      *
-     * @param  array<string, mixed>  $data
+     * @param  BeneficiaryAccount $beneficiary  The beneficiary account to register
+     * @param  ?Integration  $integration  Optional integration override
      * @return array{success: bool, beneficiary_id?: string, message?: string}
      */
-    public function createBeneficiary(Wallet $wallet, array $data): array
+    public function createBeneficiary(BeneficiaryAccount $beneficiary, ?Integration $integration = null): array
     {
-        $integration = $this->getIntegration();
+        $integration = $integration ?? $this->getIntegration();
         if (! $integration) {
             return ['success' => false, 'message' => 'Cashfree Payouts not configured'];
         }
 
         try {
-            $type = BeneficiaryTypeCast::tryFrom($data['type'] ?? 'savings') ?? BeneficiaryTypeCast::SAVINGS;
-
-            // Create local beneficiary record first
-            $beneficiary = BeneficiaryAccount::create([
-                'wallet_id' => $wallet->id,
-                'type' => $type,
-                'holder_name' => $data['holder_name'] ?? $data['account_name'] ?? null,
-                'account_number' => $data['account_number'] ?? null,
-                'ifsc_code' => isset($data['ifsc']) ? strtoupper($data['ifsc']) : (isset($data['ifsc_code']) ? strtoupper($data['ifsc_code']) : null),
-                'bank_name' => $data['bank_name'] ?? null,
-                'bank_branch' => $data['bank_branch'] ?? null,
-                'upi_id' => $data['upi_id'] ?? $data['upi_handle'] ?? null,
-                'status' => BeneficiaryStatusCast::PENDING,
-                'is_default' => $wallet->beneficiaries()->count() === 0,
-            ]);
-
-            // Register with Cashfree
+            // Register existing beneficiary with Cashfree
             $result = $this->addBeneficiary($beneficiary, $integration);
 
             if ($result['success']) {
                 $beneficiary->update([
                     'provider_beneficiary_id' => $result['bene_id'],
-                    'status' => BeneficiaryStatusCast::ACTIVE,
+                    'status' => BeneficiaryStatusCast::VERIFIED,
+                ]);
+
+                Log::info('Cashfree beneficiary registered', [
+                    'beneficiary_id' => $beneficiary->id,
+                    'provider_bene_id' => $result['bene_id'],
                 ]);
 
                 return [
                     'success' => true,
                     'beneficiary_id' => (string) $beneficiary->id,
-                    'message' => 'Beneficiary created and registered with Cashfree',
+                    'message' => 'Beneficiary registered with Cashfree successfully',
                 ];
             }
 
-            // Cashfree registration failed - keep as pending
+            // Cashfree registration failed
             Log::warning('Cashfree beneficiary registration failed', [
                 'beneficiary_id' => $beneficiary->id,
                 'error' => $result['message'],
             ]);
 
             return [
-                'success' => true,
-                'beneficiary_id' => (string) $beneficiary->id,
-                'message' => 'Beneficiary created locally but registration pending: '.$result['message'],
+                'success' => false,
+                'message' => 'Failed to register with Cashfree: '.$result['message'],
             ];
         } catch (\Exception $e) {
             Log::error('Cashfree createBeneficiary exception', [
                 'error' => $e->getMessage(),
-                'wallet_id' => $wallet->id,
+                'beneficiary_id' => $beneficiary->id,
             ]);
 
             return [
                 'success' => false,
-                'message' => 'Failed to create beneficiary: '.$e->getMessage(),
+                'message' => 'Failed to register beneficiary: '.$e->getMessage(),
             ];
         }
     }
@@ -419,7 +410,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
                 if ($result['success']) {
                     $beneficiary->update([
                         'provider_beneficiary_id' => $result['bene_id'],
-                        'status' => BeneficiaryStatusCast::ACTIVE,
+                        'status' => BeneficiaryStatusCast::VERIFIED,
                     ]);
                 }
             }
@@ -541,64 +532,18 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
     }
 
     /**
-     * Get auth headers with bearer token
+     * Get auth headers for Cashfree Payouts v2
+     *
+     * v2 uses X-Client-Id and X-Client-Secret headers (no bearer token needed)
      */
     private function getAuthHeaders(Integration $integration): array
     {
-        $token = $this->getBearerToken($integration);
-
         return [
-            'Authorization' => 'Bearer '.$token,
+            'X-Client-Id' => $integration->getCredential('app_id'),
+            'X-Client-Secret' => $integration->getCredential('secret_key'),
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
         ];
-    }
-
-    /**
-     * Get bearer token (cached)
-     */
-    private function getBearerToken(Integration $integration): ?string
-    {
-        $cacheKey = self::TOKEN_CACHE_KEY.'_'.$integration->id;
-
-        return Cache::remember($cacheKey, self::TOKEN_CACHE_TTL, function () use ($integration) {
-            return $this->authenticate($integration);
-        });
-    }
-
-    /**
-     * Authenticate with Cashfree to get bearer token
-     */
-    private function authenticate(Integration $integration): ?string
-    {
-        try {
-            $response = Http::timeout(30)->post($this->getBaseUrl($integration).'/authorize', [
-                'clientId' => $integration->getCredential('app_id'),
-                'clientSecret' => $integration->getCredential('secret_key'),
-            ]);
-
-            if ($response->successful()) {
-                $token = $response->json()['data']['token'] ?? null;
-
-                if ($token) {
-                    Log::info('Cashfree payout auth successful', [
-                        'integration_id' => $integration->id,
-                    ]);
-
-                    return $token;
-                }
-            }
-
-            Log::error('Cashfree payout auth failed', [
-                'response' => $response->json(),
-            ]);
-
-            return null;
-        } catch (\Exception $e) {
-            Log::error('Cashfree payout auth exception', ['error' => $e->getMessage()]);
-
-            return null;
-        }
     }
 
     /**
@@ -623,7 +568,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
     {
         if ($this->integration === null) {
             $this->integration = Integration::query()
-                ->bySlug('cashfree')
+                ->bySlug('cashfree-payout')
                 ->ofType(Integration::TYPE_PAYOUT)
                 ->active()
                 ->first();

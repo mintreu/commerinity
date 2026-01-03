@@ -1,5 +1,16 @@
 import type { Ref } from 'vue'
 
+export interface PlanLevel {
+  uuid: string
+  name: string
+  level_number: number
+  slug: string
+  team_member_limit: number
+  validity_days: number
+  badge_icon: string | null
+  badge_color: string | null
+}
+
 export interface SubscriptionPlan {
   uuid: string
   name: string
@@ -17,6 +28,7 @@ export interface SubscriptionPlan {
   benefits: string[]
   max_team_members: number | null
   is_default: boolean
+  levels?: PlanLevel[]
 }
 
 export interface SubscriptionStage {
@@ -126,6 +138,7 @@ export const useSubscription = () => {
         method: 'POST',
         body: {
           plan_uuid: planUuid,
+          payment_method: 'wallet',
           pin,
         },
       })

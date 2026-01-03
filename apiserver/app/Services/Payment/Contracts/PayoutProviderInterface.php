@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Payment\Contracts;
 
 use App\Models\BeneficiaryAccount;
+use App\Models\Integration;
 use App\Models\Wallet;
 use App\Services\Payment\DTOs\PayoutRequest;
 use App\Services\Payment\DTOs\PayoutResponse;
@@ -58,10 +59,11 @@ interface PayoutProviderInterface
     /**
      * Create beneficiary account with provider
      *
-     * @param  array<string, mixed>  $data  Account details
+     * @param  BeneficiaryAccount $beneficiary  The beneficiary account to register
+     * @param  ?Integration  $integration  Optional integration override
      * @return array{success: bool, beneficiary_id?: string, message?: string}
      */
-    public function createBeneficiary(Wallet $wallet, array $data): array;
+    public function createBeneficiary(BeneficiaryAccount $beneficiary, ?Integration $integration = null): array;
 
     /**
      * Update beneficiary account with provider

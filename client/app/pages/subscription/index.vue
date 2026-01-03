@@ -20,6 +20,60 @@ const pinInput = ref('')
 const showPinModal = ref(false)
 const subscribing = ref(false)
 
+const entryPlan = computed(() => plans.value[0] || null)
+const currentStageSlug = computed(() => status.value?.subscription?.stage?.slug || null)
+const activeStageSlug = computed(() => {
+  if (status.value?.has_subscription && currentStageSlug.value) return currentStageSlug.value
+  return entryPlan.value?.slug || null
+})
+
+const activePlan = computed(() => {
+  if (!activeStageSlug.value) return entryPlan.value
+  return plans.value.find(p => p.slug === activeStageSlug.value) || entryPlan.value
+})
+
+const activePlanLevels = computed(() => {
+  const levels = activePlan.value?.levels || []
+  return [...levels].sort((a, b) => (a.level_number || 0) - (b.level_number || 0))
+})
+
+const entryLevelName = computed(() => {
+  const levels = entryPlan.value?.levels || []
+  const l1 = levels.find(l => l.level_number === 1) || levels[0]
+  return l1?.name || 'Level 1'
+})
+
+const getStageNumber = (slug: string) => {
+  const idx = plans.value.findIndex(p => p.slug === slug)
+  return idx >= 0 ? idx + 1 : 1
+}
+
+const isCurrentPlan = (plan: any) => {
+  return Boolean(status.value?.has_subscription && currentStageSlug.value && plan.slug === currentStageSlug.value)
+}
+
+const isEligiblePlan = (plan: any) => {
+  if (!status.value?.can_subscribe) return false
+  if (!entryPlan.value) return false
+  return plan.slug === entryPlan.value.slug
+}
+
+const stageRoadmapPlans = computed(() => {
+  if (!plans.value.length) return []
+
+  const startIndex = Math.max(0, plans.value.findIndex(p => p.slug === activeStageSlug.value))
+  const slice = plans.value.slice(startIndex, startIndex + 3)
+
+  return slice.map((p) => {
+    const isActive = p.slug === activeStageSlug.value
+    return {
+      ...p,
+      stage_number: getStageNumber(p.slug),
+      state: isActive ? 'active' : 'inactive',
+    }
+  })
+})
+
 onMounted(async () => {
   await Promise.all([
     fetchPlans(),
@@ -35,6 +89,15 @@ const loadHistory = async () => {
 }
 
 const selectPlan = (plan: any) => {
+  if (status.value?.can_subscribe && !isEligiblePlan(plan)) {
+    toast.add({
+      title: 'Stage Locked',
+      description: `New memberships start from Stage 1 (${entryPlan.value?.name || 'Starter'}) at Level 1 (${entryLevelName.value}).`,
+      color: 'warning',
+      icon: 'i-lucide-lock'
+    })
+    return
+  }
   if (!status.value?.can_subscribe) {
     toast.add({
       title: 'Current Plan Active',
@@ -54,6 +117,16 @@ const handleSubscribe = async () => {
   subscribing.value = true
   try {
     const response = await subscribe(selectedPlan.value.uuid, pinInput.value)
+    if (response?.requires_pin_setup) {
+      toast.add({
+        title: 'PIN Required',
+        description: 'Please set up your wallet PIN to proceed with payments.',
+        color: 'warning',
+        icon: 'i-lucide-shield-alert'
+      })
+      navigateTo('/wallet/setup-pin')
+      return
+    }
     if (response?.success) {
       toast.add({
         title: 'Subscription Active!',
@@ -66,7 +139,15 @@ const handleSubscribe = async () => {
       selectedPlan.value = null
       await fetchStatus() // Refresh subscription status
       await fetchWallet() // Refresh wallet balance
+      return
     }
+
+    toast.add({
+      title: 'Subscription Failed',
+      description: response?.message || 'Failed to activate subscription.',
+      color: 'error',
+      icon: 'i-lucide-alert-circle'
+    })
   }
   catch (err: any) {
     const errorMessage = err.data?.message || 'Failed to activate subscription.'
@@ -253,85 +334,164 @@ const tabs = [
         leave-active-class="animate-out fade-out slide-out-to-top-4 duration-200"
       >
         <!-- Plans Grid -->
-        <div v-if="activeTab === 'plans'" key="plans-content" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <div v-if="isLoading" class="col-span-full h-96 flex items-center justify-center">
-            <div class="relative">
-              <div class="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
-              <UIcon name="i-lucide-crown" class="absolute inset-0 m-auto w-6 h-6 text-primary-500" />
-            </div>
-          </div>
-
-          <template v-else>
-            <div
-              v-for="plan in plans"
-              :key="plan.uuid"
-              class="group relative flex flex-col glass-card p-0 overflow-hidden hover:scale-[1.02] transition-all duration-500"
-              :class="plan.is_default ? 'ring-2 ring-primary-500 shadow-2xl shadow-primary-500/10' : 'hover:border-slate-300 dark:hover:border-slate-600'"
-            >
-              <!-- Plan Visual Header -->
-              <div class="h-24 bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-900 p-6 flex justify-between items-start">
-                <div class="p-3 bg-white dark:bg-slate-700 rounded-2xl shadow-lg shadow-black/5">
-                  <UIcon :name="plan.pv > 500 ? 'i-lucide-gem' : 'i-lucide-zap'" class="w-8 h-8 text-primary-500" />
-                </div>
-                <UBadge v-if="plan.is_default" color="primary" variant="solid" class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest">
-                  Best Value
-                </UBadge>
+        <div v-if="activeTab === 'plans'" key="plans-content" class="space-y-8">
+          <div class="glass-card p-6 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div class="space-y-1">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Applicable Stage & Entry Level</p>
+                <p class="text-lg font-black text-slate-900 dark:text-white">
+                  Stage {{ activeStageSlug ? getStageNumber(activeStageSlug) : 1 }}
+                  <span class="text-slate-400 font-bold">·</span>
+                  {{ status?.has_subscription ? (status.subscription?.stage?.name || '—') : (entryPlan?.name || '—') }}
+                </p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                  Entry level is <span class="font-black text-primary-600 dark:text-primary-400">Level 1 ({{ entryLevelName }})</span>. Unlock higher levels within the same stage as your team grows.
+                </p>
               </div>
 
-              <!-- Content -->
-              <div class="flex-1 p-8 pt-0 -mt-8">
-                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-black/5 border border-slate-100 dark:border-slate-700/50">
-                  <h3 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ plan.name }}</h3>
-                  <div class="flex items-baseline gap-1 mb-4">
-                    <span class="text-3xl font-black text-slate-900 dark:text-white">{{ plan.price_formatted }}</span>
-                    <span class="text-slate-400 text-sm font-medium">/ year</span>
-                  </div>
-
-                  <div class="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center justify-between text-sm">
-                      <span class="text-slate-500 font-medium">Personal BP</span>
-                      <span class="font-black text-primary-600 dark:text-primary-400">{{ plan.pv }} PV</span>
-                    </div>
-                    <div v-if="plan.max_team_members" class="flex items-center justify-between text-sm">
-                      <span class="text-slate-500 font-medium">Net Capacity</span>
-                      <span class="font-black text-slate-900 dark:text-white">{{ plan.max_team_members }} Members</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mt-8 space-y-4">
-                  <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Features & Benefits</h4>
-                  <ul class="space-y-3">
-                    <li v-for="benefit in plan.benefits" :key="benefit" class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400 group/item">
-                      <div class="mt-1 w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover/item:scale-110 transition-transform">
-                        <UIcon name="i-lucide-check" class="w-3 h-3" />
-                      </div>
-                      <span class="flex-1">{{ benefit }}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="p-8 pt-0">
-                <UButton
-                  block
-                  size="xl"
-                  :color="!status?.can_subscribe ? 'neutral' : 'primary'"
-                  class="rounded-2xl font-black py-4 shadow-lg active:scale-95 transition-all"
-                  :disabled="!status?.can_subscribe"
-                  @click="selectPlan(plan)"
+              <div v-if="activePlanLevels.length" class="flex flex-wrap gap-2">
+                <span
+                  v-for="(lvl, idx) in activePlanLevels"
+                  :key="lvl.uuid"
+                  class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
+                  :class="idx === 0
+                    ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 border-primary-500/20'
+                    : 'bg-white/30 dark:bg-slate-800/30 text-slate-400 border-slate-200/50 dark:border-slate-700/50 opacity-70'"
                 >
-                  <template #leading v-if="!status?.can_subscribe">
-                    <UIcon name="i-lucide-lock" />
-                  </template>
-                  {{ !status?.can_subscribe ? 'Current Selection' : 'Activate Membership' }}
-                </UButton>
-                <p class="text-[10px] text-center text-slate-400 mt-4 uppercase font-bold tracking-widest">
-                  Secure checkout with wallet credits
+                  {{ lvl.name }}
+                </span>
+              </div>
+            </div>
+
+            <div v-if="stageRoadmapPlans.length" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+              <div
+                v-for="rp in stageRoadmapPlans"
+                :key="rp.uuid"
+                class="rounded-2xl p-4 border backdrop-blur-md transition-all"
+                :class="rp.state === 'active'
+                  ? 'bg-primary-500/10 border-primary-500/20'
+                  : 'bg-white/30 dark:bg-slate-800/30 border-slate-200/50 dark:border-slate-700/50 opacity-70'"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Stage {{ rp.stage_number }}</span>
+                  <span class="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">{{ rp.price_formatted }}</span>
+                </div>
+                <p class="font-black text-slate-900 dark:text-white leading-tight">{{ rp.name }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-widest mt-1" :class="rp.state === 'active' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'">
+                  {{ rp.state === 'active' ? 'Active' : 'Inactive' }}
                 </p>
               </div>
             </div>
-          </template>
+          </div>
+
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div v-if="isLoading" class="col-span-full h-96 flex items-center justify-center">
+              <div class="relative">
+                <div class="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+                <UIcon name="i-lucide-crown" class="absolute inset-0 m-auto w-6 h-6 text-primary-500" />
+              </div>
+            </div>
+
+            <template v-else>
+              <div
+                v-for="plan in plans"
+                :key="plan.uuid"
+                class="group relative flex flex-col glass-card p-0 overflow-hidden hover:scale-[1.02] transition-all duration-500"
+                :class="plan.is_default ? 'ring-2 ring-primary-500 shadow-2xl shadow-primary-500/10' : 'hover:border-slate-300 dark:hover:border-slate-600'"
+              >
+                <div class="h-24 bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-900 p-6 flex justify-between items-start">
+                  <div class="p-3 bg-white dark:bg-slate-700 rounded-2xl shadow-lg shadow-black/5">
+                    <UIcon :name="plan.pv > 500 ? 'i-lucide-gem' : 'i-lucide-zap'" class="w-8 h-8 text-primary-500" />
+                  </div>
+                  <div class="flex flex-col items-end gap-2">
+                    <UBadge color="neutral" variant="soft" class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest">
+                      Stage {{ getStageNumber(plan.slug) }}
+                    </UBadge>
+                    <UBadge v-if="isCurrentPlan(plan)" color="success" variant="solid" class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest">
+                      Current
+                    </UBadge>
+                    <UBadge v-else-if="plan.is_default" color="primary" variant="solid" class="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest">
+                      Best Value
+                    </UBadge>
+                  </div>
+                </div>
+
+                <div class="flex-1 p-8 pt-0 -mt-8">
+                  <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-xl shadow-black/5 border border-slate-100 dark:border-slate-700/50">
+                    <h3 class="text-xl font-black text-slate-900 dark:text-white mb-1">{{ plan.name }}</h3>
+                    <div class="flex items-baseline gap-1 mb-4">
+                      <span class="text-3xl font-black text-slate-900 dark:text-white">{{ plan.price_formatted }}</span>
+                      <span class="text-slate-400 text-sm font-medium">/ year</span>
+                    </div>
+
+                    <div class="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-700">
+                      <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 font-medium">Entry Level</span>
+                        <span class="font-black text-primary-600 dark:text-primary-400">
+                          {{ (plan.levels?.find(l => l.level_number === 1) || plan.levels?.[0])?.name || 'Level 1' }}
+                        </span>
+                      </div>
+                      <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 font-medium">Personal BP</span>
+                        <span class="font-black text-primary-600 dark:text-primary-400">{{ plan.pv }} PV</span>
+                      </div>
+                      <div v-if="plan.max_team_members" class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 font-medium">Net Capacity</span>
+                        <span class="font-black text-slate-900 dark:text-white">{{ plan.max_team_members }} Members</span>
+                      </div>
+                      <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 font-medium">Base Price</span>
+                        <span class="font-black text-slate-900 dark:text-white">{{ plan.base_price_formatted }}</span>
+                      </div>
+                      <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 font-medium">Tax</span>
+                        <span class="font-black text-slate-900 dark:text-white">{{ plan.tax_amount_formatted }}</span>
+                      </div>
+                      <div v-if="plan.discount && plan.discount > 0" class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500 font-medium">Discount</span>
+                        <span class="font-black text-emerald-600 dark:text-emerald-400">-{{ plan.discount_formatted }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-8 space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Features & Benefits</h4>
+                    <ul class="space-y-3">
+                      <li v-for="benefit in plan.benefits" :key="benefit" class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400 group/item">
+                        <div class="mt-1 w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                          <UIcon name="i-lucide-check" class="w-3 h-3" />
+                        </div>
+                        <span class="flex-1">{{ benefit }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="p-8 pt-0">
+                  <UButton
+                    block
+                    size="xl"
+                    :color="isEligiblePlan(plan) ? 'primary' : 'neutral'"
+                    class="rounded-2xl font-black py-4 shadow-lg active:scale-95 transition-all"
+                    :disabled="!isEligiblePlan(plan)"
+                    @click="selectPlan(plan)"
+                  >
+                    <template #leading v-if="!isEligiblePlan(plan)">
+                      <UIcon name="i-lucide-lock" />
+                    </template>
+                    {{
+                      status?.can_subscribe
+                        ? (isEligiblePlan(plan) ? 'Activate Membership' : 'Not Available Yet')
+                        : (isCurrentPlan(plan) ? 'Current Selection' : 'Locked')
+                    }}
+                  </UButton>
+                  <p class="text-[10px] text-center text-slate-400 mt-4 uppercase font-bold tracking-widest">
+                    Secure checkout with wallet credits
+                  </p>
+                </div>
+              </div>
+            </template>
+          </div>
         </div>
 
         <!-- Status Details -->
@@ -530,7 +690,7 @@ const tabs = [
           </UButton>
         </div>
         <p class="text-[10px] text-slate-400 mt-6 uppercase font-black tracking-widest">
-          Secured by Mintreu Vault System
+          Secured by Wallet Vault System
         </p>
       </div>
     </UModal>
