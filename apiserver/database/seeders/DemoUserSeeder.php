@@ -83,5 +83,61 @@ final class DemoUserSeeder extends Seeder
             'email_verified_at' => now(),
             'onboarded' => true,
         ]);
+
+
+
+
+        // Seed Extra Users
+
+        User::create([
+            'name' => 'Partha',
+            'mobile' => '+919876543215',
+            'email' => 'partha@demo.com',
+            'password' => Hash::make('password'),
+            'type' => UserTypeCast::REGULAR->value,
+            'status' => UserStatusCast::ACTIVE->value,
+            'mobile_verified_at' => now(),
+            'email_verified_at' => now(),
+            'onboarded' => true,
+        ]);
+
+
+        User::create([
+            'name' => 'Saneep',
+            'mobile' => '+919876543212',
+            'email' => 'sandeep@demo.com',
+            'password' => Hash::make('password'),
+            'type' => UserTypeCast::REGULAR->value,
+            'status' => UserStatusCast::ACTIVE->value,
+            'mobile_verified_at' => now(),
+            'email_verified_at' => now(),
+            'onboarded' => true,
+        ]);
+
+
+        User::create([
+            'name' => 'Akash',
+            'mobile' => '+919876543209',
+            'email' => 'akash@demo.com',
+            'password' => Hash::make('password'),
+            'type' => UserTypeCast::REGULAR->value,
+            'status' => UserStatusCast::ACTIVE->value,
+            'mobile_verified_at' => now(),
+            'email_verified_at' => now(),
+            'onboarded' => true,
+        ]);
+
+        User::create([
+            'name' => 'Saheb',
+            'mobile' => '+919876543218',
+            'email' => 'saheb@demo.com',
+            'password' => Hash::make('password'),
+            'type' => UserTypeCast::REGULAR->value,
+            'status' => UserStatusCast::ACTIVE->value,
+            'mobile_verified_at' => now(),
+            'email_verified_at' => now(),
+            'onboarded' => true,
+        ]);
+
     }
 }
