@@ -70,6 +70,10 @@ Route::middleware('throttle:password-reset')->group(function () {
 Route::post('/auth/reset-password', [PasswordResetController::class, 'resetPassword']);
 Route::post('/auth/reset-password-mobile', [PasswordResetController::class, 'resetPasswordMobile']);
 
+// Logout (optional auth - works with or without token)
+Route::post('/auth/logout', [LoginController::class, 'logout']);
+Route::post('/auth/logout-all', [LoginController::class, 'logoutAll']);
+
 // ========================================
 // Protected Routes
 // ========================================
@@ -103,10 +107,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kyc/status', [KycController::class, 'status']);
     Route::post('/kyc/submit', [KycController::class, 'submit']);
     Route::post('/kyc/{kyc}/resubmit', [KycController::class, 'resubmit']);
-
-    // Logout
-    Route::post('/auth/logout', [LoginController::class, 'logout']);
-    Route::post('/auth/logout-all', [LoginController::class, 'logoutAll']);
 
     // ========================================
     // Notifications

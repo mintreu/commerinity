@@ -137,8 +137,13 @@ final class LoginController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $this->authService->logout($request);
+        // Check if user is authenticated
+        if ($request->user()) {
+            $this->authService->logout($request);
+        }
 
+        // Always return success even if not authenticated
+        // This ensures frontend can clear local state
         return response()->json([
             'success' => true,
             'message' => 'Logged out successfully',
