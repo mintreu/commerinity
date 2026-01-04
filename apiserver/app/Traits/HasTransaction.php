@@ -259,7 +259,7 @@ trait HasTransaction
         return $this->transaction()
             ->whereIn('status', [
                 TransactionStatusCast::PENDING,
-                TransactionStatusCast::SUCCESS,
+                TransactionStatusCast::COMPLETED,
             ])
             ->exists();
     }
@@ -272,7 +272,7 @@ trait HasTransaction
         return $this->transaction()
             ->whereIn('status', [
                 TransactionStatusCast::PENDING,
-                TransactionStatusCast::SUCCESS,
+                TransactionStatusCast::COMPLETED,
             ])
             ->first();
     }

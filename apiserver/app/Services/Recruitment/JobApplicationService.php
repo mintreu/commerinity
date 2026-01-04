@@ -259,8 +259,11 @@ final class JobApplicationService implements JobApplicationServiceInterface
             $wallet = $walletService->getOrCreateWallet($user);
 
             $clientBaseUrl = config('app.client_url');
-            $successUrl = "{$clientBaseUrl}/career/applications/{$application->uuid}?payment=success";
-            $failureUrl = "{$clientBaseUrl}/career/applications/{$application->uuid}?payment=failed";
+//            $successUrl = "{$clientBaseUrl}/career/applications/{$application->uuid}?payment=success";
+//            $failureUrl = "{$clientBaseUrl}/career/applications/{$application->uuid}?payment=failed";
+
+            $successUrl = config('app.client_url')."/career/applications/".$application->uuid."?payment=success";
+            $failureUrl = config('app.client_url')."/career/applications/".$application->uuid."?payment=failed";
 
             if ($paymentMethod == 'wallet' && $application->amount >= $wallet->balance)
             {
