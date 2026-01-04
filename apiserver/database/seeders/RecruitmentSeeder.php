@@ -618,5 +618,10 @@ class RecruitmentSeeder extends Seeder
         }
 
         $this->command->info("Seeded {$count} recruitment positions.");
+
+        Recruitment::factory(20)->create();
+
+        $this->command->info("Seeded 20  recruitment positions via factory.");
+
     }
 }

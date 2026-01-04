@@ -38,8 +38,8 @@ class RecruitmentFactory extends Factory
             'vacancy' => fake()->numberBetween(1, 10),
             'open_date' => now()->subDays(fake()->numberBetween(1, 30)),
             'close_date' => now()->addDays(fake()->numberBetween(7, 60)),
-            'is_payable' => false,
-            'fees' => 0,
+            'is_payable' => $payable = fake()->boolean(70),
+            'fees' => $payable ? 9900 : 0,
             'requirements' => [
                 'Minimum 12th pass or equivalent',
                 'Good communication skills',
