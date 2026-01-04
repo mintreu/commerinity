@@ -26,10 +26,10 @@ final class DemoUserSeeder extends Seeder
             'email' => 'regular@demo.com',
             'password' => Hash::make('password'),
             'type' => UserTypeCast::REGULAR->value,
-            'status' => UserStatusCast::ACTIVE->value,
+            'status' => UserStatusCast::DRAFT->value,
             'mobile_verified_at' => now(),
             'email_verified_at' => now(),
-            'onboarded' => true,
+            'onboarded' => false,
         ]);
 
         // 2. Member
