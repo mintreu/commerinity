@@ -70,6 +70,16 @@ const job = computed(() => recruitment.value?.data)
 const hasApplied = computed(() => applicationCheck.value?.data?.has_applied ?? false)
 const existingApplication = computed(() => applicationCheck.value?.data?.application)
 
+import GuestApplyForm from '~/components/career/GuestApplyForm.vue'
+
+const showGuestApplyForm = ref(false)
+
+const handleGuestApplication = async (formData: any) => {
+  console.log('Guest application submitted:', formData)
+  // Here I will call the backend API endpoint
+}
+
+
 </script>
 
 <template>

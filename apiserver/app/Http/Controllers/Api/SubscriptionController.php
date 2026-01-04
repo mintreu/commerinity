@@ -148,6 +148,10 @@ final class SubscriptionController extends Controller
             ], 400);
         }
 
+        // Check is there any transaction created or not for Subscription
+
+
+
         $stage = Stage::where('uuid', $request->input('plan_uuid'))
             ->where('is_active', true)
             ->first();
@@ -161,6 +165,7 @@ final class SubscriptionController extends Controller
 
         // Create subscription first (pending status)
         $subscription = $this->subscriptionService->createSubscription($user, $stage);
+
 
 
         // WALLET PAYMENT

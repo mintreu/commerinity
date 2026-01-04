@@ -143,6 +143,8 @@ trait HasTransaction
             $customerData = $this->parseCustomerData($customer);
 
 
+
+
             // 3. Create transaction record using MorphOne relationship from trait
             // Automatically sets transactionable_type and transactionable_id
             $transaction = $this->transaction()->create([
@@ -160,12 +162,15 @@ trait HasTransaction
                 'integration_id' => null,
                 'success_url' => $redirectSuccessUrl,
                 'failure_url' =>$redirectFailureUrl,
+                'transactionable_type' => get_class($this),
+                'transactionable_id' => $this->id,
                 'metadata' => [
                     'customer' => $customerData,
 //                    'redirect_success_url' => $redirectSuccessUrl,
 //                    'redirect_failure_url' => $redirectFailureUrl,
                 ],
             ]);
+
 
 
 

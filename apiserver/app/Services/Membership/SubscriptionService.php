@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Membership;
 
+use App\Casts\UserTypeCast;
 use App\Events\Affiliate\SubscriptionActivated;
 use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
@@ -89,22 +90,38 @@ final class SubscriptionService
 
                 $user = $subscription->user;
 
-                // 2. Create or update genealogy record
+                // 2. Upgrade user type from REGULAR to MEMBER
+                if ($user->type === UserTypeCast::REGULAR) {
+                    $user->update([
+                        'type' => UserTypeCast::MEMBER,
+                        'subscribed_at' => now(),
+                    ]);
+                    $user->refresh();
+
+                    Log::info('User type upgraded to MEMBER', [
+                        'user_id' => $user->id,
+                        'subscription_id' => $subscription->id,
+                        'old_type' => 'regular',
+                        'new_type' => 'member',
+                    ]);
+                }
+
+                // 3. Create or update genealogy record
                 $genealogy = $this->ensureGenealogyRecord($user, $subscription);
                 $results['genealogy'] = $genealogy;
 
-                // 3. Update upline counters
+                // 4. Update upline counters
                 AffiliateGenealogy::incrementUplineCounters($user->id);
 
-                // 4. Add sales to genealogy (personal + propagate to uplines)
+                // 5. Add sales to genealogy (personal + propagate to uplines)
                 $genealogy->addSales($subscription->amount, $subscription->stage?->pv ?? 0);
 
-                // 5. Process commissions
+                // 6. Process commissions
                 if ($processCommissions) {
                     $results['commissions'] = $this->commissionProcessor->processAndPersist($subscription);
                 }
 
-                // 6. Dispatch event for listeners
+                // 7. Dispatch event for listeners
                 SubscriptionActivated::dispatch($subscription, $results['commissions']);
             });
 

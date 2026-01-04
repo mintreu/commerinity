@@ -9,12 +9,10 @@
     >
       <div class="flex h-full flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <!-- Logo -->
-        <div class="flex h-16 items-center gap-3 px-6 border-b border-slate-200 dark:border-slate-800">
-          <div class="w-10 h-10 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/25">
-            <UIcon name="i-lucide-hexagon" class="w-5 h-5 text-white" />
-          </div>
+        <NuxtLink to="/" class="flex h-16 items-center gap-3 px-6 border-b border-slate-200 dark:border-slate-800">
+          <img src="/logo.png" :alt="appName" class="h-10 w-auto" />
           <span class="text-lg font-bold gradient-text-primary">{{ appName }}</span>
-        </div>
+        </NuxtLink>
 
         <!-- User Info (Compact) -->
         <div class="px-4 py-4 border-b border-slate-200 dark:border-slate-800">
@@ -110,12 +108,10 @@
         <div class="flex h-full flex-col bg-white dark:bg-slate-900 shadow-2xl">
           <!-- Close Button + Logo -->
           <div class="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center">
-                <UIcon name="i-lucide-hexagon" class="w-5 h-5 text-white" />
-              </div>
+            <NuxtLink to="/" class="flex items-center gap-3">
+              <img src="/logo.png" :alt="appName" class="h-10 w-auto" />
               <span class="text-lg font-bold gradient-text-primary">{{ appName }}</span>
-            </div>
+            </NuxtLink>
             <button
               class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors"
               @click="mobileMenuOpen = false"
@@ -245,6 +241,14 @@
 
           <!-- Right: Actions -->
           <div class="flex items-center gap-1">
+            <!-- Cart Button -->
+            <NuxtLink
+              to="/cart"
+              class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors active:bg-slate-100 dark:active:bg-slate-800"
+            >
+              <UIcon name="i-lucide-shopping-cart" class="w-5 h-5" />
+            </NuxtLink>
+
             <!-- Search -->
             <button class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors active:bg-slate-100 dark:active:bg-slate-800">
               <UIcon name="i-lucide-search" class="w-5 h-5" />

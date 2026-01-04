@@ -24,12 +24,7 @@
             to="/"
             class="flex items-center gap-2 group"
           >
-            <div class="w-10 h-10 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform">
-              <UIcon
-                name="i-lucide-hexagon"
-                class="h-6 w-6 text-white"
-              />
-            </div>
+            <img src="/logo.png" :alt="config.public.companyName" class="h-10 w-auto" />
             <span class="gradient-text-primary text-lg font-bold">{{ config.public.companyName }}</span>
           </NuxtLink>
 
@@ -56,12 +51,7 @@
               to="/"
               class="flex items-center gap-3 group"
             >
-              <div class="w-10 h-10 bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform">
-                <UIcon
-                  name="i-lucide-hexagon"
-                  class="h-6 w-6 text-white"
-                />
-              </div>
+              <img src="/logo.png" :alt="config.public.companyName" class="h-10 w-auto" />
               <div>
                 <span class="gradient-text-primary text-xl font-bold">{{ config.public.companyName }}</span>
                 <p class="text-xs text-slate-500 dark:text-slate-400 hidden lg:block">Your Shopping Destination</p>
@@ -223,7 +213,7 @@
           v-if="mobileMenuOpen"
           class="lg:hidden border-t border-slate-200/50 dark:border-slate-700/50"
         >
-          <div class="px-4 py-4 space-y-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div class="px-4 py-4 space-y-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl max-h-[calc(100vh-4rem)] overflow-y-auto z-50">
             <!-- Navigation Links -->
             <div class="mb-4">
               <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">

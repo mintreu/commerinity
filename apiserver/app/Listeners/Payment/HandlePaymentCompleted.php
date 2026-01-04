@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners\Payment;
 
 use App\Casts\JobApplicationStatusCast;
+use App\Casts\UserTypeCast;
 use App\Events\PaymentCompleted;
 use App\Models\Admin;
 use App\Models\Membership\UserSubscription;
@@ -103,6 +104,7 @@ final class HandlePaymentCompleted
      */
     private function handleSubscriptionPayment(mixed $transaction, UserSubscription $subscription): void
     {
+
         DB::transaction(function () use ($transaction, $subscription) {
             $subscription->load('user');
             $user = $subscription->user;
@@ -120,11 +122,16 @@ final class HandlePaymentCompleted
             }
 
             // 2. Activate subscription + trigger commissions
+            // NOTE: User type upgrade (REGULAR → MEMBER) happens inside activateSubscription()
             $subscriptionService = app(SubscriptionService::class);
             $subscriptionService->activateSubscription($subscription, $transaction->id);
 
+            // Refresh user to get updated type
+            $user->refresh();
+
             Log::info('Subscription activated via gateway payment', [
                 'user_id' => $user->id,
+                'user_type' => $user->type->value,
                 'subscription_id' => $subscription->id,
                 'transaction_id' => $transaction->uuid,
                 'payment_method' => $transaction->payment_method,
@@ -145,12 +152,18 @@ final class HandlePaymentCompleted
             $application->update([
                 'status' => JobApplicationStatusCast::Submitted,
                 'is_paid' => true,
+                'transaction_id' => $transaction->id,
                 'submitted_at' => now(),
             ]);
 
+            // Refresh to ensure we have the latest data
+            $application->refresh();
+
             Log::info('Recruitment fee paid, application submitted', [
                 'application_id' => $application->id,
+                'application_uuid' => $application->uuid,
                 'transaction_id' => $transaction->uuid,
+                'status' => $application->status->value,
             ]);
 
             // Notify HR/Admin  (Filament Notification)

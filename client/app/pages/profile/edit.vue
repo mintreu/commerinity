@@ -479,8 +479,6 @@ const handleUpdate = async () => {
   clearErrors()
 
   try {
-    const { useSanctumFetch } = useSanctum()  // this is wrong
-
     const response = await useSanctumFetch<{
       message: string
       data: { user: Record<string, unknown> }

@@ -21,7 +21,8 @@ return new class extends Migration
             $table->foreignId('wallet_id')->nullable()->constrained()->nullOnDelete();
 
             // Polymorphic relationship to source (Order, Subscription, etc.)
-            $table->nullableMorphs('transactionable');
+//            $table->nullableMorphs('transactionable'); // this is totally worng without transactionable no meanig of transaction
+            $table->morphs('transactionable');
 
             // Transaction details
             $table->string('type'); // credit, debit, refund, chargeback, adjustment, hold, release
