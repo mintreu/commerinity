@@ -27,7 +27,10 @@ final class OrderActionController extends Controller
      */
     public function checkout(Request $request): JsonResponse
     {
+
+
         $user = $request->user();
+
         $cartService = new CartService($user);
         $cartService->capture($request);
 
@@ -38,14 +41,22 @@ final class OrderActionController extends Controller
             ], 400);
         }
 
+
         $request->validate([
-            'payment_method' => ['required', 'string', 'in:wallet,cashfree,razorpay'],
-            'shipping_address_id' => ['required', 'integer', 'exists:addresses,id'],
-            'billing_address_id' => ['nullable', 'integer', 'exists:addresses,id'],
+            'payment_method' => ['required', 'string', 'in:wallet,online'],
+           'shipping_address_id' => ['required', 'string', 'exists:addresses,uuid'],
+            'billing_address_id' => ['nullable', 'string', 'exists:addresses,uuid'],
+            'billing_is_shipping' => ['boolean'],
+            'gift' => ['boolean'],
+            'pin' => ['nullable']
         ]);
 
-        $shippingAddress = $user->addresses()->find($request->shipping_address_id);
+
+
+        $shippingAddress = $user->addresses()->firstWhere('uuid',$request->shipping_address_id);
         $validation = $cartService->validate($shippingAddress);
+
+
 
         if (! $validation['valid']) {
             return response()->json([
@@ -56,10 +67,15 @@ final class OrderActionController extends Controller
         }
 
         $cartTotal = $validation['cart_total'];
-        $paymentMethod = PaymentMethodCast::from($request->payment_method);
+        $paymentMethod = $request->payment_method == 'wallet' ? $request->payment_method : PaymentMethodCast::CASHFREE->value;
+        $paymentMethod = PaymentMethodCast::tryFrom($paymentMethod);
+
+        $billingAddress = $request->billing_is_shipping ? $shippingAddress : $user->addresses()->firstWhere('uuid',$request->billing_address_id);
+
+
 
         try {
-            return DB::transaction(function () use ($user, $cartTotal, $paymentMethod, $request, $cartService) {
+            return DB::transaction(function () use ($user, $cartTotal, $paymentMethod, $request, $cartService,$shippingAddress,$billingAddress) {
                 // 1. Create Order
                 $order = Order::create([
                     'customerable_type' => get_class($user),
@@ -73,19 +89,21 @@ final class OrderActionController extends Controller
                     'total_bv' => $cartTotal['bv'],
                     'total_pv' => $cartTotal['pv'],
                     'total_reward_points' => $cartTotal['reward_points'],
-                    'shipping_address_id' => $request->shipping_address_id,
-                    'billing_address_id' => $request->billing_address_id ?? $request->shipping_address_id,
+                    'shipping_address_id' => $shippingAddress->id,
+                    'billing_address_id' => $billingAddress->id,
                     'quantity' => $cartTotal['total_quantity'],
                 ]);
 
+
+
                 // 2. Add Order Items
                 foreach ($cartTotal['items'] as $item) {
-                    $order->items()->create([
+                   $orderItem = $order->items()->create([
                         'product_id' => $item['product_id'],
                         'quantity' => $item['allocated_quantity'],
                         'unit_price' => $item['unit_price'],
                         'tax' => $item['item_tax'],
-                        'subtotal' => $item['item_total'],
+                        'total_price' => $item['item_total'],
                         'bv' => $item['bv'],
                         'pv' => $item['pv'],
                         'reward_points' => $item['reward_points'],
@@ -93,10 +111,12 @@ final class OrderActionController extends Controller
                             'stock_allocations' => $item['stock_entries'],
                         ],
                     ]);
+
                 }
 
+
                 // 3. Clear Cart
-                $cartService->clear();
+                $cartService->empty();
 
                 // 4. Handle Wallet Payment directly if chosen
                 if ($paymentMethod === PaymentMethodCast::WALLET) {
@@ -153,7 +173,7 @@ final class OrderActionController extends Controller
                     'data' => [
                         'order_uuid' => $order->uuid,
                         'order_number' => $order->order_number,
-                        'checkout_url' => route('checkout.show', ['transaction' => $transaction->uuid]),
+                        'checkout_url' => route('checkout', ['transaction' => $transaction->uuid]),
                         'transaction_uuid' => $transaction->uuid,
                     ]
                 ], 201);

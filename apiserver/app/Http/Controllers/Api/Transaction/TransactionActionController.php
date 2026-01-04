@@ -41,7 +41,7 @@ class TransactionActionController extends Controller
 
         // Dispatch PaymentCompleted event - triggers wallet balance update via HandlePaymentCompleted listener
         event(new \App\Events\PaymentCompleted($transaction));
-       
+
         // Redirect to success URL
         return redirect()->to($transaction->success_redirect_url ?? $transaction->success_url);
     }

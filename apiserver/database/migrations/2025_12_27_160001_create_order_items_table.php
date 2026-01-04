@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
 
-            // Product snapshot at order time
-            $table->string('product_name');
-            $table->string('product_sku')->nullable();
+            // Product snapshot at order time   .. not required we have product relation for this
+//            $table->string('product_name');
+//            $table->string('product_sku')->nullable();
 
             // Pricing (snapshot at order time, in paise)
             $table->unsignedInteger('quantity')->default(1);

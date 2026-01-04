@@ -25,13 +25,47 @@ const {
   clearCart
 } = useCart()
 
+const userAddresses = ref<{ uuid: string; label: string }[]>([])
+const isAddressesLoading = ref(false)
+
+async function fetchUserAddresses() {
+  isAddressesLoading.value = true
+  try {
+    // Assuming an API endpoint exists to fetch user addresses
+    const { data } = await useSanctumFetch('/api/addresses', { method: 'GET' })
+    if (data.value && Array.isArray(data.value.addresses)) {
+      userAddresses.value = data.value.addresses.map((addr: any) => ({
+        uuid: addr.uuid,
+        label: `${addr.address_line_1}, ${addr.city}, ${addr.state}, ${addr.zip}` // Adjust based on actual address structure
+      }))
+
+      // Set default selected addresses if available
+      if (userAddresses.value.length > 0) {
+        shippingAddressId.value = userAddresses.value[0].uuid
+        billingAddressId.value = userAddresses.value[0].uuid
+      }
+    }
+  } catch (error) {
+    toast.add({
+      title: 'Error fetching addresses',
+      description: 'Could not load user addresses.',
+      color: 'error'
+    })
+  } finally {
+    isAddressesLoading.value = false
+  }
+}
+
 // Local state
 const updatingItem = ref<string | null>(null)
 const removingItem = ref<string | null>(null)
 
-// Fetch cart on mount
-onMounted(() => {
-  fetchCart()
+// Fetch cart and addresses on mount
+onMounted(async () => {
+  await Promise.all([
+    fetchCart(),
+    fetchUserAddresses()
+  ])
 })
 
 // Quantity handlers
@@ -72,6 +106,54 @@ const handleClearCart = async () => {
 const showCheckoutModal = ref(false)
 const cartTotal = computed(() => cart.value?.total || 0)
 const cartTotalAmount = computed(() => cart.value?.total_amount || 0)
+
+const addresses = ref<any[]>([])
+const addressesLoading = ref(false)
+const shippingAddressId = ref<number | null>(null)
+const billingAddressId = ref<number | null>(null)
+const billingIsShipping = ref(true)
+const isGift = ref(false)
+
+const fetchAddresses = async () => {
+  addressesLoading.value = true
+  try {
+    const response = await useSanctumFetch<{ data: any[] }>(`${config.public.apiBase}/api/addresses`)
+    addresses.value = response.data || []
+    const def = addresses.value.find((a: any) => a.default)
+    shippingAddressId.value = def?.uuid || addresses.value[0]?.uuid || null
+    billingAddressId.value = billingIsShipping.value ? shippingAddressId.value : (def?.uuid || addresses.value[0]?.uuid || null)
+  } catch {
+    addresses.value = []
+  } finally {
+    addressesLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchAddresses()
+})
+
+watch(billingIsShipping, (v) => {
+  if (v) billingAddressId.value = shippingAddressId.value
+})
+
+watch(shippingAddressId, (id) => {
+  if (billingIsShipping.value) billingAddressId.value = id
+})
+
+const canCheckout = computed(() => {
+  return !!shippingAddressId.value && (!billingIsShipping.value ? !!billingAddressId.value : true) && cartCount.value > 0
+})
+
+const checkoutPayload = computed(() => {
+  const payload: Record<string, any> = {
+    billing_is_shipping: billingIsShipping.value,
+    gift: isGift.value,
+  }
+  payload.shipping_address_id = shippingAddressId.value
+  payload.billing_address_id = billingIsShipping.value ? shippingAddressId.value : billingAddressId.value
+  return payload
+})
 
 // Proceed to checkout
 const proceedToCheckout = () => {
@@ -317,7 +399,9 @@ useComprehensiveSeo({
         </div>
 
         <!-- Order Summary Sidebar -->
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-1 space-y-6">
+
+
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-xl overflow-hidden sticky top-24">
             <!-- Header -->
             <div class="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white p-6">
@@ -352,15 +436,63 @@ useComprehensiveSeo({
                     <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                       {{ cartTotalFormatted }}
                     </span>
-                  </div>
                 </div>
               </div>
+            </div>
+
+            <div class="space-y-6">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Delivery Details</h3>
+                  <UButton to="/addresses" size="sm" variant="soft" icon="i-lucide-map-pin">Manage Addresses</UButton>
+                </div>
+                <div v-if="addressesLoading" class="text-sm text-slate-500 dark:text-slate-400">Loading addresses...</div>
+                <div v-else-if="addresses.length" class="space-y-4">
+                  <UFormField label="Shipping Address" required>
+                    <USelect
+                      v-model="shippingAddressId"
+                      :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
+                      size="lg"
+                      :ui="{ base: 'w-full' }"
+                    />
+                  </UFormField>
+                  <div class="flex items-center gap-2">
+                    <UCheckbox v-model="billingIsShipping" label="Billing same as shipping" />
+                  </div>
+                  <div v-if="!billingIsShipping">
+                    <UFormField label="Billing Address" required>
+                      <USelect
+                        v-model="billingAddressId"
+                        :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
+                        size="lg"
+                        :ui="{ base: 'w-full' }"
+                      />
+                    </UFormField>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <UCheckbox v-model="isGift" label="Mark as gift" />
+                  </div>
+                </div>
+                <UAlert
+                  v-else
+                  color="warning"
+                  icon="i-lucide-alert-triangle"
+                  title="No address found"
+                  description="Add an address to proceed with checkout."
+                >
+                  <template #actions>
+                    <UButton to="/addresses" size="sm" color="warning">Add Address</UButton>
+                  </template>
+                </UAlert>
+              </div>
+            </div>
 
               <!-- Checkout Button -->
               <UButton
                 block
                 size="lg"
                 class="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:from-violet-700 hover:via-fuchsia-700 hover:to-pink-700 text-white font-bold text-lg py-4 rounded-2xl shadow-2xl hover:shadow-violet-500/25 transition-all duration-300 hover:-translate-y-1"
+                :disabled="!canCheckout"
                 @click="proceedToCheckout"
               >
                 <UIcon name="i-lucide-credit-card" class="w-5 h-5 mr-2" />
@@ -375,7 +507,8 @@ useComprehensiveSeo({
                 :amount="cartTotalAmount"
                 :amount-formatted="cartTotalFormatted"
                 description="Shopping Cart Checkout"
-                checkout-endpoint="/api/cart/checkout"
+                checkout-endpoint="/api/order/checkout"
+                :checkout-payload="checkoutPayload"
                 @success="handleCheckoutSuccess"
               />
 

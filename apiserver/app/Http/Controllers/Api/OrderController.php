@@ -41,6 +41,8 @@ final class OrderController extends Controller
             ->with(['items.product.media'])
             ->orderByDesc('created_at');
 
+
+
         // Filter by status if provided
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
@@ -49,9 +51,15 @@ final class OrderController extends Controller
         $perPage = $request->input('per_page', 10);
         $orders = $query->paginate($perPage);
 
+
+
+
+
         $formattedOrders = $orders->getCollection()->map(function (Order $order) {
             return $this->formatOrder($order);
         });
+
+
 
         return response()->json([
             'success' => true,
@@ -122,6 +130,7 @@ final class OrderController extends Controller
      */
     private function formatOrder(Order $order, bool $detailed = false): array
     {
+
         $statusValue = $order->status instanceof OrderStatusCast ? $order->status->value : $order->status;
 
         $data = [
@@ -147,9 +156,12 @@ final class OrderController extends Controller
             'shipped_at' => $order->shipped_at?->toIso8601String(),
             'delivered_at' => $order->delivered_at?->toIso8601String(),
             'created_at' => $order->created_at->toIso8601String(),
-            'created_at_formatted' => $order->created_at->toLocaleDateString('en-IN'),
+//            'created_at_formatted' => $order->created_at->toLocaleDateString('en-IN'),
+            'created_at_formatted' => $order->created_at->format('en-IN'),
             'items' => $order->items->map(fn (OrderItem $item) => $this->formatOrderItem($item)),
         ];
+
+
 
         if ($detailed) {
             $data['shipping_address'] = $order->shippingAddress ? [

@@ -125,6 +125,11 @@ class Order extends Model implements CommissionTrigger
         return $this->morphTo();
     }
 
+    public function customer()
+    {
+        return $this->customerable();
+    }
+
     /**
      * Order items
      */

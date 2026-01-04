@@ -274,6 +274,8 @@ class CartService
     {
         $cartItems = $this->itemsWithStock($shippingAddress);
 
+
+
         if (! $cartItems || $cartItems->isEmpty()) {
             return $this->emptyCartTotal();
         }
@@ -285,9 +287,8 @@ class CartService
         $totalRewardPoints = 0;
         $itemBreakdown = [];
         $stockAllocations = [];
-
         $shippingState = $shippingAddress?->state
-            ? Str::lower(trim($shippingAddress->state))
+            ? Str::lower(trim($shippingAddress->state->name))
             : null;
 
         foreach ($cartItems as $cartItem) {
@@ -308,6 +309,8 @@ class CartService
 
             $itemTotal = $allocation['total_price'];
             $subtotal += $itemTotal;
+
+
 
             // Calculate tax based on warehouse state
             $itemTax = 0;
@@ -399,7 +402,7 @@ class CartService
         if ($shippingState) {
             $stocks = $stocks->sortBy(function ($stock) use ($shippingState) {
                 $warehouseState = $stock->address?->state
-                    ? Str::lower(trim($stock->address->state))
+                    ? Str::lower(trim($stock->address->state->name))
                     : null;
 
                 return $warehouseState === $shippingState ? 0 : 1;
@@ -486,6 +489,7 @@ class CartService
     public function validate(?Address $shippingAddress = null): array
     {
         $cartTotal = $this->getCartTotal($shippingAddress);
+
         $errors = [];
         $warnings = $this->meta['warnings'] ?? [];
 

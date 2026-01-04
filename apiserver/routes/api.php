@@ -467,3 +467,10 @@ Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
     Route::get('/stats', [OrderController::class, 'stats']);
     Route::get('/{uuid}', [OrderController::class, 'show']);
 });
+
+
+Route::prefix('order')->middleware('auth:sanctum')->group(function (){
+    Route::post('/checkout',[\App\Http\Controllers\Api\Order\OrderActionController::class,'checkout']);
+});
+
+
