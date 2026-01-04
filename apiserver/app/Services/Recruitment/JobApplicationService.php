@@ -415,7 +415,8 @@ final class JobApplicationService implements JobApplicationServiceInterface
 
         // Generate payment URL
         $clientBaseUrl = config('app.client_url');
-        $this->returnUrl = "{$clientBaseUrl}/career/applications/{$this->application->uuid}";
+       /// $this->returnUrl = "{$clientBaseUrl}/career/applications/{$this->application->uuid}";
+        $this->returnUrl = config('app.client_url')."/career/applications/".$this->application->uuid;
     }
 
     private function setError(string $message): void

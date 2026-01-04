@@ -67,7 +67,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // API Configuration
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
 
       // Branding (can be overridden via .env)
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'VVIndia',
@@ -123,7 +123,7 @@ export default defineNuxtConfig({
   },
 
   laravelSanctum: {
-    apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+    apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
     authMode: 'token',
     userResponseWrapperKey: 'data', // Laravel UserResource wraps response in { data: {...} }
     token: {

@@ -43,7 +43,7 @@ class TransactionActionController extends Controller
         event(new \App\Events\PaymentCompleted($transaction));
 
         // Redirect to success URL
-        return redirect()->to($transaction->success_redirect_url ?? $transaction->success_url);
+        return redirect()->to($transaction->success_url);
     }
 
     /**
@@ -56,13 +56,13 @@ class TransactionActionController extends Controller
     {
         // Update transaction as failed
         $transaction->update([
-            'status' => 'failed',
+            'status' => TransactionStatusCast::FAILED->value,
         ]);
 
         // TODO: Dispatch TransactionFailed event
         // event(new TransactionFailed($transaction));
 
         // Redirect to failure URL
-        return redirect()->to($transaction->failure_redirect_url ?? $transaction->failure_url);
+        return redirect()->to($transaction->failure_url);
     }
 }

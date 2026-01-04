@@ -108,6 +108,8 @@ class RecruitmentController extends Controller
         $application = $result->getApplication();
         $application->load(['recruitment', 'address']);
 
+  
+
         return response()->json([
             'message' => $result->requiresPayment()
                 ? 'Application created. Please complete payment to submit.'
