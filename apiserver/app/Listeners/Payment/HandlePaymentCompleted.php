@@ -78,7 +78,7 @@ final class HandlePaymentCompleted
 
         Notification::make()->sendToDatabase(Admin::all())
             ->title('New Application Submitted')
-            ->body('Application ID : '. $application->uuid);
+            ->body('Application ID : '. $payable->uuid);
 
         // Notify applicant (User Side Notification eg: push notification and mail notification)
         // 1. Push Notification
