@@ -91,7 +91,7 @@ final class DemoUserSeeder extends Seeder
 
         User::create([
             'name' => 'Partha',
-            'mobile' => '+919876543215',
+            'mobile' => '+919876543220',
             'email' => 'partha@demo.com',
             'password' => Hash::make('password'),
             'type' => UserTypeCast::REGULAR->value,
@@ -104,7 +104,7 @@ final class DemoUserSeeder extends Seeder
 
         User::create([
             'name' => 'Saneep',
-            'mobile' => '+919876543212',
+            'mobile' => '+919876543221',
             'email' => 'sandeep@demo.com',
             'password' => Hash::make('password'),
             'type' => UserTypeCast::REGULAR->value,
@@ -117,7 +117,7 @@ final class DemoUserSeeder extends Seeder
 
         User::create([
             'name' => 'Akash',
-            'mobile' => '+919876543209',
+            'mobile' => '+919876543222',
             'email' => 'akash@demo.com',
             'password' => Hash::make('password'),
             'type' => UserTypeCast::REGULAR->value,
@@ -129,8 +129,21 @@ final class DemoUserSeeder extends Seeder
 
         User::create([
             'name' => 'Saheb',
-            'mobile' => '+919876543218',
+            'mobile' => '+919876543223',
             'email' => 'saheb@demo.com',
+            'password' => Hash::make('password'),
+            'type' => UserTypeCast::REGULAR->value,
+            'status' => UserStatusCast::ACTIVE->value,
+            'mobile_verified_at' => now(),
+            'email_verified_at' => now(),
+            'onboarded' => true,
+        ]);
+
+
+        User::create([
+            'name' => 'Krishanu',
+            'mobile' => '+919876543224',
+            'email' => 'krishanu@demo.com',
             'password' => Hash::make('password'),
             'type' => UserTypeCast::REGULAR->value,
             'status' => UserStatusCast::ACTIVE->value,
