@@ -206,11 +206,11 @@
 <script setup lang="ts">
 import type { StepperItem } from '@nuxt/ui'
 import type { User } from '~/types/user'
-import OnboardingStepWelcome from '~/components/onboarding/OnboardingStepWelcome.vue'
-import OnboardingStepProfile from '~/components/onboarding/OnboardingStepProfile.vue'
-import OnboardingStepContact from '~/components/onboarding/OnboardingStepContact.vue'
-import OnboardingStepAddress from '~/components/onboarding/OnboardingStepAddress.vue'
-import OnboardingStepKyc from '~/components/onboarding/OnboardingStepKyc.vue'
+import OnboardingStepWelcome from '~/components/onboarding/StepWelcome.vue'
+import OnboardingStepProfile from '~/components/onboarding/StepProfile.vue'
+import OnboardingStepContact from '~/components/onboarding/StepContact.vue'
+import OnboardingStepAddress from '~/components/onboarding/StepAddress.vue'
+import OnboardingStepKyc from '~/components/onboarding/StepKyc.vue'
 
 definePageMeta({
   layout: 'guest',
