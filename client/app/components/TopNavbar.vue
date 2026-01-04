@@ -207,13 +207,24 @@
         </div>
       </nav>
 
+      <!-- Mobile Menu Backdrop -->
+      <Transition name="fade">
+        <div
+          v-if="mobileMenuOpen"
+          class="fixed inset-0 bg-black/20  lg:hidden"
+          style="z-index: 40;"
+          @click="closeMobileMenu"
+        />
+      </Transition>
+
       <!-- Mobile Menu -->
       <Transition name="slide-down">
         <div
           v-if="mobileMenuOpen"
           class="lg:hidden border-t border-slate-200/50 dark:border-slate-700/50"
+          style="position: relative; z-index: 50;"
         >
-          <div class="px-4 py-4 space-y-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl max-h-[calc(100vh-4rem)] overflow-y-auto z-50">
+          <div class="px-4 py-4 space-y-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
             <!-- Navigation Links -->
             <div class="mb-4">
               <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">
@@ -330,15 +341,6 @@
             </div>
           </div>
         </div>
-      </Transition>
-
-      <!-- Mobile Menu Backdrop -->
-      <Transition name="fade">
-        <div
-          v-if="mobileMenuOpen"
-          class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
-          @click="closeMobileMenu"
-        />
       </Transition>
     </div>
   </header>

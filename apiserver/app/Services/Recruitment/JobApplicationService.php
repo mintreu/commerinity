@@ -295,7 +295,7 @@ final class JobApplicationService implements JobApplicationServiceInterface
                         'transaction_uuid' => $transaction->uuid,
                     ];
                 }
-                
+
                 return [
                     'success' => false,
                     'message' => 'Failed to initiate payment.',
@@ -414,7 +414,7 @@ final class JobApplicationService implements JobApplicationServiceInterface
         ]);
 
         // Generate payment URL
-        $clientBaseUrl = config('app.client_url', config('app.url'));
+        $clientBaseUrl = config('app.client_url');
         $this->returnUrl = "{$clientBaseUrl}/career/applications/{$this->application->uuid}";
     }
 

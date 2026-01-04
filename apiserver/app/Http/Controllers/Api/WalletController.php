@@ -727,7 +727,6 @@ final class WalletController extends Controller
                 'message' => 'Checkout initiated successfully',
                 'data' => [
                     'transaction_id' => $transaction->uuid,
-                    //'checkout_url' => config('app.client_url').'/checkout/'.$transaction->uuid, // dont checkout in nuxt side
                     'checkout_url' => route('checkout',['transaction' => $transaction->uuid]),  // always checkout with apiserver side
                     'amount' => $transaction->amount,
                     'amount_formatted' => MoneyService::format($transaction->amount),

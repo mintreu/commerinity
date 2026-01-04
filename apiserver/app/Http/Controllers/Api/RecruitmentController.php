@@ -152,35 +152,6 @@ class RecruitmentController extends Controller
         ]);
     }
 
-//    /**
-//     * Withdraw an application (authenticated).
-//     *
-//     * POST /api/my-applications/{uuid}/withdraw
-//     */
-//    public function withdrawApplication(Request $request, string $uuid): JsonResponse
-//    {
-//        $application = JobApplicationService::findUserApplication($request->user(), $uuid);
-//
-//        if (! $application) {
-//            return response()->json([
-//                'message' => 'Application not found.',
-//            ], 404);
-//        }
-//
-//        if (! $application->can_withdraw) {
-//            return response()->json([
-//                'message' => 'This application cannot be withdrawn.',
-//            ], 422);
-//        }
-//
-//        $reason = $request->input('reason');
-//        JobApplicationService::withdraw($application, $reason);
-//
-//        return response()->json([
-//            'message' => 'Application withdrawn successfully.',
-//            'data' => new JobApplicationResource($application->fresh(['recruitment'])),
-//        ]);
-//    }
 
     /**
      * Check if user has already applied for a recruitment.

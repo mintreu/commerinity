@@ -48,7 +48,7 @@ class CheckoutHome extends Component
     {
         return view('livewire.checkout.checkout-home',[
             'transaction' => $this->transaction,
-            'integration' => $this->integration->except('credentials'),
+            'integration' => $this->integration->makeHidden('credentials')->toArray(),
             'providerComponent' => $this->providerComponent,
         ])->layout(AppLayout::class);
     }

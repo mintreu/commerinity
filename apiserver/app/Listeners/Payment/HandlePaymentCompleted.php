@@ -12,6 +12,7 @@ use App\Models\Membership\UserSubscription;
 use App\Models\Recruitment\JobApplication;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Notifications\GeneralNotification;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
 use App\Services\UserServices\UserAffiliateService;
@@ -36,7 +37,7 @@ final class HandlePaymentCompleted
     public function handle(PaymentCompleted $event): void
     {
         $transaction = $event->transaction;
-        $transaction->load('transactionable');
+        $transaction->load('transactionable','transactionable.customer');
 
         $payable = $transaction->transactionable;
 
@@ -71,6 +72,24 @@ final class HandlePaymentCompleted
                 'transaction_id' => $transaction->uuid,
             ]),
         };
+
+
+        // Notify HR/Admin  (Filament DB Notification)
+
+        Notification::make()->sendToDatabase(Admin::all())
+            ->title('New Application Submitted')
+            ->body('Application ID : '. $application->uuid);
+
+        // Notify applicant (User Side Notification eg: push notification and mail notification)
+        // 1. Push Notification
+        //$payable->customer->notify();
+        // 2. SMS Notification
+
+        // 3. Email Notification with Invoice when email available
+
+        // 4. Db Notification to that user
+
+
     }
 
     /**
@@ -166,13 +185,7 @@ final class HandlePaymentCompleted
                 'status' => $application->status->value,
             ]);
 
-            // Notify HR/Admin  (Filament Notification)
 
-            Notification::make()->sendToDatabase(Admin::all())
-                ->title('New Application Submitted')
-                ->body('Application ID : '. $application->uuid);
-
-            // Notify applicant (User Side Notification eg: push notification and mail notification)
         });
     }
 }

@@ -262,8 +262,8 @@ final class SubscriptionController extends Controller
             $transaction = $subscription->createDebitTransaction(
                 customer: $user,
                 paymentMethod: $paymentMethod,
-                redirectSuccessUrl: config('app.frontend_url').'/payment/success',
-                redirectFailureUrl: config('app.frontend_url').'/payment/failed',
+                redirectSuccessUrl: config('app.client_url').'/payment/success',
+                redirectFailureUrl: config('app.client_url').'/payment/failed',
                 wallet: $this->walletService->getOrCreateWallet($user),
                 purpose: "Subscription to {$stage->name} plan"
             );
