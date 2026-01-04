@@ -359,15 +359,23 @@ final class JobApplicationService implements JobApplicationServiceInterface
         $this->createApplication();
 
         // Handle payment if required
-        if ($this->recruitment->is_payable) {
-            $this->handlePayment();
-        } else {
-            // Free application - submit directly
-            $this->application->update([
-                'status' => JobApplicationStatusCast::Submitted,
-                'submitted_at' => now(),
-            ]);
-        }
+//        if ($this->recruitment->is_payable) {
+//            $this->handlePayment();
+//        } else {
+//            // Free application - submit directly
+//            $this->application->update([
+//                'status' => JobApplicationStatusCast::Submitted,
+//                'submitted_at' => now(),
+//            ]);
+//        }
+
+
+        // Free application - submit directly
+        $this->application->update([
+            'status' => JobApplicationStatusCast::Submitted,
+            'submitted_at' => now(),
+        ]);
+
     }
 
     private function resolveAddress(): void
