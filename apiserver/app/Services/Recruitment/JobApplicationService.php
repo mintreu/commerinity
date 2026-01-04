@@ -372,7 +372,7 @@ final class JobApplicationService implements JobApplicationServiceInterface
 
         // Free application - submit directly
         $this->application->update([
-            'status' => JobApplicationStatusCast::Submitted,
+            'status' => $this->recruitment->is_payable ? JobApplicationStatusCast::AwaitingPayment : JobApplicationStatusCast::Submitted,
             'submitted_at' => now(),
         ]);
 
