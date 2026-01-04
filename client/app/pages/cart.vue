@@ -68,13 +68,38 @@ const handleClearCart = async () => {
   })
 }
 
+// Checkout modal state
+const showCheckoutModal = ref(false)
+const cartTotal = computed(() => cart.value?.total || 0)
+const cartTotalAmount = computed(() => cart.value?.total_amount || 0)
+
 // Proceed to checkout
 const proceedToCheckout = () => {
   if (!isLoggedIn.value) {
-    navigateTo('/auth/login?redirect=/checkout')
+    navigateTo('/auth/login?redirect=/cart')
     return
   }
-  navigateTo('/checkout')
+
+  if (cartCount.value === 0) {
+    toast.add({
+      title: 'Cart is Empty',
+      description: 'Add items to your cart before checking out',
+      color: 'warning'
+    })
+    return
+  }
+
+  showCheckoutModal.value = true
+}
+
+const handleCheckoutSuccess = async () => {
+  await fetchCart()
+  toast.add({
+    title: 'Order Placed',
+    description: 'Your order has been placed successfully',
+    color: 'success',
+    icon: 'i-lucide-check-circle'
+  })
 }
 
 // SEO
@@ -342,6 +367,17 @@ useComprehensiveSeo({
                 Proceed to Checkout
                 <UIcon name="i-lucide-arrow-right" class="w-5 h-5 ml-2" />
               </UButton>
+
+              <!-- Checkout Modal -->
+              <CheckoutModal
+                v-model:open="showCheckoutModal"
+                title="Complete Your Order"
+                :amount="cartTotalAmount"
+                :amount-formatted="cartTotalFormatted"
+                description="Shopping Cart Checkout"
+                checkout-endpoint="/api/cart/checkout"
+                @success="handleCheckoutSuccess"
+              />
 
               <!-- Continue Shopping Link (Mobile) -->
               <NuxtLink

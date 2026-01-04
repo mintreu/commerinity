@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use BinaryBuilds\FilamentFailedJobs\FilamentFailedJobsPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -29,10 +30,10 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->authGuard('admin')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Fuchsia,
             ])
             ->sidebarCollapsibleOnDesktop()
-
+            ->plugin(FilamentFailedJobsPlugin::make())
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

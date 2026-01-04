@@ -128,12 +128,24 @@ const existingApplication = computed(() => applicationCheck.value?.data?.applica
                   </div>
                 </div>
                 <div class="flex gap-2">
-                  <UBadge v-if="job.is_open" color="success">Open</UBadge>
-                  <UBadge v-else color="error">Closed</UBadge>
-                  <UBadge v-if="job.is_payable" color="warning">Paid</UBadge>
+                  <UBadge v-if="job.is_open" color="success" variant="subtle">Open</UBadge>
+                  <UBadge v-else color="error" variant="subtle">Closed</UBadge>
+                  <UBadge v-if="job.is_payable" color="warning" variant="subtle" icon="i-heroicons-banknotes">
+                    Fee Required
+                  </UBadge>
                 </div>
               </div>
             </template>
+
+            <UAlert
+              v-if="job.is_payable"
+              color="warning"
+              variant="subtle"
+              icon="i-heroicons-information-circle"
+              class="mb-6"
+              title="Application Fee Required"
+              :description="`Applying for this position requires a non-refundable fee of ${job.fees_formatted}.`"
+            />
 
             <RichContent :content="job.description" class="max-w-none" />
           </UCard>

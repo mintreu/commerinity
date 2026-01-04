@@ -126,6 +126,11 @@ class UserSubscription extends Model implements CommissionTrigger
         return $this->belongsTo(User::class);
     }
 
+    public function customer(): BelongsTo
+    {
+        return $this->user();
+    }
+
     public function stage(): BelongsTo
     {
         return $this->belongsTo(Stage::class);

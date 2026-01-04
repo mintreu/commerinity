@@ -6,6 +6,7 @@ namespace App\Listeners\Payment;
 
 use App\Casts\JobApplicationStatusCast;
 use App\Events\PaymentCompleted;
+use App\Models\Admin;
 use App\Models\Membership\UserSubscription;
 use App\Models\Recruitment\JobApplication;
 use App\Models\User;
@@ -13,6 +14,7 @@ use App\Models\Wallet;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
 use App\Services\UserServices\UserAffiliateService;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -43,6 +45,13 @@ final class HandlePaymentCompleted
             ]);
 
             return;
+        }
+
+        // Eager load relationships on the payable model
+        if ($payable instanceof UserSubscription) {
+            $payable->load(['stage.levels', 'user', 'currentLevel', 'highestLevel','level']);
+        } elseif ($payable instanceof JobApplication) {
+            $payable->load(['recruitment', 'applicant']);
         }
 
         Log::info('Processing payment completion', [
@@ -135,7 +144,8 @@ final class HandlePaymentCompleted
             // Change status from awaiting_payment to submitted
             $application->update([
                 'status' => JobApplicationStatusCast::Submitted,
-                'paid_at' => now(),
+                'is_paid' => true,
+                'submitted_at' => now(),
             ]);
 
             Log::info('Recruitment fee paid, application submitted', [
@@ -143,8 +153,13 @@ final class HandlePaymentCompleted
                 'transaction_id' => $transaction->uuid,
             ]);
 
-            // Notify HR/Admin
-            // Notify applicant
+            // Notify HR/Admin  (Filament Notification)
+
+            Notification::make()->sendToDatabase(Admin::all())
+                ->title('New Application Submitted')
+                ->body('Application ID : '. $application->uuid);
+
+            // Notify applicant (User Side Notification eg: push notification and mail notification)
         });
     }
 }

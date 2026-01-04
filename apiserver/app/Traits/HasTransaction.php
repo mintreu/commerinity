@@ -247,6 +247,32 @@ trait HasTransaction
     }
 
     /**
+     * Check if this model has any pending or successful payment transaction
+     */
+    public function hasPaymentTransaction(): bool
+    {
+        return $this->transaction()
+            ->whereIn('status', [
+                TransactionStatusCast::PENDING,
+                TransactionStatusCast::SUCCESS,
+            ])
+            ->exists();
+    }
+
+    /**
+     * Get the current active payment transaction
+     */
+    public function getActivePaymentTransaction(): ?Transaction
+    {
+        return $this->transaction()
+            ->whereIn('status', [
+                TransactionStatusCast::PENDING,
+                TransactionStatusCast::SUCCESS,
+            ])
+            ->first();
+    }
+
+    /**
      * Parse customer data from model or array
      */
     protected function parseCustomerData(Model|array $customer): array

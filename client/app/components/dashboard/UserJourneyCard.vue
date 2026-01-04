@@ -38,7 +38,7 @@ const journeySteps = computed((): JourneyStep[] => {
         description: 'Unlock exclusive benefits and start earning!',
         icon: 'i-lucide-crown',
         benefits: [
-          '15% discount on all products',
+          'Enjoy discount on all products',
           'Earn commissions by referring',
           'Access to member-only deals',
           'Priority customer support'
@@ -46,7 +46,7 @@ const journeySteps = computed((): JourneyStep[] => {
         actionLabel: 'Subscribe Now',
         actionTo: '/subscription',
         highlight: true,
-        price: 999
+        price: 299
       }]
 
     case UserType.MEMBER:

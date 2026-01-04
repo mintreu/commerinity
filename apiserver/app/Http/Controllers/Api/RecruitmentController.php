@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Casts\JobApplicationStatusCast;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApplyJobRequest;
 use App\Http\Resources\JobApplicationResource;
@@ -151,35 +152,35 @@ class RecruitmentController extends Controller
         ]);
     }
 
-    /**
-     * Withdraw an application (authenticated).
-     *
-     * POST /api/my-applications/{uuid}/withdraw
-     */
-    public function withdrawApplication(Request $request, string $uuid): JsonResponse
-    {
-        $application = JobApplicationService::findUserApplication($request->user(), $uuid);
-
-        if (! $application) {
-            return response()->json([
-                'message' => 'Application not found.',
-            ], 404);
-        }
-
-        if (! $application->can_withdraw) {
-            return response()->json([
-                'message' => 'This application cannot be withdrawn.',
-            ], 422);
-        }
-
-        $reason = $request->input('reason');
-        JobApplicationService::withdraw($application, $reason);
-
-        return response()->json([
-            'message' => 'Application withdrawn successfully.',
-            'data' => new JobApplicationResource($application->fresh(['recruitment'])),
-        ]);
-    }
+//    /**
+//     * Withdraw an application (authenticated).
+//     *
+//     * POST /api/my-applications/{uuid}/withdraw
+//     */
+//    public function withdrawApplication(Request $request, string $uuid): JsonResponse
+//    {
+//        $application = JobApplicationService::findUserApplication($request->user(), $uuid);
+//
+//        if (! $application) {
+//            return response()->json([
+//                'message' => 'Application not found.',
+//            ], 404);
+//        }
+//
+//        if (! $application->can_withdraw) {
+//            return response()->json([
+//                'message' => 'This application cannot be withdrawn.',
+//            ], 422);
+//        }
+//
+//        $reason = $request->input('reason');
+//        JobApplicationService::withdraw($application, $reason);
+//
+//        return response()->json([
+//            'message' => 'Application withdrawn successfully.',
+//            'data' => new JobApplicationResource($application->fresh(['recruitment'])),
+//        ]);
+//    }
 
     /**
      * Check if user has already applied for a recruitment.
@@ -216,7 +217,7 @@ class RecruitmentController extends Controller
     public function initiatePayment(Request $request, string $uuid): JsonResponse
     {
         $request->validate([
-            'payment_method' => ['required', 'string', 'in:cashfree,razorpay'],
+            'payment_method' => ['required', 'string', 'in:wallet,online'],
         ]);
 
         $application = JobApplicationService::findUserApplication($request->user(), $uuid);
@@ -233,7 +234,10 @@ class RecruitmentController extends Controller
             ], 400);
         }
 
-        if ($application->status->value !== 'awaiting_payment') {
+
+
+
+        if ($application->status->value !== JobApplicationStatusCast::AwaitingPayment->value) {
             return response()->json([
                 'message' => 'This application is not awaiting payment.',
             ], 400);

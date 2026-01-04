@@ -2,8 +2,48 @@ import type { User } from '~/types/user'
 import { UserType } from '~/types/user'
 
 export const useUserType = () => {
+  const config = useRuntimeConfig()
   const user = useCurrentUser() as Ref<User | null>
-  const { refreshUser } = useSanctum()
+  const { refreshUser, isLoggedIn } = useSanctum()
+
+  const jobApplicationsCount = useState<number | null>('jobApplicationsCount', () => null)
+  const jobApplicationsLoaded = useState<boolean>('jobApplicationsLoaded', () => false)
+  const jobApplicationsLoading = useState<boolean>('jobApplicationsLoading', () => false)
+
+  const refreshJobApplicationsCount = async () => {
+    if (!isLoggedIn.value) return
+    if (jobApplicationsLoading.value) return
+
+    jobApplicationsLoading.value = true
+
+    try {
+      const response = await useSanctumFetch<{ data: unknown[] }>(
+        `${config.public.apiBase}/api/my-applications`
+      )
+
+      jobApplicationsCount.value = Array.isArray(response?.data) ? response.data.length : 0
+    }
+    catch {
+      jobApplicationsCount.value = 0
+    }
+    finally {
+      jobApplicationsLoading.value = false
+      jobApplicationsLoaded.value = true
+    }
+  }
+
+  watch([user, isLoggedIn], ([nextUser, loggedIn]) => {
+    if (!loggedIn || !nextUser) {
+      jobApplicationsCount.value = null
+      jobApplicationsLoaded.value = false
+      jobApplicationsLoading.value = false
+      return
+    }
+
+    if (!jobApplicationsLoaded.value) {
+      refreshJobApplicationsCount()
+    }
+  }, { immediate: true })
 
   const userType = computed(() => user.value?.type)
 
@@ -78,11 +118,6 @@ export const useUserType = () => {
         label: 'Wallet',
         icon: 'i-lucide-wallet',
         to: '/wallet'
-      },
-      {
-        label: 'Transactions',
-        icon: 'i-lucide-history',
-        to: '/wallet/transactions'
       }
     ]
 
@@ -97,191 +132,58 @@ export const useUserType = () => {
       })
     }
 
+    if ((jobApplicationsCount.value ?? 0) > 0) {
+      baseItems.push({
+        label: 'My Applications',
+        icon: 'i-lucide-briefcase',
+        to: '/career/applications'
+      })
+    }
+
+    const shoppingItems: NavigationItem[] = [
+      { label: 'Shop', icon: 'i-lucide-shopping-bag', to: '/shop' },
+      { label: 'Orders', icon: 'i-lucide-package', to: '/orders' }
+    ]
+
     const typeSpecificItems: Record<UserType, NavigationItem[]> = {
       [UserType.REGULAR]: [
-        {
-          label: 'Shop',
-          icon: 'i-lucide-shopping-bag',
-          to: '/shop'
-        },
-        {
-          label: 'Orders',
-          icon: 'i-lucide-package',
-          to: '/orders'
-        },
-        {
-          label: 'KYC',
-          icon: 'i-lucide-shield-check',
-          to: '/profile/kyc'
-        }
+        ...shoppingItems,
+        { label: 'KYC', icon: 'i-lucide-shield-check', to: '/profile/kyc' }
       ],
       [UserType.MEMBER]: [
-        {
-          label: 'Shop',
-          icon: 'i-lucide-shopping-bag',
-          to: '/shop'
-        },
-        {
-          label: 'Orders',
-          icon: 'i-lucide-package',
-          to: '/orders'
-        },
-        {
-          label: 'My Network',
-          icon: 'i-lucide-users',
-          to: '/network'
-        },
-        {
-          label: 'Earnings',
-          icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
-        },
-        {
-          label: 'Subscription',
-          icon: 'i-lucide-crown',
-          to: '/subscription'
-        }
+        ...shoppingItems,
+        { label: 'My Network', icon: 'i-lucide-users', to: '/network' },
+        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
+        { label: 'Subscription', icon: 'i-lucide-crown', to: '/subscription' }
       ],
       [UserType.PROMOTER]: [
-        {
-          label: 'Shop',
-          icon: 'i-lucide-shopping-bag',
-          to: '/shop'
-        },
-        {
-          label: 'Orders',
-          icon: 'i-lucide-package',
-          to: '/orders'
-        },
-        {
-          label: 'My Network',
-          icon: 'i-lucide-users',
-          to: '/network'
-        },
-        {
-          label: 'Wallet',
-          icon: 'i-lucide-wallet',
-          to: '/wallet'
-        },
-        {
-          label: 'Earnings',
-          icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
-        },
-        {
-          label: 'Subscription',
-          icon: 'i-lucide-crown',
-          to: '/subscription'
-        },
-        {
-          label: 'Team',
-          icon: 'i-lucide-users-round',
-          to: '/team'
-        },
-        {
-          label: 'Marketing',
-          icon: 'i-lucide-megaphone',
-          to: '/marketing'
-        }
+        ...shoppingItems,
+        { label: 'My Network', icon: 'i-lucide-users', to: '/network' },
+        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
+        { label: 'Subscription', icon: 'i-lucide-crown', to: '/subscription' },
+        { label: 'Team', icon: 'i-lucide-users-round', to: '/team' }
+        // { label: 'Marketing', icon: 'i-lucide-megaphone', to: '/marketing' }
       ],
       [UserType.ADVISOR]: [
-        {
-          label: 'Shop',
-          icon: 'i-lucide-shopping-bag',
-          to: '/shop'
-        },
-        {
-          label: 'Orders',
-          icon: 'i-lucide-package',
-          to: '/orders'
-        },
-        {
-          label: 'Wallet',
-          icon: 'i-lucide-wallet',
-          to: '/wallet'
-        },
-        {
-          label: 'Earnings',
-          icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
-        },
-        {
-          label: 'My Team',
-          icon: 'i-lucide-users-round',
-          to: '/team'
-        },
-        {
-          label: 'Clients',
-          icon: 'i-lucide-users',
-          to: '/clients'
-        },
-        {
-          label: 'Reports',
-          icon: 'i-lucide-bar-chart',
-          to: '/reports'
-        },
-        {
-          label: 'Training',
-          icon: 'i-lucide-graduation-cap',
-          to: '/training'
-        }
+        ...shoppingItems,
+        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
+        { label: 'My Team', icon: 'i-lucide-users-round', to: '/team' }
+        // { label: 'Clients', icon: 'i-lucide-users', to: '/clients' },
+        // { label: 'Reports', icon: 'i-lucide-bar-chart', to: '/reports' },
+        // { label: 'Training', icon: 'i-lucide-graduation-cap', to: '/training' }
       ],
       [UserType.MENTOR]: [
-        {
-          label: 'Shop',
-          icon: 'i-lucide-shopping-bag',
-          to: '/shop'
-        },
-        {
-          label: 'Orders',
-          icon: 'i-lucide-package',
-          to: '/orders'
-        },
-        {
-          label: 'My Network',
-          icon: 'i-lucide-users',
-          to: '/network'
-        },
-        {
-          label: 'Wallet',
-          icon: 'i-lucide-wallet',
-          to: '/wallet'
-        },
-        {
-          label: 'Earnings',
-          icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
-        },
-        {
-          label: 'Subscription',
-          icon: 'i-lucide-crown',
-          to: '/subscription'
-        },
-        {
-          label: 'Team',
-          icon: 'i-lucide-users-round',
-          to: '/team'
-        },
-        {
-          label: 'Reports',
-          icon: 'i-lucide-bar-chart',
-          to: '/reports'
-        },
-        {
-          label: 'Training',
-          icon: 'i-lucide-graduation-cap',
-          to: '/training'
-        },
-        {
-          label: 'Leadership',
-          icon: 'i-lucide-star',
-          to: '/leadership'
-        },
-        {
-          label: 'Analytics',
-          icon: 'i-lucide-line-chart',
-          to: '/analytics'
-        }
+        ...shoppingItems,
+        { label: 'My Network', icon: 'i-lucide-users', to: '/network' },
+        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
+        { label: 'Subscription', icon: 'i-lucide-crown', to: '/subscription' },
+        { label: 'Team', icon: 'i-lucide-users-round', to: '/team' }
+        /*
+        { label: 'Reports', icon: 'i-lucide-bar-chart', to: '/reports' },
+        { label: 'Training', icon: 'i-lucide-graduation-cap', to: '/training' },
+        { label: 'Leadership', icon: 'i-lucide-star', to: '/leadership' },
+        { label: 'Analytics', icon: 'i-lucide-line-chart', to: '/analytics' }
+        */
       ]
     }
 

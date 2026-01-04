@@ -543,6 +543,7 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                 v-model="formData.type"
                 :items="accountTypes.map(t => ({ label: t.label, value: t.value }))"
                 placeholder="Select account type"
+                class="w-full"
               />
             </UFormField>
 
@@ -553,6 +554,7 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
               <UInput
                 v-model="formData.holder_name"
                 placeholder="Name as per bank records"
+                class="w-full"
               />
             </UFormField>
 
@@ -566,6 +568,7 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                   v-model="formData.account_number"
                   placeholder="Enter account number"
                   inputmode="numeric"
+                  class="w-full"
                 />
               </UFormField>
 
@@ -577,6 +580,7 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                   v-model="formData.confirm_account_number"
                   placeholder="Re-enter account number"
                   inputmode="numeric"
+                  class="w-full"
                 />
               </UFormField>
 
@@ -588,7 +592,7 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                   v-model="formData.ifsc_code"
                   placeholder="11-character IFSC code"
                   maxlength="11"
-                  class="uppercase"
+                  class="w-full uppercase"
                   :loading="verifyingIfsc"
                   @blur="validateIfsc"
                 />
@@ -604,8 +608,8 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                     class="w-4 h-4"
                   />
                   <span class="text-sm font-medium">
-                    {{ formData.bank_name }}
-                  </span>
+          {{ formData.bank_name }}
+        </span>
                 </div>
                 <p class="text-xs text-green-600 dark:text-green-400 mt-1">
                   {{ formData.branch_name }}
@@ -622,6 +626,7 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                 <UInput
                   v-model="formData.upi_id"
                   placeholder="yourname@upi"
+                  class="w-full"
                 />
               </UFormField>
             </template>
@@ -645,6 +650,9 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
               </UButton>
             </div>
           </div>
+
+
+
         </div>
       </template>
     </UModal>

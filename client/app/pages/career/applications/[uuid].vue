@@ -66,10 +66,6 @@ const { data: application, status, error, refresh } = await useAsyncData<{ data:
   () => useSanctumFetch(`${config.public.apiBase}/api/my-applications/${uuid}`)
 )
 
-const withdrawModalOpen = ref(false)
-const withdrawReason = ref('')
-const withdrawing = ref(false)
-
 const statusColorMap: Record<string, 'neutral' | 'warning' | 'info' | 'primary' | 'success' | 'error'> = {
   draft: 'neutral',
   awaiting_payment: 'warning',
@@ -93,39 +89,6 @@ function formatDate(dateString: string | null): string {
     hour: '2-digit',
     minute: '2-digit'
   })
-}
-
-async function withdrawApplication() {
-  if (withdrawing.value) return
-  
-  withdrawing.value = true
-  
-  try {
-    await useSanctumFetch(`${config.public.apiBase}/api/my-applications/${uuid}/withdraw`, {
-      method: 'POST',
-      body: {
-        reason: withdrawReason.value || undefined
-      }
-    })
-    
-    toast.add({
-      title: 'Application Withdrawn',
-      description: 'Your application has been withdrawn successfully.',
-      color: 'success'
-    })
-    
-    withdrawModalOpen.value = false
-    await refresh()
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Failed to withdraw application'
-    toast.add({
-      title: 'Error',
-      description: errorMessage,
-      color: 'error'
-    })
-  } finally {
-    withdrawing.value = false
-  }
 }
 </script>
 
@@ -163,15 +126,26 @@ async function withdrawApplication() {
       <div v-else-if="application?.data" class="space-y-6">
         <UCard>
           <template #header>
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                  {{ application.data.recruitment.title }}
-                </h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Application ID: <span class="font-mono">{{ application.data.uuid }}</span>
-                </p>
-              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                      {{ application.data.recruitment.title }}
+                    </h1>
+                    <UButton
+                      :to="`/career/${application.data.recruitment.slug}`"
+                      variant="ghost"
+                      color="primary"
+                      size="xs"
+                      icon="i-heroicons-arrow-top-right-on-square"
+                    >
+                      View Position
+                    </UButton>
+                  </div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Application ID: <span class="font-mono">{{ application.data.uuid }}</span>
+                  </p>
+                </div>
               <UBadge :color="getStatusColor(application.data.status)" size="lg">
                 {{ application.data.status_label }}
               </UBadge>
@@ -210,7 +184,7 @@ async function withdrawApplication() {
             />
           </div>
 
-          <div v-if="application.data.status === 'awaiting_payment'" class="mt-6">
+          <div v-if="application.data.recruitment.is_payable && application.data.status === 'awaiting_payment'" class="mt-6">
             <UAlert
               color="warning"
               icon="i-heroicons-exclamation-triangle"
@@ -221,26 +195,22 @@ async function withdrawApplication() {
               </template>
             </UAlert>
             <div class="mt-4">
-              <UButton
-                :to="`/career/applications/${application.data.uuid}/pay`"
+<!--              Api End Point is "`/api/my-applications/${application.data.uuid}/pay`" -->
+              <CheckoutButton
+                label="Complete Payment"
+                icon="i-lucide-credit-card"
                 color="primary"
-              >
-                Complete Payment
-              </UButton>
+                size="lg"
+                modal-title="Pay Application Fee"
+                :amount="application.data.amount"
+                :amount-formatted="application.data.amount_formatted"
+                :description="application.data.recruitment.title"
+                :checkout-endpoint="`/api/my-applications/${application.data.uuid}/pay`"
+                :checkout-payload="{ application_uuid: application.data.uuid }"
+                @success="refresh"
+              />
             </div>
           </div>
-
-          <template #footer v-if="application.data.can_withdraw">
-            <div class="flex justify-end">
-              <UButton
-                color="error"
-                variant="outline"
-                @click="withdrawModalOpen = true"
-              >
-                Withdraw Application
-              </UButton>
-            </div>
-          </template>
         </UCard>
 
         <UCard>
@@ -335,49 +305,6 @@ async function withdrawApplication() {
           </div>
         </UCard>
       </div>
-
-      <UModal v-model:open="withdrawModalOpen">
-        <template #content>
-          <UCard>
-            <template #header>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Withdraw Application
-              </h3>
-            </template>
-
-            <p class="text-gray-600 dark:text-gray-400 mb-4">
-              Are you sure you want to withdraw this application? This action cannot be undone.
-            </p>
-
-            <UFormField label="Reason (optional)">
-              <UTextarea
-                v-model="withdrawReason"
-                placeholder="Please provide a reason for withdrawal..."
-                :rows="3"
-              />
-            </UFormField>
-
-            <template #footer>
-              <div class="flex justify-end gap-3">
-                <UButton
-                  variant="outline"
-                  @click="withdrawModalOpen = false"
-                  :disabled="withdrawing"
-                >
-                  Cancel
-                </UButton>
-                <UButton
-                  color="error"
-                  @click="withdrawApplication"
-                  :loading="withdrawing"
-                >
-                  Withdraw
-                </UButton>
-              </div>
-            </template>
-          </UCard>
-        </template>
-      </UModal>
     </UContainer>
   </div>
 </template>

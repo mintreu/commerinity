@@ -16,9 +16,7 @@ const toast = useToast()
 
 const activeTab = ref('plans')
 const selectedPlan = ref<any>(null)
-const pinInput = ref('')
-const showPinModal = ref(false)
-const subscribing = ref(false)
+const showCheckoutModal = ref(false)
 
 const entryPlan = computed(() => plans.value[0] || null)
 const currentStageSlug = computed(() => status.value?.subscription?.stage?.slug || null)
@@ -52,10 +50,20 @@ const isCurrentPlan = (plan: any) => {
   return Boolean(status.value?.has_subscription && currentStageSlug.value && plan.slug === currentStageSlug.value)
 }
 
+const { user } = useUserType()
+
 const isEligiblePlan = (plan: any) => {
-  if (!status.value?.can_subscribe) return false
-  if (!entryPlan.value) return false
-  return plan.slug === entryPlan.value.slug
+  // If user is Regular (no membership), only Stage 1 is eligible
+  if (user.value?.type === 'regular' || !user.value?.level_id) {
+    return getStageNumber(plan.slug) === 1
+  }
+
+  // If already a member, check if this is their current stage or the next one
+  const currentStage = currentStageSlug.value ? getStageNumber(currentStageSlug.value) : 1
+  const planStage = getStageNumber(plan.slug)
+
+  // Can re-subscribe to current stage (renewal) or upgrade to next
+  return planStage === currentStage || (status.value?.can_upgrade && planStage === currentStage + 1)
 }
 
 const stageRoadmapPlans = computed(() => {
@@ -108,71 +116,19 @@ const selectPlan = (plan: any) => {
     return
   }
   selectedPlan.value = plan
-  showPinModal.value = true
+  showCheckoutModal.value = true
 }
 
-const handleSubscribe = async () => {
-  if (!selectedPlan.value || !pinInput.value) return
-
-  subscribing.value = true
-  try {
-    const response = await subscribe(selectedPlan.value.uuid, pinInput.value)
-    if (response?.requires_pin_setup) {
-      toast.add({
-        title: 'PIN Required',
-        description: 'Please set up your wallet PIN to proceed with payments.',
-        color: 'warning',
-        icon: 'i-lucide-shield-alert'
-      })
-      navigateTo('/wallet/setup-pin')
-      return
-    }
-    if (response?.success) {
-      toast.add({
-        title: 'Subscription Active!',
-        description: response.message || 'Welcome to your premium membership.',
-        color: 'success',
-        icon: 'i-lucide-party-popper'
-      })
-      showPinModal.value = false
-      pinInput.value = ''
-      selectedPlan.value = null
-      await fetchStatus() // Refresh subscription status
-      await fetchWallet() // Refresh wallet balance
-      return
-    }
-
-    toast.add({
-      title: 'Subscription Failed',
-      description: response?.message || 'Failed to activate subscription.',
-      color: 'error',
-      icon: 'i-lucide-alert-circle'
-    })
-  }
-  catch (err: any) {
-    const errorMessage = err.data?.message || 'Failed to activate subscription.'
-
-    if (err.data?.requires_pin_setup) {
-      toast.add({
-        title: 'PIN Required',
-        description: 'Please set up your wallet PIN to proceed with payments.',
-        color: 'warning',
-        icon: 'i-lucide-shield-alert'
-      })
-      navigateTo('/wallet/setup-pin')
-      return
-    }
-
-    toast.add({
-      title: 'Subscription Failed',
-      description: errorMessage,
-      color: 'error',
-      icon: 'i-lucide-alert-circle'
-    })
-  }
-  finally {
-    subscribing.value = false
-  }
+const handleSubscriptionSuccess = async () => {
+  await fetchStatus()
+  await fetchWallet()
+  selectedPlan.value = null
+  toast.add({
+    title: 'Subscription Active!',
+    description: 'Welcome to your premium membership.',
+    color: 'success',
+    icon: 'i-lucide-party-popper'
+  })
 }
 
 const formatDate = (dateString: string | null) => {
@@ -338,7 +294,7 @@ const tabs = [
           <div class="glass-card p-6 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div class="space-y-1">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Applicable Stage & Entry Level</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Applicable Stage </p>
                 <p class="text-lg font-black text-slate-900 dark:text-white">
                   Stage {{ activeStageSlug ? getStageNumber(activeStageSlug) : 1 }}
                   <span class="text-slate-400 font-bold">·</span>
@@ -367,16 +323,17 @@ const tabs = [
               <div
                 v-for="rp in stageRoadmapPlans"
                 :key="rp.uuid"
-                class="rounded-2xl p-4 border backdrop-blur-md transition-all"
+                @click="selectedPlan = rp; showCheckoutModal = true"
+                class="rounded-2xl p-4 border backdrop-blur-md transition-all cursor-pointer hover:border-primary-500/40 group"
                 :class="rp.state === 'active'
-                  ? 'bg-primary-500/10 border-primary-500/20'
+                  ? 'bg-primary-500/10 border-primary-500/20 shadow-lg shadow-primary-500/5'
                   : 'bg-white/30 dark:bg-slate-800/30 border-slate-200/50 dark:border-slate-700/50 opacity-70'"
               >
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Stage {{ rp.stage_number }}</span>
                   <span class="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">{{ rp.price_formatted }}</span>
                 </div>
-                <p class="font-black text-slate-900 dark:text-white leading-tight">{{ rp.name }}</p>
+                <p class="font-black text-slate-900 dark:text-white leading-tight group-hover:text-primary-600 transition-colors">{{ rp.name }}</p>
                 <p class="text-[10px] font-bold uppercase tracking-widest mt-1" :class="rp.state === 'active' ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400'">
                   {{ rp.state === 'active' ? 'Active' : 'Inactive' }}
                 </p>
@@ -468,30 +425,50 @@ const tabs = [
                 </div>
 
                 <div class="p-8 pt-0">
+                  <CheckoutButton
+                    v-if="isEligiblePlan(plan) && status?.can_subscribe"
+                    label="Subscribe Now"
+                    icon="i-lucide-credit-card"
+                    color="primary"
+                    size="lg"
+                    :block="true"
+                    modal-title="Activate Membership"
+                    :amount="plan.price"
+                    :amount-formatted="plan.price_formatted"
+                    :description="plan.name"
+                    checkout-endpoint="/api/subscription/subscribe"
+                    :checkout-payload="{ plan_uuid: plan.uuid }"
+                    @success="handleSubscriptionSuccess"
+                    class="rounded-2xl font-black py-4 shadow-lg active:scale-95 transition-all"
+                  />
                   <UButton
+                    v-else
                     block
                     size="xl"
-                    :color="isEligiblePlan(plan) ? 'primary' : 'neutral'"
-                    class="rounded-2xl font-black py-4 shadow-lg active:scale-95 transition-all"
-                    :disabled="!isEligiblePlan(plan)"
-                    @click="selectPlan(plan)"
+                    color="neutral"
+                    variant="soft"
+                    class="rounded-2xl font-black py-4 shadow-lg opacity-60"
+                    :disabled="true"
                   >
-                    <template #leading v-if="!isEligiblePlan(plan)">
-                      <UIcon name="i-lucide-lock" />
+                    <template #leading>
+                      <UIcon :name="isCurrentPlan(plan) ? 'i-lucide-check-circle' : 'i-lucide-lock'" class="w-5 h-5" />
                     </template>
                     {{
-                      status?.can_subscribe
-                        ? (isEligiblePlan(plan) ? 'Activate Membership' : 'Not Available Yet')
-                        : (isCurrentPlan(plan) ? 'Current Selection' : 'Locked')
+                      isCurrentPlan(plan) ? 'Active Plan' : (status?.can_subscribe ? 'Stage Locked' : 'Unavailable')
                     }}
                   </UButton>
-                  <p class="text-[10px] text-center text-slate-400 mt-4 uppercase font-bold tracking-widest">
-                    Secure checkout with wallet credits
+                  <p class="text-[10px] text-center text-slate-400 mt-4 uppercase font-bold tracking-widest leading-relaxed">
+                    {{ status?.can_subscribe && isEligiblePlan(plan) ? 'Secure activation via Wallet or Online' : 'Requirement: Stage 1 activation' }}
                   </p>
                 </div>
               </div>
             </template>
           </div>
+
+
+
+
+
         </div>
 
         <!-- Status Details -->
@@ -632,67 +609,17 @@ const tabs = [
       </transition>
     </div>
 
-    <!-- Security Authentication Modal -->
-    <UModal
-      v-model:open="showPinModal"
-      :ui="{
-        content: 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/20 dark:border-slate-700/50 rounded-[40px]',
-        container: 'flex items-center justify-center p-4'
-      }"
-    >
-      <div class="p-8 sm:p-12 text-center">
-        <div class="w-20 h-20 bg-primary-500/10 rounded-[30px] flex items-center justify-center mx-auto mb-8 text-primary-500">
-          <UIcon name="i-lucide-shield-check" class="w-10 h-10" />
-        </div>
-
-        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Authorize Security</h3>
-        <p class="text-slate-500 dark:text-slate-400 mb-8">
-          Enter your 6-digit transaction PIN to confirm the activation of <span class="text-primary-600 font-bold">{{ selectedPlan?.name }}</span>.
-        </p>
-
-        <UFormField>
-          <UInput
-            v-model="pinInput"
-            type="password"
-            placeholder="······"
-            maxlength="6"
-            pattern="[0-9]*"
-            inputmode="numeric"
-            class="text-3xl text-center tracking-[1rem] font-black h-20 rounded-3xl bg-slate-50 dark:bg-slate-800/50 border-none ring-offset-bg"
-            :ui="{
-              base: 'text-center pl-4 pr-0',
-              input: 'placeholder:text-slate-300 dark:placeholder:text-slate-600'
-            }"
-            autofocus
-          />
-        </UFormField>
-
-        <div class="grid grid-cols-2 gap-4 mt-10">
-          <UButton
-            size="xl"
-            color="neutral"
-            variant="ghost"
-            class="rounded-2xl font-bold py-4 hover:bg-slate-100 dark:hover:bg-slate-800"
-            :disabled="subscribing"
-            @click="showPinModal = false; pinInput = ''"
-          >
-            Go Back
-          </UButton>
-          <UButton
-            size="xl"
-            color="primary"
-            class="rounded-2xl font-black py-4 shadow-xl shadow-primary-500/20 active:scale-95"
-            :loading="subscribing"
-            :disabled="pinInput.length !== 6"
-            @click="handleSubscribe"
-          >
-            Confirm
-          </UButton>
-        </div>
-        <p class="text-[10px] text-slate-400 mt-6 uppercase font-black tracking-widest">
-          Secured by Wallet Vault System
-        </p>
-      </div>
-    </UModal>
+    <!-- Checkout Modal -->
+    <CheckoutModal
+      v-if="selectedPlan"
+      v-model:open="showCheckoutModal"
+      title="Activate Membership"
+      :amount="selectedPlan.price"
+      :amount-formatted="selectedPlan.price_formatted"
+      :description="selectedPlan.name"
+      checkout-endpoint="/api/subscription/subscribe"
+      :checkout-payload="{ plan_uuid: selectedPlan.uuid }"
+      @success="handleSubscriptionSuccess"
+    />
   </div>
 </template>

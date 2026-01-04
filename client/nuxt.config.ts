@@ -35,10 +35,10 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Commerinity Pro - Affiliate & E-Commerce Platform',
-      titleTemplate: '%s | Commerinity Pro',
+      title: 'VVIndia - Affiliate & E-Commerce Platform',
+      titleTemplate: '%s | VVIndia',
       meta: [
-        { name: 'description', content: 'Commerinity Pro - Premium Affiliate & E-Commerce Platform. Shop smart, earn more, grow your network.' },
+        { name: 'description', content: 'VVIndia - Premium Affiliate & E-Commerce Platform. Shop smart, earn more, grow your network.' },
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
         { name: 'theme-color', content: '#a855f7' },
@@ -51,7 +51,7 @@ export default defineNuxtConfig({
         { name: 'msapplication-TileColor', content: '#a855f7' },
         // Open Graph
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'Commerinity Pro' }
+        { property: 'og:site_name', content: 'VVIndia' }
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -70,14 +70,14 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
 
       // Branding (can be overridden via .env)
-      appName: process.env.NUXT_PUBLIC_APP_NAME || 'Commerinity Pro',
-      appShortName: process.env.NUXT_PUBLIC_APP_SHORT_NAME || 'CMP',
-      companyName: process.env.NUXT_PUBLIC_COMPANY_NAME || 'Commerinity Pro',
-      companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'Commerinity Pro Pvt Ltd',
+      appName: process.env.NUXT_PUBLIC_APP_NAME || 'VVIndia',
+      appShortName: process.env.NUXT_PUBLIC_APP_SHORT_NAME || 'VVIN',
+      companyName: process.env.NUXT_PUBLIC_COMPANY_NAME || 'VVIndia',
+      companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'VVIndia ',
       tagline: process.env.NUXT_PUBLIC_TAGLINE || 'Shop Smart. Earn More. Grow Together.',
 
       // Contact Information
-      supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL || 'support@commerinity.com',
+      supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL || 'support@vvindia.in',
       supportPhone: process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 98765 43210',
       companyAddress: process.env.NUXT_PUBLIC_COMPANY_ADDRESS || '123 Business Park, Tech Hub, City - 700001, India',
 

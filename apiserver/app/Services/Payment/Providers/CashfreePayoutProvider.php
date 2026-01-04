@@ -191,6 +191,144 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
     }
 
     /**
+     * Initiate batch payout transfer using v2 API
+     *
+     * @param  array<int, PayoutRequest>  $requests  Array of payout requests
+     * @return array{success: bool, batch_transfer_id?: string, message?: string, results?: array}
+     */
+    public function initiateBatch(array $requests): array
+    {
+        $integration = $this->getIntegration();
+        if (! $integration) {
+            return ['success' => false, 'message' => 'Cashfree Payouts not configured'];
+        }
+
+        if (empty($requests)) {
+            return ['success' => false, 'message' => 'No payout requests provided'];
+        }
+
+        try {
+            $batchTransferId = 'BATCH-'.Str::random(12).'-'.time();
+            $transfers = [];
+
+            foreach ($requests as $request) {
+                $beneficiary = BeneficiaryAccount::find($request->beneficiaryAccountId);
+                if (! $beneficiary || ! $beneficiary->canReceivePayout()) {
+                    continue;
+                }
+
+                // Ensure beneficiary is registered
+                if (! $beneficiary->provider_beneficiary_id) {
+                    $addResult = $this->addBeneficiary($beneficiary, $integration);
+                    if ($addResult['success']) {
+                        $beneficiary->update(['provider_beneficiary_id' => $addResult['bene_id']]);
+                    } else {
+                        continue;
+                    }
+                }
+
+                $transfers[] = [
+                    'transfer_id' => $request->transactionId,
+                    'transfer_amount' => $request->getAmountInRupees(),
+                    'bene_id' => $beneficiary->provider_beneficiary_id,
+                    'remarks' => substr($request->description ?? $request->purpose ?? 'Payout', 0, 70),
+                ];
+            }
+
+            if (empty($transfers)) {
+                return ['success' => false, 'message' => 'No valid transfers to process'];
+            }
+
+            $payload = [
+                'batch_transfer_id' => $batchTransferId,
+                'batch_format' => 'BENEFICIARY_ID',
+                'batch' => $transfers,
+            ];
+
+            $response = Http::withHeaders($this->getAuthHeaders($integration))
+                ->timeout(60)
+                ->post($this->getBaseUrl($integration).'/transfers/batch', $payload);
+
+            $data = $response->json();
+
+            if ($response->successful() && ($data['status'] ?? '') === 'SUCCESS') {
+                $batchData = $data['data'] ?? [];
+
+                Log::info('Cashfree batch payout initiated', [
+                    'batch_transfer_id' => $batchTransferId,
+                    'total_transfers' => count($transfers),
+                ]);
+
+                return [
+                    'success' => true,
+                    'batch_transfer_id' => $batchTransferId,
+                    'message' => 'Batch payout initiated successfully',
+                    'results' => $batchData,
+                ];
+            }
+
+            $errorMessage = $data['message'] ?? $data['subCode'] ?? 'Batch transfer request failed';
+            Log::error('Cashfree batch payout failed', [
+                'response' => $data,
+                'batch_transfer_id' => $batchTransferId,
+            ]);
+
+            return ['success' => false, 'message' => $errorMessage];
+        } catch (\Exception $e) {
+            Log::error('Cashfree batch payout exception', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return ['success' => false, 'message' => 'Batch payout error: '.$e->getMessage()];
+        }
+    }
+
+    /**
+     * Check batch payout status using v2 API
+     *
+     * @return array{success: bool, status?: string, data?: array, message?: string}
+     */
+    public function checkBatchStatus(string $batchTransferId): array
+    {
+        $integration = $this->getIntegration();
+        if (! $integration) {
+            return ['success' => false, 'message' => 'Cashfree Payouts not configured'];
+        }
+
+        try {
+            $response = Http::withHeaders($this->getAuthHeaders($integration))
+                ->timeout(30)
+                ->get($this->getBaseUrl($integration).'/transfers/batch/'.$batchTransferId);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $batchData = $data['data'] ?? [];
+
+                Log::info('Cashfree batch payout status retrieved', [
+                    'batch_transfer_id' => $batchTransferId,
+                    'status' => $batchData['batch_status'] ?? null,
+                ]);
+
+                return [
+                    'success' => true,
+                    'status' => $batchData['batch_status'] ?? 'UNKNOWN',
+                    'data' => $batchData,
+                    'message' => 'Batch status retrieved',
+                ];
+            }
+
+            return ['success' => false, 'message' => 'Batch status check failed'];
+        } catch (\Exception $e) {
+            Log::error('Cashfree batch status check exception', [
+                'error' => $e->getMessage(),
+                'batch_transfer_id' => $batchTransferId,
+            ]);
+
+            return ['success' => false, 'message' => 'Batch status check error: '.$e->getMessage()];
+        }
+    }
+
+    /**
      * Get account balance
      */
     public function getBalance(): ?array
@@ -218,7 +356,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
     }
 
     /**
-     * Add a beneficiary to Cashfree
+     * Add a beneficiary to Cashfree using v2 API
      */
     public function addBeneficiary(BeneficiaryAccount $beneficiary, ?Integration $integration = null): array
     {
@@ -231,7 +369,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
             $beneId = 'BENE-'.$beneficiary->id.'-'.substr(md5((string) $beneficiary->id), 0, 6);
 
             $payload = [
-                'beneId' => $beneId,
+                'bene_id' => $beneId,
                 'name' => $beneficiary->holder_name,
                 'email' => $beneficiary->accountable?->email ?? 'beneficiary@mintreu.com',
                 'phone' => $this->formatPhone($beneficiary->accountable?->mobile),
@@ -247,7 +385,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
 
             $response = Http::withHeaders($this->getAuthHeaders($integration))
                 ->timeout(30)
-                ->post($this->getBaseUrl($integration).'/addBeneficiary', $payload);
+                ->post($this->getBaseUrl($integration).'/beneficiaries', $payload);
 
             $data = $response->json();
 

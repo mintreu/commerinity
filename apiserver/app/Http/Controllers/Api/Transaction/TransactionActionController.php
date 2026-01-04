@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Transaction;
 
+use App\Casts\TransactionStatusCast;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +35,7 @@ class TransactionActionController extends Controller
         $transaction->update([
             'verified' => true,
             'verified_at' => now(),
-            'status' => 'completed',
+            'status' => TransactionStatusCast::COMPLETED->value,
             'provider_generated_sign' => $request->input('signature'),
         ]);
 

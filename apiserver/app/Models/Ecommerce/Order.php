@@ -10,6 +10,7 @@ use App\Models\Address;
 use App\Models\Membership\UserSubscription;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Traits\HasTransaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,9 @@ use Illuminate\Support\Str;
 class Order extends Model implements CommissionTrigger
 {
     use HasFactory;
+    use HasTransaction;
+
+    public const TRANSACTION_AMOUNT_COLUMN = 'total';
 
     protected $fillable = [
         'uuid',

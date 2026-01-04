@@ -9,10 +9,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
+use App\Models\User;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
 use App\Services\UserServices\UserAffiliateService;
-use App\Services\Wallet\UserWalletService;
+
+use App\Services\UserServices\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -124,14 +126,19 @@ final class SubscriptionController extends Controller
      */
     public function subscribe(Request $request): JsonResponse
     {
+
+
         $request->validate([
             'plan_uuid' => ['required', 'string', 'exists:stages,uuid'],
-            'payment_method' => ['required', 'string', 'in:wallet,cashfree,razorpay'],
+            'payment_method' => ['required', 'string', 'in:wallet,online'],
             'pin' => ['required_if:payment_method,wallet', 'nullable', 'string', 'size:6'],
         ]);
-
+        $selectedPaymentMethod = $request->input('payment_method');
+        $selectedPaymentMethod = $selectedPaymentMethod == 'wallet' ? $selectedPaymentMethod : PaymentMethodCast::CASHFREE->value;
         $user = $request->user();
-        $paymentMethod = PaymentMethodCast::from($request->input('payment_method'));
+        $paymentMethod = PaymentMethodCast::tryFrom($selectedPaymentMethod);
+
+
 
         // Check if user already has active subscription
         if (UserSubscription::hasActiveSubscription($user->id)) {
@@ -154,6 +161,7 @@ final class SubscriptionController extends Controller
 
         // Create subscription first (pending status)
         $subscription = $this->subscriptionService->createSubscription($user, $stage);
+
 
         // WALLET PAYMENT
         if ($paymentMethod === PaymentMethodCast::WALLET) {
@@ -244,6 +252,7 @@ final class SubscriptionController extends Controller
                 'sponsor_id' => $user->id,
             ]);
 
+
             // Create payment transaction using HasTransaction trait
             $transaction = $subscription->createDebitTransaction(
                 customer: $user,
@@ -258,7 +267,7 @@ final class SubscriptionController extends Controller
                 'success' => true,
                 'message' => 'Payment initiated. Please complete payment to activate subscription.',
                 'data' => [
-                    'checkout_url' => route('checkout.show', ['transaction' => $transaction->uuid]),
+                    'checkout_url' => route('checkout', ['transaction' => $transaction->uuid]),
                     'transaction_uuid' => $transaction->uuid,
                     'expires_at' => $transaction->expires_at->toIso8601String(),
                 ],

@@ -8,6 +8,7 @@ use App\Casts\JobApplicationStatusCast;
 use App\Models\Address;
 use App\Models\Transaction;
 use App\Services\MoneyService;
+use App\Traits\HasTransaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ class JobApplication extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasTransaction;
 
     protected static function newFactory(): \Database\Factories\JobApplicationFactory
     {
@@ -94,6 +96,12 @@ class JobApplication extends Model
     public function applicant(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    //  for payment checkout page
+    public function customer(): MorphTo
+    {
+        return $this->applicant();
     }
 
     public function address(): BelongsTo

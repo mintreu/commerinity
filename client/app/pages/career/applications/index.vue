@@ -21,6 +21,7 @@ interface JobApplication {
     slug: string
     role_label: string
     employment_type_label: string
+    is_payable: boolean
   }
 }
 
@@ -125,7 +126,7 @@ async function handleRefresh() {
                   {{ application.status_label }}
                 </UBadge>
               </div>
-              
+
               <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <span class="flex items-center gap-1">
                   <UIcon name="i-heroicons-briefcase" class="w-4 h-4" />
@@ -141,40 +142,59 @@ async function handleRefresh() {
                 </span>
               </div>
 
-              <div class="mt-2 text-sm">
-                <span class="text-gray-500 dark:text-gray-400">Application ID:</span>
-                <span class="ml-1 font-mono text-gray-700 dark:text-gray-300">
-                  {{ application.uuid }}
-                </span>
-              </div>
-
-              <div v-if="application.status === 'awaiting_payment'" class="mt-3">
-                <UAlert
-                  color="warning"
-                  icon="i-heroicons-exclamation-triangle"
-                  title="Payment Required"
-                  :description="`Complete payment of ${application.amount_formatted} to submit your application.`"
+              <div v-if="application.recruitment.is_payable" class="mt-3 flex items-center gap-2">
+                <UIcon
+                  :name="application.is_paid ? 'i-lucide-check-circle' : 'i-lucide-alert-circle'"
+                  :class="application.is_paid ? 'text-green-500' : 'text-orange-500'"
+                  class="w-4 h-4"
                 />
+                <span class="text-sm" :class="application.is_paid ? 'text-green-700 dark:text-green-400' : 'text-orange-700 dark:text-orange-400'">
+                  {{ application.is_paid ? 'Paid' : 'Payment Pending' }} - {{ application.amount_formatted }}
+                </span>
               </div>
             </div>
 
             <div class="flex flex-col gap-2 sm:items-end">
               <UButton
+                :to="`/career/${application.recruitment.slug}`"
+                variant="ghost"
+                color="neutral"
+                size="xs"
+                icon="i-heroicons-eye"
+              >
+                View Position
+              </UButton>
+
+              <UButton
                 :to="`/career/applications/${application.uuid}`"
                 variant="outline"
                 size="sm"
               >
-                View Details
+                View Application
               </UButton>
-              
-              <UButton
-                v-if="application.status === 'awaiting_payment'"
-                :to="`/career/applications/${application.uuid}/pay`"
+
+              <CheckoutButton
+                v-if="application.recruitment.is_payable && !application.is_paid && application.status === 'awaiting_payment'"
+                label="Pay Fees"
+                icon="i-lucide-wallet"
                 color="primary"
                 size="sm"
+                modal-title="Pay Application Fee"
+                :amount="application.amount"
+                :amount-formatted="application.amount_formatted"
+                :description="application.recruitment.title"
+                :checkout-endpoint="`/api/my-applications/${application.uuid}/pay`"
+                @success="refresh"
+              />
+
+              <UBadge
+                v-else-if="application.recruitment.is_payable && application.is_paid"
+                color="success"
+                size="sm"
               >
-                Complete Payment
-              </UButton>
+                <UIcon name="i-lucide-check-circle" class="w-4 h-4 mr-1" />
+                Paid
+              </UBadge>
             </div>
           </div>
         </UCard>

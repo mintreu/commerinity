@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Address;
+use App\Models\BeneficiaryAccount;
 use App\Models\Transaction;
+use App\Observers\AddressObserver;
+use App\Observers\BeneficiaryAccountObserver;
 use App\Observers\TransactionObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -28,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Register model observers
         Transaction::observe(TransactionObserver::class);
+        BeneficiaryAccount::observe(BeneficiaryAccountObserver::class);
+        Address::observe(AddressObserver::class);
     }
 
     /**

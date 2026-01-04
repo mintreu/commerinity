@@ -14,6 +14,7 @@ use App\Models\Recruitment\JobApplication;
 use App\Models\Recruitment\Recruitment;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\MoneyService;
 use App\Services\Payment\DTOs\PaymentInitiateRequest;
 use App\Services\Payment\PaymentService;
 use App\Services\UserServices\UserWalletService;
@@ -245,6 +246,9 @@ final class JobApplicationService implements JobApplicationServiceInterface
         User $user,
         string $paymentMethodString
     ): array {
+
+        $paymentMethodString = $paymentMethodString == 'wallet' ? $paymentMethodString : 'cashfree';
+
         $paymentMethod = PaymentMethodCast::from($paymentMethodString);
 
         return DB::transaction(function () use ($application, $user, $paymentMethod) {
@@ -254,86 +258,47 @@ final class JobApplicationService implements JobApplicationServiceInterface
             $walletService = app(UserWalletService::class);
             $wallet = $walletService->getOrCreateWallet($user);
 
-            $clientBaseUrl = config('app.client_url', config('app.frontend_url', config('app.url')));
+            $clientBaseUrl = config('app.client_url');
             $successUrl = "{$clientBaseUrl}/career/applications/{$application->uuid}?payment=success";
             $failureUrl = "{$clientBaseUrl}/career/applications/{$application->uuid}?payment=failed";
 
-            // Create transaction record
-            $transaction = Transaction::create([
-                'uuid' => 'TXN-'.Str::upper(Str::random(12)),
-                'wallet_id' => $wallet->id,
-                'transactionable_type' => JobApplication::class,
-                'transactionable_id' => $application->id,
-                'type' => TransactionTypeCast::DEBIT,
-                'status' => TransactionStatusCast::PENDING,
-                'amount' => $application->amount,
-                'currency' => 'INR',
-                'payment_method' => $paymentMethod,
-                'purpose' => 'Job Application Fee',
-                'description' => "{$user->name} - Application for {$application->recruitment->title}",
-                'expires_at' => now()->addMinutes(60),
-                'verified' => false,
-                'metadata' => [
-                    'customer' => [
-                        'user_id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'mobile' => $user->mobile,
-                    ],
-                    'redirect_success_url' => $successUrl,
-                    'redirect_failure_url' => $failureUrl,
-                    'application_uuid' => $application->uuid,
-                ],
-            ]);
+            if ($paymentMethod == 'wallet' && $application->amount >= $wallet->balance)
+            {
 
-            // Use PaymentService to initiate payment
-            $paymentService = app(PaymentService::class);
+                $transaction = $walletService->debit(
+                    $wallet,
+                    $application->amount,
+                    'Application Fees Paid',
+                    'Application Fees '.MoneyService::make($application->amount)->formatted(), ' For Application '.$application->uuid
+                );
 
-            $paymentRequest = new PaymentInitiateRequest(
-                amountInPaisa: $application->amount,
-                currency: 'INR',
-                method: $paymentMethod,
-                userId: $user->id,
-                walletId: $wallet->id,
-                transactionId: $transaction->uuid,
-                customerName: $user->name,
-                customerEmail: $user->email,
-                customerPhone: $user->mobile,
-                purpose: 'Job Application Fee',
-                description: $transaction->description,
-                metadata: $transaction->metadata ?? [],
-                callbackUrl: $successUrl,
-                expiresInMinutes: 60
-            );
+            }else{
+                $transaction = $application->createCreditTransaction(
+                    customer: $user,
+                    amount: $application->amount,
+                    paymentMethod: PaymentMethodCast::CASHFREE,
+                    redirectSuccessUrl: $successUrl,
+                    redirectFailureUrl: $failureUrl,
+                    wallet: $wallet,
+                    purpose: 'Application Fees Paid',
+
+                );
+            }
+
 
             try {
-                $paymentResponse = $paymentService->initiate($paymentRequest);
 
-                if ($paymentResponse->success || $paymentResponse->status === 'pending') {
-                    $transaction->update([
-                        'provider_order_id' => $paymentResponse->providerOrderId,
-                        'provider_transaction_id' => $paymentResponse->providerTransactionId,
-                        'checkout_url' => $paymentResponse->checkoutUrl,
-                        'status' => $paymentResponse->getStatusEnum(),
-                        'provider_response' => $paymentResponse->metadata,
-                    ]);
-
+                if ($transaction->status == TransactionStatusCast::PENDING) {
                     return [
                         'success' => true,
-                        'checkout_url' => route('checkout.show', ['transaction' => $transaction->uuid]),
+                        'checkout_url' => route('checkout', ['transaction' => $transaction->uuid]),
                         'transaction_uuid' => $transaction->uuid,
                     ];
                 }
-
-                // Failed to initiate payment
-                $transaction->update([
-                    'status' => TransactionStatusCast::FAILED,
-                    'provider_response' => $paymentResponse->metadata,
-                ]);
-
+                
                 return [
                     'success' => false,
-                    'message' => $paymentResponse->message ?? 'Failed to initiate payment.',
+                    'message' => 'Failed to initiate payment.',
                 ];
             } catch (\Exception $e) {
                 $transaction->update([
@@ -450,7 +415,7 @@ final class JobApplicationService implements JobApplicationServiceInterface
 
         // Generate payment URL
         $clientBaseUrl = config('app.client_url', config('app.url'));
-        $this->returnUrl = "{$clientBaseUrl}/career/applications/{$this->application->uuid}/pay";
+        $this->returnUrl = "{$clientBaseUrl}/career/applications/{$this->application->uuid}";
     }
 
     private function setError(string $message): void

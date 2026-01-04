@@ -335,6 +335,7 @@ Route::prefix('contact')->group(function () {
 
 // ========================================
 // Checkout (Public - no auth for checkout page display)
+// no auth thats a bad thing, not secured
 // ========================================
 Route::prefix('checkout')->group(function () {
     Route::get('/{transaction:uuid}', [CheckoutController::class, 'show']);
@@ -368,6 +369,19 @@ Route::prefix('webhooks')->group(function () {
 
     // Razorpay Payment Gateway
     Route::post('/razorpay', [RazorpayWebhookController::class, 'handle']);
+});
+
+// ========================================
+// FAQ - Public (No auth required)
+// ========================================
+Route::prefix('faq')->group(function () {
+    Route::get('/topics', [\App\Http\Controllers\Api\FaqController::class, 'topics']);
+    Route::get('/popular', [\App\Http\Controllers\Api\FaqController::class, 'popular']);
+    Route::get('/search', [\App\Http\Controllers\Api\FaqController::class, 'search']);
+    Route::get('/view/{url}', [\App\Http\Controllers\Api\FaqController::class, 'show']);
+    Route::get('/{topicSlug}', [\App\Http\Controllers\Api\FaqController::class, 'byTopic']);
+    Route::post('/{url}/helpful', [\App\Http\Controllers\Api\FaqController::class, 'markHelpful']);
+    Route::post('/{url}/not-helpful', [\App\Http\Controllers\Api\FaqController::class, 'markNotHelpful']);
 });
 
 // ========================================
