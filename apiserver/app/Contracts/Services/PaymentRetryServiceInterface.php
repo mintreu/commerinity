@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Contracts\Services;
 
 use App\Models\Transaction;
-use App\Services\Payment\DTOs\PaymentInitiateRequest;
-use App\Services\Payment\DTOs\PaymentResponse;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentResponse;
 
 interface PaymentRetryServiceInterface
 {

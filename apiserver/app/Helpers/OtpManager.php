@@ -6,7 +6,7 @@ namespace App\Helpers;
 
 use App\Models\User;
 use App\Notifications\OtpNotification;
-use App\Services\Sms\SmsService;
+use App\Services\IntegrationServices\Sms\SmsService;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Log;

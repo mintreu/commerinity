@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Models\BeneficiaryAccount;
 use App\Models\Wallet;
-use App\Services\Payment\PayoutService;
+use App\Services\IntegrationServices\Payout\PayoutService;
 use Illuminate\Support\Facades\Log;
 
 final class BeneficiaryAccountService

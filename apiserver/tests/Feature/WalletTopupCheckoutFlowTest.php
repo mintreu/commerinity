@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -25,7 +25,7 @@ uses(RefreshDatabase::class);
 test('user can initiate wallet topup and get checkout url', function () {
     // Create Cashfree integration for testing
     \App\Models\Integration::factory()->cashfree()->create();
-    app(\App\Services\Payment\PaymentService::class)->refreshProviders();
+    app(\App\Services\IntegrationServices\Payment\PaymentService::class)->refreshProviders();
 
     $user = User::factory()->create();
     $wallet = Wallet::factory()->for($user, 'walletable')->create();
@@ -73,7 +73,7 @@ test('user can initiate wallet topup and get checkout url', function () {
 test('checkout page returns transaction data correctly', function () {
     // Create Cashfree integration for testing
     \App\Models\Integration::factory()->cashfree()->create();
-    app(\App\Services\Payment\PaymentService::class)->refreshProviders();
+    app(\App\Services\IntegrationServices\Payment\PaymentService::class)->refreshProviders();
 
     $user = User::factory()->create();
     $wallet = Wallet::factory()->for($user, 'walletable')->create();

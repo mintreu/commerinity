@@ -6,8 +6,8 @@ namespace App\Jobs\Wallet;
 
 use App\Casts\TransactionStatusCast;
 use App\Models\Transaction;
-use App\Services\Payment\DTOs\PayoutResponse;
-use App\Services\Payment\Providers\CashfreePayoutProvider;
+use App\Services\IntegrationServices\Payout\DTOs\PayoutResponse;
+use App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

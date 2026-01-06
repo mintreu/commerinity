@@ -215,7 +215,7 @@ const formatDate = (dateString: string) => {
               </p>
             </div>
             <UButton
-              :to="`/orders/${order.uuid}`"
+              :to="`/order/${order.uuid}`"
               color="primary"
               variant="soft"
               class="transition-transform active:scale-95"

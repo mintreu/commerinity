@@ -8,8 +8,8 @@ use App\Models\BeneficiaryAccount;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Services\Payment\DTOs\PayoutRequest;
-use App\Services\Payment\Providers\NativePayoutProvider;
+use App\Services\IntegrationServices\Payout\DTOs\PayoutRequest;
+use App\Services\IntegrationServices\Payout\Providers\NativePayoutProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

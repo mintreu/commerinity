@@ -148,18 +148,15 @@ public function __construct(
 
 namespace App\Providers;
 
-use App\Services\Payment\Providers\CashfreePayoutProvider;
-use App\Services\Payment\Providers\NativePayoutProvider;
-use App\Services\Payment\Providers\RazorpayPayoutProvider;
-use Illuminate\Support\ServiceProvider;
+use App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider;use Illuminate\Support\ServiceProvider;
 
 class PayoutServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->singleton(CashfreePayoutProvider::class);
-        $this->app->singleton(NativePayoutProvider::class);
-        $this->app->singleton(RazorpayPayoutProvider::class);
+        $this->app->singleton(\App\Services\IntegrationServices\Payout\Providers\NativePayoutProvider::class);
+        $this->app->singleton(\App\Services\IntegrationServices\Payout\Providers\RazorpayPayoutProvider::class);
     }
 }
 ```

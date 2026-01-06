@@ -7,9 +7,9 @@ use App\Casts\TransactionStatusCast;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Services\Payment\DTOs\PaymentInitiateRequest;
-use App\Services\Payment\DTOs\PaymentVerifyRequest;
-use App\Services\Payment\Providers\NativePaymentProvider;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;
+use App\Services\IntegrationServices\Payment\Providers\NativePaymentProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

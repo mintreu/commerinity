@@ -25041,7 +25041,7 @@
     </file>
     <package name="App\Services\Payment\DTOs">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\DTOs\PaymentInitiateRequest.php">
-        <class name="App\Services\Payment\DTOs\PaymentInitiateRequest" namespace="App\Services\Payment\DTOs">
+        <class name="App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest" namespace="App\Services\Payment\DTOs">
           <metrics complexity="5" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="38" coveredstatements="2" elements="42" coveredelements="4"/>
         </class>
         <line num="32" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
@@ -25089,7 +25089,7 @@
         <metrics loc="112" ncloc="78" classes="1" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="38" coveredstatements="2" elements="42" coveredelements="4"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\DTOs\PaymentResponse.php">
-        <class name="App\Services\Payment\DTOs\PaymentResponse" namespace="App\Services\Payment\DTOs">
+        <class name="App\Services\IntegrationServices\Payment\DTOs\PaymentResponse" namespace="App\Services\Payment\DTOs">
           <metrics complexity="16" methods="9" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="27" elements="59" coveredelements="31"/>
         </class>
         <line num="37" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="15"/>
@@ -25154,7 +25154,7 @@
         <metrics loc="171" ncloc="129" classes="1" methods="9" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="27" elements="59" coveredelements="31"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\DTOs\PaymentVerifyRequest.php">
-        <class name="App\Services\Payment\DTOs\PaymentVerifyRequest" namespace="App\Services\Payment\DTOs">
+        <class name="App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest" namespace="App\Services\Payment\DTOs">
           <metrics complexity="3" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="1" elements="18" coveredelements="2"/>
         </class>
         <line num="21" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
@@ -25178,7 +25178,7 @@
         <metrics loc="61" ncloc="39" classes="1" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="1" elements="18" coveredelements="2"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\DTOs\PayoutRequest.php">
-        <class name="App\Services\Payment\DTOs\PayoutRequest" namespace="App\Services\Payment\DTOs">
+        <class name="App\Services\IntegrationServices\Payout\DTOs\PayoutRequest" namespace="App\Services\Payment\DTOs">
           <metrics complexity="5" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="28" coveredstatements="1" elements="32" coveredelements="2"/>
         </class>
         <line num="28" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
@@ -25216,7 +25216,7 @@
         <metrics loc="93" ncloc="63" classes="1" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="28" coveredstatements="1" elements="32" coveredelements="2"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\DTOs\PayoutResponse.php">
-        <class name="App\Services\Payment\DTOs\PayoutResponse" namespace="App\Services\Payment\DTOs">
+        <class name="App\Services\IntegrationServices\Payout\DTOs\PayoutResponse" namespace="App\Services\Payment\DTOs">
           <metrics complexity="6" methods="6" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="25" elements="41" coveredelements="29"/>
         </class>
         <line num="35" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="25"/>
@@ -25265,7 +25265,7 @@
     </package>
     <package name="App\Services\Payment">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\PaymentRetryService.php">
-        <class name="App\Services\Payment\PaymentRetryService" namespace="App\Services\Payment">
+        <class name="App\Services\IntegrationServices\Payment\PaymentRetryService" namespace="App\Services\Payment">
           <metrics complexity="44" methods="13" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="174" coveredstatements="76" elements="187" coveredelements="81"/>
         </class>
         <line num="47" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="18"/>
@@ -25458,7 +25458,7 @@
         <metrics loc="418" ncloc="322" classes="1" methods="13" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="174" coveredstatements="76" elements="187" coveredelements="81"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\PaymentService.php">
-        <class name="App\Services\Payment\PaymentService" namespace="App\Services\Payment">
+        <class name="App\Services\IntegrationServices\Payment\PaymentService" namespace="App\Services\Payment">
           <metrics complexity="66" methods="24" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="110" coveredstatements="24" elements="134" coveredelements="28"/>
         </class>
         <line num="46" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="19"/>
@@ -25598,7 +25598,7 @@
         <metrics loc="408" ncloc="312" classes="1" methods="24" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="110" coveredstatements="24" elements="134" coveredelements="28"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\PayoutService.php">
-        <class name="App\Services\Payment\PayoutService" namespace="App\Services\Payment">
+        <class name="App\Services\IntegrationServices\Payout\PayoutService" namespace="App\Services\Payment">
           <metrics complexity="87" methods="32" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="288" coveredstatements="19" elements="320" coveredelements="20"/>
         </class>
         <line num="45" type="method" name="__construct" visibility="public" complexity="3" crap="3.33" count="21"/>
@@ -25926,7 +25926,7 @@
     </package>
     <package name="App\Services\Payment\Providers">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\Providers\CashfreePaymentProvider.php">
-        <class name="App\Services\Payment\Providers\CashfreePaymentProvider" namespace="App\Services\Payment\Providers">
+        <class name="App\Services\IntegrationServices\Payment\Providers\Cashfree\CashfreePaymentProvider" namespace="App\Services\Payment\Providers">
           <metrics complexity="41" methods="15" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="215" coveredstatements="49" elements="230" coveredelements="55"/>
         </class>
         <line num="33" type="method" name="getSlug" visibility="public" complexity="1" crap="1" count="19"/>
@@ -26162,7 +26162,7 @@
         <metrics loc="435" ncloc="380" classes="1" methods="15" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="215" coveredstatements="49" elements="230" coveredelements="55"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\Providers\CashfreePayoutProvider.php">
-        <class name="App\Services\Payment\Providers\CashfreePayoutProvider" namespace="App\Services\Payment\Providers">
+        <class name="App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider" namespace="App\Services\Payment\Providers">
           <metrics complexity="111" methods="25" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="501" coveredstatements="9" elements="526" coveredelements="11"/>
         </class>
         <line num="36" type="method" name="getSlug" visibility="public" complexity="1" crap="2" count="0"/>
@@ -26694,7 +26694,7 @@
         <metrics loc="936" ncloc="816" classes="1" methods="25" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="501" coveredstatements="9" elements="526" coveredelements="11"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\Providers\NativePaymentProvider.php">
-        <class name="App\Services\Payment\Providers\NativePaymentProvider" namespace="App\Services\Payment\Providers">
+        <class name="App\Services\IntegrationServices\Payment\Providers\NativePaymentProvider" namespace="App\Services\Payment\Providers">
           <metrics complexity="29" methods="11" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="150" coveredstatements="69" elements="161" coveredelements="72"/>
         </class>
         <line num="29" type="method" name="getSlug" visibility="public" complexity="1" crap="1" count="19"/>
@@ -26861,7 +26861,7 @@
         <metrics loc="295" ncloc="260" classes="1" methods="11" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="150" coveredstatements="69" elements="161" coveredelements="72"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\Providers\NativePayoutProvider.php">
-        <class name="App\Services\Payment\Providers\NativePayoutProvider" namespace="App\Services\Payment\Providers">
+        <class name="App\Services\IntegrationServices\Payout\Providers\NativePayoutProvider" namespace="App\Services\Payment\Providers">
           <metrics complexity="35" methods="13" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="193" coveredstatements="128" elements="206" coveredelements="135"/>
         </class>
         <line num="31" type="method" name="getSlug" visibility="public" complexity="1" crap="1" count="40"/>
@@ -27073,7 +27073,7 @@
         <metrics loc="383" ncloc="332" classes="1" methods="13" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="193" coveredstatements="128" elements="206" coveredelements="135"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\Providers\RazorpayPaymentProvider.php">
-        <class name="App\Services\Payment\Providers\RazorpayPaymentProvider" namespace="App\Services\Payment\Providers">
+        <class name="App\Services\IntegrationServices\Payment\Providers\RazorpayPaymentProvider" namespace="App\Services\Payment\Providers">
           <metrics complexity="44" methods="14" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="246" coveredstatements="115" elements="260" coveredelements="121"/>
         </class>
         <line num="29" type="method" name="getSlug" visibility="public" complexity="1" crap="1" count="1"/>
@@ -27339,7 +27339,7 @@
         <metrics loc="461" ncloc="411" classes="1" methods="14" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="246" coveredstatements="115" elements="260" coveredelements="121"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Payment\Providers\RazorpayPayoutProvider.php">
-        <class name="App\Services\Payment\Providers\RazorpayPayoutProvider" namespace="App\Services\Payment\Providers">
+        <class name="App\Services\IntegrationServices\Payout\Providers\RazorpayPayoutProvider" namespace="App\Services\Payment\Providers">
           <metrics complexity="77" methods="19" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="373" coveredstatements="22" elements="392" coveredelements="28"/>
         </class>
         <line num="37" type="method" name="getSlug" visibility="public" complexity="1" crap="1" count="1"/>
@@ -27976,7 +27976,7 @@
     </package>
     <package name="App\Services\ShipmentProviders">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\ShipmentProviders\NativeShipmentProvider.php">
-        <class name="App\Services\ShipmentProviders\NativeShipmentProvider" namespace="App\Services\ShipmentProviders">
+        <class name="App\Services\IntegrationServices\ShipmentProviders\NativeShipmentProvider" namespace="App\Services\ShipmentProviders">
           <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="38" coveredstatements="0" elements="43" coveredelements="0"/>
         </class>
         <line num="16" type="method" name="getName" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28030,7 +28030,7 @@
     </file>
     <package name="App\Services\ShipmentProviders\Shiprocket">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\ShipmentProviders\Shiprocket\ShiprocketApi.php">
-        <class name="App\Services\ShipmentProviders\Shiprocket\ShiprocketApi" namespace="App\Services\ShipmentProviders\Shiprocket">
+        <class name="App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketApi" namespace="App\Services\ShipmentProviders\Shiprocket">
           <metrics complexity="13" methods="10" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="55" coveredstatements="0" elements="65" coveredelements="0"/>
         </class>
         <line num="24" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28101,7 +28101,7 @@
         <metrics loc="151" ncloc="131" classes="1" methods="10" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="55" coveredstatements="0" elements="65" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\ShipmentProviders\Shiprocket\ShiprocketPayloadFactory.php">
-        <class name="App\Services\ShipmentProviders\Shiprocket\ShiprocketPayloadFactory" namespace="App\Services\ShipmentProviders\Shiprocket">
+        <class name="App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketPayloadFactory" namespace="App\Services\ShipmentProviders\Shiprocket">
           <metrics complexity="13" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="81" coveredstatements="0" elements="87" coveredelements="0"/>
         </class>
         <line num="14" type="method" name="__construct" visibility="public" complexity="2" crap="6" count="0"/>
@@ -28194,7 +28194,7 @@
         <metrics loc="132" ncloc="131" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="81" coveredstatements="0" elements="87" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\ShipmentProviders\Shiprocket\ShiprocketShipmentProvider.php">
-        <class name="App\Services\ShipmentProviders\Shiprocket\ShiprocketShipmentProvider" namespace="App\Services\ShipmentProviders\Shiprocket">
+        <class name="App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketShipmentProvider" namespace="App\Services\ShipmentProviders\Shiprocket">
           <metrics complexity="10" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="63" coveredstatements="0" elements="68" coveredelements="0"/>
         </class>
         <line num="16" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28268,7 +28268,7 @@
         <metrics loc="116" ncloc="116" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="63" coveredstatements="0" elements="68" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\ShipmentProviders\Shiprocket\ShiprocketStatusMapper.php">
-        <class name="App\Services\ShipmentProviders\Shiprocket\ShiprocketStatusMapper" namespace="App\Services\ShipmentProviders\Shiprocket">
+        <class name="App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketStatusMapper" namespace="App\Services\ShipmentProviders\Shiprocket">
           <metrics complexity="14" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="11" coveredelements="0"/>
         </class>
         <line num="11" type="method" name="map" visibility="public" complexity="14" crap="210" count="0"/>
@@ -28290,7 +28290,7 @@
     </file>
     <package name="App\Services\Sms\DTOs">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\DTOs\BalanceInfo.php">
-        <class name="App\Services\Sms\DTOs\BalanceInfo" namespace="App\Services\Sms\DTOs">
+        <class name="App\Services\IntegrationServices\Sms\DTOs\BalanceInfo" namespace="App\Services\Sms\DTOs">
           <metrics complexity="9" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="0" elements="37" coveredelements="0"/>
         </class>
         <line num="22" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28333,7 +28333,7 @@
         <metrics loc="111" ncloc="78" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="0" elements="37" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\DTOs\DeliveryReport.php">
-        <class name="App\Services\Sms\DTOs\DeliveryReport" namespace="App\Services\Sms\DTOs">
+        <class name="App\Services\IntegrationServices\Sms\DTOs\DeliveryReport" namespace="App\Services\Sms\DTOs">
           <metrics complexity="12" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="38" coveredstatements="0" elements="45" coveredelements="0"/>
         </class>
         <line num="37" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28384,7 +28384,7 @@
         <metrics loc="133" ncloc="97" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="38" coveredstatements="0" elements="45" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\DTOs\SmsRequest.php">
-        <class name="App\Services\Sms\DTOs\SmsRequest" namespace="App\Services\Sms\DTOs">
+        <class name="App\Services\IntegrationServices\Sms\DTOs\SmsRequest" namespace="App\Services\Sms\DTOs">
           <metrics complexity="10" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="0" elements="40" coveredelements="0"/>
         </class>
         <line num="26" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28430,7 +28430,7 @@
         <metrics loc="139" ncloc="98" classes="1" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="0" elements="40" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\DTOs\SmsResponse.php">
-        <class name="App\Services\Sms\DTOs\SmsResponse" namespace="App\Services\Sms\DTOs">
+        <class name="App\Services\IntegrationServices\Sms\DTOs\SmsResponse" namespace="App\Services\Sms\DTOs">
           <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="43" coveredstatements="0" elements="49" coveredelements="0"/>
         </class>
         <line num="24" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28487,7 +28487,7 @@
     </package>
     <package name="App\Services\Sms\Providers">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\Providers\Fast2SmsProvider.php">
-        <class name="App\Services\Sms\Providers\Fast2SmsProvider" namespace="App\Services\Sms\Providers">
+        <class name="App\Services\IntegrationServices\Sms\Providers\Fast2SmsProvider" namespace="App\Services\Sms\Providers">
           <metrics complexity="64" methods="31" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="216" coveredstatements="0" elements="247" coveredelements="0"/>
         </class>
         <line num="54" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28740,7 +28740,7 @@
         <metrics loc="558" ncloc="472" classes="1" methods="31" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="216" coveredstatements="0" elements="247" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\Providers\LogSmsProvider.php">
-        <class name="App\Services\Sms\Providers\LogSmsProvider" namespace="App\Services\Sms\Providers">
+        <class name="App\Services\IntegrationServices\Sms\Providers\LogSmsProvider" namespace="App\Services\Sms\Providers">
           <metrics complexity="17" methods="14" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="76" coveredstatements="0" elements="90" coveredelements="0"/>
         </class>
         <line num="25" type="method" name="getSlug" visibility="public" complexity="1" crap="2" count="0"/>
@@ -28838,7 +28838,7 @@
     </package>
     <package name="App\Services\Sms">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Sms\SmsService.php">
-        <class name="App\Services\Sms\SmsService" namespace="App\Services\Sms">
+        <class name="App\Services\IntegrationServices\Sms\SmsService" namespace="App\Services\Sms">
           <metrics complexity="59" methods="22" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="209" coveredstatements="0" elements="231" coveredelements="0"/>
         </class>
         <line num="39" type="method" name="send" visibility="public" complexity="6" crap="42" count="0"/>

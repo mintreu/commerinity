@@ -460,7 +460,7 @@ Route::prefix('wishlist')->middleware('auth:sanctum')->group(function () {
 Route::get('/wishlist/{product:url}/check', [\App\Http\Controllers\Api\WishlistController::class, 'check']);
 
 // ========================================
-// Orders (Auth required)
+// Orders (Auth required) [ECOMMERCE]
 // ========================================
 Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [OrderController::class, 'index']);

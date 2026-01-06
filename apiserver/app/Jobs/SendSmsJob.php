@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\Sms\SmsLog;
-use App\Services\Sms\DTOs\SmsRequest;
-use App\Services\Sms\DTOs\SmsResponse;
-use App\Services\Sms\SmsService;
+use App\Services\IntegrationServices\Sms\DTOs\SmsRequest;
+use App\Services\IntegrationServices\Sms\DTOs\SmsResponse;
+use App\Services\IntegrationServices\Sms\SmsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;

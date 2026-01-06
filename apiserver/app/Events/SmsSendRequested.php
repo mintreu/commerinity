@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events;
 
-use App\Services\Sms\DTOs\SmsRequest;
+use App\Services\IntegrationServices\Sms\DTOs\SmsRequest;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

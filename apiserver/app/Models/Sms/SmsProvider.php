@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models\Sms;
 
-use App\Services\Sms\Contracts\SmsProviderInterface;
-use App\Services\Sms\Providers\Fast2SmsProvider;
-use App\Services\Sms\Providers\LogSmsProvider;
+use App\Services\IntegrationServices\Sms\Contracts\SmsProviderInterface;
+use App\Services\IntegrationServices\Sms\Providers\Fast2SmsProvider;
+use App\Services\IntegrationServices\Sms\Providers\LogSmsProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

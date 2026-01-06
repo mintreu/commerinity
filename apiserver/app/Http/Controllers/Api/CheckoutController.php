@@ -8,8 +8,8 @@ use App\Casts\TransactionStatusCast;
 use App\Events\PaymentCompleted;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\Services\IntegrationServices\Payment\Providers\Cashfree\CashfreePaymentProvider;
 use App\Services\MoneyService;
-use App\Services\Payment\Providers\CashfreePaymentProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -205,7 +205,7 @@ final class CheckoutController extends Controller
 
         // Call Cashfree API to verify payment status
         $verifyResponse = $this->cashfreeProvider->verify(
-            new \App\Services\Payment\DTOs\PaymentVerifyRequest(
+            new \App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest(
                 orderId: $transaction->uuid,
                 providerOrderId: $providerOrderId,
             )

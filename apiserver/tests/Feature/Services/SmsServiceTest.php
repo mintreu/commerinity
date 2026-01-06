@@ -5,12 +5,12 @@ declare(strict_types=1);
 use App\Models\Sms\SmsLog;
 use App\Models\Sms\SmsProvider;
 use App\Models\Sms\SmsTemplate;
-use App\Services\Sms\DTOs\BalanceInfo;
-use App\Services\Sms\DTOs\DeliveryReport;
-use App\Services\Sms\DTOs\SmsRequest;
-use App\Services\Sms\DTOs\SmsResponse;
-use App\Services\Sms\Providers\LogSmsProvider;
-use App\Services\Sms\SmsService;
+use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
+use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
+use App\Services\IntegrationServices\Sms\DTOs\SmsRequest;
+use App\Services\IntegrationServices\Sms\DTOs\SmsResponse;
+use App\Services\IntegrationServices\Sms\Providers\LogSmsProvider;
+use App\Services\IntegrationServices\Sms\SmsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

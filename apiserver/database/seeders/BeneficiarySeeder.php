@@ -6,7 +6,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Wallet;
-use App\Services\Payment\PayoutService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

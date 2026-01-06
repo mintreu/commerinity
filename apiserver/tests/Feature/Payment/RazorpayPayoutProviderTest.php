@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Integration;
-use App\Services\Payment\Providers\RazorpayPayoutProvider;
+use App\Services\IntegrationServices\Payout\Providers\RazorpayPayoutProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 

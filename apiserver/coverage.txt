@@ -104,33 +104,33 @@ App\Providers\TelescopeServiceProvider
   [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  60.87% ( 14/ 23)[0m
 App\Services\BeneficiaryAccountService
   [30;42mMethods: 100.00% ( 3/ 3)[0m   [30;42mLines: 100.00% ( 17/ 17)[0m
-App\Services\Payment\DTOs\PaymentInitiateRequest
+App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest
   [37;41mMethods:  50.00% ( 2/ 4)[0m   [37;41mLines:   5.26% (  2/ 38)[0m
-App\Services\Payment\DTOs\PaymentResponse
+App\Services\IntegrationServices\Payment\DTOs\PaymentResponse
   [37;41mMethods:  44.44% ( 4/ 9)[0m   [30;43mLines:  54.00% ( 27/ 50)[0m
-App\Services\Payment\DTOs\PaymentVerifyRequest
+App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest
   [37;41mMethods:  33.33% ( 1/ 3)[0m   [37;41mLines:   6.67% (  1/ 15)[0m
-App\Services\Payment\DTOs\PayoutRequest
+App\Services\IntegrationServices\Payout\DTOs\PayoutRequest
   [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   3.57% (  1/ 28)[0m
-App\Services\Payment\DTOs\PayoutResponse
+App\Services\IntegrationServices\Payout\DTOs\PayoutResponse
   [30;43mMethods:  66.67% ( 4/ 6)[0m   [30;43mLines:  71.43% ( 25/ 35)[0m
-App\Services\Payment\PaymentRetryService
+App\Services\IntegrationServices\Payment\PaymentRetryService
   [37;41mMethods:  38.46% ( 5/13)[0m   [37;41mLines:  43.68% ( 76/174)[0m
-App\Services\Payment\PaymentService
+App\Services\IntegrationServices\Payment\PaymentService
   [37;41mMethods:  16.67% ( 4/24)[0m   [37;41mLines:  21.82% ( 24/110)[0m
-App\Services\Payment\PayoutService
+App\Services\IntegrationServices\Payout\PayoutService
   [37;41mMethods:   3.12% ( 1/32)[0m   [37;41mLines:   6.60% ( 19/288)[0m
-App\Services\Payment\Providers\CashfreePaymentProvider
+App\Services\IntegrationServices\Payment\Providers\Cashfree\CashfreePaymentProvider
   [37;41mMethods:  40.00% ( 6/15)[0m   [37;41mLines:  22.79% ( 49/215)[0m
-App\Services\Payment\Providers\CashfreePayoutProvider
+App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider
   [37;41mMethods:   8.00% ( 2/25)[0m   [37;41mLines:   1.80% (  9/501)[0m
-App\Services\Payment\Providers\NativePaymentProvider
+App\Services\IntegrationServices\Payment\Providers\NativePaymentProvider
   [37;41mMethods:  27.27% ( 3/11)[0m   [37;41mLines:  46.00% ( 69/150)[0m
-App\Services\Payment\Providers\NativePayoutProvider
+App\Services\IntegrationServices\Payout\Providers\NativePayoutProvider
   [30;43mMethods:  53.85% ( 7/13)[0m   [30;43mLines:  66.32% (128/193)[0m
-App\Services\Payment\Providers\RazorpayPaymentProvider
+App\Services\IntegrationServices\Payment\Providers\RazorpayPaymentProvider
   [37;41mMethods:  42.86% ( 6/14)[0m   [37;41mLines:  46.75% (115/246)[0m
-App\Services\Payment\Providers\RazorpayPayoutProvider
+App\Services\IntegrationServices\Payout\Providers\RazorpayPayoutProvider
   [37;41mMethods:  31.58% ( 6/19)[0m   [37;41mLines:   5.90% ( 22/373)[0m
 App\Services\Trends\BaseTrendService
   [37;41mMethods:  20.00% ( 2/10)[0m   [37;41mLines:  17.09% ( 20/117)[0m

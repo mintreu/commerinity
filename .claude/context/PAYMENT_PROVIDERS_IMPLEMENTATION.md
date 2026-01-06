@@ -36,13 +36,7 @@ declare(strict_types=1);
 
 namespace App\Services\Payment\Providers;
 
-use App\Models\Integration;
-use App\Services\Payment\Contracts\PaymentProviderInterface;
-use App\Services\Payment\DTOs\PaymentInitiateRequest;
-use App\Services\Payment\DTOs\PaymentResponse;
-use App\Services\Payment\DTOs\PaymentVerifyRequest;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use App\Models\Integration;use App\Services\IntegrationServices\Payment\Contracts\PaymentProviderInterface;use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;use App\Services\IntegrationServices\Payment\DTOs\PaymentResponse;use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;use Illuminate\Support\Facades\Http;use Illuminate\Support\Facades\Log;
 
 final class CashfreePaymentProvider implements PaymentProviderInterface
 {
@@ -233,13 +227,7 @@ declare(strict_types=1);
 
 namespace App\Services\Payment\Providers;
 
-use App\Models\BeneficiaryAccount;
-use App\Models\Integration;
-use App\Services\Payment\Contracts\PayoutProviderInterface;
-use App\Services\Payment\DTOs\PayoutRequest;
-use App\Services\Payment\DTOs\PayoutResponse;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use App\Models\BeneficiaryAccount;use App\Models\Integration;use App\Services\IntegrationServices\Payout\Contracts\PayoutProviderInterface;use App\Services\IntegrationServices\Payout\DTOs\PayoutRequest;use App\Services\IntegrationServices\Payout\DTOs\PayoutResponse;use Illuminate\Support\Facades\Http;use Illuminate\Support\Facades\Log;
 
 final class CashfreePayoutProvider implements PayoutProviderInterface
 {
@@ -586,12 +574,7 @@ declare(strict_types=1);
 
 namespace App\Services\Payment\Providers;
 
-use App\Models\Integration;
-use App\Services\Payment\Contracts\PaymentProviderInterface;
-use App\Services\Payment\DTOs\PaymentInitiateRequest;
-use App\Services\Payment\DTOs\PaymentResponse;
-use App\Services\Payment\DTOs\PaymentVerifyRequest;
-use Razorpay\Api\Api;
+use App\Models\Integration;use App\Services\IntegrationServices\Payment\Contracts\PaymentProviderInterface;use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;use App\Services\IntegrationServices\Payment\DTOs\PaymentResponse;use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;use Razorpay\Api\Api;
 
 final class RazorpayPaymentProvider implements PaymentProviderInterface
 {

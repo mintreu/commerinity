@@ -8,11 +8,11 @@ use App\Casts\ShipmentStatusCast;
 use App\Models\Ecommerce\Order;
 use App\Models\Ecommerce\OrderItem;
 use App\Models\Ecommerce\Shipment;
-use App\Services\ShipmentProviders\NativeShipmentProvider;
-use App\Services\ShipmentProviders\ShipmentProviderInterface;
-use App\Services\ShipmentProviders\Shiprocket\ShiprocketApi;
-use App\Services\ShipmentProviders\Shiprocket\ShiprocketPayloadFactory;
-use App\Services\ShipmentProviders\Shiprocket\ShiprocketShipmentProvider;
+use App\Services\IntegrationServices\ShipmentProviders\NativeShipmentProvider;
+use App\Services\IntegrationServices\ShipmentProviders\ShipmentProviderInterface;
+use App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketApi;
+use App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketPayloadFactory;
+use App\Services\IntegrationServices\ShipmentProviders\Shiprocket\ShiprocketShipmentProvider;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +24,7 @@ class ShipmentService
     /**
      * Registry of providers keyed by code.
      *
-     * @var array<string, ShipmentProviderInterface>
+     * @var array<string, \App\Services\IntegrationServices\ShipmentProviders\ShipmentProviderInterface>
      */
     protected array $providers = [];
 

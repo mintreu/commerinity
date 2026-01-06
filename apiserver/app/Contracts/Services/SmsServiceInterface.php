@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Contracts\Services;
 
 use App\Models\User;
-use App\Services\Sms\DTOs\SmsResponse;
+use App\Services\IntegrationServices\Sms\DTOs\SmsResponse;
 
 interface SmsServiceInterface
 {
@@ -33,7 +33,7 @@ interface SmsServiceInterface
      * Send bulk SMS
      *
      * @param  array<string>  $recipients
-     * @return array<SmsResponse>
+     * @return array<\App\Services\IntegrationServices\Sms\DTOs\SmsResponse>
      */
     public function sendBulk(array $recipients, string $message): array;
 

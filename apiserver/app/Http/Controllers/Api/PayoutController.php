@@ -7,9 +7,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Payout\CashgramRequest;
 use App\Http\Requests\Payout\PayoutToWalletRequest;
+use App\Services\IntegrationServices\Payout\PayoutService;
+use App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider;
 use App\Services\MoneyService;
-use App\Services\Payment\PayoutService;
-use App\Services\Payment\Providers\CashfreePayoutProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

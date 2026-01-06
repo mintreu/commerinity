@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Casts\PaymentMethodCast;
 use App\Models\Integration;
-use App\Services\Payment\DTOs\PaymentInitiateRequest;
-use App\Services\Payment\DTOs\PaymentVerifyRequest;
-use App\Services\Payment\Providers\RazorpayPaymentProvider;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;
+use App\Services\IntegrationServices\Payment\Providers\RazorpayPaymentProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 

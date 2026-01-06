@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Contracts\Services;
 
 use App\Casts\PaymentMethodCast;
-use App\Services\Payment\Contracts\PaymentProviderInterface;
-use App\Services\Payment\Contracts\PayoutProviderInterface;
-use App\Services\Payment\DTOs\PaymentInitiateRequest;
-use App\Services\Payment\DTOs\PaymentResponse;
-use App\Services\Payment\DTOs\PaymentVerifyRequest;
-use App\Services\Payment\DTOs\PayoutRequest;
-use App\Services\Payment\DTOs\PayoutResponse;
+use App\Services\IntegrationServices\Payment\Contracts\PaymentProviderInterface;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentResponse;
+use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;
+use App\Services\IntegrationServices\Payout\Contracts\PayoutProviderInterface;
+use App\Services\IntegrationServices\Payout\DTOs\PayoutRequest;
+use App\Services\IntegrationServices\Payout\DTOs\PayoutResponse;
 
 interface PaymentServiceInterface
 {

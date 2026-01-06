@@ -11,7 +11,7 @@ use App\Http\Requests\EmailRegisterRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Notifications\WelcomeNotification;
-use App\Services\Sms\SmsService;
+use App\Services\IntegrationServices\Sms\SmsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
