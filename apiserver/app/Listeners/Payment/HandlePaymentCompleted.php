@@ -8,17 +8,20 @@ use App\Casts\JobApplicationStatusCast;
 use App\Casts\UserTypeCast;
 use App\Events\PaymentCompleted;
 use App\Models\Admin;
+use App\Models\Ecommerce\Order;
 use App\Models\Membership\UserSubscription;
 use App\Models\Recruitment\JobApplication;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Notifications\GeneralNotification;
+use App\Services\Ecommerce\OrderService\OrderValidationService;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
 use App\Services\UserServices\UserAffiliateService;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use function Pest\Laravel\instance;
 
 /**
  * HandlePaymentCompleted - Routes confirmed payments to appropriate handlers
@@ -67,6 +70,7 @@ final class HandlePaymentCompleted
             $payable instanceof Wallet => $this->handleWalletTopup($transaction, $payable),
             $payable instanceof UserSubscription => $this->handleSubscriptionPayment($transaction, $payable),
             $payable instanceof JobApplication => $this->handleRecruitmentPayment($transaction, $payable),
+            $payable instanceof Order::class => $this->handleOrderConfirmation($transaction,$payable),
             default => Log::warning('Unhandled payable type', [
                 'type' => get_class($payable),
                 'transaction_id' => $transaction->uuid,
@@ -188,4 +192,13 @@ final class HandlePaymentCompleted
 
         });
     }
+
+    private function handleOrderConfirmation(\App\Models\Transaction $transaction, Order $payable)
+    {
+        $orderService = OrderValidationService::make($transaction,$payable);
+        $orderService->validate();
+    }
+
+
+
 }
