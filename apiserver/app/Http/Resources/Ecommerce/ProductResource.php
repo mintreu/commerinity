@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Ecommerce;
 
+use App\Http\Resources\ImageResource;
 use App\Services\MoneyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,18 +32,21 @@ final class ProductResource extends JsonResource
         $saleInfo = $this->getActiveSaleInfo();
         $salePrice = null;
         $discountPercent = null;
+        $saleName = null;
+        $saleEndsAt = null;
 
-        if ($saleInfo) {
+        if (is_array($saleInfo)) {
             $salePrice = $this->calculateSalePrice($originalPrice, $saleInfo);
             if ($salePrice && $salePrice < $originalPrice) {
                 $discountPercent = round((($originalPrice - $salePrice) / $originalPrice) * 100);
+                $saleName = $saleInfo['name'] ?? null;
+                $saleEndsAt = $saleInfo['ends_at']?->toIso8601String();
             } else {
                 $salePrice = null;
             }
         }
 
         return [
-            'id' => $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
             'slug' => $this->url,
@@ -53,8 +57,8 @@ final class ProductResource extends JsonResource
             'original_price' => $salePrice ? $originalPrice : null,
             'original_price_formatted' => $salePrice ? MoneyService::format($originalPrice) : null,
             'discount_percent' => $discountPercent,
-            'sale_name' => $saleInfo['name'] ?? null,
-            'sale_ends_at' => $saleInfo['ends_at']?->toIso8601String(),
+            'sale_name' => $saleName,
+            'sale_ends_at' => $saleEndsAt,
             // Category
             'category' => new CategoryBriefResource($this->whenLoaded('category')),
             // Images
@@ -111,15 +115,6 @@ final class ProductResource extends JsonResource
             return null;
         }
 
-        $hasResponsive = $displayMedia->hasResponsiveImages();
-
-        return [
-            'url' => $displayMedia->getUrl(),
-            'thumbnail' => $displayMedia->hasGeneratedConversion('thumb')
-                ? $displayMedia->getUrl('thumb')
-                : $displayMedia->getUrl(),
-            'srcset' => $hasResponsive ? $displayMedia->getSrcset() : null,
-            'alt' => $displayMedia->name,
-        ];
+        return (new ImageResource($displayMedia))->toArray(request());
     }
 }

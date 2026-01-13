@@ -34,68 +34,68 @@ class AffiliateGenealogiesTable
                 TextColumn::make('depth')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('direct_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('active_direct_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_1_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_2_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_3_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_4_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('total_team_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('active_team_count')
-                    ->numeric()
-                    ->sortable(),
+//                TextColumn::make('direct_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('active_direct_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_1_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_2_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_3_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_4_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('total_team_count')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('active_team_count')
+//                    ->numeric()
+//                    ->sortable(),
                 TextColumn::make('personal_sales')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('level_1_sales')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_2_sales')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_3_sales')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('level_4_sales')
-                    ->numeric()
-                    ->sortable(),
+//                TextColumn::make('level_1_sales')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_2_sales')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_3_sales')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('level_4_sales')
+//                    ->numeric()
+//                    ->sortable(),
                 TextColumn::make('total_team_sales')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('personal_pv')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('team_pv')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('currentStage.name')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('currentLevel.name')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('highestLevel.name')
-                    ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
-                TextColumn::make('activated_at')
-                    ->dateTime()
-                    ->sortable(),
+//                TextColumn::make('personal_pv')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('team_pv')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('currentStage.name')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('currentLevel.name')
+//                    ->numeric()
+//                    ->sortable(),
+//                TextColumn::make('highestLevel.name')
+//                    ->numeric()
+//                    ->sortable(),
+//                IconColumn::make('is_active')
+//                    ->boolean(),
+//                TextColumn::make('activated_at')
+//                    ->dateTime()
+//                    ->sortable(),
                 TextColumn::make('last_activity_at')
                     ->dateTime()
                     ->sortable(),

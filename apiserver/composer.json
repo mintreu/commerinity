@@ -8,7 +8,10 @@
     "require": {
         "php": "^8.2",
         "ext-intl": "*",
+        "achyutn/filament-log-viewer": "^1.6",
         "barryvdh/laravel-dompdf": "^3.1",
+        "binarybuilds/filament-cache-manager": "^1.0",
+        "binarybuilds/filament-command-runner": "^1.1",
         "binarybuilds/filament-failed-jobs": "^2.0",
         "caresome/filament-auth-designer": "^2.0",
         "eightynine/filament-excel-import": "^4.0",

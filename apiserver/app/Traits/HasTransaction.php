@@ -165,8 +165,6 @@ trait HasTransaction
                 'transactionable_id' => $this->id,
                 'metadata' => [
                     'customer' => $customerData,
-//                    'redirect_success_url' => $redirectSuccessUrl,
-//                    'redirect_failure_url' => $redirectFailureUrl,
                 ],
             ]);
 

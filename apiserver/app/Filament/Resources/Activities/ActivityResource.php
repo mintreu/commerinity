@@ -22,7 +22,7 @@ class ActivityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|UnitEnum|null $navigationGroup = 'System';
+    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
 
     //    protected static ?int $navigationSort = 99;
 

@@ -138,22 +138,16 @@ class Order extends Model implements CommissionTrigger
         return $this->hasMany(OrderItem::class);
     }
 
-    /**
-     * Payments for this order
-     */
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class);
-    }
 
-    /**
-     * Transactions linked to this order
-     */
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(Transaction::class, 'transactionable_id')
-            ->where('transactionable_type', self::class);
-    }
+//
+//    /**
+//     * Transactions linked to this order
+//     */
+//    public function transactions(): HasMany
+//    {
+//        return $this->hasMany(Transaction::class, 'transactionable_id')
+//            ->where('transactionable_type', self::class);
+//    }
 
     /**
      * Shipping address

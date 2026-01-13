@@ -4,9 +4,8 @@
  */
 
 export interface ProductImage {
-  url: string
-  thumbnail: string
-  srcset: string | null
+  src: string
+  srcset?: string | null
   responsive: Record<string, string> | null
   alt: string
   width: number | null

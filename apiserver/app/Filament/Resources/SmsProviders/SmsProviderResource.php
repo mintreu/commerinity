@@ -24,7 +24,7 @@ class SmsProviderResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|null|\UnitEnum $navigationGroup = 'System';
+    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
 
     public static function form(Schema $schema): Schema
     {

@@ -7,6 +7,7 @@ namespace App\Http\Resources;
 use App\Casts\KycStatusCast;
 use App\Casts\UserStatusCast;
 use App\Casts\UserTypeCast;
+use App\Http\Resources\ImageResource;
 use App\Services\UserServices\UserPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -46,7 +47,8 @@ final class UserResource extends JsonResource
             'gender' => $this->gender?->value,
             'dob' => $this->dob?->format('Y-m-d'),
             'bio' => $this->bio,
-            'avatar' => $this->getFirstMediaUrl('avatar'),
+            //'avatar' => $this->getFirstMedia('avatar') ? (new ImageResource($this->getFirstMedia('avatar')))->toArray(request()) : null,
+            'avatar' => $this->getFirstMediaUrl('avatarImage'),
 
             // Type & Status (CRITICAL for personalization)
             'type' => $this->type->value,

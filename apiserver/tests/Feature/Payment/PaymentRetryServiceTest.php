@@ -45,6 +45,8 @@ beforeEach(function () {
         'payment_method' => PaymentMethodCast::CASHFREE,
         'provider_order_id' => 'cf_order_123',
         'expires_at' => now()->subMinutes(5), // Expired 5 minutes ago
+        'transactionable_type' => \App\Models\Wallet::class,
+        'transactionable_id' => $this->wallet->id,
         'metadata' => [
             'provider_order_created_at' => now()->subMinutes(35)->toIso8601String(),
             'provider_order_expiry_minutes' => 30,
@@ -96,6 +98,8 @@ describe('PaymentRetryService Expiry Check', function () {
             'amount' => 100000,
             'status' => TransactionStatusCast::PENDING,
             'payment_method' => PaymentMethodCast::CASHFREE,
+            'transactionable_type' => \App\Models\Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'metadata' => [],
         ]);
 
@@ -378,6 +382,8 @@ describe('PaymentRetryService Native Provider', function () {
             'amount' => 50000,
             'status' => TransactionStatusCast::FAILED,
             'payment_method' => PaymentMethodCast::WALLET,
+            'transactionable_type' => \App\Models\Wallet::class,
+            'transactionable_id' => $this->wallet->id,
         ]);
 
         $request = new PaymentInitiateRequest(

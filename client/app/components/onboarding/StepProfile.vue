@@ -1,6 +1,6 @@
 <template>
   <div class="step-profile">
-    <div class="max-w-lg mx-auto">
+    <div class="max-w-3xl mx-auto">
       <!-- Header -->
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -55,7 +55,7 @@
 
       <!-- Form Fields -->
       <UForm :state="formState" :schema="schema" class="space-y-5" @submit="handleSubmit">
-        <!-- Full Name -->
+        <!-- Full Name (Full width) -->
         <UFormField label="Full Name" name="name" required>
           <UInput
             v-model="formState.name"
@@ -65,27 +65,28 @@
           />
         </UFormField>
 
-        <!-- Date of Birth -->
-        <UFormField label="Date of Birth" name="dob" required>
-          <UInput
-            v-model="formState.dob"
-            type="date"
-            size="lg"
-            icon="i-lucide-calendar"
-            :max="maxDate"
-          />
-        </UFormField>
+        <!-- Date of Birth & Gender (2 columns on desktop) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          <UFormField label="Date of Birth" name="dob" required>
+            <UInput
+              v-model="formState.dob"
+              type="date"
+              size="lg"
+              icon="i-lucide-calendar"
+              :max="maxDate"
+            />
+          </UFormField>
 
-        <!-- Gender -->
-        <UFormField label="Gender" name="gender" required>
-          <URadioGroup
-            v-model="formState.gender"
-            :items="genderOptions"
-            class="flex flex-wrap gap-4"
-          />
-        </UFormField>
+          <UFormField label="Gender" name="gender" required>
+            <URadioGroup
+              v-model="formState.gender"
+              :items="genderOptions"
+              class="flex flex-wrap gap-3 mt-2"
+            />
+          </UFormField>
+        </div>
 
-        <!-- Bio (Optional) -->
+        <!-- Bio (Optional, Full width) -->
         <UFormField label="Bio" name="bio" hint="Optional">
           <UTextarea
             v-model="formState.bio"

@@ -14,12 +14,18 @@ final class AddressObserver
      */
     public function creating(Address $address): void
     {
-        if ($address->addressable_id && $address->addressable_type) {
-            $hasExisting = $address->addressable->addresses()->exists();
+        // Skip auto-setting default for standalone addresses (warehouses, stores)
+        if (! $address->addressable_id || ! $address->addressable_type) {
+            return;
+        }
 
-            if (! $hasExisting) {
-                $address->default = true;
-            }
+        // Check if this is the first address for the addressable
+        $hasExisting = Address::where('addressable_type', $address->addressable_type)
+            ->where('addressable_id', $address->addressable_id)
+            ->exists();
+
+        if (! $hasExisting) {
+            $address->default = true;
         }
     }
 
@@ -35,7 +41,8 @@ final class AddressObserver
 
         // For user addresses, only update other addresses of the same user
         if ($address->addressable_id && $address->addressable_type) {
-            $address->addressable->addresses()
+            Address::where('addressable_type', $address->addressable_type)
+                ->where('addressable_id', $address->addressable_id)
                 ->where('id', '!=', $address->id ?? 0)
                 ->update(['default' => false]);
         }

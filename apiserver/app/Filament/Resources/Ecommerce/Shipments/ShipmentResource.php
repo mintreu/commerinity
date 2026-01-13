@@ -21,6 +21,7 @@ class ShipmentResource extends Resource
     protected static ?string $model = Shipment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|null|\UnitEnum $navigationGroup = 'Ecommerce';
 
     public static function form(Schema $schema): Schema
     {

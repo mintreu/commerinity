@@ -9,7 +9,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Shop - Mintreu',
+  title: 'Shop - VVIN',
   description: 'Explore our premium products. Quality products at great prices with Affiliate rewards.'
 })
 
@@ -89,7 +89,11 @@ const { data: productsResponse, status: productsStatus, refresh: refreshProducts
       price: number
       price_formatted: string
       category: { id: number; name: string; slug: string } | null
-      image: string | null
+      image: {
+        src: string
+        srcset?: string
+      } | null
+
       in_stock: boolean
       stock_quantity: number
       view_count: number
@@ -393,12 +397,13 @@ const addToCart = async (product: typeof products.value[0]) => {
               <!-- Image -->
               <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
                 <img
-                  v-if="product.image"
-                  :src="product.image"
+                  v-if="product.image?.src"
+                  :src="product.image.src"
                   :alt="product.name"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
-                >
+                />
+
                 <div v-else class="w-full h-full flex items-center justify-center">
                   <UIcon name="i-lucide-package" class="w-16 h-16 text-slate-300 dark:text-slate-600" />
                 </div>

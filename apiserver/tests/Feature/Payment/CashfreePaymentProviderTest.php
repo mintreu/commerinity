@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Casts\PaymentMethodCast;
 use App\Models\Integration;
+use App\Models\User;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;
 use App\Services\IntegrationServices\Payment\Providers\Cashfree\CashfreePaymentProvider;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Http;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Create test user
+    $this->user = User::factory()->create();
+
     // Create test integration
     $this->integration = Integration::create([
         'name' => 'Cashfree Test',
@@ -83,7 +87,8 @@ describe('CashfreePaymentProvider Initiate', function () {
             amountInPaisa: 25000, // Rs 250
             currency: 'INR',
             method: PaymentMethodCast::CASHFREE,
-            userId: 1,
+            userFingerprint: $this->user->fingerprint(),
+            userId: $this->user->id,
             walletId: 1,
             transactionId: 'TXN-123',
             customerName: 'Test User',
@@ -115,7 +120,8 @@ describe('CashfreePaymentProvider Initiate', function () {
             amountInPaisa: 25000,
             currency: 'INR',
             method: PaymentMethodCast::CASHFREE,
-            userId: 1,
+            userFingerprint: $this->user->fingerprint(),
+            userId: $this->user->id,
             walletId: 1,
             transactionId: 'TXN-124',
         );
@@ -135,7 +141,8 @@ describe('CashfreePaymentProvider Initiate', function () {
             amountInPaisa: 25000,
             currency: 'INR',
             method: PaymentMethodCast::CASHFREE,
-            userId: 1,
+            userFingerprint: $this->user->fingerprint(),
+            userId: $this->user->id,
             walletId: 1,
             transactionId: 'TXN-125',
         );

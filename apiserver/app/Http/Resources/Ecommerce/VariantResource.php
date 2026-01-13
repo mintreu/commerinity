@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Ecommerce;
 
+use App\Http\Resources\ImageResource;
 use App\Services\MoneyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -40,7 +41,6 @@ final class VariantResource extends JsonResource
         $displayPrice = $salePrice ?? $originalPrice;
 
         return [
-            'id' => $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
             'slug' => $this->url,
@@ -98,12 +98,7 @@ final class VariantResource extends JsonResource
             return null;
         }
 
-        return [
-            'url' => $displayMedia->getUrl(),
-            'thumbnail' => $displayMedia->hasGeneratedConversion('thumb')
-                ? $displayMedia->getUrl('thumb')
-                : $displayMedia->getUrl(),
-        ];
+        return (new ImageResource($displayMedia))->toArray(request());
     }
 
     /**

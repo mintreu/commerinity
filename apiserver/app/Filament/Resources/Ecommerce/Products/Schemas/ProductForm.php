@@ -4,10 +4,13 @@ namespace App\Filament\Resources\Ecommerce\Products\Schemas;
 
 use App\Casts\ProductStatusCast;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class ProductForm
 {
@@ -17,14 +20,15 @@ class ProductForm
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->default('Unnamed Product'),
+                    ->lazy()
+                    ->afterStateUpdated(fn($state,Set $set) => $set('url',Str::slug($state))),
                 Select::make('parent_id')
                     ->relationship('parent', 'name'),
                 TextInput::make('sku')
                     ->label('SKU')
                     ->required(),
                 TextInput::make('url')
-                    ->url()
+                    ->unique('products','url')
                     ->required(),
                 TextInput::make('type')
                     ->required(),
@@ -38,8 +42,22 @@ class ProductForm
                 TextInput::make('seo_meta'),
                 Textarea::make('short_description')
                     ->columnSpanFull(),
-                TextInput::make('product_display_id')
-                    ->numeric(),
+
+                SpatieMediaLibraryFileUpload::make('display')
+                    ->label('Thumbnail')
+                    ->image()
+                    ->multiple(false)
+                    ->imageEditor()
+                    ->collection('displayImage'),
+
+                SpatieMediaLibraryFileUpload::make('banner')
+                    ->label('Gallery')
+                    ->image()
+                    ->multiple()
+                    ->imageEditor()
+                    ->collection('bannerImage'),
+
+
                 TextInput::make('price')
                     ->numeric()
                     ->prefix('$'),

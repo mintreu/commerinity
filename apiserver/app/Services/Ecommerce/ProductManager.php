@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Ecommerce;
 
+use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Models\Ecommerce\FilterOption;
 use App\Models\Ecommerce\Product;
@@ -56,7 +57,7 @@ final class ProductManager
                     'name' => $data['name'],
                     'sku' => $data['sku'],
                     'url' => $data['url'],
-                    'status' => $data['status'] ?? 'draft',
+                    'status' => $data['status'] ?? ProductStatusCast::DRAFT,
                     'type' => $case->value,
                     'filter_group_id' => $data['filter_group_id'],
                     'category_id' => $data['category_id'] ?? null,

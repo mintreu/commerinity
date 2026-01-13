@@ -12,7 +12,6 @@ final class TicketConversationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
             'message' => $this->message,
             'attachment' => $this->attachment,
             'created_at' => $this->created_at->toISOString(),

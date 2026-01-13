@@ -71,14 +71,16 @@ class ListJobApplications extends ListRecords
                         ->icon('heroicon-m-arrow-down-tray')
                         ->requiresConfirmation(),
                 )
-                ->beforeImport(function ($data, $livewire, $excelImportAction) {
-                    // Perform actions before import
-                    dd('before import',$data,$excelImportAction,$livewire);
-                })
-                ->afterImport(function ($data, $livewire, $excelImportAction) {
-                    // Perform actions after import
-                    dd('after import',$data,$excelImportAction,$livewire);
-                }),
+//                ->beforeImport(function ($data, $livewire, $excelImportAction) {
+//                    // Perform actions before import
+//                   // dd('before import',$data,$excelImportAction,$livewire);
+//                })
+//                ->afterImport(function ($data, $livewire, $excelImportAction) {
+//                    // Perform actions after import
+//                    dd('sdfasf');
+//                    dd('after import',$data,$excelImportAction,$livewire);
+//                })
+                ,
             CreateAction::make(),
         ];
     }

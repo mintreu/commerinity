@@ -2,7 +2,13 @@
 
 namespace App\Providers\Filament;
 
+use AchyutN\FilamentLogViewer\FilamentLogViewer;
+use BinaryBuilds\CommandRunner\CommandRunnerPlugin;
+use BinaryBuilds\FilamentCacheManager\FilamentCacheManagerPlugin;
 use BinaryBuilds\FilamentFailedJobs\FilamentFailedJobsPlugin;
+use Caresome\FilamentAuthDesigner\AuthDesignerPlugin;
+use Caresome\FilamentAuthDesigner\Data\AuthPageConfig;
+use Caresome\FilamentAuthDesigner\Enums\MediaPosition;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -33,7 +39,23 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Fuchsia,
             ])
             ->sidebarCollapsibleOnDesktop()
-            ->plugin(FilamentFailedJobsPlugin::make())
+            //->brandLogo(asset('assets/logo.png'))
+            ->brandName('VVIndia')
+            //->plugin()
+            ->plugins([
+                AuthDesignerPlugin::make()
+                    ->login(fn ($config) => $config
+                        ->media(asset('assets/auth_banner.png'))
+                        ->mediaPosition(MediaPosition::Left)
+                        ->mediaSize('50%') // Media takes 50% width
+                    ),
+
+                FilamentCacheManagerPlugin::make(),
+                CommandRunnerPlugin::make(),
+                FilamentFailedJobsPlugin::make(),
+                FilamentLogViewer::make(),
+
+            ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

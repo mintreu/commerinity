@@ -15,17 +15,16 @@
 
         <!-- Welcome Message -->
         <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Welcome, {{ userName }}! 
+          Welcome, {{ userName }}! 👋
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-          You're just a few steps away from unlocking the full potential of your account.
-          Let's set up your profile to personalize your experience.
+          Let's get you started! This will only take a <strong>few seconds</strong> to complete your profile setup.
         </p>
 
         <!-- What We'll Set Up -->
-        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 mb-8">
+        <div class="bg-gradient-to-br from-primary-50 to-primary-100/50 dark:from-primary-900/20 dark:to-primary-800/10 rounded-2xl p-6 mb-8 border border-primary-200 dark:border-primary-800">
           <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Here's what we'll set up together:
+            Quick setup in just 4 simple steps:
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div
@@ -48,9 +47,9 @@
         </div>
 
         <!-- Estimated Time -->
-        <div class="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <UIcon name="i-lucide-clock" class="w-4 h-4" />
-          <span>This usually takes about 2-3 minutes</span>
+        <div class="flex items-center justify-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400">
+          <UIcon name="i-lucide-zap" class="w-4 h-4" />
+          <span>Super quick – takes less than 60 seconds!</span>
         </div>
       </div>
     </div>
@@ -65,10 +64,10 @@
 
         <!-- Welcome Message - Shorter for mobile -->
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          Welcome, {{ userName }}!
+          Welcome, {{ userName }}! 👋
         </h1>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
-          Let's complete your profile setup in a few quick steps.
+          Let's set up your profile in under <strong>60 seconds</strong>!
         </p>
 
         <!-- Compact Steps List -->
@@ -86,9 +85,9 @@
         </div>
 
         <!-- Time Estimate -->
-        <p class="mt-6 text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
-          <UIcon name="i-lucide-clock" class="w-4 h-4" />
-          About 2-3 minutes
+        <p class="mt-6 text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center justify-center gap-2">
+          <UIcon name="i-lucide-zap" class="w-4 h-4" />
+          Quick & Easy – Under 60 seconds!
         </p>
       </div>
     </div>

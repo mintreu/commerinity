@@ -15,7 +15,8 @@ class Filter extends Model
     /** @use HasFactory<FilterFactory> */
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name','is_required'];
+    protected $casts = ['is_required' => 'boolean'];
 
     public function options(): HasMany
     {

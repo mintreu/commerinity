@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Casts\PaymentMethodCast;
 use App\Models\Integration;
+use App\Models\User;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentVerifyRequest;
 use App\Services\IntegrationServices\Payment\Providers\RazorpayPaymentProvider;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Http;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Create test user
+    $this->user = User::factory()->create();
+
     // Create test integration
     $this->integration = Integration::create([
         'name' => 'Razorpay Test',
@@ -78,7 +82,8 @@ describe('RazorpayPaymentProvider Initiate', function () {
             amountInPaisa: 25000,
             currency: 'INR',
             method: PaymentMethodCast::RAZORPAY,
-            userId: 1,
+            userFingerprint: $this->user->fingerprint(),
+            userId: $this->user->id,
             walletId: 1,
             transactionId: 'TXN-123',
             customerName: 'Test User',
@@ -111,7 +116,8 @@ describe('RazorpayPaymentProvider Initiate', function () {
             amountInPaisa: 25000,
             currency: 'INR',
             method: PaymentMethodCast::RAZORPAY,
-            userId: 1,
+            userFingerprint: $this->user->fingerprint(),
+            userId: $this->user->id,
             walletId: 1,
             transactionId: 'TXN-124',
         );
@@ -130,7 +136,8 @@ describe('RazorpayPaymentProvider Initiate', function () {
             amountInPaisa: 25000,
             currency: 'INR',
             method: PaymentMethodCast::RAZORPAY,
-            userId: 1,
+            userFingerprint: $this->user->fingerprint(),
+            userId: $this->user->id,
             walletId: 1,
             transactionId: 'TXN-125',
         );

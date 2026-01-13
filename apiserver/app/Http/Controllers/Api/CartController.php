@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CartItemResource;
 use App\Models\Ecommerce\Product;
 use App\Services\Ecommerce\CartService\CartService;
 use App\Services\MoneyService;
@@ -46,23 +47,8 @@ class CartController extends Controller
             ], 400);
         }
 
-        $cartItems = $items->map(function ($cart) {
-            $product = $cart->cartable;
-
-            return [
-                'product_slug' => $product?->url,
-                'name' => $product?->name,
-                'sku' => $product?->sku,
-                'quantity' => $cart->quantity,
-                'price' => $product?->price ?? 0,
-                'price_formatted' => MoneyService::format($product?->price ?? 0),
-                'subtotal' => ($product?->price ?? 0) * $cart->quantity,
-                'subtotal_formatted' => MoneyService::format(($product?->price ?? 0) * $cart->quantity),
-                'image' => $product?->productDisplay?->url ?? null,
-            ];
-        });
-
-        $subtotal = $cartItems->sum('subtotal');
+        $cartItems = CartItemResource::collection($items);
+        $subtotal = $items->sum(fn ($cart) => ($cart->cartable?->price ?? 0) * $cart->quantity);
 
         return response()->json([
             'success' => true,

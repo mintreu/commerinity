@@ -494,15 +494,18 @@ const saveAddress = async () => {
     // Transform frontend form data to backend API format
     const data = addressData.value as Record<string, unknown>
     const payload = {
-      type: (data.label || data.type || 'home') as string,
-      person_name: (data.name || data.person_name || '') as string,
-      person_mobile: formatPhoneNumber((data.phone || data.person_mobile || '') as string),
-      address_1: (data.address_line_1 || data.address_1 || '') as string,
-      address_2: (data.address_line_2 || data.address_2 || '') as string,
+      type: 'home', // Always home for onboarding
+      person_name: (data.person_name || '') as string,
+      person_mobile: formatPhoneNumber((data.person_mobile || '') as string),
+      address_1: (data.address_1 || '') as string,
+      address_2: (data.address_2 || '') as string,
       city: (data.city || '') as string,
       postal_code: (data.postal_code || '') as string,
-      state_code: (data.state || data.state_code || '') as string,
-      country_code: (data.country || data.country_code || 'IN') as string,
+      block_id: (data.block_id || null) as number | null,
+      state_code: (data.state_code || '') as string,
+      country_code: (data.country_code || 'IN') as string,
+      latitude: (data.latitude || null) as number | null,
+      longitude: (data.longitude || null) as number | null,
       default: true
     }
 

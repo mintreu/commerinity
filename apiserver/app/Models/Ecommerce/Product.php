@@ -136,14 +136,28 @@ class Product extends Model implements HasMedia
      * Register media collections for Spatie Media Library
      * Collection names match old_project for compatibility
      */
+//    public function registerMediaCollections(): void
+//    {
+//        $this->addMediaCollection('displayImage')
+//            ->singleFile()
+//            ->useFallbackUrl('/images/product-placeholder.png');
+//
+//        $this->addMediaCollection('bannerImage');
+//    }
+
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('displayImage')
+            ->useDisk('public')
             ->singleFile()
             ->useFallbackUrl('/images/product-placeholder.png');
 
-        $this->addMediaCollection('bannerImage');
+        $this->addMediaCollection('bannerImage')
+            ->useDisk('public');
     }
+
+
 
     /**
      * Register media conversions for responsive images
@@ -222,7 +236,7 @@ class Product extends Model implements HasMedia
     public function totalStock(): int
     {
         // Try to use preloaded aggregate first to avoid N+1
-        return $this->stocks_sum_in_stock_quantity ?? $this->stocks()->sum('in_stock_quantity');
+        return (int) ($this->stocks_sum_in_stock_quantity ?? $this->stocks()->sum('in_stock_quantity'));
     }
 
     /**

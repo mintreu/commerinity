@@ -14,6 +14,7 @@ use App\Models\Recruitment\JobApplication;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Notifications\GeneralNotification;
+use App\Services\Affiliate\CommissionProcessorService;
 use App\Services\Ecommerce\OrderService\OrderValidationService;
 use App\Services\Membership\SubscriptionService;
 use App\Services\MoneyService;
@@ -70,7 +71,7 @@ final class HandlePaymentCompleted
             $payable instanceof Wallet => $this->handleWalletTopup($transaction, $payable),
             $payable instanceof UserSubscription => $this->handleSubscriptionPayment($transaction, $payable),
             $payable instanceof JobApplication => $this->handleRecruitmentPayment($transaction, $payable),
-            $payable instanceof Order::class => $this->handleOrderConfirmation($transaction,$payable),
+            $payable instanceof Order => $this->handleOrderConfirmation($transaction,$payable),
             default => Log::warning('Unhandled payable type', [
                 'type' => get_class($payable),
                 'transaction_id' => $transaction->uuid,
@@ -193,9 +194,14 @@ final class HandlePaymentCompleted
         });
     }
 
-    private function handleOrderConfirmation(\App\Models\Transaction $transaction, Order $payable)
+
+
+    private function handleOrderConfirmation(\App\Models\Transaction $transaction, Order $payable): void
     {
-        $orderService = OrderValidationService::make($transaction,$payable);
+        // Get CommissionProcessorService for processing affiliate commissions
+        $commissionProcessor = app(CommissionProcessorService::class);
+
+        $orderService = OrderValidationService::make($transaction, $payable, $commissionProcessor);
         $orderService->validate();
     }
 

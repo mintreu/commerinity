@@ -78,12 +78,29 @@ const truncatedDescription = computed(() => {
     <!-- Image Section -->
     <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
       <img
-        v-if="product.image?.url"
-        :src="product.image.thumbnail || product.image.url"
+        v-if="product.image"
+        :src="product.image.thumbnail
+    || product.image.src
+    || product.image.url"
+        :srcset="product.image.srcset || undefined"
         :alt="product.image.alt || product.name"
         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         loading="lazy"
-      >
+      />
+
+
+      <!-- Fixed Product Images View -->
+<!--      <img-->
+<!--        v-if="product.image?.src"-->
+<!--        :src="product.image.src"-->
+<!--        :srcset="product.image.srcset"-->
+<!--        :alt="product.name"-->
+<!--        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"-->
+<!--        loading="lazy"-->
+<!--      />-->
+
+
+
       <div v-else class="w-full h-full flex items-center justify-center">
         <UIcon name="i-lucide-package" class="w-16 h-16 text-slate-300 dark:text-slate-600" />
       </div>

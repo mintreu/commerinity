@@ -22,7 +22,7 @@ class KycResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|null|\UnitEnum $navigationGroup = 'User Mgmt';
+    protected static string|null|\UnitEnum $navigationGroup = 'Account Management';
 
     protected static ?int $navigationSort = 2;
 

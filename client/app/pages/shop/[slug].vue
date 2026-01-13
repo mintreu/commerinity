@@ -35,7 +35,7 @@ interface ProductData {
   sale_name: string | null
   sale_ends_at: string | null
   category: { name: string; slug: string } | null
-  gallery: Array<{ id: number; url: string; thumbnail: string }>
+  gallery: Array<{ id: number; src: string; srcset: string; thumbnail: string }>
   in_stock: boolean
   stock_quantity: number
   view_count: number
@@ -190,7 +190,7 @@ const addToCart = async () => {
     const productSlug = currentVariant.value?.slug || product.value.slug
     await addToCartComposable(productSlug, quantity.value, {
       productName: product.value.name,
-      productImage: product.value.gallery[0]?.url
+      productImage: product.value.gallery[0]?.src
     })
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to add to cart'
@@ -210,7 +210,7 @@ const selectVariantByOption = (filterName: string, optionValue: string) => {
     selectedVariant.value = variant.slug
     // Update gallery if variant has image
     if (variant.image) {
-      const imageIndex = product.value.gallery.findIndex(g => g.url === variant.image?.url)
+      const imageIndex = product.value.gallery.findIndex(g => g.src === variant.image?.src)
       if (imageIndex >= 0) selectedImage.value = imageIndex
     }
   }
@@ -312,7 +312,7 @@ onMounted(() => {
 
               <img
                 v-if="product.gallery.length > 0"
-                :src="product.gallery[selectedImage]?.url"
+                :src="product.gallery[selectedImage]?.src"
                 :alt="product.name"
                 class="w-full h-full object-contain"
               >
@@ -334,7 +334,7 @@ onMounted(() => {
                 ]"
                 @click="selectedImage = index"
               >
-                <img :src="image.thumbnail" :alt="`${product.name} - Image ${index + 1}`" class="w-full h-full object-cover">
+                <img :src="image.src" :alt="`${product.name} - Image ${index + 1}`" class="w-full h-full object-cover">
               </button>
             </div>
           </div>
@@ -451,7 +451,7 @@ onMounted(() => {
                   <div class="aspect-square w-full mb-2 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800">
                     <img
                       v-if="variant.image"
-                      :src="variant.image.thumbnail || variant.image.url"
+                      :src="variant.image.thumbnail || variant.image.src"
                       :alt="variant.name"
                       class="w-full h-full object-cover"
                     >

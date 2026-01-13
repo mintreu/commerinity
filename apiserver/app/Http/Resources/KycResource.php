@@ -12,7 +12,6 @@ final class KycResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
             'kyc_type' => $this->kyc_type,
             'company_name' => $this->company_name,
             'company_type' => $this->company_type,
@@ -27,7 +26,7 @@ final class KycResource extends JsonResource
                 return $this->getMedia('documents')->map(fn ($media) => [
                     'id' => $media->id,
                     'name' => $media->file_name,
-                    'url' => $media->getUrl(),
+                    'url' => url($media->getUrl()),
                     'size' => $media->size,
                     'mime_type' => $media->mime_type,
                 ]);

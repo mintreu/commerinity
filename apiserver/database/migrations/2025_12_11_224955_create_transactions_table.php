@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignId('wallet_id')->nullable()->constrained()->nullOnDelete();
 
             // Polymorphic relationship to source (Order, Subscription, etc.)
-//            $table->nullableMorphs('transactionable'); // this is totally worng without transactionable no meanig of transaction
             $table->morphs('transactionable');
 
             // Transaction details
@@ -45,7 +44,6 @@ return new class extends Migration
             $table->string('provider_order_id')->nullable(); // Provider's order/payment ID
             $table->string('provider_transaction_id')->nullable(); // Provider's transaction reference
             $table->string('provider_signature')->nullable(); // Signature for verification
-            //$table->string('checkout_url')->nullable(); // Payment link  not required
             $table->string('qr_code_url')->nullable(); // QR code for payment
 
             $table->string('success_url')->nullable(); // success redirect after checkout

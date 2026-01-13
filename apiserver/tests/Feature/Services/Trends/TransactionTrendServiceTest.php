@@ -24,6 +24,8 @@ describe('TransactionTrendService Volume Trend', function () {
         for ($i = 0; $i < 5; $i++) {
             Transaction::create([
                 'wallet_id' => $this->wallet->id,
+                'transactionable_type' => Wallet::class,
+                'transactionable_id' => $this->wallet->id,
                 'type' => TransactionTypeCast::CREDIT,
                 'status' => TransactionStatusCast::COMPLETED,
                 'amount' => 100000,
@@ -45,6 +47,8 @@ describe('TransactionTrendService Volume Trend', function () {
         // Create transaction for our wallet
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -54,6 +58,8 @@ describe('TransactionTrendService Volume Trend', function () {
         $otherWallet = Wallet::factory()->forUser(User::factory()->create())->create();
         Transaction::create([
             'wallet_id' => $otherWallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $otherWallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 200000,
@@ -89,6 +95,8 @@ describe('TransactionTrendService Payment Method Breakdown', function () {
         // Create transactions with different payment methods
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -97,6 +105,8 @@ describe('TransactionTrendService Payment Method Breakdown', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 200000,
@@ -116,6 +126,8 @@ describe('TransactionTrendService Status Distribution', function () {
     it('returns status distribution', function () {
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -123,6 +135,8 @@ describe('TransactionTrendService Status Distribution', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
             'amount' => 50000,
@@ -130,6 +144,8 @@ describe('TransactionTrendService Status Distribution', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::FAILED,
             'amount' => 30000,
@@ -148,6 +164,8 @@ describe('TransactionTrendService Status Distribution', function () {
         // 2 completed, 1 failed = 66.67% success rate
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -155,6 +173,8 @@ describe('TransactionTrendService Status Distribution', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -162,6 +182,8 @@ describe('TransactionTrendService Status Distribution', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::FAILED,
             'amount' => 100000,
@@ -178,6 +200,8 @@ describe('TransactionTrendService Success Failure Trend', function () {
     it('returns success vs failure trend over time', function () {
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -185,6 +209,8 @@ describe('TransactionTrendService Success Failure Trend', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::FAILED,
             'amount' => 50000,
@@ -204,6 +230,8 @@ describe('TransactionTrendService Fee Collection', function () {
     it('returns fee collection trend', function () {
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 100000,
@@ -213,6 +241,8 @@ describe('TransactionTrendService Fee Collection', function () {
 
         Transaction::create([
             'wallet_id' => $this->wallet->id,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => $this->wallet->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::COMPLETED,
             'amount' => 200000,

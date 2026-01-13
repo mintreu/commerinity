@@ -203,7 +203,7 @@ final class OrderController extends Controller
             'unit_price_formatted' => MoneyService::format($item->unit_price),
             'subtotal' => $item->unit_price * $item->quantity,
             'subtotal_formatted' => MoneyService::format($item->unit_price * $item->quantity),
-            'image' => $product?->getFirstMediaUrl('product_display') ?: null,
+            'image' => $product?->getFirstMediaUrl('displayImage') ?: null,
         ];
     }
 

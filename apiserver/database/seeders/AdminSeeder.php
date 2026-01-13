@@ -67,5 +67,39 @@ class AdminSeeder extends Seeder
         );
 
         $this->command->info('CEO created: admin@example.com');
+
+
+
+        // 3. DIRECTOR
+        $ceo = Admin::firstOrCreate(
+            ['email' => 'director@example.com'],
+            [
+                'uuid' => Str::uuid()->toString(),
+                'name' => 'Director (MD)',
+                'password' => bcrypt('Admin@123'),
+                'type' => AdminTypeCast::Director,
+                'level' => 1,
+                'created_by_admin_id' => $superAdmin->id,
+                'profit_share_percent' => 15.00,
+                'locale' => 'en',
+            ]
+        );
+
+        // Create CEO wallet
+        $ceo->wallet()->firstOrCreate(
+            ['walletable_type' => Admin::class, 'walletable_id' => $ceo->id],
+            [
+                'uuid' => Str::uuid()->toString(),
+                'balance' => 0,
+                'currency' => 'INR',
+                'status' => 'active',
+            ]
+        );
+
+        $this->command->info('Director created: director@example.com');
+
+
+
+
     }
 }

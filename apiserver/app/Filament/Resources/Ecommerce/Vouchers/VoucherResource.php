@@ -22,6 +22,8 @@ class VoucherResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static string|null|\UnitEnum $navigationGroup = 'Ecommerce';
+
     public static function form(Schema $schema): Schema
     {
         return VoucherForm::configure($schema);

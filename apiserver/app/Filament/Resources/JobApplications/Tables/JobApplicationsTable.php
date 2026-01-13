@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\JobApplications\Tables;
 
+use App\Filament\Exports\Recruitment\JobApplicationExporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\IconColumn;
@@ -77,6 +79,9 @@ class JobApplicationsTable
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(JobApplicationExporter::class)
+                    ,
                 ]),
             ]);
     }

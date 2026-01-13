@@ -89,6 +89,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/avatar', [ProfileController::class, 'uploadAvatar']);
     Route::put('/user/password', [ProfileController::class, 'changePassword']);
 
+    // Geo Data
+    Route::get('/geo/countries', [\App\Http\Controllers\Api\GeoController::class, 'countries']);
+    Route::get('/geo/states', [\App\Http\Controllers\Api\GeoController::class, 'states']);
+    Route::get('/geo/blocks', [\App\Http\Controllers\Api\GeoController::class, 'blocks']);
+    Route::get('/geo/districts', [\App\Http\Controllers\Api\GeoController::class, 'districts']);
+
     // Onboarding
     Route::get('/onboarding/status', [OnboardingController::class, 'status']);
     Route::put('/onboarding/profile', [OnboardingController::class, 'updateProfile']);

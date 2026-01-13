@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Casts\ProductStatusCast;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Ecommerce\ProductDetailResource;
+use App\Http\Resources\Ecommerce\ProductResource;
 use App\Models\Ecommerce\Category;
 use App\Models\Ecommerce\Product;
 use App\Models\Ecommerce\Sale;
@@ -64,10 +66,16 @@ final class CatalogController extends Controller
         $productIds = $products->pluck('id')->toArray();
         $activeSales = $this->getActiveSalesForProducts($productIds);
 
+        // Attach sale info to products for Resource
+        $products->getCollection()->transform(function ($product) use ($activeSales) {
+            $product->setRelation('activeSaleInfo', $activeSales[$product->id] ?? null);
+            return $product;
+        });
+
         return response()->json([
             'success' => true,
             'data' => [
-                'items' => $products->map(fn ($product) => $this->formatProduct($product, $activeSales)),
+                'items' => ProductResource::collection($products->getCollection()),
                 'pagination' => [
                     'current_page' => $products->currentPage(),
                     'last_page' => $products->lastPage(),
@@ -96,12 +104,12 @@ final class CatalogController extends Controller
             // Load both displayImage and bannerImage for detail page
             'media' => fn ($q) => $q->whereIn('collection_name', ['displayImage', 'bannerImage']),
             'category',
-            'filterGroup.filters.options',
             'filterOptions.filter',
             'variants' => fn ($q) => $q->purchasable()->with([
                 'media' => fn ($mq) => $mq->where('collection_name', 'displayImage'),
                 // FIFO for variants too
                 'availableStocks' => fn ($sq) => $sq->orderBy('priority')->orderBy('created_at'),
+                'filterOptions.filter',
             ]),
             // FIFO: oldest stock first
             'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at'),
@@ -113,9 +121,12 @@ final class CatalogController extends Controller
         // Get active sale for this product
         $activeSales = $this->getActiveSalesForProducts([$product->id]);
 
+        // Set sale info on resource
+        $resource = (new ProductDetailResource($product))->setSaleInfo($activeSales[$product->id] ?? null);
+
         return response()->json([
             'success' => true,
-            'data' => $this->formatProductDetail($product, $activeSales),
+            'data' => $resource->toArray(request()),
         ]);
     }
 
@@ -183,7 +194,7 @@ final class CatalogController extends Controller
                         'slug' => $category->url,
                         'product_count' => $category->products_count,
                         'total_products' => $totalProducts,
-                        'thumbnail' => $category->getFirstMediaUrl('thumbnail'),
+                        'thumbnail' => $category->getFirstMediaUrl('thumbnail') ? url($category->getFirstMediaUrl('thumbnail')) : null,
                         'children' => $filteredChildren->values()->toArray(),
                     ];
                 })
@@ -260,13 +271,13 @@ final class CatalogController extends Controller
                     'name' => $category->name,
                     'slug' => $category->url,
                     'description' => $category->desc,
-                    'thumbnail' => $category->getFirstMediaUrl('thumbnail'),
-                    'banner' => $category->getFirstMediaUrl('banner'),
+                    'thumbnail' => $category->getFirstMediaUrl('thumbnail') ? url($category->getFirstMediaUrl('thumbnail')) : null,
+                    'banner' => $category->getFirstMediaUrl('banner') ? url($category->getFirstMediaUrl('banner')) : null,
                     'seo_meta' => $category->seo_meta,
                     'children' => $category->children->map(fn ($child) => [
                         'name' => $child->name,
                         'slug' => $child->url,
-                        'thumbnail' => $child->getFirstMediaUrl('thumbnail'),
+                        'thumbnail' => $child->getFirstMediaUrl('thumbnail') ? url($child->getFirstMediaUrl('thumbnail')) : null,
                         'product_count' => $child->products_count,
                     ]),
                     'ancestors' => $ancestors,
@@ -324,9 +335,19 @@ final class CatalogController extends Controller
                 ->toArray();
             $activeSales = $this->getActiveSalesForProducts($allProductIds);
 
+            // Attach sale info and use Resource
+            $bestSellers->transform(function ($p) use ($activeSales) {
+                $p->setRelation('activeSaleInfo', $activeSales[$p->id] ?? null);
+                return $p;
+            });
+            $newArrivals->transform(function ($p) use ($activeSales) {
+                $p->setRelation('activeSaleInfo', $activeSales[$p->id] ?? null);
+                return $p;
+            });
+
             return [
-                'best_sellers' => $bestSellers->map(fn ($p) => $this->formatProduct($p, $activeSales)),
-                'new_arrivals' => $newArrivals->map(fn ($p) => $this->formatProduct($p, $activeSales)),
+                'best_sellers' => ProductResource::collection($bestSellers),
+                'new_arrivals' => ProductResource::collection($newArrivals),
             ];
         });
 
@@ -362,7 +383,13 @@ final class CatalogController extends Controller
         $activeSales = $this->getActiveSalesForProducts($productIds);
 
         // Filter to only products that have active sales
-        $saleProducts = $products->filter(fn ($product) => isset($activeSales[$product->id]));
+        $saleProducts = $products->getCollection()->filter(fn ($product) => isset($activeSales[$product->id]));
+
+        // Attach sale info and use Resource
+        $saleProducts->transform(function ($product) use ($activeSales) {
+            $product->setRelation('activeSaleInfo', $activeSales[$product->id]);
+            return $product;
+        });
 
         // Get sale stats
         $totalDeals = SaleProduct::active()->count();
@@ -379,14 +406,7 @@ final class CatalogController extends Controller
                     'avg_discount' => round($avgDiscount),
                     'ends_at' => $earliestSale?->ends_till?->toIso8601String(),
                 ],
-                'items' => $saleProducts->map(function ($product) use ($activeSales) {
-                    $formatted = $this->formatProduct($product, $activeSales);
-                    $saleInfo = $activeSales[$product->id] ?? null;
-
-                    return array_merge($formatted, [
-                        'sale_ends_at' => $saleInfo['ends_at']?->toIso8601String() ?? null,
-                    ]);
-                })->values(),
+                'items' => ProductResource::collection($saleProducts->values()),
                 'pagination' => [
                     'current_page' => $products->currentPage(),
                     'last_page' => $products->lastPage(),
@@ -454,8 +474,8 @@ final class CatalogController extends Controller
                         'name' => $category->name,
                         'slug' => $category->url,
                         'description' => $category->desc,
-                        'thumbnail' => $category->getFirstMediaUrl('thumbnail'),
-                        'banner' => $category->getFirstMediaUrl('banner'),
+                        'thumbnail' => $category->getFirstMediaUrl('thumbnail') ? url($category->getFirstMediaUrl('thumbnail')) : null,
+                        'banner' => $category->getFirstMediaUrl('banner') ? url($category->getFirstMediaUrl('banner')) : null,
                         'product_count' => $productCount,
                         'sample_products' => $sampleProducts,
                     ];
@@ -507,11 +527,17 @@ final class CatalogController extends Controller
         $productIds = $products->pluck('id')->toArray();
         $activeSales = $this->getActiveSalesForProducts($productIds);
 
+        // Attach sale info to products for Resource
+        $products->getCollection()->transform(function ($product) use ($activeSales) {
+            $product->setRelation('activeSaleInfo', $activeSales[$product->id] ?? null);
+            return $product;
+        });
+
         return response()->json([
             'success' => true,
             'data' => [
                 'query' => $search,
-                'items' => $products->map(fn ($product) => $this->formatProduct($product, $activeSales)),
+                'items' => ProductResource::collection($products->getCollection()),
                 'pagination' => [
                     'current_page' => $products->currentPage(),
                     'last_page' => $products->lastPage(),
@@ -1056,10 +1082,10 @@ final class CatalogController extends Controller
         $hasResponsive = $displayMedia->hasResponsiveImages();
 
         return [
-            'url' => $displayMedia->getUrl(),
-            'thumbnail' => $displayMedia->hasGeneratedConversion('thumb')
+            'url' => url($displayMedia->getUrl()),
+            'thumbnail' => url($displayMedia->hasGeneratedConversion('thumb')
                 ? $displayMedia->getUrl('thumb')
-                : $displayMedia->getUrl(),
+                : $displayMedia->getUrl()),
             'srcset' => $hasResponsive ? $displayMedia->getSrcset() : null,
             'responsive' => $hasResponsive ? $displayMedia->getResponsiveImageUrls() : null,
             'alt' => $displayMedia->name,
@@ -1081,10 +1107,10 @@ final class CatalogController extends Controller
             $hasResponsive = $displayMedia->hasResponsiveImages();
             $gallery[] = [
                 'id' => $displayMedia->id,
-                'url' => $displayMedia->getUrl(),
-                'thumbnail' => $displayMedia->hasGeneratedConversion('thumb')
+                'url' => url($displayMedia->getUrl()),
+                'thumbnail' => url($displayMedia->hasGeneratedConversion('thumb')
                     ? $displayMedia->getUrl('thumb')
-                    : $displayMedia->getUrl(),
+                    : $displayMedia->getUrl()),
                 'srcset' => $hasResponsive ? $displayMedia->getSrcset() : null,
                 'responsive' => $hasResponsive ? $displayMedia->getResponsiveImageUrls() : null,
             ];
@@ -1095,10 +1121,10 @@ final class CatalogController extends Controller
             $hasResponsive = $media->hasResponsiveImages();
             $gallery[] = [
                 'id' => $media->id,
-                'url' => $media->getUrl(),
-                'thumbnail' => $media->hasGeneratedConversion('thumb')
+                'url' => url($media->getUrl()),
+                'thumbnail' => url($media->hasGeneratedConversion('thumb')
                     ? $media->getUrl('thumb')
-                    : $media->getUrl(),
+                    : $media->getUrl()),
                 'srcset' => $hasResponsive ? $media->getSrcset() : null,
                 'responsive' => $hasResponsive ? $media->getResponsiveImageUrls() : null,
             ];

@@ -38,6 +38,7 @@ class FilterSeeder extends Seeder
         foreach ($attributeBag as $data) {
             $filter = Filter::updateOrCreate([
                 'name' => $data->display_name,
+                'is_required' => $data->required
             ]);
             $finalAttributes->push($filter);
 

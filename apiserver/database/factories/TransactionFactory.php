@@ -32,8 +32,8 @@ class TransactionFactory extends Factory
 
         return [
             'wallet_id' => Wallet::factory(),
-            'transactionable_type' => null,
-            'transactionable_id' => null,
+            'transactionable_type' => Wallet::class,
+            'transactionable_id' => Wallet::factory()->create()->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
             'amount' => $amount,

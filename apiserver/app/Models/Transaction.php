@@ -46,9 +46,7 @@ class Transaction extends Model
 //        'checkout_url',  // not required
         'qr_code_url',
         'success_url',
-        'success_redirect_url',
         'failure_url',
-        'failure_redirect_url',
         'verified',
         'verified_at',
         'description',

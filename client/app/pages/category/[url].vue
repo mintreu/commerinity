@@ -140,7 +140,7 @@ const addToCart = async (product: Product) => {
   try {
     await addToCartComposable(product.slug, 1, {
       productName: product.name,
-      productImage: product.image?.url
+      productImage: product.image?.src
     })
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Failed to add to cart'
@@ -428,8 +428,8 @@ const clearPriceFilter = () => {
                   <!-- Image -->
                   <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
                     <img
-                      v-if="product.image?.url"
-                      :src="product.image.thumbnail || product.image.url"
+                      v-if="product.image?.src"
+                      :src="product.image.thumbnail || product.image.src"
                       :alt="product.image.alt || product.name"
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
