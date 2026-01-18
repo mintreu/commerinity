@@ -157,7 +157,7 @@ const formatDate = (dateString: string) => {
             <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800/50 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
               <img
                 v-if="item.image"
-                :src="item.image"
+                :src="typeof item.image === 'string' ? item.image : (item.image.src || item.image.url)"
                 :alt="item.product_name"
                 class="w-full h-full object-cover"
               >

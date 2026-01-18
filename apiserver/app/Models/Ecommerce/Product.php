@@ -334,4 +334,121 @@ class Product extends Model implements HasMedia
     {
         return (int) ($this->available_stocks_count ?? $this->availableStocks()->count());
     }
+
+    /**
+     * Get the correct price for this product using available stock
+     * Uses PriceCalculationService for consistent pricing logic
+     * Returns price in paise (integer)
+     */
+    public function getPrice(?\App\Services\Ecommerce\PriceCalculationService $priceService = null): int
+    {
+        // Get first available stock (FIFO)
+        $stock = $this->availableStocks->first();
+
+        if (!$stock) {
+            return 0; // No stock available
+        }
+
+        // Use provided service or create new instance
+        $priceService = $priceService ?? app(\App\Services\Ecommerce\PriceCalculationService::class);
+
+        return $priceService->getStockPrice($stock);
+    }
+
+    /**
+     * Get formatted price string
+     */
+    public function getFormattedPrice(): string
+    {
+        $price = $this->getPrice();
+        return \App\Services\MoneyService::format($price);
+    }
+
+    /**
+     * Get price range for products with multiple stock entries
+     * Returns string like "₹199 - ₹299" or "₹250" for single price
+     */
+    public function getPriceRange(): string
+    {
+        $priceService = app(\App\Services\Ecommerce\PriceCalculationService::class);
+
+        if ($this->availableStocks->isEmpty()) {
+            return 'Out of stock';
+        }
+
+        return $priceService->getPriceRange($this->availableStocks);
+    }
+
+    /**
+     * Check if product has sale price
+     * Returns sale price in paise if available, null otherwise
+     */
+    public function getSalePrice(): ?int
+    {
+        $originalPrice = $this->getPrice();
+        $saleInfo = $this->getActiveSaleInfo();
+
+        if (is_array($saleInfo) && $originalPrice > 0) {
+            $salePrice = $this->calculateSalePrice($originalPrice, $saleInfo);
+            if ($salePrice && $salePrice < $originalPrice) {
+                return $salePrice;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get current display price (sale price if available, otherwise regular price)
+     */
+    public function getDisplayPrice(): int
+    {
+        return $this->getSalePrice() ?? $this->getPrice();
+    }
+
+    /**
+     * Get discount percentage if sale is active
+     */
+    public function getDiscountPercent(): ?float
+    {
+        $salePrice = $this->getSalePrice();
+        $originalPrice = $this->getPrice();
+
+        if ($salePrice && $salePrice < $originalPrice) {
+            $priceService = app(\App\Services\Ecommerce\PriceCalculationService::class);
+            return $priceService->calculateDiscountPercent($originalPrice, $salePrice);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get active sale info (simplified - to be implemented with actual sale system)
+     */
+    private function getActiveSaleInfo(): ?array
+    {
+        // Check if sale info was eager loaded
+        if ($this->relationLoaded('activeSaleInfo')) {
+            return $this->activeSaleInfo;
+        }
+
+        // TODO: Implement actual sale system integration
+        return null;
+    }
+
+    /**
+     * Calculate sale price from sale info (simplified)
+     */
+    private function calculateSalePrice(int $originalPrice, array $saleInfo): ?int
+    {
+        if (isset($saleInfo['sale_product'])) {
+            return $saleInfo['sale_product']->getFinalPrice($originalPrice);
+        }
+
+        if (isset($saleInfo['sale'])) {
+            return $saleInfo['sale']->calculatePrice($originalPrice);
+        }
+
+        return null;
+    }
 }

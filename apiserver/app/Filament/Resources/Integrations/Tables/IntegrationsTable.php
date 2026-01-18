@@ -20,9 +20,9 @@ class IntegrationsTable
     {
         return $table
             ->columns([
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable(),
+//                TextColumn::make('uuid')
+//                    ->label('UUID')
+//                    ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('slug')
@@ -40,8 +40,10 @@ class IntegrationsTable
                     ->default(false),
                 TextColumn::make('last_tested_at')
                     ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('last_test_result')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

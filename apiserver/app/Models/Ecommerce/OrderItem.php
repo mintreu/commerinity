@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 class OrderItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'uuid',
         'order_id',
         'product_id',
         'stock_id',
@@ -35,6 +37,15 @@ class OrderItem extends Model
             'pv' => 'integer',
             'reward_points' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (OrderItem $item) {
+            if (empty($item->uuid)) {
+                $item->uuid = (string) Str::uuid();
+            }
+        });
     }
 
     public function order(): BelongsTo

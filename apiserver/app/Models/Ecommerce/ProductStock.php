@@ -125,7 +125,7 @@ class ProductStock extends Model
 
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'supplier_id');
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
     // ========================================
@@ -134,7 +134,7 @@ class ProductStock extends Model
 
     public function inStock(): bool
     {
-        return $this->in_stock;
+        return (bool) $this->in_stock;
     }
 
     public function minStock(int $count): int

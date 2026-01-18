@@ -25,8 +25,8 @@ final class ProductResource extends JsonResource
         $stock = $this->availableStocks->first();
         $inStock = $this->total_stock > 0;
 
-        // Get price from stock if available, otherwise from product
-        $originalPrice = $stock?->getEffectivePrice() ?? $this->price;
+        // Get price using Product model's getPrice() method
+        $originalPrice = $this->getPrice();
 
         // Check for active sale
         $saleInfo = $this->getActiveSaleInfo();
@@ -35,7 +35,7 @@ final class ProductResource extends JsonResource
         $saleName = null;
         $saleEndsAt = null;
 
-        if (is_array($saleInfo)) {
+        if (is_array($saleInfo) && $originalPrice > 0) {
             $salePrice = $this->calculateSalePrice($originalPrice, $saleInfo);
             if ($salePrice && $salePrice < $originalPrice) {
                 $discountPercent = round((($originalPrice - $salePrice) / $originalPrice) * 100);

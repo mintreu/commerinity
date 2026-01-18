@@ -37,26 +37,42 @@ const config = useRuntimeConfig()
         <!-- Subtitle -->
         <p class="max-w-3xl text-slate-600 dark:text-slate-300 font-medium text-base sm:text-lg md:text-xl leading-relaxed">
           The ultimate platform combining
-          <span class="font-bold text-violet-600 dark:text-violet-400">Network Marketing</span>,
           <span class="font-bold text-pink-600 dark:text-pink-400">E-Commerce</span>, and
+          <span class="font-bold text-violet-600 dark:text-violet-400">Business Marketing</span>,
           <span class="font-bold text-blue-600 dark:text-blue-400">Career Opportunities</span>
           — all in one powerful ecosystem
         </p>
 
         <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 pt-4">
-          <NuxtLink to="/auth/register">
-            <UButton
-              size="xl"
-              color="primary"
-              class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
-            >
-              <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-2" />
-              Start Your Journey
-            </UButton>
-          </NuxtLink>
+<!--        <div class="flex flex-col sm:flex-row gap-4 pt-4">-->
+        <div class="flex flex-col sm:flex-col gap-4 pt-4">
+          <div class="flex gap-2 flex-row sm:flex-row px-2">
+            <NuxtLink to="/auth/register">
+              <UButton
+                size="xl"
+                color="primary"
+                class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-2" />
+                Sign up
+              </UButton>
+            </NuxtLink>
 
-          <NuxtLink to="/about">
+
+            <NuxtLink to="/auth/login">
+              <UButton
+                size="xl"
+                color="primary"
+                class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-2" />
+                Sign in
+              </UButton>
+            </NuxtLink>
+          </div>
+
+
+          <NuxtLink to="/help">
             <UButton
               size="xl"
               color="neutral"

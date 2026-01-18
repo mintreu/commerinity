@@ -88,6 +88,7 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             CategorySeeder::class,
             FilterSeeder::class,
+            SupplierSeeder::class,
         ]);
     }
 

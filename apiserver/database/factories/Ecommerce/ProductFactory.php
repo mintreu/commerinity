@@ -20,7 +20,6 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $name = fake()->words(3, true);
-        $price = fake()->numberBetween(10000, 500000); // ₹100 - ₹5000 in paise
 
         return [
             'name' => ucfirst($name),
@@ -31,7 +30,6 @@ class ProductFactory extends Factory
             'status' => ProductStatusCast::PUBLISHED->value,
             'description' => fake()->paragraphs(2, true),
             'short_description' => fake()->sentence(),
-            'price' => $price,
             'view_count' => fake()->numberBetween(0, 1000),
         ];
     }
@@ -78,12 +76,11 @@ class ProductFactory extends Factory
     }
 
     /**
-     * Set specific price
+     * Set specific price (DEPRECATED - price is now stored in ProductStock)
+     * @deprecated Use ProductStock factory instead
      */
     public function withPrice(int $priceInPaise): static
     {
-        return $this->state(fn (array $attributes) => [
-            'price' => $priceInPaise,
-        ]);
+        return $this;
     }
 }

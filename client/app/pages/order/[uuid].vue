@@ -118,7 +118,7 @@ const formatDate = (dateString?: string) => {
             <div class="sm:col-span-1 flex items-center">
               <img
                 v-if="item.image"
-                :src="item.image"
+                :src="typeof item.image === 'string' ? item.image : (item.image.src || item.image.url)"
                 :alt="item.product_name"
                 class="w-16 h-16 object-cover rounded-lg"
               />

@@ -1,10 +1,104 @@
 
 
-[1;37;40mCode Coverage Report:      [0m
-[1;37;40m  2026-01-10 02:30:45      [0m
-[1;37;40m                           [0m
-[1;37;40m Summary:                  [0m
-[37;41m  Classes:  0.00% (0/468)  [0m
-[37;41m  Methods:  0.00% (0/2859) [0m
-[37;41m  Lines:    0.00% (0/26600)[0m
+[1;37;40mCode Coverage Report:        [0m
+[1;37;40m  2026-01-18 20:09:56        [0m
+[1;37;40m                             [0m
+[1;37;40m Summary:                    [0m
+[37;41m  Classes:  0.41% (2/483)    [0m
+[37;41m  Methods:  2.75% (80/2909)  [0m
+[37;41m  Lines:    1.65% (453/27390)[0m
 
+App\Console\Commands\Ecommerce\CompleteDeliveredOrders
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [37;41mLines:   2.04% (  1/ 49)[0m
+App\Filament\Resources\Activities\ActivityResource
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  50.00% (  5/ 10)[0m
+App\Filament\Resources\Addresses\AddressResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Admins\AdminResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Affiliate\AffiliateCommissions\AffiliateCommissionResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Affiliate\AffiliateGenealogies\AffiliateGenealogyResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\BeneficiaryAccounts\BeneficiaryAccountResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Ecommerce\Categories\CategoryResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Ecommerce\Orders\OrderResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Ecommerce\ProductStocks\ProductStockResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Ecommerce\Products\ProductResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  55.56% ( 10/ 18)[0m
+App\Filament\Resources\Ecommerce\Sales\SaleResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Ecommerce\Shipments\ShipmentResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Ecommerce\Vouchers\VoucherResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Geo\Countries\CountryResource
+  [37;41mMethods:  50.00% ( 2/ 4)[0m   [30;43mLines:  80.00% (  8/ 10)[0m
+App\Filament\Resources\Integrations\IntegrationResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\JobApplications\JobApplicationResource
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  50.00% (  8/ 16)[0m
+App\Filament\Resources\Kycs\KycResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Membership\Levels\LevelResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Membership\Stages\StageResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Membership\UserSubscriptions\UserSubscriptionResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Recruitments\RecruitmentResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  57.14% (  8/ 14)[0m
+App\Filament\Resources\SmsLogs\SmsLogResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\SmsProviders\SmsProviderResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\SmsTemplates\SmsTemplateResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Transactions\TransactionResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Filament\Resources\Users\UserResource
+  [37;41mMethods:  40.00% ( 2/ 5)[0m   [30;43mLines:  75.00% (  9/ 12)[0m
+App\Filament\Resources\Wallets\WalletResource
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [30;43mLines:  56.25% (  9/ 16)[0m
+App\Jobs\Wallet\CheckPayoutStatusJob
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   1.27% (  1/ 79)[0m
+App\Models\Address
+  [37;41mMethods:   6.25% ( 1/16)[0m   [37;41mLines:  21.74% ( 10/ 46)[0m
+App\Models\BeneficiaryAccount
+  [37;41mMethods:   4.35% ( 1/23)[0m   [37;41mLines:  16.36% (  9/ 55)[0m
+App\Models\Ecommerce\ProductStock
+  [37;41mMethods:   4.00% ( 1/25)[0m   [37;41mLines:  32.35% ( 22/ 68)[0m
+App\Models\Transaction
+  [37;41mMethods:   3.85% ( 1/26)[0m   [37;41mLines:  29.82% ( 17/ 57)[0m
+App\Models\User
+  [37;41mMethods:   4.76% ( 1/21)[0m   [37;41mLines:  19.70% ( 13/ 66)[0m
+App\Providers\AppServiceProvider
+  [30;43mMethods:  66.67% ( 2/ 3)[0m   [37;41mLines:  50.00% (  8/ 16)[0m
+App\Providers\Filament\AdminPanelProvider
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 50/ 50)[0m
+App\Providers\Filament\AppPanelProvider
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 31/ 31)[0m
+App\Providers\TelescopeServiceProvider
+  [37;41mMethods:  33.33% ( 1/ 3)[0m   [30;43mLines:  60.87% ( 14/ 23)[0m
+App\Services\Affiliate\Calculators\Affiliate\LevelCommissionCalculator
+  [37;41mMethods:  33.33% ( 2/ 6)[0m   [37;41mLines:   6.67% (  3/ 45)[0m
+App\Services\Affiliate\Calculators\Affiliate\OriginatorJoiningCalculator
+  [37;41mMethods:  16.67% ( 1/ 6)[0m   [37;41mLines:   2.17% (  1/ 46)[0m
+App\Services\Affiliate\Calculators\Affiliate\OriginatorRecurringCalculator
+  [37;41mMethods:  14.29% ( 1/ 7)[0m   [37;41mLines:   1.79% (  1/ 56)[0m
+App\Services\Affiliate\Calculators\Affiliate\SponsorBonusCalculator
+  [37;41mMethods:  25.00% ( 1/ 4)[0m   [37;41mLines:   3.33% (  1/ 30)[0m
+App\Services\Affiliate\Calculators\BaseCommissionCalculator
+  [37;41mMethods:  10.00% ( 1/10)[0m   [37;41mLines:   2.94% (  1/ 34)[0m
+App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator
+  [37;41mMethods:  16.67% ( 1/ 6)[0m   [37;41mLines:   2.86% (  1/ 35)[0m
+App\Services\Affiliate\CommissionProcessorService
+  [37;41mMethods:  15.00% ( 3/20)[0m   [37;41mLines:   5.43% ( 10/184)[0m
+App\Services\Ecommerce\PriceCalculationService
+  [37;41mMethods:  26.67% ( 4/15)[0m   [37;41mLines:  29.51% ( 18/ 61)[0m
+App\Services\MoneyService
+  [37;41mMethods:   0.00% ( 0/22)[0m   [37;41mLines:   5.88% (  4/ 68)[0m

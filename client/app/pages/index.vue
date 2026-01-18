@@ -14,9 +14,9 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: 'Commerinity Pro - Affiliate & E-Commerce Platform',
-  description: 'Transform your business dreams into reality with Commerinity Pro. The ultimate platform combining Network Marketing, E-Commerce, and Career Opportunities — all in one powerful ecosystem.',
-  ogTitle: 'Commerinity Pro - Affiliate & E-Commerce Platform',
+  title: 'VVIndia - Affiliate & E-Commerce Platform',
+  description: 'Transform your business dreams into reality with VVIndia. The ultimate platform combining  E-Commerce, Business Marketing, and Career Opportunities — all in one powerful ecosystem.',
+  ogTitle: 'VVIndia - Affiliate & E-Commerce Platform',
   ogDescription: 'Join thousands of successful entrepreneurs. Network Marketing, E-Commerce & Career Opportunities all in one place.',
   ogImage: '/logo.png'
 })

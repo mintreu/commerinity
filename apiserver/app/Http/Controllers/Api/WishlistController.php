@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Ecommerce\WishlistItemResource;
 use App\Models\Ecommerce\Product;
 use App\Models\Ecommerce\ProductWishlist;
 use App\Models\User;
@@ -35,6 +36,7 @@ final class WishlistController extends Controller
         $wishlist = ProductWishlist::query()
             ->where('authorable_id', $user->id)
             ->where('authorable_type', User::class)
+            // with() optimizations same as before
             ->with([
                 'product' => function ($q) {
                     $q->with([
@@ -50,37 +52,7 @@ final class WishlistController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'items' => $wishlist->map(function ($item) {
-                    $product = $item->product;
-                    if (! $product) {
-                        return null;
-                    }
-
-                    $displayMedia = $product->getFirstMedia('displayImage');
-
-                    return [
-                        'id' => $item->id,
-                        'added_at' => $item->created_at->toIso8601String(),
-                        'product' => [
-                            'name' => $product->name,
-                            'slug' => $product->url,
-                            'sku' => $product->sku,
-                            'price' => $product->price,
-                            'price_formatted' => MoneyService::format($product->price),
-                            'image' => $displayMedia ? [
-                                'url' => $displayMedia->getUrl(),
-                                'thumbnail' => $displayMedia->hasGeneratedConversion('thumb')
-                                    ? $displayMedia->getUrl('thumb')
-                                    : $displayMedia->getUrl(),
-                            ] : null,
-                            'in_stock' => $product->total_stock > 0,
-                            'category' => $product->category ? [
-                                'name' => $product->category->name,
-                                'slug' => $product->category->url,
-                            ] : null,
-                        ],
-                    ];
-                })->filter()->values(),
+                'items' => WishlistItemResource::collection($wishlist->getCollection()),
                 'pagination' => [
                     'current_page' => $wishlist->currentPage(),
                     'last_page' => $wishlist->lastPage(),
