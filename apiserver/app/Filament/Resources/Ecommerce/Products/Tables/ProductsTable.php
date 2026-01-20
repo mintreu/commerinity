@@ -36,9 +36,9 @@ class ProductsTable
                 TextColumn::make('category.name')
                     ->searchable(),
 
-                TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
+//                TextColumn::make('price')
+//                    ->money()
+//                    ->sortable(),
                 TextColumn::make('status')
                     ->badge()
                     ->searchable(),

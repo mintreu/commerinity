@@ -50,7 +50,7 @@ class VariantsRelationManager extends RelationManager
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
 
-                TextInput::make('price'),
+               // TextInput::make('price'),
 
                 Select::make('status')
                     ->options(ProductForm::statusOptions())
@@ -83,7 +83,7 @@ class VariantsRelationManager extends RelationManager
                     ->formatStateUsing(fn (string $state) => ProductStatusCast::tryFrom($state)?->getLabel() ?? $state)
                     ->color(fn (string $state): string => ProductStatusCast::tryFrom($state)?->getColor() ?? 'gray'),
 
-                TextInput::make('price'),
+               // TextInput::make('price'),
             ])
             ->filters([
                 SelectFilter::make('status')

@@ -63,9 +63,9 @@ class ManageStock extends ManageRelatedRecords
                     ->required()
                     ->numeric()
                     ->default(0.0),
-                TextInput::make('price')
-                    ->numeric()
-                    ->prefix('$'),
+//                TextInput::make('price')
+//                    ->numeric()
+//                    ->prefix('$'),
                 TextInput::make('min_quantity')
                     ->required()
                     ->numeric()
@@ -142,9 +142,9 @@ class ManageStock extends ManageRelatedRecords
                 TextColumn::make('profit_margin')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('price')
-                    ->money()
-                    ->sortable(),
+//                TextColumn::make('price')
+//                    ->money()
+//                    ->sortable(),
                 TextColumn::make('min_quantity')
                     ->numeric()
                     ->sortable(),

@@ -101,9 +101,9 @@ class ProductForm
 
                                 TextInput::make('seo_meta'),
 
-                                TextInput::make('price')
-                                    ->numeric()
-                                    ->prefix('$'),
+//                                TextInput::make('price')
+//                                    ->numeric()
+//                                    ->prefix('$'),
 
                                 TextInput::make('view_count')
                                     ->required()
