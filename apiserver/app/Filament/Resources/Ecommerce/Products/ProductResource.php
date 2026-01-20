@@ -10,6 +10,7 @@ use App\Filament\Resources\Ecommerce\Products\Pages\ViewProduct;
 use App\Filament\Resources\Ecommerce\Products\Schemas\ProductForm;
 use App\Filament\Resources\Ecommerce\Products\Schemas\ProductInfolist;
 use App\Filament\Resources\Ecommerce\Products\Tables\ProductsTable;
+use App\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
 use App\Models\Ecommerce\Product;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Resource;
@@ -61,7 +62,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            VariantsRelationManager::class,
         ];
     }
 

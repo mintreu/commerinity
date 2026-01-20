@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Ecommerce\Products\Pages;
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Filament\Resources\Ecommerce\Products\ProductResource;
+use App\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
 use App\Services\Ecommerce\ProductManager;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -17,7 +18,15 @@ class EditProduct extends EditRecord
 {
     protected static string $resource = ProductResource::class;
 
+    public function getRelationManagers(): array
+    {
+        $relationManagers = [];
+        if ($this->record->type == 'configurable') {
+            $relationManagers[] = VariantsRelationManager::class;
+        }
 
+        return $relationManagers;
+    }
 
 
     protected function getHeaderActions(): array
