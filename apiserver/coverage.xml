@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1768766985">
-  <project timestamp="1768766985" name="Clover Coverage">
+<coverage generated="1768909710">
+  <project timestamp="1768909710" name="Clover Coverage">
     <package name="App\Casts">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Casts\AdPlacementCast.php">
         <class name="App\Casts\AdPlacementCast" namespace="App\Casts">
@@ -1573,10 +1573,10 @@
     <package name="App\Console\Commands\Ecommerce">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Console\Commands\Ecommerce\CompleteDeliveredOrders.php">
         <class name="App\Console\Commands\Ecommerce\CompleteDeliveredOrders" namespace="App\Console\Commands\Ecommerce">
-          <metrics complexity="11" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="1" elements="51" coveredelements="2"/>
+          <metrics complexity="11" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="0" elements="51" coveredelements="0"/>
         </class>
-        <line num="31" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="34" type="stmt" count="1"/>
+        <line num="31" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="34" type="stmt" count="0"/>
         <line num="37" type="method" name="handle" visibility="public" complexity="10" crap="110" count="0"/>
         <line num="39" type="stmt" count="0"/>
         <line num="40" type="stmt" count="0"/>
@@ -1626,7 +1626,7 @@
         <line num="104" type="stmt" count="0"/>
         <line num="105" type="stmt" count="0"/>
         <line num="108" type="stmt" count="0"/>
-        <metrics loc="111" ncloc="100" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="1" elements="51" coveredelements="2"/>
+        <metrics loc="111" ncloc="100" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="0" elements="51" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Console\Commands\Installer">
@@ -2216,26 +2216,26 @@
     <package name="App\Filament\Resources\Activities">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Activities\ActivityResource.php">
         <class name="App\Filament\Resources\Activities\ActivityResource" namespace="App\Filament\Resources\Activities">
-          <metrics complexity="8" methods="7" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="5" elements="17" coveredelements="7"/>
+          <metrics complexity="8" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="31" type="method" name="infolist" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="33" type="stmt" count="0"/>
         <line num="36" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="38" type="stmt" count="0"/>
-        <line num="41" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="43" type="stmt" count="7"/>
-        <line num="46" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="51" type="stmt" count="7"/>
+        <line num="41" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="46" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
         <line num="54" type="method" name="canCreate" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="56" type="stmt" count="0"/>
         <line num="59" type="method" name="canEdit" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="61" type="stmt" count="0"/>
         <line num="64" type="method" name="canDelete" visibility="public" complexity="2" crap="6" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="68" classes="1" methods="7" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="5" elements="17" coveredelements="7"/>
+        <metrics loc="69" ncloc="68" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Activities\Pages">
@@ -2395,7 +2395,7 @@
     <package name="App\Filament\Resources\Addresses">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Addresses\AddressResource.php">
         <class name="App\Filament\Resources\Addresses\AddressResource" namespace="App\Filament\Resources\Addresses">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -2403,23 +2403,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Addresses\Pages">
@@ -2676,7 +2676,7 @@
     <package name="App\Filament\Resources\Admins">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Admins\AdminResource.php">
         <class name="App\Filament\Resources\Admins\AdminResource" namespace="App\Filament\Resources\Admins">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="30" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="32" type="stmt" count="0"/>
@@ -2684,23 +2684,23 @@
         <line num="37" type="stmt" count="0"/>
         <line num="40" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="42" type="stmt" count="0"/>
-        <line num="45" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="52" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <line num="59" type="stmt" count="7"/>
+        <line num="45" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="52" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="59" type="stmt" count="0"/>
         <line num="62" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
         <line num="67" type="stmt" count="0"/>
-        <metrics loc="70" ncloc="70" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="70" ncloc="70" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Admins\Pages">
@@ -2933,7 +2933,7 @@
     <package name="App\Filament\Resources\Affiliate\AffiliateCommissions">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Affiliate\AffiliateCommissions\AffiliateCommissionResource.php">
         <class name="App\Filament\Resources\Affiliate\AffiliateCommissions\AffiliateCommissionResource" namespace="App\Filament\Resources\Affiliate\AffiliateCommissions">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="31" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="33" type="stmt" count="0"/>
@@ -2941,23 +2941,23 @@
         <line num="38" type="stmt" count="0"/>
         <line num="41" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="43" type="stmt" count="0"/>
-        <line num="46" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="53" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <line num="59" type="stmt" count="7"/>
-        <line num="60" type="stmt" count="7"/>
+        <line num="46" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="53" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="59" type="stmt" count="0"/>
+        <line num="60" type="stmt" count="0"/>
         <line num="63" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
         <line num="67" type="stmt" count="0"/>
         <line num="68" type="stmt" count="0"/>
-        <metrics loc="71" ncloc="71" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="71" ncloc="71" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Affiliate\AffiliateCommissions\Pages">
@@ -3249,7 +3249,7 @@
     <package name="App\Filament\Resources\Affiliate\AffiliateGenealogies">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Affiliate\AffiliateGenealogies\AffiliateGenealogyResource.php">
         <class name="App\Filament\Resources\Affiliate\AffiliateGenealogies\AffiliateGenealogyResource" namespace="App\Filament\Resources\Affiliate\AffiliateGenealogies">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="31" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="33" type="stmt" count="0"/>
@@ -3257,23 +3257,23 @@
         <line num="38" type="stmt" count="0"/>
         <line num="41" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="43" type="stmt" count="0"/>
-        <line num="46" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="53" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <line num="59" type="stmt" count="7"/>
-        <line num="60" type="stmt" count="7"/>
+        <line num="46" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="53" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="59" type="stmt" count="0"/>
+        <line num="60" type="stmt" count="0"/>
         <line num="63" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
         <line num="67" type="stmt" count="0"/>
         <line num="68" type="stmt" count="0"/>
-        <metrics loc="71" ncloc="71" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="71" ncloc="71" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Affiliate\AffiliateGenealogies\Pages">
@@ -3554,7 +3554,7 @@
     <package name="App\Filament\Resources\BeneficiaryAccounts">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\BeneficiaryAccounts\BeneficiaryAccountResource.php">
         <class name="App\Filament\Resources\BeneficiaryAccounts\BeneficiaryAccountResource" namespace="App\Filament\Resources\BeneficiaryAccounts">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="31" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="33" type="stmt" count="0"/>
@@ -3562,23 +3562,23 @@
         <line num="38" type="stmt" count="0"/>
         <line num="41" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="43" type="stmt" count="0"/>
-        <line num="46" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="53" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <line num="59" type="stmt" count="7"/>
-        <line num="60" type="stmt" count="7"/>
+        <line num="46" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="53" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="59" type="stmt" count="0"/>
+        <line num="60" type="stmt" count="0"/>
         <line num="63" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
         <line num="67" type="stmt" count="0"/>
         <line num="68" type="stmt" count="0"/>
-        <metrics loc="71" ncloc="71" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="71" ncloc="71" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\BeneficiaryAccounts\Pages">
@@ -3800,7 +3800,7 @@
     <package name="App\Filament\Resources\Ecommerce\Categories">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\Categories\CategoryResource.php">
         <class name="App\Filament\Resources\Ecommerce\Categories\CategoryResource" namespace="App\Filament\Resources\Ecommerce\Categories">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -3808,18 +3808,18 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Ecommerce\Categories\Pages">
@@ -3988,7 +3988,7 @@
     <package name="App\Filament\Resources\Ecommerce\Orders">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\Orders\OrderResource.php">
         <class name="App\Filament\Resources\Ecommerce\Orders\OrderResource" namespace="App\Filament\Resources\Ecommerce\Orders">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="28" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="30" type="stmt" count="0"/>
@@ -3996,18 +3996,18 @@
         <line num="35" type="stmt" count="0"/>
         <line num="38" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="40" type="stmt" count="0"/>
-        <line num="43" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="50" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <metrics loc="60" ncloc="60" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="43" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="50" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <metrics loc="60" ncloc="60" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Ecommerce\Orders\Pages">
@@ -4409,7 +4409,7 @@
     <package name="App\Filament\Resources\Ecommerce\ProductStocks">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\ProductStocks\ProductStockResource.php">
         <class name="App\Filament\Resources\Ecommerce\ProductStocks\ProductStockResource" namespace="App\Filament\Resources\Ecommerce\ProductStocks">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -4417,18 +4417,18 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Ecommerce\ProductStocks\Schemas">
@@ -5095,7 +5095,7 @@
     <package name="App\Filament\Resources\Ecommerce\Products">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\Products\ProductResource.php">
         <class name="App\Filament\Resources\Ecommerce\Products\ProductResource" namespace="App\Filament\Resources\Ecommerce\Products">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="10" elements="24" coveredelements="12"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="24" coveredelements="0"/>
         </class>
         <line num="35" type="method" name="getRecordSubNavigation" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="37" type="stmt" count="0"/>
@@ -5109,19 +5109,19 @@
         <line num="53" type="stmt" count="0"/>
         <line num="56" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="58" type="stmt" count="0"/>
-        <line num="61" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="63" type="stmt" count="7"/>
-        <line num="64" type="stmt" count="7"/>
-        <line num="65" type="stmt" count="7"/>
-        <line num="68" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="70" type="stmt" count="7"/>
-        <line num="71" type="stmt" count="7"/>
-        <line num="72" type="stmt" count="7"/>
-        <line num="73" type="stmt" count="7"/>
-        <line num="74" type="stmt" count="7"/>
-        <line num="75" type="stmt" count="7"/>
-        <line num="76" type="stmt" count="7"/>
-        <metrics loc="79" ncloc="78" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="10" elements="24" coveredelements="12"/>
+        <line num="61" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="63" type="stmt" count="0"/>
+        <line num="64" type="stmt" count="0"/>
+        <line num="65" type="stmt" count="0"/>
+        <line num="68" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <line num="71" type="stmt" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="74" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <line num="76" type="stmt" count="0"/>
+        <metrics loc="79" ncloc="78" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="24" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Ecommerce\Products\Schemas">
@@ -5408,7 +5408,7 @@
     <package name="App\Filament\Resources\Ecommerce\Sales">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\Sales\SaleResource.php">
         <class name="App\Filament\Resources\Ecommerce\Sales\SaleResource" namespace="App\Filament\Resources\Ecommerce\Sales">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="26" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="28" type="stmt" count="0"/>
@@ -5416,18 +5416,18 @@
         <line num="33" type="stmt" count="0"/>
         <line num="36" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="38" type="stmt" count="0"/>
-        <line num="41" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="43" type="stmt" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="48" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <metrics loc="58" ncloc="58" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="41" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="48" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <metrics loc="58" ncloc="58" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Ecommerce\Sales\Schemas">
@@ -5746,7 +5746,7 @@
     <package name="App\Filament\Resources\Ecommerce\Shipments">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\Shipments\ShipmentResource.php">
         <class name="App\Filament\Resources\Ecommerce\Shipments\ShipmentResource" namespace="App\Filament\Resources\Ecommerce\Shipments">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="26" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="28" type="stmt" count="0"/>
@@ -5754,18 +5754,18 @@
         <line num="33" type="stmt" count="0"/>
         <line num="36" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="38" type="stmt" count="0"/>
-        <line num="41" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="43" type="stmt" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="48" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <metrics loc="58" ncloc="58" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="41" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="48" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <metrics loc="58" ncloc="58" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Ecommerce\Shipments\Tables">
@@ -6106,7 +6106,7 @@
     <package name="App\Filament\Resources\Ecommerce\Vouchers">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Ecommerce\Vouchers\VoucherResource.php">
         <class name="App\Filament\Resources\Ecommerce\Vouchers\VoucherResource" namespace="App\Filament\Resources\Ecommerce\Vouchers">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="27" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="29" type="stmt" count="0"/>
@@ -6114,40 +6114,40 @@
         <line num="34" type="stmt" count="0"/>
         <line num="37" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="39" type="stmt" count="0"/>
-        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Geo\Countries">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Geo\Countries\CountryResource.php">
         <class name="App\Filament\Resources\Geo\Countries\CountryResource" namespace="App\Filament\Resources\Geo\Countries">
-          <metrics complexity="4" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="8" elements="14" coveredelements="10"/>
+          <metrics complexity="4" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="14" coveredelements="0"/>
         </class>
         <line num="25" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="27" type="stmt" count="0"/>
         <line num="30" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="32" type="stmt" count="0"/>
-        <line num="35" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="37" type="stmt" count="7"/>
-        <line num="38" type="stmt" count="7"/>
-        <line num="39" type="stmt" count="7"/>
-        <line num="42" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <metrics loc="51" ncloc="51" classes="1" methods="4" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="8" elements="14" coveredelements="10"/>
+        <line num="35" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="37" type="stmt" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="39" type="stmt" count="0"/>
+        <line num="42" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <metrics loc="51" ncloc="51" classes="1" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="14" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Geo\Countries\Pages">
@@ -6218,7 +6218,7 @@
     <package name="App\Filament\Resources\Integrations">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Integrations\IntegrationResource.php">
         <class name="App\Filament\Resources\Integrations\IntegrationResource" namespace="App\Filament\Resources\Integrations">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -6226,23 +6226,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Integrations\Pages">
@@ -6421,22 +6421,22 @@
     <package name="App\Filament\Resources\JobApplications">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\JobApplications\JobApplicationResource.php">
         <class name="App\Filament\Resources\JobApplications\JobApplicationResource" namespace="App\Filament\Resources\JobApplications">
-          <metrics complexity="7" methods="7" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="8" elements="23" coveredelements="10"/>
+          <metrics complexity="7" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="23" coveredelements="0"/>
         </class>
         <line num="32" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="34" type="stmt" count="0"/>
         <line num="37" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="39" type="stmt" count="0"/>
-        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
+        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
         <line num="58" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="60" type="stmt" count="0"/>
         <line num="61" type="stmt" count="0"/>
@@ -6446,7 +6446,7 @@
         <line num="68" type="stmt" count="0"/>
         <line num="71" type="method" name="getNavigationBadgeColor" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="73" type="stmt" count="0"/>
-        <metrics loc="76" ncloc="76" classes="1" methods="7" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="8" elements="23" coveredelements="10"/>
+        <metrics loc="76" ncloc="76" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="23" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\JobApplications\Pages">
@@ -6470,49 +6470,40 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\JobApplications\Pages\ListJobApplications.php">
         <class name="App\Filament\Resources\JobApplications\Pages\ListJobApplications" namespace="App\Filament\Resources\JobApplications\Pages">
-          <metrics complexity="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="65" coveredstatements="0" elements="66" coveredelements="0"/>
+          <metrics complexity="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="0" elements="51" coveredelements="0"/>
         </class>
-        <line num="14" type="method" name="getHeaderActions" visibility="protected" complexity="1" crap="2" count="0"/>
-        <line num="16" type="stmt" count="0"/>
-        <line num="17" type="stmt" count="0"/>
-        <line num="18" type="stmt" count="0"/>
+        <line num="17" type="method" name="getHeaderActions" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="19" type="stmt" count="0"/>
         <line num="20" type="stmt" count="0"/>
         <line num="21" type="stmt" count="0"/>
         <line num="22" type="stmt" count="0"/>
         <line num="23" type="stmt" count="0"/>
+        <line num="24" type="stmt" count="0"/>
         <line num="25" type="stmt" count="0"/>
         <line num="26" type="stmt" count="0"/>
-        <line num="27" type="stmt" count="0"/>
         <line num="28" type="stmt" count="0"/>
         <line num="29" type="stmt" count="0"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="31" type="stmt" count="0"/>
         <line num="32" type="stmt" count="0"/>
-        <line num="33" type="stmt" count="0"/>
-        <line num="34" type="stmt" count="0"/>
         <line num="35" type="stmt" count="0"/>
         <line num="36" type="stmt" count="0"/>
         <line num="37" type="stmt" count="0"/>
         <line num="38" type="stmt" count="0"/>
         <line num="39" type="stmt" count="0"/>
         <line num="40" type="stmt" count="0"/>
-        <line num="41" type="stmt" count="0"/>
-        <line num="42" type="stmt" count="0"/>
         <line num="43" type="stmt" count="0"/>
-        <line num="46" type="stmt" count="0"/>
-        <line num="47" type="stmt" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
         <line num="48" type="stmt" count="0"/>
         <line num="49" type="stmt" count="0"/>
         <line num="50" type="stmt" count="0"/>
         <line num="51" type="stmt" count="0"/>
         <line num="52" type="stmt" count="0"/>
         <line num="53" type="stmt" count="0"/>
-        <line num="54" type="stmt" count="0"/>
-        <line num="55" type="stmt" count="0"/>
         <line num="56" type="stmt" count="0"/>
         <line num="57" type="stmt" count="0"/>
         <line num="58" type="stmt" count="0"/>
-        <line num="59" type="stmt" count="0"/>
-        <line num="60" type="stmt" count="0"/>
         <line num="61" type="stmt" count="0"/>
         <line num="62" type="stmt" count="0"/>
         <line num="63" type="stmt" count="0"/>
@@ -6526,19 +6517,13 @@
         <line num="71" type="stmt" count="0"/>
         <line num="72" type="stmt" count="0"/>
         <line num="73" type="stmt" count="0"/>
-        <line num="74" type="stmt" count="0"/>
         <line num="75" type="stmt" count="0"/>
         <line num="76" type="stmt" count="0"/>
-        <line num="77" type="stmt" count="0"/>
         <line num="78" type="stmt" count="0"/>
         <line num="79" type="stmt" count="0"/>
         <line num="80" type="stmt" count="0"/>
         <line num="81" type="stmt" count="0"/>
-        <line num="82" type="stmt" count="0"/>
-        <line num="83" type="stmt" count="0"/>
-        <line num="84" type="stmt" count="0"/>
-        <line num="85" type="stmt" count="0"/>
-        <metrics loc="88" ncloc="85" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="65" coveredstatements="0" elements="66" coveredelements="0"/>
+        <metrics loc="84" ncloc="76" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="0" elements="51" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\JobApplications\Schemas">
@@ -6668,7 +6653,7 @@
     <package name="App\Filament\Resources\Kycs">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Kycs\KycResource.php">
         <class name="App\Filament\Resources\Kycs\KycResource" namespace="App\Filament\Resources\Kycs">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -6676,18 +6661,18 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Kycs\Pages">
@@ -6857,7 +6842,7 @@
     <package name="App\Filament\Resources\Membership\Levels">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Membership\Levels\LevelResource.php">
         <class name="App\Filament\Resources\Membership\Levels\LevelResource" namespace="App\Filament\Resources\Membership\Levels">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -6865,23 +6850,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Membership\Levels\Pages">
@@ -7349,7 +7334,7 @@
     <package name="App\Filament\Resources\Membership\Stages">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Membership\Stages\StageResource.php">
         <class name="App\Filament\Resources\Membership\Stages\StageResource" namespace="App\Filament\Resources\Membership\Stages">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -7357,23 +7342,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Membership\Stages\Tables">
@@ -7784,7 +7769,7 @@
     <package name="App\Filament\Resources\Membership\UserSubscriptions">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Membership\UserSubscriptions\UserSubscriptionResource.php">
         <class name="App\Filament\Resources\Membership\UserSubscriptions\UserSubscriptionResource" namespace="App\Filament\Resources\Membership\UserSubscriptions">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="27" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="29" type="stmt" count="0"/>
@@ -7792,18 +7777,18 @@
         <line num="34" type="stmt" count="0"/>
         <line num="37" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="39" type="stmt" count="0"/>
-        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Recruitments\Pages">
@@ -7839,28 +7824,28 @@
     <package name="App\Filament\Resources\Recruitments">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Recruitments\RecruitmentResource.php">
         <class name="App\Filament\Resources\Recruitments\RecruitmentResource" namespace="App\Filament\Resources\Recruitments">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="8" elements="19" coveredelements="10"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="0" elements="19" coveredelements="0"/>
         </class>
         <line num="27" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="29" type="stmt" count="0"/>
         <line num="32" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="34" type="stmt" count="0"/>
-        <line num="37" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="39" type="stmt" count="7"/>
-        <line num="40" type="stmt" count="7"/>
-        <line num="41" type="stmt" count="7"/>
-        <line num="44" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
+        <line num="37" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="39" type="stmt" count="0"/>
+        <line num="40" type="stmt" count="0"/>
+        <line num="41" type="stmt" count="0"/>
+        <line num="44" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
         <line num="53" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="55" type="stmt" count="0"/>
         <line num="56" type="stmt" count="0"/>
         <line num="57" type="stmt" count="0"/>
         <line num="58" type="stmt" count="0"/>
-        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="8" elements="19" coveredelements="10"/>
+        <metrics loc="61" ncloc="61" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="0" elements="19" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Recruitments\Schemas">
@@ -8247,7 +8232,7 @@
     <package name="App\Filament\Resources\SmsLogs">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\SmsLogs\SmsLogResource.php">
         <class name="App\Filament\Resources\SmsLogs\SmsLogResource" namespace="App\Filament\Resources\SmsLogs">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="27" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="29" type="stmt" count="0"/>
@@ -8255,18 +8240,18 @@
         <line num="34" type="stmt" count="0"/>
         <line num="37" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="39" type="stmt" count="0"/>
-        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\SmsLogs\Tables">
@@ -8549,7 +8534,7 @@
     <package name="App\Filament\Resources\SmsProviders">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\SmsProviders\SmsProviderResource.php">
         <class name="App\Filament\Resources\SmsProviders\SmsProviderResource" namespace="App\Filament\Resources\SmsProviders">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -8557,23 +8542,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\SmsProviders\Tables">
@@ -8810,7 +8795,7 @@
     <package name="App\Filament\Resources\SmsTemplates">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\SmsTemplates\SmsTemplateResource.php">
         <class name="App\Filament\Resources\SmsTemplates\SmsTemplateResource" namespace="App\Filament\Resources\SmsTemplates">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -8818,23 +8803,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\SmsTemplates\Tables">
@@ -9181,7 +9166,7 @@
     <package name="App\Filament\Resources\Transactions">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Transactions\TransactionResource.php">
         <class name="App\Filament\Resources\Transactions\TransactionResource" namespace="App\Filament\Resources\Transactions">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -9189,23 +9174,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Users\Pages">
@@ -9537,7 +9522,7 @@
     <package name="App\Filament\Resources\Users">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Users\UserResource.php">
         <class name="App\Filament\Resources\Users\UserResource" namespace="App\Filament\Resources\Users">
-          <metrics complexity="5" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+          <metrics complexity="5" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
         </class>
         <line num="27" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="29" type="stmt" count="0"/>
@@ -9545,18 +9530,18 @@
         <line num="34" type="stmt" count="0"/>
         <line num="37" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="39" type="stmt" count="0"/>
-        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="9" elements="17" coveredelements="11"/>
+        <line num="42" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="49" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="59" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="17" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Filament\Resources\Wallets\Pages">
@@ -9759,7 +9744,7 @@
     <package name="App\Filament\Resources\Wallets">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Filament\Resources\Wallets\WalletResource.php">
         <class name="App\Filament\Resources\Wallets\WalletResource" namespace="App\Filament\Resources\Wallets">
-          <metrics complexity="6" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+          <metrics complexity="6" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
         </class>
         <line num="29" type="method" name="form" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -9767,23 +9752,23 @@
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="table" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="57" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="44" type="method" name="getRelations" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="method" name="getPages" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="61" type="method" name="getRecordRouteBindingEloquentQuery" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="63" type="stmt" count="0"/>
         <line num="64" type="stmt" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
-        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="9" elements="22" coveredelements="11"/>
+        <metrics loc="69" ncloc="69" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="22" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Helpers">
@@ -17569,6 +17554,340 @@
         <line num="267" type="stmt" count="0"/>
         <metrics loc="271" ncloc="259" classes="1" methods="13" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="113" coveredstatements="0" elements="126" coveredelements="0"/>
       </file>
+      <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Imports\EnhancedBulkJobApplicationImport.php">
+        <class name="App\Imports\EnhancedBulkJobApplicationImport" namespace="App\Imports">
+          <metrics complexity="107" methods="20" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="308" coveredstatements="0" elements="328" coveredelements="0"/>
+        </class>
+        <line num="139" type="method" name="collection" visibility="public" complexity="4" crap="20" count="0"/>
+        <line num="142" type="stmt" count="0"/>
+        <line num="143" type="stmt" count="0"/>
+        <line num="144" type="stmt" count="0"/>
+        <line num="145" type="stmt" count="0"/>
+        <line num="147" type="stmt" count="0"/>
+        <line num="149" type="stmt" count="0"/>
+        <line num="151" type="stmt" count="0"/>
+        <line num="152" type="stmt" count="0"/>
+        <line num="153" type="stmt" count="0"/>
+        <line num="156" type="stmt" count="0"/>
+        <line num="158" type="stmt" count="0"/>
+        <line num="159" type="stmt" count="0"/>
+        <line num="160" type="stmt" count="0"/>
+        <line num="163" type="stmt" count="0"/>
+        <line num="165" type="stmt" count="0"/>
+        <line num="166" type="stmt" count="0"/>
+        <line num="167" type="stmt" count="0"/>
+        <line num="168" type="stmt" count="0"/>
+        <line num="169" type="stmt" count="0"/>
+        <line num="170" type="stmt" count="0"/>
+        <line num="177" type="method" name="validateHeaders" visibility="private" complexity="2" crap="6" count="0"/>
+        <line num="179" type="stmt" count="0"/>
+        <line num="181" type="stmt" count="0"/>
+        <line num="182" type="stmt" count="0"/>
+        <line num="183" type="stmt" count="0"/>
+        <line num="184" type="stmt" count="0"/>
+        <line num="191" type="method" name="validateAndPrepareAll" visibility="private" complexity="3" crap="12" count="0"/>
+        <line num="193" type="stmt" count="0"/>
+        <line num="194" type="stmt" count="0"/>
+        <line num="195" type="stmt" count="0"/>
+        <line num="197" type="stmt" count="0"/>
+        <line num="198" type="stmt" count="0"/>
+        <line num="199" type="stmt" count="0"/>
+        <line num="202" type="stmt" count="0"/>
+        <line num="203" type="stmt" count="0"/>
+        <line num="204" type="stmt" count="0"/>
+        <line num="206" type="stmt" count="0"/>
+        <line num="208" type="stmt" count="0"/>
+        <line num="215" type="method" name="mergeWithDefaults" visibility="private" complexity="4" crap="20" count="0"/>
+        <line num="217" type="stmt" count="0"/>
+        <line num="218" type="stmt" count="0"/>
+        <line num="219" type="stmt" count="0"/>
+        <line num="223" type="stmt" count="0"/>
+        <line num="229" type="method" name="validateRow" visibility="private" complexity="30" crap="930" count="0"/>
+        <line num="231" type="stmt" count="0"/>
+        <line num="234" type="stmt" count="0"/>
+        <line num="235" type="stmt" count="0"/>
+        <line num="236" type="stmt" count="0"/>
+        <line num="237" type="stmt" count="0"/>
+        <line num="242" type="stmt" count="0"/>
+        <line num="243" type="stmt" count="0"/>
+        <line num="244" type="stmt" count="0"/>
+        <line num="245" type="stmt" count="0"/>
+        <line num="246" type="stmt" count="0"/>
+        <line num="247" type="stmt" count="0"/>
+        <line num="248" type="stmt" count="0"/>
+        <line num="249" type="stmt" count="0"/>
+        <line num="250" type="stmt" count="0"/>
+        <line num="251" type="stmt" count="0"/>
+        <line num="253" type="stmt" count="0"/>
+        <line num="258" type="stmt" count="0"/>
+        <line num="259" type="stmt" count="0"/>
+        <line num="260" type="stmt" count="0"/>
+        <line num="261" type="stmt" count="0"/>
+        <line num="262" type="stmt" count="0"/>
+        <line num="263" type="stmt" count="0"/>
+        <line num="264" type="stmt" count="0"/>
+        <line num="265" type="stmt" count="0"/>
+        <line num="266" type="stmt" count="0"/>
+        <line num="267" type="stmt" count="0"/>
+        <line num="268" type="stmt" count="0"/>
+        <line num="270" type="stmt" count="0"/>
+        <line num="271" type="stmt" count="0"/>
+        <line num="276" type="stmt" count="0"/>
+        <line num="278" type="stmt" count="0"/>
+        <line num="279" type="stmt" count="0"/>
+        <line num="280" type="stmt" count="0"/>
+        <line num="281" type="stmt" count="0"/>
+        <line num="282" type="stmt" count="0"/>
+        <line num="287" type="stmt" count="0"/>
+        <line num="288" type="stmt" count="0"/>
+        <line num="289" type="stmt" count="0"/>
+        <line num="290" type="stmt" count="0"/>
+        <line num="295" type="stmt" count="0"/>
+        <line num="296" type="stmt" count="0"/>
+        <line num="297" type="stmt" count="0"/>
+        <line num="298" type="stmt" count="0"/>
+        <line num="299" type="stmt" count="0"/>
+        <line num="301" type="stmt" count="0"/>
+        <line num="302" type="stmt" count="0"/>
+        <line num="303" type="stmt" count="0"/>
+        <line num="305" type="stmt" count="0"/>
+        <line num="310" type="stmt" count="0"/>
+        <line num="311" type="stmt" count="0"/>
+        <line num="312" type="stmt" count="0"/>
+        <line num="313" type="stmt" count="0"/>
+        <line num="316" type="stmt" count="0"/>
+        <line num="317" type="stmt" count="0"/>
+        <line num="318" type="stmt" count="0"/>
+        <line num="323" type="stmt" count="0"/>
+        <line num="324" type="stmt" count="0"/>
+        <line num="328" type="stmt" count="0"/>
+        <line num="330" type="stmt" count="0"/>
+        <line num="331" type="stmt" count="0"/>
+        <line num="332" type="stmt" count="0"/>
+        <line num="333" type="stmt" count="0"/>
+        <line num="338" type="stmt" count="0"/>
+        <line num="339" type="stmt" count="0"/>
+        <line num="343" type="stmt" count="0"/>
+        <line num="344" type="stmt" count="0"/>
+        <line num="345" type="stmt" count="0"/>
+        <line num="346" type="stmt" count="0"/>
+        <line num="351" type="stmt" count="0"/>
+        <line num="352" type="stmt" count="0"/>
+        <line num="353" type="stmt" count="0"/>
+        <line num="354" type="stmt" count="0"/>
+        <line num="358" type="stmt" count="0"/>
+        <line num="359" type="stmt" count="0"/>
+        <line num="366" type="method" name="validateGeoData" visibility="private" complexity="10" crap="110" count="0"/>
+        <line num="368" type="stmt" count="0"/>
+        <line num="371" type="stmt" count="0"/>
+        <line num="372" type="stmt" count="0"/>
+        <line num="373" type="stmt" count="0"/>
+        <line num="374" type="stmt" count="0"/>
+        <line num="375" type="stmt" count="0"/>
+        <line num="376" type="stmt" count="0"/>
+        <line num="378" type="stmt" count="0"/>
+        <line num="381" type="stmt" count="0"/>
+        <line num="382" type="stmt" count="0"/>
+        <line num="383" type="stmt" count="0"/>
+        <line num="385" type="stmt" count="0"/>
+        <line num="390" type="stmt" count="0"/>
+        <line num="391" type="stmt" count="0"/>
+        <line num="392" type="stmt" count="0"/>
+        <line num="393" type="stmt" count="0"/>
+        <line num="394" type="stmt" count="0"/>
+        <line num="395" type="stmt" count="0"/>
+        <line num="397" type="stmt" count="0"/>
+        <line num="400" type="stmt" count="0"/>
+        <line num="401" type="stmt" count="0"/>
+        <line num="402" type="stmt" count="0"/>
+        <line num="404" type="stmt" count="0"/>
+        <line num="409" type="stmt" count="0"/>
+        <line num="410" type="stmt" count="0"/>
+        <line num="411" type="stmt" count="0"/>
+        <line num="412" type="stmt" count="0"/>
+        <line num="413" type="stmt" count="0"/>
+        <line num="414" type="stmt" count="0"/>
+        <line num="416" type="stmt" count="0"/>
+        <line num="419" type="stmt" count="0"/>
+        <line num="420" type="stmt" count="0"/>
+        <line num="421" type="stmt" count="0"/>
+        <line num="423" type="stmt" count="0"/>
+        <line num="427" type="stmt" count="0"/>
+        <line num="433" type="method" name="validateKycData" visibility="private" complexity="18" crap="342" count="0"/>
+        <line num="435" type="stmt" count="0"/>
+        <line num="436" type="stmt" count="0"/>
+        <line num="439" type="stmt" count="0"/>
+        <line num="440" type="stmt" count="0"/>
+        <line num="441" type="stmt" count="0"/>
+        <line num="442" type="stmt" count="0"/>
+        <line num="443" type="stmt" count="0"/>
+        <line num="444" type="stmt" count="0"/>
+        <line num="445" type="stmt" count="0"/>
+        <line num="446" type="stmt" count="0"/>
+        <line num="450" type="stmt" count="0"/>
+        <line num="451" type="stmt" count="0"/>
+        <line num="452" type="stmt" count="0"/>
+        <line num="453" type="stmt" count="0"/>
+        <line num="454" type="stmt" count="0"/>
+        <line num="455" type="stmt" count="0"/>
+        <line num="456" type="stmt" count="0"/>
+        <line num="457" type="stmt" count="0"/>
+        <line num="458" type="stmt" count="0"/>
+        <line num="462" type="stmt" count="0"/>
+        <line num="463" type="stmt" count="0"/>
+        <line num="464" type="stmt" count="0"/>
+        <line num="465" type="stmt" count="0"/>
+        <line num="466" type="stmt" count="0"/>
+        <line num="467" type="stmt" count="0"/>
+        <line num="468" type="stmt" count="0"/>
+        <line num="469" type="stmt" count="0"/>
+        <line num="474" type="stmt" count="0"/>
+        <line num="475" type="stmt" count="0"/>
+        <line num="476" type="stmt" count="0"/>
+        <line num="477" type="stmt" count="0"/>
+        <line num="479" type="stmt" count="0"/>
+        <line num="480" type="stmt" count="0"/>
+        <line num="481" type="stmt" count="0"/>
+        <line num="486" type="stmt" count="0"/>
+        <line num="487" type="stmt" count="0"/>
+        <line num="488" type="stmt" count="0"/>
+        <line num="490" type="stmt" count="0"/>
+        <line num="491" type="stmt" count="0"/>
+        <line num="492" type="stmt" count="0"/>
+        <line num="494" type="stmt" count="0"/>
+        <line num="495" type="stmt" count="0"/>
+        <line num="499" type="stmt" count="0"/>
+        <line num="505" type="method" name="validatePan" visibility="private" complexity="1" crap="2" count="0"/>
+        <line num="507" type="stmt" count="0"/>
+        <line num="513" type="method" name="validateGst" visibility="private" complexity="1" crap="2" count="0"/>
+        <line num="515" type="stmt" count="0"/>
+        <line num="521" type="method" name="addError" visibility="private" complexity="1" crap="2" count="0"/>
+        <line num="523" type="stmt" count="0"/>
+        <line num="524" type="stmt" count="0"/>
+        <line num="525" type="stmt" count="0"/>
+        <line num="526" type="stmt" count="0"/>
+        <line num="527" type="stmt" count="0"/>
+        <line num="528" type="stmt" count="0"/>
+        <line num="534" type="method" name="handleValidationErrors" visibility="private" complexity="2" crap="6" count="0"/>
+        <line num="536" type="stmt" count="0"/>
+        <line num="537" type="stmt" count="0"/>
+        <line num="540" type="stmt" count="0"/>
+        <line num="541" type="stmt" count="0"/>
+        <line num="547" type="method" name="formatErrorsForDisplay" visibility="private" complexity="3" crap="12" count="0"/>
+        <line num="549" type="stmt" count="0"/>
+        <line num="550" type="stmt" count="0"/>
+        <line num="552" type="stmt" count="0"/>
+        <line num="553" type="stmt" count="0"/>
+        <line num="554" type="stmt" count="0"/>
+        <line num="555" type="stmt" count="0"/>
+        <line num="556" type="stmt" count="0"/>
+        <line num="557" type="stmt" count="0"/>
+        <line num="558" type="stmt" count="0"/>
+        <line num="559" type="stmt" count="0"/>
+        <line num="562" type="stmt" count="0"/>
+        <line num="563" type="stmt" count="0"/>
+        <line num="566" type="stmt" count="0"/>
+        <line num="572" type="method" name="persistAll" visibility="private" complexity="3" crap="12" count="0"/>
+        <line num="574" type="stmt" count="0"/>
+        <line num="576" type="stmt" count="0"/>
+        <line num="579" type="stmt" count="0"/>
+        <line num="582" type="stmt" count="0"/>
+        <line num="583" type="stmt" count="0"/>
+        <line num="587" type="stmt" count="0"/>
+        <line num="590" type="stmt" count="0"/>
+        <line num="597" type="method" name="createUser" visibility="private" complexity="6" crap="42" count="0"/>
+        <line num="599" type="stmt" count="0"/>
+        <line num="602" type="stmt" count="0"/>
+        <line num="605" type="stmt" count="0"/>
+        <line num="607" type="stmt" count="0"/>
+        <line num="608" type="stmt" count="0"/>
+        <line num="609" type="stmt" count="0"/>
+        <line num="610" type="stmt" count="0"/>
+        <line num="611" type="stmt" count="0"/>
+        <line num="612" type="stmt" count="0"/>
+        <line num="613" type="stmt" count="0"/>
+        <line num="614" type="stmt" count="0"/>
+        <line num="615" type="stmt" count="0"/>
+        <line num="616" type="stmt" count="0"/>
+        <line num="617" type="stmt" count="0"/>
+        <line num="618" type="stmt" count="0"/>
+        <line num="619" type="stmt" count="0"/>
+        <line num="620" type="stmt" count="0"/>
+        <line num="621" type="stmt" count="0"/>
+        <line num="622" type="stmt" count="0"/>
+        <line num="623" type="stmt" count="0"/>
+        <line num="629" type="method" name="generateDefaultPassword" visibility="private" complexity="5" crap="30" count="0"/>
+        <line num="632" type="stmt" count="0"/>
+        <line num="633" type="stmt" count="0"/>
+        <line num="637" type="stmt" count="0"/>
+        <line num="638" type="stmt" count="0"/>
+        <line num="642" type="stmt" count="0"/>
+        <line num="648" type="method" name="createAddress" visibility="private" complexity="1" crap="2" count="0"/>
+        <line num="650" type="stmt" count="0"/>
+        <line num="651" type="stmt" count="0"/>
+        <line num="652" type="stmt" count="0"/>
+        <line num="653" type="stmt" count="0"/>
+        <line num="654" type="stmt" count="0"/>
+        <line num="655" type="stmt" count="0"/>
+        <line num="656" type="stmt" count="0"/>
+        <line num="657" type="stmt" count="0"/>
+        <line num="658" type="stmt" count="0"/>
+        <line num="659" type="stmt" count="0"/>
+        <line num="660" type="stmt" count="0"/>
+        <line num="661" type="stmt" count="0"/>
+        <line num="662" type="stmt" count="0"/>
+        <line num="663" type="stmt" count="0"/>
+        <line num="664" type="stmt" count="0"/>
+        <line num="665" type="stmt" count="0"/>
+        <line num="666" type="stmt" count="0"/>
+        <line num="667" type="stmt" count="0"/>
+        <line num="673" type="method" name="createKyc" visibility="private" complexity="2" crap="6" count="0"/>
+        <line num="675" type="stmt" count="0"/>
+        <line num="676" type="stmt" count="0"/>
+        <line num="677" type="stmt" count="0"/>
+        <line num="678" type="stmt" count="0"/>
+        <line num="679" type="stmt" count="0"/>
+        <line num="681" type="stmt" count="0"/>
+        <line num="682" type="stmt" count="0"/>
+        <line num="683" type="stmt" count="0"/>
+        <line num="684" type="stmt" count="0"/>
+        <line num="686" type="stmt" count="0"/>
+        <line num="687" type="stmt" count="0"/>
+        <line num="690" type="stmt" count="0"/>
+        <line num="696" type="method" name="hasKycData" visibility="private" complexity="4" crap="20" count="0"/>
+        <line num="698" type="stmt" count="0"/>
+        <line num="699" type="stmt" count="0"/>
+        <line num="700" type="stmt" count="0"/>
+        <line num="701" type="stmt" count="0"/>
+        <line num="707" type="method" name="createJobApplication" visibility="private" complexity="5" crap="30" count="0"/>
+        <line num="709" type="stmt" count="0"/>
+        <line num="710" type="stmt" count="0"/>
+        <line num="711" type="stmt" count="0"/>
+        <line num="712" type="stmt" count="0"/>
+        <line num="713" type="stmt" count="0"/>
+        <line num="714" type="stmt" count="0"/>
+        <line num="715" type="stmt" count="0"/>
+        <line num="716" type="stmt" count="0"/>
+        <line num="717" type="stmt" count="0"/>
+        <line num="718" type="stmt" count="0"/>
+        <line num="719" type="stmt" count="0"/>
+        <line num="720" type="stmt" count="0"/>
+        <line num="722" type="stmt" count="0"/>
+        <line num="723" type="stmt" count="0"/>
+        <line num="724" type="stmt" count="0"/>
+        <line num="725" type="stmt" count="0"/>
+        <line num="728" type="stmt" count="0"/>
+        <line num="734" type="method" name="sendWelcomeNotification" visibility="private" complexity="2" crap="6" count="0"/>
+        <line num="737" type="stmt" count="0"/>
+        <line num="739" type="stmt" count="0"/>
+        <line num="740" type="stmt" count="0"/>
+        <line num="741" type="stmt" count="0"/>
+        <line num="742" type="stmt" count="0"/>
+        <line num="744" type="stmt" count="0"/>
+        <line num="745" type="stmt" count="0"/>
+        <line num="747" type="stmt" count="0"/>
+        <metrics loc="751" ncloc="631" classes="1" methods="20" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="308" coveredstatements="0" elements="328" coveredelements="0"/>
+      </file>
     </package>
     <package name="App\Jobs\Affiliate">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Jobs\Affiliate\BatchCommissionProcessingJob.php">
@@ -17960,10 +18279,10 @@
     <package name="App\Jobs\Wallet">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Jobs\Wallet\CheckPayoutStatusJob.php">
         <class name="App\Jobs\Wallet\CheckPayoutStatusJob" namespace="App\Jobs\Wallet">
-          <metrics complexity="18" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="79" coveredstatements="1" elements="83" coveredelements="2"/>
+          <metrics complexity="18" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="79" coveredstatements="0" elements="83" coveredelements="0"/>
         </class>
-        <line num="36" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="38" type="stmt" count="7"/>
+        <line num="36" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="38" type="stmt" count="0"/>
         <line num="43" type="method" name="handle" visibility="public" complexity="4" crap="20" count="0"/>
         <line num="45" type="stmt" count="0"/>
         <line num="46" type="stmt" count="0"/>
@@ -18045,7 +18364,7 @@
         <line num="172" type="stmt" count="0"/>
         <line num="175" type="stmt" count="0"/>
         <line num="177" type="stmt" count="0"/>
-        <metrics loc="180" ncloc="156" classes="1" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="79" coveredstatements="1" elements="83" coveredelements="2"/>
+        <metrics loc="180" ncloc="156" classes="1" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="79" coveredstatements="0" elements="83" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Jobs\Wallet\ProcessPayoutJob.php">
         <class name="App\Jobs\Wallet\ProcessPayoutJob" namespace="App\Jobs\Wallet">
@@ -18391,22 +18710,22 @@
     <package name="App\Models">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Address.php">
         <class name="App\Models\Address" namespace="App\Models">
-          <metrics complexity="21" methods="16" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="10" elements="62" coveredelements="11"/>
+          <metrics complexity="21" methods="16" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="0" elements="62" coveredelements="0"/>
         </class>
-        <line num="47" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="59" type="method" name="booted" visibility="protected" complexity="2" crap="2.50" count="7"/>
-        <line num="61" type="stmt" count="7"/>
+        <line num="47" type="method" name="casts" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="59" type="method" name="booted" visibility="protected" complexity="2" crap="6" count="0"/>
+        <line num="61" type="stmt" count="0"/>
         <line num="62" type="stmt" count="0"/>
         <line num="63" type="stmt" count="0"/>
-        <line num="65" type="stmt" count="7"/>
+        <line num="65" type="stmt" count="0"/>
         <line num="71" type="method" name="addressable" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="73" type="stmt" count="0"/>
         <line num="79" type="method" name="block" visibility="public" complexity="1" crap="2" count="0"/>
@@ -18455,7 +18774,7 @@
         <line num="194" type="stmt" count="0"/>
         <line num="200" type="method" name="getRouteKeyName" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="202" type="stmt" count="0"/>
-        <metrics loc="205" ncloc="163" classes="1" methods="16" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="10" elements="62" coveredelements="11"/>
+        <metrics loc="205" ncloc="163" classes="1" methods="16" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="0" elements="62" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Admin.php">
         <class name="App\Models\Admin" namespace="App\Models">
@@ -18631,21 +18950,21 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\BeneficiaryAccount.php">
         <class name="App\Models\BeneficiaryAccount" namespace="App\Models">
-          <metrics complexity="28" methods="23" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="55" coveredstatements="9" elements="78" coveredelements="10"/>
+          <metrics complexity="28" methods="23" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="55" coveredstatements="0" elements="78" coveredelements="0"/>
         </class>
-        <line num="42" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="53" type="method" name="booted" visibility="protected" complexity="2" crap="2.50" count="7"/>
-        <line num="55" type="stmt" count="7"/>
+        <line num="42" type="method" name="casts" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="53" type="method" name="booted" visibility="protected" complexity="2" crap="6" count="0"/>
+        <line num="55" type="stmt" count="0"/>
         <line num="56" type="stmt" count="0"/>
         <line num="57" type="stmt" count="0"/>
-        <line num="59" type="stmt" count="7"/>
+        <line num="59" type="stmt" count="0"/>
         <line num="69" type="method" name="accountable" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="71" type="stmt" count="0"/>
         <line num="77" type="method" name="wallet" visibility="public" complexity="1" crap="2" count="0"/>
@@ -18711,7 +19030,7 @@
         <line num="264" type="stmt" count="0"/>
         <line num="271" type="method" name="getRouteKeyName" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="273" type="stmt" count="0"/>
-        <metrics loc="276" ncloc="204" classes="1" methods="23" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="55" coveredstatements="9" elements="78" coveredelements="10"/>
+        <metrics loc="276" ncloc="204" classes="1" methods="23" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="55" coveredstatements="0" elements="78" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Conversation.php">
         <class name="App\Models\Conversation" namespace="App\Models">
@@ -19257,33 +19576,33 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Transaction.php">
         <class name="App\Models\Transaction" namespace="App\Models">
-          <metrics complexity="33" methods="26" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="57" coveredstatements="17" elements="83" coveredelements="18"/>
+          <metrics complexity="33" methods="26" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="57" coveredstatements="0" elements="83" coveredelements="0"/>
         </class>
-        <line num="63" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="7"/>
-        <line num="65" type="stmt" count="7"/>
-        <line num="66" type="stmt" count="7"/>
-        <line num="67" type="stmt" count="7"/>
-        <line num="68" type="stmt" count="7"/>
-        <line num="69" type="stmt" count="7"/>
-        <line num="70" type="stmt" count="7"/>
-        <line num="71" type="stmt" count="7"/>
-        <line num="72" type="stmt" count="7"/>
-        <line num="73" type="stmt" count="7"/>
-        <line num="74" type="stmt" count="7"/>
-        <line num="75" type="stmt" count="7"/>
-        <line num="76" type="stmt" count="7"/>
-        <line num="77" type="stmt" count="7"/>
-        <line num="78" type="stmt" count="7"/>
-        <line num="79" type="stmt" count="7"/>
-        <line num="82" type="method" name="booted" visibility="protected" complexity="4" crap="10.75" count="7"/>
-        <line num="84" type="stmt" count="7"/>
+        <line num="63" type="method" name="casts" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="65" type="stmt" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="67" type="stmt" count="0"/>
+        <line num="68" type="stmt" count="0"/>
+        <line num="69" type="stmt" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <line num="71" type="stmt" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="74" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <line num="76" type="stmt" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="78" type="stmt" count="0"/>
+        <line num="79" type="stmt" count="0"/>
+        <line num="82" type="method" name="booted" visibility="protected" complexity="4" crap="20" count="0"/>
+        <line num="84" type="stmt" count="0"/>
         <line num="85" type="stmt" count="0"/>
         <line num="86" type="stmt" count="0"/>
         <line num="90" type="stmt" count="0"/>
         <line num="91" type="stmt" count="0"/>
         <line num="95" type="stmt" count="0"/>
         <line num="96" type="stmt" count="0"/>
-        <line num="98" type="stmt" count="7"/>
+        <line num="98" type="stmt" count="0"/>
         <line num="108" type="method" name="wallet" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="110" type="stmt" count="0"/>
         <line num="116" type="method" name="transactionable" visibility="public" complexity="1" crap="2" count="0"/>
@@ -19342,7 +19661,7 @@
         <line num="298" type="stmt" count="0"/>
         <line num="305" type="method" name="getRouteKeyName" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="307" type="stmt" count="0"/>
-        <metrics loc="310" ncloc="238" classes="1" methods="26" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="57" coveredstatements="17" elements="83" coveredelements="18"/>
+        <metrics loc="310" ncloc="238" classes="1" methods="26" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="57" coveredstatements="0" elements="83" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\TransactionHistory.php">
         <class name="App\Models\TransactionHistory" namespace="App\Models">
@@ -19425,29 +19744,29 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\User.php">
         <class name="App\Models\User" namespace="App\Models">
-          <metrics complexity="28" methods="21" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="66" coveredstatements="13" elements="87" coveredelements="14"/>
+          <metrics complexity="28" methods="21" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="66" coveredstatements="0" elements="87" coveredelements="0"/>
         </class>
-        <line num="109" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="7"/>
-        <line num="111" type="stmt" count="7"/>
-        <line num="112" type="stmt" count="7"/>
-        <line num="113" type="stmt" count="7"/>
-        <line num="114" type="stmt" count="7"/>
-        <line num="115" type="stmt" count="7"/>
-        <line num="116" type="stmt" count="7"/>
-        <line num="117" type="stmt" count="7"/>
-        <line num="118" type="stmt" count="7"/>
-        <line num="119" type="stmt" count="7"/>
-        <line num="120" type="stmt" count="7"/>
-        <line num="121" type="stmt" count="7"/>
-        <line num="127" type="method" name="booted" visibility="protected" complexity="3" crap="6.80" count="7"/>
-        <line num="129" type="stmt" count="7"/>
+        <line num="109" type="method" name="casts" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="111" type="stmt" count="0"/>
+        <line num="112" type="stmt" count="0"/>
+        <line num="113" type="stmt" count="0"/>
+        <line num="114" type="stmt" count="0"/>
+        <line num="115" type="stmt" count="0"/>
+        <line num="116" type="stmt" count="0"/>
+        <line num="117" type="stmt" count="0"/>
+        <line num="118" type="stmt" count="0"/>
+        <line num="119" type="stmt" count="0"/>
+        <line num="120" type="stmt" count="0"/>
+        <line num="121" type="stmt" count="0"/>
+        <line num="127" type="method" name="booted" visibility="protected" complexity="3" crap="12" count="0"/>
+        <line num="129" type="stmt" count="0"/>
         <line num="131" type="stmt" count="0"/>
         <line num="132" type="stmt" count="0"/>
         <line num="136" type="stmt" count="0"/>
         <line num="138" type="stmt" count="0"/>
         <line num="139" type="stmt" count="0"/>
         <line num="141" type="stmt" count="0"/>
-        <line num="143" type="stmt" count="7"/>
+        <line num="143" type="stmt" count="0"/>
         <line num="149" type="method" name="parent" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="151" type="stmt" count="0"/>
         <line num="157" type="method" name="children" visibility="public" complexity="1" crap="2" count="0"/>
@@ -19514,7 +19833,7 @@
         <line num="324" type="stmt" count="0"/>
         <line num="325" type="stmt" count="0"/>
         <line num="326" type="stmt" count="0"/>
-        <metrics loc="329" ncloc="248" classes="1" methods="21" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="66" coveredstatements="13" elements="87" coveredelements="14"/>
+        <metrics loc="329" ncloc="248" classes="1" methods="21" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="66" coveredstatements="0" elements="87" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Wallet.php">
         <class name="App\Models\Wallet" namespace="App\Models">
@@ -20631,31 +20950,31 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Ecommerce\ProductStock.php">
         <class name="App\Models\Ecommerce\ProductStock" namespace="App\Models\Ecommerce">
-          <metrics complexity="32" methods="25" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="22" elements="93" coveredelements="23"/>
+          <metrics complexity="32" methods="25" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="0" elements="93" coveredelements="0"/>
         </class>
-        <line num="83" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="2"/>
-        <line num="85" type="stmt" count="2"/>
-        <line num="86" type="stmt" count="2"/>
-        <line num="87" type="stmt" count="2"/>
-        <line num="88" type="stmt" count="2"/>
-        <line num="89" type="stmt" count="2"/>
-        <line num="90" type="stmt" count="2"/>
-        <line num="91" type="stmt" count="2"/>
-        <line num="92" type="stmt" count="2"/>
-        <line num="94" type="stmt" count="2"/>
-        <line num="95" type="stmt" count="2"/>
-        <line num="96" type="stmt" count="2"/>
-        <line num="97" type="stmt" count="2"/>
-        <line num="98" type="stmt" count="2"/>
-        <line num="99" type="stmt" count="2"/>
-        <line num="101" type="stmt" count="2"/>
-        <line num="102" type="stmt" count="2"/>
-        <line num="103" type="stmt" count="2"/>
-        <line num="104" type="stmt" count="2"/>
-        <line num="105" type="stmt" count="2"/>
-        <line num="107" type="stmt" count="2"/>
-        <line num="108" type="stmt" count="2"/>
-        <line num="109" type="stmt" count="2"/>
+        <line num="83" type="method" name="casts" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="85" type="stmt" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="87" type="stmt" count="0"/>
+        <line num="88" type="stmt" count="0"/>
+        <line num="89" type="stmt" count="0"/>
+        <line num="90" type="stmt" count="0"/>
+        <line num="91" type="stmt" count="0"/>
+        <line num="92" type="stmt" count="0"/>
+        <line num="94" type="stmt" count="0"/>
+        <line num="95" type="stmt" count="0"/>
+        <line num="96" type="stmt" count="0"/>
+        <line num="97" type="stmt" count="0"/>
+        <line num="98" type="stmt" count="0"/>
+        <line num="99" type="stmt" count="0"/>
+        <line num="101" type="stmt" count="0"/>
+        <line num="102" type="stmt" count="0"/>
+        <line num="103" type="stmt" count="0"/>
+        <line num="104" type="stmt" count="0"/>
+        <line num="105" type="stmt" count="0"/>
+        <line num="107" type="stmt" count="0"/>
+        <line num="108" type="stmt" count="0"/>
+        <line num="109" type="stmt" count="0"/>
         <line num="116" type="method" name="product" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="118" type="stmt" count="0"/>
         <line num="121" type="method" name="address" visibility="public" complexity="1" crap="2" count="0"/>
@@ -20726,7 +21045,7 @@
         <line num="328" type="stmt" count="0"/>
         <line num="334" type="method" name="scopeFifo" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="336" type="stmt" count="0"/>
-        <metrics loc="339" ncloc="225" classes="1" methods="25" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="22" elements="93" coveredelements="23"/>
+        <metrics loc="339" ncloc="225" classes="1" methods="25" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="0" elements="93" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Models\Ecommerce\ProductWishlist.php">
         <class name="App\Models\Ecommerce\ProductWishlist" namespace="App\Models\Ecommerce">
@@ -23077,6 +23396,56 @@
         <line num="205" type="stmt" count="0"/>
         <metrics loc="208" ncloc="176" classes="1" methods="10" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="88" coveredstatements="0" elements="98" coveredelements="0"/>
       </file>
+      <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Notifications\JobApplicationWelcomeNotification.php">
+        <class name="App\Notifications\JobApplicationWelcomeNotification" namespace="App\Notifications">
+          <metrics complexity="8" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="39" coveredstatements="0" elements="44" coveredelements="0"/>
+        </class>
+        <line num="19" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="22" type="stmt" count="0"/>
+        <line num="24" type="method" name="via" visibility="public" complexity="3" crap="12" count="0"/>
+        <line num="26" type="stmt" count="0"/>
+        <line num="29" type="stmt" count="0"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="33" type="stmt" count="0"/>
+        <line num="36" type="method" name="toMail" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="40" type="stmt" count="0"/>
+        <line num="41" type="stmt" count="0"/>
+        <line num="42" type="stmt" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="58" type="method" name="toWhatsApp" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="60" type="stmt" count="0"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="63" type="stmt" count="0"/>
+        <line num="64" type="stmt" count="0"/>
+        <line num="65" type="stmt" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="67" type="stmt" count="0"/>
+        <line num="68" type="stmt" count="0"/>
+        <line num="69" type="stmt" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <line num="71" type="stmt" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="75" type="method" name="toArray" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="78" type="stmt" count="0"/>
+        <line num="79" type="stmt" count="0"/>
+        <line num="80" type="stmt" count="0"/>
+        <line num="81" type="stmt" count="0"/>
+        <metrics loc="84" ncloc="83" classes="1" methods="5" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="39" coveredstatements="0" elements="44" coveredelements="0"/>
+      </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Notifications\OtpNotification.php">
         <class name="App\Notifications\OtpNotification" namespace="App\Notifications">
           <metrics complexity="9" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="0" elements="26" coveredelements="0"/>
@@ -23348,18 +23717,18 @@
     <package name="App\Providers">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Providers\AppServiceProvider.php">
         <class name="App\Providers\AppServiceProvider" namespace="App\Providers">
-          <metrics complexity="3" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="8" elements="19" coveredelements="10"/>
+          <metrics complexity="3" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="19" coveredelements="0"/>
         </class>
-        <line num="23" type="method" name="register" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="26" type="stmt" count="7"/>
-        <line num="31" type="method" name="boot" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="33" type="stmt" count="7"/>
-        <line num="36" type="stmt" count="7"/>
-        <line num="37" type="stmt" count="7"/>
-        <line num="38" type="stmt" count="7"/>
-        <line num="39" type="stmt" count="7"/>
-        <line num="45" type="method" name="configureRateLimiting" visibility="protected" complexity="1" crap="1.51" count="7"/>
-        <line num="47" type="stmt" count="7"/>
+        <line num="23" type="method" name="register" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="26" type="stmt" count="0"/>
+        <line num="31" type="method" name="boot" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="33" type="stmt" count="0"/>
+        <line num="36" type="stmt" count="0"/>
+        <line num="37" type="stmt" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="39" type="stmt" count="0"/>
+        <line num="45" type="method" name="configureRateLimiting" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="47" type="stmt" count="0"/>
         <line num="48" type="stmt" count="0"/>
         <line num="49" type="stmt" count="0"/>
         <line num="50" type="stmt" count="0"/>
@@ -23368,137 +23737,137 @@
         <line num="53" type="stmt" count="0"/>
         <line num="54" type="stmt" count="0"/>
         <line num="55" type="stmt" count="0"/>
-        <line num="56" type="stmt" count="7"/>
-        <metrics loc="59" ncloc="48" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="8" elements="19" coveredelements="10"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="48" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="19" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Providers\TelescopeServiceProvider.php">
         <class name="App\Providers\TelescopeServiceProvider" namespace="App\Providers">
-          <metrics complexity="9" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="14" elements="26" coveredelements="15"/>
+          <metrics complexity="9" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="0" elements="26" coveredelements="0"/>
         </class>
-        <line num="15" type="method" name="register" visibility="public" complexity="6" crap="6" count="7"/>
-        <line num="19" type="stmt" count="7"/>
-        <line num="21" type="stmt" count="7"/>
-        <line num="23" type="stmt" count="7"/>
-        <line num="24" type="stmt" count="1"/>
-        <line num="25" type="stmt" count="1"/>
-        <line num="26" type="stmt" count="1"/>
-        <line num="27" type="stmt" count="1"/>
-        <line num="28" type="stmt" count="1"/>
-        <line num="29" type="stmt" count="1"/>
-        <line num="30" type="stmt" count="7"/>
-        <line num="36" type="method" name="hideSensitiveRequestDetails" visibility="protected" complexity="2" crap="3.69" count="7"/>
-        <line num="38" type="stmt" count="7"/>
-        <line num="39" type="stmt" count="7"/>
+        <line num="15" type="method" name="register" visibility="public" complexity="6" crap="42" count="0"/>
+        <line num="19" type="stmt" count="0"/>
+        <line num="21" type="stmt" count="0"/>
+        <line num="23" type="stmt" count="0"/>
+        <line num="24" type="stmt" count="0"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="26" type="stmt" count="0"/>
+        <line num="27" type="stmt" count="0"/>
+        <line num="28" type="stmt" count="0"/>
+        <line num="29" type="stmt" count="0"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="36" type="method" name="hideSensitiveRequestDetails" visibility="protected" complexity="2" crap="6" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="39" type="stmt" count="0"/>
         <line num="42" type="stmt" count="0"/>
         <line num="44" type="stmt" count="0"/>
         <line num="45" type="stmt" count="0"/>
         <line num="46" type="stmt" count="0"/>
         <line num="47" type="stmt" count="0"/>
         <line num="48" type="stmt" count="0"/>
-        <line num="56" type="method" name="gate" visibility="protected" complexity="1" crap="1.22" count="7"/>
-        <line num="58" type="stmt" count="7"/>
+        <line num="56" type="method" name="gate" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="58" type="stmt" count="0"/>
         <line num="59" type="stmt" count="0"/>
         <line num="60" type="stmt" count="0"/>
         <line num="61" type="stmt" count="0"/>
-        <line num="62" type="stmt" count="7"/>
-        <metrics loc="65" ncloc="53" classes="1" methods="3" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="14" elements="26" coveredelements="15"/>
+        <line num="62" type="stmt" count="0"/>
+        <metrics loc="65" ncloc="53" classes="1" methods="3" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="0" elements="26" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Providers\Filament">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Providers\Filament\AdminPanelProvider.php">
         <class name="App\Providers\Filament\AdminPanelProvider" namespace="App\Providers\Filament">
-          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="50" elements="51" coveredelements="51"/>
+          <metrics complexity="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="0" elements="51" coveredelements="0"/>
         </class>
-        <line num="30" type="method" name="panel" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="32" type="stmt" count="7"/>
-        <line num="33" type="stmt" count="7"/>
-        <line num="34" type="stmt" count="7"/>
-        <line num="35" type="stmt" count="7"/>
-        <line num="36" type="stmt" count="7"/>
-        <line num="37" type="stmt" count="7"/>
-        <line num="38" type="stmt" count="7"/>
-        <line num="39" type="stmt" count="7"/>
-        <line num="40" type="stmt" count="7"/>
-        <line num="41" type="stmt" count="7"/>
-        <line num="42" type="stmt" count="7"/>
-        <line num="43" type="stmt" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <line num="58" type="stmt" count="7"/>
-        <line num="59" type="stmt" count="7"/>
-        <line num="60" type="stmt" count="7"/>
-        <line num="61" type="stmt" count="7"/>
-        <line num="62" type="stmt" count="7"/>
-        <line num="63" type="stmt" count="7"/>
-        <line num="64" type="stmt" count="7"/>
-        <line num="65" type="stmt" count="7"/>
-        <line num="66" type="stmt" count="7"/>
-        <line num="67" type="stmt" count="7"/>
-        <line num="68" type="stmt" count="7"/>
-        <line num="70" type="stmt" count="7"/>
-        <line num="71" type="stmt" count="7"/>
-        <line num="72" type="stmt" count="7"/>
-        <line num="73" type="stmt" count="7"/>
-        <line num="74" type="stmt" count="7"/>
-        <line num="75" type="stmt" count="7"/>
-        <line num="76" type="stmt" count="7"/>
-        <line num="77" type="stmt" count="7"/>
-        <line num="78" type="stmt" count="7"/>
-        <line num="79" type="stmt" count="7"/>
-        <line num="80" type="stmt" count="7"/>
-        <line num="81" type="stmt" count="7"/>
-        <line num="82" type="stmt" count="7"/>
-        <line num="83" type="stmt" count="7"/>
-        <line num="84" type="stmt" count="7"/>
-        <metrics loc="87" ncloc="87" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="50" elements="51" coveredelements="51"/>
+        <line num="30" type="method" name="panel" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="32" type="stmt" count="0"/>
+        <line num="33" type="stmt" count="0"/>
+        <line num="34" type="stmt" count="0"/>
+        <line num="35" type="stmt" count="0"/>
+        <line num="36" type="stmt" count="0"/>
+        <line num="37" type="stmt" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="39" type="stmt" count="0"/>
+        <line num="40" type="stmt" count="0"/>
+        <line num="41" type="stmt" count="0"/>
+        <line num="42" type="stmt" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="59" type="stmt" count="0"/>
+        <line num="60" type="stmt" count="0"/>
+        <line num="61" type="stmt" count="0"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="63" type="stmt" count="0"/>
+        <line num="64" type="stmt" count="0"/>
+        <line num="65" type="stmt" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="67" type="stmt" count="0"/>
+        <line num="68" type="stmt" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <line num="71" type="stmt" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="74" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <line num="76" type="stmt" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="78" type="stmt" count="0"/>
+        <line num="79" type="stmt" count="0"/>
+        <line num="80" type="stmt" count="0"/>
+        <line num="81" type="stmt" count="0"/>
+        <line num="82" type="stmt" count="0"/>
+        <line num="83" type="stmt" count="0"/>
+        <line num="84" type="stmt" count="0"/>
+        <metrics loc="87" ncloc="87" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="50" coveredstatements="0" elements="51" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Providers\Filament\AppPanelProvider.php">
         <class name="App\Providers\Filament\AppPanelProvider" namespace="App\Providers\Filament">
-          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="31" elements="32" coveredelements="32"/>
+          <metrics complexity="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="0" elements="32" coveredelements="0"/>
         </class>
-        <line num="24" type="method" name="panel" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="26" type="stmt" count="7"/>
-        <line num="27" type="stmt" count="7"/>
-        <line num="28" type="stmt" count="7"/>
-        <line num="29" type="stmt" count="7"/>
-        <line num="30" type="stmt" count="7"/>
-        <line num="31" type="stmt" count="7"/>
-        <line num="32" type="stmt" count="7"/>
-        <line num="33" type="stmt" count="7"/>
-        <line num="34" type="stmt" count="7"/>
-        <line num="35" type="stmt" count="7"/>
-        <line num="36" type="stmt" count="7"/>
-        <line num="37" type="stmt" count="7"/>
-        <line num="38" type="stmt" count="7"/>
-        <line num="39" type="stmt" count="7"/>
-        <line num="40" type="stmt" count="7"/>
-        <line num="41" type="stmt" count="7"/>
-        <line num="42" type="stmt" count="7"/>
-        <line num="43" type="stmt" count="7"/>
-        <line num="44" type="stmt" count="7"/>
-        <line num="45" type="stmt" count="7"/>
-        <line num="46" type="stmt" count="7"/>
-        <line num="47" type="stmt" count="7"/>
-        <line num="48" type="stmt" count="7"/>
-        <line num="49" type="stmt" count="7"/>
-        <line num="50" type="stmt" count="7"/>
-        <line num="51" type="stmt" count="7"/>
-        <line num="52" type="stmt" count="7"/>
-        <line num="53" type="stmt" count="7"/>
-        <line num="54" type="stmt" count="7"/>
-        <line num="55" type="stmt" count="7"/>
-        <line num="56" type="stmt" count="7"/>
-        <metrics loc="59" ncloc="59" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="31" elements="32" coveredelements="32"/>
+        <line num="24" type="method" name="panel" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="26" type="stmt" count="0"/>
+        <line num="27" type="stmt" count="0"/>
+        <line num="28" type="stmt" count="0"/>
+        <line num="29" type="stmt" count="0"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="31" type="stmt" count="0"/>
+        <line num="32" type="stmt" count="0"/>
+        <line num="33" type="stmt" count="0"/>
+        <line num="34" type="stmt" count="0"/>
+        <line num="35" type="stmt" count="0"/>
+        <line num="36" type="stmt" count="0"/>
+        <line num="37" type="stmt" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="39" type="stmt" count="0"/>
+        <line num="40" type="stmt" count="0"/>
+        <line num="41" type="stmt" count="0"/>
+        <line num="42" type="stmt" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="45" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="49" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="59" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="31" coveredstatements="0" elements="32" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Services\Affiliate">
@@ -23886,21 +24255,21 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\CommissionProcessorService.php">
         <class name="App\Services\Affiliate\CommissionProcessorService" namespace="App\Services\Affiliate">
-          <metrics complexity="36" methods="20" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="184" coveredstatements="10" elements="204" coveredelements="13"/>
+          <metrics complexity="36" methods="20" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="184" coveredstatements="0" elements="204" coveredelements="0"/>
         </class>
-        <line num="59" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="61" type="stmt" count="1"/>
-        <line num="62" type="stmt" count="1"/>
-        <line num="68" type="method" name="registerDefaultCalculators" visibility="private" complexity="1" crap="1" count="1"/>
-        <line num="71" type="stmt" count="1"/>
-        <line num="72" type="stmt" count="1"/>
-        <line num="73" type="stmt" count="1"/>
-        <line num="74" type="stmt" count="1"/>
-        <line num="75" type="stmt" count="1"/>
-        <line num="81" type="method" name="register" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="83" type="stmt" count="1"/>
-        <line num="86" type="stmt" count="1"/>
-        <line num="88" type="stmt" count="1"/>
+        <line num="59" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="61" type="stmt" count="0"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="68" type="method" name="registerDefaultCalculators" visibility="private" complexity="1" crap="2" count="0"/>
+        <line num="71" type="stmt" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="74" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <line num="81" type="method" name="register" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="83" type="stmt" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="88" type="stmt" count="0"/>
         <line num="96" type="method" name="getCalculators" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="98" type="stmt" count="0"/>
         <line num="106" type="method" name="getEnabledCalculators" visibility="public" complexity="1" crap="2" count="0"/>
@@ -24092,23 +24461,23 @@
         <line num="482" type="stmt" count="0"/>
         <line num="483" type="stmt" count="0"/>
         <line num="484" type="stmt" count="0"/>
-        <metrics loc="487" ncloc="348" classes="1" methods="20" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="184" coveredstatements="10" elements="204" coveredelements="13"/>
+        <metrics loc="487" ncloc="348" classes="1" methods="20" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="184" coveredstatements="0" elements="204" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Services\Affiliate\Calculators\Affiliate">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\Calculators\Affiliate\LevelCommissionCalculator.php">
         <class name="App\Services\Affiliate\Calculators\Affiliate\LevelCommissionCalculator" namespace="App\Services\Affiliate\Calculators\Affiliate">
-          <metrics complexity="13" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="3" elements="51" coveredelements="5"/>
+          <metrics complexity="13" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="0" elements="51" coveredelements="0"/>
         </class>
-        <line num="28" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="30" type="stmt" count="1"/>
-        <line num="31" type="stmt" count="1"/>
+        <line num="28" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="31" type="stmt" count="0"/>
         <line num="34" type="method" name="getCommissionType" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="36" type="stmt" count="0"/>
         <line num="39" type="method" name="getSupportedTriggerTypes" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="41" type="stmt" count="0"/>
-        <line num="44" type="method" name="getPriority" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="46" type="stmt" count="1"/>
+        <line num="44" type="method" name="getPriority" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
         <line num="49" type="method" name="doCalculate" visibility="protected" complexity="8" crap="72" count="0"/>
         <line num="51" type="stmt" count="0"/>
         <line num="53" type="stmt" count="0"/>
@@ -24151,18 +24520,18 @@
         <line num="124" type="stmt" count="0"/>
         <line num="125" type="stmt" count="0"/>
         <line num="126" type="stmt" count="0"/>
-        <metrics loc="129" ncloc="105" classes="1" methods="6" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="3" elements="51" coveredelements="5"/>
+        <metrics loc="129" ncloc="105" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="0" elements="51" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\Calculators\Affiliate\OriginatorJoiningCalculator.php">
         <class name="App\Services\Affiliate\Calculators\Affiliate\OriginatorJoiningCalculator" namespace="App\Services\Affiliate\Calculators\Affiliate">
-          <metrics complexity="15" methods="6" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="1" elements="52" coveredelements="2"/>
+          <metrics complexity="15" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="0" elements="52" coveredelements="0"/>
         </class>
         <line num="26" type="method" name="getCommissionType" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="28" type="stmt" count="0"/>
         <line num="31" type="method" name="getSupportedTriggerTypes" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="33" type="stmt" count="0"/>
-        <line num="36" type="method" name="getPriority" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="38" type="stmt" count="1"/>
+        <line num="36" type="method" name="getPriority" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="38" type="stmt" count="0"/>
         <line num="41" type="method" name="isEnabled" visibility="public" complexity="2" crap="6" count="0"/>
         <line num="43" type="stmt" count="0"/>
         <line num="44" type="stmt" count="0"/>
@@ -24209,18 +24578,18 @@
         <line num="116" type="stmt" count="0"/>
         <line num="117" type="stmt" count="0"/>
         <line num="121" type="stmt" count="0"/>
-        <metrics loc="124" ncloc="104" classes="1" methods="6" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="1" elements="52" coveredelements="2"/>
+        <metrics loc="124" ncloc="104" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="46" coveredstatements="0" elements="52" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\Calculators\Affiliate\OriginatorRecurringCalculator.php">
         <class name="App\Services\Affiliate\Calculators\Affiliate\OriginatorRecurringCalculator" namespace="App\Services\Affiliate\Calculators\Affiliate">
-          <metrics complexity="20" methods="7" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="56" coveredstatements="1" elements="63" coveredelements="2"/>
+          <metrics complexity="20" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="56" coveredstatements="0" elements="63" coveredelements="0"/>
         </class>
         <line num="30" type="method" name="getCommissionType" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="32" type="stmt" count="0"/>
         <line num="35" type="method" name="getSupportedTriggerTypes" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="37" type="stmt" count="0"/>
-        <line num="40" type="method" name="getPriority" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="42" type="stmt" count="1"/>
+        <line num="40" type="method" name="getPriority" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="42" type="stmt" count="0"/>
         <line num="45" type="method" name="isEnabled" visibility="public" complexity="2" crap="6" count="0"/>
         <line num="47" type="stmt" count="0"/>
         <line num="48" type="stmt" count="0"/>
@@ -24278,18 +24647,18 @@
         <line num="140" type="stmt" count="0"/>
         <line num="141" type="stmt" count="0"/>
         <line num="145" type="stmt" count="0"/>
-        <metrics loc="148" ncloc="120" classes="1" methods="7" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="56" coveredstatements="1" elements="63" coveredelements="2"/>
+        <metrics loc="148" ncloc="120" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="56" coveredstatements="0" elements="63" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\Calculators\Affiliate\SponsorBonusCalculator.php">
         <class name="App\Services\Affiliate\Calculators\Affiliate\SponsorBonusCalculator" namespace="App\Services\Affiliate\Calculators\Affiliate">
-          <metrics complexity="11" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="1" elements="34" coveredelements="2"/>
+          <metrics complexity="11" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="0" elements="34" coveredelements="0"/>
         </class>
         <line num="25" type="method" name="getCommissionType" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="27" type="stmt" count="0"/>
         <line num="30" type="method" name="getSupportedTriggerTypes" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="32" type="stmt" count="0"/>
-        <line num="35" type="method" name="getPriority" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="37" type="stmt" count="1"/>
+        <line num="35" type="method" name="getPriority" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="37" type="stmt" count="0"/>
         <line num="40" type="method" name="doCalculate" visibility="protected" complexity="8" crap="72" count="0"/>
         <line num="42" type="stmt" count="0"/>
         <line num="44" type="stmt" count="0"/>
@@ -24318,16 +24687,16 @@
         <line num="78" type="stmt" count="0"/>
         <line num="79" type="stmt" count="0"/>
         <line num="81" type="stmt" count="0"/>
-        <metrics loc="84" ncloc="74" classes="1" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="1" elements="34" coveredelements="2"/>
+        <metrics loc="84" ncloc="74" classes="1" methods="4" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="0" elements="34" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Services\Affiliate\Calculators">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\Calculators\BaseCommissionCalculator.php">
         <class name="App\Services\Affiliate\Calculators\BaseCommissionCalculator" namespace="App\Services\Affiliate\Calculators">
-          <metrics complexity="17" methods="10" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="1" elements="44" coveredelements="2"/>
+          <metrics complexity="17" methods="10" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="0" elements="44" coveredelements="0"/>
         </class>
-        <line num="24" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="26" type="stmt" count="1"/>
+        <line num="24" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="26" type="stmt" count="0"/>
         <line num="38" type="method" name="getSupportedTriggerTypes" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="40" type="stmt" count="0"/>
         <line num="53" type="method" name="supports" visibility="public" complexity="2" crap="6" count="0"/>
@@ -24370,20 +24739,20 @@
         <line num="158" type="stmt" count="0"/>
         <line num="159" type="stmt" count="0"/>
         <line num="162" type="stmt" count="0"/>
-        <metrics loc="165" ncloc="117" classes="1" methods="10" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="1" elements="44" coveredelements="2"/>
+        <metrics loc="165" ncloc="117" classes="1" methods="10" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="34" coveredstatements="0" elements="44" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Services\Affiliate\Calculators\Task">
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Affiliate\Calculators\Task\TaskCompletionCalculator.php">
         <class name="App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator" namespace="App\Services\Affiliate\Calculators\Task">
-          <metrics complexity="12" methods="6" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="1" elements="41" coveredelements="2"/>
+          <metrics complexity="12" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="0" elements="41" coveredelements="0"/>
         </class>
         <line num="26" type="method" name="getCommissionType" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="28" type="stmt" count="0"/>
         <line num="31" type="method" name="getSupportedTriggerTypes" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="33" type="stmt" count="0"/>
-        <line num="36" type="method" name="getPriority" visibility="public" complexity="1" crap="1" count="1"/>
-        <line num="38" type="stmt" count="1"/>
+        <line num="36" type="method" name="getPriority" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="38" type="stmt" count="0"/>
         <line num="41" type="method" name="isEnabled" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="43" type="stmt" count="0"/>
         <line num="46" type="method" name="doCalculate" visibility="protected" complexity="4" crap="20" count="0"/>
@@ -24419,7 +24788,7 @@
         <line num="99" type="stmt" count="0"/>
         <line num="100" type="stmt" count="0"/>
         <line num="104" type="stmt" count="0"/>
-        <metrics loc="107" ncloc="87" classes="1" methods="6" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="1" elements="41" coveredelements="2"/>
+        <metrics loc="107" ncloc="87" classes="1" methods="6" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="0" elements="41" coveredelements="0"/>
       </file>
     </package>
     <package name="App\Services">
@@ -24529,14 +24898,14 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\MoneyService.php">
         <class name="App\Services\MoneyService" namespace="App\Services">
-          <metrics complexity="38" methods="22" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="4" elements="90" coveredelements="4"/>
+          <metrics complexity="38" methods="22" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="0" elements="90" coveredelements="0"/>
         </class>
-        <line num="23" type="method" name="__construct" visibility="public" complexity="3" crap="3.07" count="7"/>
-        <line num="25" type="stmt" count="7"/>
-        <line num="27" type="stmt" count="7"/>
+        <line num="23" type="method" name="__construct" visibility="public" complexity="3" crap="12" count="0"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="27" type="stmt" count="0"/>
         <line num="28" type="stmt" count="0"/>
-        <line num="30" type="stmt" count="7"/>
-        <line num="31" type="stmt" count="7"/>
+        <line num="30" type="stmt" count="0"/>
+        <line num="31" type="stmt" count="0"/>
         <line num="35" type="method" name="make" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="37" type="stmt" count="0"/>
         <line num="47" type="method" name="toPaise" visibility="public" complexity="1" crap="2" count="0"/>
@@ -24621,7 +24990,7 @@
         <line num="253" type="stmt" count="0"/>
         <line num="254" type="stmt" count="0"/>
         <line num="256" type="stmt" count="0"/>
-        <metrics loc="259" ncloc="202" classes="1" methods="22" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="4" elements="90" coveredelements="4"/>
+        <metrics loc="259" ncloc="202" classes="1" methods="22" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="68" coveredstatements="0" elements="90" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\OnboardingVerifierService.php">
         <class name="App\Services\OnboardingVerifierService" namespace="App\Services">
@@ -25940,41 +26309,41 @@
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Ecommerce\PriceCalculationService.php">
         <class name="App\Services\Ecommerce\PriceCalculationService" namespace="App\Services\Ecommerce">
-          <metrics complexity="41" methods="15" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="61" coveredstatements="18" elements="76" coveredelements="22"/>
+          <metrics complexity="41" methods="15" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="61" coveredstatements="0" elements="76" coveredelements="0"/>
         </class>
-        <line num="22" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
-        <line num="24" type="stmt" count="7"/>
-        <line num="30" type="method" name="calculateFromCost" visibility="public" complexity="1" crap="1" count="2"/>
-        <line num="32" type="stmt" count="2"/>
-        <line num="33" type="stmt" count="2"/>
-        <line num="35" type="stmt" count="2"/>
-        <line num="44" type="method" name="getStockPrice" visibility="public" complexity="3" crap="3" count="2"/>
-        <line num="47" type="stmt" count="2"/>
-        <line num="48" type="stmt" count="1"/>
-        <line num="52" type="stmt" count="1"/>
-        <line num="53" type="stmt" count="1"/>
-        <line num="54" type="stmt" count="1"/>
-        <line num="55" type="stmt" count="1"/>
+        <line num="22" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="24" type="stmt" count="0"/>
+        <line num="30" type="method" name="calculateFromCost" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="32" type="stmt" count="0"/>
+        <line num="33" type="stmt" count="0"/>
+        <line num="35" type="stmt" count="0"/>
+        <line num="44" type="method" name="getStockPrice" visibility="public" complexity="3" crap="12" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
         <line num="62" type="method" name="getProductPriceFromAvailableStock" visibility="public" complexity="3" crap="12" count="0"/>
         <line num="65" type="stmt" count="0"/>
         <line num="66" type="stmt" count="0"/>
         <line num="67" type="stmt" count="0"/>
         <line num="71" type="stmt" count="0"/>
-        <line num="78" type="method" name="calculateSalePrice" visibility="public" complexity="5" crap="5" count="3"/>
-        <line num="80" type="stmt" count="3"/>
-        <line num="81" type="stmt" count="1"/>
-        <line num="82" type="stmt" count="1"/>
-        <line num="83" type="stmt" count="1"/>
-        <line num="84" type="stmt" count="3"/>
-        <line num="85" type="stmt" count="3"/>
+        <line num="78" type="method" name="calculateSalePrice" visibility="public" complexity="5" crap="30" count="0"/>
+        <line num="80" type="stmt" count="0"/>
+        <line num="81" type="stmt" count="0"/>
+        <line num="82" type="stmt" count="0"/>
+        <line num="83" type="stmt" count="0"/>
+        <line num="84" type="stmt" count="0"/>
+        <line num="85" type="stmt" count="0"/>
         <line num="91" type="method" name="isWholesaleQuantity" visibility="public" complexity="2" crap="6" count="0"/>
         <line num="93" type="stmt" count="0"/>
         <line num="99" type="method" name="formatPrice" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="101" type="stmt" count="0"/>
-        <line num="107" type="method" name="calculateDiscountPercent" visibility="public" complexity="3" crap="3.33" count="1"/>
-        <line num="109" type="stmt" count="1"/>
+        <line num="107" type="method" name="calculateDiscountPercent" visibility="public" complexity="3" crap="12" count="0"/>
+        <line num="109" type="stmt" count="0"/>
         <line num="110" type="stmt" count="0"/>
-        <line num="113" type="stmt" count="1"/>
+        <line num="113" type="stmt" count="0"/>
         <line num="119" type="method" name="getMinimumPrice" visibility="public" complexity="4" crap="20" count="0"/>
         <line num="121" type="stmt" count="0"/>
         <line num="123" type="stmt" count="0"/>
@@ -26018,7 +26387,7 @@
         <line num="218" type="stmt" count="0"/>
         <line num="224" type="method" name="validateStockQuantity" visibility="public" complexity="2" crap="6" count="0"/>
         <line num="226" type="stmt" count="0"/>
-        <metrics loc="228" ncloc="158" classes="1" methods="15" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="61" coveredstatements="18" elements="76" coveredelements="22"/>
+        <metrics loc="228" ncloc="158" classes="1" methods="15" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="61" coveredstatements="0" elements="76" coveredelements="0"/>
       </file>
       <file name="C:\laragon\www\mintreu\server\commerinity\apiserver\app\Services\Ecommerce\ProductManager.php">
         <class name="App\Services\Ecommerce\ProductManager" namespace="App\Services\Ecommerce">
@@ -33834,6 +34203,6 @@
         <metrics loc="27" ncloc="20" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="0" elements="4" coveredelements="0"/>
       </file>
     </package>
-    <metrics files="543" loc="68001" ncloc="56622" classes="483" methods="2909" coveredmethods="80" conditionals="0" coveredconditionals="0" statements="27390" coveredstatements="453" elements="30299" coveredelements="533"/>
+    <metrics files="545" loc="68832" ncloc="57327" classes="485" methods="2934" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="27722" coveredstatements="0" elements="30656" coveredelements="0"/>
   </project>
 </coverage>
