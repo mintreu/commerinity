@@ -1,6 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\Products\RelationManagers;
+namespace App\Filament\Resources\Ecommerce\Products\RelationManagers; // MUST match file location! Do NOT put Products without Ecommerce!
+
+// However, based on the error, you might actually have the file at TWO locations:
+// 1. app/Filament/Resources/Products/RelationManagers/VariantsRelationManager.php (OLD - DELETE THIS)
+// 2. app/Filament/Resources/Ecommerce/Products/RelationManagers/VariantsRelationManager.php (NEW - Keep this)
+
+// If you DO have both files, delete the one in Products/ (without Ecommerce) as it's the old location.
 
 use App\Casts\ProductStatusCast;
 

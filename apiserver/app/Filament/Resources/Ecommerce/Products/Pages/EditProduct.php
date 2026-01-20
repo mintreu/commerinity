@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Ecommerce\Products\Pages;
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Filament\Resources\Ecommerce\Products\ProductResource;
-use App\Filament\Resources\Products\RelationManagers\VariantsRelationManager;
+use App\Filament\Resources\Ecommerce\Products\RelationManagers\VariantsRelationManager;
 use App\Services\Ecommerce\ProductManager;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
