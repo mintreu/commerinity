@@ -110,7 +110,7 @@ class ProductSeeder extends Seeder
                 'url' => $productData->url,
                 'status' => ProductStatusCast::PUBLISHED->value,
                 'type' => $type,
-                'price' => $productData->price,
+                //'price' => $productData->price, // we have no price column in product model, price comes from stock for visibility and use
                 'short_description' => $productData->short_description ?? null,
                 'description' => $productData->description ?? null,
                 'category_id' => $category->id,

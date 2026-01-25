@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Ecommerce;
 
 use App\Models\Ecommerce\ProductStock;
+use App\Models\Ecommerce\Product;
 use App\Services\MoneyService;
 
 /**
@@ -189,25 +190,54 @@ final class PriceCalculationService
     }
 
     /**
-     * Get stock with closest warehouse to shipping address
-     * Requires address comparison logic (simplified here)
+     * Get the best stock entry for a specific context (User Location)
+     * Prioritizes:
+     * 1. Closest Warehouse (if location provided)
+     * 2. Highest Priority (Central Warehouse)
+     * 3. Lowest Price
      */
-    public function getClosestWarehouseStock(iterable $availableStocks, ?array $shippingAddress = null): ?ProductStock
+    public function getBestStockForContext(iterable $stocks, ?array $context = null): ?ProductStock
     {
-        // If no address provided, return cheapest
-        if ($shippingAddress === null) {
-            return $this->getCheapestAvailableStock($availableStocks);
-        }
-
-        // Simplified: For now, return first available stock
-        // In production, implement address-based distance calculation
-        foreach ($availableStocks as $stock) {
+        // 1. Filter In Stock only
+        $available = [];
+        foreach ($stocks as $stock) {
             if ($stock->inStock()) {
-                return $stock;
+                $available[] = $stock;
             }
         }
 
-        return null;
+        if (empty($available)) {
+            return null;
+        }
+
+        // TODO: Implement Geo-distance check if $context['lat/lng'] provided
+        // For now, we sort by Priority (Warehouse Hierarchy) then Price
+
+        usort($available, function($a, $b) {
+            // Lower priority number = Higher importance (1 = Main Warehouse)
+            if ($a->priority !== $b->priority) {
+                return $a->priority <=> $b->priority;
+            }
+
+            // If priority same, cheaper one wins
+            return $this->getStockPrice($a) <=> $this->getStockPrice($b);
+        });
+
+        return $available[0];
+    }
+
+    /**
+     * Get correct price for this product context
+     */
+    public function getContextPrice(Product $product, ?array $context = null): int
+    {
+        $stock = $this->getBestStockForContext($product->availableStocks, $context);
+
+        if (!$stock) {
+            return 0;
+        }
+
+        return $this->getStockPrice($stock);
     }
 
     /**

@@ -23,6 +23,7 @@ class ProductStockResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static ?string $pluralModelLabel = 'Purchase Entry';
     protected static ?string $pluralLabel = 'Purchase Entry';
+    protected static string|null|\UnitEnum $navigationGroup = 'Catalogue';
 
     protected static ?string $recordTitleAttribute = 'id';
 

@@ -102,7 +102,7 @@ final class EnhancedBulkJobApplicationImport extends EnhancedDefaultImport
                 ->values()
                 ->collect();
 
-            $this->validateHeaders();
+            $this->validateFileHeaders();
 
             $this->rows = $collection->skip(1);
 
@@ -132,7 +132,7 @@ final class EnhancedBulkJobApplicationImport extends EnhancedDefaultImport
     /**
      * Validate Excel headers contain all required columns.
      */
-    private function validateHeaders(): void
+    protected function validateFileHeaders(): void
     {
         $foundHeaders = $this->headers->toArray();
         $missing = array_diff(self::USER_FRIENDLY_HEADERS, $foundHeaders);

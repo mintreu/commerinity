@@ -52,7 +52,8 @@ class ProductStockSeeder extends Seeder
     protected function createStockForProduct(Product $product): void
     {
         // Calculate realistic values
-        $productPrice = $product->price; // in paise
+      //  $productPrice = $product->price; // in paise
+        $productPrice = fake()->randomElement([20000,35000,45000]);
         $landingCost = (int) ($productPrice * 0.6); // 60% of price (40% margin)
         $profitMargin = 40.00;
 

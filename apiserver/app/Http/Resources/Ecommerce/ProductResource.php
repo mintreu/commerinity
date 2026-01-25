@@ -47,7 +47,6 @@ final class ProductResource extends JsonResource
         }
 
         return [
-            'uuid' => $this->uuid,
             'name' => $this->name,
             'slug' => $this->url,
             'sku' => $this->sku,
@@ -60,9 +59,15 @@ final class ProductResource extends JsonResource
             'sale_name' => $saleName,
             'sale_ends_at' => $saleEndsAt,
             // Category
-            'category' => new CategoryBriefResource($this->whenLoaded('category')),
+            'category' => $this->whenLoaded('category', fn ($category) => [
+                "uuid" => $category->uuid,
+                "name" => $category->name,
+                "slug" => $category->slug
+            ]),
             // Images
             'image' => $this->formatImage(),
+            // Variants
+            'variants' => ProductResource::collection($this->whenLoaded('variants')),
             // Stock
             'in_stock' => $inStock,
             'stock_quantity' => $this->total_stock,

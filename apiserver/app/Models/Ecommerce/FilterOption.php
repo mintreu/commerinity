@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Ecommerce;
 
-use Database\Factories\FilterOptionFactory;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,7 +19,7 @@ class FilterOption extends Model
 
     public function filter(): BelongsTo
     {
-        return $this->belongsTo(Filter::class);
+        return $this->belongsTo(Filter::class,'filter_id');
     }
 
     public function products(): BelongsToMany

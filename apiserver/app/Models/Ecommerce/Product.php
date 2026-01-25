@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Ecommerce;
 
 use App\Casts\ProductStatusCast;
+use App\Casts\ProductTypeCast;
 use App\Models\Address;
 use App\Models\Traits\HasSaleAccess;
 use App\Models\User;
@@ -42,6 +43,7 @@ class Product extends Model implements HasMedia
         'price',
         'view_count',
         'seo_meta',
+        'uuid',
     ];
 
     protected function casts(): array
@@ -52,7 +54,13 @@ class Product extends Model implements HasMedia
             'status' => ProductStatusCast::class,
             'is_returnable' => 'boolean',
             'return_days' => 'integer',
+            'type' => ProductTypeCast::class
         ];
+    }
+
+    protected static function booted(): void
+    {
+        parent::booted();
     }
 
     public function filterGroup(): BelongsTo
@@ -158,6 +166,93 @@ class Product extends Model implements HasMedia
     }
 
 
+
+
+    /**
+     * Scope: Search by name, sku, short description
+     */
+    public function scopeSearch(Builder $query, ?string $term): Builder
+    {
+        if (empty($term)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($term) {
+            $q->where('name', 'like', "%{$term}%")
+              ->orWhere('sku', 'like', "%{$term}%")
+              ->orWhere('short_description', 'like', "%{$term}%");
+        });
+    }
+
+    /**
+     * Scope: Filter by Category (and descendants)
+     */
+    public function scopeByCategory(Builder $query, ?string $categoryUrl): Builder
+    {
+        if (empty($categoryUrl)) {
+            return $query;
+        }
+
+        return $query->whereHas('category', function ($q) use ($categoryUrl) {
+            // Find category by URL, then get ID and children
+            $category = Category::where('url', $categoryUrl)->first();
+            if ($category) {
+                 // Simplified: Just this category for now.
+                 // Ideally use a closure table or nested set for strict hierarchy
+                $q->where('id', $category->id)
+                  ->orWhere('parent_id', $category->id);
+            } else {
+                $q->where('url', $categoryUrl);
+            }
+        });
+    }
+
+    /**
+     * Scope: Filter by Price Range via ProductStock
+     */
+    public function scopeByPrice(Builder $query, ?int $min, ?int $max): Builder
+    {
+        if (is_null($min) && is_null($max)) {
+            return $query;
+        }
+
+        return $query->whereHas('availableStocks', function ($q) use ($min, $max) {
+             // We filter by 'landing_cost' approximated or 'price' override
+             // Since we can't easily do dynamic margin calc in WHERE clause without raw SQL:
+             // We'll use a simplified approximation: landing_cost * 1.4 ~= price
+
+             $q->where(function($qq) use ($min, $max) {
+                 // CASE 1: Price Override is set
+                 $qq->whereNotNull('price')
+                    ->when($min, fn($k) => $k->where('price', '>=', $min))
+                    ->when($max, fn($k) => $k->where('price', '<=', $max));
+             })->orWhere(function($qq) use ($min, $max) {
+                 // CASE 2: No override, calc from Landing Cost (approx margin 40%)
+                 // Cost = Price / 1.4
+                 $minCost = $min ? (int)($min / 1.4) : 0;
+                 $maxCost = $max ? (int)($max / 1.4) : 99999999;
+
+                 $qq->whereNull('price')
+                    ->whereBetween('landing_cost', [$minCost, $maxCost]);
+             });
+        });
+    }
+
+    /**
+     * Scope: Sort products
+     */
+    public function scopeSort(Builder $query, ?string $sortBy): Builder
+    {
+        return match ($sortBy) {
+            // Price sorting is heavy - requires join.
+            // For now, doing simple sorts. Price sort requires subquery/join refactor.
+            'newest' => $query->orderBy('created_at', 'desc'),
+            'popularity' => $query->orderBy('view_count', 'desc'),
+            'name_asc' => $query->orderBy('name', 'asc'),
+            'name_desc' => $query->orderBy('name', 'desc'),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+    }
 
     /**
      * Register media conversions for responsive images
@@ -340,19 +435,15 @@ class Product extends Model implements HasMedia
      * Uses PriceCalculationService for consistent pricing logic
      * Returns price in paise (integer)
      */
-    public function getPrice(?\App\Services\Ecommerce\PriceCalculationService $priceService = null): int
+    public function getPrice(?array $context = null): int
     {
-        // Get first available stock (FIFO)
-        $stock = $this->availableStocks->first();
-
-        if (!$stock) {
-            return 0; // No stock available
+        if ($this->relationLoaded('availableStocks') && $this->availableStocks->isNotEmpty()) {
+            $stock = $this->availableStocks->first();
+            $price = $stock->price ?? (int) ($stock->landing_cost * (1 + $stock->profit_margin / 100));
+            return (int) max(0, $price);
         }
 
-        // Use provided service or create new instance
-        $priceService = $priceService ?? app(\App\Services\Ecommerce\PriceCalculationService::class);
-
-        return $priceService->getStockPrice($stock);
+        return $this->price ?? 0;
     }
 
     /**
@@ -360,8 +451,7 @@ class Product extends Model implements HasMedia
      */
     public function getFormattedPrice(): string
     {
-        $price = $this->getPrice();
-        return \App\Services\MoneyService::format($price);
+        return \App\Services\MoneyService::format($this->getPrice());
     }
 
     /**
@@ -370,13 +460,19 @@ class Product extends Model implements HasMedia
      */
     public function getPriceRange(): string
     {
-        $priceService = app(\App\Services\Ecommerce\PriceCalculationService::class);
-
-        if ($this->availableStocks->isEmpty()) {
+        if (!$this->relationLoaded('availableStocks') || $this->availableStocks->isEmpty()) {
             return 'Out of stock';
         }
 
-        return $priceService->getPriceRange($this->availableStocks);
+        $prices = $this->availableStocks->map(function ($stock) {
+            return $stock->price ?? (int) ($stock->landing_cost * (1 + $stock->profit_margin / 100));
+        });
+
+        if ($prices->isEmpty()) {
+            return 'Out of stock';
+        }
+
+        return \App\Services\MoneyService::formatRange($prices->min(), $prices->max());
     }
 
     /**

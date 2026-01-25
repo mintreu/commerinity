@@ -131,9 +131,9 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             // E-COMMERCE DEMO DATA - Products with images and stock
             // ═══════════════════════════════════════════════════════════
-//            ProductSeeder::class,
-          //  MasterDemoSeeder::class,
-           // ProductStockSeeder::class,
+            ProductSeeder::class,
+          //    MasterDemoSeeder::class,
+            ProductStockSeeder::class,
         ]);
     }
 }

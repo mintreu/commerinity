@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Ecommerce\Products\Tables;
 
+use App\Casts\ProductTypeCast;
 use App\Filament\Exports\Ecommerce\ProductExporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -11,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ProductsTable
@@ -19,16 +21,11 @@ class ProductsTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('displayImage')->label(null)->collection('displayImage'),
+                SpatieMediaLibraryImageColumn::make('displayImage')
+                    ->label(null)->collection('displayImage')
+                    ->default('https://placehold.co/600x400'),
                 TextColumn::make('name')
                     ->searchable(),
-//                TextColumn::make('parent.name')
-//                    ->searchable(),
-//                TextColumn::make('sku')
-//                    ->label('SKU')
-//                    ->searchable(),
-//                TextColumn::make('url')
-//                    ->searchable(),
                 TextColumn::make('type')
                     ->searchable(),
                 TextColumn::make('filterGroup.name')
@@ -42,11 +39,6 @@ class ProductsTable
                 TextColumn::make('status')
                     ->badge()
                     ->searchable(),
-//                IconColumn::make('is_returnable')
-//                    ->boolean(),
-//                TextColumn::make('return_days')
-//                    ->numeric()
-//                    ->sortable(),
                 TextColumn::make('view_count')
                     ->numeric()
                     ->sortable(),
@@ -60,6 +52,10 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+
+                SelectFilter::make('type')
+                    ->options(fn() => collect(ProductTypeCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
+
                 //
             ])
             ->recordActions([

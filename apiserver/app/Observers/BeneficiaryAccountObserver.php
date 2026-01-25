@@ -47,7 +47,19 @@ final class BeneficiaryAccountObserver
         $originalStatus = $beneficiaryAccount->getOriginal('status');
         $newStatus = $beneficiaryAccount->status;
 
-        $this->syncToCashfree($beneficiaryAccount);
+        // Only sync if relevant fields changed to avoid infinite loop (sync updates metadata)
+        $relevantAttributes = [
+            'type',
+            'holder_name',
+            'account_number',
+            'ifsc_code',
+            'upi_id',
+            'bank_name',
+        ];
+
+        if ($beneficiaryAccount->wasChanged($relevantAttributes)) {
+            $this->syncToCashfree($beneficiaryAccount);
+        }
 
         // Log the update
         Log::info('Beneficiary account updated', [
@@ -156,7 +168,13 @@ final class BeneficiaryAccountObserver
      */
     public function updating(BeneficiaryAccount $beneficiaryAccount): void
     {
-        if ($beneficiaryAccount->isVerified()) {
+        // Only enforce lock if the account WAS already verified before this update
+        // We check original status to allow the transition TO verified status
+        $originalStatus = $beneficiaryAccount->getOriginal('status');
+        $wasVerified = $originalStatus === BeneficiaryStatusCast::VERIFIED
+            || ($originalStatus instanceof BeneficiaryStatusCast && $originalStatus === BeneficiaryStatusCast::VERIFIED);
+
+        if ($wasVerified) {
             $dirty = $beneficiaryAccount->getDirty();
             $allowedChanges = ['is_default'];
 

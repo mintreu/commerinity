@@ -428,11 +428,9 @@ Route::prefix('ads')->group(function () {
 });
 
 // ========================================
-// Cart / Shopping (Supports Guest & Authenticated)
+// Cart / Shopping (Authenticated Users Only)
 // ========================================
-Route::prefix('cart')->group(function () {
-    // Guest credential (no auth required)
-    Route::post('/guest-credential', [CartController::class, 'guestCredential']);
+Route::prefix('cart')->middleware('auth:sanctum')->group(function () {
     Route::get('/count', [CartController::class, 'count']);
     Route::get('/', [CartController::class, 'index']);
     Route::post('/', [CartController::class, 'store']);

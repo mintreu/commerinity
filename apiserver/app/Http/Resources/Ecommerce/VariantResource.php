@@ -41,7 +41,6 @@ final class VariantResource extends JsonResource
         $displayPrice = $salePrice ?? $originalPrice;
 
         return [
-            'uuid' => $this->uuid,
             'name' => $this->name,
             'slug' => $this->url,
             'sku' => $this->sku,
