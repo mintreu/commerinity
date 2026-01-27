@@ -228,21 +228,39 @@ async function submitGuestApplication() {
         </UButton>
       </div>
 
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-primary" />
+      <div
+        v-if="status === 'pending'"
+        class="flex justify-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="w-8 h-8 animate-spin text-primary"
+        />
       </div>
 
-      <div v-else-if="error" class="text-center py-12">
-        <UIcon name="i-heroicons-exclamation-circle" class="w-16 h-16 mx-auto text-red-500 mb-4" />
+      <div
+        v-else-if="error"
+        class="text-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-exclamation-circle"
+          class="w-16 h-16 mx-auto text-red-500 mb-4"
+        />
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           Position not found
         </h3>
-        <UButton to="/career" variant="outline">
+        <UButton
+          to="/career"
+          variant="outline"
+        >
           Browse Open Positions
         </UButton>
       </div>
 
-      <div v-else-if="recruitment?.data" class="space-y-6">
+      <div
+        v-else-if="recruitment?.data"
+        class="space-y-6"
+      >
         <UCard>
           <template #header>
             <div class="flex items-center justify-between">
@@ -254,7 +272,11 @@ async function submitGuestApplication() {
                   Apply as Guest · No account required
                 </p>
               </div>
-              <UBadge v-if="recruitment.data.is_payable" color="warning" size="lg">
+              <UBadge
+                v-if="recruitment.data.is_payable"
+                color="warning"
+                size="lg"
+              >
                 Fee: {{ recruitment.data.fees_formatted }}
               </UBadge>
             </div>
@@ -262,15 +284,21 @@ async function submitGuestApplication() {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="space-y-1">
               <span class="text-xs text-gray-500">Role</span>
-              <p class="font-medium">{{ recruitment.data.role_label }}</p>
+              <p class="font-medium">
+                {{ recruitment.data.role_label }}
+              </p>
             </div>
             <div class="space-y-1">
               <span class="text-xs text-gray-500">Type</span>
-              <p class="font-medium">{{ recruitment.data.employment_type_label }}</p>
+              <p class="font-medium">
+                {{ recruitment.data.employment_type_label }}
+              </p>
             </div>
             <div class="space-y-1">
               <span class="text-xs text-gray-500">Location</span>
-              <p class="font-medium">{{ recruitment.data.location }}</p>
+              <p class="font-medium">
+                {{ recruitment.data.location }}
+              </p>
             </div>
           </div>
         </UCard>
@@ -343,8 +371,12 @@ async function submitGuestApplication() {
             <div>
               <div class="flex items-center justify-between mb-4">
                 <div>
-                  <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Education</h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Add up to 5 entries</p>
+                  <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                    Education
+                  </h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Add up to 5 entries
+                  </p>
                 </div>
                 <UButton
                   type="button"
@@ -357,7 +389,10 @@ async function submitGuestApplication() {
                   Add Education
                 </UButton>
               </div>
-              <div v-if="educations.length" class="space-y-4">
+              <div
+                v-if="educations.length"
+                class="space-y-4"
+              >
                 <div
                   v-for="(edu, idx) in educations"
                   :key="idx"
@@ -365,13 +400,26 @@ async function submitGuestApplication() {
                 >
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <UFormField label="Degree/Qualification">
-                      <UInput v-model="edu.degree" placeholder="e.g., 12th Pass, B.Com" :disabled="submitting" />
+                      <UInput
+                        v-model="edu.degree"
+                        placeholder="e.g., 12th Pass, B.Com"
+                        :disabled="submitting"
+                      />
                     </UFormField>
                     <UFormField label="Institution">
-                      <UInput v-model="edu.institution" placeholder="School/College name" :disabled="submitting" />
+                      <UInput
+                        v-model="edu.institution"
+                        placeholder="School/College name"
+                        :disabled="submitting"
+                      />
                     </UFormField>
                     <UFormField label="Year">
-                      <UInput v-model="edu.year" type="number" placeholder="2024" :disabled="submitting" />
+                      <UInput
+                        v-model="edu.year"
+                        type="number"
+                        placeholder="2024"
+                        :disabled="submitting"
+                      />
                     </UFormField>
                   </div>
                 </div>
@@ -381,8 +429,12 @@ async function submitGuestApplication() {
             <div>
               <div class="flex items-center justify-between mb-4">
                 <div>
-                  <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Skills</h3>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Add up to 10 entries</p>
+                  <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                    Skills
+                  </h3>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Add up to 10 entries
+                  </p>
                 </div>
                 <UButton
                   type="button"
@@ -395,7 +447,10 @@ async function submitGuestApplication() {
                   Add Skill
                 </UButton>
               </div>
-              <div v-if="skills.length" class="space-y-4">
+              <div
+                v-if="skills.length"
+                class="space-y-4"
+              >
                 <div
                   v-for="(skill, idx) in skills"
                   :key="idx"
@@ -403,10 +458,18 @@ async function submitGuestApplication() {
                 >
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <UFormField label="Skill Name">
-                      <UInput v-model="skill.skill" placeholder="e.g., Communication, Sales" :disabled="submitting" />
+                      <UInput
+                        v-model="skill.skill"
+                        placeholder="e.g., Communication, Sales"
+                        :disabled="submitting"
+                      />
                     </UFormField>
                     <UFormField label="Description">
-                      <UInput v-model="skill.description" placeholder="Brief description" :disabled="submitting" />
+                      <UInput
+                        v-model="skill.description"
+                        placeholder="Brief description"
+                        :disabled="submitting"
+                      />
                     </UFormField>
                   </div>
                 </div>
@@ -416,10 +479,18 @@ async function submitGuestApplication() {
             <div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <UFormField label="Reference Name">
-                  <UInput v-model="referenceName" placeholder="Enter reference name" :disabled="submitting" />
+                  <UInput
+                    v-model="referenceName"
+                    placeholder="Enter reference name"
+                    :disabled="submitting"
+                  />
                 </UFormField>
                 <UFormField label="Reference Contact">
-                  <UInput v-model="referenceContact" placeholder="Enter reference phone" :disabled="submitting" />
+                  <UInput
+                    v-model="referenceContact"
+                    placeholder="Enter reference phone"
+                    :disabled="submitting"
+                  />
                 </UFormField>
               </div>
             </div>
@@ -441,7 +512,10 @@ async function submitGuestApplication() {
                 :loading="submitting"
                 @click="submitGuestApplication"
               >
-                <UIcon name="i-lucide-send" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-send"
+                  class="w-4 h-4 mr-2"
+                />
                 Submit Application
               </UButton>
             </div>

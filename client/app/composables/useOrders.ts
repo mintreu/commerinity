@@ -78,12 +78,10 @@ export const useOrders = () => {
       }
 
       return response
-    }
-    catch (e: unknown) {
+    } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch orders'
       return null
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -94,7 +92,7 @@ export const useOrders = () => {
     error.value = null
 
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: Order }>(
+      const response = await useSanctumFetch<{ success: boolean, data: Order }>(
         `${config.public.apiBase}/api/orders/${uuid}`
       )
 
@@ -103,12 +101,10 @@ export const useOrders = () => {
       }
 
       return response
-    }
-    catch (e: unknown) {
+    } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch order'
       return null
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -118,8 +114,7 @@ export const useOrders = () => {
     try {
       const response = await fetchOrders(1, limit)
       return response?.data || []
-    }
-    catch {
+    } catch {
       return []
     }
   }
@@ -153,8 +148,7 @@ export const useOrders = () => {
         completed: 0,
         cancelled: 0
       }
-    }
-    catch {
+    } catch {
       return {
         total: 0,
         pending: 0,

@@ -13,6 +13,8 @@
  * - Configurable filter visibility
  */
 
+import { nextTick } from 'vue'
+
 interface FilterOption {
   id: number
   value: string
@@ -51,8 +53,19 @@ interface FilterConfig {
   showDynamicFilters?: boolean
 }
 
+interface FilterEmitPayload {
+  search?: string
+  category?: string
+  min_price?: number | null
+  max_price?: number | null
+  in_stock?: boolean
+  on_sale?: boolean
+  min_rating?: number | null
+  filters?: Record<string, number[]>
+}
+
 interface Props {
-  priceRange: { min: number; max: number }
+  priceRange?: { min?: number, max?: number }
   filterGroups: FilterGroup[]
   categories: Category[]
   loading?: boolean
@@ -76,15 +89,34 @@ const emit = defineEmits<{
   (e: 'clear'): void
 }>()
 
+const cloneFilterMap = (filters: Record<string, number[]> = {}) => {
+  return Object.fromEntries(
+    Object.entries(filters).map(([key, values]) => [
+      key,
+      Array.isArray(values) ? [...values] : []
+    ])
+  )
+}
+
 // Filter state
 const searchQuery = ref('')
 const selectedCategory = ref('')
 const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
+
+// Price range for slider (computed get/set)
+const priceRangeValue = computed({
+  get: () => [priceMin.value ?? props.priceRange?.min ?? 0, priceMax.value ?? props.priceRange?.max ?? 10000],
+  set: (val: number[]) => {
+    priceMin.value = val[0]
+    priceMax.value = val[1]
+  }
+})
 const inStockOnly = ref(false)
 const onSaleOnly = ref(false)
 const minRating = ref<number | null>(null)
 const selectedFilters = ref<Record<string, number[]>>({})
+const isExternalSync = ref(false)
 
 // Category expansion state
 const expandedCategories = ref<Set<string>>(new Set())
@@ -94,6 +126,12 @@ const collapsedSections = ref<Set<string>>(new Set(['rating', 'availability']))
 
 // Mobile drawer state
 const isMobileFilterOpen = ref(false)
+const openMobileFilters = () => {
+  isMobileFilterOpen.value = true
+}
+const closeMobileFilters = () => {
+  isMobileFilterOpen.value = false
+}
 
 // Toggle section collapse
 const toggleSection = (section: string) => {
@@ -160,14 +198,14 @@ const selectCategory = (slug: string) => {
 
 // Computed: Check if any filter is active
 const hasActiveFilters = computed(() => {
-  return searchQuery.value ||
-    selectedCategory.value ||
-    priceMin.value !== null ||
-    priceMax.value !== null ||
-    inStockOnly.value ||
-    onSaleOnly.value ||
-    minRating.value !== null ||
-    Object.values(selectedFilters.value).some(arr => arr.length > 0)
+  return searchQuery.value
+    || selectedCategory.value
+    || priceMin.value !== null
+    || priceMax.value !== null
+    || inStockOnly.value
+    || onSaleOnly.value
+    || minRating.value !== null
+    || Object.values(selectedFilters.value).some(arr => arr.length > 0)
 })
 
 // Computed: Active filter count
@@ -187,7 +225,7 @@ const activeFilterCount = computed(() => {
 
 // Computed: Applied filters for chips display
 const appliedFilters = computed(() => {
-  const chips: Array<{ key: string; label: string; color: string }> = []
+  const chips: Array<{ key: string, label: string, color: string }> = []
 
   if (searchQuery.value) {
     chips.push({ key: 'search', label: `"${searchQuery.value}"`, color: 'blue' })
@@ -263,7 +301,7 @@ const toggleFilterOption = (filterName: string, optionId: number) => {
 }
 
 // Apply quick price range
-const applyQuickPrice = (range: { min: number; max: number | null }) => {
+const applyQuickPrice = (range: { min: number, max: number | null }) => {
   priceMin.value = range.min
   priceMax.value = range.max
   emitFilters()
@@ -273,8 +311,7 @@ const applyQuickPrice = (range: { min: number; max: number | null }) => {
 const clearFilter = (key: string) => {
   if (key === 'search') searchQuery.value = ''
   else if (key === 'category') selectedCategory.value = ''
-  else if (key === 'price') { priceMin.value = null; priceMax.value = null }
-  else if (key === 'stock') inStockOnly.value = false
+  else if (key === 'price') { priceMin.value = null; priceMax.value = null } else if (key === 'stock') inStockOnly.value = false
   else if (key === 'sale') onSaleOnly.value = false
   else if (key === 'rating') minRating.value = null
   else if (key.startsWith('filter-')) {
@@ -304,6 +341,9 @@ const clearAllFilters = () => {
 
 // Emit filter changes
 const emitFilters = () => {
+  if (isExternalSync.value) {
+    return
+  }
   emit('update:filters', {
     search: searchQuery.value || undefined,
     category: selectedCategory.value || undefined,
@@ -318,6 +358,39 @@ const emitFilters = () => {
   })
 }
 
+const syncExternalFilters = (payload: Partial<FilterEmitPayload>) => {
+  isExternalSync.value = true
+
+  if (Object.prototype.hasOwnProperty.call(payload, 'search')) {
+    searchQuery.value = payload.search ?? ''
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'category')) {
+    selectedCategory.value = payload.category ?? ''
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'min_price')) {
+    priceMin.value = payload.min_price ?? null
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'max_price')) {
+    priceMax.value = payload.max_price ?? null
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'in_stock')) {
+    inStockOnly.value = Boolean(payload.in_stock)
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'on_sale')) {
+    onSaleOnly.value = Boolean(payload.on_sale)
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'min_rating')) {
+    minRating.value = payload.min_rating ?? null
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'filters')) {
+    selectedFilters.value = cloneFilterMap(payload.filters ?? {})
+  }
+
+  nextTick(() => {
+    isExternalSync.value = false
+  })
+}
+
 // Watch and emit on changes (debounced)
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 watch([searchQuery, priceMin, priceMax, inStockOnly, onSaleOnly, minRating], () => {
@@ -328,17 +401,32 @@ watch([searchQuery, priceMin, priceMax, inStockOnly, onSaleOnly, minRating], () 
 })
 
 // Expose mobile drawer toggle
-defineExpose({ isMobileFilterOpen, activeFilterCount })
+defineExpose({
+  isMobileFilterOpen,
+  activeFilterCount,
+  openMobileFilters,
+  closeMobileFilters,
+  syncExternalFilters
+})
 </script>
 
 <template>
   <!-- Mobile Filter Drawer -->
-  <USlideover v-model:open="isMobileFilterOpen" side="left" class="lg:hidden">
+  <USlideover
+    v-model:open="isMobileFilterOpen"
+    side="left"
+    class="lg:hidden"
+  >
     <template #header>
       <div class="flex items-center justify-between w-full">
-        <div class="flex items-center gap-2">
-          <h3 class="text-lg font-bold">Filters</h3>
-          <span v-if="activeFilterCount > 0" class="px-2 py-0.5 text-xs bg-primary-500 text-white rounded-full">
+        <div class="flex items-center w-full gap-2">
+          <h3 class="text-lg font-bold">
+            Filters
+          </h3>
+          <span
+            v-if="activeFilterCount > 0"
+            class="px-2 py-0.5 text-xs bg-primary-500 text-white rounded-full"
+          >
             {{ activeFilterCount }}
           </span>
         </div>
@@ -356,21 +444,33 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
 
     <div class="p-3 space-y-1 overflow-y-auto">
       <!-- Applied Filters Chips -->
-      <div v-if="appliedFilters.length" class="flex flex-wrap gap-1.5 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700">
+      <div
+        v-if="appliedFilters.length"
+        class="flex flex-wrap gap-1.5 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700"
+      >
         <span
           v-for="chip in appliedFilters"
           :key="chip.key"
-          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-400/20 to-emerald-500/20 backdrop-blur-sm ring-1 ring-emerald-200/50 shadow-sm text-emerald-700 dark:text-emerald-300 border border-emerald-200/50"
         >
           {{ chip.label }}
-          <button @click="clearFilter(chip.key)" class="ml-0.5 hover:text-red-500">
-            <UIcon name="i-lucide-x" class="w-3 h-3" />
+          <button
+            class="ml-0.5 hover:text-red-500"
+            @click="clearFilter(chip.key)"
+          >
+            <UIcon
+              name="i-lucide-x"
+              class="w-3 h-3"
+            />
           </button>
         </span>
       </div>
 
       <!-- Search (Always visible) -->
-      <div v-if="filterConfig.showSearch" class="pb-2">
+      <div
+        v-if="filterConfig.showSearch"
+        class="pb-2"
+      >
         <UInput
           v-model="searchQuery"
           placeholder="Search products..."
@@ -380,7 +480,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
       </div>
 
       <!-- Categories (Collapsible) -->
-      <div v-if="filterConfig.showCategories && categories.length" class="border-b border-slate-200 dark:border-slate-700">
+      <div
+        v-if="filterConfig.showCategories && categories.length"
+        class="border-b border-slate-200 dark:border-slate-700"
+      >
         <button
           class="w-full flex items-center justify-between py-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
           @click="toggleSection('categories')"
@@ -391,7 +494,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
             class="w-4 h-4 text-slate-400"
           />
         </button>
-        <div v-show="isSectionExpanded('categories')" class="pb-3">
+        <div
+          v-show="isSectionExpanded('categories')"
+          class="pb-3"
+        >
           <div class="max-h-48 overflow-y-auto space-y-0.5 scrollbar-thin">
             <!-- All Categories Option -->
             <label class="flex items-center gap-2 px-2 py-1 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -405,7 +511,11 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               <span class="text-xs font-medium text-slate-700 dark:text-slate-300">All</span>
             </label>
             <!-- Parent Categories -->
-            <div v-for="cat in categories" :key="cat.slug" class="border-l border-slate-200 dark:border-slate-700 ml-1">
+            <div
+              v-for="cat in categories"
+              :key="cat.slug"
+              class="border-l border-slate-200 dark:border-slate-700 ml-1"
+            >
               <div class="flex items-center">
                 <label class="flex-1 flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
                   <input
@@ -430,8 +540,14 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
                 </button>
               </div>
               <!-- Children -->
-              <div v-if="expandedCategories.has(cat.slug) && cat.children?.length" class="ml-3 space-y-0.5">
-                <div v-for="child in cat.children" :key="child.slug">
+              <div
+                v-if="expandedCategories.has(cat.slug) && cat.children?.length"
+                class="ml-3 space-y-0.5"
+              >
+                <div
+                  v-for="child in cat.children"
+                  :key="child.slug"
+                >
                   <label class="flex items-center gap-1.5 px-2 py-0.5 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
                     <input
                       type="radio"
@@ -450,7 +566,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
       </div>
 
       <!-- Price Range (Collapsible) -->
-      <div v-if="filterConfig.showPrice" class="border-b border-slate-200 dark:border-slate-700">
+      <div
+        v-if="filterConfig.showPrice"
+        class="border-b border-slate-200 dark:border-slate-700"
+      >
         <button
           class="w-full flex items-center justify-between py-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
           @click="toggleSection('price')"
@@ -461,11 +580,21 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
             class="w-4 h-4 text-slate-400"
           />
         </button>
-        <div v-show="isSectionExpanded('price')" class="pb-3">
-          <div class="flex gap-2 mb-2">
-            <UInput v-model.number="priceMin" type="number" placeholder="Min" :min="0" size="xs" />
-            <span class="self-center text-slate-400 text-xs">-</span>
-            <UInput v-model.number="priceMax" type="number" placeholder="Max" :min="0" size="xs" />
+        <div
+          v-show="isSectionExpanded('price')"
+          class="pb-3"
+        >
+          <USlider
+            v-model="priceRangeValue"
+            :min="props.priceRange?.min ?? 0"
+            :max="props.priceRange?.max ?? 10000"
+            range
+            thumbs-size="lg"
+            color="primary"
+            class="h-2 [&_track]:bg-gradient-to-r [&_track]:from-slate-200 [&_track]:to-slate-300 [&_thumb]:bg-gradient-to-r [&_thumb]:from-primary-500 [&_thumb]:to-primary-600 [&_thumb]:shadow-lg [&_thumb]:ring-4 [&_thumb]:ring-white/50 backdrop-blur-sm"
+          />
+          <div class="flex justify-between text-xs text-slate-500 mt-2 px-1">
+            ₹{{ priceMin || (props.priceRange?.min ?? 0) }} - ₹{{ priceMax || (props.priceRange?.max ?? 10000) }}
           </div>
           <div class="flex flex-wrap gap-1">
             <button
@@ -486,7 +615,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
       </div>
 
       <!-- Availability (Collapsible) -->
-      <div v-if="filterConfig.showAvailability" class="border-b border-slate-200 dark:border-slate-700">
+      <div
+        v-if="filterConfig.showAvailability"
+        class="border-b border-slate-200 dark:border-slate-700"
+      >
         <button
           class="w-full flex items-center justify-between py-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
           @click="toggleSection('availability')"
@@ -497,20 +629,34 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
             class="w-4 h-4 text-slate-400"
           />
         </button>
-        <div v-show="isSectionExpanded('availability')" class="pb-3 space-y-1.5">
+        <div
+          v-show="isSectionExpanded('availability')"
+          class="pb-3 space-y-1.5"
+        >
           <label class="flex items-center gap-2 cursor-pointer text-xs">
-            <input v-model="inStockOnly" type="checkbox" class="w-3.5 h-3.5 text-primary-600 rounded">
+            <input
+              v-model="inStockOnly"
+              type="checkbox"
+              class="w-3.5 h-3.5 text-primary-600 rounded"
+            >
             <span class="text-slate-700 dark:text-slate-300">In Stock Only</span>
           </label>
           <label class="flex items-center gap-2 cursor-pointer text-xs">
-            <input v-model="onSaleOnly" type="checkbox" class="w-3.5 h-3.5 text-primary-600 rounded">
+            <input
+              v-model="onSaleOnly"
+              type="checkbox"
+              class="w-3.5 h-3.5 text-primary-600 rounded"
+            >
             <span class="text-slate-700 dark:text-slate-300">On Sale</span>
           </label>
         </div>
       </div>
 
       <!-- Rating (Collapsible) -->
-      <div v-if="filterConfig.showRating" class="border-b border-slate-200 dark:border-slate-700">
+      <div
+        v-if="filterConfig.showRating"
+        class="border-b border-slate-200 dark:border-slate-700"
+      >
         <button
           class="w-full flex items-center justify-between py-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
           @click="toggleSection('rating')"
@@ -521,7 +667,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
             class="w-4 h-4 text-slate-400"
           />
         </button>
-        <div v-show="isSectionExpanded('rating')" class="pb-3 space-y-0.5">
+        <div
+          v-show="isSectionExpanded('rating')"
+          class="pb-3 space-y-0.5"
+        >
           <button
             v-for="opt in ratingOptions"
             :key="opt.value"
@@ -533,7 +682,12 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
             ]"
             @click="minRating = minRating === opt.value ? null : opt.value"
           >
-            <UIcon v-for="i in opt.value" :key="i" name="i-lucide-star" class="w-3 h-3 text-amber-400 fill-amber-400" />
+            <UIcon
+              v-for="i in opt.value"
+              :key="i"
+              name="i-lucide-star"
+              class="w-3 h-3 text-amber-400 fill-amber-400"
+            />
             <span class="text-[10px]">& Up</span>
           </button>
         </div>
@@ -541,14 +695,21 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
 
       <!-- Dynamic Filter Groups (Collapsible) -->
       <template v-if="filterConfig.showDynamicFilters">
-        <div v-for="group in filterGroups" :key="group.name" class="border-b border-slate-200 dark:border-slate-700">
+        <div
+          v-for="group in filterGroups"
+          :key="group.name"
+          class="border-b border-slate-200 dark:border-slate-700"
+        >
           <button
             class="w-full flex items-center justify-between py-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
             @click="toggleSection(`filter-${group.name}`)"
           >
             <span>
               {{ group.name }}
-              <span v-if="selectedFilters[group.name]?.length" class="ml-1 text-[10px] text-primary-500">
+              <span
+                v-if="selectedFilters[group.name]?.length"
+                class="ml-1 text-[10px] text-primary-500"
+              >
                 ({{ selectedFilters[group.name].length }})
               </span>
             </span>
@@ -557,9 +718,15 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               class="w-4 h-4 text-slate-400"
             />
           </button>
-          <div v-show="isSectionExpanded(`filter-${group.name}`)" class="pb-3">
+          <div
+            v-show="isSectionExpanded(`filter-${group.name}`)"
+            class="pb-3"
+          >
             <!-- Color Swatch -->
-            <div v-if="isColorFilter(group.name)" class="flex flex-wrap gap-1.5">
+            <div
+              v-if="isColorFilter(group.name)"
+              class="flex flex-wrap gap-1.5"
+            >
               <button
                 v-for="option in group.options"
                 :key="option.id"
@@ -575,11 +742,14 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               />
             </div>
             <!-- Checkbox -->
-            <div v-else class="space-y-0.5 max-h-28 overflow-y-auto scrollbar-thin">
+            <div
+              v-else
+              class="space-y-0.5 max-h-28 overflow-y-auto scrollbar-thin"
+            >
               <label
                 v-for="option in group.options"
                 :key="option.id"
-                class="flex items-center gap-1.5 cursor-pointer text-[11px] px-1 py-0.5 rounded hover:bg-slate-50 dark:hover:bg-slate-800"
+                class="flex items-center gap-2 cursor-pointer text-xs px-2 py-1 rounded-md hover:shadow-md hover:bg-slate-50/50 backdrop-blur-sm text-slate-700 dark:text-slate-300 transition-all"
               >
                 <input
                   type="checkbox"
@@ -599,8 +769,20 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
     <!-- Apply Button (Mobile) -->
     <template #footer>
       <div class="flex gap-2 p-3 border-t border-slate-200 dark:border-slate-700">
-        <UButton variant="outline" size="sm" class="flex-1" @click="clearAllFilters">Clear</UButton>
-        <UButton color="primary" size="sm" class="flex-1" @click="isMobileFilterOpen = false">
+        <UButton
+          variant="outline"
+          size="sm"
+          class="flex-1"
+          @click="clearAllFilters"
+        >
+          Clear
+        </UButton>
+        <UButton
+          color="primary"
+          size="sm"
+          class="flex-1"
+          @click="isMobileFilterOpen = false"
+        >
           Apply ({{ activeFilterCount }})
         </UButton>
       </div>
@@ -613,9 +795,15 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
       <!-- Header -->
       <div class="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700">
         <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-          <UIcon name="i-lucide-sliders-horizontal" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-sliders-horizontal"
+            class="w-4 h-4"
+          />
           Filters
-          <span v-if="activeFilterCount > 0" class="px-1.5 py-0.5 text-[10px] bg-primary-500 text-white rounded-full">
+          <span
+            v-if="activeFilterCount > 0"
+            class="px-1.5 py-0.5 text-[10px] bg-primary-500 text-white rounded-full"
+          >
             {{ activeFilterCount }}
           </span>
         </h3>
@@ -629,22 +817,34 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
       </div>
 
       <!-- Applied Filters Chips -->
-      <div v-if="appliedFilters.length" class="flex flex-wrap gap-1 p-2 border-b border-slate-200 dark:border-slate-700">
+      <div
+        v-if="appliedFilters.length"
+        class="flex flex-wrap gap-1 p-2 border-b border-slate-200 dark:border-slate-700"
+      >
         <span
           v-for="chip in appliedFilters"
           :key="chip.key"
-          class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+          class="inline-flex items-center gap-0.5 px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-400/20 to-emerald-500/20 backdrop-blur-sm ring-1 ring-emerald-200/50 shadow-sm text-emerald-700 dark:text-emerald-300 border border-emerald-200/50"
         >
           {{ chip.label }}
-          <button @click="clearFilter(chip.key)" class="hover:text-red-500">
-            <UIcon name="i-lucide-x" class="w-2.5 h-2.5" />
+          <button
+            class="hover:text-red-500"
+            @click="clearFilter(chip.key)"
+          >
+            <UIcon
+              name="i-lucide-x"
+              class="w-2.5 h-2.5"
+            />
           </button>
         </span>
       </div>
 
       <div class="p-2 space-y-0">
         <!-- Search -->
-        <div v-if="filterConfig.showSearch" class="pb-2">
+        <div
+          v-if="filterConfig.showSearch"
+          class="pb-2"
+        >
           <UInput
             v-model="searchQuery"
             placeholder="Search..."
@@ -654,7 +854,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
         </div>
 
         <!-- Categories (Collapsible) -->
-        <div v-if="filterConfig.showCategories && categories.length" class="border-t border-slate-200 dark:border-slate-700">
+        <div
+          v-if="filterConfig.showCategories && categories.length"
+          class="border-t border-slate-200 dark:border-slate-700"
+        >
           <button
             class="w-full flex items-center justify-between py-2 text-xs font-semibold text-slate-700 dark:text-slate-300"
             @click="toggleSection('categories')"
@@ -665,7 +868,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               class="w-3.5 h-3.5 text-slate-400"
             />
           </button>
-          <div v-show="isSectionExpanded('categories')" class="pb-2">
+          <div
+            v-show="isSectionExpanded('categories')"
+            class="pb-2"
+          >
             <div class="max-h-40 overflow-y-auto space-y-0.5 scrollbar-thin">
               <!-- All Categories Option -->
               <label
@@ -686,7 +892,11 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
                 <span>All Categories</span>
               </label>
               <!-- Parent Categories -->
-              <div v-for="cat in categories" :key="cat.slug" class="border-l border-slate-200 dark:border-slate-700 ml-1">
+              <div
+                v-for="cat in categories"
+                :key="cat.slug"
+                class="border-l border-slate-200 dark:border-slate-700 ml-1"
+              >
                 <div class="flex items-center">
                   <label
                     :class="[
@@ -718,7 +928,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
                   </button>
                 </div>
                 <!-- Children -->
-                <div v-if="expandedCategories.has(cat.slug) && cat.children?.length" class="ml-2 space-y-0.5">
+                <div
+                  v-if="expandedCategories.has(cat.slug) && cat.children?.length"
+                  class="ml-2 space-y-0.5"
+                >
                   <label
                     v-for="child in cat.children"
                     :key="child.slug"
@@ -745,7 +958,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
         </div>
 
         <!-- Price Range (Collapsible) -->
-        <div v-if="filterConfig.showPrice" class="border-t border-slate-200 dark:border-slate-700">
+        <div
+          v-if="filterConfig.showPrice"
+          class="border-t border-slate-200 dark:border-slate-700"
+        >
           <button
             class="w-full flex items-center justify-between py-2 text-xs font-semibold text-slate-700 dark:text-slate-300"
             @click="toggleSection('price')"
@@ -756,11 +972,21 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               class="w-3.5 h-3.5 text-slate-400"
             />
           </button>
-          <div v-show="isSectionExpanded('price')" class="pb-2">
-            <div class="flex gap-1 mb-1.5">
-              <UInput v-model.number="priceMin" type="number" placeholder="Min" :min="0" size="xs" class="text-[10px]" />
-              <span class="self-center text-slate-400 text-[10px]">-</span>
-              <UInput v-model.number="priceMax" type="number" placeholder="Max" :min="0" size="xs" class="text-[10px]" />
+          <div
+            v-show="isSectionExpanded('price')"
+            class="pb-2"
+          >
+            <USlider
+              v-model="priceRangeValue"
+              :min="props.priceRange?.min ?? 0"
+              :max="props.priceRange?.max ?? 10000"
+              range
+              thumbs-size="lg"
+              color="primary"
+              class="h-2 [&_track]:bg-gradient-to-r [&_track]:from-slate-200 [&_track]:to-slate-300 [&_thumb]:bg-gradient-to-r [&_thumb]:from-primary-500 [&_thumb]:to-primary-600 [&_thumb]:shadow-lg [&_thumb]:ring-4 [&_thumb]:ring-white/50"
+            />
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1 px-1">
+              ₹{{ priceMin || (props.priceRange?.min ?? 0) }} - ₹{{ priceMax || (props.priceRange?.max ?? 10000) }}
             </div>
             <div class="flex flex-wrap gap-1">
               <button
@@ -781,7 +1007,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
         </div>
 
         <!-- Availability (Collapsible) -->
-        <div v-if="filterConfig.showAvailability" class="border-t border-slate-200 dark:border-slate-700">
+        <div
+          v-if="filterConfig.showAvailability"
+          class="border-t border-slate-200 dark:border-slate-700"
+        >
           <button
             class="w-full flex items-center justify-between py-2 text-xs font-semibold text-slate-700 dark:text-slate-300"
             @click="toggleSection('availability')"
@@ -792,20 +1021,34 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               class="w-3.5 h-3.5 text-slate-400"
             />
           </button>
-          <div v-show="isSectionExpanded('availability')" class="pb-2 space-y-1">
+          <div
+            v-show="isSectionExpanded('availability')"
+            class="pb-2 space-y-1"
+          >
             <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
-              <input v-model="inStockOnly" type="checkbox" class="w-3 h-3 text-primary-600 rounded">
+              <input
+                v-model="inStockOnly"
+                type="checkbox"
+                class="w-3 h-3 text-primary-600 rounded"
+              >
               <span class="text-slate-700 dark:text-slate-300">In Stock</span>
             </label>
             <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
-              <input v-model="onSaleOnly" type="checkbox" class="w-3 h-3 text-primary-600 rounded">
+              <input
+                v-model="onSaleOnly"
+                type="checkbox"
+                class="w-3 h-3 text-primary-600 rounded"
+              >
               <span class="text-slate-700 dark:text-slate-300">On Sale</span>
             </label>
           </div>
         </div>
 
         <!-- Rating (Collapsible) -->
-        <div v-if="filterConfig.showRating" class="border-t border-slate-200 dark:border-slate-700">
+        <div
+          v-if="filterConfig.showRating"
+          class="border-t border-slate-200 dark:border-slate-700"
+        >
           <button
             class="w-full flex items-center justify-between py-2 text-xs font-semibold text-slate-700 dark:text-slate-300"
             @click="toggleSection('rating')"
@@ -816,7 +1059,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               class="w-3.5 h-3.5 text-slate-400"
             />
           </button>
-          <div v-show="isSectionExpanded('rating')" class="pb-2 space-y-0.5">
+          <div
+            v-show="isSectionExpanded('rating')"
+            class="pb-2 space-y-0.5"
+          >
             <button
               v-for="opt in ratingOptions"
               :key="opt.value"
@@ -828,7 +1074,12 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
               ]"
               @click="minRating = minRating === opt.value ? null : opt.value"
             >
-              <UIcon v-for="i in opt.value" :key="i" name="i-lucide-star" class="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+              <UIcon
+                v-for="i in opt.value"
+                :key="i"
+                name="i-lucide-star"
+                class="w-2.5 h-2.5 text-amber-400 fill-amber-400"
+              />
               <span class="text-[9px]">& Up</span>
             </button>
           </div>
@@ -836,14 +1087,21 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
 
         <!-- Dynamic Filter Groups (Collapsible) -->
         <template v-if="filterConfig.showDynamicFilters">
-          <div v-for="group in filterGroups" :key="group.name" class="border-t border-slate-200 dark:border-slate-700">
+          <div
+            v-for="group in filterGroups"
+            :key="group.name"
+            class="border-t border-slate-200 dark:border-slate-700"
+          >
             <button
               class="w-full flex items-center justify-between py-2 text-xs font-semibold text-slate-700 dark:text-slate-300"
               @click="toggleSection(`filter-${group.name}`)"
             >
               <span>
                 {{ group.name }}
-                <span v-if="selectedFilters[group.name]?.length" class="ml-0.5 text-[9px] text-primary-500">
+                <span
+                  v-if="selectedFilters[group.name]?.length"
+                  class="ml-0.5 text-[9px] text-primary-500"
+                >
                   ({{ selectedFilters[group.name].length }})
                 </span>
               </span>
@@ -852,9 +1110,15 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
                 class="w-3.5 h-3.5 text-slate-400"
               />
             </button>
-            <div v-show="isSectionExpanded(`filter-${group.name}`)" class="pb-2">
+            <div
+              v-show="isSectionExpanded(`filter-${group.name}`)"
+              class="pb-2"
+            >
               <!-- Color Swatch -->
-              <div v-if="isColorFilter(group.name)" class="flex flex-wrap gap-1">
+              <div
+                v-if="isColorFilter(group.name)"
+                class="flex flex-wrap gap-1"
+              >
                 <button
                   v-for="option in group.options"
                   :key="option.id"
@@ -870,7 +1134,10 @@ defineExpose({ isMobileFilterOpen, activeFilterCount })
                 />
               </div>
               <!-- Checkbox -->
-              <div v-else class="space-y-0.5 max-h-24 overflow-y-auto scrollbar-thin">
+              <div
+                v-else
+                class="space-y-0.5 max-h-24 overflow-y-auto scrollbar-thin"
+              >
                 <label
                   v-for="option in group.options"
                   :key="option.id"

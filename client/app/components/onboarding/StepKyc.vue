@@ -4,7 +4,10 @@
       <!-- Header -->
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <UIcon name="i-lucide-shield-check" class="w-8 h-8 text-purple-600 dark:text-purple-400" />
+          <UIcon
+            name="i-lucide-shield-check"
+            class="w-8 h-8 text-purple-600 dark:text-purple-400"
+          />
         </div>
         <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
           KYC Verification
@@ -17,7 +20,10 @@
       <!-- Skip Notice -->
       <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
         <div class="flex items-start gap-3">
-          <UIcon name="i-lucide-info" class="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+          <UIcon
+            name="i-lucide-info"
+            class="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
+          />
           <div>
             <p class="text-sm text-blue-800 dark:text-blue-200">
               <strong>This step is optional.</strong> You can complete it later from your profile settings.
@@ -38,15 +44,25 @@
             :key="benefit.title"
             class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
           >
-            <UIcon :name="benefit.icon" class="w-5 h-5 text-primary-500 shrink-0" />
+            <UIcon
+              :name="benefit.icon"
+              class="w-5 h-5 text-primary-500 shrink-0"
+            />
             <span class="text-sm text-gray-700 dark:text-gray-300">{{ benefit.title }}</span>
           </div>
         </div>
       </div>
 
       <!-- Document Type Selection -->
-      <div v-if="!skipping" class="space-y-5">
-        <UFormField label="Select Document Type" name="document_type" required>
+      <div
+        v-if="!skipping"
+        class="space-y-5"
+      >
+        <UFormField
+          label="Select Document Type"
+          name="document_type"
+          required
+        >
           <USelect
             v-model="formState.document_type"
             :items="documentTypes"
@@ -74,7 +90,10 @@
         </UFormField>
 
         <!-- Document Upload -->
-        <div v-if="formState.document_type" class="space-y-4">
+        <div
+          v-if="formState.document_type"
+          class="space-y-4"
+        >
           <!-- Front Side -->
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -93,8 +112,11 @@
                 class="hidden"
                 @change="handleFileChange($event, 'front')"
               >
-              
-              <div v-if="frontPreview" class="relative">
+
+              <div
+                v-if="frontPreview"
+                class="relative"
+              >
                 <img
                   :src="frontPreview"
                   alt="Front preview"
@@ -105,12 +127,18 @@
                   class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center"
                   @click.stop="removeFile('front')"
                 >
-                  <UIcon name="i-lucide-x" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-x"
+                    class="w-4 h-4"
+                  />
                 </button>
               </div>
-              
+
               <div v-else>
-                <UIcon name="i-lucide-upload" class="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                <UIcon
+                  name="i-lucide-upload"
+                  class="w-10 h-10 text-gray-400 mx-auto mb-2"
+                />
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   Click or drag to upload front side
                 </p>
@@ -139,8 +167,11 @@
                 class="hidden"
                 @change="handleFileChange($event, 'back')"
               >
-              
-              <div v-if="backPreview" class="relative">
+
+              <div
+                v-if="backPreview"
+                class="relative"
+              >
                 <img
                   :src="backPreview"
                   alt="Back preview"
@@ -151,12 +182,18 @@
                   class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center"
                   @click.stop="removeFile('back')"
                 >
-                  <UIcon name="i-lucide-x" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-x"
+                    class="w-4 h-4"
+                  />
                 </button>
               </div>
-              
+
               <div v-else>
-                <UIcon name="i-lucide-upload" class="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                <UIcon
+                  name="i-lucide-upload"
+                  class="w-10 h-10 text-gray-400 mx-auto mb-2"
+                />
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   Click or drag to upload back side
                 </p>
@@ -170,8 +207,14 @@
       </div>
 
       <!-- Skip Confirmation -->
-      <div v-else class="text-center py-8">
-        <UIcon name="i-lucide-skip-forward" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
+      <div
+        v-else
+        class="text-center py-8"
+      >
+        <UIcon
+          name="i-lucide-skip-forward"
+          class="w-16 h-16 text-gray-400 mx-auto mb-4"
+        />
         <p class="text-gray-600 dark:text-gray-400">
           You've chosen to skip KYC for now. You can complete it anytime from your profile.
         </p>
@@ -255,12 +298,12 @@ const requiresBackSide = computed(() => {
 // Validation
 const isValid = computed(() => {
   if (skipping.value || formState.skipped) return true
-  
+
   if (!formState.document_type) return false
   if (!formState.document_number || formState.document_number.length < 4) return false
   if (!formState.front_file) return false
   if (requiresBackSide.value && !formState.back_file) return false
-  
+
   return true
 })
 

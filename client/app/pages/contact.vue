@@ -65,7 +65,7 @@ async function submitUserForm() {
   userLoading.value = true
 
   try {
-    const response = await useSanctumFetch<{ success: boolean; message: string }>(`${config.public.apiBase}/api/contact/user`, {
+    const response = await useSanctumFetch<{ success: boolean, message: string }>(`${config.public.apiBase}/api/contact/user`, {
       method: 'POST',
       body: userForm.value
     })
@@ -86,8 +86,7 @@ async function submitUserForm() {
         message: ''
       }
     }
-  }
-  catch (error: any) {
+  } catch (error: any) {
     // Handle validation errors
     if (error?.data?.errors) {
       userErrors.value = Object.fromEntries(
@@ -100,8 +99,7 @@ async function submitUserForm() {
       description: error?.data?.message || 'Could not send message. Please try again.',
       color: 'error'
     })
-  }
-  finally {
+  } finally {
     userLoading.value = false
   }
 }
@@ -112,7 +110,7 @@ async function submitBusinessForm() {
   businessLoading.value = true
 
   try {
-    const response = await useSanctumFetch<{ success: boolean; message: string }>(`${config.public.apiBase}/api/contact/business`, {
+    const response = await useSanctumFetch<{ success: boolean, message: string }>(`${config.public.apiBase}/api/contact/business`, {
       method: 'POST',
       body: businessForm.value
     })
@@ -135,8 +133,7 @@ async function submitBusinessForm() {
         message: ''
       }
     }
-  }
-  catch (error: any) {
+  } catch (error: any) {
     // Handle validation errors
     if (error?.data?.errors) {
       businessErrors.value = Object.fromEntries(
@@ -149,8 +146,7 @@ async function submitBusinessForm() {
       description: error?.data?.message || 'Could not send business inquiry. Please try again.',
       color: 'error'
     })
-  }
-  finally {
+  } finally {
     businessLoading.value = false
   }
 }
@@ -168,7 +164,10 @@ useSeoMeta({
       <UContainer>
         <div class="text-center text-white">
           <div class="policy-badge inline-flex items-center px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
-            <UIcon name="i-lucide-mail" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-mail"
+              class="w-4 h-4 mr-2"
+            />
             <span>Get In Touch</span>
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight">
@@ -186,31 +185,51 @@ useSeoMeta({
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-5xl mx-auto">
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-mail" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-mail"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Email</h4>
-          <p class="text-xs">24hr Response</p>
+          <p class="text-xs">
+            24hr Response
+          </p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-phone" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-phone"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Phone</h4>
-          <p class="text-xs">9 AM - 6 PM IST</p>
+          <p class="text-xs">
+            9 AM - 6 PM IST
+          </p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-map-pin" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-map-pin"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Office</h4>
-          <p class="text-xs">Visit Us</p>
+          <p class="text-xs">
+            Visit Us
+          </p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-headphones" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-headphones"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Support</h4>
-          <p class="text-xs">24/7 Available</p>
+          <p class="text-xs">
+            24/7 Available
+          </p>
         </div>
       </div>
 

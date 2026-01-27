@@ -171,7 +171,10 @@
                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'"
               @click="activeMode = 'mobile'"
             >
-              <UIcon name="i-lucide-smartphone" class="w-4 h-4 inline mr-1" />
+              <UIcon
+                name="i-lucide-smartphone"
+                class="w-4 h-4 inline mr-1"
+              />
               Mobile
             </button>
             <button
@@ -182,7 +185,10 @@
                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'"
               @click="activeMode = 'email'"
             >
-              <UIcon name="i-lucide-mail" class="w-4 h-4 inline mr-1" />
+              <UIcon
+                name="i-lucide-mail"
+                class="w-4 h-4 inline mr-1"
+              />
               Email
             </button>
           </div>

@@ -23,7 +23,7 @@ const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
 const VALID_STATUS = [200, 404, 500]
 
 // Helper function to login
-async function login(email: string, password: string): Promise<{ ok: boolean; token?: string }> {
+async function login(email: string, password: string): Promise<{ ok: boolean, token?: string }> {
   const response = await fetch(`${apiBase}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -41,8 +41,8 @@ async function login(email: string, password: string): Promise<{ ok: boolean; to
 async function getUser(token: string): Promise<any> {
   const response = await fetch(`${apiBase}/api/user`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json'
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
     }
   })
   const json = await response.json()
@@ -92,8 +92,8 @@ describe('Regular User Complete Flow', () => {
     it('should get onboarding status', async () => {
       const response = await fetch(`${apiBase}/api/onboarding/status`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -105,8 +105,8 @@ describe('Regular User Complete Flow', () => {
     it('should view wallet info', async () => {
       const response = await fetch(`${apiBase}/api/wallet`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -119,8 +119,8 @@ describe('Regular User Complete Flow', () => {
     it('should view addresses', async () => {
       const response = await fetch(`${apiBase}/api/addresses`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -132,8 +132,8 @@ describe('Regular User Complete Flow', () => {
     it('should view notifications', async () => {
       const response = await fetch(`${apiBase}/api/notifications`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -183,8 +183,8 @@ describe('Career/Job Flow (Guest & Authenticated)', () => {
     it('should view my applications', async () => {
       const response = await fetch(`${apiBase}/api/my-applications`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -200,8 +200,8 @@ describe('Career/Job Flow (Guest & Authenticated)', () => {
         const slug = listData.data[0].slug
         const response = await fetch(`${apiBase}/api/careers/${slug}/check-application`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(VALID_STATUS).toContain(response.status)

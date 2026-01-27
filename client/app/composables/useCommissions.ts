@@ -29,7 +29,7 @@ export interface Commission {
   net_amount: number
   net_amount_formatted: string
   description: string | null
-  from_user: { uuid: string; name: string } | null
+  from_user: { uuid: string, name: string } | null
   commission_date: string | null
   period_key: string | null
   paid_at: string | null
@@ -39,7 +39,7 @@ export interface Commission {
   base_amount_formatted?: string
   metadata?: Record<string, unknown>
   approved_at?: string
-  transaction?: { uuid: string; reference_number: string }
+  transaction?: { uuid: string, reference_number: string }
 }
 
 export interface CommissionByType {
@@ -63,7 +63,7 @@ export const useCommissions = () => {
 
   const summary: Ref<CommissionSummary | null> = ref(null)
   const commissions: Ref<Commission[]> = ref([])
-  const commissionsMeta: Ref<{ current_page: number; last_page: number; per_page: number; total: number } | null> = ref(null)
+  const commissionsMeta: Ref<{ current_page: number, last_page: number, per_page: number, total: number } | null> = ref(null)
   const byType: Ref<CommissionByType[]> = ref([])
   const monthly: Ref<MonthlyEarning[]> = ref([])
   const isLoading = ref(false)
@@ -73,19 +73,17 @@ export const useCommissions = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: CommissionSummary }>(
+      const response = await useSanctumFetch<{ success: boolean, data: CommissionSummary }>(
         `${config.public.apiBase}/api/commissions/summary`
       )
       if (response?.success) {
         summary.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch summary'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -110,19 +108,17 @@ export const useCommissions = () => {
       const response = await useSanctumFetch<{
         success: boolean
         data: Commission[]
-        meta: { current_page: number; last_page: number; per_page: number; total: number }
+        meta: { current_page: number, last_page: number, per_page: number, total: number }
       }>(`${config.public.apiBase}/api/commissions?${queryParams.toString()}`)
       if (response?.success) {
         commissions.value = response.data
         commissionsMeta.value = response.meta
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch commissions'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -131,16 +127,14 @@ export const useCommissions = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: Commission }>(
+      const response = await useSanctumFetch<{ success: boolean, data: Commission }>(
         `${config.public.apiBase}/api/commissions/${uuid}`
       )
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch commission'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -152,17 +146,15 @@ export const useCommissions = () => {
       const url = period
         ? `${config.public.apiBase}/api/commissions/by-type?period=${period}`
         : `${config.public.apiBase}/api/commissions/by-type`
-      const response = await useSanctumFetch<{ success: boolean; data: CommissionByType[] }>(url)
+      const response = await useSanctumFetch<{ success: boolean, data: CommissionByType[] }>(url)
       if (response?.success) {
         byType.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch breakdown'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -171,19 +163,17 @@ export const useCommissions = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: MonthlyEarning[] }>(
+      const response = await useSanctumFetch<{ success: boolean, data: MonthlyEarning[] }>(
         `${config.public.apiBase}/api/commissions/monthly?months=${months}`
       )
       if (response?.success) {
         monthly.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch monthly'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -200,6 +190,6 @@ export const useCommissions = () => {
     fetchCommissions,
     fetchCommission,
     fetchByType,
-    fetchMonthly,
+    fetchMonthly
   }
 }

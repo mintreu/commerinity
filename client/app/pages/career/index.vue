@@ -70,9 +70,9 @@ const filteredJobs = computed(() => {
   if (!searchQuery.value) return jobs.value
   const query = searchQuery.value.toLowerCase()
   return jobs.value.filter(job =>
-    job.title.toLowerCase().includes(query) ||
-    job.role_label.toLowerCase().includes(query) ||
-    job.location.toLowerCase().includes(query)
+    job.title.toLowerCase().includes(query)
+    || job.role_label.toLowerCase().includes(query)
+    || job.location.toLowerCase().includes(query)
   )
 })
 
@@ -139,14 +139,19 @@ const companyValues = [
 
 <template>
   <div class="min-h-screen w-full bg-gradient-to-br from-slate-50 via-violet-50 to-fuchsia-50 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950">
-
     <!-- Hero Section -->
     <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       <!-- Animated Background Orbs -->
       <div class="absolute inset-0 pointer-events-none overflow-hidden">
         <div class="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-violet-400 to-purple-400 rounded-full opacity-20 blur-3xl animate-pulse" />
-        <div class="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-fuchsia-400 to-pink-400 rounded-full opacity-15 blur-3xl animate-pulse" style="animation-delay: 1s" />
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full opacity-10 blur-2xl animate-pulse" style="animation-delay: 2s" />
+        <div
+          class="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-fuchsia-400 to-pink-400 rounded-full opacity-15 blur-3xl animate-pulse"
+          style="animation-delay: 1s"
+        />
+        <div
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full opacity-10 blur-2xl animate-pulse"
+          style="animation-delay: 2s"
+        />
       </div>
 
       <!-- Hero Content -->
@@ -154,7 +159,10 @@ const companyValues = [
         <div class="space-y-8">
           <!-- Badge -->
           <div class="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border border-violet-200 dark:border-violet-800 backdrop-blur-sm">
-            <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-3 text-violet-600 dark:text-violet-400" />
+            <UIcon
+              name="i-lucide-rocket"
+              class="w-5 h-5 mr-3 text-violet-600 dark:text-violet-400"
+            />
             <span class="font-semibold text-violet-700 dark:text-violet-300">Join Our Mission</span>
           </div>
 
@@ -177,14 +185,20 @@ const companyValues = [
               class="group relative px-10 py-5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-violet-500/25 transition-all duration-300 transform hover:scale-105"
             >
               View Open Positions
-              <UIcon name="i-lucide-arrow-down" class="inline w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform" />
+              <UIcon
+                name="i-lucide-arrow-down"
+                class="inline w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform"
+              />
             </a>
             <NuxtLink
               v-if="isLoggedIn"
               to="/career/applications"
               class="group px-10 py-5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-lg rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-600 transition-all duration-300 backdrop-blur-sm"
             >
-              <UIcon name="i-lucide-file-text" class="inline w-5 h-5 mr-3" />
+              <UIcon
+                name="i-lucide-file-text"
+                class="inline w-5 h-5 mr-3"
+              />
               My Applications
             </NuxtLink>
           </div>
@@ -199,7 +213,10 @@ const companyValues = [
               <div
                 :class="['w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center bg-gradient-to-br', highlight.color, 'transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6']"
               >
-                <UIcon :name="highlight.icon" class="w-8 h-8 text-white" />
+                <UIcon
+                  :name="highlight.icon"
+                  class="w-8 h-8 text-white"
+                />
               </div>
               <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                 {{ highlight.title }}
@@ -221,12 +238,18 @@ const companyValues = [
     </section>
 
     <!-- Job Listings Section -->
-    <section id="openings" class="py-20 px-6 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950">
+    <section
+      id="openings"
+      class="py-20 px-6 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950"
+    >
       <div class="max-w-7xl mx-auto">
         <!-- Section Header -->
         <div class="text-center mb-16">
           <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border border-violet-200 dark:border-violet-800 backdrop-blur-sm mb-6">
-            <UIcon name="i-lucide-briefcase" class="w-4 h-4 mr-2 text-violet-600 dark:text-violet-400" />
+            <UIcon
+              name="i-lucide-briefcase"
+              class="w-4 h-4 mr-2 text-violet-600 dark:text-violet-400"
+            />
             <span class="text-sm font-medium text-violet-700 dark:text-violet-300">Open Positions</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black mb-6">
@@ -249,7 +272,10 @@ const companyValues = [
                 size="xl"
                 :ui="{ base: 'pl-12' }"
               />
-              <UIcon name="i-lucide-search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <UIcon
+                name="i-lucide-search"
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
+              />
             </div>
 
             <!-- Role Filter -->
@@ -289,18 +315,32 @@ const companyValues = [
         </div>
 
         <!-- Loading State -->
-        <div v-if="status === 'pending'" class="flex justify-center py-20">
+        <div
+          v-if="status === 'pending'"
+          class="flex justify-center py-20"
+        >
           <div class="flex flex-col items-center gap-4">
-            <UIcon name="i-lucide-loader-2" class="w-12 h-12 animate-spin text-violet-600" />
-            <p class="text-slate-600 dark:text-slate-400">Loading opportunities...</p>
+            <UIcon
+              name="i-lucide-loader-2"
+              class="w-12 h-12 animate-spin text-violet-600"
+            />
+            <p class="text-slate-600 dark:text-slate-400">
+              Loading opportunities...
+            </p>
           </div>
         </div>
 
         <!-- No Jobs -->
-        <div v-else-if="!filteredJobs.length" class="text-center py-20">
+        <div
+          v-else-if="!filteredJobs.length"
+          class="text-center py-20"
+        >
           <div class="max-w-md mx-auto bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-12 border border-slate-200 dark:border-slate-700">
             <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full flex items-center justify-center">
-              <UIcon name="i-lucide-briefcase" class="w-12 h-12 text-violet-600 dark:text-violet-400" />
+              <UIcon
+                name="i-lucide-briefcase"
+                class="w-12 h-12 text-violet-600 dark:text-violet-400"
+              />
             </div>
             <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               No Open Positions
@@ -308,14 +348,20 @@ const companyValues = [
             <p class="text-slate-600 dark:text-slate-400 mb-6">
               We don't have any matching positions right now. Check back soon for new opportunities!
             </p>
-            <UButton v-if="searchQuery || selectedRole !== 'all' || selectedType !== 'all'" @click="clearFilters">
+            <UButton
+              v-if="searchQuery || selectedRole !== 'all' || selectedType !== 'all'"
+              @click="clearFilters"
+            >
               Clear Filters
             </UButton>
           </div>
         </div>
 
         <!-- Job Cards Grid -->
-        <div v-else class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          v-else
+          class="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+        >
           <NuxtLink
             v-for="job in filteredJobs"
             :key="job.uuid"
@@ -331,7 +377,12 @@ const companyValues = [
                 <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-2">
                   {{ job.title }}
                 </h3>
-                <UBadge v-if="job.is_payable" color="warning" size="sm" class="shrink-0">
+                <UBadge
+                  v-if="job.is_payable"
+                  color="warning"
+                  size="sm"
+                  class="shrink-0"
+                >
                   Paid
                 </UBadge>
               </div>
@@ -340,25 +391,37 @@ const companyValues = [
               <div class="space-y-3 mb-6">
                 <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
                   <div class="w-8 h-8 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                    <UIcon name="i-lucide-briefcase" class="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                    <UIcon
+                      name="i-lucide-briefcase"
+                      class="w-4 h-4 text-violet-600 dark:text-violet-400"
+                    />
                   </div>
                   <span>{{ job.role_label }}</span>
                 </div>
                 <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
                   <div class="w-8 h-8 rounded-lg bg-fuchsia-100 dark:bg-fuchsia-900/30 flex items-center justify-center">
-                    <UIcon name="i-lucide-clock" class="w-4 h-4 text-fuchsia-600 dark:text-fuchsia-400" />
+                    <UIcon
+                      name="i-lucide-clock"
+                      class="w-4 h-4 text-fuchsia-600 dark:text-fuchsia-400"
+                    />
                   </div>
                   <span>{{ job.employment_type_label }}</span>
                 </div>
                 <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
                   <div class="w-8 h-8 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center">
-                    <UIcon name="i-lucide-map-pin" class="w-4 h-4 text-pink-600 dark:text-pink-400" />
+                    <UIcon
+                      name="i-lucide-map-pin"
+                      class="w-4 h-4 text-pink-600 dark:text-pink-400"
+                    />
                   </div>
                   <span>{{ job.location }}</span>
                 </div>
                 <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
                   <div class="w-8 h-8 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center">
-                    <UIcon name="i-lucide-users" class="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    <UIcon
+                      name="i-lucide-users"
+                      class="w-4 h-4 text-cyan-600 dark:text-cyan-400"
+                    />
                   </div>
                   <span>{{ job.vacancy }} {{ job.vacancy === 1 ? 'vacancy' : 'vacancies' }}</span>
                 </div>
@@ -367,18 +430,30 @@ const companyValues = [
               <!-- Footer -->
               <div class="flex items-center justify-between pt-6 border-t border-slate-200 dark:border-slate-700">
                 <div class="text-sm text-slate-500 dark:text-slate-400">
-                  <UIcon name="i-lucide-calendar" class="w-4 h-4 inline mr-1" />
+                  <UIcon
+                    name="i-lucide-calendar"
+                    class="w-4 h-4 inline mr-1"
+                  />
                   Closes: {{ job.close_date_formatted }}
                 </div>
                 <div class="flex items-center gap-2 text-violet-600 dark:text-violet-400 font-semibold group-hover:gap-3 transition-all">
                   Apply
-                  <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-4 h-4"
+                  />
                 </div>
               </div>
 
               <!-- Fee Badge -->
-              <div v-if="job.is_payable" class="mt-4 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-sm font-medium text-amber-700 dark:text-amber-400">
-                <UIcon name="i-lucide-indian-rupee" class="w-4 h-4 inline mr-1" />
+              <div
+                v-if="job.is_payable"
+                class="mt-4 px-4 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-sm font-medium text-amber-700 dark:text-amber-400"
+              >
+                <UIcon
+                  name="i-lucide-indian-rupee"
+                  class="w-4 h-4 inline mr-1"
+                />
                 Application Fee: {{ job.fees_formatted }}
               </div>
             </div>
@@ -393,13 +468,19 @@ const companyValues = [
     <!-- Values Section -->
     <section class="py-20 px-6 bg-white dark:bg-slate-900 relative overflow-hidden">
       <!-- Background Pattern -->
-      <div class="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, currentColor 2px, transparent 2px); background-size: 40px 40px;" />
+      <div
+        class="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none"
+        style="background-image: radial-gradient(circle, currentColor 2px, transparent 2px); background-size: 40px 40px;"
+      />
 
       <div class="relative z-10 max-w-7xl mx-auto">
         <!-- Section Header -->
         <div class="text-center mb-16">
           <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-rose-500/10 to-orange-500/10 border border-rose-200 dark:border-rose-800 backdrop-blur-sm mb-6">
-            <UIcon name="i-lucide-heart" class="w-4 h-4 mr-2 text-rose-600 dark:text-rose-400" />
+            <UIcon
+              name="i-lucide-heart"
+              class="w-4 h-4 mr-2 text-rose-600 dark:text-rose-400"
+            />
             <span class="text-sm font-medium text-rose-700 dark:text-rose-300">Our DNA</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black mb-6">
@@ -424,7 +505,10 @@ const companyValues = [
                 `bg-${value.color}-100 dark:bg-${value.color}-900/30 text-${value.color}-600 dark:text-${value.color}-400`
               ]"
             >
-              <UIcon :name="value.icon" class="w-10 h-10" />
+              <UIcon
+                :name="value.icon"
+                class="w-10 h-10"
+              />
             </div>
             <h4 class="text-xl font-bold mb-4 text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
               {{ value.title }}
@@ -441,10 +525,22 @@ const companyValues = [
     <section class="py-24 px-6 bg-gradient-to-r from-slate-900 via-violet-900 to-fuchsia-900 text-white relative overflow-hidden">
       <!-- Animated Particles -->
       <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-pulse" style="top: 20%; left: 10%;" />
-        <div class="absolute w-1 h-1 bg-violet-300 rounded-full opacity-40 animate-pulse" style="top: 60%; left: 80%; animation-delay: 1s;" />
-        <div class="absolute w-3 h-3 bg-fuchsia-300 rounded-full opacity-20 animate-pulse" style="top: 80%; left: 20%; animation-delay: 2s;" />
-        <div class="absolute w-2 h-2 bg-pink-300 rounded-full opacity-35 animate-pulse" style="top: 40%; left: 70%; animation-delay: 3s;" />
+        <div
+          class="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-pulse"
+          style="top: 20%; left: 10%;"
+        />
+        <div
+          class="absolute w-1 h-1 bg-violet-300 rounded-full opacity-40 animate-pulse"
+          style="top: 60%; left: 80%; animation-delay: 1s;"
+        />
+        <div
+          class="absolute w-3 h-3 bg-fuchsia-300 rounded-full opacity-20 animate-pulse"
+          style="top: 80%; left: 20%; animation-delay: 2s;"
+        />
+        <div
+          class="absolute w-2 h-2 bg-pink-300 rounded-full opacity-35 animate-pulse"
+          style="top: 40%; left: 70%; animation-delay: 3s;"
+        />
       </div>
 
       <div class="relative z-10 max-w-5xl mx-auto text-center">
@@ -463,7 +559,10 @@ const companyValues = [
             class="group relative px-12 py-6 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-900 font-black text-xl rounded-2xl shadow-2xl hover:shadow-amber-500/25 transition-all duration-300 transform hover:scale-105"
           >
             Explore Opportunities
-            <UIcon name="i-lucide-rocket" class="inline w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform" />
+            <UIcon
+              name="i-lucide-rocket"
+              class="inline w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform"
+            />
           </a>
 
           <NuxtLink
@@ -471,7 +570,10 @@ const companyValues = [
             to="/auth/register"
             class="group px-12 py-6 bg-transparent border-2 border-white/30 text-white font-bold text-xl rounded-2xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
           >
-            <UIcon name="i-lucide-user-plus" class="inline w-6 h-6 mr-3" />
+            <UIcon
+              name="i-lucide-user-plus"
+              class="inline w-6 h-6 mr-3"
+            />
             Join Us
           </NuxtLink>
         </div>
@@ -479,19 +581,31 @@ const companyValues = [
         <!-- Trust Indicators -->
         <div class="flex flex-wrap justify-center items-center gap-8 opacity-70">
           <div class="flex items-center text-slate-300">
-            <UIcon name="i-lucide-shield-check" class="w-5 h-5 text-emerald-400 mr-2" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="w-5 h-5 text-emerald-400 mr-2"
+            />
             <span>Equal Opportunity</span>
           </div>
           <div class="flex items-center text-slate-300">
-            <UIcon name="i-lucide-heart-pulse" class="w-5 h-5 text-rose-400 mr-2" />
+            <UIcon
+              name="i-lucide-heart-pulse"
+              class="w-5 h-5 text-rose-400 mr-2"
+            />
             <span>Health & Wellness</span>
           </div>
           <div class="flex items-center text-slate-300">
-            <UIcon name="i-lucide-trending-up" class="w-5 h-5 text-blue-400 mr-2" />
+            <UIcon
+              name="i-lucide-trending-up"
+              class="w-5 h-5 text-blue-400 mr-2"
+            />
             <span>Career Growth</span>
           </div>
           <div class="flex items-center text-slate-300">
-            <UIcon name="i-lucide-globe" class="w-5 h-5 text-green-400 mr-2" />
+            <UIcon
+              name="i-lucide-globe"
+              class="w-5 h-5 text-green-400 mr-2"
+            />
             <span>Global Impact</span>
           </div>
         </div>

@@ -303,18 +303,18 @@ onMounted(() => {
           <div
             :class="[
               'w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm transition-transform duration-300 group-hover:scale-110',
-              address.type === 'home' ? 'bg-primary-100 dark:bg-primary-900/30' :
-              address.type === 'work' ? 'bg-success-100 dark:bg-success-900/30' :
-              'bg-slate-100 dark:bg-slate-800'
+              address.type === 'home' ? 'bg-primary-100 dark:bg-primary-900/30'
+              : address.type === 'work' ? 'bg-success-100 dark:bg-success-900/30'
+                : 'bg-slate-100 dark:bg-slate-800'
             ]"
           >
             <UIcon
               :name="getTypeIcon(address.type)"
               :class="[
                 'w-7 h-7',
-                address.type === 'home' ? 'text-primary-600 dark:text-primary-400' :
-                address.type === 'work' ? 'text-success-600 dark:text-success-400' :
-                'text-slate-600 dark:text-slate-400'
+                address.type === 'home' ? 'text-primary-600 dark:text-primary-400'
+                : address.type === 'work' ? 'text-success-600 dark:text-success-400'
+                  : 'text-slate-600 dark:text-slate-400'
               ]"
             />
           </div>
@@ -337,21 +337,30 @@ onMounted(() => {
 
             <div class="space-y-1">
               <p class="text-sm text-slate-800 dark:text-slate-200 font-semibold flex items-center gap-2">
-                <UIcon name="i-lucide-user" class="w-3.5 h-3.5 text-slate-400" />
+                <UIcon
+                  name="i-lucide-user"
+                  class="w-3.5 h-3.5 text-slate-400"
+                />
                 {{ address.person_name }}
               </p>
               <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                 {{ address.address_1 }}
                 <span v-if="address.address_2">, {{ address.address_2 }}</span>
               </p>
-              <p v-if="address.landmark" class="text-sm text-slate-500 dark:text-slate-500 italic">
+              <p
+                v-if="address.landmark"
+                class="text-sm text-slate-500 dark:text-slate-500 italic"
+              >
                 Landmark: {{ address.landmark }}
               </p>
               <p class="text-sm text-slate-600 dark:text-slate-400 font-medium">
                 {{ address.city }}, {{ address.state_code }} - {{ address.postal_code }}
               </p>
               <p class="text-sm text-primary-600 dark:text-primary-400 font-bold mt-2 flex items-center gap-2">
-                <UIcon name="i-lucide-phone" class="w-3.5 h-3.5" />
+                <UIcon
+                  name="i-lucide-phone"
+                  class="w-3.5 h-3.5"
+                />
                 {{ address.person_mobile }}
               </p>
             </div>
@@ -399,8 +408,8 @@ onMounted(() => {
     <!-- Address Form Modal (Shared for Add/Edit) -->
     <UModal
       :model-value="showAddModal || showEditModal"
-      @update:model-value="val => { if(!val) { showAddModal = false; showEditModal = false; } }"
       :ui="{ width: 'sm:max-w-2xl' }"
+      @update:model-value="val => { if (!val) { showAddModal = false; showEditModal = false; } }"
     >
       <template #content>
         <UCard :ui="{ body: { padding: 'p-8' }, header: { padding: 'px-8 py-6' }, footer: { padding: 'px-8 py-6' } }">

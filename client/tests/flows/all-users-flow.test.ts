@@ -31,7 +31,7 @@ const userTypes = [
 ]
 
 // Helper function to login
-async function login(email: string, password: string): Promise<{ ok: boolean; token?: string }> {
+async function login(email: string, password: string): Promise<{ ok: boolean, token?: string }> {
   const response = await fetch(`${apiBase}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -49,8 +49,8 @@ async function login(email: string, password: string): Promise<{ ok: boolean; to
 async function getUser(token: string): Promise<any> {
   const response = await fetch(`${apiBase}/api/user`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json'
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
     }
   })
   const json = await response.json()
@@ -129,8 +129,8 @@ describe('Protected Endpoint Access by User Type', () => {
       it('should access /api/user', async () => {
         const response = await fetch(`${apiBase}/api/user`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(response.ok).toBe(true)
@@ -139,8 +139,8 @@ describe('Protected Endpoint Access by User Type', () => {
       it('should access /api/notifications', async () => {
         const response = await fetch(`${apiBase}/api/notifications`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(VALID_STATUS).toContain(response.status)
@@ -149,8 +149,8 @@ describe('Protected Endpoint Access by User Type', () => {
       it('should access /api/addresses', async () => {
         const response = await fetch(`${apiBase}/api/addresses`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(VALID_STATUS).toContain(response.status)
@@ -159,8 +159,8 @@ describe('Protected Endpoint Access by User Type', () => {
       it('should access /api/onboarding/status', async () => {
         const response = await fetch(`${apiBase}/api/onboarding/status`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(VALID_STATUS).toContain(response.status)
@@ -182,8 +182,8 @@ describe('Wallet Access by User Type', () => {
       it('should access wallet balance', async () => {
         const response = await fetch(`${apiBase}/api/wallet/balance`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(VALID_STATUS).toContain(response.status)
@@ -192,8 +192,8 @@ describe('Wallet Access by User Type', () => {
       it('should access wallet transactions', async () => {
         const response = await fetch(`${apiBase}/api/wallet/transactions`, {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Accept': 'application/json'
+            Authorization: `Bearer ${authToken}`,
+            Accept: 'application/json'
           }
         })
         expect(VALID_STATUS).toContain(response.status)

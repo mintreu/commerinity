@@ -278,7 +278,10 @@ const quickActions = computed(() => [
                   </td>
                 </tr>
                 <tr v-if="team.length === 0 && !loading">
-                  <td colspan="2" class="py-6 text-center text-sm text-slate-500">
+                  <td
+                    colspan="2"
+                    class="py-6 text-center text-sm text-slate-500"
+                  >
                     No team members found. Start recruiting!
                   </td>
                 </tr>

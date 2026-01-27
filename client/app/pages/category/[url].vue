@@ -170,13 +170,20 @@ const clearPriceFilter = () => {
 <template>
   <div class="min-h-screen">
     <!-- Loading State -->
-    <div v-if="status === 'pending'" class="py-8">
+    <div
+      v-if="status === 'pending'"
+      class="py-8"
+    >
       <UContainer>
         <!-- Hero skeleton -->
         <div class="relative h-64 lg:h-80 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse mb-8" />
         <!-- Products skeleton -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div v-for="i in 8" :key="i" class="bg-white/80 dark:bg-slate-900/80 rounded-2xl animate-pulse">
+          <div
+            v-for="i in 8"
+            :key="i"
+            class="bg-white/80 dark:bg-slate-900/80 rounded-2xl animate-pulse"
+          >
             <div class="aspect-square bg-slate-200 dark:bg-slate-700" />
             <div class="p-4 space-y-3">
               <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
@@ -189,7 +196,10 @@ const clearPriceFilter = () => {
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="py-16">
+    <div
+      v-else-if="error"
+      class="py-16"
+    >
       <UContainer>
         <div class="text-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg max-w-md mx-auto p-8">
           <UIcon
@@ -238,7 +248,10 @@ const clearPriceFilter = () => {
         <UContainer class="relative z-10 py-12 md:py-16">
           <div class="text-center text-white max-w-4xl mx-auto">
             <!-- Personalized greeting for logged-in users -->
-            <p v-if="isLoggedIn && user" class="text-purple-100 text-sm mb-2">
+            <p
+              v-if="isLoggedIn && user"
+              class="text-purple-100 text-sm mb-2"
+            >
               Welcome back, {{ user.name }}!
             </p>
 
@@ -246,22 +259,39 @@ const clearPriceFilter = () => {
               {{ category.name }}
             </h1>
 
-            <p v-if="category.description" class="text-purple-100 text-lg max-w-2xl mx-auto mb-4">
+            <p
+              v-if="category.description"
+              class="text-purple-100 text-lg max-w-2xl mx-auto mb-4"
+            >
               {{ category.description }}
             </p>
-            <p v-else class="text-purple-100 text-lg max-w-2xl mx-auto mb-4">
+            <p
+              v-else
+              class="text-purple-100 text-lg max-w-2xl mx-auto mb-4"
+            >
               Explore our premium {{ category.name }} collection
             </p>
 
             <!-- Category Stats -->
             <div class="flex flex-wrap justify-center gap-4 mt-6">
               <div class="bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-2 border border-white/20">
-                <div class="text-xl font-black">{{ pagination?.total || 0 }}</div>
-                <div class="text-xs opacity-80">Products</div>
+                <div class="text-xl font-black">
+                  {{ pagination?.total || 0 }}
+                </div>
+                <div class="text-xs opacity-80">
+                  Products
+                </div>
               </div>
-              <div v-if="category.children?.length" class="bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-2 border border-white/20">
-                <div class="text-xl font-black">{{ category.children.length }}</div>
-                <div class="text-xs opacity-80">Subcategories</div>
+              <div
+                v-if="category.children?.length"
+                class="bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-2 border border-white/20"
+              >
+                <div class="text-xl font-black">
+                  {{ category.children.length }}
+                </div>
+                <div class="text-xs opacity-80">
+                  Subcategories
+                </div>
               </div>
             </div>
 
@@ -283,16 +313,37 @@ const clearPriceFilter = () => {
         <!-- Breadcrumb with Cart Icon -->
         <div class="flex items-center justify-between mb-6">
           <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 flex-wrap">
-            <NuxtLink to="/" class="hover:text-primary-500">Home</NuxtLink>
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
-            <NuxtLink to="/shop" class="hover:text-primary-500">Shop</NuxtLink>
+            <NuxtLink
+              to="/"
+              class="hover:text-primary-500"
+            >Home</NuxtLink>
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-4 h-4"
+            />
+            <NuxtLink
+              to="/shop"
+              class="hover:text-primary-500"
+            >Shop</NuxtLink>
             <template v-if="category.ancestors?.length">
-              <template v-for="ancestor in category.ancestors" :key="ancestor.slug">
-                <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
-                <NuxtLink :to="`/category/${ancestor.slug}`" class="hover:text-primary-500">{{ ancestor.name }}</NuxtLink>
+              <template
+                v-for="ancestor in category.ancestors"
+                :key="ancestor.slug"
+              >
+                <UIcon
+                  name="i-lucide-chevron-right"
+                  class="w-4 h-4"
+                />
+                <NuxtLink
+                  :to="`/category/${ancestor.slug}`"
+                  class="hover:text-primary-500"
+                >{{ ancestor.name }}</NuxtLink>
               </template>
             </template>
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-4 h-4"
+            />
             <span class="text-slate-900 dark:text-white font-medium">{{ category.name }}</span>
           </nav>
 
@@ -301,7 +352,10 @@ const clearPriceFilter = () => {
             to="/cart"
             class="relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
           >
-            <UIcon name="i-lucide-shopping-cart" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-shopping-cart"
+              class="w-4 h-4"
+            />
             <span class="hidden sm:inline">Cart</span>
             <span
               v-if="cartCount > 0"
@@ -313,7 +367,10 @@ const clearPriceFilter = () => {
         </div>
 
         <!-- Child Categories (Flipkart-style) -->
-        <div v-if="category.children && category.children.length" class="mb-12">
+        <div
+          v-if="category.children && category.children.length"
+          class="mb-12"
+        >
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
             Browse {{ category.name }}
           </h2>
@@ -331,8 +388,14 @@ const clearPriceFilter = () => {
                   :alt="child.name"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 >
-                <div v-else class="w-full h-full flex items-center justify-center">
-                  <UIcon name="i-lucide-folder-open" class="w-12 h-12 text-primary-400 opacity-50" />
+                <div
+                  v-else
+                  class="w-full h-full flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-lucide-folder-open"
+                    class="w-12 h-12 text-primary-400 opacity-50"
+                  />
                 </div>
                 <!-- Overlay -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -404,7 +467,10 @@ const clearPriceFilter = () => {
             <!-- Filters Row -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div class="text-sm text-slate-600 dark:text-slate-400">
-                <span v-if="pagination" class="font-medium">
+                <span
+                  v-if="pagination"
+                  class="font-medium"
+                >
                   {{ pagination.total }} products
                 </span>
               </div>
@@ -418,7 +484,10 @@ const clearPriceFilter = () => {
             </div>
 
             <!-- Products Grid -->
-            <div v-if="products.length" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            <div
+              v-if="products.length"
+              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+            >
               <div
                 v-for="product in products"
                 :key="product.slug"
@@ -434,8 +503,14 @@ const clearPriceFilter = () => {
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     >
-                    <div v-else class="w-full h-full flex items-center justify-center">
-                      <UIcon name="i-lucide-package" class="w-16 h-16 text-slate-300 dark:text-slate-600" />
+                    <div
+                      v-else
+                      class="w-full h-full flex items-center justify-center"
+                    >
+                      <UIcon
+                        name="i-lucide-package"
+                        class="w-16 h-16 text-slate-300 dark:text-slate-600"
+                      />
                     </div>
 
                     <!-- Out of Stock Overlay -->

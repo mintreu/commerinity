@@ -13,26 +13,6 @@ export default defineNuxtConfig({
     enabled: true
   },
 
-  // Nuxt Fonts Configuration
-  fonts: {
-    families: [
-      {
-        name: 'Plus Jakarta Sans',
-        provider: 'google',
-        weights: [300, 400, 500, 600, 700, 800]
-      },
-      {
-        name: 'Inter',
-        provider: 'google',
-        weights: [300, 400, 500, 600, 700]
-      }
-    ],
-    defaults: {
-      weights: [400, 500, 600, 700],
-      styles: ['normal']
-    }
-  },
-
   app: {
     head: {
       title: 'VVIndia - Affiliate & E-Commerce Platform',
@@ -119,6 +99,26 @@ export default defineNuxtConfig({
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
+    }
+  },
+
+  // Nuxt Fonts Configuration
+  fonts: {
+    families: [
+      {
+        name: 'Plus Jakarta Sans',
+        provider: 'google',
+        weights: [300, 400, 500, 600, 700, 800]
+      },
+      {
+        name: 'Inter',
+        provider: 'google',
+        weights: [300, 400, 500, 600, 700]
+      }
+    ],
+    defaults: {
+      weights: [400, 500, 600, 700],
+      styles: ['normal']
     }
   },
 

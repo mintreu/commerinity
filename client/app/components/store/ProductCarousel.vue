@@ -276,7 +276,10 @@ const dotColorClass = computed(() => {
 <template>
   <div class="relative">
     <!-- Header -->
-    <div v-if="title || badgeText" class="flex items-center justify-between mb-4 md:mb-6">
+    <div
+      v-if="title || badgeText"
+      class="flex items-center justify-between mb-4 md:mb-6"
+    >
       <div>
         <!-- Badge -->
         <div
@@ -286,17 +289,26 @@ const dotColorClass = computed(() => {
             badgeColorClasses
           ]"
         >
-          <UIcon :name="badgeIcon" :class="['w-4 h-4 md:w-5 md:h-5', iconColorClass]" />
+          <UIcon
+            :name="badgeIcon"
+            :class="['w-4 h-4 md:w-5 md:h-5', iconColorClass]"
+          />
           <span class="font-bold">{{ badgeText }}</span>
         </div>
 
         <!-- Title -->
-        <h2 v-if="title" class="text-xl md:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white">
+        <h2
+          v-if="title"
+          class="text-xl md:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white"
+        >
           {{ title }}
         </h2>
 
         <!-- Subtitle -->
-        <p v-if="subtitle" class="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-0.5">
+        <p
+          v-if="subtitle"
+          class="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-0.5"
+        >
           {{ subtitle }}
         </p>
       </div>
@@ -309,22 +321,34 @@ const dotColorClass = computed(() => {
           class="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-bold hover:underline"
         >
           View All
-          <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-arrow-right"
+            class="w-4 h-4"
+          />
         </NuxtLink>
 
         <!-- Navigation Arrows -->
-        <div v-if="totalDesktopSlides > 1" class="flex items-center gap-2">
+        <div
+          v-if="totalDesktopSlides > 1"
+          class="flex items-center gap-2"
+        >
           <button
             class="w-10 h-10 rounded-full flex items-center justify-center border bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-lg hover:shadow-xl transition-all"
             @click="prevDesktopSlide"
           >
-            <UIcon name="i-lucide-chevron-left" class="w-5 h-5" />
+            <UIcon
+              name="i-lucide-chevron-left"
+              class="w-5 h-5"
+            />
           </button>
           <button
             class="w-10 h-10 rounded-full flex items-center justify-center border bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow-lg hover:shadow-xl transition-all"
             @click="nextDesktopSlide"
           >
-            <UIcon name="i-lucide-chevron-right" class="w-5 h-5" />
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-5 h-5"
+            />
           </button>
         </div>
       </div>
@@ -336,7 +360,10 @@ const dotColorClass = computed(() => {
         class="md:hidden text-sm font-semibold text-primary-600 dark:text-primary-400 flex items-center gap-1"
       >
         All
-        <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
+        <UIcon
+          name="i-lucide-chevron-right"
+          class="w-4 h-4"
+        />
       </NuxtLink>
     </div>
 
@@ -351,8 +378,15 @@ const dotColorClass = computed(() => {
         @touchend="onTouchEnd"
       >
         <!-- Loading Skeletons -->
-        <div v-if="loading" class="flex gap-[6px]">
-          <div v-for="i in 3" :key="i" class="shrink-0 w-[150px]">
+        <div
+          v-if="loading"
+          class="flex gap-[6px]"
+        >
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="shrink-0 w-[150px]"
+          >
             <div class="bg-white/80 dark:bg-slate-900/80 rounded-xl overflow-hidden animate-pulse">
               <div class="aspect-square bg-slate-200 dark:bg-slate-700" />
               <div class="p-3 space-y-2">
@@ -376,7 +410,10 @@ const dotColorClass = computed(() => {
             :key="product.slug"
             class="shrink-0 w-[150px]"
           >
-            <StoreProductCard :product="product" compact />
+            <StoreProductCard
+              :product="product"
+              compact
+            />
           </div>
 
           <!-- View All Slide Card -->
@@ -391,7 +428,10 @@ const dotColorClass = computed(() => {
 
               <div class="relative z-10 flex flex-col items-center space-y-3">
                 <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <UIcon name="i-lucide-arrow-right" class="w-7 h-7" />
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-7 h-7"
+                  />
                 </div>
                 <span class="font-bold">View All</span>
                 <span class="text-xs opacity-80">{{ products.length }}+ Products</span>
@@ -404,7 +444,10 @@ const dotColorClass = computed(() => {
       <!-- Mobile Slide Indicators (Dots) with auto-play indicator -->
       <div class="flex justify-center items-center gap-1.5 mt-4">
         <!-- Progress bar under active dot (shows auto-slide progress) -->
-        <template v-for="(_, index) in Math.min(totalMobileSlides, 7)" :key="index">
+        <template
+          v-for="(_, index) in Math.min(totalMobileSlides, 7)"
+          :key="index"
+        >
           <button
             :class="[
               'rounded-full transition-all duration-300 relative overflow-hidden',
@@ -440,8 +483,15 @@ const dotColorClass = computed(() => {
       @mouseleave="isHovered = false"
     >
       <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-4 lg:grid-cols-5 gap-6">
-        <div v-for="i in 5" :key="i" class="bg-white/80 dark:bg-slate-900/80 rounded-2xl overflow-hidden animate-pulse">
+      <div
+        v-if="loading"
+        class="grid grid-cols-4 lg:grid-cols-5 gap-6"
+      >
+        <div
+          v-for="i in 5"
+          :key="i"
+          class="bg-white/80 dark:bg-slate-900/80 rounded-2xl overflow-hidden animate-pulse"
+        >
           <div class="aspect-square bg-slate-200 dark:bg-slate-700" />
           <div class="p-4 space-y-3">
             <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
@@ -452,7 +502,10 @@ const dotColorClass = computed(() => {
       </div>
 
       <!-- Slides Container -->
-      <div v-else class="relative">
+      <div
+        v-else
+        class="relative"
+      >
         <div
           class="flex transition-transform duration-500 ease-out"
           :style="{ transform: `translateX(-${desktopActiveIndex * 100}%)` }"
@@ -464,33 +517,54 @@ const dotColorClass = computed(() => {
             class="w-full shrink-0"
           >
             <div class="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
-              <div v-for="product in getProductsForDesktopSlide(slideIndex - 1)" :key="product.slug">
+              <div
+                v-for="product in getProductsForDesktopSlide(slideIndex - 1)"
+                :key="product.slug"
+              >
                 <StoreProductCard :product="product" />
               </div>
             </div>
           </div>
 
           <!-- View All Slide -->
-          <div v-if="showViewAllSlide && viewAllLink" class="w-full shrink-0">
-            <NuxtLink :to="viewAllLink" class="block">
+          <div
+            v-if="showViewAllSlide && viewAllLink"
+            class="w-full shrink-0"
+          >
+            <NuxtLink
+              :to="viewAllLink"
+              class="block"
+            >
               <div :class="['min-h-[400px] flex items-center justify-center bg-gradient-to-br rounded-3xl p-8 text-center text-white relative overflow-hidden group shadow-2xl', gradientClass]">
                 <!-- Animated Background -->
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
                 <!-- Floating Orbs -->
                 <div class="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse" />
-                <div class="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-pulse" style="animation-delay: 1s;" />
+                <div
+                  class="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-pulse"
+                  style="animation-delay: 1s;"
+                />
 
                 <div class="relative z-10 flex flex-col items-center space-y-6">
                   <div class="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <UIcon name="i-lucide-store" class="w-12 h-12" />
+                    <UIcon
+                      name="i-lucide-store"
+                      class="w-12 h-12"
+                    />
                   </div>
                   <h3 class="text-3xl lg:text-4xl font-black">Explore All Products</h3>
                   <p class="text-lg opacity-90 max-w-md">Browse our complete collection of premium products</p>
                   <div class="bg-white text-slate-900 font-bold px-8 py-4 rounded-xl text-lg hover:scale-105 hover:shadow-2xl transition-all inline-flex items-center gap-3">
-                    <UIcon :name="badgeIcon" class="w-6 h-6" />
+                    <UIcon
+                      :name="badgeIcon"
+                      class="w-6 h-6"
+                    />
                     <span>View Collection</span>
-                    <UIcon name="i-lucide-arrow-right" class="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    <UIcon
+                      name="i-lucide-arrow-right"
+                      class="w-6 h-6 group-hover:translate-x-2 transition-transform"
+                    />
                   </div>
                 </div>
               </div>
@@ -500,7 +574,10 @@ const dotColorClass = computed(() => {
       </div>
 
       <!-- Desktop Dots Navigation -->
-      <div v-if="totalDesktopSlides > 1 && !loading" class="flex justify-center gap-2 mt-6">
+      <div
+        v-if="totalDesktopSlides > 1 && !loading"
+        class="flex justify-center gap-2 mt-6"
+      >
         <button
           v-for="index in totalDesktopSlides"
           :key="index"

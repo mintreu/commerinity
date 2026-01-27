@@ -17,7 +17,7 @@ const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
 const VALID_STATUS = [200, 404, 500]
 
 // Helper function to login
-async function login(email: string, password: string): Promise<{ ok: boolean; token?: string }> {
+async function login(email: string, password: string): Promise<{ ok: boolean, token?: string }> {
   const response = await fetch(`${apiBase}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -44,8 +44,8 @@ describe('Trends API', () => {
     it('should return dashboard summary', async () => {
       const response = await fetch(`${apiBase}/api/trends/dashboard`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -55,8 +55,8 @@ describe('Trends API', () => {
     it('should support period parameter', async () => {
       const response = await fetch(`${apiBase}/api/trends/dashboard?period=month`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -68,8 +68,8 @@ describe('Trends API', () => {
     it('should return wallet balance trend', async () => {
       const response = await fetch(`${apiBase}/api/trends/wallet/balance`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -79,8 +79,8 @@ describe('Trends API', () => {
     it('should return credit/debit trend', async () => {
       const response = await fetch(`${apiBase}/api/trends/wallet/credit-debit`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -90,8 +90,8 @@ describe('Trends API', () => {
     it('should return wallet activity', async () => {
       const response = await fetch(`${apiBase}/api/trends/wallet/activity`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -101,8 +101,8 @@ describe('Trends API', () => {
     it('should return wallet comparison', async () => {
       const response = await fetch(`${apiBase}/api/trends/wallet/comparison`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -114,8 +114,8 @@ describe('Trends API', () => {
     it('should return commission earnings trend', async () => {
       const response = await fetch(`${apiBase}/api/trends/commissions/earnings`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -125,8 +125,8 @@ describe('Trends API', () => {
     it('should return commission by type trend', async () => {
       const response = await fetch(`${apiBase}/api/trends/commissions/by-type`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -136,8 +136,8 @@ describe('Trends API', () => {
     it('should return commission comparison', async () => {
       const response = await fetch(`${apiBase}/api/trends/commissions/comparison`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -149,8 +149,8 @@ describe('Trends API', () => {
     it('should return team growth trend', async () => {
       const response = await fetch(`${apiBase}/api/trends/team/growth`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -160,8 +160,8 @@ describe('Trends API', () => {
     it('should return team levels', async () => {
       const response = await fetch(`${apiBase}/api/trends/team/levels`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -171,8 +171,8 @@ describe('Trends API', () => {
     it('should return team activity', async () => {
       const response = await fetch(`${apiBase}/api/trends/team/activity`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 

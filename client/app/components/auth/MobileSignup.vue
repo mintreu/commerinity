@@ -58,7 +58,7 @@ const handleSendOtp = async () => {
   error.value = null
 
   try {
-    const response = await $fetch<{ success: boolean; demo?: boolean; otp?: string }>(`${config.public.apiBase}/api/auth/send-otp`, {
+    const response = await $fetch<{ success: boolean, demo?: boolean, otp?: string }>(`${config.public.apiBase}/api/auth/send-otp`, {
       method: 'POST',
       body: {
         type: 'mobile',
@@ -156,7 +156,7 @@ const handleRegister = async () => {
       payload.referral_code = form.referral_code.toUpperCase()
     }
 
-    const response = await $fetch<{ success: boolean; data: { user: Record<string, unknown>; token: string } }>(`${config.public.apiBase}/api/auth/register`, {
+    const response = await $fetch<{ success: boolean, data: { user: Record<string, unknown>, token: string } }>(`${config.public.apiBase}/api/auth/register`, {
       method: 'POST',
       body: payload
     })
@@ -165,7 +165,7 @@ const handleRegister = async () => {
       emit('success', response.data.token)
     }
   } catch (err: unknown) {
-    const fetchError = err as { data?: { message?: string; errors?: Record<string, string[]> } }
+    const fetchError = err as { data?: { message?: string, errors?: Record<string, string[]> } }
     if (fetchError.data?.errors) {
       const errors = Object.values(fetchError.data.errors).flat()
       error.value = errors[0] as string
@@ -197,12 +197,18 @@ const handleRegister = async () => {
     </div>
 
     <!-- Register Form -->
-    <form class="space-y-5" @submit.prevent="handleRegister">
+    <form
+      class="space-y-5"
+      @submit.prevent="handleRegister"
+    >
       <!-- Step 1: Mobile & OTP -->
       <template v-if="currentStep === 1">
         <div class="space-y-2">
           <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-smartphone" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-smartphone"
+              class="w-4 h-4"
+            />
             <span>Mobile Number</span>
           </label>
           <div class="relative">
@@ -244,7 +250,10 @@ const handleRegister = async () => {
         <template v-if="otpSent">
           <div class="space-y-2">
             <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              <UIcon name="i-lucide-shield-check" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-shield-check"
+                class="w-4 h-4"
+              />
               <span>Enter OTP</span>
             </label>
             <div class="relative">
@@ -286,7 +295,10 @@ const handleRegister = async () => {
             class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
             @click="verifyOtpAndNext"
           >
-            <UIcon name="i-lucide-arrow-right" class="w-5 h-5" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="w-5 h-5"
+            />
             <span>Continue</span>
           </button>
         </template>
@@ -296,7 +308,10 @@ const handleRegister = async () => {
       <template v-if="currentStep === 2">
         <div class="space-y-2">
           <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-user" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-user"
+              class="w-4 h-4"
+            />
             <span>Full Name</span>
           </label>
           <div class="relative">
@@ -316,7 +331,10 @@ const handleRegister = async () => {
 
         <div class="space-y-2">
           <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-mail" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-mail"
+              class="w-4 h-4"
+            />
             <span>Email (Optional)</span>
           </label>
           <div class="relative">
@@ -335,7 +353,10 @@ const handleRegister = async () => {
 
         <div class="space-y-2">
           <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-gift" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-gift"
+              class="w-4 h-4"
+            />
             <span>Referral Code (Optional)</span>
           </label>
           <div class="relative">
@@ -358,7 +379,10 @@ const handleRegister = async () => {
             class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all"
             @click="currentStep = 1"
           >
-            <UIcon name="i-lucide-arrow-left" class="w-5 h-5" />
+            <UIcon
+              name="i-lucide-arrow-left"
+              class="w-5 h-5"
+            />
             <span>Back</span>
           </button>
           <button
@@ -368,7 +392,10 @@ const handleRegister = async () => {
             @click="currentStep = 3"
           >
             <span>Continue</span>
-            <UIcon name="i-lucide-arrow-right" class="w-5 h-5" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="w-5 h-5"
+            />
           </button>
         </div>
       </template>
@@ -377,7 +404,10 @@ const handleRegister = async () => {
       <template v-if="currentStep === 3">
         <div class="space-y-2">
           <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-lock" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-lock"
+              class="w-4 h-4"
+            />
             <span>Password</span>
           </label>
           <div class="relative">
@@ -419,7 +449,10 @@ const handleRegister = async () => {
 
         <div class="space-y-2">
           <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-lock" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-lock"
+              class="w-4 h-4"
+            />
             <span>Confirm Password</span>
           </label>
           <div class="relative">
@@ -475,7 +508,10 @@ const handleRegister = async () => {
           v-if="error"
           class="flex items-center gap-3 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-800/60 rounded-xl text-red-600 dark:text-red-400 text-sm"
         >
-          <UIcon name="i-lucide-alert-circle" class="w-5 h-5 flex-shrink-0" />
+          <UIcon
+            name="i-lucide-alert-circle"
+            class="w-5 h-5 flex-shrink-0"
+          />
           <p>{{ error }}</p>
         </div>
 
@@ -485,7 +521,10 @@ const handleRegister = async () => {
             class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all"
             @click="currentStep = 2"
           >
-            <UIcon name="i-lucide-arrow-left" class="w-5 h-5" />
+            <UIcon
+              name="i-lucide-arrow-left"
+              class="w-5 h-5"
+            />
             <span>Back</span>
           </button>
           <button

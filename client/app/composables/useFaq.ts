@@ -176,6 +176,6 @@ export const useFaq = () => {
     fetchPopular,
     searchFaqs,
     markHelpful,
-    markNotHelpful,
+    markNotHelpful
   }
 }

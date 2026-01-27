@@ -26,8 +26,8 @@ final class PublicStatsController extends Controller
         $stats = Cache::remember('public_homepage_stats', now()->addHour(), function () {
             return [
                 'members' => $this->getMemberCount(),
-                'careers' => $this->getOpenPositionsCount(),
-                'payouts' => $this->getTotalPayouts(),
+                'careers' => $this->getTotalProductsCount(),
+                'payouts' => $this->getActiveCategoriesCount(),
             ];
         });
 
@@ -44,46 +44,40 @@ final class PublicStatsController extends Controller
      */
     private function getMemberCount(): array
     {
-        $count = User::where('status', 'active')->count();
+        $count = User::count();
 
         return [
             'value' => $count,
             'formatted' => $this->formatNumber($count),
-            'label' => 'Active Members',
+            'label' => 'Total Users',
         ];
     }
 
     /**
      * Get count of open career positions.
      */
-    private function getOpenPositionsCount(): array
+    private function getTotalProductsCount(): array
     {
-        $count = Recruitment::where('status', 'open')
-            ->where(function ($query) {
-                $query->whereNull('close_date')
-                    ->orWhere('close_date', '>', now());
-            })
-            ->count();
+        $count = \App\Models\Ecommerce\Product::count();
 
         return [
             'value' => $count,
-            'formatted' => (string) $count,
-            'label' => 'Open Positions',
+            'formatted' => $this->formatNumber($count),
+            'label' => 'Total Products',
         ];
     }
 
     /**
      * Get total payouts processed (in paisa, converted to rupees for display).
      */
-    private function getTotalPayouts(): array
+    private function getActiveCategoriesCount(): array
     {
-        $totalPaisa = AffiliateCommission::where('status', 'processed')->sum('amount');
-        $totalRupees = $totalPaisa / 100;
+        $count = \App\Models\Ecommerce\Category::where('status', 'active')->count();
 
         return [
-            'value' => $totalRupees,
-            'formatted' => $this->formatCurrency($totalRupees),
-            'label' => 'Total Paid Out',
+            'value' => $count,
+            'formatted' => $this->formatNumber($count),
+            'label' => 'Active Categories',
         ];
     }
 

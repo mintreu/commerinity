@@ -57,7 +57,10 @@ const benefits = [
       <!-- Section Header -->
       <div class="text-center mb-12 md:mb-16">
         <div class="premium-badge mx-auto mb-4">
-          <UIcon name="i-lucide-gift" class="w-4 h-4 mr-2" />
+          <UIcon
+            name="i-lucide-gift"
+            class="w-4 h-4 mr-2"
+          />
           <span>Exclusive Benefits</span>
         </div>
 
@@ -90,7 +93,10 @@ const benefits = [
                 class="w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center shadow-lg bg-gradient-to-br group-hover:scale-110 transition-transform duration-500"
                 :class="benefit.gradient"
               >
-                <UIcon :name="benefit.icon" class="w-7 h-7 md:w-8 md:h-8 text-white" />
+                <UIcon
+                  :name="benefit.icon"
+                  class="w-7 h-7 md:w-8 md:h-8 text-white"
+                />
                 <!-- Pulse Ring on Hover -->
                 <div class="pulse-ring text-white/30 group-hover:opacity-100 opacity-0" />
               </div>
@@ -117,7 +123,10 @@ const benefits = [
                 :key="idx"
                 class="flex items-center text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
               >
-                <UIcon name="i-lucide-check-circle" class="w-4 h-4 text-emerald-500 mr-2 shrink-0" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-4 h-4 text-emerald-500 mr-2 shrink-0"
+                />
                 <span>{{ feature }}</span>
               </li>
             </ul>
@@ -125,7 +134,10 @@ const benefits = [
             <!-- Learn More Link -->
             <div class="mt-5 flex items-center text-sm font-semibold text-violet-600 dark:text-violet-400 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
               <span>Learn More</span>
-              <UIcon name="i-lucide-arrow-right" class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              <UIcon
+                name="i-lucide-arrow-right"
+                class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
+              />
             </div>
           </div>
 
@@ -142,14 +154,23 @@ const benefits = [
             color="primary"
             class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 transition-all duration-300"
           >
-            <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-2" />
+            <UIcon
+              name="i-lucide-rocket"
+              class="w-5 h-5 mr-2"
+            />
             Start Earning Today
-            <UIcon name="i-lucide-arrow-right" class="w-5 h-5 ml-2" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="w-5 h-5 ml-2"
+            />
           </UButton>
         </NuxtLink>
 
         <p class="text-sm text-slate-500 dark:text-slate-400 mt-4 flex items-center justify-center gap-2">
-          <UIcon name="i-lucide-check-circle" class="w-4 h-4 text-emerald-500" />
+          <UIcon
+            name="i-lucide-check-circle"
+            class="w-4 h-4 text-emerald-500"
+          />
           No credit card required • Free to join • Instant approval
         </p>
       </div>

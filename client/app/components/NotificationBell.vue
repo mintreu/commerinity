@@ -47,7 +47,7 @@ function formatTime(dateString: string): string {
 }
 
 // Handle notification click
-async function handleNotificationClick(notification: { id: string; read_at: string | null; data: { action_url?: string } }) {
+async function handleNotificationClick(notification: { id: string, read_at: string | null, data: { action_url?: string } }) {
   if (!notification.read_at) {
     await markAsRead(notification.id)
   }
@@ -66,7 +66,10 @@ async function handleMarkAllAsRead() {
 </script>
 
 <template>
-  <UPopover v-model:open="isOpen" :ui="{ content: 'w-80 max-h-96 overflow-hidden' }">
+  <UPopover
+    v-model:open="isOpen"
+    :ui="{ content: 'w-80 max-h-96 overflow-hidden' }"
+  >
     <UButton
       color="neutral"
       variant="ghost"
@@ -103,8 +106,14 @@ async function handleMarkAllAsRead() {
         <!-- Notifications list -->
         <div class="max-h-72 overflow-y-auto">
           <!-- Loading state -->
-          <div v-if="isLoading" class="flex items-center justify-center py-8">
-            <UIcon name="i-lucide-loader-2" class="h-6 w-6 animate-spin text-muted" />
+          <div
+            v-if="isLoading"
+            class="flex items-center justify-center py-8"
+          >
+            <UIcon
+              name="i-lucide-loader-2"
+              class="h-6 w-6 animate-spin text-muted"
+            />
           </div>
 
           <!-- Empty state -->
@@ -112,7 +121,10 @@ async function handleMarkAllAsRead() {
             v-else-if="notifications.length === 0"
             class="flex flex-col items-center justify-center py-8 text-center"
           >
-            <UIcon name="i-lucide-bell-off" class="h-10 w-10 text-muted mb-2" />
+            <UIcon
+              name="i-lucide-bell-off"
+              class="h-10 w-10 text-muted mb-2"
+            />
             <p class="text-sm text-muted">
               No notifications yet
             </p>
@@ -157,7 +169,10 @@ async function handleMarkAllAsRead() {
                 </div>
 
                 <!-- Unread indicator -->
-                <div v-if="!notification.read_at" class="shrink-0">
+                <div
+                  v-if="!notification.read_at"
+                  class="shrink-0"
+                >
                   <span class="block h-2 w-2 rounded-full bg-primary" />
                 </div>
               </div>

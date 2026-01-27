@@ -25,7 +25,7 @@ const {
   clearCart
 } = useCart()
 
-const userAddresses = ref<{ uuid: string; label: string }[]>([])
+const userAddresses = ref<{ uuid: string, label: string }[]>([])
 const isAddressesLoading = ref(false)
 
 async function fetchUserAddresses() {
@@ -69,7 +69,7 @@ onMounted(async () => {
 })
 
 // Quantity handlers
-const incrementQuantity = async (item: { product_slug: string; quantity: number }) => {
+const incrementQuantity = async (item: { product_slug: string, quantity: number }) => {
   if (item.quantity >= 10) return // Max limit
 
   updatingItem.value = item.product_slug
@@ -77,7 +77,7 @@ const incrementQuantity = async (item: { product_slug: string; quantity: number 
   updatingItem.value = null
 }
 
-const decrementQuantity = async (item: { product_slug: string; quantity: number }) => {
+const decrementQuantity = async (item: { product_slug: string, quantity: number }) => {
   if (item.quantity <= 1) return // Min limit
 
   updatingItem.value = item.product_slug
@@ -148,7 +148,7 @@ const canCheckout = computed(() => {
 const checkoutPayload = computed(() => {
   const payload: Record<string, any> = {
     billing_is_shipping: billingIsShipping.value,
-    gift: isGift.value,
+    gift: isGift.value
   }
   payload.shipping_address_id = shippingAddressId.value
   payload.billing_address_id = billingIsShipping.value ? shippingAddressId.value : billingAddressId.value
@@ -206,7 +206,10 @@ useComprehensiveSeo({
             >
               Home
             </NuxtLink>
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-slate-400" />
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-4 h-4 text-slate-400"
+            />
             <span class="font-semibold text-slate-900 dark:text-white">Shopping Cart</span>
           </nav>
 
@@ -214,7 +217,10 @@ useComprehensiveSeo({
             to="/shop"
             class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg group"
           >
-            <UIcon name="i-lucide-arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <UIcon
+              name="i-lucide-arrow-left"
+              class="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+            />
             <span>Continue Shopping</span>
           </NuxtLink>
         </div>
@@ -222,7 +228,10 @@ useComprehensiveSeo({
         <!-- Cart Title -->
         <div class="text-center">
           <div class="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 dark:from-violet-400/10 dark:to-fuchsia-400/10 rounded-2xl border border-violet-200/50 dark:border-violet-800/50 mb-6">
-            <UIcon name="i-lucide-shopping-cart" class="w-6 h-6 text-violet-600 dark:text-violet-400" />
+            <UIcon
+              name="i-lucide-shopping-cart"
+              class="w-6 h-6 text-violet-600 dark:text-violet-400"
+            />
             <span class="text-lg font-bold text-violet-700 dark:text-violet-300">Shopping Cart</span>
           </div>
 
@@ -237,23 +246,40 @@ useComprehensiveSeo({
           </p>
 
           <!-- Cart Stats -->
-          <div v-if="cartCount > 0" class="flex items-center justify-center gap-8 mt-8 text-center">
+          <div
+            v-if="cartCount > 0"
+            class="flex items-center justify-center gap-8 mt-8 text-center"
+          >
             <div class="flex items-center gap-2">
               <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <UIcon name="i-lucide-package" class="w-6 h-6 text-white" />
+                <UIcon
+                  name="i-lucide-package"
+                  class="w-6 h-6 text-white"
+                />
               </div>
               <div class="text-left">
-                <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ cartCount }}</p>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Items</p>
+                <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                  {{ cartCount }}
+                </p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Items
+                </p>
               </div>
             </div>
             <div class="flex items-center gap-2">
               <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <UIcon name="i-lucide-indian-rupee" class="w-6 h-6 text-white" />
+                <UIcon
+                  name="i-lucide-indian-rupee"
+                  class="w-6 h-6 text-white"
+                />
               </div>
               <div class="text-left">
-                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ cartTotalFormatted }}</p>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Total</p>
+                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                  {{ cartTotalFormatted }}
+                </p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Total
+                </p>
               </div>
             </div>
           </div>
@@ -261,10 +287,17 @@ useComprehensiveSeo({
       </div>
 
       <!-- Loading State -->
-      <div v-if="isCartLoading" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div
+        v-if="isCartLoading"
+        class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
         <div class="lg:col-span-2">
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-xl overflow-hidden">
-            <div v-for="i in 3" :key="i" class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 last:border-b-0 animate-pulse">
+            <div
+              v-for="i in 3"
+              :key="i"
+              class="p-6 border-b border-slate-200/50 dark:border-slate-700/50 last:border-b-0 animate-pulse"
+            >
               <div class="flex gap-6">
                 <div class="w-24 h-24 bg-slate-200 dark:bg-slate-700 rounded-2xl" />
                 <div class="flex-1 space-y-3">
@@ -290,7 +323,10 @@ useComprehensiveSeo({
       </div>
 
       <!-- Cart Content -->
-      <div v-else-if="cartItems.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div
+        v-else-if="cartItems.length > 0"
+        class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
         <!-- Cart Items -->
         <div class="lg:col-span-2 space-y-6">
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-xl overflow-hidden">
@@ -301,7 +337,10 @@ useComprehensiveSeo({
             >
               <div class="flex flex-col sm:flex-row gap-6">
                 <!-- Product Image -->
-                <NuxtLink :to="`/shop/${item.product_slug}`" class="shrink-0">
+                <NuxtLink
+                  :to="`/shop/${item.product_slug}`"
+                  class="shrink-0"
+                >
                   <div class="relative w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-700 shadow-lg group">
                     <img
                       v-if="item.image"
@@ -310,8 +349,14 @@ useComprehensiveSeo({
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     >
-                    <div v-else class="w-full h-full flex items-center justify-center">
-                      <UIcon name="i-lucide-package" class="w-12 h-12 text-slate-300 dark:text-slate-600" />
+                    <div
+                      v-else
+                      class="w-full h-full flex items-center justify-center"
+                    >
+                      <UIcon
+                        name="i-lucide-package"
+                        class="w-12 h-12 text-slate-300 dark:text-slate-600"
+                      />
                     </div>
                   </div>
                 </NuxtLink>
@@ -350,7 +395,10 @@ useComprehensiveSeo({
                           class="w-10 h-10 bg-white dark:bg-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-700 dark:text-slate-200 hover:bg-violet-500 hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                           @click="decrementQuantity(item)"
                         >
-                          <UIcon name="i-lucide-minus" class="w-4 h-4" />
+                          <UIcon
+                            name="i-lucide-minus"
+                            class="w-4 h-4"
+                          />
                         </button>
 
                         <span class="w-10 text-center font-bold text-slate-900 dark:text-white">
@@ -362,7 +410,10 @@ useComprehensiveSeo({
                           class="w-10 h-10 bg-white dark:bg-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-700 dark:text-slate-200 hover:bg-violet-500 hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                           @click="incrementQuantity(item)"
                         >
-                          <UIcon name="i-lucide-plus" class="w-4 h-4" />
+                          <UIcon
+                            name="i-lucide-plus"
+                            class="w-4 h-4"
+                          />
                         </button>
                       </div>
 
@@ -392,7 +443,10 @@ useComprehensiveSeo({
               class="flex items-center gap-2 px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl font-semibold transition-all duration-300"
               @click="handleClearCart"
             >
-              <UIcon name="i-lucide-trash-2" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-trash-2"
+                class="w-4 h-4"
+              />
               Clear Cart
             </button>
           </div>
@@ -400,13 +454,14 @@ useComprehensiveSeo({
 
         <!-- Order Summary Sidebar -->
         <div class="lg:col-span-1 space-y-6">
-
-
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-xl overflow-hidden sticky top-24">
             <!-- Header -->
             <div class="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white p-6">
               <h2 class="text-xl font-bold flex items-center gap-3">
-                <UIcon name="i-lucide-receipt" class="w-6 h-6" />
+                <UIcon
+                  name="i-lucide-receipt"
+                  class="w-6 h-6"
+                />
                 Order Summary
               </h2>
             </div>
@@ -436,56 +491,91 @@ useComprehensiveSeo({
                     <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                       {{ cartTotalFormatted }}
                     </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="space-y-6">
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Delivery Details</h3>
-                  <UButton to="/addresses" size="sm" variant="soft" icon="i-lucide-map-pin">Manage Addresses</UButton>
-                </div>
-                <div v-if="addressesLoading" class="text-sm text-slate-500 dark:text-slate-400">Loading addresses...</div>
-                <div v-else-if="addresses.length" class="space-y-4">
-                  <UFormField label="Shipping Address" required>
-                    <USelect
-                      v-model="shippingAddressId"
-                      :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
-                      size="lg"
-                      :ui="{ base: 'w-full' }"
-                    />
-                  </UFormField>
-                  <div class="flex items-center gap-2">
-                    <UCheckbox v-model="billingIsShipping" label="Billing same as shipping" />
+              <div class="space-y-6">
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+                      Delivery Details
+                    </h3>
+                    <UButton
+                      to="/addresses"
+                      size="sm"
+                      variant="soft"
+                      icon="i-lucide-map-pin"
+                    >
+                      Manage Addresses
+                    </UButton>
                   </div>
-                  <div v-if="!billingIsShipping">
-                    <UFormField label="Billing Address" required>
+                  <div
+                    v-if="addressesLoading"
+                    class="text-sm text-slate-500 dark:text-slate-400"
+                  >
+                    Loading addresses...
+                  </div>
+                  <div
+                    v-else-if="addresses.length"
+                    class="space-y-4"
+                  >
+                    <UFormField
+                      label="Shipping Address"
+                      required
+                    >
                       <USelect
-                        v-model="billingAddressId"
+                        v-model="shippingAddressId"
                         :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
                         size="lg"
                         :ui="{ base: 'w-full' }"
                       />
                     </UFormField>
+                    <div class="flex items-center gap-2">
+                      <UCheckbox
+                        v-model="billingIsShipping"
+                        label="Billing same as shipping"
+                      />
+                    </div>
+                    <div v-if="!billingIsShipping">
+                      <UFormField
+                        label="Billing Address"
+                        required
+                      >
+                        <USelect
+                          v-model="billingAddressId"
+                          :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
+                          size="lg"
+                          :ui="{ base: 'w-full' }"
+                        />
+                      </UFormField>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <UCheckbox
+                        v-model="isGift"
+                        label="Mark as gift"
+                      />
+                    </div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <UCheckbox v-model="isGift" label="Mark as gift" />
-                  </div>
+                  <UAlert
+                    v-else
+                    color="warning"
+                    icon="i-lucide-alert-triangle"
+                    title="No address found"
+                    description="Add an address to proceed with checkout."
+                  >
+                    <template #actions>
+                      <UButton
+                        to="/addresses"
+                        size="sm"
+                        color="warning"
+                      >
+                        Add Address
+                      </UButton>
+                    </template>
+                  </UAlert>
                 </div>
-                <UAlert
-                  v-else
-                  color="warning"
-                  icon="i-lucide-alert-triangle"
-                  title="No address found"
-                  description="Add an address to proceed with checkout."
-                >
-                  <template #actions>
-                    <UButton to="/addresses" size="sm" color="warning">Add Address</UButton>
-                  </template>
-                </UAlert>
               </div>
-            </div>
 
               <!-- Checkout Button -->
               <UButton
@@ -495,9 +585,15 @@ useComprehensiveSeo({
                 :disabled="!canCheckout"
                 @click="proceedToCheckout"
               >
-                <UIcon name="i-lucide-credit-card" class="w-5 h-5 mr-2" />
+                <UIcon
+                  name="i-lucide-credit-card"
+                  class="w-5 h-5 mr-2"
+                />
                 Proceed to Checkout
-                <UIcon name="i-lucide-arrow-right" class="w-5 h-5 ml-2" />
+                <UIcon
+                  name="i-lucide-arrow-right"
+                  class="w-5 h-5 ml-2"
+                />
               </UButton>
 
               <!-- Checkout Modal -->
@@ -517,13 +613,19 @@ useComprehensiveSeo({
                 to="/shop"
                 class="sm:hidden flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-all duration-300 hover:bg-slate-200 dark:hover:bg-slate-600"
               >
-                <UIcon name="i-lucide-arrow-left" class="w-4 h-4" />
+                <UIcon
+                  name="i-lucide-arrow-left"
+                  class="w-4 h-4"
+                />
                 Continue Shopping
               </NuxtLink>
 
               <!-- Secure Checkout Badge -->
               <div class="flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                <UIcon name="i-lucide-shield-check" class="w-4 h-4 text-emerald-500" />
+                <UIcon
+                  name="i-lucide-shield-check"
+                  class="w-4 h-4 text-emerald-500"
+                />
                 <span>Secure checkout</span>
               </div>
             </div>
@@ -532,12 +634,20 @@ useComprehensiveSeo({
       </div>
 
       <!-- Empty Cart State -->
-      <div v-else class="text-center py-16">
+      <div
+        v-else
+        class="text-center py-16"
+      >
         <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-xl max-w-lg mx-auto p-12">
           <div class="w-32 h-32 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
-            <UIcon name="i-lucide-shopping-cart" class="w-16 h-16 text-slate-400 dark:text-slate-500" />
+            <UIcon
+              name="i-lucide-shopping-cart"
+              class="w-16 h-16 text-slate-400 dark:text-slate-500"
+            />
           </div>
-          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Your cart is empty</h3>
+          <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+            Your cart is empty
+          </h3>
           <p class="text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">
             Discover amazing products and start building your perfect collection
           </p>
@@ -548,7 +658,10 @@ useComprehensiveSeo({
                 size="lg"
                 class="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white font-bold"
               >
-                <UIcon name="i-lucide-shopping-bag" class="w-5 h-5 mr-2" />
+                <UIcon
+                  name="i-lucide-shopping-bag"
+                  class="w-5 h-5 mr-2"
+                />
                 Start Shopping
               </UButton>
             </NuxtLink>
@@ -559,7 +672,10 @@ useComprehensiveSeo({
                 size="lg"
                 class="font-semibold"
               >
-                <UIcon name="i-lucide-grid-3x3" class="w-5 h-5 mr-2" />
+                <UIcon
+                  name="i-lucide-grid-3x3"
+                  class="w-5 h-5 mr-2"
+                />
                 Browse Categories
               </UButton>
             </NuxtLink>

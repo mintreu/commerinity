@@ -207,7 +207,6 @@ const handleSubmit = async () => {
     otpInputs.value[0]?.focus()
   }
 }
-
 </script>
 
 <template>
@@ -243,14 +242,23 @@ const handleSubmit = async () => {
       >
         <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-6">
           <div class="flex gap-3">
-            <UIcon name="i-lucide-info" class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+            <UIcon
+              name="i-lucide-info"
+              class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0"
+            />
             <p class="text-sm text-blue-700 dark:text-blue-300">
               For security, we'll send a verification code to your mobile before changing your PIN.
             </p>
           </div>
         </div>
 
-        <UButton color="primary" size="lg" block :loading="loading" @click="handleRequestOtp">
+        <UButton
+          color="primary"
+          size="lg"
+          block
+          :loading="loading"
+          @click="handleRequestOtp"
+        >
           Send OTP to Mobile
         </UButton>
       </div>

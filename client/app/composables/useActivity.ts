@@ -58,7 +58,7 @@ export function useActivity() {
     width: window.screen.width,
     height: window.screen.height,
     viewport_width: window.innerWidth,
-    viewport_height: window.innerHeight,
+    viewport_height: window.innerHeight
   })
 
   /**
@@ -77,12 +77,12 @@ export function useActivity() {
         event,
         description,
         properties,
-        screen: getScreenData(),
+        screen: getScreenData()
       }
 
       await useSanctumFetch(`${config.public.apiBase}/api/activity/track`, {
         method: 'POST',
-        body: payload,
+        body: payload
       })
     } catch (error) {
       // Silently fail - activity tracking shouldn't block user
@@ -109,8 +109,8 @@ export function useActivity() {
           page_path: pagePath,
           page_title: pageTitle,
           referrer,
-          screen: getScreenData(),
-        },
+          screen: getScreenData()
+        }
       })
     } catch (error) {
       console.debug('Page view tracking failed:', error)
@@ -134,8 +134,8 @@ export function useActivity() {
           action,
           target,
           data,
-          screen: getScreenData(),
-        },
+          screen: getScreenData()
+        }
       })
     } catch (error) {
       console.debug('Action tracking failed:', error)
@@ -154,7 +154,7 @@ export function useActivity() {
       event,
       description,
       properties,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     })
   }
 
@@ -170,7 +170,7 @@ export function useActivity() {
 
       await useSanctumFetch(`${config.public.apiBase}/api/activity/batch`, {
         method: 'POST',
-        body: { activities },
+        body: { activities }
       })
     } catch (error) {
       console.debug('Batch activity tracking failed:', error)
@@ -196,7 +196,7 @@ export function useActivity() {
    */
   const trackShare = (platform: string): Promise<void> => {
     return track('referral_share', `Shared referral link via ${platform}`, {
-      platform,
+      platform
     })
   }
 
@@ -223,7 +223,7 @@ export function useActivity() {
    */
   const trackProfileUpdate = (changedFields: string[]): Promise<void> => {
     return track('profile_update', 'User updated profile', {
-      changed_fields: changedFields,
+      changed_fields: changedFields
     })
   }
 
@@ -260,6 +260,6 @@ export function useActivity() {
     trackWalletView,
     trackProfileUpdate,
     trackNetworkView,
-    trackKycSubmit,
+    trackKycSubmit
   }
 }

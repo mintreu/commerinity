@@ -19,9 +19,9 @@ const faqs = ref([
 ])
 
 const filteredFaqs = computed(() => {
-  return faqs.value.filter(f => {
-    const matchesSearch = f.question.toLowerCase().includes(search.value.toLowerCase()) ||
-                         f.answer.toLowerCase().includes(search.value.toLowerCase())
+  return faqs.value.filter((f) => {
+    const matchesSearch = f.question.toLowerCase().includes(search.value.toLowerCase())
+      || f.answer.toLowerCase().includes(search.value.toLowerCase())
     const matchesCategory = selectedCategory.value === 'All' || f.category === selectedCategory.value
     return matchesSearch && matchesCategory
   })
@@ -56,13 +56,13 @@ const filteredFaqs = computed(() => {
       <button
         v-for="cat in categories"
         :key="cat"
-        @click="selectedCategory = cat"
         :class="[
           'px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest transition-all duration-300',
           selectedCategory === cat
             ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20'
             : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700'
         ]"
+        @click="selectedCategory = cat"
       >
         {{ cat }}
       </button>
@@ -70,8 +70,11 @@ const filteredFaqs = computed(() => {
 
     <!-- FAQ Accordion -->
     <div class="glass-card p-4 border-none ring-1 ring-slate-200 dark:ring-slate-800 rounded-[40px]">
-      <div v-if="filteredFaqs.length === 0" class="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
-         No matching questions found
+      <div
+        v-if="filteredFaqs.length === 0"
+        class="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-xs"
+      >
+        No matching questions found
       </div>
 
       <UAccordion
@@ -88,11 +91,16 @@ const filteredFaqs = computed(() => {
             :class="open ? 'bg-primary-500/5' : ''"
           >
             <div class="flex items-center gap-4">
-              <div :class="[
-                'w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500',
-                open ? 'bg-primary-600 text-white rotate-[360deg]' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-primary-500'
-              ]">
-                <UIcon name="i-lucide-help-circle" class="w-5 h-5" />
+              <div
+                :class="[
+                  'w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500',
+                  open ? 'bg-primary-600 text-white rotate-[360deg]' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-primary-500'
+                ]"
+              >
+                <UIcon
+                  name="i-lucide-help-circle"
+                  class="w-5 h-5"
+                />
               </div>
               <span class="font-black text-slate-900 dark:text-white">{{ item.question }}</span>
             </div>
@@ -110,10 +118,15 @@ const filteredFaqs = computed(() => {
               {{ item.answer }}
             </p>
             <div class="mt-4 flex items-center gap-2">
-               <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">Category:</span>
-               <UBadge size="xs" variant="soft" color="primary" class="rounded-full px-3 text-[10px] items-center">
-                 {{ item.category }}
-               </UBadge>
+              <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">Category:</span>
+              <UBadge
+                size="xs"
+                variant="soft"
+                color="primary"
+                class="rounded-full px-3 text-[10px] items-center"
+              >
+                {{ item.category }}
+              </UBadge>
             </div>
           </div>
         </template>
@@ -122,19 +135,21 @@ const filteredFaqs = computed(() => {
 
     <!-- CTA Footer -->
     <div class="glass-card relative overflow-hidden p-10 border-none bg-slate-900 text-white rounded-[40px] text-center space-y-6">
-       <div class="absolute inset-0 bg-gradient-to-br from-primary-600/20 to-purple-600/20" />
-       <h3 class="text-2xl font-black relative z-10">Still need assistance?</h3>
-       <p class="text-slate-400 max-w-sm mx-auto relative z-10">
-         If you couldn't find the answer you looking for, please create a support ticket.
-       </p>
-       <UButton
-         to="/helpdesk/create"
-         size="xl"
-         color="primary"
-         class="rounded-2xl px-10 font-black relative z-10 shadow-xl shadow-primary-500/20 hover:scale-105 transition-all"
-       >
-         Open Support Ticket
-       </UButton>
+      <div class="absolute inset-0 bg-gradient-to-br from-primary-600/20 to-purple-600/20" />
+      <h3 class="text-2xl font-black relative z-10">
+        Still need assistance?
+      </h3>
+      <p class="text-slate-400 max-w-sm mx-auto relative z-10">
+        If you couldn't find the answer you looking for, please create a support ticket.
+      </p>
+      <UButton
+        to="/helpdesk/create"
+        size="xl"
+        color="primary"
+        class="rounded-2xl px-10 font-black relative z-10 shadow-xl shadow-primary-500/20 hover:scale-105 transition-all"
+      >
+        Open Support Ticket
+      </UButton>
     </div>
   </div>
 </template>

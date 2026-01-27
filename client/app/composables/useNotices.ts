@@ -36,12 +36,10 @@ export const useNotices = () => {
         notices.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch notices'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -56,8 +54,7 @@ export const useNotices = () => {
       notices.value = notices.value.filter(n => n.uuid !== uuid)
 
       return true
-    }
-    catch {
+    } catch {
       return false
     }
   }
@@ -72,8 +69,7 @@ export const useNotices = () => {
       })
 
       return response?.data?.cta_link
-    }
-    catch {
+    } catch {
       // Silent fail
       return null
     }

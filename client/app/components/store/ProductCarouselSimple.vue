@@ -62,12 +62,18 @@ onUnmounted(() => {
 <template>
   <div class="relative">
     <!-- Header -->
-    <div v-if="title" class="flex items-center justify-between mb-4">
+    <div
+      v-if="title"
+      class="flex items-center justify-between mb-4"
+    >
       <div>
         <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
           {{ title }}
         </h3>
-        <p v-if="subtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+        <p
+          v-if="subtitle"
+          class="text-sm text-slate-500 dark:text-slate-400 mt-0.5"
+        >
           {{ subtitle }}
         </p>
       </div>
@@ -80,7 +86,10 @@ onUnmounted(() => {
           class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1"
         >
           View All
-          <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-arrow-right"
+            class="w-4 h-4"
+          />
         </NuxtLink>
 
         <!-- Navigation Arrows (Desktop) -->
@@ -95,7 +104,10 @@ onUnmounted(() => {
             :disabled="!canScrollLeft"
             @click="scrollLeft"
           >
-            <UIcon name="i-lucide-chevron-left" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-chevron-left"
+              class="w-4 h-4"
+            />
           </button>
           <button
             :class="[
@@ -107,7 +119,10 @@ onUnmounted(() => {
             :disabled="!canScrollRight"
             @click="scrollRight"
           >
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-4 h-4"
+            />
           </button>
         </div>
       </div>
@@ -153,7 +168,10 @@ onUnmounted(() => {
               compact ? 'w-[140px] md:w-[160px]' : 'w-[160px] md:w-[200px]'
             ]"
           >
-            <StoreProductCard :product="product" :compact="compact" />
+            <StoreProductCard
+              :product="product"
+              :compact="compact"
+            />
           </div>
 
           <!-- View All Card -->
@@ -169,7 +187,10 @@ onUnmounted(() => {
               <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               <div class="relative z-10 flex flex-col items-center space-y-2">
                 <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <UIcon name="i-lucide-arrow-right" class="w-5 h-5" />
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-5 h-5"
+                  />
                 </div>
                 <span class="font-bold text-sm">View All</span>
                 <span class="text-xs opacity-80">{{ products.length }}+ items</span>
@@ -191,10 +212,21 @@ onUnmounted(() => {
     </div>
 
     <!-- Mobile View All Button (when no inline card) -->
-    <div v-if="viewAllLink && products.length < 4" class="mt-4 text-center sm:hidden">
-      <UButton :to="viewAllLink" variant="soft" color="primary" size="sm">
+    <div
+      v-if="viewAllLink && products.length < 4"
+      class="mt-4 text-center sm:hidden"
+    >
+      <UButton
+        :to="viewAllLink"
+        variant="soft"
+        color="primary"
+        size="sm"
+      >
         View All Products
-        <UIcon name="i-lucide-arrow-right" class="w-4 h-4 ml-1" />
+        <UIcon
+          name="i-lucide-arrow-right"
+          class="w-4 h-4 ml-1"
+        />
       </UButton>
     </div>
   </div>

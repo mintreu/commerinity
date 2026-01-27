@@ -5,9 +5,14 @@
         <!-- Header -->
         <div class="text-center mb-6">
           <div class="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <UIcon name="i-lucide-share-2" class="w-8 h-8 text-primary-600 dark:text-primary-400" />
+            <UIcon
+              name="i-lucide-share-2"
+              class="w-8 h-8 text-primary-600 dark:text-primary-400"
+            />
           </div>
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">Share & Earn</h3>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+            Share & Earn
+          </h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Invite friends and earn commissions when they join
           </p>
@@ -62,7 +67,10 @@
               @click="shareVia('whatsapp')"
             >
               <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-message-circle" class="w-5 h-5 text-white" />
+                <UIcon
+                  name="i-lucide-message-circle"
+                  class="w-5 h-5 text-white"
+                />
               </div>
               <span class="text-xs text-gray-600 dark:text-gray-400">WhatsApp</span>
             </button>
@@ -72,7 +80,10 @@
               @click="shareVia('facebook')"
             >
               <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-facebook" class="w-5 h-5 text-white" />
+                <UIcon
+                  name="i-lucide-facebook"
+                  class="w-5 h-5 text-white"
+                />
               </div>
               <span class="text-xs text-gray-600 dark:text-gray-400">Facebook</span>
             </button>
@@ -82,7 +93,10 @@
               @click="shareVia('twitter')"
             >
               <div class="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-twitter" class="w-5 h-5 text-white" />
+                <UIcon
+                  name="i-lucide-twitter"
+                  class="w-5 h-5 text-white"
+                />
               </div>
               <span class="text-xs text-gray-600 dark:text-gray-400">Twitter</span>
             </button>
@@ -92,7 +106,10 @@
               @click="shareVia('telegram')"
             >
               <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-send" class="w-5 h-5 text-white" />
+                <UIcon
+                  name="i-lucide-send"
+                  class="w-5 h-5 text-white"
+                />
               </div>
               <span class="text-xs text-gray-600 dark:text-gray-400">Telegram</span>
             </button>
@@ -115,16 +132,28 @@
         <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <div class="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.totalReferrals }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Total Referrals</div>
+              <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                {{ stats.totalReferrals }}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Total Referrals
+              </div>
             </div>
             <div>
-              <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.activeReferrals }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Active</div>
+              <div class="text-2xl font-bold text-green-600 dark:text-green-400">
+                {{ stats.activeReferrals }}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Active
+              </div>
             </div>
             <div>
-              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ stats.earnings }}</div>
-              <div class="text-xs text-gray-500 dark:text-gray-400">Earned</div>
+              <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                {{ stats.earnings }}
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">
+                Earned
+              </div>
             </div>
           </div>
         </div>
@@ -166,7 +195,7 @@ const toast = useToast()
 
 const isOpen = computed({
   get: () => props.open,
-  set: (value) => emit('update:open', value)
+  set: value => emit('update:open', value)
 })
 
 // Generate referral link

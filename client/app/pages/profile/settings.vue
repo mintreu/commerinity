@@ -75,7 +75,11 @@ const deleteAccount = async () => {
 
     <!-- Sections Grid -->
     <div class="grid gap-12">
-      <div v-for="section in settingsSections" :key="section.title" class="space-y-6">
+      <div
+        v-for="section in settingsSections"
+        :key="section.title"
+        class="space-y-6"
+      >
         <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 pl-4 border-l-4 border-primary-500/20">
           {{ section.title }}
         </h2>
@@ -89,17 +93,23 @@ const deleteAccount = async () => {
           >
             <div class="flex items-center gap-5">
               <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center bg-${item.color}-500/10 text-${item.color}-500 group-hover:scale-110 transition-transform duration-500`">
-                <UIcon :name="item.icon" class="w-7 h-7" />
+                <UIcon
+                  :name="item.icon"
+                  class="w-7 h-7"
+                />
               </div>
               <div class="flex-1 min-w-0">
                 <h3 class="font-black text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                   {{ item.label }}
+                  {{ item.label }}
                 </h3>
                 <p class="text-xs text-slate-500 font-medium truncate mt-0.5">
-                   {{ item.desc }}
+                  {{ item.desc }}
                 </p>
               </div>
-              <UIcon name="i-lucide-chevron-right" class="w-5 h-5 text-slate-300 group-hover:text-primary-500 transition-colors" />
+              <UIcon
+                name="i-lucide-chevron-right"
+                class="w-5 h-5 text-slate-300 group-hover:text-primary-500 transition-colors"
+              />
             </div>
           </NuxtLink>
         </div>
@@ -108,46 +118,56 @@ const deleteAccount = async () => {
 
     <!-- System Info & Danger Zone -->
     <div class="pt-12 border-t border-slate-100 dark:border-slate-800 grid md:grid-cols-2 gap-8">
-       <!-- App Metadata -->
-       <div class="glass-card p-8 border-none bg-slate-50/50 dark:bg-slate-900/30">
-          <div class="flex items-center gap-3 mb-6">
-             <UIcon name="i-lucide-info" class="text-slate-400" />
-             <h3 class="text-xs font-black uppercase tracking-widest text-slate-500">Node Information</h3>
+      <!-- App Metadata -->
+      <div class="glass-card p-8 border-none bg-slate-50/50 dark:bg-slate-900/30">
+        <div class="flex items-center gap-3 mb-6">
+          <UIcon
+            name="i-lucide-info"
+            class="text-slate-400"
+          />
+          <h3 class="text-xs font-black uppercase tracking-widest text-slate-500">
+            Node Information
+          </h3>
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-slate-400 uppercase">Core Version</span>
+            <span class="font-black text-slate-900 dark:text-white">v4.2.1-stable</span>
           </div>
-          <div class="space-y-4">
-             <div class="flex justify-between items-center text-xs">
-                <span class="font-bold text-slate-400 uppercase">Core Version</span>
-                <span class="font-black text-slate-900 dark:text-white">v4.2.1-stable</span>
-             </div>
-             <div class="flex justify-between items-center text-xs">
-                <span class="font-bold text-slate-400 uppercase">Identity Hash</span>
-                <span class="font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-800 px-2 py-1 rounded">
-                   {{ user?.uuid?.slice(0, 16).toUpperCase() }}...
-                </span>
-             </div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-slate-400 uppercase">Identity Hash</span>
+            <span class="font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-800 px-2 py-1 rounded">
+              {{ user?.uuid?.slice(0, 16).toUpperCase() }}...
+            </span>
           </div>
-       </div>
+        </div>
+      </div>
 
-       <!-- Danger Zone -->
-       <div class="glass-card p-8 border-none bg-red-500/5 ring-1 ring-red-500/20">
-          <div class="flex items-center gap-3 mb-4 text-red-500">
-             <UIcon name="i-lucide-shield-alert" class="w-6 h-6" />
-             <h3 class="text-sm font-black uppercase tracking-widest">Termination Zone</h3>
-          </div>
-          <p class="text-xs text-red-600/70 font-medium mb-6">
-             Deleting your account will purge all transaction history, active subscriptions, and network positions. This cannot be recovered.
-          </p>
-          <UButton
-            color="error"
-            variant="soft"
-            size="lg"
-            block
-            class="rounded-xl font-black py-4 active:scale-95 transition-transform"
-            @click="showDeleteModal = true"
-          >
-            Purge Account Data
-          </UButton>
-       </div>
+      <!-- Danger Zone -->
+      <div class="glass-card p-8 border-none bg-red-500/5 ring-1 ring-red-500/20">
+        <div class="flex items-center gap-3 mb-4 text-red-500">
+          <UIcon
+            name="i-lucide-shield-alert"
+            class="w-6 h-6"
+          />
+          <h3 class="text-sm font-black uppercase tracking-widest">
+            Termination Zone
+          </h3>
+        </div>
+        <p class="text-xs text-red-600/70 font-medium mb-6">
+          Deleting your account will purge all transaction history, active subscriptions, and network positions. This cannot be recovered.
+        </p>
+        <UButton
+          color="error"
+          variant="soft"
+          size="lg"
+          block
+          class="rounded-xl font-black py-4 active:scale-95 transition-transform"
+          @click="showDeleteModal = true"
+        >
+          Purge Account Data
+        </UButton>
+      </div>
     </div>
 
     <!-- Termination Confirmation Modal -->
@@ -160,10 +180,15 @@ const deleteAccount = async () => {
     >
       <div class="p-10 text-center">
         <div class="w-20 h-20 bg-red-500/10 text-red-600 rounded-[30px] flex items-center justify-center mx-auto mb-6">
-          <UIcon name="i-lucide-alert-octagon" class="w-10 h-10" />
+          <UIcon
+            name="i-lucide-alert-octagon"
+            class="w-10 h-10"
+          />
         </div>
 
-        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Final Confirmation</h3>
+        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">
+          Final Confirmation
+        </h3>
         <p class="text-slate-500 dark:text-slate-400 text-sm mb-8">
           This process is final. Type <span class="bg-red-500/10 text-red-600 font-black px-2 py-0.5 rounded">DELETE</span> below to authorize termination.
         </p>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import GuestApplyForm from '~/components/career/GuestApplyForm.vue'
+
 definePageMeta({
   layout: 'public'
 })
@@ -70,16 +72,12 @@ const job = computed(() => recruitment.value?.data)
 const hasApplied = computed(() => applicationCheck.value?.data?.has_applied ?? false)
 const existingApplication = computed(() => applicationCheck.value?.data?.application)
 
-import GuestApplyForm from '~/components/career/GuestApplyForm.vue'
-
 const showGuestApplyForm = ref(false)
 
 const handleGuestApplication = async (formData: any) => {
   console.log('Guest application submitted:', formData)
   // Here I will call the backend API endpoint
 }
-
-
 </script>
 
 <template>
@@ -96,24 +94,42 @@ const handleGuestApplication = async (formData: any) => {
         </UButton>
       </div>
 
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-primary" />
+      <div
+        v-if="status === 'pending'"
+        class="flex justify-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="w-8 h-8 animate-spin text-primary"
+        />
       </div>
 
-      <div v-else-if="error" class="text-center py-12">
-        <UIcon name="i-heroicons-exclamation-circle" class="w-16 h-16 mx-auto text-red-500 mb-4" />
+      <div
+        v-else-if="error"
+        class="text-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-exclamation-circle"
+          class="w-16 h-16 mx-auto text-red-500 mb-4"
+        />
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           Position not found
         </h3>
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           The position you're looking for doesn't exist or is no longer available.
         </p>
-        <UButton to="/career" variant="outline">
+        <UButton
+          to="/career"
+          variant="outline"
+        >
           Browse Open Positions
         </UButton>
       </div>
 
-      <div v-else-if="job" class="grid gap-8 lg:grid-cols-3">
+      <div
+        v-else-if="job"
+        class="grid gap-8 lg:grid-cols-3"
+      >
         <div class="lg:col-span-2 space-y-6">
           <UCard>
             <template #header>
@@ -124,23 +140,49 @@ const handleGuestApplication = async (formData: any) => {
                   </h1>
                   <div class="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <span class="flex items-center gap-1">
-                      <UIcon name="i-heroicons-briefcase" class="w-4 h-4" />
+                      <UIcon
+                        name="i-heroicons-briefcase"
+                        class="w-4 h-4"
+                      />
                       {{ job.role_label }}
                     </span>
                     <span class="flex items-center gap-1">
-                      <UIcon name="i-heroicons-clock" class="w-4 h-4" />
+                      <UIcon
+                        name="i-heroicons-clock"
+                        class="w-4 h-4"
+                      />
                       {{ job.employment_type_label }}
                     </span>
                     <span class="flex items-center gap-1">
-                      <UIcon name="i-heroicons-map-pin" class="w-4 h-4" />
+                      <UIcon
+                        name="i-heroicons-map-pin"
+                        class="w-4 h-4"
+                      />
                       {{ job.location }}
                     </span>
                   </div>
                 </div>
                 <div class="flex gap-2">
-                  <UBadge v-if="job.is_open" color="success" variant="subtle">Open</UBadge>
-                  <UBadge v-else color="error" variant="subtle">Closed</UBadge>
-                  <UBadge v-if="job.is_payable" color="warning" variant="subtle" icon="i-heroicons-banknotes">
+                  <UBadge
+                    v-if="job.is_open"
+                    color="success"
+                    variant="subtle"
+                  >
+                    Open
+                  </UBadge>
+                  <UBadge
+                    v-else
+                    color="error"
+                    variant="subtle"
+                  >
+                    Closed
+                  </UBadge>
+                  <UBadge
+                    v-if="job.is_payable"
+                    color="warning"
+                    variant="subtle"
+                    icon="i-heroicons-banknotes"
+                  >
                     Fee Required
                   </UBadge>
                 </div>
@@ -157,7 +199,10 @@ const handleGuestApplication = async (formData: any) => {
               :description="`Applying for this position requires a non-refundable fee of ${job.fees_formatted}.`"
             />
 
-            <RichContent :content="job.description" class="max-w-none" />
+            <RichContent
+              :content="job.description"
+              class="max-w-none"
+            />
           </UCard>
 
           <UCard v-if="job.requirements?.length">
@@ -172,7 +217,10 @@ const handleGuestApplication = async (formData: any) => {
                 :key="idx"
                 class="flex items-start gap-2"
               >
-                <UIcon name="i-heroicons-check-circle" class="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                <UIcon
+                  name="i-heroicons-check-circle"
+                  class="w-5 h-5 text-green-500 shrink-0 mt-0.5"
+                />
                 <span class="text-gray-700 dark:text-gray-300">{{ req }}</span>
               </li>
             </ul>
@@ -190,7 +238,10 @@ const handleGuestApplication = async (formData: any) => {
                 :key="idx"
                 class="flex items-start gap-2"
               >
-                <UIcon name="i-heroicons-star" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <UIcon
+                  name="i-heroicons-star"
+                  class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
+                />
                 <span class="text-gray-700 dark:text-gray-300">{{ benefit }}</span>
               </li>
             </ul>
@@ -240,7 +291,10 @@ const handleGuestApplication = async (formData: any) => {
                 <span class="text-sm text-gray-500 dark:text-gray-400">Closes</span>
                 <span class="font-medium text-gray-900 dark:text-white">{{ job.close_date_formatted }}</span>
               </div>
-              <div v-if="job.is_payable" class="flex justify-between items-center">
+              <div
+                v-if="job.is_payable"
+                class="flex justify-between items-center"
+              >
                 <span class="text-sm text-gray-500 dark:text-gray-400">Application Fee</span>
                 <span class="font-medium text-amber-600 dark:text-amber-400">{{ job.fees_formatted }}</span>
               </div>
@@ -309,7 +363,10 @@ const handleGuestApplication = async (formData: any) => {
               </div>
             </div>
 
-            <template #footer v-if="job.info_pdf">
+            <template
+              v-if="job.info_pdf"
+              #footer
+            >
               <UButton
                 :href="job.info_pdf"
                 target="_blank"

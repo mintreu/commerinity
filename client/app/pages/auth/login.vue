@@ -589,13 +589,13 @@ const handleLogin = async () => {
       response?: { _data?: { message?: string } }
       message?: string
     }
-    
+
     // Try to extract error message from various possible locations
-    error.value = fetchError.data?.message 
-      || fetchError.response?._data?.message 
-      || fetchError.message 
+    error.value = fetchError.data?.message
+      || fetchError.response?._data?.message
+      || fetchError.message
       || 'Login failed. Please check your credentials.'
-    
+
     console.error('Login error:', err)
   } finally {
     loading.value = false

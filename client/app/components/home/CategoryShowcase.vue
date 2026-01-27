@@ -57,7 +57,10 @@ const topCategories = computed(() => {
       <!-- Section Header -->
       <div class="text-center mb-12 md:mb-16">
         <div class="premium-badge mx-auto mb-4">
-          <UIcon name="i-lucide-layers" class="w-4 h-4 mr-2" />
+          <UIcon
+            name="i-lucide-layers"
+            class="w-4 h-4 mr-2"
+          />
           <span>Shop by Category</span>
         </div>
 
@@ -72,7 +75,10 @@ const topCategories = computed(() => {
       </div>
 
       <!-- Loading State -->
-      <div v-if="status === 'pending'" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+      <div
+        v-if="status === 'pending'"
+        class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
+      >
         <div
           v-for="i in 6"
           :key="i"
@@ -83,7 +89,10 @@ const topCategories = computed(() => {
       </div>
 
       <!-- Categories Grid -->
-      <div v-else-if="topCategories.length" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+      <div
+        v-else-if="topCategories.length"
+        class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"
+      >
         <NuxtLink
           v-for="category in topCategories"
           :key="category.id"
@@ -115,7 +124,10 @@ const topCategories = computed(() => {
 
             <!-- Product Count -->
             <p class="text-sm text-white/80 flex items-center gap-1">
-              <UIcon name="i-lucide-package" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-package"
+                class="w-4 h-4"
+              />
               {{ category.products_count || 0 }} products
             </p>
 
@@ -124,13 +136,19 @@ const topCategories = computed(() => {
               v-if="category.children_count && category.children_count > 0"
               class="text-xs text-white/60 mt-1 flex items-center gap-1"
             >
-              <UIcon name="i-lucide-folder" class="w-3 h-3" />
+              <UIcon
+                name="i-lucide-folder"
+                class="w-3 h-3"
+              />
               {{ category.children_count }} subcategories
             </p>
 
             <!-- Hover Arrow -->
             <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <UIcon name="i-lucide-arrow-right" class="w-5 h-5 text-white group-hover:translate-x-0.5 transition-transform" />
+              <UIcon
+                name="i-lucide-arrow-right"
+                class="w-5 h-5 text-white group-hover:translate-x-0.5 transition-transform"
+              />
             </div>
           </div>
 
@@ -145,9 +163,14 @@ const topCategories = computed(() => {
         class="text-center py-12"
       >
         <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-          <UIcon name="i-lucide-layers" class="w-10 h-10 text-slate-400" />
+          <UIcon
+            name="i-lucide-layers"
+            class="w-10 h-10 text-slate-400"
+          />
         </div>
-        <p class="text-slate-500 dark:text-slate-400 mb-4">Categories coming soon!</p>
+        <p class="text-slate-500 dark:text-slate-400 mb-4">
+          Categories coming soon!
+        </p>
         <NuxtLink to="/shop">
           <UButton color="primary">
             Browse All Products
@@ -156,13 +179,19 @@ const topCategories = computed(() => {
       </div>
 
       <!-- View All Categories Link -->
-      <div v-if="topCategories.length" class="text-center mt-10">
+      <div
+        v-if="topCategories.length"
+        class="text-center mt-10"
+      >
         <NuxtLink
           to="/shop"
           class="inline-flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-pink-600 dark:hover:text-pink-400 font-semibold transition-colors"
         >
           View All Categories
-          <UIcon name="i-lucide-arrow-right" class="w-5 h-5" />
+          <UIcon
+            name="i-lucide-arrow-right"
+            class="w-5 h-5"
+          />
         </NuxtLink>
       </div>
     </UContainer>

@@ -9,8 +9,15 @@
     >
       <div class="flex h-full flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex h-16 items-center gap-3 px-6 border-b border-slate-200 dark:border-slate-800">
-          <img src="/logo.png" :alt="appName" class="h-10 w-auto" />
+        <NuxtLink
+          to="/"
+          class="flex h-16 items-center gap-3 px-6 border-b border-slate-200 dark:border-slate-800"
+        >
+          <img
+            src="/logo.png"
+            :alt="appName"
+            class="h-10 w-auto"
+          >
           <span class="text-lg font-bold gradient-text-primary">{{ appName }}</span>
         </NuxtLink>
 
@@ -34,14 +41,20 @@
                 {{ getUserTypeLabel() }}
               </p>
             </div>
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-slate-400" />
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-4 h-4 text-slate-400"
+            />
           </NuxtLink>
         </div>
 
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto p-4 custom-scrollbar">
           <ul class="space-y-1">
-            <li v-for="item in navigationItems" :key="item.to">
+            <li
+              v-for="item in navigationItems"
+              :key="item.to"
+            >
               <NuxtLink
                 :to="item.to"
                 :class="[
@@ -53,9 +66,16 @@
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 ]"
               >
-                <UIcon :name="item.icon" class="w-5 h-5" />
+                <UIcon
+                  :name="item.icon"
+                  class="w-5 h-5"
+                />
                 <span class="flex-1">{{ item.label }}</span>
-                <UBadge v-if="item.badge" :color="item.highlight ? 'neutral' : 'violet'" size="xs">
+                <UBadge
+                  v-if="item.badge"
+                  :color="item.highlight ? 'neutral' : 'violet'"
+                  size="xs"
+                >
                   {{ item.badge }}
                 </UBadge>
               </NuxtLink>
@@ -68,7 +88,10 @@
               Account
             </p>
             <ul class="space-y-1">
-              <li v-for="item in accountMenuItems" :key="item.to">
+              <li
+                v-for="item in accountMenuItems"
+                :key="item.to"
+              >
                 <NuxtLink
                   :to="item.to"
                   :class="[
@@ -78,7 +101,10 @@
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                   ]"
                 >
-                  <UIcon :name="item.icon" class="w-4 h-4" />
+                  <UIcon
+                    :name="item.icon"
+                    class="w-4 h-4"
+                  />
                   <span>{{ item.label }}</span>
                 </NuxtLink>
               </li>
@@ -92,7 +118,10 @@
             class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-xl transition-colors"
             @click="handleLogout"
           >
-            <UIcon name="i-lucide-log-out" class="w-4 h-4" />
+            <UIcon
+              name="i-lucide-log-out"
+              class="w-4 h-4"
+            />
             <span>Sign Out</span>
           </button>
         </div>
@@ -108,15 +137,25 @@
         <div class="flex h-full flex-col bg-white dark:bg-slate-900 shadow-2xl">
           <!-- Close Button + Logo -->
           <div class="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
-            <NuxtLink to="/" class="flex items-center gap-3">
-              <img src="/logo.png" :alt="appName" class="h-10 w-auto" />
+            <NuxtLink
+              to="/"
+              class="flex items-center gap-3"
+            >
+              <img
+                src="/logo.png"
+                :alt="appName"
+                class="h-10 w-auto"
+              >
               <span class="text-lg font-bold gradient-text-primary">{{ appName }}</span>
             </NuxtLink>
             <button
               class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors"
               @click="mobileMenuOpen = false"
             >
-              <UIcon name="i-lucide-x" class="w-6 h-6" />
+              <UIcon
+                name="i-lucide-x"
+                class="w-6 h-6"
+              />
             </button>
           </div>
 
@@ -141,14 +180,20 @@
                   {{ getUserTypeLabel() }}
                 </p>
               </div>
-              <UIcon name="i-lucide-chevron-right" class="w-5 h-5 text-violet-400" />
+              <UIcon
+                name="i-lucide-chevron-right"
+                class="w-5 h-5 text-violet-400"
+              />
             </NuxtLink>
           </div>
 
           <!-- Navigation -->
           <nav class="flex-1 overflow-y-auto p-4">
             <ul class="space-y-1">
-              <li v-for="item in navigationItems" :key="item.to">
+              <li
+                v-for="item in navigationItems"
+                :key="item.to"
+              >
                 <NuxtLink
                   :to="item.to"
                   :class="[
@@ -161,9 +206,16 @@
                   ]"
                   @click="mobileMenuOpen = false"
                 >
-                  <UIcon :name="item.icon" class="w-5 h-5" />
+                  <UIcon
+                    :name="item.icon"
+                    class="w-5 h-5"
+                  />
                   <span class="flex-1">{{ item.label }}</span>
-                  <UBadge v-if="item.badge" :color="item.highlight ? 'neutral' : 'violet'" size="xs">
+                  <UBadge
+                    v-if="item.badge"
+                    :color="item.highlight ? 'neutral' : 'violet'"
+                    size="xs"
+                  >
                     {{ item.badge }}
                   </UBadge>
                 </NuxtLink>
@@ -176,7 +228,10 @@
                 Account
               </p>
               <ul class="space-y-1">
-                <li v-for="item in accountMenuItems" :key="item.to">
+                <li
+                  v-for="item in accountMenuItems"
+                  :key="item.to"
+                >
                   <NuxtLink
                     :to="item.to"
                     :class="[
@@ -187,7 +242,10 @@
                     ]"
                     @click="mobileMenuOpen = false"
                   >
-                    <UIcon :name="item.icon" class="w-5 h-5" />
+                    <UIcon
+                      :name="item.icon"
+                      class="w-5 h-5"
+                    />
                     <span>{{ item.label }}</span>
                   </NuxtLink>
                 </li>
@@ -201,7 +259,10 @@
               class="w-full flex items-center justify-center gap-2 px-4 py-3 text-base font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 rounded-xl transition-colors active:scale-[0.98]"
               @click="handleLogout"
             >
-              <UIcon name="i-lucide-log-out" class="w-5 h-5" />
+              <UIcon
+                name="i-lucide-log-out"
+                class="w-5 h-5"
+              />
               <span>Sign Out</span>
             </button>
           </div>
@@ -229,7 +290,10 @@
               class="lg:hidden p-2 -ml-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors active:bg-slate-100 dark:active:bg-slate-800"
               @click="mobileMenuOpen = true"
             >
-              <UIcon name="i-lucide-menu" class="w-6 h-6" />
+              <UIcon
+                name="i-lucide-menu"
+                class="w-6 h-6"
+              />
             </button>
 
             <div>
@@ -246,12 +310,18 @@
               to="/cart"
               class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors active:bg-slate-100 dark:active:bg-slate-800"
             >
-              <UIcon name="i-lucide-shopping-cart" class="w-5 h-5" />
+              <UIcon
+                name="i-lucide-shopping-cart"
+                class="w-5 h-5"
+              />
             </NuxtLink>
 
             <!-- Search -->
             <button class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors active:bg-slate-100 dark:active:bg-slate-800">
-              <UIcon name="i-lucide-search" class="w-5 h-5" />
+              <UIcon
+                name="i-lucide-search"
+                class="w-5 h-5"
+              />
             </button>
 
             <!-- Notifications -->
@@ -263,7 +333,10 @@
                 class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl transition-colors active:bg-slate-100 dark:active:bg-slate-800"
                 @click="toggleDark"
               >
-                <UIcon :name="isDark ? 'i-lucide-sun' : 'i-lucide-moon'" class="w-5 h-5" />
+                <UIcon
+                  :name="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
+                  class="w-5 h-5"
+                />
               </button>
             </ClientOnly>
 
@@ -285,10 +358,16 @@
         <div class="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
           <p>&copy; {{ currentYear }} {{ appName }}. All rights reserved.</p>
           <div class="flex items-center gap-4">
-            <NuxtLink to="/privacy" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+            <NuxtLink
+              to="/privacy"
+              class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+            >
               Privacy
             </NuxtLink>
-            <NuxtLink to="/terms" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+            <NuxtLink
+              to="/terms"
+              class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+            >
               Terms
             </NuxtLink>
           </div>

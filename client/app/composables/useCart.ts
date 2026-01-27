@@ -111,7 +111,7 @@ export const useCart = () => {
       const response = await useSanctumFetch<{
         success: boolean
         message: string
-        data?: { items_count: number; total_quantity: number }
+        data?: { items_count: number, total_quantity: number }
       }>(`${config.public.apiBase}/api/cart`, {
         method: 'POST',
         body: { product_slug: productSlug, quantity }
@@ -163,7 +163,7 @@ export const useCart = () => {
       const response = await useSanctumFetch<{
         success: boolean
         message?: string
-        data?: { items_count: number; total_quantity: number }
+        data?: { items_count: number, total_quantity: number }
       }>(`${config.public.apiBase}/api/cart/${productSlug}`, {
         method: 'PATCH',
         body: { quantity }
@@ -193,7 +193,7 @@ export const useCart = () => {
       const response = await useSanctumFetch<{
         success: boolean
         message?: string
-        data?: { items_count: number; total_quantity: number }
+        data?: { items_count: number, total_quantity: number }
       }>(`${config.public.apiBase}/api/cart/${productSlug}`, {
         method: 'DELETE'
       })
@@ -230,9 +230,9 @@ export const useCart = () => {
     const sourceRect = sourceElement.getBoundingClientRect()
 
     // Find cart icon in navbar or bottom nav
-    const cartIcon = document.querySelector('[data-cart-target]') ||
-      document.querySelector('[href*="/cart"]') ||
-      document.querySelector('.cart-icon')
+    const cartIcon = document.querySelector('[data-cart-target]')
+      || document.querySelector('[href*="/cart"]')
+      || document.querySelector('.cart-icon')
 
     if (!cartIcon) {
       // No cart icon found, skip animation

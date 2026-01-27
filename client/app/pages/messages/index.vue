@@ -54,7 +54,7 @@ function formatTime(dateString: string | null): string {
 }
 
 // Get other participant name
-function getParticipantName(conversation: { user_one?: { name: string }; user_two?: { name: string } }) {
+function getParticipantName(conversation: { user_one?: { name: string }, user_two?: { name: string } }) {
   // This is simplified - in practice we'd compare with current user
   return conversation.user_one?.name || conversation.user_two?.name || 'Unknown'
 }
@@ -94,16 +94,25 @@ function startNewConversation() {
     </div>
 
     <!-- Subscription Required -->
-    <UCard v-if="requiresSubscription" class="text-center py-12">
+    <UCard
+      v-if="requiresSubscription"
+      class="text-center py-12"
+    >
       <div class="flex flex-col items-center">
-        <UIcon name="i-lucide-lock" class="h-16 w-16 text-amber-500 mb-4" />
+        <UIcon
+          name="i-lucide-lock"
+          class="h-16 w-16 text-amber-500 mb-4"
+        />
         <h3 class="text-lg font-medium text-highlighted mb-2">
           Subscription Required
         </h3>
         <p class="text-muted max-w-md mx-auto mb-6">
           Messaging is available only for subscribed members. Upgrade your subscription to communicate with your team.
         </p>
-        <UButton color="primary" to="/subscription">
+        <UButton
+          color="primary"
+          to="/subscription"
+        >
           View Subscription Plans
         </UButton>
       </div>
@@ -118,7 +127,12 @@ function startNewConversation() {
           @click="activeTab = 'direct'"
         >
           Direct Messages
-          <UBadge v-if="unreadCount.direct_unread > 0" color="error" size="xs" class="ml-1">
+          <UBadge
+            v-if="unreadCount.direct_unread > 0"
+            color="error"
+            size="xs"
+            class="ml-1"
+          >
             {{ unreadCount.direct_unread }}
           </UBadge>
           <span
@@ -132,7 +146,12 @@ function startNewConversation() {
           @click="activeTab = 'broadcasts'"
         >
           Company Announcements
-          <UBadge v-if="unreadCount.broadcast_count > 0" color="info" size="xs" class="ml-1">
+          <UBadge
+            v-if="unreadCount.broadcast_count > 0"
+            color="info"
+            size="xs"
+            class="ml-1"
+          >
             {{ unreadCount.broadcast_count }}
           </UBadge>
           <span
@@ -143,34 +162,60 @@ function startNewConversation() {
       </div>
 
       <!-- Loading -->
-      <div v-if="isLoading" class="flex items-center justify-center py-16">
-        <UIcon name="i-lucide-loader-2" class="h-8 w-8 animate-spin text-primary" />
+      <div
+        v-if="isLoading"
+        class="flex items-center justify-center py-16"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="h-8 w-8 animate-spin text-primary"
+        />
       </div>
 
       <!-- Error -->
-      <UCard v-else-if="error" class="text-center py-12 bg-red-50 dark:bg-red-900/20">
-        <UIcon name="i-lucide-alert-circle" class="h-12 w-12 text-red-500 mx-auto mb-4" />
-        <p class="text-red-600 dark:text-red-400">{{ error }}</p>
+      <UCard
+        v-else-if="error"
+        class="text-center py-12 bg-red-50 dark:bg-red-900/20"
+      >
+        <UIcon
+          name="i-lucide-alert-circle"
+          class="h-12 w-12 text-red-500 mx-auto mb-4"
+        />
+        <p class="text-red-600 dark:text-red-400">
+          {{ error }}
+        </p>
       </UCard>
 
       <!-- Direct Messages -->
       <template v-else-if="activeTab === 'direct'">
-        <UCard v-if="conversations.length === 0" class="text-center py-12">
+        <UCard
+          v-if="conversations.length === 0"
+          class="text-center py-12"
+        >
           <div class="flex flex-col items-center">
-            <UIcon name="i-lucide-message-square" class="h-16 w-16 text-muted mb-4" />
+            <UIcon
+              name="i-lucide-message-square"
+              class="h-16 w-16 text-muted mb-4"
+            />
             <h3 class="text-lg font-medium text-highlighted mb-2">
               No conversations yet
             </h3>
             <p class="text-muted mb-6">
               Start a conversation with your team members
             </p>
-            <UButton color="primary" @click="startNewConversation">
+            <UButton
+              color="primary"
+              @click="startNewConversation"
+            >
               Start New Conversation
             </UButton>
           </div>
         </UCard>
 
-        <div v-else class="space-y-3">
+        <div
+          v-else
+          class="space-y-3"
+        >
           <UCard
             v-for="conversation in conversations"
             :key="conversation.uuid"
@@ -204,7 +249,10 @@ function startNewConversation() {
               </div>
 
               <!-- Unread badge -->
-              <div v-if="conversation.unread_count > 0" class="shrink-0">
+              <div
+                v-if="conversation.unread_count > 0"
+                class="shrink-0"
+              >
                 <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary text-white text-xs font-medium">
                   {{ conversation.unread_count }}
                 </span>
@@ -216,9 +264,15 @@ function startNewConversation() {
 
       <!-- Broadcasts -->
       <template v-else-if="activeTab === 'broadcasts'">
-        <UCard v-if="broadcasts.length === 0" class="text-center py-12">
+        <UCard
+          v-if="broadcasts.length === 0"
+          class="text-center py-12"
+        >
           <div class="flex flex-col items-center">
-            <UIcon name="i-lucide-megaphone" class="h-16 w-16 text-muted mb-4" />
+            <UIcon
+              name="i-lucide-megaphone"
+              class="h-16 w-16 text-muted mb-4"
+            />
             <h3 class="text-lg font-medium text-highlighted mb-2">
               No announcements
             </h3>
@@ -228,7 +282,10 @@ function startNewConversation() {
           </div>
         </UCard>
 
-        <div v-else class="space-y-3">
+        <div
+          v-else
+          class="space-y-3"
+        >
           <UCard
             v-for="broadcast in broadcasts"
             :key="broadcast.uuid"
@@ -238,7 +295,10 @@ function startNewConversation() {
             <div class="flex items-start gap-4">
               <!-- Icon -->
               <div class="shrink-0 w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <UIcon name="i-lucide-megaphone" class="h-5 w-5 text-primary" />
+                <UIcon
+                  name="i-lucide-megaphone"
+                  class="h-5 w-5 text-primary"
+                />
               </div>
 
               <!-- Content -->

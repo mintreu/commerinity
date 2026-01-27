@@ -70,15 +70,13 @@ async function handleSend() {
       })
       router.push(`/messages/${response.data.conversation_uuid}`)
     }
-  }
-  catch {
+  } catch {
     toast.add({
       title: 'Error',
       description: error.value || 'Failed to send message',
       color: 'error'
     })
-  }
-  finally {
+  } finally {
     isSending.value = false
   }
 }
@@ -127,13 +125,25 @@ const selectedRecipientName = computed(() => {
           />
 
           <!-- Loading -->
-          <div v-if="isLoading" class="flex items-center justify-center py-8">
-            <UIcon name="i-lucide-loader-2" class="h-6 w-6 animate-spin text-primary" />
+          <div
+            v-if="isLoading"
+            class="flex items-center justify-center py-8"
+          >
+            <UIcon
+              name="i-lucide-loader-2"
+              class="h-6 w-6 animate-spin text-primary"
+            />
           </div>
 
           <!-- No recipients -->
-          <div v-else-if="recipients.length === 0" class="text-center py-8">
-            <UIcon name="i-lucide-users" class="h-12 w-12 text-muted mx-auto mb-3" />
+          <div
+            v-else-if="recipients.length === 0"
+            class="text-center py-8"
+          >
+            <UIcon
+              name="i-lucide-users"
+              class="h-12 w-12 text-muted mx-auto mb-3"
+            />
             <p class="text-muted">
               No team members found
             </p>
@@ -143,7 +153,10 @@ const selectedRecipientName = computed(() => {
           </div>
 
           <!-- Recipients list -->
-          <div v-else class="space-y-2 max-h-48 overflow-y-auto">
+          <div
+            v-else
+            class="space-y-2 max-h-48 overflow-y-auto"
+          >
             <button
               v-for="recipient in recipients"
               :key="recipient.uuid"
@@ -154,12 +167,18 @@ const selectedRecipientName = computed(() => {
                 : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'"
               @click="selectedRecipient = recipient.uuid"
             >
-              <UAvatar :alt="recipient.name" size="sm" />
+              <UAvatar
+                :alt="recipient.name"
+                size="sm"
+              />
               <div class="text-left flex-1">
                 <p class="font-medium text-highlighted">
                   {{ recipient.name }}
                 </p>
-                <p v-if="recipient.mobile_masked" class="text-xs text-muted">
+                <p
+                  v-if="recipient.mobile_masked"
+                  class="text-xs text-muted"
+                >
                   {{ recipient.mobile_masked }}
                 </p>
               </div>
@@ -181,7 +200,10 @@ const selectedRecipientName = computed(() => {
         </UFormField>
 
         <!-- Message -->
-        <UFormField label="Message" required>
+        <UFormField
+          label="Message"
+          required
+        >
           <UTextarea
             v-model="message"
             placeholder="Type your message..."

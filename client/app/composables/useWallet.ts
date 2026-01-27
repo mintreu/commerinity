@@ -61,8 +61,8 @@ interface Transaction {
 }
 
 interface SecurityQuestion {
-  key: string  // Question key (e.g., 'mothers_maiden_name')
-  label: string  // Question label/text
+  key: string // Question key (e.g., 'mothers_maiden_name')
+  label: string // Question label/text
 }
 
 interface WalletStats {

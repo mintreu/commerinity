@@ -120,9 +120,9 @@ const { data: productsData, status: productsStatus, refresh: refreshProducts } =
 const { data: filtersData } = await useFetch<{
   success: boolean
   data: {
-    price_range: { min: number; max: number }
+    price_range: { min: number, max: number }
     filter_options: FilterGroup[]
-    sort_options: Array<{ value: string; label: string }>
+    sort_options: Array<{ value: string, label: string }>
   }
 }>(`${config.public.apiBase}/api/catalog/filters`, {
   query: computed(() => activeFilters.value.category ? { category: activeFilters.value.category } : {}),
@@ -214,7 +214,7 @@ onMounted(() => {
 })
 
 // Filter sidebar ref for mobile toggle
-const filterSidebarRef = ref<{ isMobileFilterOpen: boolean; activeFilterCount: number } | null>(null)
+const filterSidebarRef = ref<{ isMobileFilterOpen: boolean, activeFilterCount: number } | null>(null)
 
 // Active filter count for badge
 const activeFilterCount = computed(() => {
@@ -237,7 +237,10 @@ const openMobileFilters = () => {
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-2">
-              <UIcon name="i-lucide-sparkles" class="w-3.5 h-3.5 text-yellow-300" />
+              <UIcon
+                name="i-lucide-sparkles"
+                class="w-3.5 h-3.5 text-yellow-300"
+              />
               <span class="font-semibold text-xs text-yellow-100">Member Benefits Active</span>
             </div>
             <h1 class="text-xl md:text-2xl font-bold">
@@ -251,12 +254,20 @@ const openMobileFilters = () => {
           <!-- Quick Stats -->
           <div class="flex gap-3">
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
-              <div class="text-lg font-bold text-yellow-300">BV/PV</div>
-              <div class="text-[10px] text-white/70">Earn Points</div>
+              <div class="text-lg font-bold text-yellow-300">
+                BV/PV
+              </div>
+              <div class="text-[10px] text-white/70">
+                Earn Points
+              </div>
             </div>
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
-              <div class="text-lg font-bold text-yellow-300">Rewards</div>
-              <div class="text-[10px] text-white/70">Every Order</div>
+              <div class="text-lg font-bold text-yellow-300">
+                Rewards
+              </div>
+              <div class="text-[10px] text-white/70">
+                Every Order
+              </div>
             </div>
           </div>
         </div>
@@ -295,9 +306,15 @@ const openMobileFilters = () => {
                 class="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                 @click="openMobileFilters"
               >
-                <UIcon name="i-lucide-sliders-horizontal" class="w-3.5 h-3.5" />
+                <UIcon
+                  name="i-lucide-sliders-horizontal"
+                  class="w-3.5 h-3.5"
+                />
                 Filters
-                <span v-if="activeFilterCount > 0" class="px-1.5 py-0.5 text-[10px] bg-primary-500 text-white rounded-full">
+                <span
+                  v-if="activeFilterCount > 0"
+                  class="px-1.5 py-0.5 text-[10px] bg-primary-500 text-white rounded-full"
+                >
                   {{ activeFilterCount }}
                 </span>
               </button>
@@ -326,17 +343,26 @@ const openMobileFilters = () => {
               <!-- View Toggle -->
               <div class="hidden md:flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
                 <button class="p-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-600">
-                  <UIcon name="i-lucide-layout-grid" class="w-3.5 h-3.5" />
+                  <UIcon
+                    name="i-lucide-layout-grid"
+                    class="w-3.5 h-3.5"
+                  />
                 </button>
                 <button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800">
-                  <UIcon name="i-lucide-list" class="w-3.5 h-3.5 text-slate-400" />
+                  <UIcon
+                    name="i-lucide-list"
+                    class="w-3.5 h-3.5 text-slate-400"
+                  />
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Loading State (Initial) -->
-          <div v-if="isLoading" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+          <div
+            v-if="isLoading"
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"
+          >
             <div
               v-for="i in 16"
               :key="i"
@@ -369,7 +395,10 @@ const openMobileFilters = () => {
             class="text-center py-12 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700"
           >
             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-              <UIcon name="i-lucide-search-x" class="w-8 h-8 text-slate-400" />
+              <UIcon
+                name="i-lucide-search-x"
+                class="w-8 h-8 text-slate-400"
+              />
             </div>
             <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">
               No products found
@@ -377,24 +406,41 @@ const openMobileFilters = () => {
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
               Try adjusting your filters
             </p>
-            <UButton variant="outline" color="primary" size="sm" @click="handleFilterClear">
+            <UButton
+              variant="outline"
+              color="primary"
+              size="sm"
+              @click="handleFilterClear"
+            >
               Clear Filters
             </UButton>
           </div>
 
           <!-- Load More Trigger (Infinite Scroll) -->
-          <div ref="loadMoreTrigger" class="h-4" />
+          <div
+            ref="loadMoreTrigger"
+            class="h-4"
+          />
 
           <!-- Loading More Indicator -->
-          <div v-if="isLoadingMore" class="flex justify-center py-6">
+          <div
+            v-if="isLoadingMore"
+            class="flex justify-center py-6"
+          >
             <div class="flex items-center gap-2 text-sm text-slate-500">
-              <UIcon name="i-lucide-loader-2" class="w-5 h-5 animate-spin" />
+              <UIcon
+                name="i-lucide-loader-2"
+                class="w-5 h-5 animate-spin"
+              />
               Loading more...
             </div>
           </div>
 
           <!-- End of Results -->
-          <div v-if="!hasMore && allProducts.length > 0" class="text-center py-6">
+          <div
+            v-if="!hasMore && allProducts.length > 0"
+            class="text-center py-6"
+          >
             <p class="text-sm text-slate-500 dark:text-slate-400">
               You've reached the end
             </p>

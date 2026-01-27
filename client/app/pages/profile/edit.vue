@@ -48,7 +48,10 @@
             <label
               class="absolute bottom-0 right-0 w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-colors"
             >
-              <UIcon name="i-lucide-camera" class="w-5 h-5" />
+              <UIcon
+                name="i-lucide-camera"
+                class="w-5 h-5"
+              />
               <input
                 type="file"
                 accept="image/*"
@@ -125,15 +128,18 @@
           <!-- Email -->
           <div class="space-y-2">
             <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              <UIcon name="i-lucide-mail" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-mail"
+                class="w-4 h-4"
+              />
               <span>Email Address</span>
               <span class="text-red-500">*</span>
               <span class="text-slate-500 text-xs">(Requires verification if changed)</span>
             </label>
             <div class="relative group">
               <input
-                v-model="form.email"
                 id="email"
+                v-model="form.email"
                 type="email"
                 placeholder="you@example.com"
                 class="w-full h-12 pl-4 pr-12 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-semibold"
@@ -142,16 +148,22 @@
                   'border-green-300 bg-green-50 dark:bg-green-900/10': canChangeEmail && !errors.email,
                   'border-blue-300 bg-blue-50 dark:bg-blue-900/10': !canChangeEmail
                 }"
-              />
+              >
               <NuxtLink
                 to="/profile/change-email"
                 class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg flex items-center justify-center shadow-md transition-all duration-300 hover:scale-105"
                 title="Change Email"
               >
-                <UIcon name="i-lucide-edit-3" class="w-4 h-4" />
+                <UIcon
+                  name="i-lucide-edit-3"
+                  class="w-4 h-4"
+                />
               </NuxtLink>
             </div>
-            <p v-if="errors.email" class="text-sm text-red-500">
+            <p
+              v-if="errors.email"
+              class="text-sm text-red-500"
+            >
               {{ errors.email }}
             </p>
           </div>
@@ -159,7 +171,10 @@
           <!-- Mobile -->
           <div class="space-y-2">
             <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              <UIcon name="i-lucide-smartphone" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-smartphone"
+                class="w-4 h-4"
+              />
               <span>Mobile Number</span>
               <span class="text-slate-500 text-xs">(Requires verification if changed)</span>
             </label>
@@ -174,19 +189,25 @@
                   'border-green-300 bg-green-50 dark:bg-green-900/10': canChangeMobile && !errors.mobile,
                   'border-blue-300 bg-blue-50 dark:bg-blue-900/10': !canChangeMobile
                 }"
-              />
+              >
               <NuxtLink
                 to="/profile/change-mobile"
                 class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg flex items-center justify-center shadow-md transition-all duration-300 hover:scale-105"
                 title="Change Mobile"
               >
-                <UIcon name="i-lucide-edit-3" class="w-4 h-4" />
+                <UIcon
+                  name="i-lucide-edit-3"
+                  class="w-4 h-4"
+                />
               </NuxtLink>
             </div>
             <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
               International format (e.g., +919876543210)
             </p>
-            <p v-if="errors.mobile" class="text-sm text-red-500">
+            <p
+              v-if="errors.mobile"
+              class="text-sm text-red-500"
+            >
               {{ errors.mobile }}
             </p>
           </div>

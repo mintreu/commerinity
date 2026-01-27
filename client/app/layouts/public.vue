@@ -24,9 +24,15 @@
             <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
               <!-- Brand Section -->
               <section class="lg:col-span-4">
-                <NuxtLink to="/" class="inline-flex items-center gap-3 mb-6 group">
+                <NuxtLink
+                  to="/"
+                  class="inline-flex items-center gap-3 mb-6 group"
+                >
                   <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform">
-                    <UIcon name="i-lucide-hexagon" class="w-6 h-6 text-white" />
+                    <UIcon
+                      name="i-lucide-hexagon"
+                      class="w-6 h-6 text-white"
+                    />
                   </div>
                   <div>
                     <h3 class="text-2xl font-bold gradient-text-primary">{{ config.public.companyName }}</h3>
@@ -49,7 +55,10 @@
                     rel="noopener noreferrer"
                     class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-gradient-to-r hover:from-violet-600 hover:to-fuchsia-600 flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                   >
-                    <UIcon :name="social.icon" class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-white transition-colors" />
+                    <UIcon
+                      :name="social.icon"
+                      class="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-white transition-colors"
+                    />
                   </a>
                 </div>
               </section>
@@ -58,9 +67,14 @@
               <div class="lg:col-span-8 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
                 <!-- Shop Section -->
                 <nav>
-                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">Shop</h4>
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">
+                    Shop
+                  </h4>
                   <ul class="space-y-3 text-sm">
-                    <li v-for="link in shopLinks" :key="link.url">
+                    <li
+                      v-for="link in shopLinks"
+                      :key="link.url"
+                    >
                       <NuxtLink
                         :to="link.url"
                         class="text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
@@ -73,9 +87,14 @@
 
                 <!-- Support -->
                 <nav>
-                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">Support</h4>
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">
+                    Support
+                  </h4>
                   <ul class="space-y-3 text-sm">
-                    <li v-for="link in supportLinks" :key="link.url">
+                    <li
+                      v-for="link in supportLinks"
+                      :key="link.url"
+                    >
                       <NuxtLink
                         :to="link.url"
                         class="text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
@@ -88,9 +107,14 @@
 
                 <!-- Company -->
                 <nav>
-                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">Company</h4>
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">
+                    Company
+                  </h4>
                   <ul class="space-y-3 text-sm">
-                    <li v-for="link in companyLinks" :key="link.url">
+                    <li
+                      v-for="link in companyLinks"
+                      :key="link.url"
+                    >
                       <NuxtLink
                         :to="link.url"
                         class="text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
@@ -103,22 +127,39 @@
 
                 <!-- Contact -->
                 <div>
-                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">Contact</h4>
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wide">
+                    Contact
+                  </h4>
                   <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                     <li class="flex items-start gap-2">
-                      <UIcon name="i-lucide-mail" class="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                      <a :href="`mailto:${siteConfig.email}`" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors break-all">
+                      <UIcon
+                        name="i-lucide-mail"
+                        class="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5"
+                      />
+                      <a
+                        :href="`mailto:${siteConfig.email}`"
+                        class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors break-all"
+                      >
                         {{ siteConfig.email }}
                       </a>
                     </li>
                     <li class="flex items-start gap-2">
-                      <UIcon name="i-lucide-phone" class="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                      <a :href="`tel:${siteConfig.phone}`" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+                      <UIcon
+                        name="i-lucide-phone"
+                        class="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5"
+                      />
+                      <a
+                        :href="`tel:${siteConfig.phone}`"
+                        class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                      >
                         {{ siteConfig.phone }}
                       </a>
                     </li>
                     <li class="flex items-start gap-2">
-                      <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                      <UIcon
+                        name="i-lucide-map-pin"
+                        class="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5"
+                      />
                       <span class="leading-relaxed">{{ siteConfig.address }}</span>
                     </li>
                   </ul>
@@ -131,13 +172,22 @@
               <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-600 dark:text-slate-400">
                 <p>&copy; {{ currentYear }} {{ config.public.companyName }}. All rights reserved.</p>
                 <div class="flex items-center gap-6 flex-wrap justify-center">
-                  <NuxtLink to="/privacy" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+                  <NuxtLink
+                    to="/privacy"
+                    class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
                     Privacy Policy
                   </NuxtLink>
-                  <NuxtLink to="/terms" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+                  <NuxtLink
+                    to="/terms"
+                    class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
                     Terms of Service
                   </NuxtLink>
-                  <NuxtLink to="/cookies" class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors">
+                  <NuxtLink
+                    to="/cookies"
+                    class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
                     Cookie Policy
                   </NuxtLink>
                 </div>
@@ -149,7 +199,10 @@
     </div>
 
     <!-- Mobile Bottom Nav - ONLY for authenticated users -->
-    <nav v-if="isLoggedIn" class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800/80 safe-area-bottom">
+    <nav
+      v-if="isLoggedIn"
+      class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-slate-800/80 safe-area-bottom"
+    >
       <div class="flex items-center justify-around h-16 px-2">
         <NuxtLink
           v-for="item in mobileNavItems"
@@ -194,14 +247,17 @@
     <Transition name="fade">
       <button
         v-show="showScrollTop"
-        @click="scrollToTop"
         :class="[
           'fixed right-6 z-40 w-12 h-12 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white rounded-full shadow-xl shadow-violet-500/25 transition-all duration-300 hover:scale-110 active:scale-95',
           isLoggedIn ? 'bottom-20 lg:bottom-8' : 'bottom-8'
         ]"
         aria-label="Scroll to top"
+        @click="scrollToTop"
       >
-        <UIcon name="i-lucide-arrow-up" class="w-5 h-5 mx-auto" />
+        <UIcon
+          name="i-lucide-arrow-up"
+          class="w-5 h-5 mx-auto"
+        />
       </button>
     </Transition>
   </div>
@@ -284,13 +340,13 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
-  if (process.client) {
+  if (import.meta.client) {
     window.addEventListener('scroll', handleScroll, { passive: true })
   }
 })
 
 onUnmounted(() => {
-  if (process.client) {
+  if (import.meta.client) {
     window.removeEventListener('scroll', handleScroll)
   }
 })

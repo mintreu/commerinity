@@ -125,7 +125,8 @@ class ProductSeeder extends Seeder
     protected function attachMediaFiles(Product $product, Category $category): void
     {
         $dir = $category->url.'/'.$product->url.'/';
-        $displayImagePath = Storage::path('private/data/products/'.$dir.$product->url.'.png');
+        $displayImagePath = Storage::path('data/products/'.$dir.$product->url.'.png');
+
 
         if (file_exists($displayImagePath)) {
             $product->clearMediaCollection('displayImage');
@@ -134,7 +135,7 @@ class ProductSeeder extends Seeder
                 ->toMediaCollection('displayImage');
         }
 
-        $allImages = Storage::disk('local')->allFiles('private/data/products/'.$dir);
+        $allImages = Storage::disk('local')->allFiles('data/products/'.$dir);
 
         foreach ($allImages as $image) {
             $imagePath = Storage::path($image);

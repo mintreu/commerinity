@@ -80,37 +80,64 @@ async function handleRefresh() {
         </p>
       </div>
 
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-primary" />
+      <div
+        v-if="status === 'pending'"
+        class="flex justify-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="w-8 h-8 animate-spin text-primary"
+        />
       </div>
 
-      <div v-else-if="error" class="text-center py-12">
-        <UIcon name="i-heroicons-exclamation-circle" class="w-16 h-16 mx-auto text-red-500 mb-4" />
+      <div
+        v-else-if="error"
+        class="text-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-exclamation-circle"
+          class="w-16 h-16 mx-auto text-red-500 mb-4"
+        />
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           Failed to load applications
         </h3>
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           {{ error.message }}
         </p>
-        <UButton @click="handleRefresh" variant="outline">
+        <UButton
+          variant="outline"
+          @click="handleRefresh"
+        >
           Try Again
         </UButton>
       </div>
 
-      <div v-else-if="!applications?.data?.length" class="text-center py-12">
-        <UIcon name="i-heroicons-document-text" class="w-16 h-16 mx-auto text-gray-400 mb-4" />
+      <div
+        v-else-if="!applications?.data?.length"
+        class="text-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-document-text"
+          class="w-16 h-16 mx-auto text-gray-400 mb-4"
+        />
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           No applications yet
         </h3>
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           You haven't applied to any positions yet.
         </p>
-        <UButton to="/career" color="primary">
+        <UButton
+          to="/career"
+          color="primary"
+        >
           Browse Open Positions
         </UButton>
       </div>
 
-      <div v-else class="space-y-4">
+      <div
+        v-else
+        class="space-y-4"
+      >
         <UCard
           v-for="application in applications.data"
           :key="application.uuid"
@@ -122,33 +149,51 @@ async function handleRefresh() {
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   {{ application.recruitment.title }}
                 </h3>
-                <UBadge :color="getStatusColor(application.status)" size="sm">
+                <UBadge
+                  :color="getStatusColor(application.status)"
+                  size="sm"
+                >
                   {{ application.status_label }}
                 </UBadge>
               </div>
 
               <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <span class="flex items-center gap-1">
-                  <UIcon name="i-heroicons-briefcase" class="w-4 h-4" />
+                  <UIcon
+                    name="i-heroicons-briefcase"
+                    class="w-4 h-4"
+                  />
                   {{ application.recruitment.role_label }}
                 </span>
                 <span class="flex items-center gap-1">
-                  <UIcon name="i-heroicons-clock" class="w-4 h-4" />
+                  <UIcon
+                    name="i-heroicons-clock"
+                    class="w-4 h-4"
+                  />
                   {{ application.recruitment.employment_type_label }}
                 </span>
                 <span class="flex items-center gap-1">
-                  <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
+                  <UIcon
+                    name="i-heroicons-calendar"
+                    class="w-4 h-4"
+                  />
                   Applied: {{ formatDate(application.created_at) }}
                 </span>
               </div>
 
-              <div v-if="application.recruitment.is_payable" class="mt-3 flex items-center gap-2">
+              <div
+                v-if="application.recruitment.is_payable"
+                class="mt-3 flex items-center gap-2"
+              >
                 <UIcon
                   :name="application.is_paid ? 'i-lucide-check-circle' : 'i-lucide-alert-circle'"
                   :class="application.is_paid ? 'text-green-500' : 'text-orange-500'"
                   class="w-4 h-4"
                 />
-                <span class="text-sm" :class="application.is_paid ? 'text-green-700 dark:text-green-400' : 'text-orange-700 dark:text-orange-400'">
+                <span
+                  class="text-sm"
+                  :class="application.is_paid ? 'text-green-700 dark:text-green-400' : 'text-orange-700 dark:text-orange-400'"
+                >
                   {{ application.is_paid ? 'Paid' : 'Payment Pending' }} - {{ application.amount_formatted }}
                 </span>
               </div>
@@ -192,7 +237,10 @@ async function handleRefresh() {
                 color="success"
                 size="sm"
               >
-                <UIcon name="i-lucide-check-circle" class="w-4 h-4 mr-1" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-4 h-4 mr-1"
+                />
                 Paid
               </UBadge>
             </div>

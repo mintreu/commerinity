@@ -4,11 +4,11 @@
  * Shows all products currently on sale with countdown timer and filters
  */
 
+import type { Product } from '~/types/catalog'
+
 definePageMeta({
   layout: 'public'
 })
-
-import type { Product } from '~/types/catalog'
 
 const config = useRuntimeConfig()
 const toast = useToast()
@@ -67,7 +67,7 @@ const { data: dealsResponse, status: dealsStatus, refresh: refreshDeals } = awai
 // Fetch categories for filter
 const { data: categoriesData } = await useFetch<{
   success: boolean
-  data: Array<{ name: string; slug: string; product_count: number }>
+  data: Array<{ name: string, slug: string, product_count: number }>
 }>(`${config.public.apiBase}/api/catalog/categories`, {
   lazy: true,
   server: false
@@ -222,7 +222,10 @@ const discountOptions = [
       <div class="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <!-- Badge -->
         <div class="inline-flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 rounded-full font-bold text-sm mb-6 animate-pulse">
-          <UIcon name="i-lucide-zap" class="w-5 h-5" />
+          <UIcon
+            name="i-lucide-zap"
+            class="w-5 h-5"
+          />
           LIMITED TIME SALE
         </div>
 
@@ -238,37 +241,76 @@ const discountOptions = [
         </p>
 
         <!-- Countdown Timer -->
-        <div v-if="countdown.days || countdown.hours || countdown.minutes || countdown.seconds" class="flex justify-center items-center gap-2 md:gap-4 mb-8">
-          <div v-if="countdown.days" class="bg-black/30 backdrop-blur-md rounded-2xl px-3 md:px-6 py-4 md:py-6 text-center min-w-[60px] md:min-w-[80px]">
-            <div class="text-2xl md:text-4xl font-black">{{ countdown.days }}</div>
-            <div class="text-xs opacity-80">DAYS</div>
+        <div
+          v-if="countdown.days || countdown.hours || countdown.minutes || countdown.seconds"
+          class="flex justify-center items-center gap-2 md:gap-4 mb-8"
+        >
+          <div
+            v-if="countdown.days"
+            class="bg-black/30 backdrop-blur-md rounded-2xl px-3 md:px-6 py-4 md:py-6 text-center min-w-[60px] md:min-w-[80px]"
+          >
+            <div class="text-2xl md:text-4xl font-black">
+              {{ countdown.days }}
+            </div>
+            <div class="text-xs opacity-80">
+              DAYS
+            </div>
           </div>
-          <div v-if="countdown.days" class="text-2xl md:text-4xl font-black animate-pulse">:</div>
-          <div class="bg-black/30 backdrop-blur-md rounded-2xl px-3 md:px-6 py-4 md:py-6 text-center min-w-[60px] md:min-w-[80px]">
-            <div class="text-2xl md:text-4xl font-black">{{ String(countdown.hours).padStart(2, '0') }}</div>
-            <div class="text-xs opacity-80">HOURS</div>
+          <div
+            v-if="countdown.days"
+            class="text-2xl md:text-4xl font-black animate-pulse"
+          >
+            :
           </div>
-          <div class="text-2xl md:text-4xl font-black animate-pulse">:</div>
           <div class="bg-black/30 backdrop-blur-md rounded-2xl px-3 md:px-6 py-4 md:py-6 text-center min-w-[60px] md:min-w-[80px]">
-            <div class="text-2xl md:text-4xl font-black">{{ String(countdown.minutes).padStart(2, '0') }}</div>
-            <div class="text-xs opacity-80">MINS</div>
+            <div class="text-2xl md:text-4xl font-black">
+              {{ String(countdown.hours).padStart(2, '0') }}
+            </div>
+            <div class="text-xs opacity-80">
+              HOURS
+            </div>
           </div>
-          <div class="text-2xl md:text-4xl font-black animate-pulse">:</div>
+          <div class="text-2xl md:text-4xl font-black animate-pulse">
+            :
+          </div>
           <div class="bg-black/30 backdrop-blur-md rounded-2xl px-3 md:px-6 py-4 md:py-6 text-center min-w-[60px] md:min-w-[80px]">
-            <div class="text-2xl md:text-4xl font-black">{{ String(countdown.seconds).padStart(2, '0') }}</div>
-            <div class="text-xs opacity-80">SECS</div>
+            <div class="text-2xl md:text-4xl font-black">
+              {{ String(countdown.minutes).padStart(2, '0') }}
+            </div>
+            <div class="text-xs opacity-80">
+              MINS
+            </div>
+          </div>
+          <div class="text-2xl md:text-4xl font-black animate-pulse">
+            :
+          </div>
+          <div class="bg-black/30 backdrop-blur-md rounded-2xl px-3 md:px-6 py-4 md:py-6 text-center min-w-[60px] md:min-w-[80px]">
+            <div class="text-2xl md:text-4xl font-black">
+              {{ String(countdown.seconds).padStart(2, '0') }}
+            </div>
+            <div class="text-xs opacity-80">
+              SECS
+            </div>
           </div>
         </div>
 
         <!-- Stats -->
         <div class="flex justify-center gap-8 md:gap-12">
           <div class="text-center">
-            <div class="text-2xl md:text-3xl font-bold">{{ stats.total_deals }}+</div>
-            <div class="text-sm opacity-80">Hot Deals</div>
+            <div class="text-2xl md:text-3xl font-bold">
+              {{ stats.total_deals }}+
+            </div>
+            <div class="text-sm opacity-80">
+              Hot Deals
+            </div>
           </div>
           <div class="text-center">
-            <div class="text-2xl md:text-3xl font-bold">{{ stats.avg_discount }}%</div>
-            <div class="text-sm opacity-80">Avg Discount</div>
+            <div class="text-2xl md:text-3xl font-bold">
+              {{ stats.avg_discount }}%
+            </div>
+            <div class="text-sm opacity-80">
+              Avg Discount
+            </div>
           </div>
         </div>
       </div>
@@ -305,7 +347,11 @@ const discountOptions = [
               v-model="selectedDiscount"
               class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm"
             >
-              <option v-for="opt in discountOptions" :key="opt.value" :value="opt.value">
+              <option
+                v-for="opt in discountOptions"
+                :key="opt.value"
+                :value="opt.value"
+              >
                 {{ opt.label }}
               </option>
             </select>
@@ -326,8 +372,15 @@ const discountOptions = [
     <section class="py-8 md:py-12">
       <div class="max-w-7xl mx-auto px-4">
         <!-- Loading -->
-        <div v-if="dealsStatus === 'pending'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-          <div v-for="i in 10" :key="i" class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm animate-pulse">
+        <div
+          v-if="dealsStatus === 'pending'"
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
+        >
+          <div
+            v-for="i in 10"
+            :key="i"
+            class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm animate-pulse"
+          >
             <div class="aspect-square bg-slate-200 dark:bg-slate-700" />
             <div class="p-4 space-y-3">
               <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
@@ -337,7 +390,10 @@ const discountOptions = [
         </div>
 
         <!-- Deals -->
-        <div v-else-if="filteredDeals.length" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+        <div
+          v-else-if="filteredDeals.length"
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
+        >
           <div
             v-for="deal in filteredDeals"
             :key="deal.slug"
@@ -345,17 +401,26 @@ const discountOptions = [
           >
             <!-- Timer Badge -->
             <div class="absolute top-2 left-2 z-10 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1">
-              <UIcon name="i-lucide-timer" class="w-3 h-3" />
+              <UIcon
+                name="i-lucide-timer"
+                class="w-3 h-3"
+              />
               {{ formatTimeLeft(deal.sale_ends_at) }}
             </div>
 
             <!-- Discount Badge -->
-            <div v-if="deal.discount_percent" class="absolute top-2 right-2 z-10 bg-gradient-to-r from-orange-500 to-red-600 text-white px-2 py-1 rounded-md text-sm font-black">
+            <div
+              v-if="deal.discount_percent"
+              class="absolute top-2 right-2 z-10 bg-gradient-to-r from-orange-500 to-red-600 text-white px-2 py-1 rounded-md text-sm font-black"
+            >
               -{{ deal.discount_percent }}%
             </div>
 
             <!-- Product Image -->
-            <NuxtLink :to="`/shop/${deal.slug}`" class="block">
+            <NuxtLink
+              :to="`/shop/${deal.slug}`"
+              class="block"
+            >
               <div class="relative aspect-square bg-slate-100 dark:bg-slate-700 overflow-hidden">
                 <img
                   v-if="deal.image"
@@ -364,8 +429,14 @@ const discountOptions = [
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
                 >
-                <div v-else class="w-full h-full flex items-center justify-center">
-                  <UIcon name="i-lucide-package" class="w-16 h-16 text-slate-300 dark:text-slate-600" />
+                <div
+                  v-else
+                  class="w-full h-full flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-lucide-package"
+                    class="w-16 h-16 text-slate-300 dark:text-slate-600"
+                  />
                 </div>
 
                 <!-- Flash Effect -->
@@ -386,14 +457,23 @@ const discountOptions = [
                 <span class="text-lg font-bold text-emerald-600 dark:text-emerald-400">
                   {{ deal.price_formatted }}
                 </span>
-                <span v-if="deal.original_price_formatted" class="text-sm text-slate-400 line-through">
+                <span
+                  v-if="deal.original_price_formatted"
+                  class="text-sm text-slate-400 line-through"
+                >
                   {{ deal.original_price_formatted }}
                 </span>
               </div>
 
               <!-- Sale Name -->
-              <div v-if="deal.sale_name" class="text-xs text-red-500 font-medium mb-3 flex items-center gap-1">
-                <UIcon name="i-lucide-tag" class="w-3 h-3" />
+              <div
+                v-if="deal.sale_name"
+                class="text-xs text-red-500 font-medium mb-3 flex items-center gap-1"
+              >
+                <UIcon
+                  name="i-lucide-tag"
+                  class="w-3 h-3"
+                />
                 {{ deal.sale_name }}
               </div>
 
@@ -406,7 +486,10 @@ const discountOptions = [
                 class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 border-0"
                 @click="addToCart(deal)"
               >
-                <UIcon :name="deal.in_stock ? 'i-lucide-shopping-cart' : 'i-lucide-x'" class="w-4 h-4" />
+                <UIcon
+                  :name="deal.in_stock ? 'i-lucide-shopping-cart' : 'i-lucide-x'"
+                  class="w-4 h-4"
+                />
                 {{ deal.in_stock ? 'Add to Cart' : 'Sold Out' }}
               </UButton>
             </div>
@@ -414,9 +497,15 @@ const discountOptions = [
         </div>
 
         <!-- No Deals -->
-        <div v-else class="text-center py-16">
+        <div
+          v-else
+          class="text-center py-16"
+        >
           <div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-            <UIcon name="i-lucide-zap-off" class="w-12 h-12 text-slate-400" />
+            <UIcon
+              name="i-lucide-zap-off"
+              class="w-12 h-12 text-slate-400"
+            />
           </div>
           <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">
             No Deals Found
@@ -424,13 +513,19 @@ const discountOptions = [
           <p class="text-slate-600 dark:text-slate-400 mb-6">
             {{ selectedCategory || selectedDiscount ? 'Try adjusting your filters' : 'Check back later for new deals' }}
           </p>
-          <UButton v-if="selectedCategory || selectedDiscount" @click="clearFilters">
+          <UButton
+            v-if="selectedCategory || selectedDiscount"
+            @click="clearFilters"
+          >
             Clear Filters
           </UButton>
         </div>
 
         <!-- Pagination -->
-        <div v-if="pagination && pagination.last_page > 1" class="flex justify-center mt-8">
+        <div
+          v-if="pagination && pagination.last_page > 1"
+          class="flex justify-center mt-8"
+        >
           <UPagination
             :model-value="pagination.current_page"
             :total="pagination.total"
@@ -444,7 +539,10 @@ const discountOptions = [
     <!-- CTA -->
     <section class="py-16 bg-gradient-to-r from-violet-600 to-purple-600">
       <div class="max-w-4xl mx-auto px-4 text-center text-white">
-        <UIcon name="i-lucide-shopping-bag" class="w-12 h-12 mx-auto mb-4 text-yellow-300" />
+        <UIcon
+          name="i-lucide-shopping-bag"
+          class="w-12 h-12 mx-auto mb-4 text-yellow-300"
+        />
         <h2 class="text-3xl md:text-4xl font-black mb-4">
           Don't Miss These Deals!
         </h2>
@@ -452,12 +550,29 @@ const discountOptions = [
           Shop now before these offers expire. New deals added daily!
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <UButton to="/shop" size="lg" color="white" class="font-bold">
-            <UIcon name="i-lucide-store" class="w-5 h-5" />
+          <UButton
+            to="/shop"
+            size="lg"
+            color="white"
+            class="font-bold"
+          >
+            <UIcon
+              name="i-lucide-store"
+              class="w-5 h-5"
+            />
             Browse All Products
           </UButton>
-          <UButton to="/categories" size="lg" variant="outline" color="white" class="font-bold border-2 bg-white/10 hover:bg-white/20">
-            <UIcon name="i-lucide-grid-3x3" class="w-5 h-5" />
+          <UButton
+            to="/categories"
+            size="lg"
+            variant="outline"
+            color="white"
+            class="font-bold border-2 bg-white/10 hover:bg-white/20"
+          >
+            <UIcon
+              name="i-lucide-grid-3x3"
+              class="w-5 h-5"
+            />
             Shop by Category
           </UButton>
         </div>

@@ -114,10 +114,16 @@ const securityActions = computed(() => [
             <p class="text-blue-100 text-sm mb-1">
               Available Balance
             </p>
-            <div v-if="loading" class="animate-pulse">
+            <div
+              v-if="loading"
+              class="animate-pulse"
+            >
               <div class="h-10 w-48 bg-white/20 rounded" />
             </div>
-            <p v-else class="text-4xl font-bold">
+            <p
+              v-else
+              class="text-4xl font-bold"
+            >
               {{ wallet?.available_balance_formatted || '0.00' }}
             </p>
           </div>
@@ -357,7 +363,10 @@ const securityActions = computed(() => [
         </p>
       </div>
 
-      <div v-else class="divide-y divide-slate-200 dark:divide-slate-700">
+      <div
+        v-else
+        class="divide-y divide-slate-200 dark:divide-slate-700"
+      >
         <div
           v-for="txn in transactions"
           :key="txn.uuid"

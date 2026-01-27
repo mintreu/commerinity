@@ -29,7 +29,7 @@ const filteredTickets = computed(() => {
 })
 
 const pageCount = computed(() => Math.ceil(filteredTickets.value.length / pageSize))
-const paginatedTickets = computed(() => filteredTickets.value.slice((page.value-1)*pageSize, page.value*pageSize))
+const paginatedTickets = computed(() => filteredTickets.value.slice((page.value - 1) * pageSize, page.value * pageSize))
 const openCount = computed(() => tickets.value.filter(t => t.status === 'open').length)
 const resolvedCount = computed(() => tickets.value.filter(t => t.status === 'resolved').length)
 
@@ -116,11 +116,16 @@ const formatDate = (date: string) => {
         class="glass-card p-6 border-none flex items-center gap-5 group hover:bg-white dark:hover:bg-slate-800 transition-all duration-300"
       >
         <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center bg-${stat.color}-500/10 text-${stat.color}-500 group-hover:bg-${stat.color}-500/20 transition-colors`">
-          <UIcon :name="stat.icon" class="w-7 h-7" />
+          <UIcon
+            :name="stat.icon"
+            class="w-7 h-7"
+          />
         </div>
         <div>
           <span class="text-[10px] uppercase font-black tracking-widest text-slate-400">{{ stat.label }}</span>
-          <p class="text-2xl font-black text-slate-900 dark:text-white">{{ stat.value }}</p>
+          <p class="text-2xl font-black text-slate-900 dark:text-white">
+            {{ stat.value }}
+          </p>
         </div>
       </div>
     </div>
@@ -143,13 +148,13 @@ const formatDate = (date: string) => {
         <div class="flex gap-3">
           <USelectMenu
             v-model="statusFilter"
-            :options="[{label:'All Statuses',value:'all'},{label:'Open',value:'open'},{label:'Resolved',value:'resolved'},{label:'Closed',value:'closed'}]"
+            :options="[{ label: 'All Statuses', value: 'all' }, { label: 'Open', value: 'open' }, { label: 'Resolved', value: 'resolved' }, { label: 'Closed', value: 'closed' }]"
             class="w-40"
             size="xl"
           />
           <USelectMenu
             v-model="priorityFilter"
-            :options="[{label:'All Priorities',value:'all'},{label:'Low',value:'low'},{label:'Medium',value:'medium'},{label:'High',value:'high'},{label:'Urgent',value:'urgent'}]"
+            :options="[{ label: 'All Priorities', value: 'all' }, { label: 'Low', value: 'low' }, { label: 'Medium', value: 'medium' }, { label: 'High', value: 'high' }, { label: 'Urgent', value: 'urgent' }]"
             class="w-40"
             size="xl"
           />
@@ -157,25 +162,45 @@ const formatDate = (date: string) => {
       </div>
 
       <!-- Tickets List -->
-      <div v-if="loading && tickets.length === 0" class="p-20 flex flex-col items-center justify-center space-y-4">
-         <div class="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
-         <p class="text-xs font-black uppercase tracking-widest text-slate-400">Loading your tickets...</p>
+      <div
+        v-if="loading && tickets.length === 0"
+        class="p-20 flex flex-col items-center justify-center space-y-4"
+      >
+        <div class="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+        <p class="text-xs font-black uppercase tracking-widest text-slate-400">
+          Loading your tickets...
+        </p>
       </div>
 
-      <div v-else-if="filteredTickets.length === 0" class="p-20 text-center">
+      <div
+        v-else-if="filteredTickets.length === 0"
+        class="p-20 text-center"
+      >
         <div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-400">
-          <UIcon name="i-lucide-ticket-x" class="w-10 h-10" />
+          <UIcon
+            name="i-lucide-ticket-x"
+            class="w-10 h-10"
+          />
         </div>
-        <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">No tickets found</h3>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">
+          No tickets found
+        </h3>
         <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">
           We couldn't find any tickets matching your search criteria.
         </p>
-        <UButton color="primary" variant="soft" @click="searchQuery = ''; statusFilter = 'all'; priorityFilter='all'">
+        <UButton
+          color="primary"
+          variant="soft"
+          @click="searchQuery = ''; statusFilter = 'all'; priorityFilter='all'"
+        >
           Clear Filters
         </UButton>
       </div>
 
-      <div v-else class="overflow-x-auto">
+      <div
+        v-else
+        class="overflow-x-auto"
+      >
         <UTable
           :rows="paginatedTickets"
           :columns="columns"
@@ -188,7 +213,7 @@ const formatDate = (date: string) => {
         >
           <template #uuid-data="{ row }">
             <span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500">
-              #{{ row.uuid.slice(0,8).toUpperCase() }}
+              #{{ row.uuid.slice(0, 8).toUpperCase() }}
             </span>
           </template>
 
@@ -220,7 +245,10 @@ const formatDate = (date: string) => {
 
           <template #created_at-data="{ row }">
             <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-              <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-3.5 h-3.5"
+              />
               {{ formatDate(row.created_at) }}
             </div>
           </template>
@@ -242,7 +270,10 @@ const formatDate = (date: string) => {
       </div>
 
       <!-- Pagination Footer -->
-      <div v-if="pageCount > 1" class="p-6 bg-slate-50/20 dark:bg-slate-900/20 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between">
+      <div
+        v-if="pageCount > 1"
+        class="p-6 bg-slate-50/20 dark:bg-slate-900/20 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between"
+      >
         <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
           Showing page {{ page }} of {{ pageCount }}
         </p>

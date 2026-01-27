@@ -216,7 +216,10 @@ const openShareModal = () => {
             />
             <div>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-award" class="w-5 h-5 text-amber-500" />
+                <UIcon
+                  name="i-lucide-award"
+                  class="w-5 h-5 text-amber-500"
+                />
                 <span class="font-bold text-slate-900 dark:text-white">{{ levelProgress.currentLevel }}</span>
               </div>
               <p class="text-sm text-slate-500 dark:text-slate-400">
@@ -229,7 +232,10 @@ const openShareModal = () => {
             size="sm"
             @click="openShareModal"
           >
-            <UIcon name="i-lucide-share-2" class="w-4 h-4 mr-1" />
+            <UIcon
+              name="i-lucide-share-2"
+              class="w-4 h-4 mr-1"
+            />
             <span class="hidden sm:inline">Share</span>
           </UButton>
         </div>
@@ -291,7 +297,10 @@ const openShareModal = () => {
             <h2 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">
               Top Referrals
             </h2>
-            <NuxtLink to="/network" class="text-sm text-violet-600 dark:text-violet-400">
+            <NuxtLink
+              to="/network"
+              class="text-sm text-violet-600 dark:text-violet-400"
+            >
               View all
             </NuxtLink>
           </div>
@@ -306,17 +315,27 @@ const openShareModal = () => {
                 <span class="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold">
                   {{ index + 1 }}
                 </span>
-                <UAvatar :alt="member.name" size="sm" />
+                <UAvatar
+                  :alt="member.name"
+                  size="sm"
+                />
                 <div>
-                  <p class="text-sm font-medium text-slate-900 dark:text-white">{{ member.name }}</p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 capitalize">{{ member.type }}</p>
+                  <p class="text-sm font-medium text-slate-900 dark:text-white">
+                    {{ member.name }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                    {{ member.type }}
+                  </p>
                 </div>
               </div>
               <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
                 Joined {{ formatDate(member.created_at, 'short') }}
               </p>
             </div>
-            <div v-if="team.length === 0 && !loading" class="text-center py-4 text-sm text-slate-500">
+            <div
+              v-if="team.length === 0 && !loading"
+              class="text-center py-4 text-sm text-slate-500"
+            >
               No referrals yet. Share your code to grow!
             </div>
           </div>
@@ -358,7 +377,10 @@ const openShareModal = () => {
             class="mt-3"
             @click="openShareModal"
           >
-            <UIcon name="i-lucide-share-2" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-share-2"
+              class="w-4 h-4 mr-2"
+            />
             Share Now
           </UButton>
         </div>

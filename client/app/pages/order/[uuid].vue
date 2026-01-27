@@ -50,25 +50,36 @@ const formatDate = (dateString?: string) => {
       </p>
     </div>
 
-    <div v-if="isLoading" class="space-y-4">
+    <div
+      v-if="isLoading"
+      class="space-y-4"
+    >
       <USkeleton class="h-10 w-64" />
       <USkeleton class="h-24 w-full" />
       <USkeleton class="h-24 w-full" />
     </div>
 
-    <div v-else-if="currentOrder" class="space-y-6">
+    <div
+      v-else-if="currentOrder"
+      class="space-y-6"
+    >
       <!-- Order Header -->
       <UCard>
         <template #header>
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-slate-500 dark:text-slate-400">Order #</p>
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                Order #
+              </p>
               <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
                 {{ currentOrder.order_number }}
               </h2>
             </div>
             <UBadge :color="getStatusColor(currentOrder.status)">
-              <UIcon :name="getStatusIcon(currentOrder.status)" class="w-4 h-4 mr-1" />
+              <UIcon
+                :name="getStatusIcon(currentOrder.status)"
+                class="w-4 h-4 mr-1"
+              />
               {{ currentOrder.status_label }}
             </UBadge>
           </div>
@@ -76,13 +87,17 @@ const formatDate = (dateString?: string) => {
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Placed On</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Placed On
+            </p>
             <p class="font-medium text-slate-900 dark:text-white">
               {{ formatDate(currentOrder.created_at) }}
             </p>
           </div>
           <div>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Payment</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Payment
+            </p>
             <p class="font-medium text-slate-900 dark:text-white flex items-center gap-1">
               <UIcon
                 :name="currentOrder.payment_success ? 'i-lucide-check-circle-2' : 'i-lucide-clock-3'"
@@ -93,7 +108,9 @@ const formatDate = (dateString?: string) => {
             </p>
           </div>
           <div>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Tracking ID</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Tracking ID
+            </p>
             <p class="font-medium text-primary-600 dark:text-primary-400">
               {{ currentOrder.tracking_id || '—' }}
             </p>
@@ -121,13 +138,22 @@ const formatDate = (dateString?: string) => {
                 :src="typeof item.image === 'string' ? item.image : (item.image.src || item.image.url)"
                 :alt="item.product_name"
                 class="w-16 h-16 object-cover rounded-lg"
-              />
-              <div v-else class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
-                <UIcon name="i-lucide-package" class="w-6 h-6 text-slate-400" />
+              >
+              <div
+                v-else
+                class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center"
+              >
+                <UIcon
+                  name="i-lucide-package"
+                  class="w-6 h-6 text-slate-400"
+                />
               </div>
             </div>
             <div class="sm:col-span-6">
-              <NuxtLink :to="`/shop/${item.product_slug}`" class="font-medium text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400">
+              <NuxtLink
+                :to="`/shop/${item.product_slug}`"
+                class="font-medium text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400"
+              >
                 {{ item.product_name }}
               </NuxtLink>
               <p class="text-sm text-slate-500 dark:text-slate-400">
@@ -183,10 +209,17 @@ const formatDate = (dateString?: string) => {
 
       <!-- Actions -->
       <div class="flex items-center justify-end gap-3">
-        <UButton to="/orders" variant="soft">
+        <UButton
+          to="/orders"
+          variant="soft"
+        >
           Back to Orders
         </UButton>
-        <UButton v-if="!currentOrder.payment_success" :to="`/checkout/${currentOrder.uuid}`" color="primary">
+        <UButton
+          v-if="!currentOrder.payment_success"
+          :to="`/checkout/${currentOrder.uuid}`"
+          color="primary"
+        >
           Complete Payment
         </UButton>
       </div>
@@ -200,9 +233,13 @@ const formatDate = (dateString?: string) => {
       description="We couldn't find the order you are looking for."
     >
       <template #actions>
-        <UButton to="/orders" size="sm">Go to Orders</UButton>
+        <UButton
+          to="/orders"
+          size="sm"
+        >
+          Go to Orders
+        </UButton>
       </template>
     </UAlert>
   </div>
 </template>
-

@@ -4,7 +4,10 @@
       <!-- Header -->
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <UIcon name="i-lucide-map-pin" class="w-8 h-8 text-orange-600 dark:text-orange-400" />
+          <UIcon
+            name="i-lucide-map-pin"
+            class="w-8 h-8 text-orange-600 dark:text-orange-400"
+          />
         </div>
         <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Add your delivery address
@@ -68,7 +71,7 @@ const addressInitialData = computed(() => ({
   state_code: props.initialData?.state_code || '',
   country_code: props.initialData?.country_code || 'IN',
   latitude: props.initialData?.latitude || null,
-  longitude: props.initialData?.longitude || null,
+  longitude: props.initialData?.longitude || null
 }))
 
 // Handle data updates from the form
@@ -92,6 +95,6 @@ const getData = (): AddressData => {
 
 defineExpose({
   validate,
-  getData,
+  getData
 })
 </script>

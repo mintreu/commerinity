@@ -89,7 +89,10 @@ onMounted(async () => {
   <div class="max-w-4xl mx-auto space-y-8 pb-12">
     <!-- Breadcrumbs -->
     <div class="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
-      <NuxtLink to="/helpdesk" class="hover:text-primary-500 transition-colors">Support Center</NuxtLink>
+      <NuxtLink
+        to="/helpdesk"
+        class="hover:text-primary-500 transition-colors"
+      >Support Center</NuxtLink>
       <UIcon name="i-lucide-chevron-right" />
       <span class="text-slate-900 dark:text-white">New Ticket</span>
     </div>
@@ -108,10 +111,17 @@ onMounted(async () => {
       <!-- Main Form -->
       <div class="lg:col-span-2">
         <div class="glass-card p-8 border-none ring-1 ring-slate-200 dark:ring-slate-800">
-          <UForm :state="form" @submit="handleSubmit" class="space-y-8">
+          <UForm
+            :state="form"
+            class="space-y-8"
+            @submit="handleSubmit"
+          >
             <!-- Topic & Priority Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <UFormField label="Select Topic" required>
+              <UFormField
+                label="Select Topic"
+                required
+              >
                 <USelectMenu
                   v-model="form.topic_slug"
                   :options="topics"
@@ -124,7 +134,10 @@ onMounted(async () => {
                 />
               </UFormField>
 
-              <UFormField label="Priority Level" required>
+              <UFormField
+                label="Priority Level"
+                required
+              >
                 <USelectMenu
                   v-model="form.priority"
                   :options="priorityOptions"
@@ -133,14 +146,23 @@ onMounted(async () => {
                   class="rounded-2xl"
                 >
                   <template #label>
-                    <div v-if="form.priority" class="flex items-center gap-2">
-                      <UIcon :name="priorityOptions.find(o => o.value === form.priority)?.icon" :class="`text-${priorityOptions.find(o => o.value === form.priority)?.color}-500`" />
+                    <div
+                      v-if="form.priority"
+                      class="flex items-center gap-2"
+                    >
+                      <UIcon
+                        :name="priorityOptions.find(o => o.value === form.priority)?.icon"
+                        :class="`text-${priorityOptions.find(o => o.value === form.priority)?.color}-500`"
+                      />
                       {{ priorityOptions.find(o => o.value === form.priority)?.label.split(' - ')[0] }}
                     </div>
                   </template>
                   <template #option="{ option }">
                     <div class="flex items-center gap-2">
-                      <UIcon :name="option.icon" :class="`text-${option.color}-500`" />
+                      <UIcon
+                        :name="option.icon"
+                        :class="`text-${option.color}-500`"
+                      />
                       <span class="font-medium">{{ option.label }}</span>
                     </div>
                   </template>
@@ -148,7 +170,10 @@ onMounted(async () => {
               </UFormField>
             </div>
 
-            <UFormField label="Subject Title" required>
+            <UFormField
+              label="Subject Title"
+              required
+            >
               <UInput
                 v-model="form.title"
                 placeholder="Briefly describe what's happening"
@@ -157,7 +182,10 @@ onMounted(async () => {
               />
             </UFormField>
 
-            <UFormField label="Detailed Description" required>
+            <UFormField
+              label="Detailed Description"
+              required
+            >
               <UTextarea
                 v-model="form.description"
                 :rows="6"
@@ -176,17 +204,20 @@ onMounted(async () => {
                   @change="handleFile"
                 >
                 <div class="p-6 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl group-hover:border-primary-500/50 group-hover:bg-primary-500/5 transition-all flex flex-col items-center justify-center gap-3">
-                   <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary-500 transition-colors">
-                     <UIcon :name="form.screenshot ? 'i-lucide-file-check' : 'i-lucide-upload-cloud'" class="w-6 h-6" />
-                   </div>
-                   <div class="text-center">
-                     <p class="text-sm font-black text-slate-900 dark:text-white">
-                       {{ form.screenshot ? form.screenshot.name : 'Upload Screenshot' }}
-                     </p>
-                     <p class="text-xs text-slate-500">
-                       Drag and drop or click to browse (Max 5MB)
-                     </p>
-                   </div>
+                  <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary-500 transition-colors">
+                    <UIcon
+                      :name="form.screenshot ? 'i-lucide-file-check' : 'i-lucide-upload-cloud'"
+                      class="w-6 h-6"
+                    />
+                  </div>
+                  <div class="text-center">
+                    <p class="text-sm font-black text-slate-900 dark:text-white">
+                      {{ form.screenshot ? form.screenshot.name : 'Upload Screenshot' }}
+                    </p>
+                    <p class="text-xs text-slate-500">
+                      Drag and drop or click to browse (Max 5MB)
+                    </p>
+                  </div>
                 </div>
               </div>
             </UFormField>
@@ -222,14 +253,21 @@ onMounted(async () => {
             Support Guidelines
           </h3>
           <ul class="space-y-4">
-            <li v-for="(item, i) in [
-              'Be specific about the issue',
-              'Include error messages if any',
-              'Attach relevant screenshots',
-              'Response time is < 24 hours'
-            ]" :key="i" class="flex gap-3 text-sm font-medium">
+            <li
+              v-for="(item, i) in [
+                'Be specific about the issue',
+                'Include error messages if any',
+                'Attach relevant screenshots',
+                'Response time is < 24 hours'
+              ]"
+              :key="i"
+              class="flex gap-3 text-sm font-medium"
+            >
               <div class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                <UIcon name="i-lucide-check" class="w-3 h-3 text-white" />
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-3 h-3 text-white"
+                />
               </div>
               {{ item }}
             </li>
@@ -238,13 +276,22 @@ onMounted(async () => {
 
         <div class="glass-card p-6 border-none ring-1 ring-slate-200 dark:ring-slate-800">
           <h3 class="font-black text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-            <UIcon name="i-lucide-help-circle" class="text-primary-500" />
+            <UIcon
+              name="i-lucide-help-circle"
+              class="text-primary-500"
+            />
             Need Quick Help?
           </h3>
           <p class="text-sm text-slate-500 mb-6">
             Check our knowledge base for instant answers to common questions.
           </p>
-          <UButton to="/faq" block color="neutral" variant="soft" class="rounded-xl font-bold">
+          <UButton
+            to="/faq"
+            block
+            color="neutral"
+            variant="soft"
+            class="rounded-xl font-bold"
+          >
             View FAQ
           </UButton>
         </div>

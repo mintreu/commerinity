@@ -1,27 +1,46 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
     <div class="container mx-auto px-4 py-8">
-
       <!-- Loading State -->
-      <div v-if="isLoading" class="max-w-2xl mx-auto">
+      <div
+        v-if="isLoading"
+        class="max-w-2xl mx-auto"
+      >
         <UCard>
           <div class="flex flex-col items-center justify-center py-12 gap-4">
-            <Icon name="svg-spinners:ring-resize" class="w-12 h-12 text-primary" />
-            <p class="text-gray-600 dark:text-gray-400">Loading checkout...</p>
+            <Icon
+              name="svg-spinners:ring-resize"
+              class="w-12 h-12 text-primary"
+            />
+            <p class="text-gray-600 dark:text-gray-400">
+              Loading checkout...
+            </p>
           </div>
         </UCard>
       </div>
 
       <!-- Already Completed State -->
-      <div v-else-if="isAlreadyCompleted" class="max-w-2xl mx-auto">
+      <div
+        v-else-if="isAlreadyCompleted"
+        class="max-w-2xl mx-auto"
+      >
         <UCard>
           <div class="flex flex-col items-center justify-center py-12 gap-4">
-            <Icon name="heroicons:check-circle" class="w-16 h-16 text-green-500" />
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Payment Completed</h2>
+            <Icon
+              name="heroicons:check-circle"
+              class="w-16 h-16 text-green-500"
+            />
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Payment Completed
+            </h2>
             <p class="text-gray-600 dark:text-gray-400 text-center">
               This transaction has already been processed successfully.
             </p>
-            <UButton color="primary" variant="soft" @click="navigateTo('/dashboard')">
+            <UButton
+              color="primary"
+              variant="soft"
+              @click="navigateTo('/dashboard')"
+            >
               Return to Dashboard
             </UButton>
           </div>
@@ -29,15 +48,27 @@
       </div>
 
       <!-- Expired State -->
-      <div v-else-if="isExpired" class="max-w-2xl mx-auto">
+      <div
+        v-else-if="isExpired"
+        class="max-w-2xl mx-auto"
+      >
         <UCard>
           <div class="flex flex-col items-center justify-center py-12 gap-4">
-            <Icon name="heroicons:clock" class="w-16 h-16 text-orange-500" />
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Payment Expired</h2>
+            <Icon
+              name="heroicons:clock"
+              class="w-16 h-16 text-orange-500"
+            />
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Payment Expired
+            </h2>
             <p class="text-gray-600 dark:text-gray-400 text-center">
               This payment link has expired. Please initiate a new payment.
             </p>
-            <UButton color="gray" variant="soft" @click="navigateTo('/wallet')">
+            <UButton
+              color="gray"
+              variant="soft"
+              @click="navigateTo('/wallet')"
+            >
               Return to Wallet
             </UButton>
           </div>
@@ -45,13 +76,27 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="max-w-2xl mx-auto">
+      <div
+        v-else-if="error"
+        class="max-w-2xl mx-auto"
+      >
         <UCard>
           <div class="flex flex-col items-center justify-center py-12 gap-4">
-            <Icon name="heroicons:x-circle" class="w-16 h-16 text-red-500" />
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Checkout Failed</h2>
-            <p class="text-gray-600 dark:text-gray-400 text-center">{{ errorMessage }}</p>
-            <UButton color="gray" variant="soft" @click="navigateTo('/wallet')">
+            <Icon
+              name="heroicons:x-circle"
+              class="w-16 h-16 text-red-500"
+            />
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Checkout Failed
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 text-center">
+              {{ errorMessage }}
+            </p>
+            <UButton
+              color="gray"
+              variant="soft"
+              @click="navigateTo('/wallet')"
+            >
               Return to Wallet
             </UButton>
           </div>
@@ -59,13 +104,17 @@
       </div>
 
       <!-- Checkout UI -->
-      <div v-else-if="checkoutData" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-
+      <div
+        v-else-if="checkoutData"
+        class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
         <!-- Transaction Details (Left) -->
         <div class="md:col-span-1">
           <UCard>
             <template #header>
-              <h2 class="text-lg font-semibold">Transaction Details</h2>
+              <h2 class="text-lg font-semibold">
+                Transaction Details
+              </h2>
             </template>
 
             <div class="space-y-4">
@@ -93,7 +142,10 @@
                 </UBadge>
               </div>
 
-              <div v-if="checkoutData.transaction.expires_at" class="flex justify-between text-sm">
+              <div
+                v-if="checkoutData.transaction.expires_at"
+                class="flex justify-between text-sm"
+              >
                 <span class="text-gray-600 dark:text-gray-400">Expires in</span>
                 <span class="text-orange-600 dark:text-orange-400 font-medium">
                   {{ formatExpiryTime(checkoutData.transaction.expires_at) }}
@@ -102,7 +154,10 @@
 
               <div class="pt-4 border-t dark:border-gray-700">
                 <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <Icon name="heroicons:shield-check" class="w-5 h-5 text-green-500" />
+                  <Icon
+                    name="heroicons:shield-check"
+                    class="w-5 h-5 text-green-500"
+                  />
                   <span>Secured by {{ checkoutData.payment.provider }}</span>
                 </div>
               </div>
@@ -114,45 +169,105 @@
         <div class="md:col-span-2">
           <UCard>
             <template #header>
-              <h2 class="text-xl font-semibold">Complete Payment</h2>
+              <h2 class="text-xl font-semibold">
+                Complete Payment
+              </h2>
             </template>
 
             <!-- ⭐ Payment Success / Processing State -->
-            <div v-if="paymentSuccess" class="min-h-[400px] flex flex-col items-center justify-center">
-              <Icon name="heroicons:check-circle" class="w-16 h-16 text-green-500 mx-auto" />
-              <h3 class="text-xl font-semibold mt-4">Payment Successful!</h3>
-              <p class="text-gray-600 dark:text-gray-400 mt-2">Your payment has been processed.</p>
-              <p class="text-sm text-gray-500 mt-1">Redirecting...</p>
+            <div
+              v-if="paymentSuccess"
+              class="min-h-[400px] flex flex-col items-center justify-center"
+            >
+              <Icon
+                name="heroicons:check-circle"
+                class="w-16 h-16 text-green-500 mx-auto"
+              />
+              <h3 class="text-xl font-semibold mt-4">
+                Payment Successful!
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 mt-2">
+                Your payment has been processed.
+              </p>
+              <p class="text-sm text-gray-500 mt-1">
+                Redirecting...
+              </p>
             </div>
 
             <!-- ⭐ Payment Verification State -->
-            <div v-else-if="isVerifying" class="min-h-[400px] flex flex-col items-center justify-center">
-              <Icon name="svg-spinners:ring-resize" class="w-12 h-12 text-primary mx-auto" />
-              <h3 class="text-lg font-semibold mt-4">Verifying Payment...</h3>
-              <p class="text-gray-600 dark:text-gray-400 mt-2">Please wait while we confirm your payment.</p>
-              <p class="text-sm text-gray-500 mt-1">Do not close this page.</p>
+            <div
+              v-else-if="isVerifying"
+              class="min-h-[400px] flex flex-col items-center justify-center"
+            >
+              <Icon
+                name="svg-spinners:ring-resize"
+                class="w-12 h-12 text-primary mx-auto"
+              />
+              <h3 class="text-lg font-semibold mt-4">
+                Verifying Payment...
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 mt-2">
+                Please wait while we confirm your payment.
+              </p>
+              <p class="text-sm text-gray-500 mt-1">
+                Do not close this page.
+              </p>
             </div>
 
             <!-- ⭐ Payment Failed State -->
-            <div v-else-if="paymentFailed" class="min-h-[400px] flex flex-col items-center justify-center">
-              <Icon name="heroicons:x-circle" class="w-16 h-16 text-red-500 mx-auto" />
-              <h3 class="text-xl font-semibold mt-4">Payment Failed</h3>
-              <p class="text-gray-600 dark:text-gray-400 mt-2">{{ paymentFailureReason }}</p>
-              <UButton color="primary" class="mt-4" @click="initiateCashfreePayment" :loading="isProcessing">
+            <div
+              v-else-if="paymentFailed"
+              class="min-h-[400px] flex flex-col items-center justify-center"
+            >
+              <Icon
+                name="heroicons:x-circle"
+                class="w-16 h-16 text-red-500 mx-auto"
+              />
+              <h3 class="text-xl font-semibold mt-4">
+                Payment Failed
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 mt-2">
+                {{ paymentFailureReason }}
+              </p>
+              <UButton
+                color="primary"
+                class="mt-4"
+                :loading="isProcessing"
+                @click="initiateCashfreePayment"
+              >
                 Try Again
               </UButton>
             </div>
 
             <!-- ⭐ Ready to Pay State -->
-            <div v-else class="min-h-[400px] flex flex-col items-center justify-center">
-              <div v-if="!paymentInitialized" class="text-center space-y-4">
-                <Icon name="svg-spinners:ring-resize" class="w-12 h-12 text-primary mx-auto" />
-                <p class="text-gray-600 dark:text-gray-400">Initializing payment gateway...</p>
+            <div
+              v-else
+              class="min-h-[400px] flex flex-col items-center justify-center"
+            >
+              <div
+                v-if="!paymentInitialized"
+                class="text-center space-y-4"
+              >
+                <Icon
+                  name="svg-spinners:ring-resize"
+                  class="w-12 h-12 text-primary mx-auto"
+                />
+                <p class="text-gray-600 dark:text-gray-400">
+                  Initializing payment gateway...
+                </p>
               </div>
 
-              <div v-else class="w-full text-center space-y-4">
-                <Icon name="heroicons:credit-card" class="w-16 h-16 text-primary mx-auto" />
-                <h3 class="text-lg font-semibold">Pay {{ checkoutData.transaction.amount_formatted }}</h3>
+              <div
+                v-else
+                class="w-full text-center space-y-4"
+              >
+                <Icon
+                  name="heroicons:credit-card"
+                  class="w-16 h-16 text-primary mx-auto"
+                />
+                <h3 class="text-lg font-semibold">
+                  Pay {{ checkoutData.transaction.amount_formatted }}
+                </h3>
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   Click the button below to complete your payment securely.
                 </p>
@@ -160,10 +275,13 @@
                   id="cashfree-pay-button"
                   size="xl"
                   color="primary"
-                  @click="initiateCashfreePayment"
                   :loading="isProcessing"
+                  @click="initiateCashfreePayment"
                 >
-                  <Icon name="heroicons:lock-closed" class="w-5 h-5 mr-2" />
+                  <Icon
+                    name="heroicons:lock-closed"
+                    class="w-5 h-5 mr-2"
+                  />
                   Pay via {{ checkoutData.payment.provider }}
                 </UButton>
               </div>

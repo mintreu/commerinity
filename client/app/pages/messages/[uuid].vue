@@ -91,7 +91,7 @@ function isMyMessage(message: { sender_user_id: number | null }): boolean {
 
 // Group messages by date
 const groupedMessages = computed(() => {
-  const groups: { date: string; messages: typeof messages.value }[] = []
+  const groups: { date: string, messages: typeof messages.value }[] = []
   let currentDate = ''
 
   // Messages are in reverse order (newest first), so reverse for display
@@ -126,8 +126,7 @@ async function handleSend() {
     nextTick(() => {
       scrollToBottom()
     })
-  }
-  catch {
+  } catch {
     // Restore message on error
     newMessage.value = messageText
     toast.add({
@@ -135,8 +134,7 @@ async function handleSend() {
       description: 'Failed to send message',
       color: 'error'
     })
-  }
-  finally {
+  } finally {
     isSending.value = false
   }
 }
@@ -164,7 +162,10 @@ function handleKeydown(event: KeyboardEvent) {
       <template v-if="currentConversation">
         <template v-if="currentConversation.is_broadcast">
           <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-            <UIcon name="i-lucide-megaphone" class="h-5 w-5 text-primary" />
+            <UIcon
+              name="i-lucide-megaphone"
+              class="h-5 w-5 text-primary"
+            />
           </div>
           <div>
             <h1 class="font-semibold text-highlighted">
@@ -184,7 +185,10 @@ function handleKeydown(event: KeyboardEvent) {
             <h1 class="font-semibold text-highlighted">
               {{ currentConversation.other_participant?.name || 'Unknown' }}
             </h1>
-            <p v-if="currentConversation.subject" class="text-sm text-muted">
+            <p
+              v-if="currentConversation.subject"
+              class="text-sm text-muted"
+            >
               {{ currentConversation.subject }}
             </p>
           </div>
@@ -193,16 +197,34 @@ function handleKeydown(event: KeyboardEvent) {
     </div>
 
     <!-- Loading -->
-    <div v-if="isLoading" class="flex-1 flex items-center justify-center">
-      <UIcon name="i-lucide-loader-2" class="h-8 w-8 animate-spin text-primary" />
+    <div
+      v-if="isLoading"
+      class="flex-1 flex items-center justify-center"
+    >
+      <UIcon
+        name="i-lucide-loader-2"
+        class="h-8 w-8 animate-spin text-primary"
+      />
     </div>
 
     <!-- Error -->
-    <div v-else-if="error" class="flex-1 flex items-center justify-center p-4">
+    <div
+      v-else-if="error"
+      class="flex-1 flex items-center justify-center p-4"
+    >
       <UCard class="text-center py-8">
-        <UIcon name="i-lucide-alert-circle" class="h-12 w-12 text-red-500 mx-auto mb-4" />
-        <p class="text-red-600 dark:text-red-400">{{ error }}</p>
-        <UButton color="primary" class="mt-4" @click="loadConversation">
+        <UIcon
+          name="i-lucide-alert-circle"
+          class="h-12 w-12 text-red-500 mx-auto mb-4"
+        />
+        <p class="text-red-600 dark:text-red-400">
+          {{ error }}
+        </p>
+        <UButton
+          color="primary"
+          class="mt-4"
+          @click="loadConversation"
+        >
           Retry
         </UButton>
       </UCard>
@@ -215,13 +237,25 @@ function handleKeydown(event: KeyboardEvent) {
         class="flex-1 overflow-y-auto p-4 space-y-6"
       >
         <!-- Empty state -->
-        <div v-if="messages.length === 0" class="text-center py-12">
-          <UIcon name="i-lucide-message-square" class="h-16 w-16 text-muted mx-auto mb-4" />
-          <p class="text-muted">No messages yet</p>
+        <div
+          v-if="messages.length === 0"
+          class="text-center py-12"
+        >
+          <UIcon
+            name="i-lucide-message-square"
+            class="h-16 w-16 text-muted mx-auto mb-4"
+          />
+          <p class="text-muted">
+            No messages yet
+          </p>
         </div>
 
         <!-- Grouped messages -->
-        <div v-for="group in groupedMessages" :key="group.date" class="space-y-4">
+        <div
+          v-for="group in groupedMessages"
+          :key="group.date"
+          class="space-y-4"
+        >
           <!-- Date header -->
           <div class="flex items-center justify-center">
             <span class="px-3 py-1 text-xs font-medium text-muted bg-slate-100 dark:bg-slate-800 rounded-full">
@@ -262,8 +296,14 @@ function handleKeydown(event: KeyboardEvent) {
                 :class="isMyMessage(msg) ? 'text-white/70' : 'text-muted'"
               >
                 {{ formatTime(msg.created_at) }}
-                <span v-if="isMyMessage(msg) && msg.read_at" class="ml-1">
-                  <UIcon name="i-lucide-check-check" class="h-3 w-3 inline" />
+                <span
+                  v-if="isMyMessage(msg) && msg.read_at"
+                  class="ml-1"
+                >
+                  <UIcon
+                    name="i-lucide-check-check"
+                    class="h-3 w-3 inline"
+                  />
                 </span>
               </p>
             </div>
@@ -301,9 +341,15 @@ function handleKeydown(event: KeyboardEvent) {
         class="shrink-0 p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
       >
         <p class="text-center text-sm text-muted">
-          <UIcon name="i-lucide-info" class="h-4 w-4 inline mr-1" />
+          <UIcon
+            name="i-lucide-info"
+            class="h-4 w-4 inline mr-1"
+          />
           This is a company announcement. You cannot reply to this message.
-          <NuxtLink to="/helpdesk" class="text-primary hover:underline">
+          <NuxtLink
+            to="/helpdesk"
+            class="text-primary hover:underline"
+          >
             Contact support
           </NuxtLink>
           if you have questions.

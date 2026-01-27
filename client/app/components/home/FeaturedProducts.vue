@@ -41,7 +41,10 @@ const isLoading = computed(() => status.value === 'pending')
       <!-- Section Header -->
       <div class="text-center mb-12 md:mb-16">
         <div class="premium-badge mx-auto mb-4">
-          <UIcon name="i-lucide-trending-up" class="w-4 h-4 mr-2" />
+          <UIcon
+            name="i-lucide-trending-up"
+            class="w-4 h-4 mr-2"
+          />
           <span>Featured Products</span>
         </div>
 
@@ -92,9 +95,14 @@ const isLoading = computed(() => status.value === 'pending')
           class="text-center py-12"
         >
           <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-            <UIcon name="i-lucide-package" class="w-10 h-10 text-slate-400" />
+            <UIcon
+              name="i-lucide-package"
+              class="w-10 h-10 text-slate-400"
+            />
           </div>
-          <p class="text-slate-500 dark:text-slate-400 mb-4">Products coming soon!</p>
+          <p class="text-slate-500 dark:text-slate-400 mb-4">
+            Products coming soon!
+          </p>
           <NuxtLink to="/shop">
             <UButton color="primary">
               Browse Shop
@@ -111,9 +119,15 @@ const isLoading = computed(() => status.value === 'pending')
             color="primary"
             class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 transition-all duration-300"
           >
-            <UIcon name="i-lucide-shopping-bag" class="w-5 h-5 mr-2" />
+            <UIcon
+              name="i-lucide-shopping-bag"
+              class="w-5 h-5 mr-2"
+            />
             Explore All Products
-            <UIcon name="i-lucide-arrow-right" class="w-5 h-5 ml-2" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="w-5 h-5 ml-2"
+            />
           </UButton>
         </NuxtLink>
       </div>

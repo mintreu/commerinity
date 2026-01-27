@@ -57,7 +57,10 @@ const features = [
       <!-- Section Header -->
       <div class="text-center mb-12 md:mb-16">
         <div class="premium-badge mx-auto mb-4">
-          <UIcon name="i-lucide-star" class="w-4 h-4 mr-2" />
+          <UIcon
+            name="i-lucide-star"
+            class="w-4 h-4 mr-2"
+          />
           <span>Premium Features</span>
         </div>
 
@@ -81,7 +84,10 @@ const features = [
         >
           <!-- Large Background Icon -->
           <div class="hidden sm:block absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 opacity-5 dark:opacity-10 pointer-events-none">
-            <UIcon :name="feature.icon" class="w-full h-full text-violet-600" />
+            <UIcon
+              :name="feature.icon"
+              class="w-full h-full text-violet-600"
+            />
           </div>
 
           <!-- Content -->
@@ -92,7 +98,10 @@ const features = [
                 class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br group-hover:scale-110 transition-transform duration-300"
                 :class="feature.gradient"
               >
-                <UIcon :name="feature.icon" class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                <UIcon
+                  :name="feature.icon"
+                  class="w-6 h-6 sm:w-7 sm:h-7 text-white"
+                />
               </div>
             </div>
 
@@ -113,7 +122,10 @@ const features = [
                 :key="idx"
                 class="flex items-start text-xs sm:text-sm text-slate-500 dark:text-slate-400"
               >
-                <UIcon name="i-lucide-check-circle" class="w-4 h-4 text-violet-500 mr-2 shrink-0 mt-0.5" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-4 h-4 text-violet-500 mr-2 shrink-0 mt-0.5"
+                />
                 <span>{{ item }}</span>
               </li>
             </ul>
@@ -133,14 +145,23 @@ const features = [
             variant="solid"
             class="px-8 py-4 font-bold shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            <UIcon name="i-lucide-zap" class="w-5 h-5 mr-2" />
+            <UIcon
+              name="i-lucide-zap"
+              class="w-5 h-5 mr-2"
+            />
             Explore All Features
-            <UIcon name="i-lucide-arrow-right" class="w-5 h-5 ml-2" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="w-5 h-5 ml-2"
+            />
           </UButton>
         </NuxtLink>
 
         <p class="text-sm text-slate-500 dark:text-slate-400 mt-4 flex items-center justify-center gap-2">
-          <UIcon name="i-lucide-check-circle" class="w-4 h-4 text-violet-500" />
+          <UIcon
+            name="i-lucide-check-circle"
+            class="w-4 h-4 text-violet-500"
+          />
           All features included • No hidden costs
         </p>
       </div>

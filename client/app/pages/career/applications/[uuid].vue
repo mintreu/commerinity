@@ -106,47 +106,68 @@ function formatDate(dateString: string | null): string {
         </UButton>
       </div>
 
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-primary" />
+      <div
+        v-if="status === 'pending'"
+        class="flex justify-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-arrow-path"
+          class="w-8 h-8 animate-spin text-primary"
+        />
       </div>
 
-      <div v-else-if="error" class="text-center py-12">
-        <UIcon name="i-heroicons-exclamation-circle" class="w-16 h-16 mx-auto text-red-500 mb-4" />
+      <div
+        v-else-if="error"
+        class="text-center py-12"
+      >
+        <UIcon
+          name="i-heroicons-exclamation-circle"
+          class="w-16 h-16 mx-auto text-red-500 mb-4"
+        />
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           Application not found
         </h3>
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           The application you're looking for doesn't exist or you don't have access to it.
         </p>
-        <UButton to="/career/applications" variant="outline">
+        <UButton
+          to="/career/applications"
+          variant="outline"
+        >
           View All Applications
         </UButton>
       </div>
 
-      <div v-else-if="application?.data" class="space-y-6">
+      <div
+        v-else-if="application?.data"
+        class="space-y-6"
+      >
         <UCard>
           <template #header>
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                      {{ application.data.recruitment.title }}
-                    </h1>
-                    <UButton
-                      :to="`/career/${application.data.recruitment.slug}`"
-                      variant="ghost"
-                      color="primary"
-                      size="xs"
-                      icon="i-heroicons-arrow-top-right-on-square"
-                    >
-                      View Position
-                    </UButton>
-                  </div>
-                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Application ID: <span class="font-mono">{{ application.data.uuid }}</span>
-                  </p>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    {{ application.data.recruitment.title }}
+                  </h1>
+                  <UButton
+                    :to="`/career/${application.data.recruitment.slug}`"
+                    variant="ghost"
+                    color="primary"
+                    size="xs"
+                    icon="i-heroicons-arrow-top-right-on-square"
+                  >
+                    View Position
+                  </UButton>
                 </div>
-              <UBadge :color="getStatusColor(application.data.status)" size="lg">
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Application ID: <span class="font-mono">{{ application.data.uuid }}</span>
+                </p>
+              </div>
+              <UBadge
+                :color="getStatusColor(application.data.status)"
+                size="lg"
+              >
                 {{ application.data.status_label }}
               </UBadge>
             </div>
@@ -154,28 +175,51 @@ function formatDate(dateString: string | null): string {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Position</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.recruitment.role_label }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Position
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.recruitment.role_label }}
+              </p>
             </div>
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Employment Type</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.recruitment.employment_type_label }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Employment Type
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.recruitment.employment_type_label }}
+              </p>
             </div>
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Location</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.recruitment.location }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Location
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.recruitment.location }}
+              </p>
             </div>
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Applied On</h3>
-              <p class="text-gray-900 dark:text-white">{{ formatDate(application.data.created_at) }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Applied On
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ formatDate(application.data.created_at) }}
+              </p>
             </div>
             <div v-if="application.data.submitted_at">
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Submitted On</h3>
-              <p class="text-gray-900 dark:text-white">{{ formatDate(application.data.submitted_at) }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Submitted On
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ formatDate(application.data.submitted_at) }}
+              </p>
             </div>
           </div>
 
-          <div v-if="application.data.status_feedback" class="mt-6">
+          <div
+            v-if="application.data.status_feedback"
+            class="mt-6"
+          >
             <UAlert
               :color="application.data.status === 'accepted' ? 'success' : application.data.status === 'rejected' ? 'error' : 'info'"
               :icon="application.data.status === 'accepted' ? 'i-heroicons-check-circle' : application.data.status === 'rejected' ? 'i-heroicons-x-circle' : 'i-heroicons-information-circle'"
@@ -184,7 +228,10 @@ function formatDate(dateString: string | null): string {
             />
           </div>
 
-          <div v-if="application.data.recruitment.is_payable && application.data.status === 'awaiting_payment'" class="mt-6">
+          <div
+            v-if="application.data.recruitment.is_payable && application.data.status === 'awaiting_payment'"
+            class="mt-6"
+          >
             <UAlert
               color="warning"
               icon="i-heroicons-exclamation-triangle"
@@ -195,7 +242,7 @@ function formatDate(dateString: string | null): string {
               </template>
             </UAlert>
             <div class="mt-4">
-<!--              Api End Point is "`/api/my-applications/${application.data.uuid}/pay`" -->
+              <!--              Api End Point is "`/api/my-applications/${application.data.uuid}/pay`" -->
               <CheckoutButton
                 label="Complete Payment"
                 icon="i-lucide-credit-card"
@@ -222,20 +269,35 @@ function formatDate(dateString: string | null): string {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Guardian Name</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.guardian_name }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Guardian Name
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.guardian_name }}
+              </p>
             </div>
             <div v-if="application.data.address">
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Address</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.address.full_address }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Address
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.address.full_address }}
+              </p>
               <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ application.data.address.city }}, {{ application.data.address.state }} - {{ application.data.address.pincode }}
               </p>
             </div>
             <div v-if="application.data.reference_name">
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Reference</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.reference_name }}</p>
-              <p v-if="application.data.reference_contact" class="text-sm text-gray-600 dark:text-gray-400">
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Reference
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.reference_name }}
+              </p>
+              <p
+                v-if="application.data.reference_contact"
+                class="text-sm text-gray-600 dark:text-gray-400"
+              >
                 {{ application.data.reference_contact }}
               </p>
             </div>
@@ -255,7 +317,9 @@ function formatDate(dateString: string | null): string {
               :key="index"
               class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0"
             >
-              <h3 class="font-medium text-gray-900 dark:text-white">{{ edu.degree }}</h3>
+              <h3 class="font-medium text-gray-900 dark:text-white">
+                {{ edu.degree }}
+              </h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ edu.institution }} ({{ edu.year }})
               </p>
@@ -276,8 +340,13 @@ function formatDate(dateString: string | null): string {
               :key="index"
               class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0"
             >
-              <h3 class="font-medium text-gray-900 dark:text-white">{{ skill.skill }}</h3>
-              <p v-if="skill.description" class="text-sm text-gray-600 dark:text-gray-400">
+              <h3 class="font-medium text-gray-900 dark:text-white">
+                {{ skill.skill }}
+              </h3>
+              <p
+                v-if="skill.description"
+                class="text-sm text-gray-600 dark:text-gray-400"
+              >
                 {{ skill.description }}
               </p>
             </div>
@@ -293,11 +362,17 @@ function formatDate(dateString: string | null): string {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Application Fee</h3>
-              <p class="text-gray-900 dark:text-white">{{ application.data.amount_formatted }}</p>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Application Fee
+              </h3>
+              <p class="text-gray-900 dark:text-white">
+                {{ application.data.amount_formatted }}
+              </p>
             </div>
             <div>
-              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Payment Status</h3>
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                Payment Status
+              </h3>
               <UBadge :color="application.data.is_paid ? 'success' : 'warning'">
                 {{ application.data.is_paid ? 'Paid' : 'Pending' }}
               </UBadge>

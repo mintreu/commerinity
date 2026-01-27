@@ -5,13 +5,11 @@
  * - Auth User: Product listing with filters (Flipkart/Amazon style)
  */
 
-
+import type { Product } from '~/types/catalog'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'default'
 })
-
-import type { Product } from '~/types/catalog'
 
 interface FeaturedCategory {
   name: string
@@ -20,7 +18,7 @@ interface FeaturedCategory {
   thumbnail: string
   banner: string
   product_count: number
-  sample_products: Array<{ name: string; image: string }>
+  sample_products: Array<{ name: string, image: string }>
 }
 
 // SEO

@@ -7,7 +7,10 @@
           to="/profile"
           class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
         >
-          <UIcon name="i-lucide-arrow-left" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-arrow-left"
+            class="w-4 h-4"
+          />
           <span>Back to Profile</span>
         </NuxtLink>
       </div>

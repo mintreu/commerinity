@@ -82,7 +82,7 @@ function formatTime(dateString: string): string {
 }
 
 // Handle notification click
-async function handleNotificationClick(notification: { id: string; read_at: string | null; data: { action_url?: string } }) {
+async function handleNotificationClick(notification: { id: string, read_at: string | null, data: { action_url?: string } }) {
   if (!notification.read_at) {
     await markAsRead(notification.id)
   }
@@ -108,8 +108,7 @@ async function handleMarkAllAsRead() {
 async function togglePushSubscription() {
   if (isPushSubscribed.value) {
     await unsubscribeFromPush()
-  }
-  else {
+  } else {
     await subscribeToPush()
   }
 }
@@ -182,21 +181,38 @@ watch(currentPage, () => {
         @click="filter = 'unread'"
       >
         Unread
-        <UBadge v-if="unreadCount > 0" color="error" size="xs" class="ml-1">
+        <UBadge
+          v-if="unreadCount > 0"
+          color="error"
+          size="xs"
+          class="ml-1"
+        >
           {{ unreadCount }}
         </UBadge>
       </UButton>
     </div>
 
     <!-- Loading state -->
-    <div v-if="isLoading" class="flex items-center justify-center py-16">
-      <UIcon name="i-lucide-loader-2" class="h-8 w-8 animate-spin text-primary" />
+    <div
+      v-if="isLoading"
+      class="flex items-center justify-center py-16"
+    >
+      <UIcon
+        name="i-lucide-loader-2"
+        class="h-8 w-8 animate-spin text-primary"
+      />
     </div>
 
     <!-- Empty state -->
-    <UCard v-else-if="filteredNotifications.length === 0" class="text-center py-12">
+    <UCard
+      v-else-if="filteredNotifications.length === 0"
+      class="text-center py-12"
+    >
       <div class="flex flex-col items-center">
-        <UIcon name="i-lucide-inbox" class="h-16 w-16 text-muted mb-4" />
+        <UIcon
+          name="i-lucide-inbox"
+          class="h-16 w-16 text-muted mb-4"
+        />
         <h3 class="text-lg font-medium text-highlighted mb-2">
           No notifications
         </h3>
@@ -207,7 +223,10 @@ watch(currentPage, () => {
     </UCard>
 
     <!-- Notifications list -->
-    <div v-else class="space-y-3">
+    <div
+      v-else
+      class="space-y-3"
+    >
       <UCard
         v-for="notification in filteredNotifications"
         :key="notification.id"
@@ -275,7 +294,10 @@ watch(currentPage, () => {
     </div>
 
     <!-- Pagination -->
-    <div v-if="totalPages > 1" class="flex justify-center mt-8">
+    <div
+      v-if="totalPages > 1"
+      class="flex justify-center mt-8"
+    >
       <UPagination
         v-model="currentPage"
         :total="totalPages * perPage"

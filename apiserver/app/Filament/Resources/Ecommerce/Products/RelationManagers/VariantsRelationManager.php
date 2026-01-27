@@ -87,7 +87,10 @@ class VariantsRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options(ProductForm::statusOptions()),
+                    ->options(collect(ProductStatusCast::cases())
+                        ->mapWithKeys(fn (ProductStatusCast $status) => [$status->value => $status->getLabel()])
+                        ->toArray())
+                    ->default(ProductStatusCast::DRAFT->value) ,
             ])
             ->headerActions([
                 CreateAction::make(),

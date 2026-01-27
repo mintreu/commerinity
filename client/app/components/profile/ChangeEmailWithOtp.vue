@@ -10,7 +10,10 @@
         <!-- Success Header -->
         <div class="flex items-center gap-6 p-8 border-b border-blue-200/50 dark:border-blue-800/50">
           <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl">
-            <UIcon name="i-lucide-check-circle" class="w-8 h-8 text-white" />
+            <UIcon
+              name="i-lucide-check-circle"
+              class="w-8 h-8 text-white"
+            />
           </div>
           <div>
             <h3 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
@@ -29,8 +32,8 @@
           </p>
 
           <button
-            @click="closeSuccessModal"
             class="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+            @click="closeSuccessModal"
           >
             Continue
           </button>
@@ -39,7 +42,10 @@
     </div>
   </Teleport>
 
-  <form @submit.prevent="saveEmail" class="relative z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+  <form
+    class="relative z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+    @submit.prevent="saveEmail"
+  >
     <!-- Header Background Gradient -->
     <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5 opacity-70" />
 
@@ -48,7 +54,10 @@
       <div class="p-8 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm">
         <div class="flex items-center gap-4 mb-4">
           <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-300">
-            <UIcon name="i-lucide-mail" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-mail"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <div>
             <h2 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -64,7 +73,10 @@
         <!-- Current Email Display -->
         <div class="mt-6 p-4 bg-white/60 dark:bg-slate-700/60 rounded-2xl border border-slate-200/50 dark:border-slate-600/50 backdrop-blur-sm">
           <div class="flex items-center gap-3">
-            <UIcon name="i-lucide-mail-check" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <UIcon
+              name="i-lucide-mail-check"
+              class="w-5 h-5 text-blue-600 dark:text-blue-400"
+            />
             <div>
               <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                 Current
@@ -81,17 +93,26 @@
       <div class="p-8 space-y-8">
         <!-- Email Input -->
         <div class="space-y-3">
-          <label for="email" class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon name="i-lucide-mail" class="w-4 h-4" />
+          <label
+            for="email"
+            class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
+          >
+            <UIcon
+              name="i-lucide-mail"
+              class="w-4 h-4"
+            />
             <span>New Email Address</span>
             <span class="text-red-500">*</span>
           </label>
 
           <div class="relative group focus-within:scale-[1.02] transition-transform duration-300">
-            <UIcon name="i-lucide-mail" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-300" />
+            <UIcon
+              name="i-lucide-mail"
+              class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-300"
+            />
             <input
-              v-model="email"
               id="email"
+              v-model="email"
               type="email"
               placeholder="you@example.com"
               class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-semibold"
@@ -100,37 +121,61 @@
                 'border-blue-300 bg-blue-50 dark:bg-blue-900/10': canSendOtp && !fieldError
               }"
               @blur="onEmailBlur"
-            />
+            >
           </div>
 
-          <div v-if="fieldError" class="flex items-center gap-2 text-sm text-red-500 bg-red-50/80 dark:bg-red-900/20 px-4 py-3 rounded-xl border border-red-200/60 dark:border-red-800/60 backdrop-blur-sm">
-            <UIcon name="i-lucide-alert-circle" class="w-5 h-5" />
+          <div
+            v-if="fieldError"
+            class="flex items-center gap-2 text-sm text-red-500 bg-red-50/80 dark:bg-red-900/20 px-4 py-3 rounded-xl border border-red-200/60 dark:border-red-800/60 backdrop-blur-sm"
+          >
+            <UIcon
+              name="i-lucide-alert-circle"
+              class="w-5 h-5"
+            />
             <span class="font-medium">{{ fieldError }}</span>
           </div>
 
-          <div v-else-if="canSendOtp" class="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 bg-blue-50/80 dark:bg-blue-900/20 px-4 py-3 rounded-xl border border-blue-200/60 dark:border-blue-800/60 backdrop-blur-sm">
-            <UIcon name="i-lucide-check-circle" class="w-5 h-5" />
+          <div
+            v-else-if="canSendOtp"
+            class="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 bg-blue-50/80 dark:bg-blue-900/20 px-4 py-3 rounded-xl border border-blue-200/60 dark:border-blue-800/60 backdrop-blur-sm"
+          >
+            <UIcon
+              name="i-lucide-check-circle"
+              class="w-5 h-5"
+            />
             <span class="font-medium">Email address is available</span>
           </div>
         </div>
 
         <!-- Send OTP Button -->
-        <div class="flex justify-end" v-if="canSendOtp && !otpVerified">
+        <div
+          v-if="canSendOtp && !otpVerified"
+          class="flex justify-end"
+        >
           <button
             type="button"
-            @click="sendOtp"
             :disabled="otpSending || countdown > 0"
             class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 group"
+            @click="sendOtp"
           >
-            <UIcon :name="otpSending ? 'i-lucide-loader-2' : 'i-lucide-send'" :class="{ 'w-5 h-5 animate-spin': otpSending, 'w-5 h-5 group-hover:rotate-12 transition-transform duration-300': !otpSending }" />
+            <UIcon
+              :name="otpSending ? 'i-lucide-loader-2' : 'i-lucide-send'"
+              :class="{ 'w-5 h-5 animate-spin': otpSending, 'w-5 h-5 group-hover:rotate-12 transition-transform duration-300': !otpSending }"
+            />
             <span>{{ countdown > 0 ? `Resend OTP (${countdown}s)` : 'Send OTP' }}</span>
           </button>
         </div>
 
         <!-- Demo OTP Notice -->
-        <div v-if="otpSent && demoOtp" class="bg-amber-50/80 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-800/60 rounded-2xl p-6 backdrop-blur-sm">
+        <div
+          v-if="otpSent && demoOtp"
+          class="bg-amber-50/80 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-800/60 rounded-2xl p-6 backdrop-blur-sm"
+        >
           <div class="flex items-center gap-3 mb-3">
-            <UIcon name="i-lucide-info" class="w-6 h-6 text-amber-600 dark:text-amber-400" />
+            <UIcon
+              name="i-lucide-info"
+              class="w-6 h-6 text-amber-600 dark:text-amber-400"
+            />
             <h4 class="font-bold text-amber-700 dark:text-amber-300">
               Demo Mode
             </h4>
@@ -144,11 +189,17 @@
         </div>
 
         <!-- OTP Fields -->
-        <div v-if="otpSent && !otpVerified" class="space-y-6">
+        <div
+          v-if="otpSent && !otpVerified"
+          class="space-y-6"
+        >
           <div class="text-center">
             <div class="flex items-center justify-center gap-3 mb-4">
               <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <UIcon name="i-lucide-mail-open" class="w-6 h-6 text-white" />
+                <UIcon
+                  name="i-lucide-mail-open"
+                  class="w-6 h-6 text-white"
+                />
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 dark:text-white text-lg">
@@ -165,38 +216,53 @@
             <input
               v-for="(digit, index) in otp"
               :key="index"
+              v-model="otp[index]"
               maxlength="1"
               type="text"
               inputmode="numeric"
               class="w-14 h-14 text-center rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white/80 dark:bg-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-bold text-xl shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 focus:scale-110"
-              v-model="otp[index]"
               @input="focusNext(index, $event)"
               @keydown="handleOtpKeydown(index, $event)"
-            />
+            >
           </div>
 
-          <div v-if="otpError" class="flex items-center gap-2 text-sm text-red-500 justify-center bg-red-50/80 dark:bg-red-900/20 px-6 py-4 rounded-2xl border border-red-200/60 dark:border-red-800/60 backdrop-blur-sm">
-            <UIcon name="i-lucide-alert-circle" class="w-5 h-5" />
+          <div
+            v-if="otpError"
+            class="flex items-center gap-2 text-sm text-red-500 justify-center bg-red-50/80 dark:bg-red-900/20 px-6 py-4 rounded-2xl border border-red-200/60 dark:border-red-800/60 backdrop-blur-sm"
+          >
+            <UIcon
+              name="i-lucide-alert-circle"
+              class="w-5 h-5"
+            />
             <span class="font-medium">{{ otpError }}</span>
           </div>
 
           <button
             type="button"
-            @click="verifyOtp"
             class="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 group"
             :disabled="verifyingOtp || otp.join('').length < 6"
+            @click="verifyOtp"
           >
-            <UIcon :name="verifyingOtp ? 'i-lucide-loader-2' : 'i-lucide-shield-check'" :class="{ 'w-6 h-6 inline animate-spin mr-3': verifyingOtp, 'w-6 h-6 inline mr-3 group-hover:scale-110 transition-transform duration-300': !verifyingOtp }" />
+            <UIcon
+              :name="verifyingOtp ? 'i-lucide-loader-2' : 'i-lucide-shield-check'"
+              :class="{ 'w-6 h-6 inline animate-spin mr-3': verifyingOtp, 'w-6 h-6 inline mr-3 group-hover:scale-110 transition-transform duration-300': !verifyingOtp }"
+            />
             <span>{{ verifyingOtp ? 'Verifying...' : 'Verify OTP' }}</span>
           </button>
         </div>
 
         <!-- OTP Verified -->
-        <div v-if="otpVerified" class="text-center space-y-6">
+        <div
+          v-if="otpVerified"
+          class="text-center space-y-6"
+        >
           <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 p-8 rounded-3xl border-2 border-blue-200/60 dark:border-blue-800/60 backdrop-blur-sm">
             <div class="flex items-center justify-center gap-4 mb-4">
               <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl">
-                <UIcon name="i-lucide-check-circle" class="w-8 h-8 text-white" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-8 h-8 text-white"
+                />
               </div>
               <div>
                 <h4 class="text-xl font-bold text-blue-600 dark:text-blue-400">
@@ -214,7 +280,10 @@
             class="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 group"
             :disabled="saving"
           >
-            <UIcon :name="saving ? 'i-lucide-loader-2' : 'i-lucide-save'" :class="{ 'w-6 h-6 inline animate-spin mr-3': saving, 'w-6 h-6 inline mr-3 group-hover:scale-110 transition-transform duration-300': !saving }" />
+            <UIcon
+              :name="saving ? 'i-lucide-loader-2' : 'i-lucide-save'"
+              :class="{ 'w-6 h-6 inline animate-spin mr-3': saving, 'w-6 h-6 inline mr-3 group-hover:scale-110 transition-transform duration-300': !saving }"
+            />
             <span>{{ saving ? 'Saving Email Address...' : 'Save Email Address' }}</span>
           </button>
         </div>

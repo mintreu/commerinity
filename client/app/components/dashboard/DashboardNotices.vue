@@ -21,9 +21,15 @@ async function handleClick(uuid: string) {
 </script>
 
 <template>
-  <div v-if="notices.length > 0 || isLoading" class="space-y-4">
+  <div
+    v-if="notices.length > 0 || isLoading"
+    class="space-y-4"
+  >
     <!-- Loading skeleton -->
-    <div v-if="isLoading" class="animate-pulse">
+    <div
+      v-if="isLoading"
+      class="animate-pulse"
+    >
       <div class="h-24 bg-slate-200 dark:bg-slate-700 rounded-xl" />
     </div>
 

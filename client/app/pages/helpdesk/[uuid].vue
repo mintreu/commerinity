@@ -71,24 +71,28 @@ const formatDate = (date: string) => {
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-         <UButton
-           to="/helpdesk"
-           variant="ghost"
-           color="neutral"
-           icon="i-lucide-arrow-left"
-           class="rounded-xl"
-         />
-         <div>
-           <h1 class="text-xl font-black text-slate-900 dark:text-white">
-             {{ ticket.title || 'Loading Ticket...' }}
-           </h1>
-           <p class="text-xs font-mono text-slate-500 uppercase tracking-widest">
-             Ticket ID: #{{ route.params.uuid.toString().slice(0,8).toUpperCase() }}
-           </p>
-         </div>
+        <UButton
+          to="/helpdesk"
+          variant="ghost"
+          color="neutral"
+          icon="i-lucide-arrow-left"
+          class="rounded-xl"
+        />
+        <div>
+          <h1 class="text-xl font-black text-slate-900 dark:text-white">
+            {{ ticket.title || 'Loading Ticket...' }}
+          </h1>
+          <p class="text-xs font-mono text-slate-500 uppercase tracking-widest">
+            Ticket ID: #{{ route.params.uuid.toString().slice(0, 8).toUpperCase() }}
+          </p>
+        </div>
       </div>
       <div class="flex gap-2">
-        <UBadge :color="getStatusColor(ticket.status)" variant="subtle" class="rounded-full px-4 font-black text-[10px] uppercase tracking-widest">
+        <UBadge
+          :color="getStatusColor(ticket.status)"
+          variant="subtle"
+          class="rounded-full px-4 font-black text-[10px] uppercase tracking-widest"
+        >
           {{ ticket.status }}
         </UBadge>
       </div>
@@ -103,8 +107,11 @@ const formatDate = (date: string) => {
             ref="chatContainer"
             class="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-hide bg-slate-50/30 dark:bg-slate-900/10"
           >
-            <div v-if="loading && messages.length === 0" class="h-full flex items-center justify-center">
-               <div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+            <div
+              v-if="loading && messages.length === 0"
+              class="h-full flex items-center justify-center"
+            >
+              <div class="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
             </div>
 
             <template v-else>
@@ -125,10 +132,15 @@ const formatDate = (date: string) => {
                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm border border-slate-100 dark:border-slate-700 rounded-tl-none'
                     ]"
                   >
-                    <p class="whitespace-pre-wrap">{{ msg.message }}</p>
+                    <p class="whitespace-pre-wrap">
+                      {{ msg.message }}
+                    </p>
 
                     <!-- Attachments -->
-                    <div v-if="msg.attachments?.length" class="mt-4 flex flex-wrap gap-2">
+                    <div
+                      v-if="msg.attachments?.length"
+                      class="mt-4 flex flex-wrap gap-2"
+                    >
                       <a
                         v-for="(url, i) in msg.attachments"
                         :key="i"
@@ -136,9 +148,15 @@ const formatDate = (date: string) => {
                         target="_blank"
                         class="relative group overflow-hidden rounded-xl h-24 w-24 border border-white/20"
                       >
-                        <img :src="url" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                        <img
+                          :src="url"
+                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform"
+                        >
                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <UIcon name="i-lucide-external-link" class="text-white w-5 h-5" />
+                          <UIcon
+                            name="i-lucide-external-link"
+                            class="text-white w-5 h-5"
+                          />
                         </div>
                       </a>
                     </div>
@@ -160,7 +178,10 @@ const formatDate = (date: string) => {
 
           <!-- Input Area -->
           <div class="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 rounded-b-3xl">
-            <UForm @submit="handleReply" class="relative">
+            <UForm
+              class="relative"
+              @submit="handleReply"
+            >
               <UTextarea
                 v-model="replyText"
                 placeholder="Write your message here..."
@@ -185,8 +206,11 @@ const formatDate = (date: string) => {
                 Press Ctrl + Enter to send
               </p>
               <div class="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                 <UIcon name="i-lucide-shield-check" class="text-emerald-500" />
-                 End-to-End Encrypted
+                <UIcon
+                  name="i-lucide-shield-check"
+                  class="text-emerald-500"
+                />
+                End-to-End Encrypted
               </div>
             </div>
           </div>
@@ -212,7 +236,10 @@ const formatDate = (date: string) => {
             <div>
               <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Department / Topic</span>
               <div class="flex items-center gap-2 text-slate-900 dark:text-white">
-                <UIcon name="i-lucide-tag" class="text-primary-500 w-4 h-4" />
+                <UIcon
+                  name="i-lucide-tag"
+                  class="text-primary-500 w-4 h-4"
+                />
                 <span class="text-sm font-bold">{{ ticket.topic?.name || 'General' }}</span>
               </div>
             </div>
@@ -220,14 +247,23 @@ const formatDate = (date: string) => {
             <div>
               <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Submission Date</span>
               <div class="flex items-center gap-2 text-slate-900 dark:text-white">
-                 <UIcon name="i-lucide-calendar-days" class="text-slate-400 w-4 h-4" />
-                 <span class="text-sm font-bold">{{ formatDate(ticket.created_at || new Date()) }}</span>
+                <UIcon
+                  name="i-lucide-calendar-days"
+                  class="text-slate-400 w-4 h-4"
+                />
+                <span class="text-sm font-bold">{{ formatDate(ticket.created_at || new Date()) }}</span>
               </div>
             </div>
           </div>
 
           <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800">
-            <UButton block color="neutral" variant="soft" class="rounded-xl font-bold py-3" icon="i-lucide-check-check">
+            <UButton
+              block
+              color="neutral"
+              variant="soft"
+              class="rounded-xl font-bold py-3"
+              icon="i-lucide-check-check"
+            >
               Mark as Resolved
             </UButton>
           </div>
@@ -235,13 +271,21 @@ const formatDate = (date: string) => {
 
         <!-- Security Badge -->
         <div class="p-6 bg-slate-50/50 dark:bg-slate-800/30 rounded-3xl border border-slate-200 dark:border-slate-800 text-center">
-           <UIcon name="i-lucide-headphones" class="w-10 h-10 text-primary-500/50 mx-auto mb-3" />
-           <p class="text-xs font-bold text-slate-600 dark:text-slate-400">
-             Need faster response? Premium users get priority 1-hour resolution.
-           </p>
-           <UButton to="/subscription" variant="link" color="primary" class="mt-2 text-[10px] font-black uppercase tracking-widest p-0">
-             Upgrade Now
-           </UButton>
+          <UIcon
+            name="i-lucide-headphones"
+            class="w-10 h-10 text-primary-500/50 mx-auto mb-3"
+          />
+          <p class="text-xs font-bold text-slate-600 dark:text-slate-400">
+            Need faster response? Premium users get priority 1-hour resolution.
+          </p>
+          <UButton
+            to="/subscription"
+            variant="link"
+            color="primary"
+            class="mt-2 text-[10px] font-black uppercase tracking-widest p-0"
+          >
+            Upgrade Now
+          </UButton>
         </div>
       </div>
     </div>

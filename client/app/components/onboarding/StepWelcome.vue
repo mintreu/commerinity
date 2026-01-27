@@ -6,10 +6,16 @@
         <!-- Animated Welcome Icon -->
         <div class="relative inline-block mb-8">
           <div class="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl flex items-center justify-center shadow-2xl animate-pulse">
-            <UIcon name="i-lucide-sparkles" class="w-12 h-12 text-white" />
+            <UIcon
+              name="i-lucide-sparkles"
+              class="w-12 h-12 text-white"
+            />
           </div>
           <div class="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-            <UIcon name="i-lucide-check" class="w-4 h-4 text-white" />
+            <UIcon
+              name="i-lucide-check"
+              class="w-4 h-4 text-white"
+            />
           </div>
         </div>
 
@@ -32,15 +38,24 @@
               :key="step.title"
               class="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl"
             >
-              <div :class="[
-                'flex items-center justify-center w-10 h-10 rounded-lg shrink-0',
-                step.bgColor
-              ]">
-                <UIcon :name="step.icon" :class="['w-5 h-5', step.iconColor]" />
+              <div
+                :class="[
+                  'flex items-center justify-center w-10 h-10 rounded-lg shrink-0',
+                  step.bgColor
+                ]"
+              >
+                <UIcon
+                  :name="step.icon"
+                  :class="['w-5 h-5', step.iconColor]"
+                />
               </div>
               <div class="text-left">
-                <h3 class="font-medium text-gray-900 dark:text-white">{{ step.title }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ step.description }}</p>
+                <h3 class="font-medium text-gray-900 dark:text-white">
+                  {{ step.title }}
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  {{ step.description }}
+                </p>
               </div>
             </div>
           </div>
@@ -48,7 +63,10 @@
 
         <!-- Estimated Time -->
         <div class="flex items-center justify-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400">
-          <UIcon name="i-lucide-zap" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-zap"
+            class="w-4 h-4"
+          />
           <span>Super quick – takes less than 60 seconds!</span>
         </div>
       </div>
@@ -59,7 +77,10 @@
       <div class="text-center py-6 px-2">
         <!-- Simple Icon -->
         <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-          <UIcon name="i-lucide-sparkles" class="w-10 h-10 text-white" />
+          <UIcon
+            name="i-lucide-sparkles"
+            class="w-10 h-10 text-white"
+          />
         </div>
 
         <!-- Welcome Message - Shorter for mobile -->
@@ -86,7 +107,10 @@
 
         <!-- Time Estimate -->
         <p class="mt-6 text-sm font-medium text-primary-600 dark:text-primary-400 flex items-center justify-center gap-2">
-          <UIcon name="i-lucide-zap" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-zap"
+            class="w-4 h-4"
+          />
           Quick & Easy – Under 60 seconds!
         </p>
       </div>

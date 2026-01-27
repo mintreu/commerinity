@@ -15,7 +15,7 @@ const lastUpdated = 'September 25, 2025'
 
 useSeoMeta({
   title: 'Return & Refund Policy - Easy Returns Process',
-  description: 'Learn about our return eligibility, refund process, and how to initiate returns. Clear policies for hassle-free shopping.',
+  description: 'Learn about our return eligibility, refund process, and how to initiate returns. Clear policies for hassle-free shopping.'
 })
 </script>
 
@@ -26,7 +26,10 @@ useSeoMeta({
       <UContainer>
         <div class="text-center text-white">
           <div class="policy-badge inline-flex items-center px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
-            <UIcon name="i-lucide-package-check" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-package-check"
+              class="w-4 h-4 mr-2"
+            />
             <span>Returns & Refunds</span>
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight">
@@ -34,12 +37,18 @@ useSeoMeta({
           </h1>
           <div class="policy-meta flex flex-wrap justify-center gap-4 md:gap-6 text-white/80">
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-calendar" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-4 h-4"
+              />
               <span>Effective: {{ effectiveDate }}</span>
             </div>
             <div class="hidden md:block w-px h-5 bg-white/30" />
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-clock" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-clock"
+                class="w-4 h-4"
+              />
               <span>Updated: {{ lastUpdated }}</span>
             </div>
           </div>
@@ -52,28 +61,40 @@ useSeoMeta({
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-4xl mx-auto">
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-check-circle" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-check-circle"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Product-Based</h4>
           <p>Eligibility varies</p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-rose-500 to-red-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-x-circle" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-x-circle"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>No Change of Mind</h4>
           <p>Not accepted</p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-wallet" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-wallet"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Wallet First</h4>
           <p>Refunds to wallet</p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-truck" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-truck"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Free Pickup</h4>
           <p>Courier collection</p>
@@ -106,24 +127,39 @@ useSeoMeta({
           <!-- Valid Reasons Highlight -->
           <div class="policy-highlight my-6">
             <h4 class="font-bold text-slate-900 dark:text-white mb-3 flex items-center text-base">
-              <UIcon name="i-lucide-check-circle" class="w-5 h-5 mr-2 text-emerald-600 dark:text-emerald-400" />
+              <UIcon
+                name="i-lucide-check-circle"
+                class="w-5 h-5 mr-2 text-emerald-600 dark:text-emerald-400"
+              />
               Valid Reasons for Return
             </h4>
             <ul class="grid sm:grid-cols-2 gap-2 text-sm text-slate-700 dark:text-slate-300">
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0"
+                />
                 Wrong item shipped
               </li>
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0"
+                />
                 Manufacturing defect
               </li>
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0"
+                />
                 Missing components
               </li>
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0"
+                />
                 Damage during shipping
               </li>
             </ul>
@@ -142,24 +178,39 @@ useSeoMeta({
           <!-- Not Accepted Highlight -->
           <div class="policy-highlight danger my-6">
             <h4 class="font-bold text-slate-900 dark:text-white mb-3 flex items-center text-base">
-              <UIcon name="i-lucide-x-circle" class="w-5 h-5 mr-2 text-rose-600 dark:text-rose-400" />
+              <UIcon
+                name="i-lucide-x-circle"
+                class="w-5 h-5 mr-2 text-rose-600 dark:text-rose-400"
+              />
               Not Accepted as Return Reasons
             </h4>
             <ul class="grid sm:grid-cols-2 gap-2 text-sm text-slate-700 dark:text-slate-300">
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-x" class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0"
+                />
                 Size/color preference change
               </li>
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-x" class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0"
+                />
                 Changed mind after delivery
               </li>
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-x" class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0"
+                />
                 Didn't like the product
               </li>
               <li class="flex items-center gap-2">
-                <UIcon name="i-lucide-x" class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0"
+                />
                 Found better price elsewhere
               </li>
             </ul>
@@ -177,22 +228,32 @@ useSeoMeta({
 
           <!-- Return Steps -->
           <div class="policy-highlight info my-6">
-            <h4 class="font-bold text-slate-900 dark:text-white mb-4 text-base">Return Steps</h4>
+            <h4 class="font-bold text-slate-900 dark:text-white mb-4 text-base">
+              Return Steps
+            </h4>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div class="policy-step flex-col items-center text-center p-0">
-                <div class="policy-step-number mb-2">1</div>
+                <div class="policy-step-number mb-2">
+                  1
+                </div>
                 <span class="policy-step-content text-sm">Submit return request</span>
               </div>
               <div class="policy-step flex-col items-center text-center p-0">
-                <div class="policy-step-number mb-2">2</div>
+                <div class="policy-step-number mb-2">
+                  2
+                </div>
                 <span class="policy-step-content text-sm">Schedule pickup</span>
               </div>
               <div class="policy-step flex-col items-center text-center p-0">
-                <div class="policy-step-number mb-2">3</div>
+                <div class="policy-step-number mb-2">
+                  3
+                </div>
                 <span class="policy-step-content text-sm">Quality inspection</span>
               </div>
               <div class="policy-step flex-col items-center text-center p-0">
-                <div class="policy-step-number mb-2">4</div>
+                <div class="policy-step-number mb-2">
+                  4
+                </div>
                 <span class="policy-step-content text-sm">Refund processing</span>
               </div>
             </div>
@@ -221,7 +282,10 @@ useSeoMeta({
           <!-- Non-Refundable Highlight -->
           <div class="policy-highlight warning my-6">
             <h4 class="font-bold text-slate-900 dark:text-white mb-3 flex items-center text-base">
-              <UIcon name="i-lucide-alert-triangle" class="w-5 h-5 mr-2 text-amber-600 dark:text-amber-400" />
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="w-5 h-5 mr-2 text-amber-600 dark:text-amber-400"
+              />
               Non-Refundable Items
             </h4>
             <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
@@ -242,38 +306,71 @@ useSeoMeta({
             <div class="grid gap-4 sm:grid-cols-2">
               <div class="flex items-start gap-3">
                 <div class="icon-box icon-box-sm icon-box-soft-warning rounded-lg">
-                  <UIcon name="i-lucide-building-2" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-building-2"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Company</p>
-                  <p class="font-semibold text-slate-900 dark:text-white">{{ companyName }}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Company
+                  </p>
+                  <p class="font-semibold text-slate-900 dark:text-white">
+                    {{ companyName }}
+                  </p>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <div class="icon-box icon-box-sm icon-box-soft-warning rounded-lg">
-                  <UIcon name="i-lucide-mail" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-mail"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Email</p>
-                  <a :href="`mailto:${supportEmail}`" class="font-semibold text-orange-600 dark:text-orange-400 hover:underline">{{ supportEmail }}</a>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Email
+                  </p>
+                  <a
+                    :href="`mailto:${supportEmail}`"
+                    class="font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                  >{{ supportEmail }}</a>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <div class="icon-box icon-box-sm icon-box-soft-warning rounded-lg">
-                  <UIcon name="i-lucide-phone" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-phone"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Phone</p>
-                  <a :href="`tel:${phoneNumber}`" class="font-semibold text-orange-600 dark:text-orange-400 hover:underline">{{ phoneNumber }}</a>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Phone
+                  </p>
+                  <a
+                    :href="`tel:${phoneNumber}`"
+                    class="font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                  >{{ phoneNumber }}</a>
                 </div>
               </div>
-              <div v-if="address" class="flex items-start gap-3">
+              <div
+                v-if="address"
+                class="flex items-start gap-3"
+              >
                 <div class="icon-box icon-box-sm icon-box-soft-warning rounded-lg">
-                  <UIcon name="i-lucide-map-pin" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-map-pin"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Address</p>
-                  <p class="font-semibold text-slate-900 dark:text-white">{{ address }}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Address
+                  </p>
+                  <p class="font-semibold text-slate-900 dark:text-white">
+                    {{ address }}
+                  </p>
                 </div>
               </div>
             </div>

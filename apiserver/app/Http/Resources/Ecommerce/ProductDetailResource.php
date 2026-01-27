@@ -18,12 +18,18 @@ final class ProductDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // FIFO: Get first available stock
-        $stock = $this->availableStocks->first();
-        $inStock = $this->availableStocks->count() > 0;
-        $totalStock = $this->availableStocks->sum('in_stock_quantity');
+        // Unified stock resolution (parent OR variant)
+        $stock = $this->availableStocks->first()
+            ?? $this->variants
+                ->flatMap->availableStocks
+                ->first();
 
-        // Get price from stock
-        $originalPrice = $stock?->getEffectivePrice() ?? $this->price;
+        $inStock = $this->total_stock > 0;
+        $totalStock = $this->total_stock;
+
+// Unified price (single source of truth)
+        $originalPrice = $this->getPrice();
+
 
         // Check for active sale (from setSaleInfo or loaded relationship)
         $saleInfo = $this->saleInfo ?? ($this->relationLoaded('activeSaleInfo') ? $this->activeSaleInfo : null);

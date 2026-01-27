@@ -106,7 +106,10 @@ const onboardingProgress = computed(() => {
               variant="soft"
               size="xs"
             >
-              <UIcon name="i-lucide-crown" class="w-3 h-3 mr-1" />
+              <UIcon
+                name="i-lucide-crown"
+                class="w-3 h-3 mr-1"
+              />
               {{ user.current_level.name }}
             </UBadge>
           </div>
@@ -136,7 +139,10 @@ const onboardingProgress = computed(() => {
               Continue setup
             </p>
           </div>
-          <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-amber-500" />
+          <UIcon
+            name="i-lucide-chevron-right"
+            class="w-4 h-4 text-amber-500"
+          />
         </NuxtLink>
       </div>
     </div>

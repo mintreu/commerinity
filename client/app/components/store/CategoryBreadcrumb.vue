@@ -19,23 +19,35 @@ defineProps<Props>()
       to="/"
       class="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
     >
-      <UIcon name="i-lucide-home" class="w-4 h-4" />
+      <UIcon
+        name="i-lucide-home"
+        class="w-4 h-4"
+      />
     </NuxtLink>
-    
-    <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-slate-400" />
-    
+
+    <UIcon
+      name="i-lucide-chevron-right"
+      class="w-4 h-4 text-slate-400"
+    />
+
     <template v-if="ancestors && ancestors.length">
-      <template v-for="(ancestor, index) in ancestors" :key="ancestor.id">
+      <template
+        v-for="(ancestor, index) in ancestors"
+        :key="ancestor.id"
+      >
         <NuxtLink
           :to="`/category/${ancestor.url}`"
           class="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
         >
           {{ ancestor.name }}
         </NuxtLink>
-        <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-slate-400" />
+        <UIcon
+          name="i-lucide-chevron-right"
+          class="w-4 h-4 text-slate-400"
+        />
       </template>
     </template>
-    
+
     <span class="text-slate-900 dark:text-white font-semibold">
       {{ category.name }}
     </span>

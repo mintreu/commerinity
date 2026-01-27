@@ -4,7 +4,10 @@
       <!-- Header -->
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <UIcon name="i-lucide-smartphone" class="w-8 h-8 text-green-600 dark:text-green-400" />
+          <UIcon
+            name="i-lucide-smartphone"
+            class="w-8 h-8 text-green-600 dark:text-green-400"
+          />
         </div>
         <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
           {{ hasMobileVerified ? 'Add your email (optional)' : 'Verify your mobile number' }}
@@ -18,11 +21,20 @@
       </div>
 
       <!-- Mobile Section (REQUIRED if not verified) -->
-      <div v-if="!hasMobileVerified" class="space-y-5">
+      <div
+        v-if="!hasMobileVerified"
+        class="space-y-5"
+      >
         <!-- Mobile Already Verified Badge -->
-        <div v-if="mobileVerified" class="mb-6">
+        <div
+          v-if="mobileVerified"
+          class="mb-6"
+        >
           <div class="flex items-center justify-center gap-2 py-3 px-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-            <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400" />
+            <UIcon
+              name="i-lucide-check-circle"
+              class="w-5 h-5 text-green-600 dark:text-green-400"
+            />
             <span class="text-green-700 dark:text-green-300 font-medium">
               Mobile verified successfully!
             </span>
@@ -30,8 +42,17 @@
         </div>
 
         <!-- Mobile Form -->
-        <UForm v-if="!mobileVerified" :state="mobileFormState" :schema="mobileSchema" class="space-y-5">
-          <UFormField label="Mobile Number" name="mobile" required>
+        <UForm
+          v-if="!mobileVerified"
+          :state="mobileFormState"
+          :schema="mobileSchema"
+          class="space-y-5"
+        >
+          <UFormField
+            label="Mobile Number"
+            name="mobile"
+            required
+          >
             <UInput
               v-model="mobileFormState.mobile"
               type="tel"
@@ -46,7 +67,10 @@
 
           <!-- OTP Section -->
           <div v-if="mobileFormState.mobile && !mobileVerified">
-            <div v-if="!mobileOtpSent" class="mt-4">
+            <div
+              v-if="!mobileOtpSent"
+              class="mt-4"
+            >
               <UButton
                 :loading="sendingMobileOtp"
                 :disabled="!isValidMobile"
@@ -56,17 +80,26 @@
                 class="w-full"
                 @click="sendMobileOtp"
               >
-                <UIcon name="i-lucide-send" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-send"
+                  class="w-4 h-4 mr-2"
+                />
                 Send Verification Code
               </UButton>
             </div>
 
-            <div v-else class="space-y-4 mt-4">
+            <div
+              v-else
+              class="space-y-4 mt-4"
+            >
               <p class="text-sm text-center text-gray-600 dark:text-gray-400">
                 We sent a code to <strong>{{ mobileFormState.mobile }}</strong>
               </p>
 
-              <UFormField label="Verification Code" name="otp">
+              <UFormField
+                label="Verification Code"
+                name="otp"
+              >
                 <UInput
                   v-model="mobileFormState.otp"
                   placeholder="123456"
@@ -103,19 +136,31 @@
       </div>
 
       <!-- Email Section (OPTIONAL - only shown after mobile is verified) -->
-      <div v-else class="space-y-5">
+      <div
+        v-else
+        class="space-y-5"
+      >
         <!-- Mobile Already Verified Info -->
         <div class="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg mb-4">
-          <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-green-600" />
+          <UIcon
+            name="i-lucide-check-circle"
+            class="w-5 h-5 text-green-600"
+          />
           <span class="text-green-700 dark:text-green-300 text-sm font-medium">
             Mobile: {{ props.userMobile }} (verified)
           </span>
         </div>
 
         <!-- Email Already Verified Badge -->
-        <div v-if="hasEmailVerified" class="mb-6">
+        <div
+          v-if="hasEmailVerified"
+          class="mb-6"
+        >
           <div class="flex items-center justify-center gap-2 py-3 px-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-            <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400" />
+            <UIcon
+              name="i-lucide-check-circle"
+              class="w-5 h-5 text-green-600 dark:text-green-400"
+            />
             <span class="text-green-700 dark:text-green-300 font-medium">
               Email already verified!
             </span>
@@ -123,8 +168,16 @@
         </div>
 
         <!-- Email Form (Optional) -->
-        <UForm v-if="!hasEmailVerified && !emailVerified" :state="emailFormState" :schema="emailSchema" class="space-y-5">
-          <UFormField label="Email Address (Optional)" name="email">
+        <UForm
+          v-if="!hasEmailVerified && !emailVerified"
+          :state="emailFormState"
+          :schema="emailSchema"
+          class="space-y-5"
+        >
+          <UFormField
+            label="Email Address (Optional)"
+            name="email"
+          >
             <UInput
               v-model="emailFormState.email"
               type="email"
@@ -136,7 +189,10 @@
 
           <!-- OTP Section -->
           <div v-if="emailFormState.email && !emailVerified">
-            <div v-if="!emailOtpSent" class="mt-4">
+            <div
+              v-if="!emailOtpSent"
+              class="mt-4"
+            >
               <UButton
                 :loading="sendingEmailOtp"
                 :disabled="!isValidEmail"
@@ -146,17 +202,26 @@
                 class="w-full"
                 @click="sendEmailOtp"
               >
-                <UIcon name="i-lucide-send" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-send"
+                  class="w-4 h-4 mr-2"
+                />
                 Send Verification Code
               </UButton>
             </div>
 
-            <div v-else class="space-y-4 mt-4">
+            <div
+              v-else
+              class="space-y-4 mt-4"
+            >
               <p class="text-sm text-center text-gray-600 dark:text-gray-400">
                 We sent a code to <strong>{{ emailFormState.email }}</strong>
               </p>
 
-              <UFormField label="Verification Code" name="otp">
+              <UFormField
+                label="Verification Code"
+                name="otp"
+              >
                 <UInput
                   v-model="emailFormState.otp"
                   placeholder="123456"
@@ -192,13 +257,22 @@
         </UForm>
 
         <!-- Email Verified Badge -->
-        <div v-if="emailVerified" class="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-          <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-green-600" />
+        <div
+          v-if="emailVerified"
+          class="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg"
+        >
+          <UIcon
+            name="i-lucide-check-circle"
+            class="w-5 h-5 text-green-600"
+          />
           <span class="text-green-700 dark:text-green-300 text-sm font-medium">Email verified successfully!</span>
         </div>
 
         <!-- Skip Email Note -->
-        <p v-if="!hasEmailVerified && !emailVerified && !emailFormState.email" class="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p
+          v-if="!hasEmailVerified && !emailVerified && !emailFormState.email"
+          class="text-center text-sm text-gray-500 dark:text-gray-400"
+        >
           You can skip this step and add email later from your profile settings.
         </p>
       </div>
@@ -220,7 +294,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  'update:data': [data: { email?: string; mobile?: string }]
+  'update:data': [data: { email?: string, mobile?: string }]
   'valid': [isValid: boolean]
   'verified': []
 }>()
@@ -296,7 +370,7 @@ watch(
 // Emit data changes
 watch(
   () => ({ email: emailFormState.email, mobile: mobileFormState.mobile }),
-  (data) => emit('update:data', data),
+  data => emit('update:data', data),
   { immediate: true }
 )
 
@@ -308,7 +382,7 @@ const sendMobileOtp = async () => {
     // Clean mobile number
     const cleanMobile = mobileFormState.mobile.replace(/[\s-]/g, '')
 
-    const response = await $fetch<{ demo?: boolean; otp?: string }>(`${config.public.apiBase}/api/auth/send-otp`, {
+    const response = await $fetch<{ demo?: boolean, otp?: string }>(`${config.public.apiBase}/api/auth/send-otp`, {
       method: 'POST',
       body: {
         type: 'mobile',
@@ -397,7 +471,7 @@ const sendEmailOtp = async () => {
   sendingEmailOtp.value = true
 
   try {
-    const response = await $fetch<{ demo?: boolean; otp?: string }>(`${config.public.apiBase}/api/auth/send-otp`, {
+    const response = await $fetch<{ demo?: boolean, otp?: string }>(`${config.public.apiBase}/api/auth/send-otp`, {
       method: 'POST',
       body: {
         type: 'email',

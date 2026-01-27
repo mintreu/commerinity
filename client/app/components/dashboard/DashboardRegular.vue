@@ -169,7 +169,10 @@ const activities = computed(() => {
         <div class="glass-card p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-              <UIcon name="i-lucide-shopping-cart" class="text-primary-500" />
+              <UIcon
+                name="i-lucide-shopping-cart"
+                class="text-primary-500"
+              />
               Recent Orders
             </h2>
             <NuxtLink
@@ -184,7 +187,11 @@ const activities = computed(() => {
             v-if="loading"
             class="space-y-4"
           >
-            <div v-for="i in 3" :key="i" class="h-20 bg-slate-100 dark:bg-slate-800/50 animate-pulse rounded-xl" />
+            <div
+              v-for="i in 3"
+              :key="i"
+              class="h-20 bg-slate-100 dark:bg-slate-800/50 animate-pulse rounded-xl"
+            />
           </div>
 
           <div
@@ -262,15 +269,23 @@ const activities = computed(() => {
     </div>
 
     <!-- Onboarding Alert (if not complete) -->
-    <div v-if="user && !user.onboarded" class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div
+      v-if="user && !user.onboarded"
+      class="animate-in fade-in slide-in-from-bottom-4 duration-700"
+    >
       <div class="p-6 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-3xl backdrop-blur-md">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div class="flex items-center gap-4 text-center md:text-left">
             <div class="w-14 h-14 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500">
-              <UIcon name="i-lucide-user-check" class="w-8 h-8" />
+              <UIcon
+                name="i-lucide-user-check"
+                class="w-8 h-8"
+              />
             </div>
             <div>
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Complete Your Profile</h3>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                Complete Your Profile
+              </h3>
               <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
                 Finish setting up your account to unlock personalized recommendations and exclusive member benefits.
               </p>

@@ -65,8 +65,7 @@ function handleCtaClick(notice: Notice) {
     // Check if internal or external link
     if (notice.cta_link.startsWith('/')) {
       router.push(notice.cta_link)
-    }
-    else {
+    } else {
       window.open(notice.cta_link, '_blank')
     }
   }
@@ -128,17 +127,23 @@ function handleCtaClick(notice: Notice) {
           @click="handleCtaClick(notice)"
         >
           {{ notice?.cta_text }}
-          <UIcon name="i-lucide-arrow-right" class="w-4 h-4 ml-1" />
+          <UIcon
+            name="i-lucide-arrow-right"
+            class="w-4 h-4 ml-1"
+          />
         </UButton>
       </div>
 
       <!-- Image (if provided) -->
-      <div v-if="notice.image_url" class="hidden sm:block shrink-0">
+      <div
+        v-if="notice.image_url"
+        class="hidden sm:block shrink-0"
+      >
         <img
           :src="notice.image_url"
           :alt="notice.title"
           class="w-20 h-20 rounded-lg object-cover"
-        />
+        >
       </div>
     </div>
   </div>

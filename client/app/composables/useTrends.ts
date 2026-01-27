@@ -196,7 +196,7 @@ export const useTrends = () => {
         tension: 0.4,
         borderWidth: 2,
         pointRadius: 3,
-        pointHoverRadius: 5,
+        pointHoverRadius: 5
       }))
     }
   }
@@ -210,35 +210,35 @@ export const useTrends = () => {
     plugins: {
       legend: {
         display: true,
-        position: 'top' as const,
+        position: 'top' as const
       },
       title: {
         display: !!title,
-        text: title,
+        text: title
       },
       tooltip: {
         mode: 'index' as const,
-        intersect: false,
-      },
+        intersect: false
+      }
     },
     scales: {
       x: {
         grid: {
-          display: false,
-        },
+          display: false
+        }
       },
       y: {
         beginAtZero: true,
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
-        },
-      },
+          color: 'rgba(0, 0, 0, 0.1)'
+        }
+      }
     },
     interaction: {
       mode: 'nearest' as const,
       axis: 'x' as const,
-      intersect: false,
-    },
+      intersect: false
+    }
   })
 
   /**
@@ -250,23 +250,23 @@ export const useTrends = () => {
     plugins: {
       legend: {
         display: true,
-        position: 'top' as const,
+        position: 'top' as const
       },
       title: {
         display: !!title,
-        text: title,
-      },
+        text: title
+      }
     },
     scales: {
       x: {
         grid: {
-          display: false,
-        },
+          display: false
+        }
       },
       y: {
-        beginAtZero: true,
-      },
-    },
+        beginAtZero: true
+      }
+    }
   })
 
   /**
@@ -278,36 +278,36 @@ export const useTrends = () => {
     plugins: {
       legend: {
         display: true,
-        position: 'right' as const,
+        position: 'right' as const
       },
       title: {
         display: !!title,
-        text: title,
-      },
-    },
+        text: title
+      }
+    }
   })
 
   /**
    * Format percentage change with arrow indicator
    */
-  const formatPercentageChange = (value: number): { text: string; color: string; icon: string } => {
+  const formatPercentageChange = (value: number): { text: string, color: string, icon: string } => {
     if (value > 0) {
       return {
         text: `+${value.toFixed(1)}%`,
         color: 'text-green-600',
-        icon: 'i-lucide-trending-up',
+        icon: 'i-lucide-trending-up'
       }
     } else if (value < 0) {
       return {
         text: `${value.toFixed(1)}%`,
         color: 'text-red-600',
-        icon: 'i-lucide-trending-down',
+        icon: 'i-lucide-trending-down'
       }
     }
     return {
       text: '0%',
       color: 'text-gray-500',
-      icon: 'i-lucide-minus',
+      icon: 'i-lucide-minus'
     }
   }
 
@@ -318,7 +318,7 @@ export const useTrends = () => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value)
   }
 
@@ -355,6 +355,6 @@ export const useTrends = () => {
     getBarChartOptions,
     getDoughnutChartOptions,
     formatPercentageChange,
-    formatCurrency,
+    formatCurrency
   }
 }

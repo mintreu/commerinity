@@ -15,7 +15,7 @@ const lastUpdated = 'September 25, 2025'
 
 useSeoMeta({
   title: 'Shipping Policy - Delivery Information',
-  description: 'Learn about our shipping methods, delivery times, costs, and tracking options. Fast and reliable delivery.',
+  description: 'Learn about our shipping methods, delivery times, costs, and tracking options. Fast and reliable delivery.'
 })
 </script>
 
@@ -26,7 +26,10 @@ useSeoMeta({
       <UContainer>
         <div class="text-center text-white">
           <div class="policy-badge inline-flex items-center px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
-            <UIcon name="i-lucide-truck" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-truck"
+              class="w-4 h-4 mr-2"
+            />
             <span>Shipping & Delivery</span>
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight">
@@ -34,12 +37,18 @@ useSeoMeta({
           </h1>
           <div class="policy-meta flex flex-wrap justify-center gap-4 md:gap-6 text-white/80">
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-calendar" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-4 h-4"
+              />
               <span>Effective: {{ effectiveDate }}</span>
             </div>
             <div class="hidden md:block w-px h-5 bg-white/30" />
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-clock" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-clock"
+                class="w-4 h-4"
+              />
               <span>Updated: {{ lastUpdated }}</span>
             </div>
           </div>
@@ -52,28 +61,40 @@ useSeoMeta({
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-4xl mx-auto">
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-clock" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-clock"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Processing</h4>
           <p>1-2 business days</p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-truck" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-truck"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Standard</h4>
           <p>3-7 business days</p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-zap" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-zap"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Express</h4>
           <p>1-3 business days</p>
         </div>
         <div class="policy-quick-card">
           <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon name="i-lucide-gift" class="w-6 h-6 text-white" />
+            <UIcon
+              name="i-lucide-gift"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <h4>Free Shipping</h4>
           <p>On qualifying orders</p>
@@ -148,38 +169,71 @@ useSeoMeta({
             <div class="grid gap-4 sm:grid-cols-2">
               <div class="flex items-start gap-3">
                 <div class="icon-box icon-box-sm icon-box-soft-success rounded-lg">
-                  <UIcon name="i-lucide-building-2" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-building-2"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Company</p>
-                  <p class="font-semibold text-slate-900 dark:text-white">{{ companyName }}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Company
+                  </p>
+                  <p class="font-semibold text-slate-900 dark:text-white">
+                    {{ companyName }}
+                  </p>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <div class="icon-box icon-box-sm icon-box-soft-success rounded-lg">
-                  <UIcon name="i-lucide-mail" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-mail"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Email</p>
-                  <a :href="`mailto:${supportEmail}`" class="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">{{ supportEmail }}</a>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Email
+                  </p>
+                  <a
+                    :href="`mailto:${supportEmail}`"
+                    class="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                  >{{ supportEmail }}</a>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <div class="icon-box icon-box-sm icon-box-soft-success rounded-lg">
-                  <UIcon name="i-lucide-phone" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-phone"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Phone</p>
-                  <a :href="`tel:${phoneNumber}`" class="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">{{ phoneNumber }}</a>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Phone
+                  </p>
+                  <a
+                    :href="`tel:${phoneNumber}`"
+                    class="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                  >{{ phoneNumber }}</a>
                 </div>
               </div>
-              <div v-if="address" class="flex items-start gap-3">
+              <div
+                v-if="address"
+                class="flex items-start gap-3"
+              >
                 <div class="icon-box icon-box-sm icon-box-soft-success rounded-lg">
-                  <UIcon name="i-lucide-map-pin" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-map-pin"
+                    class="w-4 h-4"
+                  />
                 </div>
                 <div>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">Address</p>
-                  <p class="font-semibold text-slate-900 dark:text-white">{{ address }}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Address
+                  </p>
+                  <p class="font-semibold text-slate-900 dark:text-white">
+                    {{ address }}
+                  </p>
                 </div>
               </div>
             </div>

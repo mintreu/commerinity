@@ -98,7 +98,10 @@ const principles = [
       <UContainer class="relative z-10">
         <div class="text-center text-white">
           <div class="policy-badge inline-flex items-center px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
-            <UIcon name="i-lucide-building-2" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-building-2"
+              class="w-4 h-4 mr-2"
+            />
             <span>About {{ appName }}</span>
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight">
@@ -120,7 +123,10 @@ const principles = [
           class="policy-quick-card"
         >
           <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <UIcon :name="stat.icon" class="w-6 h-6 text-white" />
+            <UIcon
+              :name="stat.icon"
+              class="w-6 h-6 text-white"
+            />
           </div>
           <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
             {{ stat.value }}
@@ -138,7 +144,10 @@ const principles = [
         <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div>
             <div class="inline-flex items-center px-4 py-2 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-semibold mb-4">
-              <UIcon name="i-lucide-target" class="w-4 h-4 mr-2" />
+              <UIcon
+                name="i-lucide-target"
+                class="w-4 h-4 mr-2"
+              />
               Our Mission
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6">
@@ -163,10 +172,16 @@ const principles = [
               </div>
               <!-- Floating elements -->
               <div class="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg animate-float-slow">
-                <UIcon name="i-lucide-trending-up" class="w-8 h-8 text-white" />
+                <UIcon
+                  name="i-lucide-trending-up"
+                  class="w-8 h-8 text-white"
+                />
               </div>
               <div class="absolute -bottom-4 -left-4 w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg animate-float-gentle">
-                <UIcon name="i-lucide-star" class="w-7 h-7 text-white" />
+                <UIcon
+                  name="i-lucide-star"
+                  class="w-7 h-7 text-white"
+                />
               </div>
             </div>
           </div>
@@ -177,7 +192,10 @@ const principles = [
       <div class="max-w-5xl mx-auto mb-12">
         <div class="text-center mb-10">
           <div class="inline-flex items-center px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-semibold mb-4">
-            <UIcon name="i-lucide-heart" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-heart"
+              class="w-4 h-4 mr-2"
+            />
             Our Values
           </div>
           <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">
@@ -195,7 +213,10 @@ const principles = [
             class="glass-card p-6 text-center group hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
           >
             <div :class="['w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4', value.bgColor]">
-              <UIcon :name="value.icon" :class="['w-8 h-8', value.textColor]" />
+              <UIcon
+                :name="value.icon"
+                :class="['w-8 h-8', value.textColor]"
+              />
             </div>
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">
               {{ value.title }}
@@ -215,7 +236,10 @@ const principles = [
         <div class="relative">
           <div class="text-center mb-8">
             <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-semibold mb-4">
-              <UIcon name="i-lucide-eye" class="w-4 h-4 mr-2" />
+              <UIcon
+                name="i-lucide-eye"
+                class="w-4 h-4 mr-2"
+              />
               Our Vision
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">
@@ -233,7 +257,10 @@ const principles = [
               class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50"
             >
               <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
-                <UIcon :name="principle.icon" class="w-6 h-6 text-white" />
+                <UIcon
+                  :name="principle.icon"
+                  class="w-6 h-6 text-white"
+                />
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 dark:text-white mb-1">
@@ -252,7 +279,10 @@ const principles = [
       <div class="glass-card p-6 md:p-10 lg:p-12 max-w-5xl mx-auto">
         <div class="text-center mb-8">
           <div class="inline-flex items-center px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold mb-4">
-            <UIcon name="i-lucide-info" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-info"
+              class="w-4 h-4 mr-2"
+            />
             Company Information
           </div>
           <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
@@ -264,21 +294,36 @@ const principles = [
           <div class="grid gap-6 sm:grid-cols-2">
             <div class="flex items-start gap-4">
               <div class="icon-box icon-box-sm icon-box-soft-primary rounded-lg">
-                <UIcon name="i-lucide-building-2" class="w-5 h-5" />
+                <UIcon
+                  name="i-lucide-building-2"
+                  class="w-5 h-5"
+                />
               </div>
               <div>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Legal Name</p>
-                <p class="font-semibold text-slate-900 dark:text-white">{{ companyName }}</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+                  Legal Name
+                </p>
+                <p class="font-semibold text-slate-900 dark:text-white">
+                  {{ companyName }}
+                </p>
               </div>
             </div>
 
             <div class="flex items-start gap-4">
               <div class="icon-box icon-box-sm icon-box-soft-primary rounded-lg">
-                <UIcon name="i-lucide-mail" class="w-5 h-5" />
+                <UIcon
+                  name="i-lucide-mail"
+                  class="w-5 h-5"
+                />
               </div>
               <div>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Support Email</p>
-                <a :href="`mailto:${supportEmail}`" class="font-semibold text-violet-600 dark:text-violet-400 hover:underline">
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+                  Support Email
+                </p>
+                <a
+                  :href="`mailto:${supportEmail}`"
+                  class="font-semibold text-violet-600 dark:text-violet-400 hover:underline"
+                >
                   {{ supportEmail }}
                 </a>
               </div>
@@ -286,23 +331,41 @@ const principles = [
 
             <div class="flex items-start gap-4">
               <div class="icon-box icon-box-sm icon-box-soft-primary rounded-lg">
-                <UIcon name="i-lucide-phone" class="w-5 h-5" />
+                <UIcon
+                  name="i-lucide-phone"
+                  class="w-5 h-5"
+                />
               </div>
               <div>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Support Phone</p>
-                <a :href="`tel:${supportPhone}`" class="font-semibold text-violet-600 dark:text-violet-400 hover:underline">
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+                  Support Phone
+                </p>
+                <a
+                  :href="`tel:${supportPhone}`"
+                  class="font-semibold text-violet-600 dark:text-violet-400 hover:underline"
+                >
                   {{ supportPhone }}
                 </a>
               </div>
             </div>
 
-            <div v-if="companyAddress" class="flex items-start gap-4">
+            <div
+              v-if="companyAddress"
+              class="flex items-start gap-4"
+            >
               <div class="icon-box icon-box-sm icon-box-soft-primary rounded-lg">
-                <UIcon name="i-lucide-map-pin" class="w-5 h-5" />
+                <UIcon
+                  name="i-lucide-map-pin"
+                  class="w-5 h-5"
+                />
               </div>
               <div>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Registered Address</p>
-                <p class="font-semibold text-slate-900 dark:text-white">{{ companyAddress }}</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">
+                  Registered Address
+                </p>
+                <p class="font-semibold text-slate-900 dark:text-white">
+                  {{ companyAddress }}
+                </p>
               </div>
             </div>
           </div>
@@ -315,14 +378,27 @@ const principles = [
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <NuxtLink to="/shop">
-              <UButton size="lg" class="px-8">
-                <UIcon name="i-lucide-shopping-bag" class="w-5 h-5 mr-2" />
+              <UButton
+                size="lg"
+                class="px-8"
+              >
+                <UIcon
+                  name="i-lucide-shopping-bag"
+                  class="w-5 h-5 mr-2"
+                />
                 Browse Products
               </UButton>
             </NuxtLink>
             <NuxtLink to="/auth/register">
-              <UButton size="lg" variant="outline" class="px-8">
-                <UIcon name="i-lucide-user-plus" class="w-5 h-5 mr-2" />
+              <UButton
+                size="lg"
+                variant="outline"
+                class="px-8"
+              >
+                <UIcon
+                  name="i-lucide-user-plus"
+                  class="w-5 h-5 mr-2"
+                />
                 Join Our Community
               </UButton>
             </NuxtLink>

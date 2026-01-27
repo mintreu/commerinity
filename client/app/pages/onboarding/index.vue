@@ -6,19 +6,30 @@
       class="min-h-screen flex items-center justify-center"
     >
       <div class="text-center">
-        <UIcon name="i-lucide-loader-2" class="w-12 h-12 animate-spin text-primary-500 mx-auto mb-4" />
-        <p class="text-gray-600 dark:text-gray-400">Loading your profile...</p>
+        <UIcon
+          name="i-lucide-loader-2"
+          class="w-12 h-12 animate-spin text-primary-500 mx-auto mb-4"
+        />
+        <p class="text-gray-600 dark:text-gray-400">
+          Loading your profile...
+        </p>
       </div>
     </div>
 
     <!-- Onboarding Content -->
-    <div v-else class="min-h-screen flex flex-col">
+    <div
+      v-else
+      class="min-h-screen flex flex-col"
+    >
       <!-- Header with Logo (Mobile) -->
       <div class="md:hidden px-4 py-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-              <UIcon name="i-lucide-hexagon" class="w-5 h-5 text-white" />
+              <UIcon
+                name="i-lucide-hexagon"
+                class="w-5 h-5 text-white"
+              />
             </div>
             <span class="font-bold text-gray-900 dark:text-white">Commerinity Pro</span>
           </div>
@@ -51,14 +62,25 @@
               <div class="hidden md:flex items-center justify-between px-6 py-4">
                 <div class="flex items-center gap-4">
                   <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <UIcon name="i-lucide-hexagon" class="w-6 h-6 text-white" />
+                    <UIcon
+                      name="i-lucide-hexagon"
+                      class="w-6 h-6 text-white"
+                    />
                   </div>
                   <div>
-                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">Profile Setup</h1>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Complete your account setup</p>
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+                      Profile Setup
+                    </h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                      Complete your account setup
+                    </p>
                   </div>
                 </div>
-                <UBadge color="primary" variant="subtle" size="lg">
+                <UBadge
+                  color="primary"
+                  variant="subtle"
+                  size="lg"
+                >
                   {{ Math.round(progressPercent) }}% Complete
                 </UBadge>
               </div>
@@ -151,7 +173,10 @@
                 :disabled="submitting"
                 @click="prevStep"
               >
-                <UIcon name="i-lucide-arrow-left" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-arrow-left"
+                  class="w-4 h-4 mr-2"
+                />
                 <span class="hidden sm:inline">Previous</span>
                 <span class="sm:hidden">Back</span>
               </UButton>
@@ -181,7 +206,10 @@
                 >
                   <span class="hidden sm:inline">{{ currentStep === 0 ? 'Get Started' : 'Continue' }}</span>
                   <span class="sm:hidden">{{ currentStep === 0 ? 'Start' : 'Next' }}</span>
-                  <UIcon name="i-lucide-arrow-right" class="w-4 h-4 ml-2" />
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-4 h-4 ml-2"
+                  />
                 </UButton>
                 <UButton
                   v-else
@@ -191,7 +219,10 @@
                   :disabled="!canProceed"
                   @click="completeOnboarding"
                 >
-                  <UIcon name="i-lucide-check" class="w-4 h-4 mr-2" />
+                  <UIcon
+                    name="i-lucide-check"
+                    class="w-4 h-4 mr-2"
+                  />
                   Complete Setup
                 </UButton>
               </div>
@@ -567,7 +598,7 @@ const completeOnboarding = async () => {
       router.push('/dashboard')
     }, 1000)
   } catch (error: unknown) {
-    const err = error as { data?: { message?: string; missing?: string[] } }
+    const err = error as { data?: { message?: string, missing?: string[] } }
     if (err.data?.missing) {
       toast.add({
         title: 'Incomplete Setup',

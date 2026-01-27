@@ -4,7 +4,10 @@
       <!-- Header -->
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <UIcon name="i-lucide-user" class="w-8 h-8 text-blue-600 dark:text-blue-400" />
+          <UIcon
+            name="i-lucide-user"
+            class="w-8 h-8 text-blue-600 dark:text-blue-400"
+          />
         </div>
         <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Tell us about yourself
@@ -38,7 +41,10 @@
             class="absolute bottom-0 right-0 w-8 h-8 bg-primary-500 hover:bg-primary-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
             @click="triggerFileInput"
           >
-            <UIcon name="i-lucide-camera" class="w-4 h-4 text-white" />
+            <UIcon
+              name="i-lucide-camera"
+              class="w-4 h-4 text-white"
+            />
           </button>
           <input
             ref="fileInput"
@@ -54,9 +60,18 @@
       </p>
 
       <!-- Form Fields -->
-      <UForm :state="formState" :schema="schema" class="space-y-5" @submit="handleSubmit">
+      <UForm
+        :state="formState"
+        :schema="schema"
+        class="space-y-5"
+        @submit="handleSubmit"
+      >
         <!-- Full Name (Full width) -->
-        <UFormField label="Full Name" name="name" required>
+        <UFormField
+          label="Full Name"
+          name="name"
+          required
+        >
           <UInput
             v-model="formState.name"
             placeholder="Enter your full name"
@@ -67,7 +82,11 @@
 
         <!-- Date of Birth & Gender (2 columns on desktop) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-          <UFormField label="Date of Birth" name="dob" required>
+          <UFormField
+            label="Date of Birth"
+            name="dob"
+            required
+          >
             <UInput
               v-model="formState.dob"
               type="date"
@@ -77,7 +96,11 @@
             />
           </UFormField>
 
-          <UFormField label="Gender" name="gender" required>
+          <UFormField
+            label="Gender"
+            name="gender"
+            required
+          >
             <URadioGroup
               v-model="formState.gender"
               :items="genderOptions"
@@ -87,7 +110,11 @@
         </div>
 
         <!-- Bio (Optional, Full width) -->
-        <UFormField label="Bio" name="bio" hint="Optional">
+        <UFormField
+          label="Bio"
+          name="bio"
+          hint="Optional"
+        >
           <UTextarea
             v-model="formState.bio"
             placeholder="Tell us a little about yourself..."
@@ -158,7 +185,7 @@ watch(
   () => ({ ...formState, avatar: avatarFile.value }),
   (newData) => {
     emit('update:data', newData)
-    
+
     // Check validity
     const result = schema.safeParse(formState)
     emit('valid', result.success)
@@ -173,10 +200,10 @@ const triggerFileInput = () => {
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
-  
+
   if (file) {
     avatarFile.value = file
-    
+
     // Create preview
     const reader = new FileReader()
     reader.onload = (e) => {

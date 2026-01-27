@@ -13,7 +13,7 @@ interface StatsData {
 
 const config = useRuntimeConfig()
 
-const { data: statsResponse, status } = await useFetch<{ success: boolean; data: StatsData }>(
+const { data: statsResponse, status } = await useFetch<{ success: boolean, data: StatsData }>(
   `${config.public.apiBase}/api/public/stats`,
   {
     lazy: true,
@@ -55,7 +55,10 @@ const stats = computed(() => {
 
     <UContainer class="relative z-10">
       <!-- Loading State -->
-      <div v-if="status === 'pending'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        v-if="status === 'pending'"
+        class="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
         <div
           v-for="i in 3"
           :key="i"
@@ -72,7 +75,10 @@ const stats = computed(() => {
       </div>
 
       <!-- Stats Grid -->
-      <div v-else-if="stats.length" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        v-else-if="stats.length"
+        class="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
         <div
           v-for="(stat, index) in stats"
           :key="index"
@@ -84,7 +90,10 @@ const stats = computed(() => {
               class="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform duration-500"
               :class="stat.gradient"
             >
-              <UIcon :name="stat.icon" class="w-7 h-7 text-white" />
+              <UIcon
+                :name="stat.icon"
+                class="w-7 h-7 text-white"
+              />
             </div>
 
             <!-- Content -->
@@ -107,8 +116,13 @@ const stats = computed(() => {
       </div>
 
       <!-- Error/Empty State -->
-      <div v-else class="text-center py-8">
-        <p class="text-slate-500 dark:text-slate-400">Unable to load statistics</p>
+      <div
+        v-else
+        class="text-center py-8"
+      >
+        <p class="text-slate-500 dark:text-slate-400">
+          Unable to load statistics
+        </p>
       </div>
     </UContainer>
   </section>

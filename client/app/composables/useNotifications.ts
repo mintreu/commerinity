@@ -154,12 +154,10 @@ export function useNotifications() {
         return response.data
       }
       return null
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to fetch notifications:', err)
       return null
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -176,8 +174,7 @@ export function useNotifications() {
         return response.data.unread_count
       }
       return 0
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to fetch unread count:', err)
       return 0
     }
@@ -203,8 +200,7 @@ export function useNotifications() {
         return true
       }
       return false
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to mark notification as read:', err)
       return false
     }
@@ -222,15 +218,14 @@ export function useNotifications() {
 
       if (response.success) {
         // Update local state
-        notifications.value.forEach(n => {
+        notifications.value.forEach((n) => {
           n.read_at = new Date().toISOString()
         })
         unreadCount.value = 0
         return true
       }
       return false
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to mark all as read:', err)
       return false
     }
@@ -259,8 +254,7 @@ export function useNotifications() {
         return true
       }
       return false
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to delete notification:', err)
       return false
     }
@@ -281,8 +275,7 @@ export function useNotifications() {
         return response.public_key
       }
       return null
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to get VAPID key:', err)
       return null
     }
@@ -343,8 +336,7 @@ export function useNotifications() {
       }
 
       return false
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to subscribe to push:', err)
       error('Subscription Failed', 'Could not enable push notifications.')
       return false
@@ -377,8 +369,7 @@ export function useNotifications() {
       isPushSubscribed.value = false
       info('Push Disabled', 'You will no longer receive push notifications.')
       return true
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Failed to unsubscribe from push:', err)
       return false
     }
@@ -395,8 +386,7 @@ export function useNotifications() {
       const subscription = await registration.pushManager.getSubscription()
       isPushSubscribed.value = !!subscription
       return !!subscription
-    }
-    catch {
+    } catch {
       return false
     }
   }

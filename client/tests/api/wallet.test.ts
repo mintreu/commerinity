@@ -17,7 +17,7 @@ const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
 const VALID_STATUS = [200, 404, 500]
 
 // Helper function to login
-async function login(email: string, password: string): Promise<{ ok: boolean; token?: string }> {
+async function login(email: string, password: string): Promise<{ ok: boolean, token?: string }> {
   const response = await fetch(`${apiBase}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -45,8 +45,8 @@ describe('Wallet API', () => {
     it('should return wallet data', async () => {
       const response = await fetch(`${apiBase}/api/wallet`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -64,8 +64,8 @@ describe('Wallet API', () => {
     it('should return wallet balance', async () => {
       const response = await fetch(`${apiBase}/api/wallet/balance`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -81,8 +81,8 @@ describe('Wallet API', () => {
     it('should return wallet stats', async () => {
       const response = await fetch(`${apiBase}/api/wallet/stats`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -94,8 +94,8 @@ describe('Wallet API', () => {
     it('should return transaction list', async () => {
       const response = await fetch(`${apiBase}/api/wallet/transactions`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -111,8 +111,8 @@ describe('Wallet API', () => {
     it('should have proper transaction structure', async () => {
       const response = await fetch(`${apiBase}/api/wallet/transactions`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -135,8 +135,8 @@ describe('Wallet API', () => {
     it('should return available security questions', async () => {
       const response = await fetch(`${apiBase}/api/wallet/security-questions`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -148,8 +148,8 @@ describe('Wallet API', () => {
     it('should return beneficiary account types', async () => {
       const response = await fetch(`${apiBase}/api/wallet/beneficiaries/types`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -159,8 +159,8 @@ describe('Wallet API', () => {
     it('should return beneficiary list', async () => {
       const response = await fetch(`${apiBase}/api/wallet/beneficiaries`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 

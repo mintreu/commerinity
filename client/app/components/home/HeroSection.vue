@@ -23,7 +23,10 @@ const config = useRuntimeConfig()
 
         <!-- Premium Badge -->
         <div class="premium-badge">
-          <UIcon name="i-lucide-sparkles" class="w-4 h-4 mr-2" />
+          <UIcon
+            name="i-lucide-sparkles"
+            class="w-4 h-4 mr-2"
+          />
           <span>All-in-One Business Platform</span>
         </div>
 
@@ -44,7 +47,7 @@ const config = useRuntimeConfig()
         </p>
 
         <!-- CTA Buttons -->
-<!--        <div class="flex flex-col sm:flex-row gap-4 pt-4">-->
+        <!--        <div class="flex flex-col sm:flex-row gap-4 pt-4"> -->
         <div class="flex flex-col sm:flex-col gap-4 pt-4">
           <div class="flex gap-2 flex-row sm:flex-row px-2">
             <NuxtLink to="/auth/register">
@@ -53,11 +56,13 @@ const config = useRuntimeConfig()
                 color="primary"
                 class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
               >
-                <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-2" />
+                <UIcon
+                  name="i-lucide-rocket"
+                  class="w-5 h-5 mr-2"
+                />
                 Sign up
               </UButton>
             </NuxtLink>
-
 
             <NuxtLink to="/auth/login">
               <UButton
@@ -65,12 +70,14 @@ const config = useRuntimeConfig()
                 color="primary"
                 class="px-8 py-4 font-bold shadow-xl shadow-violet-500/25 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
               >
-                <UIcon name="i-lucide-rocket" class="w-5 h-5 mr-2" />
+                <UIcon
+                  name="i-lucide-rocket"
+                  class="w-5 h-5 mr-2"
+                />
                 Sign in
               </UButton>
             </NuxtLink>
           </div>
-
 
           <NuxtLink to="/help">
             <UButton
@@ -79,7 +86,10 @@ const config = useRuntimeConfig()
               variant="outline"
               class="px-8 py-4 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300"
             >
-              <UIcon name="i-lucide-play-circle" class="w-5 h-5 mr-2" />
+              <UIcon
+                name="i-lucide-play-circle"
+                class="w-5 h-5 mr-2"
+              />
               Learn More
             </UButton>
           </NuxtLink>
@@ -88,17 +98,26 @@ const config = useRuntimeConfig()
         <!-- Trust Badges -->
         <div class="flex flex-wrap justify-center items-center gap-4 pt-6 text-sm text-slate-500 dark:text-slate-400">
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-shield-check" class="w-4 h-4 text-emerald-500" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="w-4 h-4 text-emerald-500"
+            />
             <span>100% Secure</span>
           </div>
           <div class="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600" />
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-credit-card" class="w-4 h-4 text-violet-500" />
+            <UIcon
+              name="i-lucide-credit-card"
+              class="w-4 h-4 text-violet-500"
+            />
             <span>No Hidden Fees</span>
           </div>
           <div class="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600" />
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-headphones" class="w-4 h-4 text-blue-500" />
+            <UIcon
+              name="i-lucide-headphones"
+              class="w-4 h-4 text-blue-500"
+            />
             <span>24/7 Support</span>
           </div>
         </div>

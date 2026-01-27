@@ -13,23 +13,135 @@ useSeoMeta({
   description: 'Explore our premium products. Quality products at great prices with Affiliate rewards.'
 })
 
+interface FilterOption {
+  id: number
+  value: string
+  swatch?: string | null
+  count?: number
+}
+
+interface FilterGroup {
+  name: string
+  options: FilterOption[]
+}
+
+interface CatalogProductCategory {
+  id?: number | null
+  uuid?: string | null
+  name: string
+  slug: string
+}
+
+interface CatalogProductImage {
+  src: string
+  srcset?: string | null
+}
+
+interface CatalogProduct {
+  id: number
+  name: string
+  slug: string
+  sku: string
+  price: number
+  price_formatted: string
+  original_price?: number | null
+  original_price_formatted?: string | null
+  discount_percent?: number | null
+  sale_name?: string | null
+  category: CatalogProductCategory | null
+  image: CatalogProductImage | null
+  in_stock: boolean
+  stock_quantity: number
+  view_count: number
+  bv: number
+  pv: number
+  reward_points: number
+}
+
+interface CatalogPaginationMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  from?: number | null
+  to?: number | null
+  path?: string
+}
+
+interface CatalogProductsResponse {
+  success: boolean
+  data: CatalogProduct[]
+  meta?: CatalogPaginationMeta
+  links?: Record<string, string | null>
+}
+
 const config = useRuntimeConfig()
 const route = useRoute()
 
+const parseNumberFromQuery = (value?: string | string[]): number | null => {
+  if (!value) return null
+  const normalized = Array.isArray(value) ? value[0] : value
+  const parsed = Number(normalized)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+const parseFilterOptionsFromQuery = (): Record<string, number[]> => {
+  const rawFilters = route.query.filters
+  if (!rawFilters) return {}
+
+  try {
+    const parsed =
+      typeof rawFilters === 'string'
+        ? JSON.parse(rawFilters)
+        : (rawFilters as Record<string, string | number[]>)
+
+    return Object.fromEntries(
+      Object.entries(parsed).map(([filterName, value]) => {
+        if (Array.isArray(value)) {
+          const ids = value.map(Number).filter(id => Number.isFinite(id))
+          return [filterName, ids]
+        }
+        if (typeof value === 'string') {
+          const ids = value
+            .split(',')
+            .map(id => Number(id.trim()))
+            .filter(id => Number.isFinite(id))
+          return [filterName, ids]
+        }
+        return [filterName, []]
+      })
+    )
+  } catch (error) {
+    console.warn('Failed to parse filters from query', error)
+    return {}
+  }
+}
+
+const cloneFilterMap = (filters: Record<string, number[]>) => {
+  return Object.fromEntries(
+    Object.entries(filters).map(([key, ids]) => [key, Array.isArray(ids) ? [...ids] : []])
+  )
+}
+
 // Filter state
-const selectedCategory = ref(route.query.category as string || '')
-const selectedSort = ref(route.query.sort as string || 'popularity')
-const searchQuery = ref(route.query.search as string || '')
-const currentPage = ref(1)
-const priceMin = ref<number | null>(route.query.price_min ? Number(route.query.price_min) : null)
-const priceMax = ref<number | null>(route.query.price_max ? Number(route.query.price_max) : null)
-const selectedFilterOptions = ref<Record<string, number[]>>({})
+const selectedCategory = ref(typeof route.query.category === 'string' ? route.query.category : '')
+const selectedSort = ref(typeof route.query.sort === 'string' ? route.query.sort : 'popularity')
+const searchQuery = ref(typeof route.query.search === 'string' ? route.query.search : '')
+const currentPage = ref(Math.max(1, parseNumberFromQuery(route.query.page) || 1))
+const priceMin = ref<number | null>(parseNumberFromQuery(route.query.min_price) ?? parseNumberFromQuery(route.query.price_min))
+const priceMax = ref<number | null>(parseNumberFromQuery(route.query.max_price) ?? parseNumberFromQuery(route.query.price_max))
+const selectedFilterOptions = ref<Record<string, number[]>>(parseFilterOptionsFromQuery())
 
 // Mobile filter drawer
 const showMobileFilters = ref(false)
 
+// Auth / user type
+const { isLoggedIn } = useSanctum()
+const { isMember, isPromoter } = useUserType()
+const canSeeAffiliateBenefits = computed(() => isMember.value || isPromoter.value)
+
 // Sort options - Nuxt UI v4 format
-const sortOptions = [
+const fallbackSortOptions = [
   { label: 'Popularity', id: 'popularity' },
   { label: 'Newest First', id: 'latest' },
   { label: 'Price: Low to High', id: 'price_asc' },
@@ -38,78 +150,69 @@ const sortOptions = [
 ]
 
 // Fetch available filters
-const { data: filtersResponse } = await useFetch<{
+const { data: filtersResponse, pending: filtersPending } = await useFetch<{
   success: boolean
   data: {
     price_range: { min: number; max: number }
     sort_options: Array<{ value: string; label: string }>
+    filter_options?: FilterGroup[]
   }
 }>(`${config.public.apiBase}/api/catalog/filters`, {
-  query: computed(() => selectedCategory.value ? { category: selectedCategory.value } : {}),
-  lazy: true,
+  query: computed(() => (selectedCategory.value ? { category: selectedCategory.value } : {})),
   server: false
 })
 
 const availableFilters = computed(() => filtersResponse.value?.data)
+const isFiltersLoading = computed(() => filtersPending.value)
+
+const sortSelectOptions = computed(() => {
+  const apiOptions = availableFilters.value?.sort_options?.map(option => ({
+    label: option.label,
+    id: option.value
+  }))
+
+  if (apiOptions && apiOptions.length > 0) {
+    return apiOptions
+  }
+
+  return fallbackSortOptions
+})
 
 // API query params
+const toPaisa = (value: number | null) => {
+  if (value === null) return null
+  return Math.round(value * 100)
+}
+
 const queryParams = computed(() => {
-  const params: Record<string, string | number | Record<string, string>> = {
+  const params: Record<string, any> = {
     page: currentPage.value,
     sort: selectedSort.value
   }
   if (selectedCategory.value) params.category = selectedCategory.value
   if (searchQuery.value) params.search = searchQuery.value
-  if (priceMin.value !== null) params.price_min = priceMin.value
-  if (priceMax.value !== null) params.price_max = priceMax.value
+  const minPrice = toPaisa(priceMin.value)
+  const maxPrice = toPaisa(priceMax.value)
+  if (minPrice !== null) params.min_price = minPrice
+  if (maxPrice !== null) params.max_price = maxPrice
 
-  // Add filter options to query params
-  const filterParams: Record<string, string> = {}
-  for (const [filterName, optionIds] of Object.entries(selectedFilterOptions.value)) {
-    if (optionIds.length > 0) {
-      filterParams[filterName] = optionIds.join(',')
+  if (Object.keys(selectedFilterOptions.value).length > 0) {
+    const filters: Record<string, string> = {}
+    for (const [filterName, optionIds] of Object.entries(selectedFilterOptions.value)) {
+      if (Array.isArray(optionIds) && optionIds.length > 0) {
+        filters[filterName] = optionIds.join(',')
+      }
     }
-  }
-  if (Object.keys(filterParams).length > 0) {
-    params.filters = filterParams
+    if (Object.keys(filters).length > 0) {
+      params.filters = JSON.stringify(filters)
+    }
   }
 
   return params
 })
 
 // Fetch products
-const { data: productsResponse, status: productsStatus, refresh: refreshProducts } = await useFetch<{
-  success: boolean
-  data: {
-    items: Array<{
-      id: number
-      name: string
-      slug: string
-      sku: string
-      price: number
-      price_formatted: string
-      category: { id: number; name: string; slug: string } | null
-      image: {
-        src: string
-        srcset?: string
-      } | null
-
-      in_stock: boolean
-      stock_quantity: number
-      view_count: number
-      bv: number
-      pv: number
-      reward_points: number
-    }>
-    pagination: {
-      current_page: number
-      last_page: number
-      per_page: number
-      total: number
-      has_more: boolean
-    }
-  }
-}>(`${config.public.apiBase}/api/catalog/products`, {
+const { data: productsResponse, status: productsStatus } = await useFetch<CatalogProductsResponse>(`${config.public.apiBase}/api/catalog/products`, {
   query: queryParams,
   watch: [queryParams],
   lazy: true,
@@ -132,24 +235,92 @@ const { data: categoriesResponse } = await useFetch<{
   server: false
 })
 
-const products = computed(() => productsResponse.value?.data?.items || [])
-const pagination = computed(() => productsResponse.value?.data?.pagination)
+const products = computed<CatalogProduct[]>(() => productsResponse.value?.data ?? [])
+const pagination = computed(() => {
+  const meta = productsResponse.value?.meta
+  if (!meta) {
+    return null
+  }
+
+  return {
+    current_page: meta.current_page,
+    last_page: meta.last_page,
+    per_page: meta.per_page,
+    total: meta.total
+  }
+})
 const categories = computed(() => {
   const cats = categoriesResponse.value?.data || []
   return [{ id: 0, name: 'All Products', slug: '', product_count: 0 }, ...cats]
 })
 
-// Update URL when filters change
-watch([selectedCategory, selectedSort, searchQuery, priceMin, priceMax, selectedFilterOptions], () => {
-  currentPage.value = 1
+const activeFilterCount = computed(() => {
+  let count = 0
+  if (selectedCategory.value) count++
+  if (selectedSort.value !== 'popularity') count++
+  if (searchQuery.value) count++
+  if (priceMin.value !== null || priceMax.value !== null) count++
+  count += Object.values(selectedFilterOptions.value).reduce((total, ids) => total + ids.length, 0)
+  return count
+})
+
+const rupeeFormatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  maximumFractionDigits: 2
+})
+
+const formatRupee = (value: number | null, fallback = '₹0') =>
+  value === null ? fallback : rupeeFormatter.format(value)
+
+const buildQueryObject = () => {
   const query: Record<string, string> = {}
   if (selectedCategory.value) query.category = selectedCategory.value
   if (selectedSort.value !== 'popularity') query.sort = selectedSort.value
   if (searchQuery.value) query.search = searchQuery.value
-  if (priceMin.value !== null) query.price_min = String(priceMin.value)
-  if (priceMax.value !== null) query.price_max = String(priceMax.value)
-  navigateTo({ query })
+  if (priceMin.value !== null) query.min_price = String(toPaisa(priceMin.value) ?? 0)
+  if (priceMax.value !== null) query.max_price = String(toPaisa(priceMax.value) ?? 0)
+  if (currentPage.value > 1) query.page = String(currentPage.value)
+  if (Object.keys(selectedFilterOptions.value).length > 0) {
+    query.filters = JSON.stringify(selectedFilterOptions.value)
+  }
+  return query
+}
+
+const normalizeRouteQuery = () => {
+  const normalized: Record<string, string> = {}
+  for (const [key, value] of Object.entries(route.query)) {
+    if (value === undefined) continue
+    const normalizedValue = Array.isArray(value) ? value[0] : value
+    if (typeof normalizedValue === 'string') {
+      normalized[key] = normalizedValue
+    }
+  }
+  return normalized
+}
+
+const updateRouteQuery = () => {
+  const nextQuery = buildQueryObject()
+  const currentQuery = normalizeRouteQuery()
+  if (JSON.stringify(nextQuery) === JSON.stringify(currentQuery)) {
+    return
+  }
+  navigateTo({ path: route.path, query: nextQuery }, { replace: true })
+}
+
+watch([selectedCategory, selectedSort, searchQuery, priceMin, priceMax], () => {
+  currentPage.value = 1
+  updateRouteQuery()
+})
+
+watch(selectedFilterOptions, () => {
+  currentPage.value = 1
+  updateRouteQuery()
 }, { deep: true })
+
+watch(currentPage, () => {
+  updateRouteQuery()
+})
 
 const handleCategoryChange = (slug: string) => {
   selectedCategory.value = slug
@@ -160,6 +331,26 @@ const handlePageChange = (page: number) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+const updateSelectedSort = (value: string) => {
+  selectedSort.value = value
+}
+
+const updatePriceMin = (value: number | null) => {
+  priceMin.value = value
+}
+
+const updatePriceMax = (value: number | null) => {
+  priceMax.value = value
+}
+
+const updateSelectedFilters = (value: Record<string, number[]>) => {
+  selectedFilterOptions.value = cloneFilterMap(value)
+}
+
+const handleFiltersApplied = () => {
+  showMobileFilters.value = false
+}
+
 // Clear all filters
 const clearAllFilters = () => {
   selectedCategory.value = ''
@@ -168,7 +359,15 @@ const clearAllFilters = () => {
   priceMin.value = null
   priceMax.value = null
   selectedFilterOptions.value = {}
+  currentPage.value = 1
   showMobileFilters.value = false
+}
+
+const removeFilterGroup = (filterName: string) => {
+  if (!selectedFilterOptions.value[filterName]) return
+  const updated = cloneFilterMap(selectedFilterOptions.value)
+  delete updated[filterName]
+  selectedFilterOptions.value = updated
 }
 
 // Cart functionality
@@ -177,6 +376,14 @@ const toast = useToast()
 
 const addToCart = async (product: typeof products.value[0]) => {
   if (!product.in_stock) return
+
+  if (!isLoggedIn.value) {
+    navigateTo({
+      path: '/auth/login',
+      query: { redirect: route.fullPath }
+    })
+    return
+  }
 
   addingToCart.value = product.slug
 
@@ -281,16 +488,20 @@ const addToCart = async (product: typeof products.value[0]) => {
           <!-- Price, Sort & Filter Options -->
           <StoreProductFilters
             :filters="availableFilters"
+            :categories="categories"
             :selected-category="selectedCategory"
             :selected-sort="selectedSort"
             :price-min="priceMin"
             :price-max="priceMax"
             :selected-filter-options="selectedFilterOptions"
-            @update:selected-sort="selectedSort = $event"
-            @update:price-min="priceMin = $event"
-            @update:price-max="priceMax = $event"
-            @update:selected-filter-options="selectedFilterOptions = $event"
-            @clear-filters="clearAllFilters"
+            :show-sort="false"
+            :loading="isFiltersLoading"
+            @update:selectedSort="updateSelectedSort"
+            @update:priceMin="updatePriceMin"
+            @update:priceMax="updatePriceMax"
+            @update:selectedFilterOptions="updateSelectedFilters"
+            @applyFilters="handleFiltersApplied"
+            @clearFilters="clearAllFilters"
           />
         </aside>
 
@@ -328,13 +539,18 @@ const addToCart = async (product: typeof products.value[0]) => {
               >
                 <UIcon name="i-lucide-sliders-horizontal" class="w-4 h-4 mr-1" />
                 Filters
-                <span v-if="priceMin || priceMax" class="ml-1 w-2 h-2 rounded-full bg-primary-500" />
+                <span
+                  v-if="activeFilterCount"
+                  class="ml-2 px-1.5 py-0.5 text-xs rounded-full bg-primary-600 text-white font-semibold"
+                >
+                  {{ activeFilterCount }}
+                </span>
               </UButton>
 
               <!-- Sort -->
               <USelect
                 v-model="selectedSort"
-                :items="sortOptions"
+                :items="sortSelectOptions"
                 value-key="id"
                 class="w-48"
               />
@@ -350,7 +566,7 @@ const addToCart = async (product: typeof products.value[0]) => {
               </button>
             </span>
             <span v-if="priceMin || priceMax" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
-              Price: {{ priceMin ? `₹${priceMin}` : '₹0' }} - {{ priceMax ? `₹${priceMax}` : 'Max' }}
+              Price: {{ priceMin ? formatRupee(priceMin) : '₹0' }} - {{ priceMax ? formatRupee(priceMax) : 'Max' }}
               <button class="hover:text-emerald-500" @click="priceMin = null; priceMax = null">
                 <UIcon name="i-lucide-x" class="w-4 h-4" />
               </button>
@@ -359,7 +575,7 @@ const addToCart = async (product: typeof products.value[0]) => {
             <template v-for="(optionIds, filterName) in selectedFilterOptions" :key="filterName">
               <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium">
                 {{ filterName }}: {{ optionIds.length }} selected
-                <button class="hover:text-violet-500" @click="delete selectedFilterOptions[filterName]">
+                <button class="hover:text-violet-500" @click="removeFilterGroup(filterName)">
                   <UIcon name="i-lucide-x" class="w-4 h-4" />
                 </button>
               </span>
@@ -428,10 +644,16 @@ const addToCart = async (product: typeof products.value[0]) => {
 
                 <!-- BV/PV Badge -->
                 <div
-                  v-if="product.bv > 0"
+                  v-if="canSeeAffiliateBenefits && product.bv > 0"
                   class="absolute top-2 right-2 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded"
                 >
                   {{ product.bv }} BV
+                </div>
+                <div
+                  v-else-if="!isLoggedIn && product.reward_points > 0"
+                  class="absolute top-2 right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded"
+                >
+                  Rewards
                 </div>
               </div>
 
@@ -476,26 +698,44 @@ const addToCart = async (product: typeof products.value[0]) => {
 
                 <!-- Reward Points -->
                 <div
-                  v-if="product.reward_points > 0"
+                  v-if="canSeeAffiliateBenefits && product.reward_points > 0"
                   class="text-xs text-emerald-600 dark:text-emerald-400 mb-3"
                 >
                   Earn {{ product.reward_points }} reward points
                 </div>
+                <div
+                  v-else-if="!isLoggedIn && product.reward_points > 0"
+                  class="text-xs text-purple-600 dark:text-purple-400 mb-3"
+                >
+                  Sign in to earn rewards
+                </div>
 
                 <!-- Add to Cart -->
-                <UButton
-                  block
-                  :disabled="!product.in_stock || addingToCart === product.slug"
-                  :loading="addingToCart === product.slug"
-                  :color="product.in_stock ? 'primary' : 'neutral'"
-                  @click.prevent="addToCart(product)"
-                >
-                  <UIcon
-                    name="i-lucide-shopping-cart"
-                    class="w-4 h-4 mr-2"
-                  />
-                  {{ product.in_stock ? 'Add to Cart' : 'Out of Stock' }}
-                </UButton>
+                <div class="flex flex-col gap-2">
+                  <UButton
+                    v-if="isLoggedIn"
+                    block
+                    :disabled="!product.in_stock || addingToCart === product.slug"
+                    :loading="addingToCart === product.slug"
+                    :color="product.in_stock ? 'primary' : 'neutral'"
+                    @click.prevent="addToCart(product)"
+                  >
+                    <UIcon
+                      name="i-lucide-shopping-cart"
+                      class="w-4 h-4 mr-2"
+                    />
+                    {{ product.in_stock ? 'Add to Cart' : 'Out of Stock' }}
+                  </UButton>
+                  <UButton
+                    v-else
+                    block
+                    variant="outline"
+                    color="primary"
+                    @click.prevent="navigateTo(`/shop/${product.slug}`)"
+                  >
+                    View Product
+                  </UButton>
+                </div>
               </div>
             </NuxtLink>
           </div>
@@ -541,5 +781,74 @@ const addToCart = async (product: typeof products.value[0]) => {
       </div>
     </UContainer>
   </div>
+
+  <USlideover
+    v-model:open="showMobileFilters"
+    side="right"
+    class="lg:hidden"
+  >
+    <template #header>
+      <div class="flex items-center justify-between w-full">
+        <h3 class="text-base font-semibold">
+          Filters
+          <span
+            v-if="activeFilterCount"
+            class="ml-2 text-xs text-slate-500"
+          >
+            ({{ activeFilterCount }})
+          </span>
+        </h3>
+        <UButton
+          variant="ghost"
+          size="sm"
+          icon="i-lucide-x"
+          @click="showMobileFilters = false"
+        />
+      </div>
+    </template>
+
+    <template #body>
+      <div class="flex-1 overflow-y-auto p-4 space-y-6">
+        <div>
+          <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">
+            Categories
+          </h4>
+          <div class="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
+            <button
+              v-for="cat in categories"
+              :key="cat.id"
+              :class="[
+                'px-4 py-2 rounded-full text-sm font-medium transition-all',
+                selectedCategory === cat.slug
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+              ]"
+              @click="handleCategoryChange(cat.slug)"
+            >
+              {{ cat.name }}
+            </button>
+          </div>
+        </div>
+
+        <StoreProductFilters
+          :filters="availableFilters"
+          :categories="categories"
+          :selected-category="selectedCategory"
+          :selected-sort="selectedSort"
+          :price-min="priceMin"
+          :price-max="priceMax"
+          :selected-filter-options="selectedFilterOptions"
+          :show-sort="false"
+          :loading="isFiltersLoading"
+          @update:selectedSort="updateSelectedSort"
+          @update:priceMin="updatePriceMin"
+          @update:priceMax="updatePriceMax"
+          @update:selectedFilterOptions="updateSelectedFilters"
+          @applyFilters="handleFiltersApplied"
+          @clearFilters="clearAllFilters"
+        />
+      </div>
+    </template>
+  </USlideover>
 </template>
 

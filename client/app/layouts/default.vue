@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Dashboard from "./dashboard.vue";
-import Public from "./public.vue";
+import Dashboard from './dashboard.vue'
+import Public from './public.vue'
 
 /**
  * Smart Default Layout
@@ -33,19 +33,22 @@ const layoutToUse = computed(() => {
 </script>
 
 <template>
-
-  <NuxtLayout v-if="isLoggedIn" name="dashboard">
+  <NuxtLayout
+    v-if="isLoggedIn"
+    name="dashboard"
+  >
     <slot />
   </NuxtLayout>
 
   <!-- Guest View: Landing page with carousels -->
-  <NuxtLayout v-else name="public">
+  <NuxtLayout
+    v-else
+    name="public"
+  >
     <slot />
   </NuxtLayout>
 
-
-
-<!--  <component :is="layoutToUse">-->
-<!--    <slot />-->
-<!--  </component>-->
+<!--  <component :is="layoutToUse"> -->
+<!--    <slot /> -->
+<!--  </component> -->
 </template>

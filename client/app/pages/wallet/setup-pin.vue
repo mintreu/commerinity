@@ -80,8 +80,12 @@ const handleSubmit = async () => {
   <div class="max-w-lg mx-auto">
     <div class="glass-card overflow-hidden">
       <div class="bg-gradient-to-r from-amber-600 to-amber-500 p-6 text-white">
-        <h1 class="text-xl font-bold">Set Wallet PIN</h1>
-        <p class="text-amber-100 text-sm">Secure your wallet with a 6-digit PIN</p>
+        <h1 class="text-xl font-bold">
+          Set Wallet PIN
+        </h1>
+        <p class="text-amber-100 text-sm">
+          Secure your wallet with a 6-digit PIN
+        </p>
       </div>
 
       <div class="p-6 space-y-6">
@@ -124,18 +128,29 @@ const handleSubmit = async () => {
         </div>
 
         <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4">
-          <h4 class="text-sm font-medium text-slate-900 dark:text-white mb-2">PIN Guidelines</h4>
+          <h4 class="text-sm font-medium text-slate-900 dark:text-white mb-2">
+            PIN Guidelines
+          </h4>
           <ul class="text-xs text-slate-500 dark:text-slate-400 space-y-1">
             <li class="flex items-center gap-2">
-              <UIcon name="i-lucide-check" class="w-3 h-3 text-green-500" />
+              <UIcon
+                name="i-lucide-check"
+                class="w-3 h-3 text-green-500"
+              />
               Must be exactly 6 digits
             </li>
             <li class="flex items-center gap-2">
-              <UIcon name="i-lucide-x" class="w-3 h-3 text-red-500" />
+              <UIcon
+                name="i-lucide-x"
+                class="w-3 h-3 text-red-500"
+              />
               Avoid sequential numbers (123456)
             </li>
             <li class="flex items-center gap-2">
-              <UIcon name="i-lucide-x" class="w-3 h-3 text-red-500" />
+              <UIcon
+                name="i-lucide-x"
+                class="w-3 h-3 text-red-500"
+              />
               Avoid repeated digits (111111)
             </li>
           </ul>

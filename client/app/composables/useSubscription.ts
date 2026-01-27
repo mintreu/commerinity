@@ -75,7 +75,7 @@ export const useSubscription = () => {
   const plans: Ref<SubscriptionPlan[]> = ref([])
   const status: Ref<SubscriptionStatus | null> = ref(null)
   const history: Ref<Subscription[]> = ref([])
-  const historyMeta: Ref<{ current_page: number; last_page: number; per_page: number; total: number } | null> = ref(null)
+  const historyMeta: Ref<{ current_page: number, last_page: number, per_page: number, total: number } | null> = ref(null)
   const isLoading = ref(false)
   const error: Ref<string | null> = ref(null)
 
@@ -83,19 +83,17 @@ export const useSubscription = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: { plans: SubscriptionPlan[] } }>(
+      const response = await useSanctumFetch<{ success: boolean, data: { plans: SubscriptionPlan[] } }>(
         `${config.public.apiBase}/api/subscription/plans`
       )
       if (response?.success) {
         plans.value = response.data.plans
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch plans'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -104,19 +102,17 @@ export const useSubscription = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: SubscriptionStatus }>(
+      const response = await useSanctumFetch<{ success: boolean, data: SubscriptionStatus }>(
         `${config.public.apiBase}/api/subscription/status`
       )
       if (response?.success) {
         status.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch status'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -139,19 +135,17 @@ export const useSubscription = () => {
         body: {
           plan_uuid: planUuid,
           payment_method: 'wallet',
-          pin,
-        },
+          pin
+        }
       })
       if (response?.success) {
         await fetchStatus()
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to subscribe'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -163,19 +157,17 @@ export const useSubscription = () => {
       const response = await useSanctumFetch<{
         success: boolean
         data: Subscription[]
-        meta: { current_page: number; last_page: number; per_page: number; total: number }
+        meta: { current_page: number, last_page: number, per_page: number, total: number }
       }>(`${config.public.apiBase}/api/subscription/history?page=${page}`)
       if (response?.success) {
         history.value = response.data
         historyMeta.value = response.meta
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch history'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -190,6 +182,6 @@ export const useSubscription = () => {
     fetchPlans,
     fetchStatus,
     subscribe,
-    fetchHistory,
+    fetchHistory
   }
 }

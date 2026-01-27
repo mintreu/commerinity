@@ -25,8 +25,7 @@ onMounted(async () => {
       fetchSummary(),
       fetchCommissions()
     ])
-  }
-  catch {
+  } catch {
     toast.add({
       title: 'Error',
       description: 'Failed to load earnings data',
@@ -110,12 +109,22 @@ const statusOptions = [
   <div class="max-w-6xl mx-auto space-y-6">
     <!-- Page Header -->
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Earnings</h1>
-      <p class="text-gray-500 dark:text-gray-400">Track your commissions and earnings history</p>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        My Earnings
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400">
+        Track your commissions and earnings history
+      </p>
     </div>
 
-    <div v-if="isLoading && !summary" class="flex justify-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary-500" />
+    <div
+      v-if="isLoading && !summary"
+      class="flex justify-center py-12"
+    >
+      <UIcon
+        name="i-lucide-loader-2"
+        class="w-8 h-8 animate-spin text-primary-500"
+      />
     </div>
 
     <template v-else>
@@ -124,44 +133,76 @@ const statusOptions = [
         <div class="glass-card p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-              <UIcon name="i-lucide-indian-rupee" class="w-5 h-5 text-green-600 dark:text-green-400" />
+              <UIcon
+                name="i-lucide-indian-rupee"
+                class="w-5 h-5 text-green-600 dark:text-green-400"
+              />
             </div>
           </div>
-          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary?.total_earnings_formatted || '₹0.00' }}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">Total Earned</div>
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ summary?.total_earnings_formatted || '₹0.00' }}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Total Earned
+          </div>
         </div>
 
         <div class="glass-card p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-              <UIcon name="i-lucide-calendar" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-5 h-5 text-blue-600 dark:text-blue-400"
+              />
             </div>
-            <UBadge v-if="summary?.growth_percent" :color="summary.growth_percent >= 0 ? 'success' : 'error'" size="xs">
+            <UBadge
+              v-if="summary?.growth_percent"
+              :color="summary.growth_percent >= 0 ? 'success' : 'error'"
+              size="xs"
+            >
               {{ summary.growth_percent >= 0 ? '+' : '' }}{{ summary.growth_percent }}%
             </UBadge>
           </div>
-          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary?.this_month_earnings_formatted || '₹0.00' }}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">This Month</div>
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ summary?.this_month_earnings_formatted || '₹0.00' }}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            This Month
+          </div>
         </div>
 
         <div class="glass-card p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-              <UIcon name="i-lucide-clock" class="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <UIcon
+                name="i-lucide-clock"
+                class="w-5 h-5 text-amber-600 dark:text-amber-400"
+              />
             </div>
           </div>
-          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary?.pending_earnings_formatted || '₹0.00' }}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">Pending</div>
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ summary?.pending_earnings_formatted || '₹0.00' }}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Pending
+          </div>
         </div>
 
         <div class="glass-card p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
-              <UIcon name="i-lucide-hash" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <UIcon
+                name="i-lucide-hash"
+                class="w-5 h-5 text-purple-600 dark:text-purple-400"
+              />
             </div>
           </div>
-          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ summary?.total_commissions || 0 }}</div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">Total Commissions</div>
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ summary?.total_commissions || 0 }}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">
+            Total Commissions
+          </div>
         </div>
       </div>
 
@@ -174,7 +215,10 @@ const statusOptions = [
       />
 
       <!-- History Tab -->
-      <div v-if="activeTab === 'history'" class="space-y-4">
+      <div
+        v-if="activeTab === 'history'"
+        class="space-y-4"
+      >
         <!-- Filters -->
         <div class="glass-card p-4">
           <div class="flex flex-wrap gap-4">
@@ -195,8 +239,14 @@ const statusOptions = [
         </div>
 
         <!-- Commission List -->
-        <div v-if="isLoading" class="flex justify-center py-8">
-          <UIcon name="i-lucide-loader-2" class="w-6 h-6 animate-spin text-primary-500" />
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-8"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="w-6 h-6 animate-spin text-primary-500"
+          />
         </div>
 
         <template v-else-if="commissions.length > 0">
@@ -207,12 +257,22 @@ const statusOptions = [
           >
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-                <UIcon :name="getTypeIcon(commission.type)" class="w-6 h-6 text-green-600 dark:text-green-400" />
+                <UIcon
+                  :name="getTypeIcon(commission.type)"
+                  class="w-6 h-6 text-green-600 dark:text-green-400"
+                />
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="font-semibold text-gray-900 dark:text-white">{{ commission.type_label }}</h3>
-                  <UBadge :color="getStatusColor(commission.status)" size="xs">{{ commission.status_label }}</UBadge>
+                  <h3 class="font-semibold text-gray-900 dark:text-white">
+                    {{ commission.type_label }}
+                  </h3>
+                  <UBadge
+                    :color="getStatusColor(commission.status)"
+                    size="xs"
+                  >
+                    {{ commission.status_label }}
+                  </UBadge>
                 </div>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                   <span v-if="commission.from_user">From {{ commission.from_user.name }} &bull; </span>
@@ -220,14 +280,24 @@ const statusOptions = [
                 </p>
               </div>
               <div class="text-right">
-                <div class="text-lg font-bold text-green-600 dark:text-green-400">{{ commission.net_amount_formatted }}</div>
-                <div v-if="commission.level" class="text-xs text-gray-500 dark:text-gray-400">Level {{ commission.level }}</div>
+                <div class="text-lg font-bold text-green-600 dark:text-green-400">
+                  {{ commission.net_amount_formatted }}
+                </div>
+                <div
+                  v-if="commission.level"
+                  class="text-xs text-gray-500 dark:text-gray-400"
+                >
+                  Level {{ commission.level }}
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Pagination -->
-          <div v-if="commissionsMeta && commissionsMeta.last_page > 1" class="flex justify-center pt-4">
+          <div
+            v-if="commissionsMeta && commissionsMeta.last_page > 1"
+            class="flex justify-center pt-4"
+          >
             <UPagination
               :model-value="commissionsMeta.current_page"
               :total="commissionsMeta.total"
@@ -237,27 +307,62 @@ const statusOptions = [
           </div>
         </template>
 
-        <div v-else class="glass-card p-8">
+        <div
+          v-else
+          class="glass-card p-8"
+        >
           <!-- Show empty chart with zero values -->
           <div class="text-center py-8">
             <div class="h-48 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl flex flex-col items-center justify-center mb-4">
-              <UIcon name="i-lucide-bar-chart-3" class="w-16 h-16 text-green-300 dark:text-green-700 mb-3" />
+              <UIcon
+                name="i-lucide-bar-chart-3"
+                class="w-16 h-16 text-green-300 dark:text-green-700 mb-3"
+              />
               <div class="flex items-end gap-1 h-16">
-                <div class="w-8 bg-green-200 dark:bg-green-800 rounded-t" style="height: 20%" />
-                <div class="w-8 bg-green-200 dark:bg-green-800 rounded-t" style="height: 15%" />
-                <div class="w-8 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
-                <div class="w-8 bg-green-200 dark:bg-green-800 rounded-t" style="height: 5%" />
-                <div class="w-8 bg-green-200 dark:bg-green-800 rounded-t" style="height: 0%" />
-                <div class="w-8 bg-green-200 dark:bg-green-800 rounded-t" style="height: 0%" />
+                <div
+                  class="w-8 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 20%"
+                />
+                <div
+                  class="w-8 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 15%"
+                />
+                <div
+                  class="w-8 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
+                <div
+                  class="w-8 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 5%"
+                />
+                <div
+                  class="w-8 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 0%"
+                />
+                <div
+                  class="w-8 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 0%"
+                />
               </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Commissions Yet</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              No Commissions Yet
+            </h3>
             <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
               Start building your network and earning commissions. Your earnings chart will appear here.
             </p>
-            <NuxtLink to="/network" class="mt-4 inline-block">
-              <UButton color="primary" variant="soft">
-                <UIcon name="i-lucide-users" class="w-4 h-4 mr-2" />
+            <NuxtLink
+              to="/network"
+              class="mt-4 inline-block"
+            >
+              <UButton
+                color="primary"
+                variant="soft"
+              >
+                <UIcon
+                  name="i-lucide-users"
+                  class="w-4 h-4 mr-2"
+                />
                 Build Your Network
               </UButton>
             </NuxtLink>
@@ -266,9 +371,18 @@ const statusOptions = [
       </div>
 
       <!-- By Type Tab -->
-      <div v-if="activeTab === 'by-type'" class="space-y-4">
-        <div v-if="isLoading" class="flex justify-center py-8">
-          <UIcon name="i-lucide-loader-2" class="w-6 h-6 animate-spin text-primary-500" />
+      <div
+        v-if="activeTab === 'by-type'"
+        class="space-y-4"
+      >
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-8"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="w-6 h-6 animate-spin text-primary-500"
+          />
         </div>
 
         <template v-else-if="byType.length > 0">
@@ -280,21 +394,33 @@ const statusOptions = [
             >
               <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-                  <UIcon :name="getTypeIcon(item.type)" class="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  <UIcon
+                    :name="getTypeIcon(item.type)"
+                    class="w-6 h-6 text-primary-600 dark:text-primary-400"
+                  />
                 </div>
                 <div class="flex-1">
-                  <h3 class="font-semibold text-gray-900 dark:text-white">{{ item.type_label }}</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{{ item.count }} commissions</p>
+                  <h3 class="font-semibold text-gray-900 dark:text-white">
+                    {{ item.type_label }}
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ item.count }} commissions
+                  </p>
                 </div>
                 <div class="text-right">
-                  <div class="text-xl font-bold text-green-600 dark:text-green-400">{{ item.total_formatted }}</div>
+                  <div class="text-xl font-bold text-green-600 dark:text-green-400">
+                    {{ item.total_formatted }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </template>
 
-        <div v-else class="glass-card p-8">
+        <div
+          v-else
+          class="glass-card p-8"
+        >
           <!-- Show empty pie chart placeholder -->
           <div class="text-center py-8">
             <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 flex items-center justify-center">
@@ -302,7 +428,9 @@ const statusOptions = [
                 <span class="text-2xl font-bold text-gray-400 dark:text-gray-500">0%</span>
               </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Commission Breakdown</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              No Commission Breakdown
+            </h3>
             <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
               Your commission types will be shown here once you start earning.
             </p>
@@ -311,9 +439,18 @@ const statusOptions = [
       </div>
 
       <!-- Monthly Tab -->
-      <div v-if="activeTab === 'monthly'" class="space-y-4">
-        <div v-if="isLoading" class="flex justify-center py-8">
-          <UIcon name="i-lucide-loader-2" class="w-6 h-6 animate-spin text-primary-500" />
+      <div
+        v-if="activeTab === 'monthly'"
+        class="space-y-4"
+      >
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-8"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="w-6 h-6 animate-spin text-primary-500"
+          />
         </div>
 
         <template v-else-if="monthly.length > 0">
@@ -324,7 +461,9 @@ const statusOptions = [
                 :key="item.period"
                 class="flex items-center gap-4"
               >
-                <div class="w-20 text-sm font-medium text-gray-600 dark:text-gray-300">{{ item.period }}</div>
+                <div class="w-20 text-sm font-medium text-gray-600 dark:text-gray-300">
+                  {{ item.period }}
+                </div>
                 <div class="flex-1">
                   <div class="h-8 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
                     <div
@@ -334,25 +473,50 @@ const statusOptions = [
                   </div>
                 </div>
                 <div class="w-28 text-right">
-                  <div class="font-semibold text-gray-900 dark:text-white">{{ item.total_formatted }}</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400">{{ item.count }} commissions</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">
+                    {{ item.total_formatted }}
+                  </div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    {{ item.count }} commissions
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </template>
 
-        <div v-else class="glass-card p-8">
+        <div
+          v-else
+          class="glass-card p-8"
+        >
           <!-- Show empty monthly chart placeholder -->
           <div class="text-center py-8">
             <div class="h-32 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl flex items-center justify-center mb-4">
               <div class="flex items-end gap-2 h-20">
-                <div class="w-10 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
-                <div class="w-10 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
-                <div class="w-10 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
-                <div class="w-10 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
-                <div class="w-10 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
-                <div class="w-10 bg-green-200 dark:bg-green-800 rounded-t" style="height: 10%" />
+                <div
+                  class="w-10 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
+                <div
+                  class="w-10 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
+                <div
+                  class="w-10 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
+                <div
+                  class="w-10 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
+                <div
+                  class="w-10 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
+                <div
+                  class="w-10 bg-green-200 dark:bg-green-800 rounded-t"
+                  style="height: 10%"
+                />
               </div>
             </div>
             <div class="flex justify-center gap-4 text-xs text-gray-400 dark:text-gray-500 mb-4">
@@ -363,7 +527,9 @@ const statusOptions = [
               <span>May</span>
               <span>Jun</span>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Monthly Data Yet</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              No Monthly Data Yet
+            </h3>
             <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
               Your monthly earnings trend will be displayed here as you earn commissions.
             </p>
@@ -373,5 +539,3 @@ const statusOptions = [
     </template>
   </div>
 </template>
-
-

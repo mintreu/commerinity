@@ -106,7 +106,7 @@ const chartOptions = computed(() => {
           usePointStyle: true,
           padding: 20,
           font: {
-            family: "'Plus Jakarta Sans', sans-serif",
+            family: '\'Plus Jakarta Sans\', sans-serif',
             size: 12
           }
         }
@@ -124,8 +124,14 @@ defineExpose({ refresh: loadData })
 
 <template>
   <div class="flex flex-col h-full">
-    <div v-if="showControls" class="flex items-center justify-between mb-4">
-      <h3 v-if="title" class="text-sm font-semibold text-slate-900 dark:text-white">
+    <div
+      v-if="showControls"
+      class="flex items-center justify-between mb-4"
+    >
+      <h3
+        v-if="title"
+        class="text-sm font-semibold text-slate-900 dark:text-white"
+      >
         {{ title }}
       </h3>
       <div class="flex p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
@@ -145,32 +151,78 @@ defineExpose({ refresh: loadData })
       </div>
     </div>
 
-    <div class="relative flex-1 min-h-[160px]" :style="{ height: height ? (typeof height === 'number' ? `${height}px` : height) : '100%' }">
+    <div
+      class="relative flex-1 min-h-[160px]"
+      :style="{ height: height ? (typeof height === 'number' ? `${height}px` : height) : '100%' }"
+    >
       <!-- Loading State -->
-      <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 z-10 rounded-xl overflow-hidden backdrop-blur-sm">
-        <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-primary-500 animate-spin" />
+      <div
+        v-if="loading"
+        class="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 z-10 rounded-xl overflow-hidden backdrop-blur-sm"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="w-8 h-8 text-primary-500 animate-spin"
+        />
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-        <UIcon name="i-lucide-alert-circle" class="w-8 h-8 text-red-400 mb-2" />
-        <p class="text-sm text-slate-600 dark:text-slate-400">{{ error }}</p>
-        <UButton size="xs" variant="soft" color="primary" class="mt-2" @click="loadData">
+      <div
+        v-else-if="error"
+        class="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+      >
+        <UIcon
+          name="i-lucide-alert-circle"
+          class="w-8 h-8 text-red-400 mb-2"
+        />
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          {{ error }}
+        </p>
+        <UButton
+          size="xs"
+          variant="soft"
+          color="primary"
+          class="mt-2"
+          @click="loadData"
+        >
           Retry
         </UButton>
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="!chartData.labels?.length" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-        <UIcon name="i-lucide-bar-chart-3" class="w-10 h-10 text-slate-300 mb-2" />
-        <p class="text-sm text-slate-500">No data available for this period</p>
+      <div
+        v-else-if="!chartData.labels?.length"
+        class="absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+      >
+        <UIcon
+          name="i-lucide-bar-chart-3"
+          class="w-10 h-10 text-slate-300 mb-2"
+        />
+        <p class="text-sm text-slate-500">
+          No data available for this period
+        </p>
       </div>
 
       <!-- Chart -->
-      <div v-else class="h-full w-full">
-        <Line v-if="type === 'line'" :data="chartData" :options="chartOptions" />
-        <Bar v-else-if="type === 'bar'" :data="chartData" :options="chartOptions" />
-        <Doughnut v-else-if="type === 'doughnut' || type === 'pie'" :data="chartData" :options="chartOptions" />
+      <div
+        v-else
+        class="h-full w-full"
+      >
+        <Line
+          v-if="type === 'line'"
+          :data="chartData"
+          :options="chartOptions"
+        />
+        <Bar
+          v-else-if="type === 'bar'"
+          :data="chartData"
+          :options="chartOptions"
+        />
+        <Doughnut
+          v-else-if="type === 'doughnut' || type === 'pie'"
+          :data="chartData"
+          :options="chartOptions"
+        />
       </div>
     </div>
   </div>

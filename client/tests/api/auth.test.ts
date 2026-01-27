@@ -20,7 +20,7 @@ const demoUsers = {
 }
 
 // Helper to login and get token
-async function login(email: string, password: string): Promise<{ ok: boolean; token?: string; status: number }> {
+async function login(email: string, password: string): Promise<{ ok: boolean, token?: string, status: number }> {
   const response = await fetch(`${apiBase}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -39,11 +39,11 @@ async function login(email: string, password: string): Promise<{ ok: boolean; to
 }
 
 // Helper to get user data (unwraps Laravel JsonResource's data wrapper)
-async function getUser(token: string): Promise<{ ok: boolean; user?: any }> {
+async function getUser(token: string): Promise<{ ok: boolean, user?: any }> {
   const response = await fetch(`${apiBase}/api/user`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json'
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
     }
   })
 
@@ -146,7 +146,7 @@ describe('Authentication API', () => {
 
     it('should reject without token', async () => {
       const response = await fetch(`${apiBase}/api/user`, {
-        headers: { 'Accept': 'application/json' }
+        headers: { Accept: 'application/json' }
       })
 
       expect(response.ok).toBe(false)
@@ -156,8 +156,8 @@ describe('Authentication API', () => {
     it('should reject with invalid token', async () => {
       const response = await fetch(`${apiBase}/api/user`, {
         headers: {
-          'Authorization': 'Bearer invalid-token',
-          'Accept': 'application/json'
+          Authorization: 'Bearer invalid-token',
+          Accept: 'application/json'
         }
       })
 
@@ -177,8 +177,8 @@ describe('Authentication API', () => {
       const logoutResponse = await fetch(`${apiBase}/api/auth/logout`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json'
         }
       })
 
@@ -187,8 +187,8 @@ describe('Authentication API', () => {
       // Try to use the token again - should fail
       const userResponse = await fetch(`${apiBase}/api/user`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json'
         }
       })
 

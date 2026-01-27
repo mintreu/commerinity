@@ -264,23 +264,41 @@ function formatDob(dob: string | null | undefined): string {
       </div>
 
       <!-- Loading State -->
-      <div v-if="status === 'pending'" class="flex justify-center py-12">
-        <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin text-primary" />
+      <div
+        v-if="status === 'pending'"
+        class="flex justify-center py-12"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="w-8 h-8 animate-spin text-primary"
+        />
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12">
-        <UIcon name="i-lucide-alert-circle" class="w-16 h-16 mx-auto text-red-500 mb-4" />
+      <div
+        v-else-if="error"
+        class="text-center py-12"
+      >
+        <UIcon
+          name="i-lucide-alert-circle"
+          class="w-16 h-16 mx-auto text-red-500 mb-4"
+        />
         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
           Position not found
         </h3>
-        <UButton to="/career" variant="outline">
+        <UButton
+          to="/career"
+          variant="outline"
+        >
           Browse Open Positions
         </UButton>
       </div>
 
       <!-- Application Form -->
-      <div v-else-if="recruitment?.data" class="space-y-6">
+      <div
+        v-else-if="recruitment?.data"
+        class="space-y-6"
+      >
         <!-- Job Header Card -->
         <UCard :ui="{ root: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white' }">
           <div class="flex items-start justify-between">
@@ -290,20 +308,34 @@ function formatDob(dob: string | null | undefined): string {
               </h1>
               <div class="flex flex-wrap gap-3 text-sm text-white/80">
                 <span class="flex items-center gap-1">
-                  <UIcon name="i-lucide-briefcase" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-briefcase"
+                    class="w-4 h-4"
+                  />
                   {{ recruitment.data.role_label }}
                 </span>
                 <span class="flex items-center gap-1">
-                  <UIcon name="i-lucide-clock" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-clock"
+                    class="w-4 h-4"
+                  />
                   {{ recruitment.data.employment_type_label }}
                 </span>
                 <span class="flex items-center gap-1">
-                  <UIcon name="i-lucide-map-pin" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-map-pin"
+                    class="w-4 h-4"
+                  />
                   {{ recruitment.data.location }}
                 </span>
               </div>
             </div>
-            <UBadge v-if="recruitment.data.is_payable" color="warning" variant="solid" size="lg">
+            <UBadge
+              v-if="recruitment.data.is_payable"
+              color="warning"
+              variant="solid"
+              size="lg"
+            >
               Fee: {{ recruitment.data.fees_formatted }}
             </UBadge>
           </div>
@@ -323,7 +355,10 @@ function formatDob(dob: string | null | undefined): string {
           <template #header>
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-user" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <UIcon
+                  name="i-lucide-user"
+                  class="w-5 h-5 text-blue-600 dark:text-blue-400"
+                />
               </div>
               <div>
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -378,8 +413,14 @@ function formatDob(dob: string | null | undefined): string {
 
           <template #footer>
             <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <UIcon name="i-lucide-info" class="w-4 h-4" />
-              <span>Need to update your profile? <NuxtLink to="/profile/edit" class="text-blue-600 dark:text-blue-400 hover:underline">Edit Profile</NuxtLink></span>
+              <UIcon
+                name="i-lucide-info"
+                class="w-4 h-4"
+              />
+              <span>Need to update your profile? <NuxtLink
+                to="/profile/edit"
+                class="text-blue-600 dark:text-blue-400 hover:underline"
+              >Edit Profile</NuxtLink></span>
             </div>
           </template>
         </UCard>
@@ -390,7 +431,10 @@ function formatDob(dob: string | null | undefined): string {
             <div class="flex items-start justify-between gap-4">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                  <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <UIcon
+                    name="i-lucide-map-pin"
+                    class="w-5 h-5 text-green-600 dark:text-green-400"
+                  />
                 </div>
                 <div>
                   <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -413,7 +457,10 @@ function formatDob(dob: string | null | undefined): string {
             </div>
           </template>
 
-          <div v-if="addresses.length" class="space-y-4">
+          <div
+            v-if="addresses.length"
+            class="space-y-4"
+          >
             <!-- Address Selector -->
             <UFormField
               label="Select Address"
@@ -437,7 +484,10 @@ function formatDob(dob: string | null | undefined): string {
               class="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl"
             >
               <div class="flex items-start gap-3">
-                <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5"
+                />
                 <div>
                   <p class="font-medium text-gray-900 dark:text-white mb-1">
                     {{ selectedAddress.label }}
@@ -459,7 +509,11 @@ function formatDob(dob: string | null | undefined): string {
             description="You need to add an address before applying for this position."
           >
             <template #actions>
-              <UButton to="/addresses" size="sm" color="warning">
+              <UButton
+                to="/addresses"
+                size="sm"
+                color="warning"
+              >
                 Add Address
               </UButton>
             </template>
@@ -471,7 +525,10 @@ function formatDob(dob: string | null | undefined): string {
           <template #header>
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                <UIcon name="i-lucide-file-text" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <UIcon
+                  name="i-lucide-file-text"
+                  class="w-5 h-5 text-purple-600 dark:text-purple-400"
+                />
               </div>
               <div>
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -484,7 +541,10 @@ function formatDob(dob: string | null | undefined): string {
             </div>
           </template>
 
-          <form class="space-y-6" @submit.prevent="submitApplication">
+          <form
+            class="space-y-6"
+            @submit.prevent="submitApplication"
+          >
             <!-- Guardian Name -->
             <UFormField
               label="Guardian/Parent Name"
@@ -528,7 +588,10 @@ function formatDob(dob: string | null | undefined): string {
                 </UButton>
               </div>
 
-              <div v-if="educations.length" class="space-y-4">
+              <div
+                v-if="educations.length"
+                class="space-y-4"
+              >
                 <div
                   v-for="(edu, idx) in educations"
                   :key="idx"
@@ -575,7 +638,10 @@ function formatDob(dob: string | null | undefined): string {
                 </div>
               </div>
 
-              <p v-else class="text-sm text-gray-500 dark:text-gray-400 italic">
+              <p
+                v-else
+                class="text-sm text-gray-500 dark:text-gray-400 italic"
+              >
                 No education added. Click "Add Education" to include your qualifications.
               </p>
             </div>
@@ -603,7 +669,10 @@ function formatDob(dob: string | null | undefined): string {
                 </UButton>
               </div>
 
-              <div v-if="skills.length" class="space-y-4">
+              <div
+                v-if="skills.length"
+                class="space-y-4"
+              >
                 <div
                   v-for="(skill, idx) in skills"
                   :key="idx"
@@ -642,7 +711,10 @@ function formatDob(dob: string | null | undefined): string {
                 </div>
               </div>
 
-              <p v-else class="text-sm text-gray-500 dark:text-gray-400 italic">
+              <p
+                v-else
+                class="text-sm text-gray-500 dark:text-gray-400 italic"
+              >
                 No skills added. Click "Add Skill" to showcase your abilities.
               </p>
             </div>
@@ -708,7 +780,10 @@ function formatDob(dob: string | null | undefined): string {
                 :loading="submitting"
                 :disabled="!addresses.length"
               >
-                <UIcon name="i-lucide-send" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-send"
+                  class="w-4 h-4 mr-2"
+                />
                 {{ recruitment.data.is_payable ? 'Submit & Proceed to Payment' : 'Submit Application' }}
               </UButton>
             </div>

@@ -106,7 +106,7 @@ export function useComprehensiveSeo(options: SeoOptions) {
       meta.push({ property: 'article:section', content: options.article.section })
     }
     if (options.article.tags) {
-      options.article.tags.forEach(tag => {
+      options.article.tags.forEach((tag) => {
         meta.push({ property: 'article:tag', content: tag })
       })
     }

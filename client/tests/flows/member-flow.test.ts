@@ -23,7 +23,7 @@ const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
 const VALID_STATUS = [200, 404, 500]
 
 // Helper function to login
-async function login(email: string, password: string): Promise<{ ok: boolean; token?: string }> {
+async function login(email: string, password: string): Promise<{ ok: boolean, token?: string }> {
   const response = await fetch(`${apiBase}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -41,8 +41,8 @@ async function login(email: string, password: string): Promise<{ ok: boolean; to
 async function getUser(token: string): Promise<any> {
   const response = await fetch(`${apiBase}/api/user`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json'
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
     }
   })
   const json = await response.json()
@@ -94,8 +94,8 @@ describe('Member User Complete Flow', () => {
     it('should fetch dashboard summary', async () => {
       const response = await fetch(`${apiBase}/api/trends/dashboard`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -107,8 +107,8 @@ describe('Member User Complete Flow', () => {
     it('should view wallet balance', async () => {
       const response = await fetch(`${apiBase}/api/wallet/balance`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -124,8 +124,8 @@ describe('Member User Complete Flow', () => {
     it('should view transaction history', async () => {
       const response = await fetch(`${apiBase}/api/wallet/transactions`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -137,8 +137,8 @@ describe('Member User Complete Flow', () => {
     it('should view Affiliate stats', async () => {
       const response = await fetch(`${apiBase}/api/affiliate/stats`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -148,8 +148,8 @@ describe('Member User Complete Flow', () => {
     it('should view team members (children)', async () => {
       const response = await fetch(`${apiBase}/api/affiliate/children`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -161,8 +161,8 @@ describe('Member User Complete Flow', () => {
     it('should view commission summary', async () => {
       const response = await fetch(`${apiBase}/api/commissions/summary`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -172,8 +172,8 @@ describe('Member User Complete Flow', () => {
     it('should view commission history', async () => {
       const response = await fetch(`${apiBase}/api/commissions`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -191,8 +191,8 @@ describe('Member User Complete Flow', () => {
     it('should get onboarding status', async () => {
       const response = await fetch(`${apiBase}/api/onboarding/status`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 
@@ -204,8 +204,8 @@ describe('Member User Complete Flow', () => {
     it('should view addresses', async () => {
       const response = await fetch(`${apiBase}/api/addresses`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Accept': 'application/json'
+          Authorization: `Bearer ${authToken}`,
+          Accept: 'application/json'
         }
       })
 

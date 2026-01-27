@@ -36,6 +36,7 @@ interface Props {
   priceMax?: number | null
   selectedFilterOptions?: Record<string, number[]>
   loading?: boolean
+  showSort?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,7 +46,8 @@ const props = withDefaults(defineProps<Props>(), {
   priceMin: null,
   priceMax: null,
   selectedFilterOptions: () => ({}),
-  loading: false
+  loading: false,
+  showSort: true
 })
 
 const emit = defineEmits<{
@@ -62,10 +64,19 @@ const localPriceMin = ref(props.priceMin)
 const localPriceMax = ref(props.priceMax)
 const sortValue = ref(props.selectedSort)
 const localFilterOptions = ref<Record<string, number[]>>({ ...props.selectedFilterOptions })
+const syncingPriceFromProps = ref(false)
 
 // Sync with props
-watch(() => props.priceMin, (val) => { localPriceMin.value = val })
-watch(() => props.priceMax, (val) => { localPriceMax.value = val })
+watch(() => props.priceMin, (val) => {
+  syncingPriceFromProps.value = true
+  localPriceMin.value = val
+  syncingPriceFromProps.value = false
+})
+watch(() => props.priceMax, (val) => {
+  syncingPriceFromProps.value = true
+  localPriceMax.value = val
+  syncingPriceFromProps.value = false
+})
 watch(() => props.selectedSort, (val) => { sortValue.value = val })
 watch(() => props.selectedFilterOptions, (val) => { localFilterOptions.value = { ...val } }, { deep: true })
 
@@ -80,9 +91,11 @@ const applyPriceFilter = () => {
 const clearAllFilters = () => {
   localPriceMin.value = null
   localPriceMax.value = null
-  sortValue.value = 'popularity'
+  if (props.showSort) {
+    sortValue.value = 'popularity'
+    emit('update:selectedSort', 'popularity')
+  }
   localFilterOptions.value = {}
-  emit('update:selectedSort', 'popularity')
   emit('update:priceMin', null)
   emit('update:priceMax', null)
   emit('update:selectedFilterOptions', {})
@@ -118,33 +131,46 @@ const isOptionSelected = (filterName: string, optionId: number): boolean => {
   return (localFilterOptions.value[filterName] || []).includes(optionId)
 }
 
-// Predefined price ranges
-const quickPriceRanges = computed(() => {
-  if (!props.filters?.price_range) return []
-  const max = props.filters.price_range.max
-  const ranges = []
-
-  if (max > 500) ranges.push({ label: 'Under ₹500', min: 0, max: 500 })
-  if (max > 1000) ranges.push({ label: '₹500 - ₹1000', min: 500, max: 1000 })
-  if (max > 2000) ranges.push({ label: '₹1000 - ₹2000', min: 1000, max: 2000 })
-  if (max > 5000) ranges.push({ label: '₹2000 - ₹5000', min: 2000, max: 5000 })
-  if (max > 5000) ranges.push({ label: 'Above ₹5000', min: 5000, max: null })
-
-  return ranges
+const rupeeFormatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  maximumFractionDigits: 2
 })
 
-const applyQuickPrice = (min: number, max: number | null) => {
-  localPriceMin.value = min
-  localPriceMax.value = max
-  applyPriceFilter()
-}
+const priceRangeLimits = computed(() => {
+  const min = (props.filters?.price_range?.min ?? 0) / 100
+  let max = (props.filters?.price_range?.max ?? 0) / 100
+  if (max < min) {
+    max = min
+  }
+  return { min, max }
+})
+
+const formatCurrencyValue = (value: number) => rupeeFormatter.format(value / 100)
+const formatSliderValue = (value: number) => rupeeFormatter.format(value)
+
+const priceRangeValue = computed<[number, number]>({
+  get() {
+    return [
+      localPriceMin.value ?? priceRangeLimits.value.min,
+      localPriceMax.value ?? priceRangeLimits.value.max
+    ]
+  },
+  set([min, max]) {
+    localPriceMin.value = min
+    localPriceMax.value = max
+    emit('update:priceMin', min)
+    emit('update:priceMax', max)
+    emit('applyFilters')
+  }
+})
 
 // Check if any filter is active
 const hasActiveFilters = computed(() => {
-  return props.priceMin !== null ||
-    props.priceMax !== null ||
-    props.selectedSort !== 'popularity' ||
-    Object.keys(localFilterOptions.value).length > 0
+  return props.priceMin !== null
+    || props.priceMax !== null
+    || props.selectedSort !== 'popularity'
+    || Object.keys(localFilterOptions.value).length > 0
 })
 
 // Get count of selected filter options
@@ -154,13 +180,19 @@ const selectedFilterCount = computed(() => {
 </script>
 
 <template>
-  <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg">
+  <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg flex flex-col h-full lg:max-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-6rem)]">
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-slate-200/50 dark:border-slate-700/50">
       <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-        <UIcon name="i-lucide-filter" class="w-5 h-5 text-primary-500" />
+        <UIcon
+          name="i-lucide-filter"
+          class="w-5 h-5 text-primary-500"
+        />
         Filters
-        <span v-if="selectedFilterCount" class="ml-1 px-2 py-0.5 text-xs bg-primary-500 text-white rounded-full">
+        <span
+          v-if="selectedFilterCount"
+          class="ml-1 px-2 py-0.5 text-xs bg-primary-500 text-white rounded-full"
+        >
           {{ selectedFilterCount }}
         </span>
       </h3>
@@ -173,9 +205,9 @@ const selectedFilterCount = computed(() => {
       </button>
     </div>
 
-    <div class="p-4 space-y-6 max-h-[70vh] overflow-y-auto">
+    <div class="p-4 space-y-6 overflow-y-auto flex-1 max-h-[70vh] lg:max-h-[calc(100vh-4rem)]">
       <!-- Sort Options -->
-      <div>
+      <div v-if="props.showSort">
         <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">
           Sort By
         </h4>
@@ -201,27 +233,28 @@ const selectedFilterCount = computed(() => {
         <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">
           Price Range
         </h4>
-
-        <!-- Quick Price Filters (Flipkart style) -->
-        <div class="space-y-2 mb-4">
-          <button
-            v-for="range in quickPriceRanges"
-            :key="range.label"
-            :class="[
-              'w-full text-left px-3 py-2 rounded-lg text-sm transition-all border',
-              localPriceMin === range.min && localPriceMax === range.max
-                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary-300'
-            ]"
-            @click="applyQuickPrice(range.min, range.max)"
-          >
-            {{ range.label }}
-          </button>
+        <div class="pb-3">
+          <USlider
+            v-model="priceRangeValue"
+            :min="priceRangeLimits.min"
+            :max="priceRangeLimits.max"
+            range
+            thumbs-size="lg"
+            color="primary"
+            step="0.01"
+            class="h-2 [&_track]:bg-gradient-to-r [&_track]:from-slate-200 [&_track]:to-slate-300 [&_thumb]:bg-gradient-to-r [&_thumb]:from-primary-500 [&_thumb]:to-primary-600 [&_thumb]:shadow-lg [&_thumb]:ring-4 [&_thumb]:ring-white/50"
+          />
+          <div class="flex justify-between text-xs text-slate-500 mt-2 px-1">
+            {{ formatSliderValue(localPriceMin ?? priceRangeLimits.min) }} - {{ formatSliderValue(localPriceMax ?? priceRangeLimits.max) }}
+          </div>
         </div>
+
 
         <!-- Custom Price Input -->
         <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Custom Range</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+            Custom Range
+          </p>
           <div class="flex items-center gap-2">
             <UInput
               v-model.number="localPriceMin"
@@ -253,23 +286,45 @@ const selectedFilterCount = computed(() => {
         </div>
 
         <!-- Price Range Display -->
-        <p class="text-xs text-slate-400 mt-2">
-          Range: ₹{{ filters.price_range.min }} - ₹{{ filters.price_range.max }}
-        </p>
+          <p class="text-xs text-slate-400 mt-2">
+            Range: {{ formatCurrencyValue(filters.price_range.min) }} - {{ formatCurrencyValue(filters.price_range.max) }}
+          </p>
       </div>
 
       <!-- Dynamic Filter Options (Color, Size, etc.) - Flipkart Style -->
-      <div v-for="filterGroup in filters?.filter_options || []" :key="filterGroup.name">
+      <div
+        v-for="filterGroup in filters?.filter_options || []"
+        :key="filterGroup.name"
+      >
         <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide flex items-center gap-2">
-          <UIcon v-if="filterGroup.name.toLowerCase() === 'color'" name="i-lucide-palette" class="w-4 h-4" />
-          <UIcon v-else-if="filterGroup.name.toLowerCase() === 'size'" name="i-lucide-ruler" class="w-4 h-4" />
-          <UIcon v-else-if="filterGroup.name.toLowerCase() === 'weight'" name="i-lucide-weight" class="w-4 h-4" />
-          <UIcon v-else name="i-lucide-tag" class="w-4 h-4" />
+          <UIcon
+            v-if="filterGroup.name.toLowerCase() === 'color'"
+            name="i-lucide-palette"
+            class="w-4 h-4"
+          />
+          <UIcon
+            v-else-if="filterGroup.name.toLowerCase() === 'size'"
+            name="i-lucide-ruler"
+            class="w-4 h-4"
+          />
+          <UIcon
+            v-else-if="filterGroup.name.toLowerCase() === 'weight'"
+            name="i-lucide-weight"
+            class="w-4 h-4"
+          />
+          <UIcon
+            v-else
+            name="i-lucide-tag"
+            class="w-4 h-4"
+          />
           {{ filterGroup.name }}
         </h4>
 
         <!-- Color Swatch Style (for color filters) -->
-        <div v-if="filterGroup.name.toLowerCase() === 'color'" class="flex flex-wrap gap-2">
+        <div
+          v-if="filterGroup.name.toLowerCase() === 'color'"
+          class="flex flex-wrap gap-2"
+        >
           <button
             v-for="option in filterGroup.options"
             :key="option.id"
@@ -288,12 +343,18 @@ const selectedFilterCount = computed(() => {
               name="i-lucide-check"
               class="w-4 h-4 text-white absolute inset-0 m-auto drop-shadow-lg"
             />
-            <span v-if="!option.swatch" class="text-xs font-bold">{{ option.value.charAt(0) }}</span>
+            <span
+              v-if="!option.swatch"
+              class="text-xs font-bold"
+            >{{ option.value.charAt(0) }}</span>
           </button>
         </div>
 
         <!-- Checkbox Style (for other filters) -->
-        <div v-else class="space-y-2">
+        <div
+          v-else
+          class="space-y-2"
+        >
           <label
             v-for="option in filterGroup.options"
             :key="option.id"
@@ -321,7 +382,10 @@ const selectedFilterCount = computed(() => {
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="space-y-3">
+      <div
+        v-if="loading"
+        class="space-y-3"
+      >
         <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
         <div class="h-8 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />
         <div class="h-8 bg-slate-200 dark:bg-slate-700 rounded animate-pulse" />

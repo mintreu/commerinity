@@ -24,7 +24,11 @@
             to="/"
             class="flex items-center gap-2 group"
           >
-            <img src="/logo.png" :alt="config.public.companyName" class="h-10 w-auto" />
+            <img
+              src="/logo.png"
+              :alt="config.public.companyName"
+              class="h-10 w-auto"
+            >
             <span class="gradient-text-primary text-lg font-bold">{{ config.public.companyName }}</span>
           </NuxtLink>
 
@@ -51,7 +55,11 @@
               to="/"
               class="flex items-center gap-3 group"
             >
-              <img src="/logo.png" :alt="config.public.companyName" class="h-10 w-auto" />
+              <img
+                src="/logo.png"
+                :alt="config.public.companyName"
+                class="h-10 w-auto"
+              >
               <div>
                 <span class="gradient-text-primary text-xl font-bold">{{ config.public.companyName }}</span>
                 <p class="text-xs text-slate-500 dark:text-slate-400 hidden lg:block">Your Shopping Destination</p>

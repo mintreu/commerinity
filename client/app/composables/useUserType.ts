@@ -22,11 +22,9 @@ export const useUserType = () => {
       )
 
       jobApplicationsCount.value = Array.isArray(response?.data) ? response.data.length : 0
-    }
-    catch {
+    } catch {
       jobApplicationsCount.value = 0
-    }
-    finally {
+    } finally {
       jobApplicationsLoading.value = false
       jobApplicationsLoaded.value = true
     }

@@ -80,29 +80,32 @@ const truncatedDescription = computed(() => {
       <img
         v-if="product.image"
         :src="product.image.thumbnail
-    || product.image.src
-    || product.image.url"
+          || product.image.src
+          || product.image.url"
         :srcset="product.image.srcset || undefined"
         :alt="product.image.alt || product.name"
         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         loading="lazy"
-      />
-
+      >
 
       <!-- Fixed Product Images View -->
-<!--      <img-->
-<!--        v-if="product.image?.src"-->
-<!--        :src="product.image.src"-->
-<!--        :srcset="product.image.srcset"-->
-<!--        :alt="product.name"-->
-<!--        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"-->
-<!--        loading="lazy"-->
-<!--      />-->
+      <!--      <img -->
+      <!--        v-if="product.image?.src" -->
+      <!--        :src="product.image.src" -->
+      <!--        :srcset="product.image.srcset" -->
+      <!--        :alt="product.name" -->
+      <!--        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" -->
+      <!--        loading="lazy" -->
+      <!--      /> -->
 
-
-
-      <div v-else class="w-full h-full flex items-center justify-center">
-        <UIcon name="i-lucide-package" class="w-16 h-16 text-slate-300 dark:text-slate-600" />
+      <div
+        v-else
+        class="w-full h-full flex items-center justify-center"
+      >
+        <UIcon
+          name="i-lucide-package"
+          class="w-16 h-16 text-slate-300 dark:text-slate-600"
+        />
       </div>
 
       <!-- Out of Stock Overlay -->
@@ -198,13 +201,19 @@ const truncatedDescription = computed(() => {
       </div>
 
       <!-- Affiliate Benefits - Only for Member/Promoter -->
-      <div v-if="canEarnAffiliateBenefits" class="mt-auto">
+      <div
+        v-if="canEarnAffiliateBenefits"
+        class="mt-auto"
+      >
         <!-- Reward Points -->
         <div
           v-if="product.reward_points > 0"
           class="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1.5 rounded-lg"
         >
-          <UIcon name="i-lucide-gift" class="w-3.5 h-3.5" />
+          <UIcon
+            name="i-lucide-gift"
+            class="w-3.5 h-3.5"
+          />
           Earn {{ product.reward_points }} points
         </div>
 
@@ -213,10 +222,16 @@ const truncatedDescription = computed(() => {
           v-if="product.bv > 0 || product.pv > 0"
           class="flex gap-1.5 text-xs mb-2"
         >
-          <span v-if="product.bv" class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded font-semibold">
+          <span
+            v-if="product.bv"
+            class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded font-semibold"
+          >
             BV: {{ product.bv }}
           </span>
-          <span v-if="product.pv" class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded font-semibold">
+          <span
+            v-if="product.pv"
+            class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded font-semibold"
+          >
             PV: {{ product.pv }}
           </span>
         </div>
@@ -231,7 +246,10 @@ const truncatedDescription = computed(() => {
       </div>
 
       <!-- Spacer for consistent card height -->
-      <div v-else class="mt-auto" />
+      <div
+        v-else
+        class="mt-auto"
+      />
 
       <!-- Add to Cart Button -->
       <UButton

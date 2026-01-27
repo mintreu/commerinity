@@ -23,6 +23,7 @@ class ProductsTable
             ->columns([
                 SpatieMediaLibraryImageColumn::make('displayImage')
                     ->label(null)->collection('displayImage')
+                    ->size('100px')
                     ->default('https://placehold.co/600x400'),
                 TextColumn::make('name')
                     ->searchable(),

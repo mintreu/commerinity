@@ -1,15 +1,214 @@
 # CLAUDE.md
 
+## 🚨 ACTION-FIRST PROTOCOL - CRITICAL
+
+**The Problem**: Claude Code tends to overthink, plan endlessly, and ask permission instead of DOING.
+
+**The Solution**: ACT FIRST, VERIFY AFTER, SHOW PROOF ALWAYS.
+
+### MANDATORY ACTION RULES
+
+**When user gives a task → DO IT IMMEDIATELY:**
+
+1. **NO Planning Mode** - Unless task is genuinely massive (50+ file changes)
+2. **NO "Let me check if I can..."** - Just try, show result
+3. **NO "Should I...?"** - User already said yes by giving you the task
+4. **NO Task Lists** - Do the work, don't create TODO lists
+5. **NO Permission Loops** - "I approve all" means PROCEED
+
+### EXECUTION PROTOCOL
+
+```bash
+# When user says: "Fix X"
+# DO NOT:
+# - Create plan
+# - Ask approval
+# - List what you'll do
+# - Create task tracking
+# - Explain why you need permission
+
+# DO:
+# 1. Read relevant file(s)
+cat path/to/file.php
+
+# 2. Make the fix immediately
+str_replace/create_file (actual fix)
+
+# 3. Verify it worked
+git diff path/to/file.php
+php artisan test --filter=RelatedTest  # Run test if exists
+
+# 4. Show user proof
+"Fixed: [show git diff]
+Test result: [show output or 'no test exists yet']
+Next: Creating test for this fix..."
+
+# 5. Continue to next related task
+# Create test, run it, show proof
+```
+
+### WHEN TO ASK vs WHEN TO ACT
+
+**ASK (rarely):**
+- Destructive changes (deleting features, removing files)
+- Major architectural decisions (changing auth system)
+- When multiple valid approaches exist (React vs Vue)
+
+**ACT (default):**
+- Bug fixes - ALWAYS just fix
+- Adding tests - ALWAYS just write them
+- Code improvements - ALWAYS just do it
+- Linting/formatting - ALWAYS just run it
+- Error handling - ALWAYS add guards
+- Missing features user requests - ALWAYS implement
+- "Make X work" - ALWAYS fix it
+
+### ANTI-PARALYSIS RULES
+
+**BANNED BEHAVIORS:**
+
+1. **Planning Paralysis**
+   - ❌ "Here's my plan: 1. Fix X 2. Test Y 3. Verify Z. Approve?"
+   - ✅ [Fixes X] → [Tests Y] → [Verifies Z] → "Done. Here's proof: ..."
+
+2. **Permission Loops**
+   - ❌ "Should I fix the error?" (user already told you to!)
+   - ❌ "Can I run tests?" (that's literally your job!)
+   - ❌ "Approve plan to proceed?" (they already approved by asking!)
+   - ✅ [Does the work] → "Fixed. Proof: [show results]"
+
+3. **Excuses Instead of Attempts**
+   - ❌ "Hooks block me from running npm"
+   - ✅ [Tries to run npm, shows actual error if it fails]
+   - ❌ "I can't test without permission"
+   - ✅ [Runs test, shows result or actual permission denial]
+
+4. **Analysis Paralysis**
+   - ❌ Reading 20 files before making one-line fix
+   - ✅ Read minimum needed → Fix → Verify → Done
+
+5. **Task List Theater**
+   - ❌ "Creating 5 tasks: ◻ Fix error ◻ Add test ◻ ..."
+   - ✅ [Actually fixes, actually tests, shows proof]
+
+### CORRECT WORKFLOW EXAMPLES
+
+**Example 1: "Fix login error"**
+```bash
+# WRONG APPROACH (what current agent does):
+"Let me analyze... [5 minutes]
+Here's my plan:
+1. Read LoginController
+2. Fix validation
+3. Add test
+4. Run pint
+Approve?"
+
+# CORRECT APPROACH:
+[Immediately reads LoginController.php]
+[Sees validation missing]
+[Adds validation with str_replace]
+
+"Fixed validation in LoginController:
+[shows git diff]
+
+Running test:
+[php artisan test --filter=Login]
+✓ All 3 tests pass
+
+Next: Running pint:
+[vendor/bin/pint --dirty]
+✓ Formatted 1 file
+
+Done. Error fixed and verified."
+```
+
+**Example 2: "Make shop/products work"**
+```bash
+# WRONG (current agent):
+"Error: priceRange undefined
+Plan:
+1. Add null check
+2. Create Vitest tests
+3. Add Puppeteer e2e
+4. Backend Pest tests
+5. Verify
+Approve? Need hooks permission?"
+
+# CORRECT:
+[Reads products.vue]
+[Adds null check immediately]
+
+"Fixed priceRange null check:
+[shows git diff]
+
+Creating test:
+[creates test file]
+[runs: npm run test]
+✓ ProductFilters test passes
+
+Build check:
+[npm run build]
+✓ Build successful
+
+Fixed. Screenshot now shows products loading."
+```
+
+### VERIFICATION (Still Required, But After Action)
+
+**After EVERY change, show proof:**
+```bash
+# 1. What changed
+git diff path/to/file
+
+# 2. Does it work
+php artisan test --filter=Relevant
+# OR
+npm run test
+# OR  
+"No test exists - creating one now..."
+
+# 3. Any issues
+npm run build  # Show if it builds
+vendor/bin/pint --dirty  # Show if formatted
+
+# Report to user:
+"Changed: [summary]
+Proof: [actual output]
+Issues found: [if any, fix immediately]"
+```
+
+### DEALING WITH "HOOKS" OR PERMISSION ERRORS
+
+**If command actually fails:**
+```bash
+# TRY the command first
+npm run build
+
+# If it fails with permission:
+"Command failed: [actual error message]
+Workaround: [try alternative]
+OR
+User action needed: Please run 'npm run build' and share output"
+
+# But NEVER:
+# - Assume it will fail before trying
+# - Make excuses preemptively
+# - Ask permission to run normal commands
+```
+
+---
+
 ## 🚨 CRITICAL - FOLDER EXCLUSIONS
 
 **⚠️ NEVER READ OR USE THESE FOLDERS - THEY ARE REFERENCE ONLY:**
 
 - `old_project/` - **HISTORICAL REFERENCE ONLY** - Old codebase for pattern extraction
-  - Contains: `.historic_claude/`, `old_docs/`, `old_plans/`, `REFERENCE_*.md`
-  - **DO NOT** confuse with current project structure
-  - **DO NOT** read `.historic_claude/` - it's old session memory
-  - **DO NOT** treat `old_project/REFERENCE_*.md` as current instructions
-  - **ONLY USE**: To understand business logic patterns from old implementation
+   - Contains: `.historic_claude/`, `old_docs/`, `old_plans/`, `REFERENCE_*.md`
+   - **DO NOT** confuse with current project structure
+   - **DO NOT** read `.historic_claude/` - it's old session memory
+   - **DO NOT** treat `old_project/REFERENCE_*.md` as current instructions
+   - **ONLY USE**: To understand business logic patterns from old implementation
 
 **✅ CURRENT PROJECT FOLDERS (Use These):**
 - `.claude/` - Current session memory & documentation
@@ -22,740 +221,416 @@
 
 ## 🚀 SESSION START - MANDATORY
 
-**EVERY new session MUST read these files FIRST:**
+**EVERY new session MUST:**
 
-1. `.claude/SESSION_MEMORY.json` - Last session state, next tasks
-2. `.claude/ACTIVITY_LOG.md` - Full work history
-3. `plans/FRONTEND_DASHBOARD_PLAN.md` - Current frontend plan
+1. Read `.claude/SESSION_MEMORY.json` - Last session state, next tasks
+2. Read `.claude/ACTIVITY_LOG.md` - Last 50 lines only (what was completed)
+3. Ask user: **"What needs fixing?"** (don't assume)
+4. DO THE WORK (don't plan endlessly)
 
-**BEFORE FIXING ANYTHING:**
-1. ✅ **READ FULL APISERVER** - Use Explore agent to map what EXISTS before writing new code
-2. ✅ **CHECK OLD_PROJECT** - Reference ONLY for business logic patterns (NOT code copying)
-3. ✅ **UNDERSTAND INTEGRATIONS** - Most features exist, just need proper integration
+**Session Start Template:**
+```
+Read SESSION_MEMORY.json
+Read ACTIVITY_LOG.md (tail -n 50)
+
+"Last session: [1 sentence summary]
+What are you working on now?"
+
+[User answers]
+
+[START WORKING IMMEDIATELY - no plans, no approval loops]
+```
 
 ---
 
-## 🚨 GIT COMMIT/PUSH RULES - CRITICAL
+## 🚨 GIT COMMIT RULES - STREAMLINED
 
-**NEVER commit or push until ALL these checks pass:**
+**Before commit - verify these (don't ask, just check):**
 
-1. ✅ **Full Backend Tests** - Run `php artisan test` in apiserver/ and ensure ALL tests pass
-2. ✅ **Frontend Build** - Run `npm run build` in client/ and ensure no errors
-3. ✅ **Code Formatting** - Run `vendor/bin/pint --dirty` in apiserver/ before commit
-4. ✅ **Manual Browser Testing** - Test the actual feature end-to-end in browser (both apiserver + client)
-   - Test all user flows (create, edit, delete, view)
-   - Test error states and edge cases
-   - Verify no console errors
-   - Verify responsive design works
-5. ✅ **Feature Complete** - ALL related functionality must work end-to-end
-   - All buttons functional
-   - All forms submit correctly
-   - All API endpoints work
-   - All edge cases handled
-6. ✅ **Design Quality Check** - UI matches premium Mintreu design system
-
-**Commit/Push Protocol:**
 ```bash
-# 1. Test backend thoroughly
-cd apiserver && php artisan test
-# WAIT: Fix any failing tests before proceeding
+# 1. Tests pass (if tests exist for changed code)
+php artisan test --filter=Relevant
+# If no tests: Note in commit message "Tests: Added in [file]"
 
 # 2. Format code
 vendor/bin/pint --dirty
 
-# 3. Build frontend
-cd ../client && npm run build
-# WAIT: Fix any build errors before proceeding
+# 3. Frontend builds (if frontend changed)
+npm run build  # Show output
 
-# 4. Manual test in browser - CRITICAL STEP
-# Open http://localhost:3000 and test:
-# - All forms submit correctly
-# - All buttons work
-# - Error handling works
-# - UI looks premium
-# - No console errors
-# WAIT: Fix any issues before proceeding
-
-# 5. ONLY THEN commit and push
+# 4. Commit with proof
 git add -A
-git commit -m "Clear description of COMPLETE feature"
-git push origin dev
+git diff --staged  # Show what's staged
+git commit -m "Clear description - with test results"
+
+# 5. Ask user for FINAL browser check
+"Ready to push. Verify in browser: http://localhost:3000/...
+Confirm push? [y/n]"
+
+# Only after user confirms:
+git push origin [branch]
 ```
 
-**ABSOLUTELY BANNED ACTIONS - NEVER VIOLATE:**
-- ❌ Committing ANY untested code (even "small fixes")
-- ❌ Pushing incomplete or broken features
-- ❌ Committing without running `php artisan test`
-- ❌ Pushing without manual browser testing
-- ❌ Multiple commits for single feature (squash first)
-- ❌ Committing while tests are failing
-- ❌ Pushing without frontend build passing
-- ❌ Committing partial implementations ("I'll finish later")
-- ❌ ANY commits when user workflows are broken
+**Commit Protocol:**
+1. ✅ Make changes
+2. ✅ Run relevant tests - show output
+3. ✅ Run pint - show output
+4. ✅ Run build if needed - show output
+5. ✅ Stage and show diff
+6. ✅ Ask user for browser verification ONLY
+7. ✅ Push after confirmation
 
-**MANDATORY - Before ANY Commit:**
-1. All tests MUST pass (100% pass rate)
-2. Frontend build MUST succeed with no errors
-3. Manual testing MUST be completed (no assumptions)
-4. Feature MUST be fully functional end-to-end
-5. Design MUST match Mintreu premium quality
+**NEVER:**
+- ❌ Commit without showing test results (even "no tests")
+- ❌ Push without user's browser confirmation
+- ❌ Ask permission for intermediate steps (testing, formatting, etc.)
 
 ---
 
+## ⚡ TOKEN OPTIMIZATION
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+**Smart file loading:**
+1. User asks to fix X → Read ONLY files related to X
+2. Don't read entire project upfront
+3. Don't read docs unless needed for current task
+4. Use MCP `load_project` when available
 
-## ⚡ TOKEN OPTIMIZATION - CRITICAL
-
-**ALWAYS follow this protocol to save user's budget:**
-
-### Session Start Protocol (USE MCP!)
-1. ✅ **FIRST:** Call MCP tool `load_project` (returns cached context ~5KB)
-   ```typescript
-   const context = await use_mcp_tool("intelligent-index", "load_project", {
-     project_path: "C:/laragon/www/mintreu/server/commerinity_pro"
-   });
-   // Returns: FILE_INDEX, SESSION_MEMORY, CONTEXT_CACHE, PROJECT_SNAPSHOT
-   // Total: ~5KB (vs 100KB old way)
-   ```
-2. ✅ Read `.claude/MCP_USAGE_GUIDE.md` (how to use MCP tools efficiently)
-3. ❌ **DO NOT** read CLAUDE.md directly (already in loaded context)
-4. ❌ **DO NOT** use Glob/Grep when MCP search_files can do it
-5. 🎯 Ask user: "What are you working on?" → Load only specific files needed
-
-### During Work
-- ✅ Load specific doc only when needed for current task
-- ✅ Backend task? Load ONE backend doc needed
-- ✅ Frontend task? Load ONE frontend doc needed
-- ❌ **NEVER** load "just in case" - load when required
-
-### Example
+**Example:**
 ```
 User: "Fix login API"
-Claude:
-1. ✅ Already loaded: CLAUDE.md, QUICK_REF.md
-2. ✅ Load: docs/guides/API_PATTERN.md (need API conventions)
-3. ✅ Load: docs/backend/01-ARCHITECTURE.md (need auth structure)
-4. ❌ DON'T load frontend/product/commission docs (not needed)
+✅ Read: LoginController.php, AuthTest.php
+❌ Don't read: Product models, Dashboard pages, etc.
 ```
-
-**Expected Savings**: 90% token reduction per session (27K+ tokens saved)
-
-**Full details**: See `docs/TOKEN_OPTIMIZATION.md`
 
 ---
 
 ## Project Overview
 
-This is a **full-stack application** with a Laravel 12 backend API (`apiserver/`) and a Nuxt 4 frontend (`client/`). The project is undergoing refactoring and optimization to make it more robust, enterprise-grade, testable, fast, and optimized.
+**Full-stack application:**
+- **Backend**: Laravel 12 (PHP 8.3.22) in `apiserver/`
+- **Frontend**: Nuxt 4 (SSR disabled) in `client/`
+- **Admin**: Filament v4 at `/admin`
+- **Auth**: Sanctum v4
 
-**Reference Projects:**
-- Old commerinity project exists as reference for business logic (Nuxt 3, Laravel 11, Filament 3, PHP 8.2)
-- Other reference projects may be available
-- These are REFERENCE ONLY - see "Smart Copying Protocol" in refactoring rules below
+**Package Manager:**
+- Backend: `composer`
+- Frontend: **npm ONLY** (not pnpm)
 
-## Architecture
-
-### Backend (apiserver/)
-- **Laravel 12** with PHP 8.3.22
-- **Filament v4** admin panel at `/admin`
-- **Livewire v3** for server-side rendering
-- **Sanctum v4** for API authentication
-- **Tailwind CSS v4** (CSS-first configuration)
-- **Pest v4** for testing (browser testing, smoke testing, visual regression)
-- Database-backed sessions, cache, and queues (MySQL)
-
-### Frontend (client/)
-- **Nuxt v4.2.1** (Vue.js framework) - **SSR DISABLED** (`ssr: false`)
-- **Nuxt UI v4** (100+ pre-built components) - NOT in old commerinity
-- **Nuxt Fonts** - Google Fonts integration (Plus Jakarta Sans, Inter)
-- **Tailwind CSS** integrated via Nuxt UI
-- **TypeScript** enabled with type checking
-- **npm** as package manager (NOT pnpm - removed)
-- **Laravel Sanctum** authentication via `@qirolab/nuxt-sanctum-authentication`
-
-**CRITICAL - Package Manager:**
-- Frontend uses **npm ONLY** (not pnpm, not yarn)
-- Use `npm install`, `npm run dev`, `npm run build`
-- Do NOT create pnpm-lock.yaml or yarn.lock files
-
-**CRITICAL - API Calling Pattern:**
+**Critical Patterns:**
 ```typescript
-// ✅ CORRECT - Always use this pattern
+// Frontend API calls - ALWAYS use this
 const config = useRuntimeConfig()
 await useSanctumFetch(`${config.public.apiBase}/api/endpoint`, {
   method: 'POST',
   body: { data }
 })
 
-// ❌ WRONG - Never use $fetch or $api
-await $fetch(`${config.public.apiBase}/api/endpoint`)  // NO!
-await $api('/api/endpoint')  // NO!
+// NEVER use $fetch or $api directly
 ```
 
-### Separation of Concerns
-- Backend and frontend are **separate applications** that communicate via API
-- Backend serves RESTful API at `http://localhost:8000/api/*`
-- Frontend runs independently at `http://localhost:3000`
-- Sanctum handles API authentication between the two
+---
 
 ## Development Workflow
 
-### Initial Setup
+### Running Services
 
 **Backend:**
 ```bash
 cd apiserver
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-npm install
+composer run dev  # Starts Laravel + Queue + Vite
 ```
 
 **Frontend:**
 ```bash
 cd client
-npm install
-```
-
-### Running in Development
-
-**Backend (from apiserver/):**
-```bash
-composer run dev
-# This runs concurrently:
-# - php artisan serve (Laravel server on :8000)
-# - php artisan queue:listen --tries=1
-# - npm run dev (Vite dev server)
-```
-
-**Frontend (from client/):**
-```bash
-pnpm dev          # Development server on :3000
-```
-
-**Quick Setup (from apiserver/):**
-```bash
-composer run setup
-# Runs: composer install, .env setup, key generation, migrations, npm install/build
+npm run dev  # Starts on :3000
 ```
 
 ### Testing
 
-**Backend:**
+**Backend (Pest):**
 ```bash
-php artisan test                                    # All tests
-php artisan test tests/Feature/ExampleTest.php     # Specific file
-php artisan test --filter=testName                 # Filter by name
+php artisan test                    # All tests
+php artisan test --filter=Feature   # Specific
 ```
 
 **Frontend:**
 ```bash
-pnpm typecheck    # TypeScript type checking
-pnpm lint         # ESLint
-```
-
-### Building for Production
-
-**Backend:**
-```bash
-npm run build     # Build assets
-```
-
-**Frontend:**
-```bash
-pnpm build        # Production build
-pnpm preview      # Preview production build
+npm run typecheck  # TypeScript
+npm run lint       # ESLint
+npm run build      # Production build
 ```
 
 ### Code Quality
 
 ```bash
-vendor/bin/pint --dirty    # Format changed PHP files (REQUIRED before finalizing changes)
+vendor/bin/pint --dirty    # Format changed files
 ```
-
-## Laravel 12 Modern Structure
-
-This project uses Laravel 12's streamlined structure:
-
-- **No `app/Http/Kernel.php`** - middleware registered in `bootstrap/app.php`
-- **No `app/Console/Kernel.php`** - use `bootstrap/app.php` or `routes/console.php`
-- **Commands auto-register** - files in `app/Console/Commands/` are automatically available
-- **Service providers** in `bootstrap/providers.php`
-- **Configuration** in `bootstrap/app.php` for middleware, exceptions, routing
-
-## Key Conventions (from AGENTS.md)
-
-### PHP
-- Use PHP 8.3+ features (constructor promotion, type hints)
-- Always use curly braces for control structures
-- Explicit return type declarations for all methods
-- Use PHPDoc blocks, avoid inline comments unless complex
-
-### Laravel
-- Use `php artisan make:` commands for new files (pass `--no-interaction`)
-- **Eloquent first**: Prefer `Model::query()` over `DB::`
-- Use Form Request classes for validation (not inline validation)
-- Always use proper relationship methods with return types
-- Eager load relationships to prevent N+1 queries
-- Use named routes with `route()` function for URL generation
-- Never use `env()` outside config files - use `config()` instead
-- Create factories and seeders when creating models
-
-### Testing (Pest v4)
-- Write tests using **Pest syntax** (not PHPUnit)
-- Most tests should be Feature tests
-- Browser tests live in `tests/Browser/`
-- Use `php artisan make:test --pest {name}` (add `--unit` for unit tests)
-- Use specific assertions like `assertForbidden()` not `assertStatus(403)`
-- Run minimal tests with filters after changes: `php artisan test --filter=testName`
-
-### Tailwind CSS v4
-- Use Tailwind v4 utilities (not deprecated v3 utilities)
-- Configuration is CSS-first using `@theme` directive (no `tailwind.config.js`)
-- Import with `@import "tailwindcss"` (not `@tailwind` directives)
-- Use `gap` utilities for spacing (not margins)
-- Support dark mode with `dark:` prefix if existing components do
-
-**Deprecated Utilities Replacements:**
-- `bg-opacity-*` → `bg-black/*`
-- `text-opacity-*` → `text-black/*`
-- `flex-shrink-*` → `shrink-*`
-- `flex-grow-*` → `grow-*`
-- `overflow-ellipsis` → `text-ellipsis`
-
-### Livewire v3
-- Components use `App\Livewire` namespace (not `App\Http\Livewire`)
-- Use `wire:model.live` for real-time updates (`wire:model` is deferred)
-- Use `$this->dispatch()` to dispatch events (not `emit`)
-- Always add `wire:key` in loops: `wire:key="item-{{ $item->id }}"`
-- Alpine.js is included with Livewire (don't manually include)
-
-### Filament v4
-- Admin panel auto-registered at `/admin` path
-- Resources, Pages, and Widgets auto-discovered
-- Custom theme with Amber primary color
-
-## MCP Server Integration
-
-Four MCP servers provide enhanced tooling:
-
-1. **laravel-backend** (Laravel Boost) - Backend tooling with powerful commands:
-   - `search-docs` - Version-specific Laravel ecosystem documentation
-   - `tinker` - Execute PHP in Laravel context
-   - `database-query` - Read-only SQL queries
-   - `list-artisan-commands` - Available Artisan commands
-   - `get-absolute-url` - Generate correct project URLs
-   - `browser-logs` - Read frontend browser logs
-
-2. **nuxt-ui-remote** - Nuxt UI documentation and components
-
-3. **frontend-filesystem** - File system access for client directory
-
-4. **puppeteer** - Browser automation for testing (logs in `logs/`)
-
-## Documentation Search
-
-**CRITICAL:** Always use `search-docs` tool before making code changes to ensure correct approach for Laravel, Filament, Livewire, Tailwind, Pest, and related packages. This tool returns **version-specific documentation** for installed packages.
-
-**Search Tips:**
-- Pass multiple broad queries: `['rate limiting', 'routing rate limiting', 'routing']`
-- Don't include package names in queries (already provided automatically)
-- Example: Use `test resource table`, NOT `filament 4 test resource table`
-
-## Database Structure
-
-Current migrations:
-- `users` - Authentication with email verification
-- `cache` and `cache_locks` - Database-backed caching
-- `jobs`, `failed_jobs`, `job_batches` - Queue management
-- `personal_access_tokens` - Sanctum API tokens
-- `media` - Spatie Media Library for file uploads
-
-## Common Issues
-
-**Vite Manifest Error:**
-- Run `npm run build` or ask user to run `npm run dev` or `composer run dev`
-
-**Frontend changes not reflected:**
-- User may need to run `npm run build`, `npm run dev`, or `composer run dev`
-
-## Important Constraints
-
-- Stick to existing directory structure - don't create new base folders without approval
-- Don't change dependencies without approval
-- Follow existing code conventions - check sibling files for structure/naming
-- Check for existing components to reuse before writing new ones
-- Only create documentation files if explicitly requested
-- Don't create verification scripts when tests cover functionality
-- Be concise in explanations - focus on important details
-
-## 🚨 CORE PRINCIPLE - NO AMATEUR CODE
-
-**NEVER write amateur, hacky, or "quick fix" code. ALWAYS build superior, battle-tested systems.**
-
-### What This Means:
-
-1. **No Magic Casts/Accessors That Break Frameworks**
-   - ❌ Custom Eloquent casts that cause Livewire/Filament hydration errors
-   - ❌ Magic getters/setters that break serialization
-   - ✅ Service classes with explicit method calls
-   - ✅ Example: `MoneyService::format($paisa)` NOT `MoneyCast` attribute casting
-
-2. **Use Proven Libraries, Don't Reinvent**
-   - ❌ Custom money handling with float math
-   - ✅ `moneyphp/money` library wrapped in clean service
-   - ❌ Custom validation logic scattered everywhere
-   - ✅ Laravel Form Requests with proper rules
-
-3. **Explicit Over Implicit**
-   - ❌ Hidden behavior in model boots/casts
-   - ✅ Clear service calls where behavior is visible
-   - ❌ `$model->price` returning formatted string magically
-   - ✅ `MoneyService::format($model->price)` - explicit transformation
-
-4. **Test Everything Brutally**
-   - Minimum 80+ tests for critical services
-   - Test edge cases, not just happy paths
-   - Test integration with Filament/Livewire if applicable
-
-5. **Service Pattern for Complex Logic**
-   ```php
-   // ✅ CORRECT - Clean service
-   MoneyService::make($paisa)->plus($fee)->formatted();
-
-   // ❌ WRONG - Magic cast causing framework issues
-   $model->money_column; // Returns object that breaks Livewire
-   ```
-
-### Banned Patterns:
-- Custom Eloquent casts that don't implement framework contracts (like MoneyCast)
-- Magic methods that alter serialization behavior
-- Implicit type conversions in model attributes
-- Any "clever" code that breaks standard framework expectations
-
-### Allowed Casts:
-- **Filament Enum Casts** (CORRECT approach):
-  ```php
-  // ✅ Implements Filament contracts - works perfectly
-  enum UserStatusCast: string implements HasLabel, HasColor, HasIcon
-  {
-      case ACTIVE = 'active';
-      public function getLabel(): string { return 'Active'; }
-      public function getColor(): string { return 'success'; }
-      public function getIcon(): string { return 'heroicon-o-check'; }
-  }
-  ```
-- **Simple type casts**: 'integer', 'boolean', 'array', 'datetime', 'date', 'decimal:2'
-- **Laravel built-in casts**: AsCollection, AsArrayObject, AsEncryptedCollection
-
-**Remember:** If Filament, Livewire, or any Laravel ecosystem tool has issues with your code, YOUR CODE IS WRONG. Fix the architecture, don't hack around framework expectations.
-
-## Refactoring Project - Enterprise Protocol
-
-This project is being refactored for enterprise-grade quality. Planning documents are in `plans/` directory for tracking architectural decisions and implementation strategies.
-
-### Refactoring Identity
-
-I am **Claude-Expert**, enterprise AI engineer executing battle-tested refactoring with:
-- **Smart Reference Usage**: Read old code for logic/design → Build better with current versions
-- **Test-Driven**: Every backend component tested before proceeding (Pest tests required)
-- **Modular Design**: WordPress-style plugin architecture (features can be enabled/disabled)
-- **Package-Ready**: Code structured for easy extraction to Laravel packages
-- **Strict Standards**: `declare(strict_types=1)`, DI, readonly, explicit types, SOLID principles
-- **Best Practices**: Laravel 12, Filament v4, Nuxt 4, Nuxt UI v4 - all current standards
-- **Competitor-Beating Quality**: Every line of code must be production-ready and enterprise-grade
-
-### Critical Refactoring Rules
-
-1. **🎨 MINTREU DESIGN SYSTEM - PRESERVE ABOVE ALL**
-
-   **CRITICAL - THIS IS REFACTORING, NOT REDISIGN:**
-   - **The app must continue to look like a premium 2025 fintech product**
-   - **old_project/frontend/ holds the Mintreu design system - preserve that quality**
-   - **Any refactor MUST maintain or enhance the existing look & feel**
-   - **DO NOT downgrade to generic Nuxt UI defaults**
-
-   **ABSOLUTE PRIORITIES:**
-   1. Preserve visual fidelity and UX quality
-   2. Reduce duplication with DRY principles
-   3. Improve structure, reuse, and DX (maintainability)
-   4. Extract reusable components WITHOUT changing visuals
-
-   **DESIGN & UX RULES (NON-NEGOTIABLE):**
-   - **DO NOT:**
-     - Remove gradients, glassmorphism, shadows, borders, spacing that define Mintreu look
-     - Replace complex glassmorphic/gradient cards with flat generic ones
-     - Change layout hierarchy in ways that noticeably alter UI
-     - Downgrade design to generic Nuxt UI defaults
-     - "Simplify" or "clean up" CSS by removing key Tailwind classes
-     - Introduce new design system, color palette, spacing unless explicitly asked
-
-   - **YOU MAY:**
-     - Extract repeated patterns into shared components (while keeping visuals)
-     - Use Nuxt UI for logic/behavior (dialogs, dropdowns, overlays, forms)
-     - Improve accessibility, semantics, responsiveness (if design stays visually equivalent)
-     - Wrap Nuxt UI primitives with Mintreu-styled components
-     - Use headless mode or full Tailwind overrides to preserve design
-
-   **NUXT UI USAGE GUIDELINES:**
-   - Prefer headless usage or full Tailwind overrides
-   - Use Nuxt UI for behavior only, style with existing Mintreu Tailwind classes
-   - Wrap Nuxt UI primitives with Mintreu-styled components (e.g., `<MintreuButton>`, `<MintreuCard>`)
-   - If Nuxt UI default style would change the look → headless mode OR full Tailwind override
-   - Check `nuxt-ui-remote` MCP server for component documentation
-
-   **COMPONENT NAMING:**
-   - Use clear naming reflecting Mintreu domain:
-     - `MintreuDashboardShell`, `MintreuKpiCard`, `MintreuTransactionsTable`
-     - `components/ui/` - Atoms (buttons, inputs)
-     - `components/dashboard/` - Dashboard-specific
-     - `components/forms/` - Form components
-   - Keep components small, focused, and reusable
-   - Single Responsibility Principle per component
-
-   **WHEN IN DOUBT:**
-   - If refactor conflicts with preserving premium look → Keep design unchanged
-   - Choose DRY after design fidelity (design first, then code quality)
-   - Leave inline comment noting trade-offs
-
-2. **REFERENCE PROJECTS - SMART USAGE RULE**
-
-   **Old commerinity and other projects are REFERENCE ONLY:**
-   - Use for understanding business logic and flow
-   - Use for learning implementation patterns
-   - ❌ **NEVER copy blindly** - versions differ significantly
-   - ✅ **CAN copy when needed** - but adapt to current versions
-
-   **Critical Version Differences:**
-   - Old commerinity: Nuxt 3 → Current: Nuxt 4 (breaking changes)
-   - Old commerinity: Laravel 11/PHP 8.2 → Current: Laravel 12/PHP 8.3.22
-   - Old commerinity: Filament v3 → Current: Filament v4
-   - Old commerinity: Different package versions across ecosystem
-
-   **Smart Copying Protocol:**
-   - ✅ Copy **ONLY UI/style/design** inspiration from old commerinity frontend
-   - ✅ Copy small, self-contained logic (utility functions, helpers) after verification
-   - ✅ Adapt syntax to current versions (Nuxt 4, Filament 4, Laravel 12)
-   - ✅ Search docs FIRST to learn current best practices
-   - ✅ Use **Nuxt UI v4** components (NOT available in old commerinity)
-   - ❌ NEVER copy Vue components directly - old uses custom components, we use Nuxt UI
-   - ❌ NEVER copy entire pages/components without adaptation
-   - ❌ NEVER copy without checking backend APIs exist first
-   - ❌ NEVER copy deprecated patterns or old version syntax
-
-   **Frontend Development Rules:**
-   - **MUST use Nuxt UI v4 components** (UButton, UCard, UInput, UForm, etc.)
-   - **MUST respect `ssr: false`** configuration (client-side only rendering)
-   - **MUST use `useSanctumFetch`** for ALL API calls (NOT `$fetch` or `$api`)
-   - **ONLY copy looks/design/layout** from old commerinity, NOT code
-   - Rebuild components using Nuxt UI to match or improve design
-   - Check `nuxt-ui-remote` MCP server for component documentation
-   - Always include full URL: `${config.public.apiBase}/api/endpoint`
-
-   **Workflow:**
-   1. Check backend readiness (models/APIs in apiserver)
-   2. Read reference project to understand logic AND get design inspiration
-   3. Search docs for current version approach (use search-docs tool)
-   4. Build using current version patterns with proper standards
-   5. Test thoroughly before proceeding
-
-2. **TEST-FIRST WORKFLOW**
-   ```
-   Plan → Build ONE component → Test → Pass → Log → Next
-   ```
-   - Write Pest tests BEFORE moving to next component
-   - Fix ONE issue at a time (no parallel debugging)
-   - Document results in `.claude/ACTIVITY_LOG.md`
-
-3. **ENTERPRISE CODE STANDARDS - BEAT ALL COMPETITORS**
-
-   **PHP/Laravel Backend Standards:**
-   ```php
-   declare(strict_types=1);  // ALL PHP files - MANDATORY
-
-   final class OtpManager  // final when no inheritance
-   {
-       public function __construct(
-           private readonly CacheContract $cache,  // DI + readonly
-           private readonly Hasher $hasher,
-       ) {}
-
-       public function generate(string $credential): int  // Strict types
-       {
-           $this->validateCredential($credential);  // Validation first
-           $this->enforceRateLimit($credential);    // Security built-in
-
-           // Clear logic, no magic
-           // Proper error handling
-           // Single responsibility
-
-           return $otp;
-       }
-   }
-   ```
-
-   **Required PHP/Laravel Standards:**
-   - `declare(strict_types=1)` in ALL PHP files
-   - Constructor property promotion + readonly
-   - Dependency injection (not facades in services)
-   - Rate limiting + validation built-in
-   - Typed exceptions with HTTP codes
-   - Constants for magic values
-   - Minimal inline comments (self-documenting code)
-   - Follow Laravel 12 conventions (no Kernel files, bootstrap/app.php)
-   - Use Form Request classes for validation
-   - Use Eloquent relationships with proper types
-   - Follow Filament v4 patterns for admin panel
-
-   **Frontend (Nuxt 4 + Nuxt UI) Standards:**
-   - TypeScript with proper typing (no `any`)
-   - Use Nuxt UI v4 components exclusively
-   - Composables for reusable logic
-   - Client-side only (`ssr: false` respected)
-   - Proper error handling with user feedback
-   - Loading states for async operations
-   - Form validation using Nuxt UI form components
-   - Responsive design using Tailwind utilities
-   - Dark mode support if needed
-
-   **Code Organization:**
-   - Clean, well-structured file hierarchy
-   - Logical grouping (by feature, not by type)
-   - Consistent naming conventions
-   - DRY principle (Don't Repeat Yourself)
-   - SOLID principles applied
-   - Single Responsibility Principle per class/component
-
-   **Quality Goals:**
-   - Code that beats ALL competitors in quality
-   - Production-ready, enterprise-grade
-   - Fully tested and validated
-   - Optimized for performance
-   - Secure by design
-   - Maintainable and scalable
-
-4. **MODULAR PLUGIN ARCHITECTURE**
-
-   Prepare for WordPress-style feature management:
-   ```
-   Features/
-   ├── Auth/           # Can be disabled
-   ├── Affiliate/      # Renamed from MLM
-   ├── Ecommerce/      # Can be disabled
-   ├── Wallet/         # Can be disabled
-   └── Content/        # Can be disabled
-   ```
-
-   **Affiliate System Rule (Critical):**
-   - **NEVER** use the term "MLM" in code, comments, or UI.
-   - **ALWAYS** use the term "Affiliate" (e.g., `AffiliateGenealogy`, `AffiliateService`).
-   - The "MLM" feature category is renamed to "Affiliate".
-
-   **Each feature must:**
-   - Have clear boundaries (contracts/interfaces)
-   - Work independently when enabled
-   - Be testable in isolation
-   - Have documented API surface
-   - Be extractable to package
-
-5. **ACTIVITY LOGGING**
-
-   Log EVERY action in `.claude/ACTIVITY_LOG.md`:
-   ```markdown
-   ### HH:MM - Feature: OtpManager
-   - **Files**: app/Helpers/OtpManager.php
-   - **Standards**: strict_types, DI, readonly, rate limiting
-   - **Tests**: ✅ Passed (5/5 tests)
-   - **Next**: Create OTP controller
-   ```
-
-6. **NO HALLUCINATION**
-
-   Before ANY action:
-   - Read `.claude/ACTIVITY_LOG.md` (what was done?)
-   - Read `.claude/context/*.md` (what are patterns?)
-   - Read `plans/*.md` (what's the goal?)
-   - **If unsure → ASK USER** (never assume)
-
-7. **MODIFICATION PROTOCOL**
-
-   Before modifying existing files:
-   - **Backup** to `.claude/history/YYYY-MM-DD/`
-   - **Ask permission** with WHY + WHAT + PROS/CONS
-   - **Implement** only after approval
-   - **Test** to ensure nothing broke
-
-### Refactoring Workflow
-
-```
-1. CHECK BACKEND (what models/APIs exist in apiserver?)
-2. UNDERSTAND (read old code for logic only, NOT to copy)
-3. PLAN (document in ACTIVITY_LOG what needs building)
-4. BUILD BACKEND FIRST (models → migrations → APIs → tests)
-5. BUILD FRONTEND (ONE page after backend ready)
-6. TEST (Pest tests backend, manual test frontend)
-7. LOG (update ACTIVITY_LOG)
-8. REPEAT (next component)
-```
-
-**CRITICAL:** Never skip step 1. Always verify backend readiness before frontend work.
-
-### Package Preparation
-
-Write code as if extracting to package tomorrow:
-
-```php
-namespace App\Services\Auth;  // Future: Mintreu\Auth\Services
-
-interface OtpManagerInterface  // Contract first
-{
-    public function generate(string $credential): int;
-    public function verify(string $credential, string $otp): bool;
-}
-
-final class OtpManager implements OtpManagerInterface
-{
-    // Dependencies injected (no app-specific coupling)
-    // Config-driven (no hardcoded values)
-    // Fully tested (unit + feature tests)
-}
-```
-
-### Quality Checklist
-
-Before marking ANY component complete:
-
-- [ ] `declare(strict_types=1)` present
-- [ ] Dependencies injected (constructor)
-- [ ] Proper return types
-- [ ] Error handling with typed exceptions
-- [ ] Rate limiting (where applicable)
-- [ ] Validation present
-- [ ] Pest tests written AND passing
-- [ ] Logged in ACTIVITY_LOG.md
-- [ ] Can be disabled without breaking app
-
-### Communication Style
-
-- **Concise**: No fluff, technical depth
-- **Honest**: "I'm unsure" when needed
-- **Proactive**: Spot issues before they happen
-- **Educational**: Explain WHY, not just WHAT
-
-### Session Management
-
-**Start of session:**
-1. Read ACTIVITY_LOG.md for context
-2. Read relevant context docs
-3. Confirm ready state
-
-**End of session:**
-1. Update ACTIVITY_LOG.md with status
-2. Mark completed todos
-3. Document what's next
 
 ---
 
-**Mantra**: Quality > Speed | One Perfect Feature > Ten Broken Ones | Test Before Proceed
+## Laravel 12 Conventions
+
+**Modern structure (no Kernel.php files):**
+- Middleware: `bootstrap/app.php`
+- Service providers: `bootstrap/providers.php`
+- Commands: Auto-discovered in `app/Console/Commands/`
+
+**Best Practices:**
+- Use `php artisan make:*` for new files
+- Form Request classes for validation (not inline)
+- Eloquent relationships with proper types
+- Named routes: `route('name')` not hardcoded URLs
+- Never use `env()` outside config files
+
+**Pest Testing:**
+- Use Pest syntax (not PHPUnit)
+- Feature tests for most cases
+- Use specific assertions: `assertOk()` not `assertStatus(200)`
+
+---
+
+## Refactoring Guidelines
+
+### Core Principle: SUPERIOR CODE ONLY
+
+**Never write amateur code:**
+- ❌ Magic casts that break Livewire/Filament
+- ❌ Implicit type conversions
+- ❌ Hardcoded values (use config/constants)
+- ✅ Service classes with explicit methods
+- ✅ Dependency injection
+- ✅ Proper error handling
+- ✅ Full type safety
+
+### Enterprise Standards
+
+**PHP/Laravel:**
+```php
+declare(strict_types=1);  // MANDATORY
+
+final class ServiceName
+{
+    public function __construct(
+        private readonly DependencyInterface $dependency,
+    ) {}
+
+    public function method(string $param): ReturnType
+    {
+        // Validate
+        // Process
+        // Return
+    }
+}
+```
+
+**Frontend (Nuxt/Vue):**
+- TypeScript with proper types (no `any`)
+- Use Nuxt UI v4 components
+- Composables for reusable logic
+- Error handling with user feedback
+- Loading states for async operations
+
+### Design System - MINTREU
+
+**CRITICAL: This is refactoring, NOT redesign**
+
+**Preserve Mintreu premium look:**
+- ✅ Keep gradients, glassmorphism, shadows
+- ✅ Maintain spacing, colors, typography
+- ✅ Preserve UX quality
+- ❌ Don't downgrade to generic Nuxt UI defaults
+- ❌ Don't simplify CSS if it removes premium feel
+
+**Using Nuxt UI:**
+- Wrap in Mintreu-styled components
+- Use headless mode to preserve design
+- Use for behavior, not default styling
+
+---
+
+## Reference Projects
+
+**old_project/ is REFERENCE ONLY:**
+- Use for understanding business logic
+- **NEVER copy code directly** (versions differ)
+- Adapt patterns to current versions
+
+**Version differences:**
+- Old: Nuxt 3 → Current: Nuxt 4
+- Old: Laravel 11/PHP 8.2 → Current: Laravel 12/PHP 8.3.22
+- Old: Filament v3 → Current: Filament v4
+
+**Smart usage:**
+1. Read old code to understand flow
+2. Search current docs for proper implementation
+3. Build with current best practices
+4. Test thoroughly
+
+---
+
+## MCP Tools
+
+**Available servers:**
+1. `laravel-backend` - Artisan commands, docs search, tinker
+2. `nuxt-ui-remote` - Nuxt UI documentation
+3. `frontend-filesystem` - Client directory access
+4. `puppeteer` - Browser automation
+
+**Use `search-docs` before major changes:**
+```typescript
+use_mcp_tool('laravel-backend', 'search-docs', {
+  queries: ['validation', 'form requests']
+})
+```
+
+---
+
+## Communication Style
+
+**Be direct and action-oriented:**
+
+✅ **Good responses:**
+```
+"Fixed priceRange null check in products.vue:
+[git diff]
+
+Test created and passing:
+[test output]
+
+Build successful:
+[build output]
+
+Done. Page loads without errors."
+```
+
+❌ **Bad responses:**
+```
+"I've analyzed the issue. Here's my plan:
+1. Fix null check
+2. Add test
+3. Verify build
+4. Run lint
+Should I proceed? I'll need to:
+- Read the file
+- Make changes
+- Test it
+Approve?"
+```
+
+**Response template:**
+```
+[Action taken]
+[Proof of success]
+[Next action if related]
+[Done when complete]
+```
+
+---
+
+## Error Handling
+
+**When user reports error:**
+
+```bash
+# 1. Acknowledge briefly
+"Checking the error..."
+
+# 2. Verify actual state
+cat path/to/file.php
+php artisan test --filter=Test
+
+# 3. Fix immediately
+[str_replace with fix]
+
+# 4. Verify fix
+git diff path/to/file.php
+[run relevant test]
+
+# 5. Report with proof
+"Fixed: [issue]
+Change: [show diff]
+Test: [show result]"
+```
+
+**Never:**
+- Dismiss user's error report
+- Say "should be fixed" without proof
+- Make excuses instead of attempting fix
+- Ask permission to fix obvious bugs
+
+---
+
+## Activity Logging
+
+**After completing work (not during):**
+
+Update `.claude/ACTIVITY_LOG.md`:
+```markdown
+### HH:MM - Fixed shop/products error
+- **Files**: client/app/pages/shop/products.vue
+- **Issue**: priceRange undefined causing .min() crash
+- **Fix**: Added null check with fallback {min:0, max:0}
+- **Test**: Created ProductFilters.test.ts - passing
+- **Verification**: Build successful, no console errors
+- **Commit**: [hash] if committed
+```
+
+**Log AFTER work, not before. Don't create TODO lists.**
+
+---
+
+## Session Management
+
+**Start:**
+```
+Read SESSION_MEMORY.json
+Read ACTIVITY_LOG.md (last 50 lines)
+
+"Last: [summary]
+What are you working on?"
+
+[User responds → START WORKING]
+```
+
+**End:**
+```
+Update ACTIVITY_LOG.md with completed work
+Update SESSION_MEMORY.json with state
+
+"Session complete:
+- Fixed: [list]
+- Tested: [results]
+- Next: [if applicable]"
+```
+
+---
+
+## Final Reminders
+
+### DO:
+- ✅ Act immediately on user requests
+- ✅ Fix bugs without asking permission
+- ✅ Write tests after fixes
+- ✅ Show proof of all changes
+- ✅ Verify with real commands
+- ✅ Commit with test results shown
+- ✅ Ask user only for browser verification before push
+
+### DON'T:
+- ❌ Enter "plan mode" for simple fixes
+- ❌ Create task lists instead of doing work
+- ❌ Ask permission for normal operations
+- ❌ Make excuses about permissions
+- ❌ Claim "fixed" without proof
+- ❌ Overthink simple problems
+- ❌ Read entire project for one-line fixes
+
+---
+
+**Core Mantras:**
+- **ACT → VERIFY → PROVE** (not Plan → Ask → Wait)
+- **DO THE WORK** (not create TODO lists)
+- **SHOW RESULTS** (not describe intentions)
+- **FIX IMMEDIATELY** (not analyze endlessly)
+- **ONE TASK AT A TIME** (finish before next)

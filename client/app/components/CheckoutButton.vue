@@ -57,7 +57,11 @@ function handleClick() {
       :block="block"
       @click="handleClick"
     >
-      <UIcon v-if="icon" :name="icon" class="w-4 h-4 mr-1" />
+      <UIcon
+        v-if="icon"
+        :name="icon"
+        class="w-4 h-4 mr-1"
+      />
       {{ label }}
     </UButton>
 

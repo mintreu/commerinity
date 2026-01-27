@@ -110,7 +110,11 @@ function close() {
 </script>
 
 <template>
-  <UModal :model-value="open" @update:model-value="emit('update:open', $event)" :ui="{ width: 'sm:max-w-md' }">
+  <UModal
+    :model-value="open"
+    :ui="{ width: 'sm:max-w-md' }"
+    @update:model-value="emit('update:open', $event)"
+  >
     <UCard>
       <template #header>
         <div class="flex items-center justify-between">
@@ -135,13 +139,19 @@ function close() {
           <p class="text-3xl font-bold">
             {{ amountFormatted }}
           </p>
-          <p v-if="description" class="text-sm opacity-80 mt-2">
+          <p
+            v-if="description"
+            class="text-sm opacity-80 mt-2"
+          >
             {{ description }}
           </p>
         </div>
 
         <!-- Wallet Balance -->
-        <div v-if="wallet" class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+        <div
+          v-if="wallet"
+          class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4"
+        >
           <div class="flex items-center justify-between">
             <span class="text-sm text-slate-600 dark:text-slate-400">Wallet Balance</span>
             <span class="font-semibold text-slate-900 dark:text-white">
@@ -168,7 +178,7 @@ function close() {
               type="radio"
               value="wallet"
               class="w-5 h-5 text-primary"
-            />
+            >
             <div class="flex-1">
               <p class="font-medium text-slate-900 dark:text-white">
                 Pay via Wallet
@@ -177,21 +187,30 @@ function close() {
                 Instant payment from your wallet balance
               </p>
             </div>
-            <UIcon name="i-lucide-wallet" class="w-6 h-6 text-slate-400" />
+            <UIcon
+              name="i-lucide-wallet"
+              class="w-6 h-6 text-slate-400"
+            />
           </label>
 
           <!-- Wallet PIN Input (Only when wallet selected) -->
-          <div v-if="paymentMethod === 'wallet'" class="px-2 animate-in fade-in slide-in-from-top-2 duration-300">
-             <UFormGroup label="Wallet PIN" help="Enter your 6-digit transaction PIN">
-                <UInput
-                  v-model="walletPin"
-                  type="password"
-                  placeholder="••••••"
-                  maxlength="6"
-                  icon="i-lucide-lock"
-                  class="font-mono text-center tracking-widest"
-                />
-             </UFormGroup>
+          <div
+            v-if="paymentMethod === 'wallet'"
+            class="px-2 animate-in fade-in slide-in-from-top-2 duration-300"
+          >
+            <UFormGroup
+              label="Wallet PIN"
+              help="Enter your 6-digit transaction PIN"
+            >
+              <UInput
+                v-model="walletPin"
+                type="password"
+                placeholder="••••••"
+                maxlength="6"
+                icon="i-lucide-lock"
+                class="font-mono text-center tracking-widest"
+              />
+            </UFormGroup>
           </div>
 
           <!-- Pay Online -->
@@ -206,7 +225,7 @@ function close() {
               type="radio"
               value="online"
               class="w-5 h-5 text-primary"
-            />
+            >
             <div class="flex-1">
               <p class="font-medium text-slate-900 dark:text-white">
                 Pay Online
@@ -215,7 +234,10 @@ function close() {
                 UPI, Cards, Net Banking & more
               </p>
             </div>
-            <UIcon name="i-lucide-credit-card" class="w-6 h-6 text-slate-400" />
+            <UIcon
+              name="i-lucide-credit-card"
+              class="w-6 h-6 text-slate-400"
+            />
           </label>
         </div>
 
@@ -246,7 +268,10 @@ function close() {
             :disabled="insufficientBalance"
             @click="processPayment"
           >
-            <UIcon name="i-lucide-lock" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-lock"
+              class="w-4 h-4 mr-2"
+            />
             {{ paymentMethod === 'wallet' ? 'Pay from Wallet' : 'Pay Online' }}
           </UButton>
         </div>

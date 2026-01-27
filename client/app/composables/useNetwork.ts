@@ -16,8 +16,8 @@ export interface AffiliateStats {
     personal_sales: number
     total_team_sales: number
     is_active: boolean
-    current_stage: { name: string; slug: string } | null
-    current_level: { name: string; level_number: number } | null
+    current_stage: { name: string, slug: string } | null
+    current_level: { name: string, level_number: number } | null
     highest_level: { name: string } | null
   } | null
   earnings: {
@@ -55,7 +55,7 @@ export const useNetwork = () => {
 
   const stats: Ref<AffiliateStats | null> = ref(null)
   const team: Ref<TeamMember[]> = ref([])
-  const teamMeta: Ref<{ current_page: number; last_page: number; per_page: number; total: number } | null> = ref(null)
+  const teamMeta: Ref<{ current_page: number, last_page: number, per_page: number, total: number } | null> = ref(null)
   const upline: Ref<UplineMember[]> = ref([])
   const isLoading = ref(false)
   const error: Ref<string | null> = ref(null)
@@ -64,19 +64,17 @@ export const useNetwork = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: AffiliateStats }>(
+      const response = await useSanctumFetch<{ success: boolean, data: AffiliateStats }>(
         `${config.public.apiBase}/api/affiliate/stats`
       )
       if (response?.success) {
         stats.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch Affiliate stats'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -101,16 +99,14 @@ export const useNetwork = () => {
           current_page: response.data.current_page,
           last_page: response.data.last_page,
           per_page: response.data.per_page,
-          total: response.data.total,
+          total: response.data.total
         }
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch team'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -119,19 +115,17 @@ export const useNetwork = () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await useSanctumFetch<{ success: boolean; data: UplineMember[] }>(
+      const response = await useSanctumFetch<{ success: boolean, data: UplineMember[] }>(
         `${config.public.apiBase}/api/affiliate/upline`
       )
       if (response?.success) {
         upline.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch upline'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -145,6 +139,6 @@ export const useNetwork = () => {
     error,
     fetchStats,
     fetchTeam,
-    fetchUpline,
+    fetchUpline
   }
 }

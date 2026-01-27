@@ -21,7 +21,7 @@ const selectedOtpMethod = ref<'mobile' | 'email'>('mobile')
 const maskedCredential = ref('')
 const resendTimer = ref(0)
 const verificationToken = ref('')
-const securityQuestions = ref<Array<{ key: string; label: string }>>([])
+const securityQuestions = ref<Array<{ key: string, label: string }>>([])
 const selectedQuestion = ref<string | null>(null)
 
 // Form data

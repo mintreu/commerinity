@@ -38,6 +38,7 @@ class ProductInfolist
                                         // Thumbnail
                                         SpatieMediaLibraryImageEntry::make('displayImage')
                                             ->hiddenLabel()
+                                            ->imageSize('250px')
                                             ->collection('displayImage'),
 
                                         // Info Box
@@ -103,6 +104,7 @@ class ProductInfolist
                                 SpatieMediaLibraryImageEntry::make('bannerImage')
                                     ->hiddenLabel()
                                     ->columnSpanFull()
+                                    ->imageSize('250px')
                                     ->collection('bannerImage')
                             ]),
 

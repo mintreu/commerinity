@@ -51,7 +51,7 @@ export const useMessages = () => {
   const broadcasts: Ref<Conversation[]> = ref([])
   const currentConversation: Ref<ConversationDetail | null> = ref(null)
   const messages: Ref<Message[]> = ref([])
-  const unreadCount: Ref<{ direct_unread: number; broadcast_count: number; total: number }> = ref({
+  const unreadCount: Ref<{ direct_unread: number, broadcast_count: number, total: number }> = ref({
     direct_unread: 0,
     broadcast_count: 0,
     total: 0
@@ -83,12 +83,10 @@ export const useMessages = () => {
         conversations.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch conversations'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -106,12 +104,10 @@ export const useMessages = () => {
         broadcasts.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch broadcasts'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -133,12 +129,10 @@ export const useMessages = () => {
         messages.value = response.data.messages
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch conversation'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -147,15 +141,14 @@ export const useMessages = () => {
     try {
       const response = await useSanctumFetch<{
         success: boolean
-        data: { direct_unread: number; broadcast_count: number; total: number }
+        data: { direct_unread: number, broadcast_count: number, total: number }
       }>(`${config.public.apiBase}/api/messages/unread-count`)
 
       if (response?.success) {
         unreadCount.value = response.data
       }
       return response
-    }
-    catch {
+    } catch {
       // Silent fail for unread count
     }
   }
@@ -175,8 +168,7 @@ export const useMessages = () => {
         recipients.value = response.data
       }
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch recipients'
       throw err
     }
@@ -188,7 +180,7 @@ export const useMessages = () => {
     try {
       const response = await useSanctumFetch<{
         success: boolean
-        data: { conversation_uuid: string; message: Message }
+        data: { conversation_uuid: string, message: Message }
         requires_subscription?: boolean
         message?: string
       }>(`${config.public.apiBase}/api/messages`, {
@@ -207,12 +199,10 @@ export const useMessages = () => {
       }
 
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to send message'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -238,12 +228,10 @@ export const useMessages = () => {
       }
 
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to send message'
       throw err
-    }
-    finally {
+    } finally {
       isLoading.value = false
     }
   }
@@ -261,8 +249,7 @@ export const useMessages = () => {
         unreadCount.value.total -= conversation.unread_count
         conversation.unread_count = 0
       }
-    }
-    catch {
+    } catch {
       // Silent fail
     }
   }
@@ -279,8 +266,7 @@ export const useMessages = () => {
       }
 
       return response
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Failed to delete message'
       throw err
     }

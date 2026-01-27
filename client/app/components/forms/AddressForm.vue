@@ -9,7 +9,10 @@
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0">
           <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <UIcon name="i-lucide-map-pin" class="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <UIcon
+              name="i-lucide-map-pin"
+              class="w-5 h-5 text-primary-600 dark:text-primary-400"
+            />
           </div>
         </div>
         <div class="flex-1">
@@ -26,7 +29,10 @@
               :loading="fetchingLocation"
               @click="requestGeolocation"
             >
-              <UIcon name="i-lucide-navigation" class="w-4 h-4 mr-1.5" />
+              <UIcon
+                name="i-lucide-navigation"
+                class="w-4 h-4 mr-1.5"
+              />
               Enable Location
             </UButton>
             <UButton
@@ -44,16 +50,27 @@
           class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
           @click="dismissGeolocationPrompt"
         >
-          <UIcon name="i-lucide-x" class="w-5 h-5" />
+          <UIcon
+            name="i-lucide-x"
+            class="w-5 h-5"
+          />
         </button>
       </div>
     </UCard>
 
     <!-- Form Fields -->
-    <UForm :state="formState" :schema="schema" class="space-y-5">
+    <UForm
+      :state="formState"
+      :schema="schema"
+      class="space-y-5"
+    >
       <!-- Full Name & Phone (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <UFormField label="Full Name" name="person_name" required>
+        <UFormField
+          label="Full Name"
+          name="person_name"
+          required
+        >
           <UInput
             v-model="formState.person_name"
             placeholder="Enter recipient name"
@@ -62,7 +79,11 @@
           />
         </UFormField>
 
-        <UFormField label="Phone Number" name="person_mobile" required>
+        <UFormField
+          label="Phone Number"
+          name="person_mobile"
+          required
+        >
           <UInput
             v-model="formState.person_mobile"
             type="tel"
@@ -74,7 +95,11 @@
       </div>
 
       <!-- Address Line 1 (Full width) -->
-      <UFormField label="Address Line 1" name="address_1" required>
+      <UFormField
+        label="Address Line 1"
+        name="address_1"
+        required
+      >
         <UInput
           v-model="formState.address_1"
           placeholder="House no., Building name, Street"
@@ -84,7 +109,11 @@
       </UFormField>
 
       <!-- Address Line 2 (Full width) -->
-      <UFormField label="Address Line 2" name="address_2" hint="Optional">
+      <UFormField
+        label="Address Line 2"
+        name="address_2"
+        hint="Optional"
+      >
         <UInput
           v-model="formState.address_2"
           placeholder="Area, Landmark"
@@ -95,7 +124,11 @@
 
       <!-- Country & State (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <UFormField label="Country" name="country_code" required>
+        <UFormField
+          label="Country"
+          name="country_code"
+          required
+        >
           <USelectMenu
             v-model="formState.country_code"
             :options="countries"
@@ -108,7 +141,11 @@
           />
         </UFormField>
 
-        <UFormField label="State / Province" name="state_code" required>
+        <UFormField
+          label="State / Province"
+          name="state_code"
+          required
+        >
           <USelectMenu
             v-model="formState.state_code"
             :options="states"
@@ -125,7 +162,11 @@
 
       <!-- City & Block (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <UFormField label="City / District" name="city" required>
+        <UFormField
+          label="City / District"
+          name="city"
+          required
+        >
           <UInput
             v-model="formState.city"
             placeholder="Enter city name"
@@ -134,7 +175,11 @@
           />
         </UFormField>
 
-        <UFormField label="Block / Area" name="block_id" hint="Optional">
+        <UFormField
+          label="Block / Area"
+          name="block_id"
+          hint="Optional"
+        >
           <USelectMenu
             v-model="formState.block_id"
             :options="blocks"
@@ -150,7 +195,11 @@
       </div>
 
       <!-- Postal Code (Full width) -->
-      <UFormField label="Postal Code / ZIP" name="postal_code" required>
+      <UFormField
+        label="Postal Code / ZIP"
+        name="postal_code"
+        required
+      >
         <UInput
           v-model="formState.postal_code"
           placeholder="Enter postal code"
@@ -161,8 +210,14 @@
       </UFormField>
 
       <!-- Hidden lat/lng fields -->
-      <input v-model="formState.latitude" type="hidden">
-      <input v-model="formState.longitude" type="hidden">
+      <input
+        v-model="formState.latitude"
+        type="hidden"
+      >
+      <input
+        v-model="formState.longitude"
+        type="hidden"
+      >
     </UForm>
 
     <!-- Location Status (if coordinates are set) -->
@@ -170,7 +225,10 @@
       v-if="formState.latitude && formState.longitude"
       class="mt-4 flex items-center gap-2 text-sm text-green-600 dark:text-green-400"
     >
-      <UIcon name="i-lucide-map-pin-check-inside" class="w-4 h-4" />
+      <UIcon
+        name="i-lucide-map-pin-check-inside"
+        class="w-4 h-4"
+      />
       <span>Location coordinates detected</span>
     </div>
   </div>
@@ -202,7 +260,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   defaultCountry: 'IN',
-  showGeolocation: true,
+  showGeolocation: true
 })
 
 const emit = defineEmits<{
@@ -222,7 +280,7 @@ const {
   fetchStates,
   fetchBlocks,
   resetStates,
-  resetBlocks,
+  resetBlocks
 } = useGeoData()
 
 // Geolocation state
@@ -242,7 +300,7 @@ const formState = reactive<AddressFormData>({
   state_code: props.initialData?.state_code || '',
   country_code: props.initialData?.country_code || props.defaultCountry,
   latitude: props.initialData?.latitude || null,
-  longitude: props.initialData?.longitude || null,
+  longitude: props.initialData?.longitude || null
 })
 
 // Validation schema
@@ -257,7 +315,7 @@ const schema = z.object({
   country_code: z.string().min(2, 'Please select your country'),
   block_id: z.number().nullable().optional(),
   latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional()
 })
 
 // Watch for changes and emit
@@ -317,7 +375,7 @@ const requestGeolocation = async () => {
       navigator.geolocation.getCurrentPosition(resolve, reject, {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 0,
+        maximumAge: 0
       })
     })
 
@@ -331,7 +389,7 @@ const requestGeolocation = async () => {
       title: 'Location Detected',
       description: 'Your coordinates have been captured successfully',
       color: 'success',
-      icon: 'i-lucide-map-pin-check-inside',
+      icon: 'i-lucide-map-pin-check-inside'
     })
   } catch (error) {
     console.error('Geolocation error:', error)
@@ -356,7 +414,7 @@ const getData = (): AddressFormData => ({ ...formState })
 
 defineExpose({
   validate,
-  getData,
+  getData
 })
 
 // Load countries on mount

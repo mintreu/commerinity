@@ -8,7 +8,7 @@ export interface GeoOption {
   label: string
   isd_code?: number
   district?: string
-  coordinates?: { lat: number; lng: number } | null
+  coordinates?: { lat: number, lng: number } | null
 }
 
 export function useGeoData() {
@@ -79,7 +79,7 @@ export function useGeoData() {
 
     loadingBlocks.value = true
     try {
-      const response = await useSanctumFetch<{ data: GeoOption[]  }>(
+      const response = await useSanctumFetch<{ data: GeoOption[] }>(
         `${config.public.apiBase}/api/geo/blocks?state_code=${stateCode}`
       )
       blocks.value = response.data || []
@@ -150,6 +150,6 @@ export function useGeoData() {
     fetchBlocks,
     fetchDistricts,
     resetStates,
-    resetBlocks,
+    resetBlocks
   }
 }

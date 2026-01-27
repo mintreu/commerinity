@@ -178,15 +178,17 @@ const handleAddBeneficiary = async () => {
     const payload = {
       type: formData.value.type,
       holder_name: formData.value.holder_name,
-      ...(isBank.value ? {
-        account_number: formData.value.account_number,
-        confirm_account_number: formData.value.confirm_account_number,
-        ifsc_code: formData.value.ifsc_code,
-        bank_name: formData.value.bank_name,
-        branch_name: formData.value.branch_name
-      } : {
-        upi_id: formData.value.upi_id
-      })
+      ...(isBank.value
+        ? {
+            account_number: formData.value.account_number,
+            confirm_account_number: formData.value.confirm_account_number,
+            ifsc_code: formData.value.ifsc_code,
+            bank_name: formData.value.bank_name,
+            branch_name: formData.value.branch_name
+          }
+        : {
+            upi_id: formData.value.upi_id
+          })
     }
 
     const response = await useSanctumFetch(`${config.public.apiBase}/api/wallet/beneficiaries`, {
@@ -438,7 +440,10 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
         :class="{ 'ring-2 ring-primary-500': beneficiary.is_default }"
       >
         <div class="flex items-start gap-4">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" :class="beneficiary.is_upi ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-slate-100 dark:bg-slate-800'">
+          <div
+            class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+            :class="beneficiary.is_upi ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-slate-100 dark:bg-slate-800'"
+          >
             <UIcon
               :name="beneficiary.is_upi ? 'i-lucide-qr-code' : 'i-lucide-building-2'"
               class="w-6 h-6"
@@ -608,8 +613,8 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
                     class="w-4 h-4"
                   />
                   <span class="text-sm font-medium">
-          {{ formData.bank_name }}
-        </span>
+                    {{ formData.bank_name }}
+                  </span>
                 </div>
                 <p class="text-xs text-green-600 dark:text-green-400 mt-1">
                   {{ formData.branch_name }}
@@ -650,9 +655,6 @@ const getStatusColor = (beneficiary: BeneficiaryAccount) => {
               </UButton>
             </div>
           </div>
-
-
-
         </div>
       </template>
     </UModal>
