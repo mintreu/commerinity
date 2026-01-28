@@ -8,6 +8,7 @@ use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Models\Ecommerce\FilterOption;
 use App\Models\Ecommerce\Product;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -98,7 +99,7 @@ final class ProductManager
      * @param  array  $data  Update data
      * @param  bool  $reload  Whether to return fresh model
      */
-    public static function update(Product $product, array $data, bool $reload = false): ?Product
+    public static function update(Model|Product $product, array $data, bool $reload = false): ?Product
     {
         return DB::transaction(function () use ($product, $data, $reload) {
             try {

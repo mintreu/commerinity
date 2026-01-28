@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,15 +18,22 @@ class CategoriesTable
     {
         return $table
             ->columns([
-                TextColumn::make('parent_id')
-                    ->numeric()
-                    ->sortable(),
+
+                SpatieMediaLibraryImageColumn::make('displayImage')
+                    ->collection('displayImage'),
+
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
                 TextColumn::make('url')
                     ->searchable(),
+
+                TextColumn::make('parent.name')
+                    ->badge()
+                    ->default('-root-')
+                    ->sortable(),
+
                 IconColumn::make('status')
                     ->boolean(),
                 TextColumn::make('view_count')
@@ -34,9 +42,7 @@ class CategoriesTable
                 TextColumn::make('order')
                     ->numeric()
                     ->sortable(),
-                ImageColumn::make('category_image_id')
-                    ->numeric()
-                    ->sortable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

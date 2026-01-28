@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Ecommerce\Categories\Schemas;
 
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -13,6 +14,7 @@ class CategoryInfolist
     {
         return $schema
             ->components([
+                SpatieMediaLibraryImageEntry::make('displayImage')->collection('displayImage'),
                 TextEntry::make('parent_id')
                     ->numeric()
                     ->placeholder('-'),
@@ -30,9 +32,6 @@ class CategoryInfolist
                 TextEntry::make('desc')
                     ->placeholder('-')
                     ->columnSpanFull(),
-                ImageEntry::make('category_image_id')
-                    ->numeric()
-                    ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

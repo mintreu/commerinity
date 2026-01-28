@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Ecommerce\Categories\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -36,8 +37,7 @@ class CategoryForm
                 TextInput::make('seo_meta'),
                 TextInput::make('meta_data'),
                 TextInput::make('banners'),
-                FileUpload::make('category_image_id')
-                    ->image(),
+                SpatieMediaLibraryFileUpload::make('displayImage')->collection('displayImage'),
             ]);
     }
 }
