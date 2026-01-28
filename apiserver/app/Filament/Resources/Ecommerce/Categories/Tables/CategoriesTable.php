@@ -20,6 +20,7 @@ class CategoriesTable
             ->columns([
 
                 SpatieMediaLibraryImageColumn::make('thumbnail')
+                    ->imageSize('150px')
                     ->collection('thumbnail'),
 
                 TextColumn::make('name')
