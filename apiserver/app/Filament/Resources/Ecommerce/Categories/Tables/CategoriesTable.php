@@ -19,8 +19,8 @@ class CategoriesTable
         return $table
             ->columns([
 
-                SpatieMediaLibraryImageColumn::make('displayImage')
-                    ->collection('displayImage'),
+                SpatieMediaLibraryImageColumn::make('thumbnail')
+                    ->collection('thumbnail'),
 
                 TextColumn::make('name')
                     ->searchable(),

@@ -14,7 +14,7 @@ class CategoryInfolist
     {
         return $schema
             ->components([
-                SpatieMediaLibraryImageEntry::make('displayImage')->collection('displayImage'),
+                SpatieMediaLibraryImageEntry::make('thumbnail')->collection('thumbnail'),
                 TextEntry::make('parent_id')
                     ->numeric()
                     ->placeholder('-'),

@@ -37,7 +37,7 @@ class CategoryForm
                 TextInput::make('seo_meta'),
                 TextInput::make('meta_data'),
                 TextInput::make('banners'),
-                SpatieMediaLibraryFileUpload::make('displayImage')->collection('displayImage'),
+                SpatieMediaLibraryFileUpload::make('thumbnail')->collection('thumbnail'),
             ]);
     }
 }
