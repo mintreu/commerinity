@@ -12,16 +12,25 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DissociateAction;
 use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\EditAction;
+
+
 use Filament\Actions\ViewAction;
+use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -37,81 +46,227 @@ class ManageStock extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('init_quantity')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('sold_quantity')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('in_stock_quantity')
-                    ->numeric(),
-                Toggle::make('in_stock'),
-                TextInput::make('priority')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Select::make('address_id')
-                    ->relationship('address', 'title'),
-                TextInput::make('landing_cost')
-                    ->required()
-                    ->numeric()
-                    ->default(0)
-                    ->prefix('$'),
-                TextInput::make('profit_margin')
-                    ->required()
-                    ->numeric()
-                    ->default(0.0),
-//                TextInput::make('price')
-//                    ->numeric()
-//                    ->prefix('$'),
-                TextInput::make('min_quantity')
-                    ->required()
-                    ->numeric()
-                    ->default(1),
-                TextInput::make('max_quantity')
-                    ->numeric(),
-                TextInput::make('wholesale_unit_quantity')
-                    ->numeric(),
-                TextInput::make('bv')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('pv')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('reward_points')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                TextInput::make('commission_rate')
-                    ->numeric(),
-                Toggle::make('is_commissionable')
-                    ->required(),
-                Select::make('supplier_id')
-                    ->relationship('supplier', 'name'),
-                TextInput::make('purchase_invoice_number'),
-                DatePicker::make('purchase_date'),
-                DatePicker::make('expiry_date'),
-                TextInput::make('batch_number'),
-                Textarea::make('notes')
-                    ->columnSpanFull(),
-                TextInput::make('low_stock_threshold')
-                    ->required()
-                    ->numeric()
-                    ->default(5),
-                Toggle::make('notify_on_low_stock')
-                    ->required(),
+            ->schema([
+                Section::make('Stock Levels')
+                    ->schema([
+                        Grid::make(3)
+                            ->schema([
+                                TextInput::make('init_quantity')
+                                    ->label('Initial Quantity')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->placeholder('0'),
+                                TextInput::make('sold_quantity')
+                                    ->label('Sold Quantity')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->default(0)
+                                    ->readOnly()
+                                    ->placeholder('0'),
+                                TextInput::make('in_stock_quantity')
+                                    ->label('Available Stock')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->placeholder('Calculated: init - sold'),
+                            ]),
+                        Toggle::make('in_stock')
+                            ->disabled()
+                            ->label('In Stock'),
+                        TextInput::make('priority')
+                            ->required()
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0),
+                    ])
+                    ->collapsible(),
+                Section::make('Pricing')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('landing_cost')
+                                    ->label('Landing Cost')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->default(0)
+                                    ->prefix('$')
+                                    ->placeholder('0.00'),
+                                TextInput::make('price')
+                                    ->label('Selling Price')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->prefix('$')
+                                    ->placeholder('0.00'),
+                                TextInput::make('profit_margin')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->suffix('%')
+                                    ->placeholder('0.0'),
+                            ]),
+                    ])
+                    ->collapsible(),
+                Section::make('Purchase Details')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('supplier_id')
+                                    ->relationship('supplier', 'name')
+                                    ->searchable()
+                                    ->preload(),
+                                TextInput::make('purchase_invoice_number'),
+                            ])
+                            ->extraAttributes(['class' => 'gap-4']),
+                        Grid::make(3)
+                            ->schema([
+                                DatePicker::make('purchase_date'),
+                                DatePicker::make('expiry_date'),
+                                TextInput::make('batch_number'),
+                            ]),
+                    ])
+                    ->collapsible(),
+                Section::make('Inventory Limits')
+                    ->schema([
+                        Grid::make(3)
+                            ->schema([
+                                TextInput::make('min_quantity')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(1),
+                                TextInput::make('max_quantity')
+                                    ->numeric()
+                                    ->minValue(0),
+                                TextInput::make('low_stock_threshold')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(5),
+                            ]),
+                        Toggle::make('notify_on_low_stock')
+                            ->label('Notify on Low Stock'),
+                    ])
+                    ->collapsible(),
+                Section::make('Commission & Rewards')
+                    ->schema([
+                        Grid::make(3)
+                            ->schema([
+                                TextInput::make('bv')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0)
+                                    ->minValue(0),
+                                TextInput::make('pv')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0)
+                                    ->minValue(0),
+                                TextInput::make('reward_points')
+                                    ->required()
+                                    ->numeric()
+                                    ->default(0)
+                                    ->minValue(0),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('commission_rate')
+                                    ->numeric()
+                                    ->suffix('%'),
+                                Toggle::make('is_commissionable'),
+                            ]),
+                    ])
+                    ->collapsible(),
+                Section::make('Other')
+                    ->schema([
+                        Select::make('address_id')
+                            ->relationship('address', 'title')
+                            ->searchable()
+                            ->preload(),
+                        TextInput::make('wholesale_unit_quantity')
+                            ->numeric()
+                            ->minValue(0),
+                        Textarea::make('notes')
+                            ->columnSpanFull()
+                            ->rows(3),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
     public function infolist(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextEntry::make('product_id'),
+            ->schema([
+                Section::make('Stock Overview')
+                    ->schema([
+                        Grid::make(4)
+                            ->schema([
+                                TextEntry::make('init_quantity')
+                                    ->label('Initial')
+                                    ->badge()
+                                    ->color(fn (int $state): string => match (true) {
+                                        $state > 100 => 'success',
+                                        $state > 10 => 'warning',
+                                        default => 'danger',
+                                    }),
+                                TextEntry::make('sold_quantity')
+                                    ->label('Sold')
+                                    ->badge()
+                                    ->color('danger'),
+                                TextEntry::make('in_stock_quantity')
+                                    ->label('Available')
+                                    ->badge()
+                                    ->color(fn (int $state): string => match (true) {
+                                        $state > 50 => 'success',
+                                        $state > 5 => 'warning',
+                                        default => 'danger',
+                                    }),
+                                IconEntry::make('in_stock')
+                                    ->label('Status')
+                                    ->boolean()
+                                    ->color(fn (bool $state): string => $state ? 'success' : 'danger'),
+                            ]),
+                    ]),
+                Section::make('Pricing & Purchase')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextEntry::make('price')
+                                    ->money('USD')
+                                    ->label('Selling Price'),
+                                TextEntry::make('landing_cost')
+                                    ->money('USD')
+                                    ->label('Cost'),
+                            ])
+                            ->extraAttributes(['class' => 'gap-6']),
+                        Grid::make(3)
+                            ->schema([
+                                TextEntry::make('purchase_date')
+                                    ->date()
+                                    ->label('Purchased'),
+                                TextEntry::make('expiry_date')
+                                    ->date()
+                                    ->label('Expires'),
+                                TextEntry::make('purchase_invoice_number')
+                                    ->label('Invoice #'),
+                            ]),
+                    ])
+                    ->collapsible(),
+                Section::make('Details')
+                    ->schema([
+                        TextEntry::make('priority')
+                            ->badge(),
+                        TextEntry::make('batch_number')
+                            ->label('Batch'),
+                        TextEntry::make('supplier.name')
+                            ->label('Supplier'),
+                        TextEntry::make('address.title')
+                            ->label('Location'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 
@@ -120,58 +275,23 @@ class ManageStock extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('product_id')
             ->columns([
-                TextColumn::make('init_quantity')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('sold_quantity')
                     ->numeric()
+                    ->label('Stock (Sold)')
                     ->sortable(),
                 TextColumn::make('in_stock_quantity')
                     ->numeric()
+                    ->label('Stock (Available)')
                     ->sortable(),
                 IconColumn::make('in_stock')
                     ->boolean(),
                 TextColumn::make('priority')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('address.title')
-                    ->searchable(),
-                TextColumn::make('landing_cost')
+                TextColumn::make('price')
                     ->money()
                     ->sortable(),
-                TextColumn::make('profit_margin')
-                    ->numeric()
-                    ->sortable(),
-//                TextColumn::make('price')
-//                    ->money()
-//                    ->sortable(),
-                TextColumn::make('min_quantity')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('max_quantity')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('wholesale_unit_quantity')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('bv')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('pv')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('reward_points')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('commission_rate')
-                    ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_commissionable')
-                    ->boolean(),
-                TextColumn::make('supplier.name')
-                    ->searchable(),
-                TextColumn::make('purchase_invoice_number')
-                    ->searchable(),
+
                 TextColumn::make('purchase_date')
                     ->date()
                     ->sortable(),
@@ -180,11 +300,6 @@ class ManageStock extends ManageRelatedRecords
                     ->sortable(),
                 TextColumn::make('batch_number')
                     ->searchable(),
-                TextColumn::make('low_stock_threshold')
-                    ->numeric()
-                    ->sortable(),
-                IconColumn::make('notify_on_low_stock')
-                    ->boolean(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -199,17 +314,17 @@ class ManageStock extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make(),
-                AssociateAction::make(),
+                //AssociateAction::make(),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                DissociateAction::make(),
+              //  DissociateAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DissociateBulkAction::make(),
+                  //  DissociateBulkAction::make(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
