@@ -89,5 +89,17 @@ class ProductStockSeeder extends Seeder
             'expiry_date' => now()->addMonths(random_int(6, 24)),
             'notes' => 'Initial stock entry',
         ]);
+
+        $product->update([
+            'price' => $productPrice,
+            'bv' => $bv,
+            'pv' => $pv,
+            'reward_points' => $rewardPoints,
+            'min_quantity' => 1,
+            'max_quantity' => 50,
+            'wholesale_unit_quantity' => null,
+            'is_commissionable' => true,
+            'commission_rate' => 5.00,
+        ]);
     }
 }

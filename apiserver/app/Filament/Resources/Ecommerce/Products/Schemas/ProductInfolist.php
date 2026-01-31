@@ -4,17 +4,16 @@ namespace App\Filament\Resources\Ecommerce\Products\Schemas;
 
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 
 class ProductInfolist
 {
@@ -51,7 +50,7 @@ class ProductInfolist
                                                     ->color('primary')
                                                     ->hintAction(
                                                         Action::make('visit')
-                                                            ->url(url: fn(Model $record) => config('app.client_url').'/product/'.$record->url,shouldOpenInNewTab:true)
+                                                            ->url(url: fn (Model $record) => config('app.client_url').'/product/'.$record->url, shouldOpenInNewTab: true)
                                                             ->icon('heroicon-m-globe-alt')->iconButton()
                                                     ),
 
@@ -62,12 +61,13 @@ class ProductInfolist
                                                 // Product Price From Stock
 
                                                 TextEntry::make('price')
+                                                    ->getStateUsing(fn (Model $record) => $record->getPrice())
                                                     ->money()
                                                     ->placeholder('-'),
 
                                                 // Total Available Stock
                                                 TextEntry::make('Current Stock')->inlineLabel()
-                                                    ->getStateUsing(fn(Model $record) => $record->availableStocks()->sum('in_stock_quantity'))
+                                                    ->getStateUsing(fn (Model $record) => $record->availableStocks()->sum('in_stock_quantity'))
                                                     ->size(TextSize::Medium),
 
                                                 TextEntry::make('type')->badge()->inlineLabel(),
@@ -75,7 +75,6 @@ class ProductInfolist
                                             ]),
 
                                     ]),
-
 
                                 TextEntry::make('short_description')
                                     ->label('Short Intro')
@@ -105,13 +104,12 @@ class ProductInfolist
                                     ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->imageSize('250px')
-                                    ->collection('bannerImage')
+                                    ->collection('bannerImage'),
                             ]),
 
                         Tab::make('Store Config')
                             ->columns()
                             ->schema([
-
 
                                 TextEntry::make('status')
                                     ->badge(),

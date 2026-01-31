@@ -32,6 +32,11 @@ Last refreshed: 2026-01-28
   - Casts include gender, type, status; `dob` date; `password` hashed.
   - Affiliate relationships: `parent()`, `children()`, `genealogy()`; originator morphs.
 
+## Pricing & fulfillment
+- `products.price` is the canonical storefront price; the public APIs, carts, and Nuxt resources plug into `Product::getPrice()`/`getSalePrice()`/`getDisplayPrice()` so totals no longer vary by stock entry.
+- BV/PV/reward/wholesale thresholds and commission flags now live on `products` (fillables/casts/migration/seeders updated) so CartService and order flows aggregate those values from the product row while `ProductStock` stays responsible only for warehouse/FIFO allocation.
+- Warehouse-aware helpers (`PriceCalculationService::resolveStockContext`, `getOrderedStocksForContext`, `getBestStockForContext`) remain in the live service to feed allocation logic, whereas the legacy stock-based price calculators were relocated into `.codex/deprecated/ecommerce/StockPricing/DeprecatedPriceService` for reference.
+
 ## Key API routes (from `apiserver/routes/api.php`)
 - Health: `GET /api/health`
 - Auth: `/api/auth/send-otp`, `/api/auth/verify-otp`, `/api/auth/register`, `/api/auth/login`, password reset, logout.

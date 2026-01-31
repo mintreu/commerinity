@@ -57,9 +57,9 @@ class SeoMetaGenerator
             'og_title' => "Buy {$name} Online | Best Price",
             'og_description' => $metaDescription,
             'og_type' => 'product',
-            'og_price_amount' => $product->price / 100, // Convert paisa to rupees
+            'og_price_amount' => $product->getPrice() / 100, // Convert paise to rupees
             'og_price_currency' => 'INR',
-            'og_availability' => $product->stock_quantity > 0 ? 'in stock' : 'out of stock',
+            'og_availability' => $product->total_stock > 0 ? 'in stock' : 'out of stock',
             'twitter_card' => 'summary_large_image',
             'twitter_title' => "{$name} | Mintreu",
             'twitter_description' => $metaDescription,

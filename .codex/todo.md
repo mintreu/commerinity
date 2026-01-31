@@ -1,6 +1,6 @@
 ﻿# TODO (Commerinity)
 
-1. Add sales targeting support (old_project parity)
+1. Add sales targeting support (old_project parity) ✅
    - Add sales target config (Level/Stage/UserType/User as needed).
    - Implement user-context sale selection in product list/detail APIs:
      - Auth user: targeted sale_products + global fallback
@@ -8,7 +8,7 @@
    - Ensure SaleProduct relation/resolver exists to fetch active sales per user context.
    - Update tests: product list/detail pricing with user vs guest sale targets.
 
-2. Complete pricing system (single source of truth)
+2. Complete pricing system (single source of truth) *(details and refactor plan captured in `issues/product-pricing-refactor.md`, keep this as a trigger for the next session)* ✅
    - Resolve stock by location (nearest warehouse first; pincode proximity; FIFO for guest).
    - Ensure Product/Cart/Order use identical price resolution + sale application.
    - Display MRP/sale/current price + discount consistently in Nuxt.

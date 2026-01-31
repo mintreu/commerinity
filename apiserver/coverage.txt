@@ -1,12 +1,12 @@
 
 
 Code Coverage Report:
-  2026-01-28 19:29:46
+  2026-01-31 01:49:32
 
  Summary:
-  Classes:  0.39% (2/515)
-  Methods:  4.46% (133/2981)
-  Lines:    3.01% (837/27836)
+  Classes:  0.39% (2/516)
+  Methods:  2.98% (89/2986)
+  Lines:    1.73% (486/28072)
 
 App\Console\Commands\Ecommerce\CompleteDeliveredOrders
   Methods:  50.00% ( 1/ 2)   Lines:   2.04% (  1/ 49)
@@ -70,40 +70,20 @@ App\Filament\Resources\Users\UserResource
   Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
 App\Filament\Resources\Wallets\WalletResource
   Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
-App\Helpers\OtpManager
-  Methods:   4.76% ( 1/21)   Lines:   1.02% (  1/ 98)
-App\Http\Controllers\Api\WalletController
-  Methods:   6.25% ( 1/16)   Lines:   7.14% ( 31/434)
 App\Jobs\Wallet\CheckPayoutStatusJob
   Methods:  25.00% ( 1/ 4)   Lines:   1.27% (  1/ 79)
 App\Models\Address
-  Methods:  12.50% ( 2/16)   Lines:  26.09% ( 12/ 46)
+  Methods:   6.25% ( 1/16)   Lines:  21.74% ( 10/ 46)
 App\Models\BeneficiaryAccount
   Methods:   4.35% ( 1/23)   Lines:  16.36% (  9/ 55)
-App\Models\Geo\Block
-  Methods:  16.67% ( 1/ 6)   Lines:  44.44% (  4/  9)
-App\Models\Geo\Country
-  Methods:  20.00% ( 1/ 5)   Lines:  63.64% (  7/ 11)
-App\Models\Geo\State
-  Methods:  33.33% ( 2/ 6)   Lines:  40.00% (  4/ 10)
-App\Models\Integration
-  Methods:  40.00% (10/25)   Lines:  53.70% ( 29/ 54)
-App\Models\Traits\HasFingerprint
-  Methods:  10.00% ( 1/10)   Lines:  41.94% ( 13/ 31)
-App\Models\Traits\HasWallet
-  Methods:  12.50% ( 1/ 8)   Lines:  12.50% (  1/  8)
+App\Models\Ecommerce\Product
+  Methods:   9.76% ( 4/41)   Lines:  15.34% ( 25/163)
+App\Models\Ecommerce\ProductStock
+  Methods:  15.38% ( 4/26)   Lines:  33.33% ( 25/ 75)
 App\Models\Transaction
-  Methods:   3.85% ( 1/26)   Lines:  38.60% ( 22/ 57)
+  Methods:   3.85% ( 1/26)   Lines:  29.82% ( 17/ 57)
 App\Models\User
-  Methods:  19.05% ( 4/21)   Lines:  53.03% ( 35/ 66)
-App\Models\Wallet
-  Methods:  12.00% ( 3/25)   Lines:  28.85% ( 15/ 52)
-App\Observers\AddressObserver
-  Methods:   0.00% ( 0/ 2)   Lines:  73.68% ( 14/ 19)
-App\Observers\TransactionObserver
-  Methods:  50.00% ( 1/ 2)   Lines:  11.54% (  3/ 26)
-App\Observers\UserObserver
-  Methods:  20.00% ( 1/ 5)   Lines:  73.33% ( 11/ 15)
+  Methods:   4.76% ( 1/21)   Lines:  19.70% ( 13/ 66)
 App\Providers\AppServiceProvider
   Methods:  66.67% ( 2/ 3)   Lines:  50.00% (  8/ 16)
 App\Providers\Filament\AdminPanelProvider
@@ -126,21 +106,3 @@ App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator
   Methods:  16.67% ( 1/ 6)   Lines:   2.86% (  1/ 35)
 App\Services\Affiliate\CommissionProcessorService
   Methods:  15.00% ( 3/20)   Lines:   5.43% ( 10/184)
-App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest
-  Methods:  50.00% ( 2/ 4)   Lines:   5.26% (  2/ 38)
-App\Services\IntegrationServices\Payment\DTOs\PaymentResponse
-  Methods:  22.22% ( 2/ 9)   Lines:  30.00% ( 15/ 50)
-App\Services\IntegrationServices\Payment\PaymentService
-  Methods:  31.25% ( 5/16)   Lines:  35.38% ( 23/ 65)
-App\Services\IntegrationServices\Payment\Providers\Cashfree\CashfreePaymentProvider
-  Methods:  46.67% ( 7/15)   Lines:  30.66% ( 65/212)
-App\Services\IntegrationServices\Payment\Providers\NativePaymentProvider
-  Methods:  18.18% ( 2/11)   Lines:   4.67% (  7/150)
-App\Services\IntegrationServices\Payment\Providers\RazorpayPaymentProvider
-  Methods:  21.43% ( 3/14)   Lines:   4.07% ( 10/246)
-App\Services\MoneyService
-  Methods:   4.55% ( 1/22)   Lines:  16.18% ( 11/ 68)
-App\Services\UserServices\UserWalletService
-  Methods:   4.17% ( 1/24)   Lines:   4.78% ( 15/314)
-App\Traits\HasTransaction
-  Methods:  25.00% ( 2/ 8)   Lines:  68.42% ( 91/133)

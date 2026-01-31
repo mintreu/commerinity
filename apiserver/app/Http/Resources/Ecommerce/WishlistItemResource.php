@@ -31,6 +31,7 @@ class WishlistItemResource extends JsonResource
         }
 
         $displayMedia = $product->getFirstMedia('displayImage');
+        $price = $product->getPrice();
 
         return [
             'id' => $this->id,
@@ -39,12 +40,13 @@ class WishlistItemResource extends JsonResource
                 'name' => $product->name,
                 'slug' => $product->url,
                 'sku' => $product->sku,
-                'price' => $product->price,
-                'price_formatted' => MoneyService::format($product->price),
+                'price' => $price,
+                'price_formatted' => MoneyService::format($price),
                 'image' => $displayMedia ? (new ImageResource($displayMedia))->toArray($request) : null,
                 'in_stock' => $product->total_stock > 0,
                 'category' => $product->category ? new CategoryBriefResource($product->category) : null,
             ],
         ];
     }
+
 }

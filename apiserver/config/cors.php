@@ -23,6 +23,8 @@ return [
         //        '*'
         'http://localhost:3000',   // Nuxt dev
         'https://vvindia.in',  // Production
+        'https://www.vvindia.in', // Production alias hosting Nuxt client
+        'https://panel.vvindia.in', // API host when accessed via browser clients
     ],
 
     'allowed_origins_patterns' => [],

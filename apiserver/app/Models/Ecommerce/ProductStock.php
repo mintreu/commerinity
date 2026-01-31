@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\Ecommerce;
 
 use App\Models\Address;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -190,11 +189,27 @@ class ProductStock extends Model
 
     /**
      * Get the effective price for this stock entry
-     * Uses override price if set, otherwise falls back to product price
+     * Uses override price if set, otherwise calculates from landing cost + profit margin
      */
     public function getEffectivePrice(): int
     {
-        return $this->price ?? $this->product->price ?? 0;
+        if ($this->price !== null && $this->price > 0) {
+            return $this->price;
+        }
+
+        return $this->calculatePriceFromCost();
+    }
+
+    private function calculatePriceFromCost(): int
+    {
+        if ($this->landing_cost <= 0) {
+            return 0;
+        }
+
+        $marginMultiplier = 1 + ($this->profit_margin / 100);
+        $price = (int) round($this->landing_cost * $marginMultiplier);
+
+        return max(0, $price);
     }
 
     /**

@@ -14,14 +14,16 @@ use App\Models\Ecommerce\Shipment;
 use App\Models\Ecommerce\ShipmentItem;
 use App\Models\Transaction;
 use App\Services\Affiliate\CommissionProcessorService;
-use Illuminate\Support\Collection;
+use App\Services\Ecommerce\PriceCalculationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class OrderValidationService
 {
     protected Transaction $transaction;
+
     protected Order $order;
+
     protected ?CommissionProcessorService $commissionProcessor = null;
 
     public function __construct(
@@ -32,7 +34,7 @@ class OrderValidationService
         $this->transaction = $transaction;
         $this->order = $order;
         $this->commissionProcessor = $commissionProcessor;
-        $this->order->load(['items.product', 'items.stock']);
+        $this->order->load(['items.product', 'items.stock', 'shippingAddress']);
     }
 
     public static function make(Transaction $transaction, Order $order, ?CommissionProcessorService $commissionProcessor = null): self
@@ -121,21 +123,25 @@ class OrderValidationService
     {
         $product = $orderItem->product;
         $requestedQuantity = $orderItem->quantity;
+        $priceService = app(PriceCalculationService::class);
+        $context = $priceService->resolveStockContext($this->order->shippingAddress);
 
         // Get available stock entries ordered by FIFO (priority then created_at)
         // Note: in_stock and in_stock_quantity are generated columns, use calculation instead
         $stockEntries = ProductStock::query()
             ->where('product_id', $product->id)
             ->whereColumn('sold_quantity', '<', 'init_quantity')
-            ->orderBy('priority')
+            ->with('address')
             ->orderBy('created_at')
             ->get();
+
+        $orderedStocks = $priceService->getOrderedStocksForContext($stockEntries, $context);
 
         $remainingQuantity = $requestedQuantity;
         $stockAllocations = [];
 
         // Allocate stock using FIFO pattern
-        foreach ($stockEntries as $stock) {
+        foreach ($orderedStocks as $stock) {
             if ($remainingQuantity <= 0) {
                 break;
             }
@@ -194,6 +200,7 @@ class OrderValidationService
                     'order_item_id' => $orderItem->id,
                     'pickup_address_id' => $pickupAddressId,
                 ]);
+
                 continue;
             }
 

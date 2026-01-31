@@ -17,17 +17,19 @@ final class CartItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         $product = $this->cartable;
+        $price = $product?->getPrice() ?? 0;
 
         return [
             'product_slug' => $product?->url,
             'name' => $product?->name,
             'sku' => $product?->sku,
             'quantity' => $this->quantity,
-            'price' => $product?->price ?? 0,
-            'price_formatted' => MoneyService::format($product?->price ?? 0),
-            'subtotal' => ($product?->price ?? 0) * $this->quantity,
-            'subtotal_formatted' => MoneyService::format(($product?->price ?? 0) * $this->quantity),
+            'price' => $price,
+            'price_formatted' => MoneyService::format($price),
+            'subtotal' => $price * $this->quantity,
+            'subtotal_formatted' => MoneyService::format($price * $this->quantity),
             'image' => $product?->getFirstMedia('displayImage') ? (new ImageResource($product->getFirstMedia('displayImage')))->toArray(request()) : null,
         ];
     }
+
 }

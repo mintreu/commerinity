@@ -28,3 +28,10 @@ Schedule::command('ecommerce:complete-orders')
     ->name('complete-delivered-orders')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Reindex sales (sale_products) hourly to keep targets in sync
+Schedule::command('app:sales-reindex')
+    ->hourly()
+    ->name('sales-reindex')
+    ->withoutOverlapping()
+    ->runInBackground();

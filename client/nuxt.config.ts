@@ -48,6 +48,7 @@ export default defineNuxtConfig({
     public: {
       // API Configuration
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in',
 
       // Branding (can be overridden via .env)
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'VVIndia',

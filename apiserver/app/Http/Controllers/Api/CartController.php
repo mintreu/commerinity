@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CartItemResource;
+use App\Models\Address;
 use App\Models\Ecommerce\Product;
 use App\Services\Ecommerce\CartService\CartService;
 use App\Services\MoneyService;
@@ -38,6 +39,11 @@ class CartController extends Controller
     {
         $this->cartService->capture($request);
 
+        $shippingAddress = $this->resolveShippingAddress($request);
+        if ($shippingAddress) {
+            $request->attributes->set('stock_context', $shippingAddress);
+        }
+
         $items = $this->cartService->items();
 
         if ($this->cartService->hasErrors()) {
@@ -48,7 +54,8 @@ class CartController extends Controller
         }
 
         $cartItems = CartItemResource::collection($items);
-        $subtotal = $items->sum(fn ($cart) => ($cart->cartable?->price ?? 0) * $cart->quantity);
+        $cartTotal = $this->cartService->getCartTotal($shippingAddress);
+        $subtotal = $cartTotal['subtotal'] ?? 0;
 
         return response()->json([
             'success' => true,
@@ -58,7 +65,7 @@ class CartController extends Controller
                     'items_count' => $this->cartService->count(),
                     'total_quantity' => $this->cartService->getTotalQuantity(),
                     'subtotal' => $subtotal,
-                    'subtotal_formatted' => MoneyService::format($subtotal),
+                    'subtotal_formatted' => $cartTotal['formatted']['subtotal'] ?? MoneyService::format($subtotal),
                 ],
                 'is_guest' => $this->cartService->isGuest(),
             ],
@@ -195,5 +202,18 @@ class CartController extends Controller
                 'total_quantity' => $this->cartService->getTotalQuantity(),
             ],
         ]);
+    }
+
+    private function resolveShippingAddress(Request $request): ?Address
+    {
+        $user = auth('sanctum')->user();
+
+        if (! $user || ! $request->filled('shipping_address_id')) {
+            return null;
+        }
+
+        return $user->addresses()
+            ->where('uuid', $request->input('shipping_address_id'))
+            ->first();
     }
 }
