@@ -1,5 +1,5 @@
-import { defineEventHandler, setResponseHeader, useRuntimeConfig } from 'h3'
-import { $fetch } from 'ohmyfetch'
+import { defineEventHandler, setResponseHeader } from 'h3'
+import { useRuntimeConfig } from '#imports'
 
 type SitemapUrl = {
   path: string
@@ -9,26 +9,37 @@ type SitemapUrl = {
 
 type ApiResponse<T> = {
   data?: T
+  items?: T[]
   [key: string]: unknown
 }
 
 const safeFetch = async <T>(url: string, query?: Record<string, string | number>) => {
   try {
-    const response = await $fetch<ApiResponse<T>>(url, {
+    const params = query ? new URLSearchParams(Object.entries(query).map(([key, value]) => [key, String(value)])) : undefined
+    const fullUrl = `${url}${params && params.toString() ? `?${params.toString()}` : ''}`
+    const response = await fetch(fullUrl, {
       method: 'GET',
-      query,
       headers: {
         accept: 'application/json'
       }
     })
 
-    if (Array.isArray(response.data)) {
-      return response.data
+    if (!response.ok) {
+      return []
     }
 
-    const fallback = response as unknown
-    if (Array.isArray(fallback)) {
-      return fallback
+    const body = (await response.json()) as ApiResponse<T>
+
+    if (Array.isArray(body.data)) {
+      return body.data
+    }
+
+    if (Array.isArray(body.items)) {
+      return body.items
+    }
+
+    if (Array.isArray(body)) {
+      return body as T[]
     }
 
     return []
