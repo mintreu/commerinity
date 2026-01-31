@@ -60,9 +60,12 @@ export const useCart = () => {
   /**
    * Fetch cart from API
    */
-  const fetchCart = async () => {
+  const fetchCart = async (options?: { shippingAddressId?: string | null }) => {
     cartState.loading = true
     try {
+      const query = options?.shippingAddressId
+        ? `?shipping_address_id=${encodeURIComponent(options.shippingAddressId)}`
+        : ''
       const response = await useSanctumFetch<{
         success: boolean
         data: {
@@ -70,7 +73,7 @@ export const useCart = () => {
           summary: CartSummary
           is_guest: boolean
         }
-      }>(`${config.public.apiBase}/api/cart`)
+      }>(`${config.public.apiBase}/api/cart${query}`)
 
       if (response.success && response.data) {
         cartState.items = response.data.items || []
@@ -158,7 +161,11 @@ export const useCart = () => {
   /**
    * Update cart item quantity
    */
-  const updateQuantity = async (productSlug: string, quantity: number): Promise<boolean> => {
+  const updateQuantity = async (
+    productSlug: string,
+    quantity: number,
+    options?: { shippingAddressId?: string | null }
+  ): Promise<boolean> => {
     try {
       const response = await useSanctumFetch<{
         success: boolean
@@ -176,7 +183,7 @@ export const useCart = () => {
           cartState.summary.total_quantity = response.data.total_quantity
         }
         // Refetch to get updated items
-        await fetchCart()
+        await fetchCart(options)
         return true
       }
       return false
@@ -188,7 +195,10 @@ export const useCart = () => {
   /**
    * Remove item from cart
    */
-  const removeFromCart = async (productSlug: string): Promise<boolean> => {
+  const removeFromCart = async (
+    productSlug: string,
+    options?: { shippingAddressId?: string | null }
+  ): Promise<boolean> => {
     try {
       const response = await useSanctumFetch<{
         success: boolean
@@ -205,7 +215,7 @@ export const useCart = () => {
           cartState.summary.total_quantity = response.data.total_quantity
         }
         // Refetch to get updated items
-        await fetchCart()
+        await fetchCart(options)
         toast.add({
           title: 'Removed',
           description: 'Item removed from cart',

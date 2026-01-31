@@ -21,8 +21,6 @@ final class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // FIFO: Get first available stock
-        $stock = $this->availableStocks->first();
         $inStock = $this->total_stock > 0;
 
         // Get price using Product model's getPrice() method
@@ -60,9 +58,9 @@ final class ProductResource extends JsonResource
             'sale_ends_at' => $saleEndsAt,
             // Category
             'category' => $this->whenLoaded('category', fn ($category) => [
-                "uuid" => $category->uuid,
-                "name" => $category->name,
-                "slug" => $category->slug
+                'uuid' => $category->uuid,
+                'name' => $category->name,
+                'slug' => $category->slug,
             ]),
             // Images
             'image' => $this->formatImage(),
@@ -74,9 +72,9 @@ final class ProductResource extends JsonResource
             // Stats
             'view_count' => $this->view_count,
             // Affiliate points from FIFO stock
-            'bv' => $stock?->bv ?? 0,
-            'pv' => $stock?->pv ?? 0,
-            'reward_points' => $stock?->reward_points ?? 0,
+            'bv' => $this->bv,
+            'pv' => $this->pv,
+            'reward_points' => $this->reward_points,
         ];
     }
 
@@ -122,4 +120,5 @@ final class ProductResource extends JsonResource
 
         return (new ImageResource($displayMedia))->toArray(request());
     }
+
 }

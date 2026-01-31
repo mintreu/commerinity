@@ -73,7 +73,7 @@ const incrementQuantity = async (item: { product_slug: string, quantity: number 
   if (item.quantity >= 10) return // Max limit
 
   updatingItem.value = item.product_slug
-  await updateQuantity(item.product_slug, item.quantity + 1)
+  await updateQuantity(item.product_slug, item.quantity + 1, { shippingAddressId: shippingAddressId.value })
   updatingItem.value = null
 }
 
@@ -81,13 +81,13 @@ const decrementQuantity = async (item: { product_slug: string, quantity: number 
   if (item.quantity <= 1) return // Min limit
 
   updatingItem.value = item.product_slug
-  await updateQuantity(item.product_slug, item.quantity - 1)
+  await updateQuantity(item.product_slug, item.quantity - 1, { shippingAddressId: shippingAddressId.value })
   updatingItem.value = null
 }
 
 const handleRemoveItem = async (productSlug: string) => {
   removingItem.value = productSlug
-  await removeFromCart(productSlug)
+  await removeFromCart(productSlug, { shippingAddressId: shippingAddressId.value })
   removingItem.value = null
 }
 
@@ -139,6 +139,9 @@ watch(billingIsShipping, (v) => {
 
 watch(shippingAddressId, (id) => {
   if (billingIsShipping.value) billingAddressId.value = id
+  if (id) {
+    fetchCart({ shippingAddressId: id })
+  }
 })
 
 const canCheckout = computed(() => {

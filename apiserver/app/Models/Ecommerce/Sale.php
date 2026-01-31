@@ -6,11 +6,15 @@ namespace App\Models\Ecommerce;
 
 use App\Casts\ConditionMatchingCast;
 use App\Casts\SaleActionTypeCast;
+use App\Models\Membership\Level;
+use App\Models\Membership\Stage;
+use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Sale extends Model
@@ -30,6 +34,8 @@ class Sale extends Model
         'action_type',
         'discount_amount',
         'sort_order',
+        'target_user_types',
+        'target_wholesale_only',
     ];
 
     protected function casts(): array
@@ -44,6 +50,8 @@ class Sale extends Model
             'action_type' => SaleActionTypeCast::class,
             'discount_amount' => 'integer',
             'sort_order' => 'integer',
+            'target_user_types' => 'array',
+            'target_wholesale_only' => 'boolean',
         ];
     }
 
@@ -69,20 +77,6 @@ class Sale extends Model
     public function saleProducts(): HasMany
     {
         return $this->hasMany(SaleProduct::class);
-    }
-
-    /**
-     * Polymorphic targets (categories, user groups, etc.)
-     */
-    public function targets(): MorphToMany
-    {
-        return $this->morphedByMany(
-            Category::class,
-            'target',
-            'sale_targets',
-            'sale_id',
-            'target_id'
-        );
     }
 
     /**
@@ -113,6 +107,48 @@ class Sale extends Model
         );
     }
 
+    /**
+     * Stage targets (membership tier)
+     */
+    public function stages(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Stage::class,
+            'target',
+            'sale_targets',
+            'sale_id',
+            'target_id'
+        );
+    }
+
+    /**
+     * Level targets (membership rank)
+     */
+    public function levels(): MorphToMany
+    {
+        return $this->morphedByMany(
+            Level::class,
+            'target',
+            'sale_targets',
+            'sale_id',
+            'target_id'
+        );
+    }
+
+    /**
+     * User targets (specific users)
+     */
+    public function users(): MorphToMany
+    {
+        return $this->morphedByMany(
+            User::class,
+            'target',
+            'sale_targets',
+            'sale_id',
+            'target_id'
+        );
+    }
+
     // ==================== SCOPES ====================
 
     /**
@@ -130,7 +166,11 @@ class Sale extends Model
      */
     public function scopeWithoutTargets(Builder $query): Builder
     {
-        return $query->whereDoesntHave('targets');
+        return $query->whereNotExists(function ($sub): void {
+            $sub->select(DB::raw(1))
+                ->from('sale_targets')
+                ->whereColumn('sale_targets.sale_id', 'sales.id');
+        });
     }
 
     /**
@@ -138,8 +178,11 @@ class Sale extends Model
      */
     public function scopeForTarget(Builder $query, Model $target): Builder
     {
-        return $query->whereHas('targets', function ($q) use ($target): void {
-            $q->where('target_type', $target::class)
+        return $query->whereExists(function ($sub) use ($target): void {
+            $sub->select(DB::raw(1))
+                ->from('sale_targets')
+                ->whereColumn('sale_targets.sale_id', 'sales.id')
+                ->where('target_type', $target::class)
                 ->where('target_id', $target->getKey());
         });
     }
@@ -149,8 +192,11 @@ class Sale extends Model
      */
     public function scopeForTargetType(Builder $query, string $targetClass): Builder
     {
-        return $query->whereHas('targets', function ($q) use ($targetClass): void {
-            $q->where('target_type', $targetClass);
+        return $query->whereExists(function ($sub) use ($targetClass): void {
+            $sub->select(DB::raw(1))
+                ->from('sale_targets')
+                ->whereColumn('sale_targets.sale_id', 'sales.id')
+                ->where('target_type', $targetClass);
         });
     }
 
@@ -235,21 +281,21 @@ class Sale extends Model
      */
     public function appliesTo(Product $product): bool
     {
-        // Check if product is directly targeted
-        if ($this->products()->where('products.id', $product->id)->exists()) {
-            return true;
+        // Product/Category targeting only affects product eligibility
+        $hasProductTargets = $this->products()->exists() || $this->categories()->exists();
+
+        if ($hasProductTargets) {
+            if ($this->products()->where('products.id', $product->id)->exists()) {
+                return true;
+            }
+
+            if ($product->category_id && $this->categories()->where('categories.id', $product->category_id)->exists()) {
+                return true;
+            }
+
+            return false;
         }
 
-        // Check if product's category is targeted
-        if ($product->category_id && $this->categories()->where('categories.id', $product->category_id)->exists()) {
-            return true;
-        }
-
-        // Check if this is a site-wide sale (no targets)
-        if (! $this->targets()->exists()) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

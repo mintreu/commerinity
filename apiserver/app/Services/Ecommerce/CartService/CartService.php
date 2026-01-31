@@ -13,6 +13,7 @@ use App\Models\Ecommerce\VoucherCode;
 use App\Models\User;
 use App\Services\Ecommerce\CartService\Support\HasGuestCartSupport;
 use App\Services\Ecommerce\CartService\Support\HasVoucherCodeValidator;
+use App\Services\Ecommerce\PriceCalculationService;
 use App\Services\MoneyService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -119,9 +120,9 @@ class CartService
             return null;
         }
 
-        // Load stock for each product, prioritizing nearest to shipping address
+        // Load stock for each product with addresses for context ordering
         $items->load(['cartable.stocks' => function ($query): void {
-            $query->inStock()->fifo();
+            $query->inStock()->with('address')->orderBy('created_at');
         }]);
 
         return $items;
@@ -274,8 +275,6 @@ class CartService
     {
         $cartItems = $this->itemsWithStock($shippingAddress);
 
-
-
         if (! $cartItems || $cartItems->isEmpty()) {
             return $this->emptyCartTotal();
         }
@@ -300,7 +299,7 @@ class CartService
             $quantity = $cartItem->quantity;
 
             // FIFO stock allocation
-            $allocation = $this->allocateStockFifo($product, $quantity, $shippingState);
+            $allocation = $this->allocateStockFifo($product, $quantity, $shippingAddress);
 
             if ($allocation['allocated_quantity'] < $quantity) {
                 // Not enough stock - record warning
@@ -309,8 +308,6 @@ class CartService
 
             $itemTotal = $allocation['total_price'];
             $subtotal += $itemTotal;
-
-
 
             // Calculate tax based on warehouse state
             $itemTax = 0;
@@ -391,23 +388,18 @@ class CartService
      * Allocate stock using FIFO (First In First Out)
      * Prioritizes older stock entries and stock closer to shipping address
      */
-    protected function allocateStockFifo(Product $product, int $quantity, ?string $shippingState): array
+    protected function allocateStockFifo(Product $product, int $quantity, ?Address $shippingAddress): array
     {
+        $priceService = app(PriceCalculationService::class);
+        $context = $priceService->resolveStockContext($shippingAddress);
+
         $stocks = $product->stocks()
             ->inStock()
-            ->fifo()
+            ->with('address')
+            ->orderBy('created_at')
             ->get();
 
-        // Sort: prioritize same-state stocks first
-        if ($shippingState) {
-            $stocks = $stocks->sortBy(function ($stock) use ($shippingState) {
-                $warehouseState = $stock->address?->state
-                    ? Str::lower(trim($stock->address->state->name))
-                    : null;
-
-                return $warehouseState === $shippingState ? 0 : 1;
-            });
-        }
+        $orderedStocks = $priceService->getOrderedStocksForContext($stocks, $context);
 
         $allocated = 0;
         $totalPrice = 0;
@@ -416,7 +408,7 @@ class CartService
         $totalRewardPoints = 0;
         $stockEntries = [];
 
-        foreach ($stocks as $stock) {
+        foreach ($orderedStocks as $stock) {
             if ($allocated >= $quantity) {
                 break;
             }
@@ -427,7 +419,10 @@ class CartService
             }
 
             $toAllocate = min($available, $quantity - $allocated);
-            $unitPrice = $stock->getEffectivePrice();
+
+            // Use Product price for calculation, NOT stock price
+            // Stock entry still tracked for inventory decrement
+            $unitPrice = $product->getPrice();
             $lineTotal = $unitPrice * $toAllocate;
 
             $stockEntries[] = [
@@ -435,11 +430,11 @@ class CartService
                 'quantity' => $toAllocate,
                 'unit_price' => $unitPrice,
                 'line_total' => $lineTotal,
-                'bv' => $stock->bv * $toAllocate,
-                'pv' => $stock->pv * $toAllocate,
-                'reward_points' => $stock->reward_points * $toAllocate,
+                'bv' => $product->bv * $toAllocate,
+                'pv' => $product->pv * $toAllocate,
+                'reward_points' => $product->reward_points * $toAllocate,
                 'warehouse_state' => $stock->address?->state
-                    ? Str::lower(trim($stock->address->state))
+                    ? Str::lower(trim($stock->address->state->name))
                     : null,
                 'batch_number' => $stock->batch_number,
                 'expiry_date' => $stock->expiry_date?->toDateString(),
@@ -447,9 +442,9 @@ class CartService
 
             $allocated += $toAllocate;
             $totalPrice += $lineTotal;
-            $totalBv += $stock->bv * $toAllocate;
-            $totalPv += $stock->pv * $toAllocate;
-            $totalRewardPoints += $stock->reward_points * $toAllocate;
+            $totalBv += $product->bv * $toAllocate;
+            $totalPv += $product->pv * $toAllocate;
+            $totalRewardPoints += $product->reward_points * $toAllocate;
         }
 
         return [

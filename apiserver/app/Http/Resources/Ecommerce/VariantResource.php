@@ -21,8 +21,7 @@ final class VariantResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $stock = $this->availableStocks->first();
-        $originalPrice = $stock?->getEffectivePrice() ?? $this->price;
+        $originalPrice = $this->getPrice();
 
         // Check sale for variant
         $saleInfo = $this->getActiveSaleInfo();
@@ -51,9 +50,9 @@ final class VariantResource extends JsonResource
             'discount_percent' => $discountPercent,
             'image' => $this->formatImage(),
             'in_stock' => $this->availableStocks->count() > 0,
-            'bv' => $stock?->bv ?? 0,
-            'pv' => $stock?->pv ?? 0,
-            'reward_points' => $stock?->reward_points ?? 0,
+            'bv' => $this->bv,
+            'pv' => $this->pv,
+            'reward_points' => $this->reward_points,
             'filter_options' => $this->formatFilterOptions(),
         ];
     }

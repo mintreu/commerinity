@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Ecommerce;
 
-use App\Casts\ProductStatusCast;
 use App\Http\Resources\ImageResource;
 use App\Services\MoneyService;
 use Illuminate\Http\Request;
@@ -17,19 +16,11 @@ final class ProductDetailResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        // FIFO: Get first available stock
-        // Unified stock resolution (parent OR variant)
-        $stock = $this->availableStocks->first()
-            ?? $this->variants
-                ->flatMap->availableStocks
-                ->first();
-
         $inStock = $this->total_stock > 0;
         $totalStock = $this->total_stock;
 
-// Unified price (single source of truth)
+        // Unified price (single source of truth) derived from Canonical Product Price
         $originalPrice = $this->getPrice();
-
 
         // Check for active sale (from setSaleInfo or loaded relationship)
         $saleInfo = $this->saleInfo ?? ($this->relationLoaded('activeSaleInfo') ? $this->activeSaleInfo : null);
@@ -56,8 +47,7 @@ final class ProductDetailResource extends JsonResource
 
         // Format variants
         $variants = $this->variants->map(function ($variant) {
-            $variantStock = $variant->availableStocks->first();
-            $variantOriginalPrice = $variantStock?->getEffectivePrice() ?? $variant->price;
+            $variantOriginalPrice = $variant->getPrice();
 
             return [
                 'name' => $variant->name,
@@ -67,9 +57,9 @@ final class ProductDetailResource extends JsonResource
                 'price_formatted' => MoneyService::format($variantOriginalPrice),
                 'image' => $this->formatVariantImage($variant),
                 'in_stock' => $variant->availableStocks->count() > 0,
-                'bv' => $variantStock?->bv ?? 0,
-                'pv' => $variantStock?->pv ?? 0,
-                'reward_points' => $variantStock?->reward_points ?? 0,
+                'bv' => $variant->bv,
+                'pv' => $variant->pv,
+                'reward_points' => $variant->reward_points,
                 'filter_options' => $variant->filterOptions->map(fn ($opt) => [
                     'filter' => $opt->filter?->name,
                     'value' => $opt->value,
@@ -117,9 +107,9 @@ final class ProductDetailResource extends JsonResource
             'is_returnable' => $this->is_returnable,
             'return_days' => $this->return_days,
             // Affiliate points
-            'bv' => $stock?->bv ?? 0,
-            'pv' => $stock?->pv ?? 0,
-            'reward_points' => $stock?->reward_points ?? 0,
+            'bv' => $this->bv,
+            'pv' => $this->pv,
+            'reward_points' => $this->reward_points,
             // Variants
             'has_variants' => $variants->isNotEmpty(),
             'variants' => $variants,
@@ -182,6 +172,7 @@ final class ProductDetailResource extends JsonResource
     public function setSaleInfo(?array $saleInfo): self
     {
         $this->saleInfo = $saleInfo;
+
         return $this;
     }
 }

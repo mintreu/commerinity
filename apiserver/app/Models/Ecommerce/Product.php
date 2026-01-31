@@ -41,6 +41,14 @@ class Product extends Model implements HasMedia
         'parent_id',
         'category_id',
         'price',
+        'bv',
+        'pv',
+        'reward_points',
+        'min_quantity',
+        'max_quantity',
+        'wholesale_unit_quantity',
+        'is_commissionable',
+        'commission_rate',
         'view_count',
         'seo_meta',
         'uuid',
@@ -54,7 +62,15 @@ class Product extends Model implements HasMedia
             'status' => ProductStatusCast::class,
             'is_returnable' => 'boolean',
             'return_days' => 'integer',
-            'type' => ProductTypeCast::class
+            'type' => ProductTypeCast::class,
+            'bv' => 'integer',
+            'pv' => 'integer',
+            'reward_points' => 'integer',
+            'min_quantity' => 'integer',
+            'max_quantity' => 'integer',
+            'wholesale_unit_quantity' => 'integer',
+            'is_commissionable' => 'boolean',
+            'commission_rate' => 'decimal:2',
         ];
     }
 
@@ -144,15 +160,14 @@ class Product extends Model implements HasMedia
      * Register media collections for Spatie Media Library
      * Collection names match old_project for compatibility
      */
-//    public function registerMediaCollections(): void
-//    {
-//        $this->addMediaCollection('displayImage')
-//            ->singleFile()
-//            ->useFallbackUrl('/images/product-placeholder.png');
-//
-//        $this->addMediaCollection('bannerImage');
-//    }
-
+    //    public function registerMediaCollections(): void
+    //    {
+    //        $this->addMediaCollection('displayImage')
+    //            ->singleFile()
+    //            ->useFallbackUrl('/images/product-placeholder.png');
+    //
+    //        $this->addMediaCollection('bannerImage');
+    //    }
 
     public function registerMediaCollections(): void
     {
@@ -165,9 +180,6 @@ class Product extends Model implements HasMedia
             ->useDisk('public');
     }
 
-
-
-
     /**
      * Scope: Search by name, sku, short description
      */
@@ -179,8 +191,8 @@ class Product extends Model implements HasMedia
 
         return $query->where(function ($q) use ($term) {
             $q->where('name', 'like', "%{$term}%")
-              ->orWhere('sku', 'like', "%{$term}%")
-              ->orWhere('short_description', 'like', "%{$term}%");
+                ->orWhere('sku', 'like', "%{$term}%")
+                ->orWhere('short_description', 'like', "%{$term}%");
         });
     }
 
@@ -197,10 +209,10 @@ class Product extends Model implements HasMedia
             // Find category by URL, then get ID and children
             $category = Category::where('url', $categoryUrl)->first();
             if ($category) {
-                 // Simplified: Just this category for now.
-                 // Ideally use a closure table or nested set for strict hierarchy
+                // Simplified: Just this category for now.
+                // Ideally use a closure table or nested set for strict hierarchy
                 $q->where('id', $category->id)
-                  ->orWhere('parent_id', $category->id);
+                    ->orWhere('parent_id', $category->id);
             } else {
                 $q->where('url', $categoryUrl);
             }
@@ -217,24 +229,15 @@ class Product extends Model implements HasMedia
         }
 
         return $query->whereHas('availableStocks', function ($q) use ($min, $max) {
-             // We filter by 'landing_cost' approximated or 'price' override
-             // Since we can't easily do dynamic margin calc in WHERE clause without raw SQL:
-             // We'll use a simplified approximation: landing_cost * 1.4 ~= price
+            $expression = 'COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))';
 
-             $q->where(function($qq) use ($min, $max) {
-                 // CASE 1: Price Override is set
-                 $qq->whereNotNull('price')
-                    ->when($min, fn($k) => $k->where('price', '>=', $min))
-                    ->when($max, fn($k) => $k->where('price', '<=', $max));
-             })->orWhere(function($qq) use ($min, $max) {
-                 // CASE 2: No override, calc from Landing Cost (approx margin 40%)
-                 // Cost = Price / 1.4
-                 $minCost = $min ? (int)($min / 1.4) : 0;
-                 $maxCost = $max ? (int)($max / 1.4) : 99999999;
+            if (! is_null($min)) {
+                $q->whereRaw("{$expression} >= ?", [$min]);
+            }
 
-                 $qq->whereNull('price')
-                    ->whereBetween('landing_cost', [$minCost, $maxCost]);
-             });
+            if (! is_null($max)) {
+                $q->whereRaw("{$expression} <= ?", [$max]);
+            }
         });
     }
 
@@ -250,6 +253,26 @@ class Product extends Model implements HasMedia
             'popularity' => $query->orderBy('view_count', 'desc'),
             'name_asc' => $query->orderBy('name', 'asc'),
             'name_desc' => $query->orderBy('name', 'desc'),
+            'price_asc' => $query->orderBy(
+                ProductStock::query()
+                    ->selectRaw('COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))')
+                    ->whereColumn('product_stocks.product_id', 'products.id')
+                    ->where('in_stock', true)
+                    ->orderBy('priority')
+                    ->orderBy('created_at')
+                    ->limit(1),
+                'asc'
+            ),
+            'price_desc' => $query->orderBy(
+                ProductStock::query()
+                    ->selectRaw('COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))')
+                    ->whereColumn('product_stocks.product_id', 'products.id')
+                    ->where('in_stock', true)
+                    ->orderBy('priority')
+                    ->orderBy('created_at')
+                    ->limit(1),
+                'desc'
+            ),
             default => $query->orderBy('created_at', 'desc'),
         };
     }
@@ -431,19 +454,14 @@ class Product extends Model implements HasMedia
     }
 
     /**
-     * Get the correct price for this product using available stock
-     * Uses PriceCalculationService for consistent pricing logic
-     * Returns price in paise (integer)
+     * Get the correct price for this product
+     *
+     * @param Address|string|null $delivery Delivery context (ignored for price, kept for compatibility)
+     * @return int Price in paise
      */
-    public function getPrice(?array $context = null): int
+    public function getPrice(Address|string|null $delivery = null): int
     {
-        if ($this->relationLoaded('availableStocks') && $this->availableStocks->isNotEmpty()) {
-            $stock = $this->availableStocks->first();
-            $price = $stock->price ?? (int) ($stock->landing_cost * (1 + $stock->profit_margin / 100));
-            return (int) max(0, $price);
-        }
-
-        return $this->price ?? 0;
+        return $this->price;
     }
 
     /**
@@ -460,19 +478,8 @@ class Product extends Model implements HasMedia
      */
     public function getPriceRange(): string
     {
-        if (!$this->relationLoaded('availableStocks') || $this->availableStocks->isEmpty()) {
-            return 'Out of stock';
-        }
-
-        $prices = $this->availableStocks->map(function ($stock) {
-            return $stock->price ?? (int) ($stock->landing_cost * (1 + $stock->profit_margin / 100));
-        });
-
-        if ($prices->isEmpty()) {
-            return 'Out of stock';
-        }
-
-        return \App\Services\MoneyService::formatRange($prices->min(), $prices->max());
+        // For now, return single price since we are decoupling from stock pricing
+        return $this->getFormattedPrice();
     }
 
     /**
@@ -512,6 +519,7 @@ class Product extends Model implements HasMedia
 
         if ($salePrice && $salePrice < $originalPrice) {
             $priceService = app(\App\Services\Ecommerce\PriceCalculationService::class);
+
             return $priceService->calculateDiscountPercent($originalPrice, $salePrice);
         }
 

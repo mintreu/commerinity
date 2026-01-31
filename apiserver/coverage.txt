@@ -1,10 +1,108 @@
 
 
-[1;37;40mCode Coverage Report:      [0m
-[1;37;40m  2026-01-27 10:08:16      [0m
-[1;37;40m                           [0m
-[1;37;40m Summary:                  [0m
-[37;41m  Classes:  0.00% (0/515)  [0m
-[37;41m  Methods:  0.00% (0/2983) [0m
-[37;41m  Lines:    0.00% (0/27724)[0m
+Code Coverage Report:
+  2026-01-31 01:49:32
 
+ Summary:
+  Classes:  0.39% (2/516)
+  Methods:  2.98% (89/2986)
+  Lines:    1.73% (486/28072)
+
+App\Console\Commands\Ecommerce\CompleteDeliveredOrders
+  Methods:  50.00% ( 1/ 2)   Lines:   2.04% (  1/ 49)
+App\Filament\Resources\Activities\ActivityResource
+  Methods:  28.57% ( 2/ 7)   Lines:  50.00% (  5/ 10)
+App\Filament\Resources\Addresses\AddressResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Admins\AdminResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Affiliate\AffiliateCommissions\AffiliateCommissionResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Affiliate\AffiliateGenealogies\AffiliateGenealogyResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\BeneficiaryAccounts\BeneficiaryAccountResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Ecommerce\Categories\CategoryResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\FilterGroups\FilterGroupResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\Filters\FilterResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\Orders\OrderResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\ProductStocks\ProductStockResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\Products\ProductResource
+  Methods:  33.33% ( 2/ 6)   Lines:  55.56% ( 10/ 18)
+App\Filament\Resources\Ecommerce\Sales\SaleResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\Shipments\ShipmentResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\Suppliers\SupplierResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Ecommerce\Vouchers\VoucherResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Geo\Countries\CountryResource
+  Methods:  50.00% ( 2/ 4)   Lines:  80.00% (  8/ 10)
+App\Filament\Resources\Integrations\IntegrationResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\JobApplications\JobApplicationResource
+  Methods:  28.57% ( 2/ 7)   Lines:  50.00% (  8/ 16)
+App\Filament\Resources\Kycs\KycResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Membership\Levels\LevelResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Membership\Stages\StageResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Membership\UserSubscriptions\UserSubscriptionResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Recruitments\RecruitmentResource
+  Methods:  40.00% ( 2/ 5)   Lines:  57.14% (  8/ 14)
+App\Filament\Resources\SmsLogs\SmsLogResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\SmsProviders\SmsProviderResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\SmsTemplates\SmsTemplateResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Transactions\TransactionResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Filament\Resources\Users\UserResource
+  Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
+App\Filament\Resources\Wallets\WalletResource
+  Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
+App\Jobs\Wallet\CheckPayoutStatusJob
+  Methods:  25.00% ( 1/ 4)   Lines:   1.27% (  1/ 79)
+App\Models\Address
+  Methods:   6.25% ( 1/16)   Lines:  21.74% ( 10/ 46)
+App\Models\BeneficiaryAccount
+  Methods:   4.35% ( 1/23)   Lines:  16.36% (  9/ 55)
+App\Models\Ecommerce\Product
+  Methods:   9.76% ( 4/41)   Lines:  15.34% ( 25/163)
+App\Models\Ecommerce\ProductStock
+  Methods:  15.38% ( 4/26)   Lines:  33.33% ( 25/ 75)
+App\Models\Transaction
+  Methods:   3.85% ( 1/26)   Lines:  29.82% ( 17/ 57)
+App\Models\User
+  Methods:   4.76% ( 1/21)   Lines:  19.70% ( 13/ 66)
+App\Providers\AppServiceProvider
+  Methods:  66.67% ( 2/ 3)   Lines:  50.00% (  8/ 16)
+App\Providers\Filament\AdminPanelProvider
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 50/ 50)
+App\Providers\Filament\AppPanelProvider
+  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 31/ 31)
+App\Providers\TelescopeServiceProvider
+  Methods:  33.33% ( 1/ 3)   Lines:  60.87% ( 14/ 23)
+App\Services\Affiliate\Calculators\Affiliate\LevelCommissionCalculator
+  Methods:  33.33% ( 2/ 6)   Lines:   6.67% (  3/ 45)
+App\Services\Affiliate\Calculators\Affiliate\OriginatorJoiningCalculator
+  Methods:  16.67% ( 1/ 6)   Lines:   2.17% (  1/ 46)
+App\Services\Affiliate\Calculators\Affiliate\OriginatorRecurringCalculator
+  Methods:  14.29% ( 1/ 7)   Lines:   1.79% (  1/ 56)
+App\Services\Affiliate\Calculators\Affiliate\SponsorBonusCalculator
+  Methods:  25.00% ( 1/ 4)   Lines:   3.33% (  1/ 30)
+App\Services\Affiliate\Calculators\BaseCommissionCalculator
+  Methods:  10.00% ( 1/10)   Lines:   2.94% (  1/ 34)
+App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator
+  Methods:  16.67% ( 1/ 6)   Lines:   2.86% (  1/ 35)
+App\Services\Affiliate\CommissionProcessorService
+  Methods:  15.00% ( 3/20)   Lines:   5.43% ( 10/184)

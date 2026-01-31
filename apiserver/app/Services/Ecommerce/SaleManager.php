@@ -167,7 +167,7 @@ final class SaleManager
             SaleProduct::whereDate('ends_till', '<', now())->delete();
 
             // Get active sales
-            $allSales = Sale::with('targets')
+            $allSales = Sale::with(['categories', 'products', 'stages', 'levels', 'users'])
                 ->where(function ($q): void {
                     $q->where('starts_from', '<=', Carbon::now()->format('Y-m-d'))
                         ->orWhereNull('starts_from');
@@ -205,6 +205,7 @@ final class SaleManager
         $productIds = $this->getMatchingProductIds($sale, $product);
         $startsFrom = $sale->starts_from ? Carbon::createFromTimeString($sale->starts_from.' 00:00:01') : null;
         $endsTill = $sale->ends_till ? Carbon::createFromTimeString($sale->ends_till.' 23:59:59') : null;
+        $targets = $this->getSaleTargets($sale);
 
         $productCollection = Product::with(['tiers' => function ($q): void {
             $q->where('in_stock', true)->orderBy('price');
@@ -213,8 +214,8 @@ final class SaleManager
         foreach ($productCollection as $product) {
             $calculated = $this->calculate($sale, $product);
 
-            if ($sale->targets->count()) {
-                foreach ($sale->targets as $target) {
+            if ($targets->isNotEmpty()) {
+                foreach ($targets as $target) {
                     $rows[] = $this->buildSaleProductRow($sale, $product, $target, $calculated, $startsFrom, $endsTill);
                 }
             } else {
@@ -298,18 +299,7 @@ final class SaleManager
      */
     private function getEffectivePrice(Product $product): int
     {
-        if ($product->relationLoaded('tiers')) {
-            $cheapestTier = $product->tiers->first();
-
-            return $cheapestTier?->price ?? $product->price;
-        }
-
-        $cheapestTier = $product->tiers()
-            ->where('in_stock', true)
-            ->orderBy('price')
-            ->first();
-
-        return $cheapestTier?->price ?? $product->price;
+        return $product->getPrice();
     }
 
     /**
@@ -444,5 +434,17 @@ final class SaleManager
         }
 
         return $allQueryProducts;
+    }
+
+    private function getSaleTargets(Sale $sale): Collection
+    {
+        return collect()
+            ->merge($sale->categories)
+            ->merge($sale->products)
+            ->merge($sale->stages)
+            ->merge($sale->levels)
+            ->merge($sale->users)
+            ->unique(fn ($target) => $target::class.'-'.$target->getKey())
+            ->values();
     }
 }

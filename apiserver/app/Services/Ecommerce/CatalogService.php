@@ -8,12 +8,14 @@ use App\Casts\ProductStatusCast;
 use App\Http\Resources\Ecommerce\ProductDetailResource;
 use App\Http\Resources\Ecommerce\ProductResource;
 use App\Models\Ecommerce\Category;
-use App\Models\Ecommerce\Product;
 use App\Models\Ecommerce\FilterOption;
+use App\Models\Ecommerce\Product;
+use App\Models\Ecommerce\ProductStock;
+use App\Models\Ecommerce\Sale;
+use App\Models\Ecommerce\SaleProduct;
+use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
-use App\Models\Sale;
-use App\Models\SaleProduct;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
@@ -39,7 +41,7 @@ final class CatalogService
             ->with([
                 'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                 'category',
-                'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at')->limit(1),
+                'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
             ])
             ->withStockInfo();
 
@@ -53,7 +55,10 @@ final class CatalogService
 
         $products = $query->paginate($perPage, ['*'], 'page', $page);
         $productIds = $products->pluck('id')->toArray();
-        $activeSales = $this->getActiveSalesForProducts($productIds);
+        $this->applyActiveSalesToProducts(
+            $products->getCollection(),
+            auth('sanctum')->user()
+        );
 
         return [
             'items' => ProductResource::collection($products)->toArray(request()),
@@ -81,9 +86,9 @@ final class CatalogService
                 'filterOptions.filter',
                 'variants' => fn ($q) => $q->purchasable()->with([
                     'media' => fn ($mq) => $mq->where('collection_name', 'displayImage'),
-                    'availableStocks' => fn ($sq) => $sq->orderBy('priority')->orderBy('created_at'),
+                    'availableStocks' => fn ($sq) => $sq->with('address')->orderBy('created_at'),
                 ]),
-                'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at'),
+                'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
             ])
             ->first();
 
@@ -92,7 +97,10 @@ final class CatalogService
         }
 
         $product->increment('view_count');
-        $activeSales = $this->getActiveSalesForProducts([$product->id]);
+        $this->applyActiveSalesToProducts(
+            collect([$product])->merge($product->variants),
+            auth('sanctum')->user()
+        );
 
         return (new ProductDetailResource($product))->toArray(request());
     }
@@ -158,7 +166,7 @@ final class CatalogService
             ->with([
                 'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                 'category',
-                'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at')->limit(1),
+                'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
             ])
             ->withStockInfo();
 
@@ -168,7 +176,10 @@ final class CatalogService
         $this->applySorting($query, $filters['sort'] ?? 'popularity');
 
         $products = $query->paginate($perPage, ['*'], 'page', $page);
-        $activeSales = $this->getActiveSalesForProducts($products->pluck('id')->toArray());
+        $this->applyActiveSalesToProducts(
+            $products->getCollection(),
+            auth('sanctum')->user()
+        );
 
         return [
             'category' => $this->formatCategoryDetail($category, $ancestors),
@@ -195,7 +206,7 @@ final class CatalogService
                 ->with([
                     'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                     'category',
-                    'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at')->limit(1),
+                    'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
                 ])
                 ->withStockInfo()
                 ->orderByDesc('view_count')
@@ -208,7 +219,7 @@ final class CatalogService
                 ->with([
                     'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                     'category',
-                    'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at')->limit(1),
+                    'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
                 ])
                 ->withStockInfo()
                 ->latest()
@@ -219,7 +230,10 @@ final class CatalogService
                 ->merge($newArrivals->pluck('id'))
                 ->unique()
                 ->toArray();
-            $activeSales = $this->getActiveSalesForProducts($allProductIds);
+            $this->applyActiveSalesToProducts(
+                $bestSellers->concat($newArrivals),
+                auth('sanctum')->user()
+            );
 
             return [
                 'best_sellers' => ProductResource::collection($bestSellers)->toArray(request()),
@@ -239,7 +253,7 @@ final class CatalogService
             ->with([
                 'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                 'category',
-                'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at')->limit(1),
+                'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
             ])
             ->withStockInfo();
 
@@ -250,7 +264,7 @@ final class CatalogService
 
         $products = $query->paginate($perPage, ['*'], 'page', $page);
         $productIds = $products->pluck('id')->toArray();
-        $activeSales = $this->getActiveSalesForProducts($productIds);
+        $activeSales = $this->getActiveSalesForProducts($productIds, auth('sanctum')->user());
 
         $saleProducts = $products->filter(fn ($product) => isset($activeSales[$product->id]));
 
@@ -317,7 +331,7 @@ final class CatalogService
             ->with([
                 'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                 'category',
-                'availableStocks' => fn ($q) => $q->orderBy('priority')->orderBy('created_at')->limit(1),
+                'availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at'),
             ])
             ->withStockInfo()
             ->where(function ($q) use ($query) {
@@ -330,7 +344,10 @@ final class CatalogService
         $this->applySorting($productQuery, $filters['sort'] ?? 'popularity');
 
         $products = $productQuery->paginate($perPage, ['*'], 'page', $page);
-        $activeSales = $this->getActiveSalesForProducts($products->pluck('id')->toArray());
+        $this->applyActiveSalesToProducts(
+            $products->getCollection(),
+            auth('sanctum')->user()
+        );
 
         return [
             'query' => $query,
@@ -364,8 +381,11 @@ final class CatalogService
                 }
             }
 
-            $priceRange = $query->clone()
-                ->selectRaw('MIN(price) as min_price, MAX(price) as max_price')
+            $priceRange = ProductStock::query()
+                ->inStock()
+                ->whereIn('product_id', $query->clone()->select('id'))
+                ->selectRaw('MIN(COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))) as min_price')
+                ->selectRaw('MAX(COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))) as max_price')
                 ->first();
 
             $filterOptions = $this->getAvailableFilterOptions($categoryIds);
@@ -419,12 +439,18 @@ final class CatalogService
     {
         if (isset($filters['min_price'])) {
             $minPaisa = (int) ($filters['min_price'] * 100);
-            $query->where('price', '>=', $minPaisa);
+            $query->whereHas('availableStocks', function ($q) use ($minPaisa): void {
+                $expression = 'COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))';
+                $q->whereRaw("{$expression} >= ?", [$minPaisa]);
+            });
         }
 
         if (isset($filters['max_price'])) {
             $maxPaisa = (int) ($filters['max_price'] * 100);
-            $query->where('price', '<=', $maxPaisa);
+            $query->whereHas('availableStocks', function ($q) use ($maxPaisa): void {
+                $expression = 'COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))';
+                $q->whereRaw("{$expression} <= ?", [$maxPaisa]);
+            });
         }
     }
 
@@ -454,8 +480,26 @@ final class CatalogService
     {
         match ($sort) {
             'latest' => $query->latest(),
-            'price_asc' => $query->orderBy('price', 'asc'),
-            'price_desc' => $query->orderBy('price', 'desc'),
+            'price_asc' => $query->orderBy(
+                ProductStock::query()
+                    ->selectRaw('COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))')
+                    ->whereColumn('product_stocks.product_id', 'products.id')
+                    ->where('in_stock', true)
+                    ->orderBy('priority')
+                    ->orderBy('created_at')
+                    ->limit(1),
+                'asc'
+            ),
+            'price_desc' => $query->orderBy(
+                ProductStock::query()
+                    ->selectRaw('COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))')
+                    ->whereColumn('product_stocks.product_id', 'products.id')
+                    ->where('in_stock', true)
+                    ->orderBy('priority')
+                    ->orderBy('created_at')
+                    ->limit(1),
+                'desc'
+            ),
             'name_asc' => $query->orderBy('name', 'asc'),
             'name_desc' => $query->orderBy('name', 'desc'),
             default => $query->orderByDesc('view_count'),
@@ -614,80 +658,104 @@ final class CatalogService
         return $subscription?->stage;
     }
 
-    private function getActiveSalesForProducts(array $productIds): array
+    private function resolveSaleContext(?User $user): array
+    {
+        if (! $user instanceof User) {
+            return [
+                'user_id' => null,
+                'user_type' => null,
+                'stage_id' => null,
+                'level_id' => null,
+            ];
+        }
+
+        $subscription = UserSubscription::getActiveForUser($user->id);
+
+        return [
+            'user_id' => $user->id,
+            'user_type' => $user->type?->value,
+            'stage_id' => $subscription?->stage_id,
+            'level_id' => $subscription?->current_level_id
+                ?? $subscription?->level_id
+                ?? $user->level_id,
+        ];
+    }
+
+    private function applyActiveSalesToProducts($products, ?User $user): void
+    {
+        $productIds = $products->pluck('id')->filter()->values()->all();
+        $activeSales = $this->getActiveSalesForProducts($productIds, $user);
+
+        foreach ($products as $product) {
+            $product->setRelation('activeSaleInfo', $activeSales[$product->id] ?? null);
+        }
+    }
+
+    private function getActiveSalesForProducts(array $productIds, ?User $user = null): array
     {
         if (empty($productIds)) {
             return [];
         }
 
-        $activeSales = [];
-        $userStage = $this->getCurrentUserStage();
+        $context = $this->resolveSaleContext($user);
+        $userType = $context['user_type'];
+        $userStageId = $context['stage_id'];
+        $userLevelId = $context['level_id'];
 
-        // Product-specific sales
         $saleProductQuery = SaleProduct::query()
             ->active()
             ->whereIn('product_id', $productIds)
             ->ordered()
-            ->where(function ($q) use ($userStage) {
-                $q->whereNull('target_type')->whereNull('target_id');
+            ->where(function ($q) use ($context, $userStageId, $userLevelId): void {
+                $q->whereNull('target_type')
+                    ->orWhereIn('target_type', [Category::class, Product::class]);
 
-                if ($userStage) {
-                    $q->orWhere(fn ($stageQuery) => $stageQuery
-                        ->where('target_type', Stage::class)
-                        ->where('target_id', $userStage->id)
-                    );
-                }
-            });
+                if ($context['user_id']) {
+                    $q->orWhere(function ($targetQuery) use ($context): void {
+                        $targetQuery->where('target_type', User::class)
+                            ->where('target_id', $context['user_id']);
+                    });
 
-        foreach ($saleProductQuery->get() as $sp) {
-            if (! isset($activeSales[$sp->product_id]) && $sp->isActive()) {
-                $activeSales[$sp->product_id] = [
-                    'type' => 'product_sale',
-                    'sale_product' => $sp,
-                    'name' => $sp->sale?->name ?? 'Special Offer',
-                    'ends_at' => $sp->ends_till ?? $sp->sale?->ends_till,
-                ];
-            }
-        }
+                    if ($userStageId) {
+                        $q->orWhere(function ($targetQuery) use ($userStageId): void {
+                            $targetQuery->where('target_type', Stage::class)
+                                ->where('target_id', $userStageId);
+                        });
+                    }
 
-        // Site-wide sales
-        $siteSales = Sale::query()->active()->ordered()->get();
-
-        foreach ($siteSales as $sale) {
-            foreach ($productIds as $productId) {
-                if (isset($activeSales[$productId])) {
-                    continue;
-                }
-
-                $product = Product::find($productId);
-                if (! $product || ! $sale->appliesTo($product)) {
-                    continue;
-                }
-
-                $hasTargets = $sale->targets()->exists();
-
-                if (! $hasTargets) {
-                    $activeSales[$productId] = [
-                        'type' => 'sale',
-                        'sale' => $sale,
-                        'name' => $sale->name,
-                        'ends_at' => $sale->ends_till,
-                    ];
-                } elseif ($userStage) {
-                    $stageTargeted = $sale->targets()
-                        ->where('target_type', Stage::class)
-                        ->where('target_id', $userStage->id)
-                        ->exists();
-
-                    if ($stageTargeted) {
-                        $activeSales[$productId] = [
-                            'type' => 'sale',
-                            'sale' => $sale,
-                            'name' => $sale->name,
-                            'ends_at' => $sale->ends_till,
-                        ];
+                    if ($userLevelId) {
+                        $q->orWhere(function ($targetQuery) use ($userLevelId): void {
+                            $targetQuery->where('target_type', Level::class)
+                                ->where('target_id', $userLevelId);
+                        });
                     }
                 }
+            })
+            ->where(function ($q) use ($userType): void {
+                $q->whereNull('sale_id')
+                    ->orWhereHas('sale', function ($saleQuery) use ($userType): void {
+                        $saleQuery->where(function ($userTypeQuery) use ($userType): void {
+                            $userTypeQuery->whereNull('target_user_types')
+                                ->orWhereJsonLength('target_user_types', 0);
+
+                            if ($userType) {
+                                $userTypeQuery->orWhereJsonContains('target_user_types', $userType);
+                            }
+                        });
+                    });
+            })
+            ->with('sale');
+
+        $activeSales = [];
+
+        foreach ($saleProductQuery->get() as $saleProduct) {
+            if (! isset($activeSales[$saleProduct->product_id]) && $saleProduct->isActive()) {
+                $activeSales[$saleProduct->product_id] = [
+                    'type' => 'product_sale',
+                    'sale_product' => $saleProduct,
+                    'name' => $saleProduct->sale?->name ?? 'Special Offer',
+                    'ends_at' => $saleProduct->ends_till ?? $saleProduct->sale?->ends_till,
+                ];
             }
         }
 

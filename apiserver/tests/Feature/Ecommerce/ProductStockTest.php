@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 
 describe('ProductStock Model', function () {
     it('creates stock with purchase entry fields', function () {
-        $product = Product::factory()->create(['price' => 50000]); // ₹500
+        $product = Product::factory()->create();
 
         $stock = ProductStock::create([
             'product_id' => $product->id,
@@ -82,7 +82,7 @@ describe('ProductStock Model', function () {
     });
 
     it('calculates profit per unit correctly', function () {
-        $product = Product::factory()->create(['price' => 50000]);
+        $product = Product::factory()->create();
 
         $stock = ProductStock::create([
             'product_id' => $product->id,
@@ -94,17 +94,18 @@ describe('ProductStock Model', function () {
         expect($stock->getProfitPerUnit())->toBe(20000); // ₹200 profit
     });
 
-    it('uses product price when stock price is null', function () {
-        $product = Product::factory()->create(['price' => 50000]);
+    it('calculates stock price from landing cost and profit margin when override price is null', function () {
+        $product = Product::factory()->create();
 
         $stock = ProductStock::create([
             'product_id' => $product->id,
             'init_quantity' => 100,
             'landing_cost' => 30000,
+            'profit_margin' => 50.0,
             'price' => null,
         ]);
 
-        expect($stock->getEffectivePrice())->toBe(50000);
+        expect($stock->getEffectivePrice())->toBe(45000);
     });
 
     it('calculates BV from profit correctly', function () {
