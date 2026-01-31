@@ -110,7 +110,7 @@ class ProductSeeder extends Seeder
                 'url' => $productData->url,
                 'status' => ProductStatusCast::PUBLISHED->value,
                 'type' => $type,
-                'price' => isset($productData->price) ? (int) round($productData->price * 100) : 0,
+                        'price' => isset($productData->price) ? (int) round($productData->price) : 0, // data already stores paise
                 'bv' => 0,
                 'pv' => 0,
                 'reward_points' => 0,

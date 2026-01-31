@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Ecommerce\Products\Schemas;
 
+use App\Services\MoneyService;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -61,8 +62,8 @@ class ProductInfolist
                                                 // Product Price From Stock
 
                                                 TextEntry::make('price')
-                                                    ->getStateUsing(fn (Model $record) => $record->getPrice())
-                                                    ->money()
+                                                    //->getStateUsing(fn (Model $record) => $record->getPrice())
+                                                    ->money(MoneyService::make()->getCurrencyCode())
                                                     ->placeholder('-'),
 
                                                 // Total Available Stock

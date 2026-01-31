@@ -19,6 +19,7 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists;
@@ -86,26 +87,25 @@ class ManageStock extends ManageRelatedRecords
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('landing_cost')
-                                    ->label('Landing Cost')
+                                    ->label('Landing Cost (paise)')
                                     ->required()
                                     ->numeric()
                                     ->minValue(0)
                                     ->default(0)
-                                    ->prefix('$')
-                                    ->placeholder('0.00'),
-                                TextInput::make('price')
-                                    ->label('Selling Price')
-                                    ->required()
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->prefix('$')
-                                    ->placeholder('0.00'),
+                                    ->helperText('Total purchase cost in paise'),
+
                                 TextInput::make('profit_margin')
                                     ->numeric()
                                     ->default(0)
                                     ->suffix('%')
-                                    ->placeholder('0.0'),
+                                    ->placeholder('0.0')
+                                    ->helperText('Profit margin percentage for this purchase entry'),
                             ]),
+
+                        Placeholder::make('stock_price_control')
+                            ->label('Selling Price')
+                            ->content('The final selling price, BV, PV, and reward points are managed on the main product form. Stock entries only capture landing cost, margin, and inventory constraints.')
+                            ->helperText('Leave price-related fields blank here to avoid overrides.'),
                     ])
                     ->collapsible(),
                 Section::make('Purchase Details')
@@ -151,31 +151,9 @@ class ManageStock extends ManageRelatedRecords
                     ->collapsible(),
                 Section::make('Commission & Rewards')
                     ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                TextInput::make('bv')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(0)
-                                    ->minValue(0),
-                                TextInput::make('pv')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(0)
-                                    ->minValue(0),
-                                TextInput::make('reward_points')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(0)
-                                    ->minValue(0),
-                            ]),
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('commission_rate')
-                                    ->numeric()
-                                    ->suffix('%'),
-                                Toggle::make('is_commissionable'),
-                            ]),
+                        Placeholder::make('commission_hint')
+                            ->label('Product-level values')
+                            ->content('BV, PV, reward points, and commission settings are managed on the main product form. Stock entries only track inventory, landing cost, and purchase metadata.')
                     ])
                     ->collapsible(),
                 Section::make('Other')

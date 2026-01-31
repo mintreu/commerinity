@@ -149,9 +149,65 @@ class ProductForm
 
                         Section::make('Pricing')
                             ->schema([
-                                Placeholder::make('pricing_info')
-                                    ->label('Manage Pricing')
-                                    ->content('Pricing and Inventory are managed via the "Stocks" tab after creation. Prices are calculated based on stock landing costs.'),
+                                Grid::make(2)->schema([
+                                    TextInput::make('price')
+                                        ->label('Base Price (paise)')
+                                        ->numeric()
+                                        ->required()
+                                        ->helperText('Enter paise (e.g., 45000 = ₹450.00)'),
+
+                                    TextInput::make('bv')
+                                        ->label('Business Volume')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->helperText('BV points awarded per unit sold'),
+                                ]),
+
+                                Grid::make(2)->schema([
+                                    TextInput::make('pv')
+                                        ->label('Personal Volume')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->helperText('PV points for the affiliate'),
+
+                                    TextInput::make('reward_points')
+                                        ->label('Reward Points')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->helperText('Customer reward points per purchase'),
+                                ]),
+
+                                Grid::make(3)->schema([
+                                    TextInput::make('min_quantity')
+                                        ->label('Min Order Qty')
+                                        ->numeric()
+                                        ->default(1)
+                                        ->helperText('Minimum quantity sold without stock entry override'),
+
+                                    TextInput::make('max_quantity')
+                                        ->label('Max Order Qty')
+                                        ->numeric()
+                                        ->helperText('Leave empty for no max limit'),
+
+                                    TextInput::make('wholesale_unit_quantity')
+                                        ->label('Wholesale Unit Qty')
+                                        ->numeric()
+                                        ->helperText('Break packs into this quantity when shipped'),
+                                ]),
+
+                                Grid::make(2)->schema([
+                                    TextInput::make('commission_rate')
+                                        ->label('Commission Rate')
+                                        ->numeric()
+                                        ->suffix('%')
+                                        ->helperText('Treats null as using level rate'),
+
+                                    Toggle::make('is_commissionable')
+                                        ->label('Is Commissionable')
+                                        ->inline(false)
+                                        ->helperText('Toggle whether this product generates affiliate commissions')
+                                        ->default(true),
+                                ]),
                             ]),
 
 
