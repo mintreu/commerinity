@@ -1,0 +1,355 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthat true is true[39m[90m                                                                                           [39m [90m0.28s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exceptions\AuthExceptionsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException has default message[39m[90m                                                                    [39m [90m26.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException has 403 code[39m[90m                                                                            [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException accepts custom message[39m[90m                                                                  [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException is throwable[39m[90m                                                                            [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException extends Exception[39m[90m                                                                       [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException has default message[39m[90m                                                                  [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException has 403 code[39m[90m                                                                         [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException accepts custom message[39m[90m                                                               [39m [90m0.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException is throwable[39m[90m                                                                         [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException extends Exception[39m[90m                                                                    [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbanned and suspended exceptions are distinct types[39m[90m                                                          [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan catch banned exception specifically[39m[90m                                                                     [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan catch suspended exception specifically[39m[90m                                                                  [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth exceptions can be caught as Exception[39m[90m                                                                  [39m [90m0.20s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\AddressTest[39m
+  [32;1m✓[39;22m[90m [39m[90maddress can be created with required fields[39m[90m                                                                 [39m [90m1.83s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress generates uuid on creation[39m[90m                                                                          [39m [90m0.95s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress uses uuid as route key[39m[90m                                                                              [39m [90m1.68s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to addressable polymorphically[39m[90m                                                              [39m [90m1.17s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to block[39m[90m                                                                                    [39m [90m0.97s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to state[39m[90m                                                                                    [39m [90m1.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to country[39m[90m                                                                                  [39m [90m0.58s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress standalone scope filters non-user addresses[39m[90m                                                         [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress warehouses scope filters warehouse type standalone[39m[90m                                                  [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress stores scope filters store type standalone[39m[90m                                                          [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress userAddresses scope filters user-owned addresses[39m[90m                                                    [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress byType scope filters by type[39m[90m                                                                        [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress default scope filters default addresses[39m[90m                                                             [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress automatically updates other user addresses when setting new default[39m[90m                                 [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress does not update other users addresses when setting default[39m[90m                                          [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress standalone default logic works for same type[39m[90m                                                        [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getFullAddressAttribute formats address correctly[39m[90m                                                   [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress hasCoordinates returns true when coordinates set[39m[90m                                                    [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress hasCoordinates returns false when coordinates null[39m[90m                                                  [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getEffectiveCoordinates returns address coordinates when available[39m[90m                                  [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getEffectiveCoordinates falls back to block coordinates[39m[90m                                             [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getEffectiveCoordinates returns null when no coordinates available[39m[90m                                  [39m [90m0.29s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\Geo\BlockTest[39m
+  [32;1m✓[39;22m[90m [39m[90mblock can be created with required fields[39m[90m                                                                   [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock belongs to state[39m[90m                                                                                      [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock has addresses relationship[39m[90m                                                                            [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock byState scope filters by state_code[39m[90m                                                                   [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock byDistrict scope filters by district_name[39m[90m                                                             [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock hasCoordinates returns true when both latitude and longitude are set[39m[90m                                  [39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock hasCoordinates returns false when coordinates are null[39m[90m                                                [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mblock coordinates are cast to decimal[39m[90m                                                                       [39m [90m0.22s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\Geo\CountryTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcountry can be created with required fields[39m[90m                                                                 [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcountry has states relationship[39m[90m                                                                             [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcountry has addresses relationship[39m[90m                                                                          [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcountry active scope filters active countries[39m[90m                                                               [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcountry byRegion scope filters by region[39m[90m                                                                    [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcountry casts exchange_rate to array[39m[90m                                                                        [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcountry casts is_active to boolean[39m[90m                                                                          [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mindia factory state creates correct data[39m[90m                                                                    [39m [90m0.22s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\Geo\StateTest[39m
+  [32;1m✓[39;22m[90m [39m[90mstate can be created with required fields[39m[90m                                                                   [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate belongs to country[39m[90m                                                                                    [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate has blocks relationship[39m[90m                                                                               [39m [90m0.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate has addresses relationship[39m[90m                                                                            [39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate byCountry scope filters by country_id[39m[90m                                                                 [39m [90m0.40s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate byCountryCode scope filters by country iso_code_2[39m[90m                                                     [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstate code and country_id combination is unique[39m[90m                                                             [39m [90m0.29s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\KycTest[39m
+  [32;1m✓[39;22m[90m [39m[90mstatus is cast to KycStatusCast enum[39m[90m                                                                        [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus can be pending[39m[90m                                                                                       [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus can be approved[39m[90m                                                                                      [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus can be rejected[39m[90m                                                                                      [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90msubmitted_at is cast to datetime[39m[90m                                                                            [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreviewed_at is cast to datetime[39m[90m                                                                             [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mkyc belongs to user via morphTo[39m[90m                                                                             [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mkyc can have a reviewer[39m[90m                                                                                     [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mkyc reviewer can be null[39m[90m                                                                                    [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90misPending returns true for pending KYC[39m[90m                                                                      [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90misApproved returns true for approved KYC[39m[90m                                                                    [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90misRejected returns true for rejected KYC[39m[90m                                                                    [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpending scope filters pending KYC records[39m[90m                                                                   [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapproved scope filters approved KYC records[39m[90m                                                                 [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejected scope filters rejected KYC records[39m[90m                                                                 [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpersonal scope filters personal KYC records[39m[90m                                                                 [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbusiness scope filters business KYC records[39m[90m                                                                 [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapprove method updates status to approved[39m[90m                                                                   [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapprove method works without reviewer[39m[90m                                                                       [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreject method updates status to rejected with reason[39m[90m                                                        [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreject method works without reviewer[39m[90m                                                                        [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpersonal KYC has correct fields[39m[90m                                                                             [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbusiness KYC has company fields[39m[90m                                                                             [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrejection reason is stored when rejected[39m[90m                                                                    [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpending KYC has no rejection reason[39m[90m                                                                         [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapproved KYC has no rejection reason[39m[90m                                                                        [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiple KYC records can exist for same user[39m[90m                                                                [39m [90m0.23s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\UserTest[39m
+  [32;1m✓[39;22m[90m [39m[90muuid is auto-generated on creation[39m[90m                                                                          [39m [90m0.50s[39m  
+  [32;1m✓[39;22m[90m [39m[90muuid starts with REG prefix and current year[39m[90m                                                                [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90muuid is unique for each user[39m[90m                                                                                [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90muuid can be manually set[39m[90m                                                                                    [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral_code is auto-generated on creation[39m[90m                                                                 [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral_code is uppercase[39m[90m                                                                                  [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral_code is unique for each user[39m[90m                                                                       [39m [90m0.61s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral_code can be manually set[39m[90m                                                                           [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus is cast to UserStatusCast enum[39m[90m                                                                       [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtype is cast to UserTypeCast enum[39m[90m                                                                           [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgender is cast to GenderCast enum[39m[90m                                                                           [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail_verified_at is cast to datetime[39m[90m                                                                       [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmobile_verified_at is cast to datetime[39m[90m                                                                      [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdob is cast to date[39m[90m                                                                                         [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90monboarded is cast to boolean[39m[90m                                                                                [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword is hidden from array[39m[90m                                                                               [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can have a parent (upline)[39m[90m                                                                             [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can have children (downline)[39m[90m                                                                           [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can have addresses[39m[90m                                                                                     [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can have single kyc record[39m[90m                                                                             [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can have multiple kyc records (history)[39m[90m                                                                [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasVerifiedMobile returns true when mobile is verified[39m[90m                                                      [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasVerifiedMobile returns false when mobile is not verified[39m[90m                                                 [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasVerifiedEmail returns true when email is verified[39m[90m                                                        [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasVerifiedEmail returns false when email is not verified[39m[90m                                                   [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasApprovedKyc returns true when user has approved KYC[39m[90m                                                      [39m [90m0.43s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasApprovedKyc returns false when user has pending KYC[39m[90m                                                      [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasApprovedKyc returns false when user has no KYC[39m[90m                                                           [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefaultAddress returns default address when set[39m[90m                                                             [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdefaultAddress returns null when no default set[39m[90m                                                             [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90misOnboardingComplete returns true when all conditions met[39m[90m                                                   [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90misOnboardingComplete returns true with mobile verified instead of email[39m[90m                                     [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90misOnboardingComplete returns false when not onboarded[39m[90m                                                       [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90misOnboardingComplete returns false when no address[39m[90m                                                          [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[90misOnboardingComplete returns false when neither email nor mobile verified[39m[90m                                   [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mroute key name is uuid[39m[90m                                                                                      [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser without parent has null parent relationship[39m[90m                                                            [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser without children has empty children collection[39m[90m                                                         [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can have both email and mobile verified[39m[90m                                                                [39m [90m0.25s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\MoneyServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[90minitializes with INR currency[39m[90m                                                                               [39m [90m0.70s[39m  
+  [32;1m✓[39;22m[90m [39m[90mconverts rupees to paise correctly[39m[90m                                                                          [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhandles float precision edge cases[39m[90m                                                                          [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcreates Money objects correctly[39m[90m                                                                             [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mformats money as INR currency[39m[90m                                                                               [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mformats paise directly[39m[90m                                                                                      [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mformats negative amounts[39m[90m                                                                                    [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mformats for API responses[39m[90m                                                                                   [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcalculates percentage using MoneyPHP[39m[90m                                                                        [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90madds amounts using MoneyPHP[39m[90m                                                                                 [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90msubtracts amounts using MoneyPHP[39m[90m                                                                            [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiplies amounts using MoneyPHP[39m[90m                                                                           [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcalculates totals using MoneyPHP[39m[90m                                                                            [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaintains precision with BCMath operations[39m[90m                                                                  [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhandles maximum safe values[39m[90m                                                                                 [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhandles zero and null values[39m[90m                                                                                [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidates money operations integrity[39m[90m                                                                        [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhandles complex financial calculations using MoneyPHP[39m[90m                                                       [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmaintains accuracy across multiple operations using MoneyPHP[39m[90m                                                [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatic format() method works[39m[90m                                                                                [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatic toRupees() converts paise to float[39m[90m                                                                   [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatic toRupeesString() converts paise to string[39m[90m                                                            [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatic toRupeesString() handles negative amounts[39m[90m                                                            [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmake() creates MoneyService from integer[39m[90m                                                                    [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmake() creates MoneyService from string[39m[90m                                                                     [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90madd() returns new instance (immutable)[39m[90m                                                                      [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90msubtract() returns new instance (immutable)[39m[90m                                                                 [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmultiply() returns new instance (immutable)[39m[90m                                                                 [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdivide() returns new instance (immutable)[39m[90m                                                                   [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mformatted() returns INR currency string[39m[90m                                                                     [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90msameAs() compares correctly[39m[90m                                                                                 [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchaining immutable operations works[39m[90m                                                                         [39m [90m0.23s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Resources\UserResourceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mresource returns correct structure[39m[90m                                                                          [39m [90m0.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresource returns uuid correctly[39m[90m                                                                             [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresource returns name correctly[39m[90m                                                                             [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresource returns email correctly[39m[90m                                                                            [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresource returns mobile correctly[39m[90m                                                                           [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail_verified is true when email is verified[39m[90m                                                               [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90memail_verified is false when email is not verified[39m[90m                                                          [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmobile_verified is true when mobile is verified[39m[90m                                                             [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mmobile_verified is false when mobile is not verified[39m[90m                                                        [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasParent is true when user has parent[39m[90m                                                                      [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasParent is false when user has no parent[39m[90m                                                                  [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mparent data is included when parent exists and loaded[39m[90m                                                       [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtype returns enum value as string[39m[90m                                                                           [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus returns enum value as string[39m[90m                                                                         [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgender returns enum value when set[39m[90m                                                                          [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgender returns enum value for all genders with ('male', 'male')[39m[90m                                             [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgender returns enum value for all genders with ('female', 'female')[39m[90m                                         [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgender returns enum value for all genders with ('other', 'other')[39m[90m                                           [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdob returns formatted date when set[39m[90m                                                                         [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdob returns null when not set[39m[90m                                                                               [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbio returns value when set[39m[90m                                                                                  [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbio returns null when not set[39m[90m                                                                               [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90monboarded returns boolean[39m[90m                                                                                   [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mreferral_code returns user referral code[39m[90m                                                                    [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhasLevel is always false (TODO)[39m[90m                                                                             [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlevel_id is always null (TODO)[39m[90m                                                                              [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90mavatar returns empty string when no avatar[39m[90m                                                                  [39m [90m0.24s[39m  
+
+  [39;41;1m FAIL [39;49;22m[39m Tests\Feature\AddressApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mauthenticated user can list their addresses[39m[90m                                                                 [39m [90m0.55s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfirst address is automatically set as default[39m[90m                                                               [39m [90m0.26s[39m  
+  [31;1m⨯[39;22m[90m [39m[90muser can create new address[39m[90m                                                                                 [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[90msetting address as default unsets other defaults[39m[90m                                                            [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can view specific address[39m[90m                                                                              [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser cannot view another users address[39m[90m                                                                      [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can update their address[39m[90m                                                                               [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser cannot update another users address[39m[90m                                                                    [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser can delete their address[39m[90m                                                                               [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser cannot delete another users address[39m[90m                                                                    [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidation requires person name[39m[90m                                                                             [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidation requires valid mobile format[39m[90m                                                                     [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mvalidation requires valid address type[39m[90m                                                                      [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddresses are ordered by default first[39m[90m                                                                      [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthenticated user cannot access addresses[39m[90m                                                                [39m [90m0.25s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AddressManagementTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexample[39m[90m                                                                                                     [39m [90m0.38s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Affiliate\AffiliateCommissionTest[39m
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can be created with factory[39m[90m                                                  [39m [90m0.29s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it auto-generates uuid and dates on creation[39m[90m                                    [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it calculates net amount from gross minus deductions[39m[90m                            [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can create sponsor bonus commission[39m[90m                                          [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can create level commission with rate[39m[90m                                        [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it belongs to a user[39m[90m                                                            [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can have from_user relationship[39m[90m                                              [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can have genealogy relationship[39m[90m                                              [39m [90m0.50s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can be approved[39m[90m                                                              [39m [90m0.55s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can be marked as paid[39m[90m                                                        [39m [90m0.47s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can be put on hold[39m[90m                                                           [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can be cancelled[39m[90m                                                             [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it can be reversed (creates reversal entry)[39m[90m                                     [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it throws exception when approving non-pending commission[39m[90m                       [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it throws exception when reversing non-paid commission[39m[90m                          [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it calculates total earnings for user[39m[90m                                           [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it calculates pending earnings for user[39m[90m                                         [39m [90m0.42s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it scope forUser works[39m[90m                                                          [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it scope ofType works[39m[90m                                                           [39m [90m0.47s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it scope forPeriod works[39m[90m                                                        [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateCommission Model[39m[90m → it uses route key uuid[39m[90m                                                          [39m [90m0.30s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Affiliate\AffiliateConfigServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[37mmaster switches[39m[90m → it checks member commissions master switch[39m[90m                                                [39m [90m0.49s[39m  
+  [32;1m✓[39;22m[90m [39m[37mmaster switches[39m[90m → it checks originator commissions master switch[39m[90m                                            [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mmaster switches[39m[90m → it checks task commissions master switch[39m[90m                                                  [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[37mmaster switches[39m[90m → it checks income deduction master switch[39m[90m                                                  [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[37mmaster switches[39m[90m → it checks agent salary master switch[39m[90m                                                      [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mcommission type checks[39m[90m → it respects member master switch for member types[39m[90m                                  [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[37mcommission type checks[39m[90m → it respects originator master switch for originator types[39m[90m                          [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[37mcommission type checks[39m[90m → it respects task master switch for task types[39m[90m                                      [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mcommission type checks[39m[90m → it enables type when master and individual switch are on[39m[90m                           [39m [90m0.52s[39m  
+  [32;1m✓[39;22m[90m [39m[37mcommission type checks[39m[90m → it gets enabled member types[39m[90m                                                       [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mcommission type checks[39m[90m → it returns empty array when member master switch is off[39m[90m                            [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37moriginator commission config[39m[90m → it gets joining commission config[39m[90m                                            [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37moriginator commission config[39m[90m → it gets recurring commission config[39m[90m                                          [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mincome deduction[39m[90m → it gets income deduction config[39m[90m                                                          [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37mincome deduction[39m[90m → it calculates income deduction when enabled[39m[90m                                              [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37mincome deduction[39m[90m → it returns zero deduction when disabled[39m[90m                                                  [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37magent salary[39m[90m → it gets salary tiers when enabled[39m[90m                                                            [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37magent salary[39m[90m → it returns empty tiers when disabled[39m[90m                                                         [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37magent salary[39m[90m → it finds correct salary tier for metrics[39m[90m                                                     [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37magent salary[39m[90m → it returns null when no tier matches[39m[90m                                                         [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mtds calculation[39m[90m → it calculates TDS when threshold exceeded[39m[90m                                                 [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mtds calculation[39m[90m → it returns zero TDS below threshold[39m[90m                                                       [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37mtds calculation[39m[90m → it returns zero TDS when disabled[39m[90m                                                         [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37mlevel features[39m[90m → it gets features at rank when enabled[39m[90m                                                      [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37mlevel features[39m[90m → it returns empty features when disabled[39m[90m                                                    [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mlevel features[39m[90m → it checks if feature is unlocked[39m[90m                                                           [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[37mdashboard visibility[39m[90m → it resolves dynamic config values[39m[90m                                                    [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mdashboard visibility[39m[90m → it checks specific dashboard element[39m[90m                                                 [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[37mconfig summary[39m[90m → it generates complete config summary[39m[90m                                                       [39m [90m0.22s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Affiliate\AffiliateGenealogyTest[39m
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can be created with factory[39m[90m                                                   [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it auto-generates uuid on creation[39m[90m                                               [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it has default values for counters[39m[90m                                               [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can be created with team counts[39m[90m                                               [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can be created with sales volumes[39m[90m                                             [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can set placement parent[39m[90m                                                      [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it belongs to a user[39m[90m                                                             [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can have placement parent relationship[39m[90m                                        [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can be activated and deactivated[39m[90m                                              [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can add sales and update personal volumes[39m[90m                                     [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it uses route key uuid[39m[90m                                                           [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can get upline chain[39m[90m                                                          [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it limits upline to max levels[39m[90m                                                   [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can be found by user id[39m[90m                                                       [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it returns null for non-existent user[39m[90m                                            [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it can create for user with depth calculation[39m[90m                                    [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliateGenealogy Model[39m[90m → it scope active works[39m[90m                                                            [39m [90m0.29s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Affiliate\AffiliateJourneyTest[39m
+  [32;1m✓[39;22m[90m [39m[37mMode 1: Root User Journey (No Sponsor)[39m[90m → it creates root user without parent_id[39m[90m                             [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 1: Root User Journey (No Sponsor)[39m[90m → it creates subscription for root user[39m[90m                              [39m [90m0.30s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 1: Root User Journey (No Sponsor)[39m[90m → it activates subscription and creates genealogy for root user[39m[90m      [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 1: Root User Journey (No Sponsor)[39m[90m → it generates no sponsor commission for root user (no upline)[39m[90m       [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 1: Root User Journey (No Sponsor)[39m[90m → it tracks root user level progression[39m[90m                              [39m [90m0.47s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 2: Originator User Journey (Advisor)[39m[90m → it creates user with originator tracking[39m[90m                        [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 2: Originator User Journey (Advisor)[39m[90m → it creates sponsored subscription with sponsor tracking[39m[90m         [39m [90m0.66s[39m  
+  [32;1m✓[39;22m[90m [39m[37mMode 2: Originator User Journey (Advisor)[39m[90m → it generates originator commission when user subscribes[39m[90m         [39m [90m0.64s[39m  
+  [32;1m✓[39;22m[90m [39m[37mFull Affiliate Journey: Team Building[39m[90m → it builds 4-level deep team with commission flow[39m[90m                    [39m [90m0.97s[39m  
+  [32;1m✓[39;22m[90m [39m[37mFull Affiliate Journey: Team Building[39m[90m → it tracks team counts correctly in genealogy[39m[90m                        [39m [90m0.85s[39m  
+  [32;1m✓[39;22m[90m [39m[37mFull Affiliate Journey: Team Building[39m[90m → it propagates sales to upline genealogy[39m[90m                             [39m [90m0.80s[39m  
+  [32;1m✓[39;22m[90m [39m[37mLevel Progression[39m[90m → it checks level qualification requirements[39m[90m                                              [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[37mLevel Progression[39m[90m → it promotes user to next level when qualified[39m[90m                                           [39m [90m0.71s[39m  
+  [32;1m✓[39;22m[90m [39m[37mLevel Progression[39m[90m → it gets level progression status[39m[90m                                                        [39m [90m0.56s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission Calculations[39m[90m → it calculates sponsor bonus correctly[39m[90m                                             [39m [90m0.65s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission Calculations[39m[90m → it calculates multi-level commissions correctly[39m[90m                                   [39m [90m1.30s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission Calculations[39m[90m → it applies TDS deduction on high earnings[39m[90m                                         [39m [90m1.48s[39m  
+  [32;1m✓[39;22m[90m [39m[37mComplete User Journey Simulation[39m[90m → it simulates full journey from registration to Diamond level[39m[90m             [39m [90m1.17s[39m  
+  [32;1m✓[39;22m[90m [39m[37mComplete User Journey Simulation[39m[90m → it simulates originator (advisor) journey with multiple originated users[39m[90m [39m [90m1.10s[39m  
+  [32;1m✓[39;22m[90m [39m[37mEdge Cases[39m[90m → it handles team capacity limits (5^n matrix)[39m[90m                                                   [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mEdge Cases[39m[90m → it prevents duplicate commission for same trigger[39m[90m                                              [39m [90m0.72s[39m  
+  [32;1m✓[39;22m[90m [39m[37mEdge Cases[39m[90m → it handles subscription renewal correctly[39m[90m                                                      [39m [90m0.44s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Affiliate\AffiliateLifecycleTest[39m
+  [32;1m✓[39;22m[90m [39m[37mAffiliate User Placement[39m[90m → it places user directly under sponsor when slot available[39m[90m                        [39m [90m0.46s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate User Placement[39m[90m → it finds slot in descendants when sponsor is full (BFS)[39m[90m                          [39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate User Placement[39m[90m → it places user in tree with correct depth[39m[90m                                        [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate User Placement[39m[90m → it can accept up to 5 direct children per user[39m[90m                                   [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate User Placement[39m[90m → it builds 5x4 matrix correctly (max 780 members)[39m[90m                                 [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Commission Distribution[39m[90m → it distributes level commissions to uplines[39m[90m                             [39m [90m0.35s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Commission Distribution[39m[90m → it calculates originator commission for agent/advisor[39m[90m                   [39m [90m0.37s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Commission Distribution[39m[90m → it skips commission for inactive uplines[39m[90m                                [39m [90m0.33s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Team Counters[39m[90m → it increments upline counters when user joins[39m[90m                                     [39m [90m0.60s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Team Counters[39m[90m → it tracks direct and team counts separately[39m[90m                                       [39m [90m3.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Upline Queries (Optimized)[39m[90m → it fetches upline with levels using single query[39m[90m                     [39m [90m9.43s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Upline Queries (Optimized)[39m[90m → it gets children counts for multiple users efficiently[39m[90m               [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Network Scenarios[39m[90m → it handles spillover when sponsor slot is full[39m[90m                                [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Network Scenarios[39m[90m → it maintains referral relationship separate from matrix placement[39m[90m             [39m [90m0.36s[39m  
+  [32;1m✓[39;22m[90m [39m[37mAffiliate Network Scenarios[39m[90m → it handles user joining as root (no sponsor)[39m[90m                                  [39m [90m0.23s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\Affiliate\CommissionProcessorServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[37mCommissionProcessorService instantiation[39m[90m → it creates service with default calculators[39m[90m                      [39m [90m0.41s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommissionProcessorService instantiation[39m[90m → it registers calculators in priority order[39m[90m                       [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommissionProcessorService instantiation[39m[90m → it filters enabled calculators correctly[39m[90m                         [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission calculation[39m[90m → it calculates commissions using all enabled calculators[39m[90m                            [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission calculation[39m[90m → it skips disabled calculators[39m[90m                                                      [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission calculation[39m[90m → it handles calculator exceptions gracefully[39m[90m                                        [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission persistence[39m[90m → it persists commission results to database[39m[90m                                         [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission persistence[39m[90m → it prevents duplicate commissions[39m[90m                                                  [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission deductions[39m[90m → it applies TDS when threshold exceeded[39m[90m                                              [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission deductions[39m[90m → it does not apply TDS below threshold[39m[90m                                               [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission deductions[39m[90m → it applies admin fee when enabled[39m[90m                                                   [39m [90m0.34s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission statistics[39m[90m → it calculates user statistics correctly[39m[90m                                             [39m [90m0.38s[39m  
+  [32;1m✓[39;22m[90m [39m[37mCommission simulation[39m[90m → it simulates commission calculation without persistence[39m[90m                             [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[37mConfiguration summary[39m[90m → it returns complete config summary[39m[90m                                                  [39m [90m0.27s[39m  

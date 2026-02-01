@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Ecommerce;
 
 use App\Models\Address;
+use App\Models\Traits\HasAddress;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,16 +29,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $priority
  * @property int|null $address_id
  * @property int $landing_cost (paise)
- * @property float $profit_margin (percentage)
- * @property int|null $price (paise, override)
- * @property int $min_quantity
- * @property int|null $max_quantity
- * @property int|null $wholesale_unit_quantity
- * @property int $bv (Business Volume)
- * @property int $pv (Personal Volume)
- * @property int $reward_points
- * @property float|null $commission_rate
- * @property bool $is_commissionable
  * @property int|null $supplier_id
  * @property string|null $purchase_invoice_number
  * @property \Carbon\Carbon|null $purchase_date
@@ -47,33 +38,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ProductStock extends Model
 {
-    use HasFactory;
+    use HasFactory,HasAddress;
 
     protected $fillable = [
+        // Fixed column as it is
         'product_id',
         'init_quantity',
-        'sold_quantity',
-        'address_id',
-        'priority',
+        'priority', // override manually priority of choosing stock when default using FIFO
         'low_stock_threshold',
         'notify_on_low_stock',
-        // Purchase Entry Fields
-        'landing_cost',
-        'profit_margin',
-        'price',
-        'min_quantity',
-        'max_quantity',
-        'wholesale_unit_quantity',
-        // Affiliate Fields
-        'bv',
-        'pv',
-        'reward_points',
-        'commission_rate',
-        'is_commissionable',
-        // Supplier/Tracking
+        'sold_quantity',
+        // Address Type Pickup
+        'address_id',
+
+        // Supplier/Tracking // nullables
         'supplier_id',
+        // Purchase Entry Fields nullables
         'purchase_invoice_number',
         'purchase_date',
+        'landing_cost',
         'expiry_date',
         'batch_number',
         'notes',
@@ -91,17 +74,6 @@ class ProductStock extends Model
             'priority' => 'integer',
             // Purchase Entry
             'landing_cost' => 'integer',
-            'profit_margin' => 'decimal:2',
-            'price' => 'integer',
-            'min_quantity' => 'integer',
-            'max_quantity' => 'integer',
-            'wholesale_unit_quantity' => 'integer',
-            // Affiliate
-            'bv' => 'integer',
-            'pv' => 'integer',
-            'reward_points' => 'integer',
-            'commission_rate' => 'decimal:2',
-            'is_commissionable' => 'boolean',
             // Dates
             'purchase_date' => 'date',
             'expiry_date' => 'date',

@@ -29,29 +29,29 @@ class Product extends Model implements HasMedia
 
     protected $fillable = [
         'name',
+        'type', // product types
         'sku',
-        'url',
+        'url',  // this is used all area for routke key.. no need uuid or id for product.. in apiserver we can use internally the id column but for display and navigation api usage use url
         'status',
         'is_returnable',
-        'return_days',
+        'return_days',  // the minimum set days (default: 0) after that bv, pv, commissions etc will be distributed as successfully completed sales
         'filter_group_id',
         'description',
         'short_description',
-        'type',
         'parent_id',
         'category_id',
-        'price',
-        'bv',
-        'pv',
-        'reward_points',
-        'min_quantity',
-        'max_quantity',
-        'wholesale_unit_quantity',
-        'is_commissionable',
-        'commission_rate',
+        'base_price', // mrp
+        'price',  // default current offering sale price without applying any sales
+        'bv',  // for members and promoters type users only
+        'pv',  // for members and promoters type users only
+        'reward_points',  // for who purchase wallet reward points count increasing on purchase
+        'min_quantity',  // for cart
+        'max_quantity',  // for cart
+        'wholesale_unit_quantity',  // for distributor case .. not applicable for users in nuxt client side
+        'is_commissionable',  // for advisor type user to get commisison from their own originator user teams
+        'commission_rate',  // for advisor type user
         'view_count',
-        'seo_meta',
-        'uuid',
+        'seo_meta', // this can be rename as only meta .. json column
     ];
 
     protected function casts(): array

@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->nullable()->comment('Public UUID');
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('stock_id')->nullable()->constrained('product_stocks')->nullOnDelete();
 
             // Product snapshot at order time   .. not required we have product relation for this
 //            $table->string('product_name');
@@ -24,6 +26,9 @@ return new class extends Migration
             $table->unsignedInteger('quantity')->default(1);
             $table->unsignedBigInteger('unit_price')->comment('Unit price in paise');
             $table->unsignedBigInteger('total_price')->comment('Total price in paise');
+            $table->unsignedInteger('bv')->default(0)->comment('Business Volume for this item');
+            $table->unsignedInteger('pv')->default(0)->comment('Personal Volume earned');
+            $table->unsignedInteger('reward_points')->default(0)->comment('Reward points for this item');
 
             $table->timestamps();
 

@@ -1,0 +1,43 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthat true is true[39m[90m                                                                                           [39m [90m0.33s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Exceptions\AuthExceptionsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException has default message[39m[90m                                                                    [39m [90m30.38s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException has 403 code[39m[90m                                                                            [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException accepts custom message[39m[90m                                                                  [39m [90m0.32s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException is throwable[39m[90m                                                                            [39m [90m0.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserBannedException extends Exception[39m[90m                                                                       [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException has default message[39m[90m                                                                  [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException has 403 code[39m[90m                                                                         [39m [90m0.18s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException accepts custom message[39m[90m                                                               [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException is throwable[39m[90m                                                                         [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUserSuspendedException extends Exception[39m[90m                                                                    [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbanned and suspended exceptions are distinct types[39m[90m                                                          [39m [90m0.50s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan catch banned exception specifically[39m[90m                                                                     [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan catch suspended exception specifically[39m[90m                                                                  [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90mboth exceptions can be caught as Exception[39m[90m                                                                  [39m [90m0.20s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\Models\AddressTest[39m
+  [32;1m✓[39;22m[90m [39m[90maddress can be created with required fields[39m[90m                                                                 [39m [90m3.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress generates uuid on creation[39m[90m                                                                          [39m [90m1.29s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress uses uuid as route key[39m[90m                                                                              [39m [90m0.63s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to addressable polymorphically[39m[90m                                                              [39m [90m2.62s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to block[39m[90m                                                                                    [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to state[39m[90m                                                                                    [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress belongs to country[39m[90m                                                                                  [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress standalone scope filters non-user addresses[39m[90m                                                         [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress warehouses scope filters warehouse type standalone[39m[90m                                                  [39m [90m0.27s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress stores scope filters store type standalone[39m[90m                                                          [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress userAddresses scope filters user-owned addresses[39m[90m                                                    [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress byType scope filters by type[39m[90m                                                                        [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress default scope filters default addresses[39m[90m                                                             [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress automatically updates other user addresses when setting new default[39m[90m                                 [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress does not update other users addresses when setting default[39m[90m                                          [39m [90m0.24s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress standalone default logic works for same type[39m[90m                                                        [39m [90m0.22s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getFullAddressAttribute formats address correctly[39m[90m                                                   [39m [90m0.23s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress hasCoordinates returns true when coordinates set[39m[90m                                                    [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress hasCoordinates returns false when coordinates null[39m[90m                                                  [39m [90m0.19s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getEffectiveCoordinates returns address coordinates when available[39m[90m                                  [39m [90m0.20s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getEffectiveCoordinates falls back to block coordinates[39m[90m                                             [39m [90m0.21s[39m  
+  [32;1m✓[39;22m[90m [39m[90maddress getEffectiveCoordinates returns null when no coordinates available[39m[90m                                  [39m [90m0.22s[39m  

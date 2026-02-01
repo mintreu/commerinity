@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Shipment extends Model
 {
@@ -85,6 +86,11 @@ class Shipment extends Model
     public function shipmentItems(): HasMany
     {
         return $this->hasMany(ShipmentItem::class);
+    }
+
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(OrderInvoice::class,'shipment_id');
     }
 
     public function items(): BelongsToMany

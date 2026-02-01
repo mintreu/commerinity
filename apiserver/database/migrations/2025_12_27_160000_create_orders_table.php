@@ -28,12 +28,21 @@ return new class extends Migration
             $table->unsignedBigInteger('discount')->default(0)->comment('Discount in paise');
             $table->unsignedBigInteger('total')->default(0)->comment('Total in paise');
 
+            // Affiliate totals
+            $table->unsignedInteger('total_bv')->default(0)->comment('Total Business Volume');
+            $table->unsignedInteger('total_pv')->default(0)->comment('Total Personal Volume');
+            $table->unsignedInteger('total_reward_points')->default(0)->comment('Total reward points earned');
+            $table->boolean('commission_processed')->default(false)->comment('Commission payout processed flag');
+
             // Addresses (snapshot at order time)
             $table->foreignId('shipping_address_id')->nullable()->constrained('addresses')->nullOnDelete();
             $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->nullOnDelete();
 
             // Checkout Expire At
             $table->dateTime('expire_at')->nullable();
+            $table->timestamp('delivered_at')->nullable();
+            $table->timestamp('return_period_ends_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
 
             // Additional info
             $table->string('voucher')->nullable()->comment('Applied coupon code');

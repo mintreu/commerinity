@@ -483,6 +483,8 @@ final class DemoAffiliateSeeder extends Seeder
 
                 Transaction::create([
                     'wallet_id' => $wallet->id,
+                    'transactionable_type' => Wallet::class,
+                    'transactionable_id' => $wallet->id,
                     'type' => $isCredit ? TransactionTypeCast::CREDIT : TransactionTypeCast::DEBIT,
                     'purpose' => $purpose,
                     'amount' => $amount,

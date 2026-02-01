@@ -126,7 +126,8 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             // Affiliate NETWORK - Full Affiliate tree with commissions, genealogy
             // ═══════════════════════════════════════════════════════════
-           // DemoAffiliateSeeder::class,
+
+            DemoAffiliateSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
             // E-COMMERCE DEMO DATA - Products with images and stock

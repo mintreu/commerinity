@@ -22,6 +22,7 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
     case DELIVERY = 'delivery';
     case PICKUP = 'pickup';
     case HUB = 'hub';
+    case WAREHOUSE = 'warehouse';
     case SERVICE_POINT = 'service_point';
     case OTHER = 'other';
 
@@ -35,7 +36,7 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
             self::WORK => Color::Emerald,
             self::DELIVERY => Color::Blue,
             self::PICKUP => Color::Amber,
-            self::HUB => Color::Purple,
+            self::HUB,self::WAREHOUSE => Color::Purple,
             self::SERVICE_POINT => Color::Teal,
             self::OTHER => Color::Sky,
         };
@@ -51,7 +52,7 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
             self::WORK => 'heroicon-o-building-office',
             self::DELIVERY => 'heroicon-o-truck',
             self::PICKUP => 'heroicon-o-shopping-bag',
-            self::HUB => 'heroicon-o-building-storefront',
+            self::HUB,self::WAREHOUSE => 'heroicon-o-building-storefront',
             self::SERVICE_POINT => 'heroicon-o-map',
             self::OTHER => 'heroicon-s-map-pin',
         };
@@ -70,6 +71,7 @@ enum AddressTypeCast: string implements HasColor, HasIcon, HasLabel
             self::HUB => 'Hub',
             self::SERVICE_POINT => 'Service Point',
             self::OTHER => 'Other',
+            self::WAREHOUSE => 'WareHouse'
         };
     }
 }

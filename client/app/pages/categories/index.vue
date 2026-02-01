@@ -416,7 +416,7 @@ const getLeafCategories = (category: Category): Category[] => {
             class="p-4 bg-slate-50/50 dark:bg-slate-800/30"
           >
             <NuxtLink
-              :to="`/category/${parent.slug}`"
+              :to="`/category/${parent.url}`"
               class="inline-flex items-center gap-2 text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
             >
               Browse all {{ parent.name }} products

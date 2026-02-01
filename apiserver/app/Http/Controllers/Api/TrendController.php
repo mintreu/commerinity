@@ -9,7 +9,7 @@ use App\Services\Trends\CommissionTrendService;
 use App\Services\Trends\TeamTrendService;
 use App\Services\Trends\TransactionTrendService;
 use App\Services\Trends\WalletTrendService;
-use App\Services\Wallet\UserWalletService;
+use App\Services\UserServices\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

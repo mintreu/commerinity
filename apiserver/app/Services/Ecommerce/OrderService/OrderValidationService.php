@@ -158,6 +158,7 @@ class OrderValidationService
                     $stock->update(['in_stock' => false]);
                 }
 
+
                 $stockAllocations[] = [
                     'stock_id' => $stock->id,
                     'quantity' => $quantityToConsume,
@@ -191,10 +192,42 @@ class OrderValidationService
         foreach ($groupedAllocations as $pickupAddressId => $allocations) {
             $totalQuantity = $allocations->sum('quantity');
 
-            // Create shipment
-            $shipment = $this->makeOrderShipment($orderItem, $totalQuantity, $pickupAddressId);
 
-            if (! $shipment) {
+
+
+            // Create shipment For Order
+            $orderShipment = $this->order->shipments()->create([
+                'pickup_address_id' => $pickupAddressId,
+                'delivery_address_id' => $this->order->shipping_address_id,
+                'total_quantity' => $this->order->quantity,
+                'status'    => ShipmentStatusCast::PROCESSING->value,
+//                    'shipping_method',
+                'provider' => 'native',
+//                    'shipping_provider_id',
+//                    'provider_channel_id',
+//                    'provider_order_id',
+//                    'shipment_id',
+//                    'tracking_id',
+//                    'tracking_data',
+//                    'shipment_track_activities',
+//                    'last_update',
+//                    'shipped_at',
+//                    'delivered_at',
+//                    'cancelled_at',
+//                    'last_synced_at',
+//                    'cod',
+//                    'cod_amount',
+//                    'cod_status',
+//                    'cod_collected_at',
+//                    'cod_remitted_at',
+//                    'charge',
+            ]);
+
+
+
+
+
+            if (! $orderShipment) {
                 Log::error('Failed to create shipment', [
                     'order_id' => $this->order->id,
                     'order_item_id' => $orderItem->id,
@@ -206,19 +239,15 @@ class OrderValidationService
 
             // Create shipment items linking stock entries to shipment
             foreach ($allocations as $allocation) {
-                ShipmentItem::create([
-                    'shipment_id' => $shipment->id,
-                    'order_item_id' => $orderItem->id,
-                    'quantity' => $allocation['quantity'],
-                ]);
+                $orderItemShipment = $this->makeOrderShipment($orderShipment,$orderItem, $allocation['quantity']);
             }
 
             // Create invoice
-            $invoice = $this->makeOrderInvoice($shipment, $orderItem);
+            $invoice = $this->makeOrderInvoice($orderShipment, $orderItem);
 
             if (! $invoice) {
                 Log::error('Failed to create invoice', [
-                    'shipment_id' => $shipment->id,
+                    'shipment_id' => $orderShipment->id,
                     'order_item_id' => $orderItem->id,
                 ]);
             }
@@ -235,14 +264,12 @@ class OrderValidationService
     /**
      * Create shipment for order item
      */
-    protected function makeOrderShipment(OrderItem $orderItem, int $quantity, ?int $pickupAddressId): ?Shipment
+    protected function makeOrderShipment(Shipment $shipment, OrderItem $orderItem, int $quantity): ?ShipmentItem
     {
-        return $orderItem->shipment()->create([
-            'order_id' => $this->order->id,
-            'pickup_address_id' => $pickupAddressId,
-            'delivery_address_id' => $this->order->shipping_address_id,
-            'total_quantity' => $quantity,
-            'status' => ShipmentStatusCast::PROCESSING->value,
+        return $shipment->shipmentItems()->create([
+           // 'shipment_id' => $shipment->id,
+            'order_item_id' => $orderItem->id,
+            'quantity' => $quantity,
         ]);
     }
 

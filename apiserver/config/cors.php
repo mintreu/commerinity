@@ -21,13 +21,16 @@ return [
 
     'allowed_origins' => [
         //        '*'
+        'http://localhost:8000',    // Filament Admin dev
         'http://localhost:3000',   // Nuxt dev
         'https://vvindia.in',  // Production
         'https://www.vvindia.in', // Production alias hosting Nuxt client
-        'https://panel.vvindia.in', // API host when accessed via browser clients
+        'https://panel.vvindia.in', // API host when accessed via browser clients & Filament Admin
     ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '^https:\/\/.*\.vvindia\.in$',
+    ],
 
     'allowed_headers' => ['*'],
 
