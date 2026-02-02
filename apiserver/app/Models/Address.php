@@ -42,6 +42,9 @@ class Address extends Model
         'default',
         'priority',
         'pickup_location',
+        'addressable_type',
+        'addressable_id',
+
     ];
 
     protected function casts(): array

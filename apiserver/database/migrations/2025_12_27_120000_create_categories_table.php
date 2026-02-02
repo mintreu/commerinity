@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()->constrained('categories')->cascadeOnDelete();
             $table->string('name');
-            $table->string('slug')->unique();
-            $table->string('url')->nullable();
+//            $table->string('slug')->unique();
+            $table->string('url')->unique();
             $table->boolean('status')->default(true);
             $table->integer('view_count')->default(0);
             $table->integer('order')->default(0);

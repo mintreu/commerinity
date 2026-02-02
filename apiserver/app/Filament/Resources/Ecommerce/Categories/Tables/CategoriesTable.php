@@ -6,52 +6,91 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CategoriesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultGroup(Group::make('parent.name')
+                ->titlePrefixedWithLabel(false))
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
+            ->collapsedGroupsByDefault()
+
             ->columns([
 
-                SpatieMediaLibraryImageColumn::make('thumbnail')
-                    ->imageSize('150px')
-                    ->collection('thumbnail'),
+                Split::make([
+                    SpatieMediaLibraryImageColumn::make('thumbnail')
+                        ->imageSize('150px')
+                        ->defaultImageUrl('https://placehold.co/400')
+                        ->collection('thumbnail'),
 
-                TextColumn::make('name')
-                    ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                TextColumn::make('url')
-                    ->searchable(),
+                    TextColumn::make('name')
+                        ->size(fn(Model $record) => is_null($record->parent_id) ? TextSize::Large : TextSize::Medium)
+                        ->color(fn(Model $record) => is_null($record->parent_id) ? 'primary' : 'info')
+                        ->searchable(),
+                ]),
 
-                TextColumn::make('parent.name')
-                    ->badge()
-                    ->default('-root-')
-                    ->sortable(),
 
-                IconColumn::make('status')
-                    ->boolean(),
-                TextColumn::make('view_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('order')
-                    ->numeric()
-                    ->sortable(),
 
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Panel::make([
+                    Stack::make([
+
+                        TextColumn::make('parent.name')
+                            ->badge()
+                            ->default('-root-')
+                            ->description('Parent')
+                            ->sortable(),
+
+                        Split::make([
+                            IconColumn::make('status')
+                                ->tooltip('Status')
+                                ->inline()
+                                ->boolean(),
+                            TextColumn::make('view_count')
+                                ->numeric()
+                                ->description('Views')
+                                ->sortable(),
+                            TextColumn::make('order')
+                                ->numeric()
+                                ->description('Priority')
+                                ->sortable(),
+                        ]),
+
+                        Split::make([
+                            TextColumn::make('created_at')
+                                ->dateTime()
+                                ->sortable()
+                                ->description('Create On')
+                                ->toggledHiddenByDefault()
+                                ->toggleable(isToggledHiddenByDefault: true),
+                            TextColumn::make('updated_at')
+                                ->dateTime()
+                                ->sortable()
+                                ->description('Last Edited')
+                                ->toggledHiddenByDefault()
+                                ->toggleable(isToggledHiddenByDefault: true),
+                        ])
+
+                    ]),
+                ])->collapsible(),
+
+
+
             ])
             ->filters([
                 //

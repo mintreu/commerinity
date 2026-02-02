@@ -22,11 +22,8 @@ class Category extends Model implements HasMedia
     protected static function booted(): void
     {
         static::creating(function (Category $category) {
-            if (empty($category->slug)) {
-                $category->slug = Str::slug($category->name);
-            }
             if (empty($category->url)) {
-                $category->url = $category->slug;
+                $category->url = Str::slug($category->name);
             }
         });
     }

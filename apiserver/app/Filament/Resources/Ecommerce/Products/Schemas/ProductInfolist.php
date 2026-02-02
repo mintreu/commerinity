@@ -7,7 +7,9 @@ use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -20,123 +22,192 @@ class ProductInfolist
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Tabs::make('Tabs')
-                    ->columnSpanFull()
-                    ->contained(false)
-                    ->tabs([
-                        Tab::make('General')
-                            ->columns(3)
-                            ->schema([
+        $currency = MoneyService::make()->getCurrencyCode();
 
-                                Section::make('Product Info')
-                                    ->columnSpanFull()
-                                    ->aside()
-                                    ->columns()
+        return $schema->components([
+            Tabs::make('Product')
+                ->columnSpanFull()
+                ->contained(false)
+                ->tabs([
+                    Tab::make('Overview')
+                        ->schema([
+                            // HERO (Image + Primary Info)
+                            Flex::make([
+                                Section::make()
                                     ->schema([
-                                        // Thumbnail
                                         SpatieMediaLibraryImageEntry::make('displayImage')
                                             ->hiddenLabel()
-                                            ->imageSize('250px')
-                                            ->collection('displayImage'),
+                                            ->collection('displayImage')
+                                            ->imageSize('320px')
+                                            ->extraImgAttributes([
+                                                'class' => 'rounded-2xl ring-1 ring-gray-200 dark:ring-gray-800 shadow-sm object-cover',
+                                            ])
+                                            ->placeholder('-'),
+                                    ])
+                                    ->grow(false),
 
-                                        // Info Box
-                                        Grid::make(1)
-                                            ->schema([
-                                                // Product Name
-                                                TextEntry::make('name')
-                                                    ->size(TextSize::Large)
-                                                    ->weight(FontWeight::ExtraBold)
-                                                    ->color('primary')
-                                                    ->hintAction(
-                                                        Action::make('visit')
-                                                            ->url(url: fn (Model $record) => config('app.client_url').'/product/'.$record->url, shouldOpenInNewTab: true)
-                                                            ->icon('heroicon-m-globe-alt')->iconButton()
-                                                    ),
+                                Group::make([
+                                    Section::make('Product')
+                                        ->schema([
+                                            TextEntry::make('name')
+                                                ->hiddenLabel()
+                                                ->size(TextSize::Large)
+                                                ->weight(FontWeight::ExtraBold)
+                                                ->hintAction(
+                                                    Action::make('visit')
+                                                        ->label('Open on store')
+                                                        ->icon('heroicon-m-arrow-top-right-on-square')
+                                                        ->url(
+                                                            fn (Model $record) => rtrim(config('app.client_url'), '/') . '/product/' . $record->url,
+                                                            true
+                                                        )
+                                                ),
 
-                                                // Product SKU
+                                            Grid::make([
+                                                'default' => 2,
+                                                'md' => 4,
+                                            ])->schema([
                                                 TextEntry::make('sku')
-                                                    ->label('SKU')->inlineLabel(),
-
-                                                // Product Price From Stock
+                                                    ->label('SKU')
+                                                    ->placeholder('-')
+                                                    ->badge(),
 
                                                 TextEntry::make('price')
-                                                    //->getStateUsing(fn (Model $record) => $record->getPrice())
-                                                    ->money(MoneyService::make()->getCurrencyCode())
+                                                    ->label('Price')
+                                                    ->money($currency)
+                                                    ->placeholder('-')
+                                                    ->badge(),
+
+                                                TextEntry::make('type')
+                                                    ->label('Type')
+                                                    ->badge()
                                                     ->placeholder('-'),
 
-                                                // Total Available Stock
-                                                TextEntry::make('Current Stock')->inlineLabel()
-                                                    ->getStateUsing(fn (Model $record) => $record->availableStocks()->sum('in_stock_quantity'))
-                                                    ->size(TextSize::Medium),
-
-                                                TextEntry::make('type')->badge()->inlineLabel(),
-                                                TextEntry::make('status')->badge()->inlineLabel(),
+                                                TextEntry::make('status')
+                                                    ->label('Status')
+                                                    ->badge()
+                                                    ->placeholder('-'),
                                             ]),
 
-                                    ]),
+                                            Grid::make([
+                                                'default' => 2,
+                                                'md' => 4,
+                                            ])->schema([
+                                                TextEntry::make('current_stock')
+                                                    ->label('Current Stock')
+                                                    ->getStateUsing(fn (Model $record) => (int) $record->availableStocks()->sum('in_stock_quantity'))
+                                                    ->placeholder('0')
+                                                    ->badge(),
 
-                                TextEntry::make('short_description')
-                                    ->label('Short Intro')
-                                    ->placeholder('-')
-                                    ->columnSpanFull()->html()->alignJustify(),
+                                                TextEntry::make('view_count')
+                                                    ->label('Views')
+                                                    ->numeric()
+                                                    ->placeholder('0')
+                                                    ->badge(),
 
-                                Section::make('Full Description')
-                                    ->columnSpanFull()->collapsible()
-                                    ->schema([
-                                        TextEntry::make('description')
-                                            ->hiddenLabel()
-                                            ->placeholder('-')
-                                            ->columnSpanFull()->html()->alignJustify(),
-                                    ]),
-                            ]),
-                        Tab::make('Source')
-                            ->schema([
+                                                IconEntry::make('is_returnable')
+                                                    ->label('Returnable')
+                                                    ->boolean(),
 
-                                TextEntry::make('parent.name')
-                                    ->label('Parent')
-                                    ->columnSpanFull()
-                                    ->placeholder('-'),
-                            ]),
-                        Tab::make('Gallery')
-                            ->schema([
-                                SpatieMediaLibraryImageEntry::make('bannerImage')
-                                    ->hiddenLabel()
-                                    ->columnSpanFull()
-                                    ->imageSize('250px')
-                                    ->collection('bannerImage'),
-                            ]),
+                                                TextEntry::make('return_days')
+                                                    ->label('Return Days')
+                                                    ->numeric()
+                                                    ->placeholder('-')
+                                                    ->badge(),
+                                            ]),
+                                        ]),
+                                ]),
+                            ])->from('md')->columnSpanFull(),
 
-                        Tab::make('Store Config')
-                            ->columns()
-                            ->schema([
+                            Section::make('Short Intro')
+                                ->collapsible()
+                                ->schema([
+                                    TextEntry::make('short_description')
+                                        ->hiddenLabel()
+                                        ->placeholder('-')
+                                        ->html()
+                                        ->alignJustify()
+                                        ->columnSpanFull(),
+                                ])
+                                ->columnSpanFull(),
 
-                                TextEntry::make('status')
-                                    ->badge(),
-                                IconEntry::make('is_returnable')
-                                    ->boolean(),
-                                TextEntry::make('return_days')
-                                    ->numeric(),
-                                TextEntry::make('view_count')
-                                    ->numeric(),
-                                TextEntry::make('created_at')
-                                    ->dateTime()
-                                    ->placeholder('-'),
-                                TextEntry::make('updated_at')
-                                    ->dateTime()
-                                    ->placeholder('-'),
-                            ]),
-                        Tab::make('Config')
-                            ->schema([
+                            Section::make('Full Description')
+                                ->collapsible()
+                                ->collapsed()
+                                ->schema([
+                                    TextEntry::make('description')
+                                        ->hiddenLabel()
+                                        ->placeholder('-')
+                                        ->html()
+                                        ->alignJustify()
+                                        ->columnSpanFull(),
+                                ])
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(1),
 
-                                TextEntry::make('filterGroup.name')
-                                    ->label('Filter group'),
-                                TextEntry::make('category.name')
-                                    ->label('Category')
-                                    ->placeholder('-'),
-                            ]),
-                    ]),
-            ]);
+                    Tab::make('Catalog')
+                        ->schema([
+                            Section::make('Source')
+                                ->columns([
+                                    'default' => 1,
+                                    'md' => 2,
+                                ])
+                                ->schema([
+                                    TextEntry::make('parent.name')
+                                        ->label('Parent Product')
+                                        ->placeholder('-'),
+
+                                    TextEntry::make('category.name')
+                                        ->label('Category')
+                                        ->placeholder('-'),
+
+                                    TextEntry::make('filterGroup.name')
+                                        ->label('Filter Group')
+                                        ->placeholder('-'),
+                                ])
+                                ->columnSpanFull(),
+                        ]),
+
+                    Tab::make('Gallery')
+                        ->schema([
+                            Section::make('Images')
+                                ->schema([
+                                    // If bannerImage collection has multiple images, this will render them.
+                                    SpatieMediaLibraryImageEntry::make('bannerImage')
+                                        ->hiddenLabel()
+                                        ->collection('bannerImage')
+                                        ->imageSize('260px')
+                                        ->columnSpanFull()
+                                        ->extraImgAttributes([
+                                            'class' => 'rounded-xl ring-1 ring-gray-200 dark:ring-gray-800 shadow-sm object-cover',
+                                        ])
+                                        ->placeholder('-'),
+                                ])
+                                ->columnSpanFull(),
+                        ]),
+
+                    Tab::make('Store & System')
+                        ->schema([
+                            Section::make('Store Config')
+                                ->columns([
+                                    'default' => 1,
+                                    'md' => 2,
+                                ])
+                                ->schema([
+                                    TextEntry::make('created_at')
+                                        ->label('Created')
+                                        ->dateTime()
+                                        ->placeholder('-'),
+
+                                    TextEntry::make('updated_at')
+                                        ->label('Updated')
+                                        ->dateTime()
+                                        ->placeholder('-'),
+                                ])
+                                ->columnSpanFull(),
+                        ]),
+                ]),
+        ]);
     }
 }

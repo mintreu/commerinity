@@ -25,6 +25,7 @@ class CategoryResource extends Resource
     protected static string|null|\UnitEnum $navigationGroup = 'Catalogue';
 
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordRouteKeyName = 'url';
 
     public static function form(Schema $schema): Schema
     {
@@ -53,8 +54,8 @@ class CategoryResource extends Resource
         return [
             'index' => ListCategories::route('/'),
             'create' => CreateCategory::route('/create'),
-            'view' => ViewCategory::route('/{record}'),
-            'edit' => EditCategory::route('/{record}/edit'),
+            'view' => ViewCategory::route('/{record:url}'),
+            'edit' => EditCategory::route('/{record:url}/edit'),
         ];
     }
 }

@@ -71,4 +71,12 @@ enum UserStatusCast: string implements HasColor, HasIcon, HasLabel
             self::UNSUBSCRIBED => 'heroicon-o-bell-slash',
         };
     }
+
+
+
+    public static function notServiceable():array
+    {
+        return [self::BANNED->value,self::SUSPENDED->value];
+    }
+
 }

@@ -8,9 +8,7 @@ use App\Casts\RecruitmentRoleCast;
 use App\Casts\RecruitmentStatusCast;
 use App\Casts\RecruitmentTypeCast;
 use Filament\Forms\Components\DatePicker;
-
 use Filament\Forms\Components\Repeater;
-
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -19,112 +17,191 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class RecruitmentForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
+        return $schema->components([
+            Grid::make([
+                'default' => 1,
+                'md' => 12,
+            ])->schema([
+                // =========================
+                // LEFT (Main) - md:8
+                // =========================
                 Grid::make(1)
+                    ->columnSpan(['md' => 8])
                     ->schema([
                         Section::make('Basic Information')
+                            ->description('Title, description, role, type, location and timeline')
+                            ->icon('heroicon-o-document-text')
                             ->schema([
-                                Grid::make(2)
-                                    ->schema([
-                                        TextInput::make('title')
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->live(onBlur: true)
-                                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+                                Grid::make([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                ])->schema([
+                                    TextInput::make('title')
+                                        ->label('Title')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->live(onBlur: true)
+                                        ->afterStateUpdated(
+                                            fn ($state, callable $set) => $set('slug', Str::slug((string) $state))
+                                        ),
 
-                                        TextInput::make('slug')
-                                            ->required()
-                                            ->maxLength(255)
-                                            ->unique(ignoreRecord: true),
-                                    ]),
+                                    TextInput::make('slug')
+                                        ->label('Slug')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->unique(ignoreRecord: true),
+                                ]),
 
                                 Textarea::make('description')
+                                    ->label('Description')
                                     ->rows(4)
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->placeholder('Write a short description of the role...'),
 
-                                Grid::make(3)
-                                    ->schema([
-                                        Select::make('role')
-                                            ->options(RecruitmentRoleCast::class)
-                                            ->required(),
+                                Grid::make([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 3,
+                                ])->schema([
+                                    Select::make('role')
+                                        ->label('Role')
+                                        ->options(RecruitmentRoleCast::class)
+                                        ->required()
+                                        ->placeholder('Select role'),
 
-                                        Select::make('employment_type')
-                                            ->options(RecruitmentTypeCast::class)
-                                            ->default('full_time')
-                                            ->required(),
+                                    Select::make('employment_type')
+                                        ->label('Employment Type')
+                                        ->options(RecruitmentTypeCast::class)
+                                        ->default('full_time')
+                                        ->required(),
 
-                                        TextInput::make('location')
-                                            ->maxLength(255)
-                                            ->placeholder('e.g., Remote, Kolkata, India'),
-                                    ]),
+                                    TextInput::make('location')
+                                        ->label('Location')
+                                        ->maxLength(255)
+                                        ->placeholder('Remote / Kolkata / India'),
+                                ]),
 
-                                Grid::make(3)
-                                    ->schema([
-                                        TextInput::make('vacancy')
-                                            ->required()
-                                            ->numeric()
-                                            ->default(1)
-                                            ->minValue(1),
+                                Grid::make([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 3,
+                                ])->schema([
+                                    TextInput::make('vacancy')
+                                        ->label('Vacancy')
+                                        ->required()
+                                        ->numeric()
+                                        ->default(1)
+                                        ->minValue(1),
 
-                                        DatePicker::make('open_date')
-                                            ->default(now()),
+                                    DatePicker::make('open_date')
+                                        ->label('Open Date')
+                                        ->default(now()),
 
-                                        DatePicker::make('close_date'),
-                                    ]),
-                            ]),
+                                    DatePicker::make('close_date')
+                                        ->label('Close Date'),
+                                ]),
+                            ])
+                            ->compact(),
 
                         Section::make('Eligibility Criteria')
+                            ->description('Age, education and experience requirements')
+                            ->icon('heroicon-o-shield-check')
                             ->schema([
-                                Grid::make(4)
-                                    ->schema([
-                                        TextInput::make('eligibility.min_age')
-                                            ->label('Min Age')
-                                            ->numeric()
-                                            ->minValue(18)
-                                            ->default(18),
+                                Grid::make([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 4,
+                                ])->schema([
+                                    TextInput::make('eligibility.min_age')
+                                        ->label('Min Age')
+                                        ->numeric()
+                                        ->minValue(18)
+                                        ->default(18),
 
-                                        TextInput::make('eligibility.max_age')
-                                            ->label('Max Age')
-                                            ->numeric()
-                                            ->maxValue(65),
+                                    TextInput::make('eligibility.max_age')
+                                        ->label('Max Age')
+                                        ->numeric()
+                                        ->maxValue(65)
+                                        ->placeholder('Optional'),
 
-                                        TextInput::make('eligibility.education')
-                                            ->label('Min Education')
-                                            ->placeholder('e.g., Graduate'),
+                                    TextInput::make('eligibility.education')
+                                        ->label('Min Education')
+                                        ->placeholder('e.g., Graduate'),
 
-                                        TextInput::make('eligibility.experience')
-                                            ->label('Min Experience')
-                                            ->placeholder('e.g., 2 years'),
-                                    ]),
+                                    TextInput::make('eligibility.experience')
+                                        ->label('Min Experience')
+                                        ->placeholder('e.g., 2 years'),
+                                ]),
                             ])
                             ->collapsible()
-                            ->collapsed(),
+                            ->collapsed()
+                            ->compact(),
+
+                        Section::make('Requirements & Benefits')
+                            ->description('What you expect and what you offer')
+                            ->icon('heroicon-o-sparkles')
+                            ->schema([
+                                Grid::make([
+                                    'default' => 1,
+                                    'md' => 2,
+                                ])->schema([
+                                    Repeater::make('requirements')
+                                        ->label('Requirements')
+                                        ->simple(
+                                            TextInput::make('requirement')
+                                                ->placeholder('e.g., Bachelor’s degree in related field')
+                                        )
+                                        ->addActionLabel('Add Requirement')
+                                        ->defaultItems(0)
+                                        ->reorderable(),
+
+                                    Repeater::make('benefits')
+                                        ->label('Benefits')
+                                        ->simple(
+                                            TextInput::make('benefit')
+                                                ->placeholder('e.g., Health insurance, Flexible hours')
+                                        )
+                                        ->addActionLabel('Add Benefit')
+                                        ->defaultItems(0)
+                                        ->reorderable(),
+                                ]),
+                            ])
+                            ->collapsible()
+                            ->compact(),
                     ]),
 
+                // =========================
+                // RIGHT (Sidebar) - md:4
+                // =========================
                 Grid::make(1)
+                    ->columnSpan(['md' => 4])
                     ->schema([
-                        Section::make('Media')
+                        Section::make('Status')
+                            ->description('Workflow status and internal notes')
+                            ->icon('heroicon-o-flag')
                             ->schema([
-                                SpatieMediaLibraryFileUpload::make('display_image')
-                                    ->collection('display_image')
-                                    ->image()
-                                    ->imageEditor(),
+                                Select::make('status')
+                                    ->label('Status')
+                                    ->options(RecruitmentStatusCast::class)
+                                    ->default('draft')
+                                    ->required(),
 
-                                SpatieMediaLibraryFileUpload::make('info_pdf')
-                                    ->collection('info_pdf')
-                                    ->acceptedFileTypes(['application/pdf']),
+                                Textarea::make('status_feedback')
+                                    ->label('Notes')
+                                    ->rows(2)
+                                    ->placeholder('Optional internal note...'),
                             ])
-                            ->columnSpanFull()
-                            ->collapsible()
-                            ->collapsed(),
+                            ->compact(),
 
                         Section::make('Application Fee')
+                            ->description('Enable if candidates must pay')
+                            ->icon('heroicon-o-banknotes')
                             ->schema([
                                 Toggle::make('is_payable')
                                     ->label('Require Payment')
@@ -136,59 +213,36 @@ class RecruitmentForm
                                     ->numeric()
                                     ->default(0)
                                     ->prefix('₹')
-                                    ->helperText('Enter amount in Rupees (will be stored in paisa)')
-                                    ->visible(fn ($get) => $get('is_payable'))
-                                    ->dehydrateStateUsing(fn ($state) => (int) ($state * 100))
-                                    ->formatStateUsing(fn ($state) => $state / 100),
+                                    ->helperText('Enter amount in Rupees (stored in paisa)')
+                                    ->visible(fn ($get) => (bool) $get('is_payable'))
+                                    ->dehydrateStateUsing(fn ($state) => (int) (((float) $state) * 100))
+                                    ->formatStateUsing(fn ($state) => $state ? ((int) $state) / 100 : 0),
                             ])
-                            ->columns(2),
+                            ->compact()
+                            ->collapsible(),
 
-                        Section::make('Status')
+                        Section::make('Media')
+                            ->description('Display image and info PDF')
+                            ->icon('heroicon-o-photo')
                             ->schema([
-                                Select::make('status')
-                                    ->options(RecruitmentStatusCast::class)
-                                    ->default('draft')
-                                    ->required(),
+                                SpatieMediaLibraryFileUpload::make('display_image')
+                                    ->label('Display Image')
+                                    ->collection('display_image')
+                                    ->image()
+                                    ->imageEditor(),
 
-                                Textarea::make('status_feedback')
-                                    ->label('Notes')
-                                    ->rows(2),
+                                SpatieMediaLibraryFileUpload::make('info_pdf')
+                                    ->label('Info PDF')
+                                    ->collection('info_pdf')
+                                    ->acceptedFileTypes(['application/pdf']),
                             ])
+                            ->compact()
                             ->collapsible()
-                            ->columnSpanFull()
+                            ->collapsed(),
                     ]),
-
-
-
-
-                Section::make('Requirements & Benefits')
-                    ->schema([
-                        Repeater::make('requirements')
-                            ->simple(
-                                TextInput::make('requirement')
-                                    ->placeholder('e.g., Bachelor\'s degree in related field')
-                            )
-                            ->addActionLabel('Add Requirement')
-                            ->defaultItems(0)
-                            ->reorderable(),
-
-                        Repeater::make('benefits')
-                            ->simple(
-                                TextInput::make('benefit')
-                                    ->placeholder('e.g., Health insurance, Flexible hours')
-                            )
-                            ->addActionLabel('Add Benefit')
-                            ->defaultItems(0)
-                            ->reorderable(),
-                    ])
-                    ->columns(2)
-                    ->collapsible(),
-
-
-
-
-
-
-            ]);
+            ])
+                ->columnSpanFull()
+                ->extraAttributes(['class' => 'gap-6']),
+        ]);
     }
 }
