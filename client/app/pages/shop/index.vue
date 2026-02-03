@@ -43,28 +43,41 @@ const userName = computed(() => {
   return user.value.name?.split(' ')[0] || user.value.name || 'Member'
 })
 
-// Guest data - only fetch for guests
-const { data: featuredCategoriesData } = await useFetch<{
-  success: boolean
-  data: FeaturedCategory[]
-}>(`/api/catalog/categories/featured?limit=6`, {
-  $fetch: sanctumFetch,
-  lazy: true,
-  server: false,
-  immediate: computed(() => !isLoggedIn.value).value
-})
-
-const { data: featuredData } = await useFetch<{
+const featuredCategoriesData = ref<{ success: boolean; data: FeaturedCategory[] } | null>(null)
+const featuredData = ref<{
   success: boolean
   data: {
     best_sellers: Product[]
     new_arrivals: Product[]
   }
-}>(`/api/catalog/featured`, {
-  $fetch: sanctumFetch,
-  lazy: true,
-  server: false,
-  immediate: computed(() => !isLoggedIn.value).value
+} | null>(null)
+
+const loadGuestData = async () => {
+  if (isLoggedIn.value) return
+
+  try {
+    featuredCategoriesData.value = await sanctumFetch(
+      `${config.public.apiBase}/api/catalog/categories/featured?limit=6`
+    )
+  } catch {
+    featuredCategoriesData.value = null
+  }
+
+  try {
+    featuredData.value = await sanctumFetch(`${config.public.apiBase}/api/catalog/featured`)
+  } catch {
+    featuredData.value = null
+  }
+}
+
+onMounted(() => {
+  loadGuestData()
+})
+
+watch(isLoggedIn, (loggedIn) => {
+  if (!loggedIn) {
+    loadGuestData()
+  }
 })
 
 // Parse guest data

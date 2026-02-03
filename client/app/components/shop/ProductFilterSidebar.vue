@@ -417,6 +417,14 @@ defineExpose({
     side="left"
     class="lg:hidden"
   >
+    <template #title>
+      <span class="sr-only">Filters</span>
+    </template>
+
+    <template #description>
+      <span class="sr-only">Filter products by category, price, availability, rating, and other options.</span>
+    </template>
+
     <template #header>
       <div class="flex items-center justify-between w-full">
         <div class="flex items-center w-full gap-2">
@@ -442,7 +450,8 @@ defineExpose({
       </div>
     </template>
 
-    <div class="p-3 space-y-1 overflow-y-auto">
+    <template #body>
+      <div class="p-3 space-y-1 overflow-y-auto">
       <!-- Applied Filters Chips -->
       <div
         v-if="appliedFilters.length"
@@ -764,7 +773,8 @@ defineExpose({
           </div>
         </div>
       </template>
-    </div>
+      </div>
+    </template>
 
     <!-- Apply Button (Mobile) -->
     <template #footer>

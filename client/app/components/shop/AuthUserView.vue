@@ -48,7 +48,6 @@ defineProps<Props>()
 
 const config = useRuntimeConfig()
 const { isLoggedIn } = useSanctum()
-const sanctumFetch = useSanctumFetch()
 
 // Filter state
 const activeFilters = ref<Record<string, any>>({})
@@ -69,6 +68,16 @@ const sortOptions = [
   { label: 'Price: High to Low', value: 'price_desc' },
   { label: 'Name: A to Z', value: 'name_asc' }
 ]
+
+const buildQueryString = (params: Record<string, any>) => {
+  const query = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === '') continue
+    query.set(key, String(value))
+  }
+  const queryString = query.toString()
+  return queryString ? `?${queryString}` : ''
+}
 
 // Build query params from filters
 const queryParams = computed(() => {
@@ -102,8 +111,7 @@ const queryParams = computed(() => {
   return params
 })
 
-// Fetch products - initial load
-const { data: productsData, status: productsStatus, refresh: refreshProducts } = await useFetch<{
+const productsResponse = ref<{
   success: boolean
   data: Product[]
   meta?: {
@@ -112,72 +120,91 @@ const { data: productsData, status: productsStatus, refresh: refreshProducts } =
     total: number
     per_page: number
   }
-}>(`${config.public.apiBase}/api/catalog/products`, {
-  $fetch: sanctumFetch,
-  query: queryParams,
-  lazy: true,
-  server: false,
-  immediate: true,
-  watch: false // We'll manually control refetching
-})
+} | null>(null)
+const productsStatus = ref<'pending' | 'success' | 'error'>('pending')
 
-// Fetch filters data
-const { data: filtersData } = await useFetch<{
+const filtersResponse = ref<{
   success: boolean
   data: {
     price_range: { min: number, max: number }
     filter_options: FilterGroup[]
     sort_options: Array<{ value: string, label: string }>
   }
-}>(`${config.public.apiBase}/api/catalog/filters`, {
-  query: computed(() => activeFilters.value.category ? { category: activeFilters.value.category } : {}),
-  lazy: true,
-  server: false,
-  $fetch: sanctumFetch
-})
+} | null>(null)
 
-// Fetch categories with nested children
-const { data: categoriesData } = await useFetch<{
+const categoriesResponse = ref<{
   success: boolean
   data: Category[]
-}>(`${config.public.apiBase}/api/catalog/categories`, {
-  lazy: true,
-  server: false,
-  $fetch: sanctumFetch
-})
+} | null>(null)
 
-// Computed
-const priceRange = computed(() => filtersData.value?.data?.price_range || { min: 0, max: 10000 })
-const filterGroups = computed(() => filtersData.value?.data?.filter_options || [])
-const categories = computed(() => categoriesData.value?.data || [])
-const isLoading = computed(() => productsStatus.value === 'pending' && currentPage.value === 1)
+const applyProductsResponse = (payload: typeof productsResponse.value, append: boolean) => {
+  if (!payload?.data) return
+  if (append) {
+    allProducts.value = [...allProducts.value, ...payload.data]
+  } else {
+    allProducts.value = payload.data
+  }
 
-// Watch for data changes and update products
-watch(productsData, (newData) => {
-  if (newData?.data) {
-    if (currentPage.value === 1) {
-      allProducts.value = newData.data
-    } else {
-      allProducts.value = [...allProducts.value, ...newData.data]
-    }
-    const meta = newData.meta
-    if (meta) {
-      hasMore.value = meta.current_page < meta.last_page
-      totalProducts.value = meta.total
-    } else {
-      hasMore.value = false
-      totalProducts.value = allProducts.value.length
-    }
+  const meta = payload.meta
+  if (meta) {
+    hasMore.value = meta.current_page < meta.last_page
+    totalProducts.value = meta.total
+  } else {
+    hasMore.value = false
+    totalProducts.value = allProducts.value.length
+  }
+}
+
+const loadProducts = async (append = false) => {
+  productsStatus.value = 'pending'
+  try {
+    const queryString = buildQueryString(queryParams.value)
+    productsResponse.value = await useSanctumFetch(
+      `${config.public.apiBase}/api/catalog/products${queryString}`
+    )
+    applyProductsResponse(productsResponse.value, append)
+    productsStatus.value = 'success'
+  } catch {
+    productsStatus.value = 'error'
+  } finally {
     isLoadingMore.value = false
   }
-}, { immediate: true })
+}
+
+const loadFilters = async () => {
+  const queryString = buildQueryString(
+    activeFilters.value.category ? { category: activeFilters.value.category } : {}
+  )
+  try {
+    filtersResponse.value = await useSanctumFetch(
+      `${config.public.apiBase}/api/catalog/filters${queryString}`
+    )
+  } catch {
+    filtersResponse.value = null
+  }
+}
+
+const loadCategories = async () => {
+  try {
+    categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
+  } catch {
+    categoriesResponse.value = null
+  }
+}
+
+// Computed
+const priceRange = computed(() => filtersResponse.value?.data?.price_range || { min: 0, max: 10000 })
+const filterGroups = computed(() => filtersResponse.value?.data?.filter_options || [])
+const categories = computed(() => categoriesResponse.value?.data || [])
+const isLoading = computed(() => productsStatus.value === 'pending' && currentPage.value === 1)
 
 // Handle filter updates
 const handleFilterUpdate = (filters: Record<string, any>) => {
   activeFilters.value = filters
   currentPage.value = 1
   allProducts.value = []
-  refreshProducts()
+  loadProducts(false)
+  loadFilters()
 }
 
 // Handle filter clear
@@ -185,14 +212,15 @@ const handleFilterClear = () => {
   activeFilters.value = {}
   currentPage.value = 1
   allProducts.value = []
-  refreshProducts()
+  loadProducts(false)
+  loadFilters()
 }
 
 // Handle sort change
 const handleSortChange = () => {
   currentPage.value = 1
   allProducts.value = []
-  refreshProducts()
+  loadProducts(false)
 }
 
 // Load more products (infinite scroll)
@@ -201,13 +229,17 @@ const loadMore = async () => {
 
   isLoadingMore.value = true
   currentPage.value += 1
-  await refreshProducts()
+  await loadProducts(true)
 }
 
 // Intersection observer for infinite scroll
 const loadMoreTrigger = ref<HTMLElement | null>(null)
 
 onMounted(() => {
+  loadCategories()
+  loadFilters()
+  loadProducts(false)
+
   const observer = new IntersectionObserver(
     (entries) => {
       if (entries[0].isIntersecting && hasMore.value && !isLoadingMore.value && !isLoading.value) {
@@ -303,25 +335,24 @@ const openMobileFilters = () => {
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-3 md:px-4 py-4 min-h-[calc(100vh-10rem)]">
       <div class="flex gap-4 min-h-full">
-        <!-- Filter Sidebar -->
-        <ShopProductFilterSidebar
-          ref="filterSidebarRef"
-          :price-range="priceRange"
-          :filter-groups="filterGroups"
-          :categories="categories"
-          :loading="isLoading"
-          :filter-config="{
-            showSearch: true,
-            showCategories: true,
-            showPrice: true,
-            showAvailability: true,
-            showRating: true,
-            showDynamicFilters: true
-          }"
-          @update:filters="handleFilterUpdate"
-          @clear="handleFilterClear"
-        />
-
+        <div class="hidden lg:block shrink-0">
+          <ShopProductFilterSidebar
+            :price-range="priceRange"
+            :filter-groups="filterGroups"
+            :categories="categories"
+            :loading="isLoading"
+            :filter-config="{
+              showSearch: true,
+              showCategories: true,
+              showPrice: true,
+              showAvailability: true,
+              showRating: true,
+              showDynamicFilters: true
+            }"
+            @update:filters="handleFilterUpdate"
+            @clear="handleFilterClear"
+          />
+        </div>
         <!-- Products Grid -->
         <main class="flex-1 min-w-0">
           <!-- Toolbar: Results count + Sort + Mobile Filter Toggle -->
@@ -473,6 +504,26 @@ const openMobileFilters = () => {
           </div>
         </main>
       </div>
+    </div>
+
+    <div class="lg:hidden">
+      <ShopProductFilterSidebar
+        ref="filterSidebarRef"
+        :price-range="priceRange"
+        :filter-groups="filterGroups"
+        :categories="categories"
+        :loading="isLoading"
+        :filter-config="{
+          showSearch: true,
+          showCategories: true,
+          showPrice: true,
+          showAvailability: true,
+          showRating: true,
+          showDynamicFilters: true
+        }"
+        @update:filters="handleFilterUpdate"
+        @clear="handleFilterClear"
+      />
     </div>
 
     <!-- Mobile padding for bottom nav -->
