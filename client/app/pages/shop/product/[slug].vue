@@ -212,11 +212,17 @@ const specRows = computed(() => {
   const rows: Array<{ label: string; value: string }> = []
   if (product.value?.sku) rows.push({ label: 'SKU', value: product.value.sku })
   if (product.value?.category?.name) rows.push({ label: 'Category', value: product.value.category.name })
+  if (typeof product.value?.view_count === 'number') {
+    rows.push({ label: 'Views', value: `${product.value.view_count}` })
+  }
   if (typeof product.value?.stock_quantity === 'number') {
     rows.push({
       label: 'Stock',
       value: product.value.stock_quantity > 0 ? `${product.value.stock_quantity} available` : 'Out of stock'
     })
+  }
+  if (product.value?.is_returnable) {
+    rows.push({ label: 'Return Policy', value: `${product.value.return_days}-day returns` })
   }
   const filters = product.value?.filter_options ?? []
   for (const group of filters) {
@@ -224,6 +230,11 @@ const specRows = computed(() => {
     if (values) rows.push({ label: group.filter_name, value: values })
   }
   return rows
+})
+
+const totalHelpfulVotes = computed(() => {
+  const list = reviews.value?.reviews ?? []
+  return list.reduce((sum, review) => sum + (review.helpful_votes || 0), 0)
 })
 
 // Wishlist state
@@ -533,13 +544,10 @@ onMounted(() => {
               </h1>
 
               <!-- Rating Summary -->
-              <div
-                v-if="reviews?.stats.total_reviews"
-                class="flex items-center gap-3"
-              >
+              <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-1">
                   <template
-                    v-for="star in getStarArray(Math.round(reviews.stats.average_rating))"
+                    v-for="star in getStarArray(Math.round(reviews?.stats.average_rating || 0))"
                     :key="star"
                   >
                     <UIcon
@@ -548,8 +556,13 @@ onMounted(() => {
                     />
                   </template>
                 </div>
-                <span class="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  {{ reviews.stats.average_rating }} ({{ reviews.stats.total_reviews }} reviews)
+                <span class="inline-flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+                    {{ reviews?.stats.average_rating || 0 }}/5
+                  </span>
+                  <span>{{ reviews?.stats.total_reviews || 0 }} ratings</span>
+                  <span class="text-slate-400">•</span>
+                  <span>{{ totalHelpfulVotes }} helpful votes</span>
                 </span>
               </div>
 
@@ -922,14 +935,23 @@ onMounted(() => {
         <!-- Reviews Section -->
         <div class="mt-12">
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg p-6 md:p-8">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-                Customer Reviews
-              </h2>
-              <span
-                v-if="reviews?.stats.total_reviews"
-                class="text-sm text-slate-500"
-              >{{ reviews.stats.total_reviews }} reviews</span>
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                  Ratings & Reviews
+                </h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  Verified buyer feedback and rating distribution
+                </p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-sm font-semibold">
+                  <UIcon name="i-lucide-star" class="w-4 h-4" />
+                  {{ reviews?.stats.average_rating || 0 }}
+                </span>
+                <span class="text-sm text-slate-500">{{ reviews?.stats.total_reviews || 0 }} ratings</span>
+                <span class="text-sm text-slate-500">• {{ totalHelpfulVotes }} helpful votes</span>
+              </div>
             </div>
 
             <!-- Rating Summary -->
@@ -992,9 +1014,21 @@ onMounted(() => {
                     {{ review.author.name.charAt(0).toUpperCase() }}
                   </div>
                   <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
                       <span class="font-medium text-slate-900 dark:text-white">{{ review.author.name }}</span>
                       <span class="text-xs text-slate-400">{{ formatDate(review.created_at) }}</span>
+                      <span
+                        v-if="review.helpful_votes >= 5"
+                        class="text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                      >
+                        Most Helpful
+                      </span>
+                      <span
+                        v-if="review.helpful_votes"
+                        class="text-xs text-slate-500"
+                      >
+                        • {{ review.helpful_votes }} helpful
+                      </span>
                     </div>
                     <div class="flex items-center gap-1 mb-2">
                       <template
