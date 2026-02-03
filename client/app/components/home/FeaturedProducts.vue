@@ -16,17 +16,26 @@ interface FeaturedResponse {
 
 const config = useRuntimeConfig()
 
-const { data: featuredResponse, status } = await useFetch<FeaturedResponse>(
-  `${config.public.apiBase}/api/catalog/featured`,
-  {
-    lazy: true,
-    server: false
+const featuredResponse = ref<FeaturedResponse | null>(null)
+const status = ref<'pending' | 'success' | 'error'>('pending')
+
+const loadFeatured = async () => {
+  status.value = 'pending'
+  try {
+    featuredResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/featured`)
+    status.value = 'success'
+  } catch {
+    status.value = 'error'
   }
-)
+}
 
 const trendingProducts = computed(() => featuredResponse.value?.data?.best_sellers || [])
 const newArrivals = computed(() => featuredResponse.value?.data?.new_arrivals || [])
 const isLoading = computed(() => status.value === 'pending')
+
+onMounted(() => {
+  loadFeatured()
+})
 </script>
 
 <template>

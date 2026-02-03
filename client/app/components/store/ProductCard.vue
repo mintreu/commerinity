@@ -58,8 +58,16 @@ const addToCart = async (event: Event) => {
   }
 }
 
+const productSlug = computed(() => {
+  return props.product.slug
+    || (props.product as unknown as { url?: string }).url
+    || (props.product as unknown as { product_slug?: string }).product_slug
+    || ''
+})
+
 const viewProduct = () => {
-  navigateTo(`/shop/${props.product.slug}`)
+  if (!productSlug.value) return
+  navigateTo(`/shop/product/${productSlug.value}`)
 }
 
 // Truncate short description

@@ -36,7 +36,7 @@ defineProps<Props>()
         :key="ancestor.id"
       >
         <NuxtLink
-          :to="`/category/${ancestor.url}`"
+          :to="`/category/${ancestor.slug}`"
           class="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
         >
           {{ ancestor.name }}

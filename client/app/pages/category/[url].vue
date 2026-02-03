@@ -10,6 +10,7 @@ definePageMeta({
 })
 
 const config = useRuntimeConfig()
+const sanctumFetch = useSanctumFetch()
 const route = useRoute()
 const toast = useToast()
 
@@ -82,7 +83,8 @@ const { data: categoryResponse, status, error } = await useFetch<{
     items: Product[]
     pagination: Pagination
   }
-}>(`${config.public.apiBase}/api/catalog/categories/${route.params.url}`, {
+}>(`/api/catalog/categories/${route.params.url}`, {
+  $fetch: sanctumFetch,
   query: queryParams,
   watch: [queryParams],
   server: false
@@ -493,7 +495,7 @@ const clearPriceFilter = () => {
                 :key="product.slug"
                 class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-300"
               >
-                <NuxtLink :to="`/shop/${product.slug}`">
+                <NuxtLink :to="`/shop/product/${product.slug || (product as any).url || ''}`">
                   <!-- Image -->
                   <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
                     <img

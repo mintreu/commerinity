@@ -30,6 +30,8 @@ return [
 
     'allowed_origins_patterns' => [
         '^https:\/\/.*\.vvindia\.in$',
+        '^http:\/\/localhost:\d+$',
+        '^http:\/\/127\.0\.0\.1:\d+$',
     ],
 
     'allowed_headers' => ['*'],

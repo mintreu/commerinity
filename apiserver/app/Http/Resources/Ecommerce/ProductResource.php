@@ -60,7 +60,7 @@ final class ProductResource extends JsonResource
             'category' => $this->whenLoaded('category', fn ($category) => [
                 'uuid' => $category->uuid,
                 'name' => $category->name,
-                'slug' => $category->slug,
+                'slug' => $category->url,
             ]),
             // Images
             'image' => $this->formatImage(),

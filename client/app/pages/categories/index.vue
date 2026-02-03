@@ -18,23 +18,30 @@ interface Category {
   name: string
   slug: string
   product_count: number
-  total_products: number
+  total_products?: number
   thumbnail?: string | null
   children?: Category[]
 }
 
 const config = useRuntimeConfig()
 
-// Fetch categories from API
-const { data: categoriesResponse, status, error } = await useFetch<{
-  success: boolean
-  data: Category[]
-}>(`${config.public.apiBase}/api/catalog/categories`, {
-  lazy: true,
-  server: false
-})
+const categoriesResponse = ref<{ success: boolean; data: Category[] } | null>(null)
+const status = ref<'pending' | 'success' | 'error'>('pending')
+const error = ref<unknown>(null)
 
 const categories = computed(() => categoriesResponse.value?.data || [])
+
+const loadCategories = async () => {
+  status.value = 'pending'
+  error.value = null
+  try {
+    categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
+    status.value = 'success'
+  } catch (err) {
+    error.value = err
+    status.value = 'error'
+  }
+}
 
 // Expanded state for mobile accordion
 const expandedCategories = ref<Set<string>>(new Set())
@@ -48,6 +55,10 @@ const toggleExpanded = (slug: string) => {
 }
 
 const isExpanded = (slug: string) => expandedCategories.value.has(slug)
+
+onMounted(() => {
+  loadCategories()
+})
 
 // Get category gradient colors based on name
 const categoryColors: Record<string, string> = {
@@ -282,7 +293,7 @@ const getLeafCategories = (category: Category): Category[] => {
                   {{ parent.name }}
                 </h2>
                 <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400">
-                  {{ parent.total_products }} products
+                  {{ parent.product_count }} products
                 </p>
               </div>
             </NuxtLink>
@@ -335,7 +346,7 @@ const getLeafCategories = (category: Category): Category[] => {
                   <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                     {{ child.name }}
                   </h3>
-                  <span class="text-xs text-slate-400">({{ child.total_products }})</span>
+                  <span class="text-xs text-slate-400">({{ child.product_count }})</span>
                   <UIcon
                     name="i-lucide-chevron-right"
                     class="w-4 h-4 text-slate-400 group-hover:text-violet-600 transition-colors"
@@ -404,7 +415,7 @@ const getLeafCategories = (category: Category): Category[] => {
 
                 <!-- Product Count -->
                 <span class="text-[10px] md:text-xs text-slate-400 dark:text-slate-500 mt-1">
-                  {{ child.total_products }} items
+                  {{ child.product_count }} items
                 </span>
               </NuxtLink>
             </div>
@@ -416,7 +427,7 @@ const getLeafCategories = (category: Category): Category[] => {
             class="p-4 bg-slate-50/50 dark:bg-slate-800/30"
           >
             <NuxtLink
-              :to="`/category/${parent.url}`"
+              :to="`/category/${parent.slug}`"
               class="inline-flex items-center gap-2 text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
             >
               Browse all {{ parent.name }} products

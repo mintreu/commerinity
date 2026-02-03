@@ -15,7 +15,7 @@ defineProps<Props>()
 
 <template>
   <NuxtLink
-    :to="`/category/${category.url}`"
+    :to="`/category/${category.slug}`"
     :class="[
       'group block bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300',
       featured ? 'md:col-span-2' : ''

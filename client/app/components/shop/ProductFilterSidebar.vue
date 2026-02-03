@@ -526,7 +526,7 @@ defineExpose({
                     @change="selectCategory(cat.slug)"
                   >
                   <span class="text-xs text-slate-700 dark:text-slate-300 truncate">{{ cat.name }}</span>
-                  <span class="text-[10px] text-slate-400">({{ cat.total_products || 0 }})</span>
+                  <span class="text-[10px] text-slate-400">({{ cat.product_count || 0 }})</span>
                 </label>
                 <button
                   v-if="cat.children?.length"
@@ -914,7 +914,7 @@ defineExpose({
                       @change="selectCategory(cat.slug)"
                     >
                     <span class="truncate">{{ cat.name }}</span>
-                    <span class="text-[9px] text-slate-400">({{ cat.total_products || 0 }})</span>
+                    <span class="text-[9px] text-slate-400">({{ cat.product_count || 0 }})</span>
                   </label>
                   <button
                     v-if="cat.children?.length"

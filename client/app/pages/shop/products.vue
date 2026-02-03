@@ -123,10 +123,27 @@ const cloneFilterMap = (filters: Record<string, number[]>) => {
   )
 }
 
+const buildQueryString = (params: Record<string, any>) => {
+  const query = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === '') continue
+    query.set(key, String(value))
+  }
+  const queryString = query.toString()
+  return queryString ? `?${queryString}` : ''
+}
+
+const normalizeQueryString = (value?: string | string[]) => {
+  if (!value) return ''
+  const normalized = Array.isArray(value) ? value[0] : value
+  if (normalized === 'undefined' || normalized === 'null') return ''
+  return normalized
+}
+
 // Filter state
-const selectedCategory = ref(typeof route.query.category === 'string' ? route.query.category : '')
-const selectedSort = ref(typeof route.query.sort === 'string' ? route.query.sort : 'popularity')
-const searchQuery = ref(typeof route.query.search === 'string' ? route.query.search : '')
+const selectedCategory = ref(normalizeQueryString(route.query.category))
+const selectedSort = ref(normalizeQueryString(route.query.sort) || 'popularity')
+const searchQuery = ref(normalizeQueryString(route.query.search))
 const currentPage = ref(Math.max(1, parseNumberFromQuery(route.query.page) || 1))
 const priceMin = ref<number | null>(parseNumberFromQuery(route.query.min_price) ?? parseNumberFromQuery(route.query.price_min))
 const priceMax = ref<number | null>(parseNumberFromQuery(route.query.max_price) ?? parseNumberFromQuery(route.query.price_max))
@@ -149,18 +166,58 @@ const fallbackSortOptions = [
   { label: 'Name: A to Z', id: 'name_asc' }
 ]
 
-// Fetch available filters
-const { data: filtersResponse, pending: filtersPending } = await useFetch<{
+// API query params
+const toPaisa = (value: number | null) => {
+  if (value === null) return null
+  return Math.round(value * 100)
+}
+
+const buildFilterPayload = (filters: Record<string, number[]>) => {
+  const payload: Record<string, string> = {}
+  for (const [filterName, optionIds] of Object.entries(filters)) {
+    if (Array.isArray(optionIds) && optionIds.length > 0) {
+      payload[filterName] = optionIds.join(',')
+    }
+  }
+  return payload
+}
+
+const filtersQuery = computed(() => {
+  const params: Record<string, any> = {}
+  if (selectedCategory.value) params.category = selectedCategory.value
+  if (searchQuery.value) params.search = searchQuery.value
+  const minPrice = toPaisa(priceMin.value)
+  const maxPrice = toPaisa(priceMax.value)
+  if (minPrice !== null) params.min_price = minPrice
+  if (maxPrice !== null) params.max_price = maxPrice
+  const payload = buildFilterPayload(selectedFilterOptions.value)
+  if (Object.keys(payload).length > 0) {
+    params.filters = JSON.stringify(payload)
+  }
+  return params
+})
+
+const filtersResponse = ref<{
   success: boolean
   data: {
     price_range: { min: number; max: number }
     sort_options: Array<{ value: string; label: string }>
     filter_options?: FilterGroup[]
   }
-}>(`${config.public.apiBase}/api/catalog/filters`, {
-  query: computed(() => (selectedCategory.value ? { category: selectedCategory.value } : {})),
-  server: false
-})
+} | null>(null)
+const filtersPending = ref(false)
+
+const loadFilters = async () => {
+  filtersPending.value = true
+  try {
+    const queryString = buildQueryString(filtersQuery.value)
+    filtersResponse.value = await useSanctumFetch(
+      `${config.public.apiBase}/api/catalog/filters${queryString}`
+    )
+  } finally {
+    filtersPending.value = false
+  }
+}
 
 const availableFilters = computed(() => filtersResponse.value?.data)
 const isFiltersLoading = computed(() => filtersPending.value)
@@ -178,12 +235,6 @@ const sortSelectOptions = computed(() => {
   return fallbackSortOptions
 })
 
-// API query params
-const toPaisa = (value: number | null) => {
-  if (value === null) return null
-  return Math.round(value * 100)
-}
-
 const queryParams = computed(() => {
   const params: Record<string, any> = {
     page: currentPage.value,
@@ -196,31 +247,31 @@ const queryParams = computed(() => {
   if (minPrice !== null) params.min_price = minPrice
   if (maxPrice !== null) params.max_price = maxPrice
 
-  if (Object.keys(selectedFilterOptions.value).length > 0) {
-    const filters: Record<string, string> = {}
-    for (const [filterName, optionIds] of Object.entries(selectedFilterOptions.value)) {
-      if (Array.isArray(optionIds) && optionIds.length > 0) {
-        filters[filterName] = optionIds.join(',')
-      }
-    }
-    if (Object.keys(filters).length > 0) {
-      params.filters = JSON.stringify(filters)
-    }
+  const filters = buildFilterPayload(selectedFilterOptions.value)
+  if (Object.keys(filters).length > 0) {
+    params.filters = JSON.stringify(filters)
   }
 
   return params
 })
 
-// Fetch products
-const { data: productsResponse, status: productsStatus } = await useFetch<CatalogProductsResponse>(`${config.public.apiBase}/api/catalog/products`, {
-  query: queryParams,
-  watch: [queryParams],
-  lazy: true,
-  server: false
-})
+const productsResponse = ref<CatalogProductsResponse | null>(null)
+const productsStatus = ref<'pending' | 'success' | 'error'>('pending')
 
-// Fetch categories
-const { data: categoriesResponse } = await useFetch<{
+const loadProducts = async () => {
+  productsStatus.value = 'pending'
+  try {
+    const queryString = buildQueryString(queryParams.value)
+    productsResponse.value = await useSanctumFetch(
+      `${config.public.apiBase}/api/catalog/products${queryString}`
+    )
+    productsStatus.value = 'success'
+  } catch {
+    productsStatus.value = 'error'
+  }
+}
+
+const categoriesResponse = ref<{
   success: boolean
   data: Array<{
     id: number
@@ -230,10 +281,11 @@ const { data: categoriesResponse } = await useFetch<{
     thumbnail: string | null
     children: Array<{ id: number; name: string; slug: string; product_count: number }>
   }>
-}>(`${config.public.apiBase}/api/catalog/categories`, {
-  lazy: true,
-  server: false
-})
+} | null>(null)
+
+const loadCategories = async () => {
+  categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
+}
 
 const products = computed<CatalogProduct[]>(() => productsResponse.value?.data ?? [])
 const pagination = computed(() => {
@@ -311,15 +363,26 @@ const updateRouteQuery = () => {
 watch([selectedCategory, selectedSort, searchQuery, priceMin, priceMax], () => {
   currentPage.value = 1
   updateRouteQuery()
+  loadProducts()
+  loadFilters()
 })
 
 watch(selectedFilterOptions, () => {
   currentPage.value = 1
   updateRouteQuery()
+  loadProducts()
+  loadFilters()
 }, { deep: true })
 
 watch(currentPage, () => {
   updateRouteQuery()
+  loadProducts()
+})
+
+onMounted(() => {
+  loadCategories()
+  loadFilters()
+  loadProducts()
 })
 
 const handleCategoryChange = (slug: string) => {
@@ -603,12 +666,17 @@ const addToCart = async (product: typeof products.value[0]) => {
           </div>
 
           <!-- Products Grid -->
-          <div v-else-if="products.length" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          <div
+            v-else-if="products.length"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+            data-testid="product-grid"
+          >
             <NuxtLink
               v-for="product in products"
-              :key="product.slug"
-              :to="`/shop/${product.slug}`"
+              :key="product.slug || (product as any).url"
+              :to="`/shop/product/${product.slug || (product as any).url || ''}`"
               class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg overflow-hidden group cursor-pointer"
+              data-testid="product-card"
             >
               <!-- Image -->
               <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
@@ -671,7 +739,7 @@ const addToCart = async (product: typeof products.value[0]) => {
 
                 <!-- Price (Amazon/Flipkart style) -->
                 <div class="flex flex-wrap items-baseline gap-2 mb-2">
-                  <span class="text-lg font-bold text-slate-900 dark:text-white">
+                  <span class="text-lg font-bold text-slate-900 dark:text-white" data-testid="product-price">
                     {{ product.price_formatted }}
                   </span>
                   <span
@@ -731,7 +799,7 @@ const addToCart = async (product: typeof products.value[0]) => {
                     block
                     variant="outline"
                     color="primary"
-                    @click.prevent="navigateTo(`/shop/${product.slug}`)"
+                    @click.prevent="navigateTo(`/shop/product/${product.slug || (product as any).url || ''}`)"
                   >
                     View Product
                   </UButton>

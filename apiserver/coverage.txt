@@ -1,17 +1,13 @@
 
 
 Code Coverage Report:
-  2026-02-03 04:34:47
+  2026-02-03 05:18:16
 
  Summary:
-  Classes:  0.77% (4/522)
-  Methods:  3.47% (104/2997)
-  Lines:    2.19% (690/31547)
+  Classes:  0.38% (2/522)
+  Methods:  3.60% (108/2998)
+  Lines:    2.38% (752/31547)
 
-App\Casts\BeneficiaryStatusCast
-  Methods:  25.00% ( 1/ 4)   Lines:  47.37% (  9/ 19)
-App\Casts\BeneficiaryTypeCast
-  Methods:  60.00% ( 3/ 5)   Lines:  41.18% (  7/ 17)
 App\Console\Commands\Ecommerce\CompleteDeliveredOrders
   Methods:  50.00% ( 1/ 2)   Lines:   2.04% (  1/ 49)
 App\Filament\Resources\Activities\ActivityResource
@@ -74,30 +70,32 @@ App\Filament\Resources\Users\UserResource
   Methods:  40.00% ( 2/ 5)   Lines:  75.00% (  9/ 12)
 App\Filament\Resources\Wallets\WalletResource
   Methods:  33.33% ( 2/ 6)   Lines:  56.25% (  9/ 16)
-App\Http\Controllers\Api\BeneficiaryAccountController
-  Methods:  18.18% ( 2/11)   Lines:  13.55% ( 37/273)
-App\Http\Requests\StoreBeneficiaryAccountRequest
-  Methods: 100.00% ( 3/ 3)   Lines: 100.00% ( 70/ 70)
-App\Http\Resources\BeneficiaryAccountResource
-  Methods: 100.00% ( 1/ 1)   Lines: 100.00% ( 23/ 23)
+App\Http\Controllers\Api\CatalogController
+  Methods:  21.43% ( 3/14)   Lines:  35.76% (113/316)
+App\Http\Resources\Ecommerce\ProductDetailResource
+  Methods:   0.00% ( 0/ 6)   Lines:  52.08% ( 50/ 96)
+App\Http\Resources\Ecommerce\ProductResource
+  Methods:   0.00% ( 0/ 4)   Lines:  74.51% ( 38/ 51)
 App\Jobs\Wallet\CheckPayoutStatusJob
   Methods:  25.00% ( 1/ 4)   Lines:   1.27% (  1/ 79)
 App\Models\Address
   Methods:   6.25% ( 1/16)   Lines:  21.74% ( 10/ 46)
 App\Models\BeneficiaryAccount
-  Methods:  26.09% ( 6/23)   Lines:  43.64% ( 24/ 55)
-App\Models\Traits\HasWallet
-  Methods:  12.50% ( 1/ 8)   Lines:  12.50% (  1/  8)
+  Methods:   4.35% ( 1/23)   Lines:  16.36% (  9/ 55)
+App\Models\Ecommerce\Category
+  Methods:  16.67% ( 1/ 6)   Lines:  52.94% (  9/ 17)
+App\Models\Ecommerce\Product
+  Methods:  31.71% (13/41)   Lines:  30.77% ( 44/143)
+App\Models\Ecommerce\ProductStock
+  Methods:  19.23% ( 5/26)   Lines:  24.62% ( 16/ 65)
+App\Models\Ecommerce\Sale
+  Methods:   4.76% ( 1/21)   Lines:  15.62% ( 15/ 96)
+App\Models\Ecommerce\SaleProduct
+  Methods:  28.57% ( 4/14)   Lines:  36.00% ( 18/ 50)
 App\Models\Transaction
   Methods:   3.85% ( 1/26)   Lines:  29.82% ( 17/ 57)
 App\Models\User
-  Methods:  14.29% ( 3/21)   Lines:  50.75% ( 34/ 67)
-App\Models\Wallet
-  Methods:  16.00% ( 4/25)   Lines:  30.77% ( 16/ 52)
-App\Observers\BeneficiaryAccountObserver
-  Methods:   0.00% ( 0/ 8)   Lines:  33.75% ( 27/ 80)
-App\Observers\UserObserver
-  Methods:  20.00% ( 1/ 5)   Lines:  73.33% ( 11/ 15)
+  Methods:   4.76% ( 1/21)   Lines:  19.40% ( 13/ 67)
 App\Providers\AppServiceProvider
   Methods:  66.67% ( 2/ 3)   Lines:  52.94% (  9/ 17)
 App\Providers\Filament\AdminPanelProvider
@@ -120,5 +118,5 @@ App\Services\Affiliate\Calculators\Task\TaskCompletionCalculator
   Methods:  16.67% ( 1/ 6)   Lines:   2.86% (  1/ 35)
 App\Services\Affiliate\CommissionProcessorService
   Methods:  15.00% ( 3/20)   Lines:   5.43% ( 10/184)
-App\Services\UserServices\UserWalletService
-  Methods:   4.17% ( 1/24)   Lines:   4.78% ( 15/314)
+App\Services\MoneyService
+  Methods:   4.55% ( 1/22)   Lines:  16.18% ( 11/ 68)

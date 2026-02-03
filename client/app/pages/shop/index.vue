@@ -35,6 +35,7 @@ const user = useCurrentUser()
 
 // API
 const config = useRuntimeConfig()
+const sanctumFetch = useSanctumFetch()
 
 // Get user's first name for greeting
 const userName = computed(() => {
@@ -46,7 +47,8 @@ const userName = computed(() => {
 const { data: featuredCategoriesData } = await useFetch<{
   success: boolean
   data: FeaturedCategory[]
-}>(`${config.public.apiBase}/api/catalog/categories/featured?limit=6`, {
+}>(`/api/catalog/categories/featured?limit=6`, {
+  $fetch: sanctumFetch,
   lazy: true,
   server: false,
   immediate: computed(() => !isLoggedIn.value).value
@@ -58,7 +60,8 @@ const { data: featuredData } = await useFetch<{
     best_sellers: Product[]
     new_arrivals: Product[]
   }
-}>(`${config.public.apiBase}/api/catalog/featured`, {
+}>(`/api/catalog/featured`, {
+  $fetch: sanctumFetch,
   lazy: true,
   server: false,
   immediate: computed(() => !isLoggedIn.value).value
@@ -72,18 +75,17 @@ const newArrivals = computed(() => featuredData.value?.data?.new_arrivals || [])
 
 <template>
   <div>
-    <!-- Auth User View: Product list with filters (Flipkart-style) -->
-    <ShopAuthUserView
-      v-if="isLoggedIn"
-      :user-name="userName"
-    />
-
     <!-- Guest View: Landing page with carousels -->
     <ShopGuestView
-      v-else
+      v-if="!isLoggedIn"
       :featured-categories="featuredCategories"
       :trending-products="trendingProducts"
       :new-arrivals="newArrivals"
+    />
+
+    <!-- Product list with filters (Flipkart-style) for all users -->
+    <ShopAuthUserView
+      :user-name="userName"
     />
   </div>
 </template>

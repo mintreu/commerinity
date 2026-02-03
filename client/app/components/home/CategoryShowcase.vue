@@ -15,7 +15,6 @@ interface HomepageCategory {
   id: number
   name: string
   slug: string
-  url: string
   description?: string | null
   thumbnail: string | null
   product_count: number
@@ -29,10 +28,12 @@ interface CategoriesResponse {
 }
 
 const config = useRuntimeConfig()
+const sanctumFetch = useSanctumFetch()
 
 const { data: categoriesResponse, status } = await useFetch<CategoriesResponse>(
   `${config.public.apiBase}/api/catalog/categories`,
   {
+    $fetch: sanctumFetch,
     lazy: true,
     server: false
   }
@@ -96,7 +97,7 @@ const topCategories = computed(() => {
         <NuxtLink
           v-for="category in topCategories"
           :key="category.id"
-          :to="`/category/${category.url}`"
+          :to="`/category/${category.slug}`"
           class="group relative aspect-[4/3] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-[1.02]"
         >
           <!-- Background Image -->
@@ -128,7 +129,7 @@ const topCategories = computed(() => {
                 name="i-lucide-package"
                 class="w-4 h-4"
               />
-              {{ category.products_count || 0 }} products
+              {{ category.product_count || 0 }} products
             </p>
 
             <!-- Children Count -->

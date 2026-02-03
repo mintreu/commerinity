@@ -228,17 +228,15 @@ class Product extends Model implements HasMedia
             return $query;
         }
 
-        return $query->whereHas('availableStocks', function ($q) use ($min, $max) {
-            $expression = 'COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))';
+        if (! is_null($min)) {
+            $query->where('price', '>=', $min);
+        }
 
-            if (! is_null($min)) {
-                $q->whereRaw("{$expression} >= ?", [$min]);
-            }
+        if (! is_null($max)) {
+            $query->where('price', '<=', $max);
+        }
 
-            if (! is_null($max)) {
-                $q->whereRaw("{$expression} <= ?", [$max]);
-            }
-        });
+        return $query;
     }
 
     /**
@@ -253,26 +251,8 @@ class Product extends Model implements HasMedia
             'popularity' => $query->orderBy('view_count', 'desc'),
             'name_asc' => $query->orderBy('name', 'asc'),
             'name_desc' => $query->orderBy('name', 'desc'),
-            'price_asc' => $query->orderBy(
-                ProductStock::query()
-                    ->selectRaw('COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))')
-                    ->whereColumn('product_stocks.product_id', 'products.id')
-                    ->where('in_stock', true)
-                    ->orderBy('priority')
-                    ->orderBy('created_at')
-                    ->limit(1),
-                'asc'
-            ),
-            'price_desc' => $query->orderBy(
-                ProductStock::query()
-                    ->selectRaw('COALESCE(price, ROUND(landing_cost * (1 + profit_margin / 100)))')
-                    ->whereColumn('product_stocks.product_id', 'products.id')
-                    ->where('in_stock', true)
-                    ->orderBy('priority')
-                    ->orderBy('created_at')
-                    ->limit(1),
-                'desc'
-            ),
+            'price_asc' => $query->orderBy('price', 'asc'),
+            'price_desc' => $query->orderBy('price', 'desc'),
             default => $query->orderBy('created_at', 'desc'),
         };
     }

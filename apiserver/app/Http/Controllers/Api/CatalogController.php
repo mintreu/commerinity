@@ -16,6 +16,7 @@ use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -65,39 +66,7 @@ class CatalogController extends Controller
             );
         $query->with(['availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at')]);
 
-        /* ===============================
-           ✅ FIXED FILTER PARSING
-           =============================== */
-        if ($request->filled('filters')) {
-
-            // Frontend sends JSON string
-            $filters = json_decode($request->input('filters'), true);
-
-            if (is_array($filters)) {
-                foreach ($filters as $filterName => $optionIds) {
-
-                    // "1,2,3" → [1,2,3]
-                    if (is_string($optionIds)) {
-                        $optionIds = array_filter(
-                            array_map('intval', explode(',', $optionIds))
-                        );
-                    }
-
-                    if (empty($optionIds)) {
-                        continue;
-                    }
-
-                    $query->where(function ($q) use ($optionIds) {
-                        $q->whereHas('filterOptions', function ($qq) use ($optionIds) {
-                            $qq->whereIn('filter_options.id', $optionIds);
-                        })
-                            ->orWhereHas('variants.filterOptions', function ($qq) use ($optionIds) {
-                                $qq->whereIn('filter_options.id', $optionIds);
-                            });
-                    });
-                }
-            }
-        }
+        $this->applyOptionFilters($query, $request);
 
         $products = $query
             ->sort($request->input('sort'))
@@ -264,7 +233,8 @@ class CatalogController extends Controller
      */
     public function categories(): AnonymousResourceCollection
     {
-        $categories = Category::with('media')
+        $categories = Category::with(['media', 'children.media'])
+            ->withCount('products')
             ->whereNull('parent_id')
             ->orderBy('order')
             ->get();
@@ -277,13 +247,12 @@ class CatalogController extends Controller
      */
     public function featuredCategories(): AnonymousResourceCollection
     {
-        $categories = Category::with('media')
-            ->where('is_featured', true)
-            ->first();
-        // Simplified return for now, usually collection
-
         return CategoryResource::collection(
-            Category::with('media')->where('is_featured', true)->take(8)->get()
+            Category::with(['media', 'children.media'])
+                ->withCount('products')
+                ->where('is_featured', true)
+                ->take(8)
+                ->get()
         );
     }
 
@@ -297,24 +266,29 @@ class CatalogController extends Controller
     public function filters(Request $request): JsonResponse
     {
         $this->applyStockContext($request);
-        // Build product query
         $productsQuery = Product::query()
             ->purchasable()
-            ->whereNull('parent_id');
+            ->whereNull('parent_id')
+            ->search($request->input('search'))
+            ->byCategory($request->input('category'))
+            ->byPrice(
+                $request->input('min_price') ? (int) $request->input('min_price') * 100 : null,
+                $request->input('max_price') ? (int) $request->input('max_price') * 100 : null
+            );
 
-        if ($request->filled('category')) {
-            $category = Category::where('url', $request->input('category'))->first();
-            if ($category) {
-                $productsQuery->where('category_id', $category->id);
-            }
-        }
+        $this->applyOptionFilters($productsQuery, $request);
 
         $products = $productsQuery->with(['availableStocks' => function ($q) {
             $q->orderBy('priority')->orderBy('created_at');
         }])->get();
 
-        $productIds = $products->pluck('id')->toArray();
-        $activeSales = $this->getActiveSalesForProducts($productIds, auth('sanctum')->user());
+        $productIds = $products->pluck('id')->filter()->values();
+        $variantIds = Product::query()
+            ->whereIn('parent_id', $productIds)
+            ->pluck('id')
+            ->filter()
+            ->values();
+        $allProductIds = $productIds->merge($variantIds)->unique()->values();
 
         // Calculate min/max price considering sales
         $allPrices = $products
@@ -335,56 +309,48 @@ class CatalogController extends Controller
             ['label' => 'Name: A to Z', 'value' => 'name_asc'],
         ];
 
-        // Filter Options (Color, Size, etc.)
-        $filterOptions = Filter::query()
-            ->with(['options' => function ($query) {
-                //                $query->whereHas('products', function ($q) use ($request) {
-                //                    $q->where('products.status', 'published')
-                //                        ->whereNull('products.parent_id');
-                //
-                //                    if ($request->filled('category')) {
-                //                        $category = Category::where('url', $request->input('category'))->first();
-                //                        if ($category) {
-                //                            $q->where('products.category_id', $category->id);
-                //                        }
-                //                    }
-                //                })
-                //                    ->withCount(['products' => function ($q) use ($request) {
-                //                    $q->where('products.status', 'published')
-                //                        ->whereNull('products.parent_id');
-                //
-                //                    if ($request->filled('category')) {
-                //                        $category = Category::where('url', $request->input('category'))->first();
-                //                        if ($category) {
-                //                            $q->where('products.category_id', $category->id);
-                //                        }
-                //                    }
-                //                }]);
-            }])
-//            ->whereHas('options.products', function ($q) use ($request) {
-//                $q->where('products.status', 'published')->whereNull('products.parent_id');
-//
-//                if ($request->filled('category')) {
-//                    $category = Category::where('url', $request->input('category'))->first();
-//                    if ($category) {
-//                        $q->where('products.category_id', $category->id);
-//                    }
-//                }
-//            })
+        $filterGroupIds = $products->pluck('filter_group_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $filterOptionsQuery = Filter::query()
+            ->with(['options' => function ($query) use ($allProductIds) {
+                $query->whereHas('products', function ($q) use ($allProductIds) {
+                    $q->whereIn('products.id', $allProductIds);
+                })->withCount(['products' => function ($q) use ($allProductIds) {
+                    $q->whereIn('products.id', $allProductIds);
+                }]);
+            }]);
+
+        if ($filterGroupIds->isNotEmpty()) {
+            $filterOptionsQuery->whereHas('groups', function ($q) use ($filterGroupIds) {
+                $q->whereIn('filter_groups.id', $filterGroupIds);
+            });
+        }
+
+        $filterOptions = $filterOptionsQuery
             ->get()
             ->map(function ($filter) {
-                return [
-                    'name' => $filter->name,
-                    'options' => $filter->options->map(function ($option) {
+                $options = $filter->options
+                    ->filter(fn ($option) => (int) $option->products_count > 0)
+                    ->map(function ($option) {
                         return [
                             'id' => $option->id,
                             'value' => $option->value,
                             'swatch' => $option->swatch_value,
-                            'count' => $option->products_count,
+                            'count' => (int) $option->products_count,
                         ];
-                    })->values(),
+                    })
+                    ->values();
+
+                return [
+                    'name' => $filter->name,
+                    'options' => $options,
                 ];
-            });
+            })
+            ->filter(fn ($filter) => $filter['options']->isNotEmpty())
+            ->values();
 
         return response()->json([
             'success' => true,
@@ -526,5 +492,38 @@ class CatalogController extends Controller
         }
 
         $request->attributes->set('stock_context', $address);
+    }
+
+    private function applyOptionFilters(Builder $query, Request $request): void
+    {
+        if (! $request->filled('filters')) {
+            return;
+        }
+
+        $filters = json_decode($request->input('filters'), true);
+        if (! is_array($filters)) {
+            return;
+        }
+
+        foreach ($filters as $filterName => $optionIds) {
+            if (is_string($optionIds)) {
+                $optionIds = array_filter(
+                    array_map('intval', explode(',', $optionIds))
+                );
+            }
+
+            if (empty($optionIds)) {
+                continue;
+            }
+
+            $query->where(function ($q) use ($optionIds) {
+                $q->whereHas('filterOptions', function ($qq) use ($optionIds) {
+                    $qq->whereIn('filter_options.id', $optionIds);
+                })
+                    ->orWhereHas('variants.filterOptions', function ($qq) use ($optionIds) {
+                        $qq->whereIn('filter_options.id', $optionIds);
+                    });
+            });
+        }
     }
 }

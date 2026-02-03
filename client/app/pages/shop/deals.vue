@@ -11,6 +11,7 @@ definePageMeta({
 })
 
 const config = useRuntimeConfig()
+const sanctumFetch = useSanctumFetch()
 const toast = useToast()
 
 // SEO
@@ -55,7 +56,8 @@ const { data: dealsResponse, status: dealsStatus, refresh: refreshDeals } = awai
       has_more: boolean
     }
   }
-}>(`${config.public.apiBase}/api/catalog/on-sale`, {
+}>(`/api/catalog/on-sale`, {
+  $fetch: sanctumFetch,
   query: computed(() => ({
     page: currentPage.value,
     category: selectedCategory.value || undefined
@@ -68,7 +70,8 @@ const { data: dealsResponse, status: dealsStatus, refresh: refreshDeals } = awai
 const { data: categoriesData } = await useFetch<{
   success: boolean
   data: Array<{ name: string, slug: string, product_count: number }>
-}>(`${config.public.apiBase}/api/catalog/categories`, {
+}>(`/api/catalog/categories`, {
+  $fetch: sanctumFetch,
   lazy: true,
   server: false
 })

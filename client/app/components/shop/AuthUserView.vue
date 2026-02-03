@@ -47,6 +47,8 @@ interface Props {
 defineProps<Props>()
 
 const config = useRuntimeConfig()
+const { isLoggedIn } = useSanctum()
+const sanctumFetch = useSanctumFetch()
 
 // Filter state
 const activeFilters = ref<Record<string, any>>({})
@@ -84,12 +86,16 @@ const queryParams = computed(() => {
   if (activeFilters.value.on_sale) params.on_sale = 1
   if (activeFilters.value.min_rating) params.min_rating = activeFilters.value.min_rating
 
-  // Dynamic filters
+  // Dynamic filters (JSON payload expected by API)
   if (activeFilters.value.filters) {
+    const payload: Record<string, string> = {}
     for (const [name, ids] of Object.entries(activeFilters.value.filters)) {
       if (Array.isArray(ids) && ids.length > 0) {
-        params[`filters[${name}]`] = (ids as number[]).join(',')
+        payload[name] = (ids as number[]).join(',')
       }
+    }
+    if (Object.keys(payload).length > 0) {
+      params.filters = JSON.stringify(payload)
     }
   }
 
@@ -99,16 +105,15 @@ const queryParams = computed(() => {
 // Fetch products - initial load
 const { data: productsData, status: productsStatus, refresh: refreshProducts } = await useFetch<{
   success: boolean
-  data: {
-    items: Product[]
-    pagination: {
-      current_page: number
-      last_page: number
-      total: number
-      has_more: boolean
-    }
+  data: Product[]
+  meta?: {
+    current_page: number
+    last_page: number
+    total: number
+    per_page: number
   }
 }>(`${config.public.apiBase}/api/catalog/products`, {
+  $fetch: sanctumFetch,
   query: queryParams,
   lazy: true,
   server: false,
@@ -127,7 +132,8 @@ const { data: filtersData } = await useFetch<{
 }>(`${config.public.apiBase}/api/catalog/filters`, {
   query: computed(() => activeFilters.value.category ? { category: activeFilters.value.category } : {}),
   lazy: true,
-  server: false
+  server: false,
+  $fetch: sanctumFetch
 })
 
 // Fetch categories with nested children
@@ -136,7 +142,8 @@ const { data: categoriesData } = await useFetch<{
   data: Category[]
 }>(`${config.public.apiBase}/api/catalog/categories`, {
   lazy: true,
-  server: false
+  server: false,
+  $fetch: sanctumFetch
 })
 
 // Computed
@@ -147,14 +154,20 @@ const isLoading = computed(() => productsStatus.value === 'pending' && currentPa
 
 // Watch for data changes and update products
 watch(productsData, (newData) => {
-  if (newData?.data?.items) {
+  if (newData?.data) {
     if (currentPage.value === 1) {
-      allProducts.value = newData.data.items
+      allProducts.value = newData.data
     } else {
-      allProducts.value = [...allProducts.value, ...newData.data.items]
+      allProducts.value = [...allProducts.value, ...newData.data]
     }
-    hasMore.value = newData.data.pagination.has_more
-    totalProducts.value = newData.data.pagination.total
+    const meta = newData.meta
+    if (meta) {
+      hasMore.value = meta.current_page < meta.last_page
+      totalProducts.value = meta.total
+    } else {
+      hasMore.value = false
+      totalProducts.value = allProducts.value.length
+    }
     isLoadingMore.value = false
   }
 }, { immediate: true })
@@ -231,28 +244,41 @@ const openMobileFilters = () => {
 
 <template>
   <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
-    <!-- Compact Header with Welcome Message -->
+    <!-- Compact Header -->
     <div class="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white">
       <div class="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-2">
-              <UIcon
-                name="i-lucide-sparkles"
-                class="w-3.5 h-3.5 text-yellow-300"
-              />
-              <span class="font-semibold text-xs text-yellow-100">Member Benefits Active</span>
-            </div>
-            <h1 class="text-xl md:text-2xl font-bold">
-              Welcome, {{ userName }}!
-            </h1>
-            <p class="text-white/80 text-sm mt-0.5">
-              Earn BV/PV points on every purchase
-            </p>
+            <template v-if="isLoggedIn">
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-2">
+                <UIcon
+                  name="i-lucide-sparkles"
+                  class="w-3.5 h-3.5 text-yellow-300"
+                />
+                <span class="font-semibold text-xs text-yellow-100">Member Benefits Active</span>
+              </div>
+              <h1 class="text-xl md:text-2xl font-bold">
+                Welcome, {{ userName }}!
+              </h1>
+              <p class="text-white/80 text-sm mt-0.5">
+                Earn BV/PV points on every purchase
+              </p>
+            </template>
+            <template v-else>
+              <h1 class="text-xl md:text-2xl font-bold">
+                Shop Products
+              </h1>
+              <p class="text-white/80 text-sm mt-0.5">
+                Discover top picks and filter by what you need
+              </p>
+            </template>
           </div>
 
           <!-- Quick Stats -->
-          <div class="flex gap-3">
+          <div
+            v-if="isLoggedIn"
+            class="flex gap-3"
+          >
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
               <div class="text-lg font-bold text-yellow-300">
                 BV/PV
