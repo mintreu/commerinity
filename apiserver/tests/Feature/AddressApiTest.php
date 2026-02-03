@@ -64,8 +64,10 @@ test('user can create new address', function () {
         ->assertJsonStructure([
             'message',
             'data' => [
-                'id', 'uuid', 'title', 'person_name', 'type',
+                'uuid', 'title', 'person_name', 'type',
                 'address_1', 'city', 'postal_code', 'default',
+                'country' => ['code', 'name'],
+                'state' => ['code', 'name'],
             ],
         ]);
 });

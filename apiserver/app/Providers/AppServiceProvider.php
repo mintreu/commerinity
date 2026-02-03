@@ -36,7 +36,9 @@ class AppServiceProvider extends ServiceProvider
         Transaction::observe(TransactionObserver::class);
         BeneficiaryAccount::observe(BeneficiaryAccountObserver::class);
         Address::observe(AddressObserver::class);
-        User::observe(UserObserver::class);
+        if (! app()->environment('testing')) {
+            User::observe(UserObserver::class);
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\IntegrationServices\Payment\Providers;
 
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Services\IntegrationServices\Payment\Contracts\PaymentProviderInterface;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
@@ -385,7 +386,7 @@ final class RazorpayPaymentProvider implements PaymentProviderInterface
         if ($this->integration === null) {
             $this->integration = Integration::query()
                 ->bySlug('razorpay')
-                ->ofType(Integration::TYPE_PAYMENT)
+                ->ofType(IntegrationTypeCast::PAYMENT->value)
                 ->active()
                 ->first();
         }

@@ -84,7 +84,7 @@ final class OrderController extends Controller
 
         $order = Order::forCustomer($user)
             ->where('uuid', $uuid)
-            ->with(['items.product.media', 'shippingAddress', 'billingAddress', 'payments'])
+            ->with(['items.product.media', 'shippingAddress', 'billingAddress', 'transaction'])
             ->first();
 
         if (! $order) {
@@ -174,14 +174,18 @@ final class OrderController extends Controller
                 'postal_code' => $order->shippingAddress->postal_code,
             ] : null;
 
-            $data['payments'] = $order->payments->map(fn ($payment) => [
-                'uuid' => $payment->uuid,
-                'amount' => $payment->amount,
-                'amount_formatted' => MoneyService::format($payment->amount),
-                'status' => $payment->status->value,
-                'method' => $payment->payment_method->value,
-                'created_at' => $payment->created_at->toIso8601String(),
-            ]);
+            $transaction = $order->transaction;
+
+            $data['transactions'] = $transaction
+                ? [[
+                    'uuid' => $transaction->uuid,
+                    'amount' => $transaction->amount,
+                    'amount_formatted' => MoneyService::format($transaction->amount),
+                    'status' => $transaction->status->value,
+                    'method' => $transaction->payment_method->value,
+                    'created_at' => $transaction->created_at->toIso8601String(),
+                ]]
+                : [];
         }
 
         return $data;

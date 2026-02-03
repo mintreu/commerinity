@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Hashing\BcryptHasher;
+use Illuminate\Support\Facades\Facade;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -14,8 +18,50 @@ declare(strict_types=1);
 */
 
 pest()->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature', 'Unit');
+
+if (! Facade::getFacadeApplication()) {
+    Facade::setFacadeApplication(app());
+}
+
+if (! app()->bound('hash')) {
+    app()->singleton('hash', function () {
+        return new class {
+            private readonly BcryptHasher $driver;
+
+            public function __construct()
+            {
+                $this->driver = new BcryptHasher;
+            }
+
+            public function driver($name = null): BcryptHasher
+            {
+                return $this->driver;
+            }
+
+            public function make($value, array $options = []): string
+            {
+                return $this->driver->make($value, $options);
+            }
+
+            public function check($value, string $hashedValue, array $options = []): bool
+            {
+                return $this->driver->check($value, $hashedValue, $options);
+            }
+
+            public function needsRehash(string $hashedValue, array $options = []): bool
+            {
+                return $this->driver->needsRehash($hashedValue, $options);
+            }
+
+            public function info(string $hashedValue): array
+            {
+                return $this->driver->info($hashedValue);
+            }
+        };
+    });
+}
 
 /*
 |--------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,7 +15,7 @@ beforeEach(function () {
     $this->integration = Integration::create([
         'name' => 'Cashfree Payout Test',
         'slug' => 'cashfree',
-        'type' => Integration::TYPE_PAYOUT,
+        'type' => IntegrationTypeCast::PAYOUT->value,
         'credentials' => [
             'app_id' => 'test_payout_app_id',
             'secret_key' => 'test_payout_secret_key',

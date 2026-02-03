@@ -4,120 +4,56 @@ declare(strict_types=1);
 
 namespace App\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
+use Filament\Support\Colors\Color;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 
 /**
- * Commission Type Cast
+ * Commission Type Enum (Filament v4 friendly)
  *
- * Defines the types of commissions in the Affiliate system.
+ * Use directly in Filament:
+ * - Select::make('type')->options(CommissionTypeCast::class)
+ * - TextEntry::make('type')->badge()
+ *
+ * And in Eloquent:
+ * - protected $casts = ['type' => CommissionTypeCast::class];
  */
-final class CommissionTypeCast implements CastsAttributes
+enum CommissionTypeCast: string implements HasColor, HasIcon, HasLabel
 {
-    // ========================================
-    // COMMISSION TYPES
-    // ========================================
+    // Member (Affiliate tree)
+    case SPONSOR_BONUS = 'sponsor_bonus';
+    case LEVEL_COMMISSION = 'level_commission';
+    case MATCHING_BONUS = 'matching_bonus';
+    case LEVEL_ACHIEVEMENT = 'level_achievement';
+    case POOL_BONUS = 'pool_bonus';
+    case PURCHASE_COMMISSION = 'purchase_commission';
+    case RENEWAL_BONUS = 'renewal_bonus';
 
-    /** One-time bonus for direct referral */
-    public const SPONSOR_BONUS = 'sponsor_bonus';
+    // Administrative
+    case ADJUSTMENT = 'adjustment';
+    case REVERSAL = 'reversal';
 
-    /** Commission based on network depth (level 1-4) */
-    public const LEVEL_COMMISSION = 'level_commission';
+    // Originator
+    case ORIGINATOR_JOINING = 'originator_joining';
+    case ORIGINATOR_RECURRING = 'originator_recurring';
+    case AGENT_SALARY = 'agent_salary';
+    case INCOME_DEDUCTION = 'income_deduction';
 
-    /** Percentage of downline's earnings */
-    public const MATCHING_BONUS = 'matching_bonus';
+    // Task/Activity based
+    case TASK_COMPLETION = 'task_completion';
+    case MILESTONE_BONUS = 'milestone_bonus';
+    case REFERRAL_BONUS = 'referral_bonus';
+    case PERFORMANCE_BONUS = 'performance_bonus';
+    case CUSTOM = 'custom';
 
-    /** Bonus for reaching a new level (2/3/4) */
-    public const LEVEL_ACHIEVEMENT = 'level_achievement';
+    /* -------------------------------------------------
+     | Filament UI
+     -------------------------------------------------*/
 
-    /** Distribution from global pool */
-    public const POOL_BONUS = 'pool_bonus';
-
-    /** Commission on product purchases */
-    public const PURCHASE_COMMISSION = 'purchase_commission';
-
-    /** Bonus on subscription renewal */
-    public const RENEWAL_BONUS = 'renewal_bonus';
-
-    /** Manual adjustment by admin */
-    public const ADJUSTMENT = 'adjustment';
-
-    /** Reversal/clawback of previous commission */
-    public const REVERSAL = 'reversal';
-
-    // ========================================
-    // ORIGINATOR COMMISSION TYPES
-    // ========================================
-
-    /** Originator commission on user joining/subscription */
-    public const ORIGINATOR_JOINING = 'originator_joining';
-
-    /** Recurring originator commission (on withdrawal/monthly) */
-    public const ORIGINATOR_RECURRING = 'originator_recurring';
-
-    /** Agent/Advisor salary payout (target-based) */
-    public const AGENT_SALARY = 'agent_salary';
-
-    /** Income deduction from member earnings (for agent fund) */
-    public const INCOME_DEDUCTION = 'income_deduction';
-
-    // ========================================
-    // TASK/ACTIVITY BASED COMMISSION TYPES
-    // ========================================
-
-    /** Commission for completing a task/activity */
-    public const TASK_COMPLETION = 'task_completion';
-
-    /** Commission for achieving a milestone/goal */
-    public const MILESTONE_BONUS = 'milestone_bonus';
-
-    /** Commission for referral conversion (non-Affiliate referral) */
-    public const REFERRAL_BONUS = 'referral_bonus';
-
-    /** Commission for performance/KPI achievement */
-    public const PERFORMANCE_BONUS = 'performance_bonus';
-
-    /** Custom commission type (extensible via metadata) */
-    public const CUSTOM = 'custom';
-
-    /**
-     * All valid commission types
-     */
-    public static function values(): array
+    public function getLabel(): string
     {
-        return [
-            // Member (Affiliate tree)
-            self::SPONSOR_BONUS,
-            self::LEVEL_COMMISSION,
-            self::MATCHING_BONUS,
-            self::LEVEL_ACHIEVEMENT,
-            self::POOL_BONUS,
-            self::PURCHASE_COMMISSION,
-            self::RENEWAL_BONUS,
-            // Administrative
-            self::ADJUSTMENT,
-            self::REVERSAL,
-            // Originator
-            self::ORIGINATOR_JOINING,
-            self::ORIGINATOR_RECURRING,
-            self::AGENT_SALARY,
-            self::INCOME_DEDUCTION,
-            // Task/Activity based
-            self::TASK_COMPLETION,
-            self::MILESTONE_BONUS,
-            self::REFERRAL_BONUS,
-            self::PERFORMANCE_BONUS,
-            self::CUSTOM,
-        ];
-    }
-
-    /**
-     * Get human-readable labels
-     */
-    public static function labels(): array
-    {
-        return [
+        return match ($this) {
             self::SPONSOR_BONUS => 'Sponsor Bonus',
             self::LEVEL_COMMISSION => 'Level Commission',
             self::MATCHING_BONUS => 'Matching Bonus',
@@ -136,12 +72,77 @@ final class CommissionTypeCast implements CastsAttributes
             self::REFERRAL_BONUS => 'Referral Bonus',
             self::PERFORMANCE_BONUS => 'Performance Bonus',
             self::CUSTOM => 'Custom Commission',
-        ];
+        };
     }
 
-    /**
-     * Get member commission types (Affiliate tree based)
-     */
+    public function getColor(): string|array|null
+    {
+        // Idea: positive earning = green-ish, deductions/reversals = red,
+        // admin/manual = amber, task/activity = blue-ish, originator = purple-ish.
+        return match ($this) {
+            // Positive member commissions
+            self::SPONSOR_BONUS,
+            self::LEVEL_COMMISSION,
+            self::MATCHING_BONUS,
+            self::LEVEL_ACHIEVEMENT,
+            self::POOL_BONUS,
+            self::PURCHASE_COMMISSION,
+            self::RENEWAL_BONUS => 'success',
+
+            // Admin/manual actions
+            self::ADJUSTMENT => Color::Amber,
+
+            // Deductions
+            self::REVERSAL,
+            self::INCOME_DEDUCTION => 'danger',
+
+            // Originator group
+            self::ORIGINATOR_JOINING,
+            self::ORIGINATOR_RECURRING,
+            self::AGENT_SALARY => Color::Purple,
+
+            // Task/activity group
+            self::TASK_COMPLETION,
+            self::MILESTONE_BONUS,
+            self::REFERRAL_BONUS,
+            self::PERFORMANCE_BONUS => Color::Blue,
+
+            self::CUSTOM => Color::Gray,
+        };
+    }
+
+    public function getIcon(): ?string
+    {
+        return match ($this) {
+            self::SPONSOR_BONUS => 'heroicon-o-user-plus',
+            self::LEVEL_COMMISSION => 'heroicon-o-bars-3-bottom-left',
+            self::MATCHING_BONUS => 'heroicon-o-squares-2x2',
+            self::LEVEL_ACHIEVEMENT => 'heroicon-o-trophy',
+            self::POOL_BONUS => 'heroicon-o-circle-stack',
+            self::PURCHASE_COMMISSION => 'heroicon-o-shopping-cart',
+            self::RENEWAL_BONUS => 'heroicon-o-arrow-path',
+
+            self::ADJUSTMENT => 'heroicon-o-adjustments-horizontal',
+            self::REVERSAL => 'heroicon-o-arrow-uturn-left',
+
+            self::ORIGINATOR_JOINING => 'heroicon-o-user-circle',
+            self::ORIGINATOR_RECURRING => 'heroicon-o-arrow-path-rounded-square',
+            self::AGENT_SALARY => 'heroicon-o-banknotes',
+            self::INCOME_DEDUCTION => 'heroicon-o-minus-circle',
+
+            self::TASK_COMPLETION => 'heroicon-o-check-badge',
+            self::MILESTONE_BONUS => 'heroicon-o-flag',
+            self::REFERRAL_BONUS => 'heroicon-o-link',
+            self::PERFORMANCE_BONUS => 'heroicon-o-chart-bar-square',
+
+            self::CUSTOM => 'heroicon-o-wrench-screwdriver',
+        };
+    }
+
+    /* -------------------------------------------------
+     | Groups / helpers (same capability as your old class)
+     -------------------------------------------------*/
+
     public static function memberTypes(): array
     {
         return [
@@ -155,9 +156,6 @@ final class CommissionTypeCast implements CastsAttributes
         ];
     }
 
-    /**
-     * Get originator commission types (agent/advisor based)
-     */
     public static function originatorTypes(): array
     {
         return [
@@ -167,9 +165,6 @@ final class CommissionTypeCast implements CastsAttributes
         ];
     }
 
-    /**
-     * Get task/activity based commission types
-     */
     public static function taskTypes(): array
     {
         return [
@@ -181,9 +176,6 @@ final class CommissionTypeCast implements CastsAttributes
         ];
     }
 
-    /**
-     * Get deduction types (reduces member earnings)
-     */
     public static function deductionTypes(): array
     {
         return [
@@ -192,123 +184,54 @@ final class CommissionTypeCast implements CastsAttributes
         ];
     }
 
-    /**
-     * Get config key for a commission type (for enable/disable check)
-     */
-    public static function configKey(string $type): ?string
+    public static function configKey(self|string $type): ?string
     {
-        return match ($type) {
-            self::SPONSOR_BONUS => 'affiliate.member_commissions.sponsor_bonus.enabled',
-            self::LEVEL_COMMISSION => 'affiliate.member_commissions.level_commission.enabled',
-            self::MATCHING_BONUS => 'affiliate.member_commissions.matching_bonus.enabled',
-            self::LEVEL_ACHIEVEMENT => 'affiliate.member_commissions.level_achievement.enabled',
-            self::POOL_BONUS => 'affiliate.member_commissions.pool_bonus.enabled',
-            self::PURCHASE_COMMISSION => 'affiliate.member_commissions.purchase_commission.enabled',
-            self::RENEWAL_BONUS => 'affiliate.member_commissions.renewal_bonus.enabled',
-            self::ORIGINATOR_JOINING => 'affiliate.originator_commissions.joining_commission.enabled',
-            self::ORIGINATOR_RECURRING => 'affiliate.originator_commissions.recurring_commission.enabled',
-            self::AGENT_SALARY => 'affiliate.agent_salary.enabled',
-            self::INCOME_DEDUCTION => 'affiliate.income_deduction.enabled',
-            self::TASK_COMPLETION => 'affiliate.task_commissions.task_completion.enabled',
-            self::MILESTONE_BONUS => 'affiliate.task_commissions.milestone_bonus.enabled',
-            self::REFERRAL_BONUS => 'affiliate.task_commissions.referral_bonus.enabled',
-            self::PERFORMANCE_BONUS => 'affiliate.task_commissions.performance_bonus.enabled',
-            self::CUSTOM => 'affiliate.task_commissions.custom.enabled',
+        $value = $type instanceof self ? $type->value : $type;
+
+        return match ($value) {
+            self::SPONSOR_BONUS->value => 'affiliate.member_commissions.sponsor_bonus.enabled',
+            self::LEVEL_COMMISSION->value => 'affiliate.member_commissions.level_commission.enabled',
+            self::MATCHING_BONUS->value => 'affiliate.member_commissions.matching_bonus.enabled',
+            self::LEVEL_ACHIEVEMENT->value => 'affiliate.member_commissions.level_achievement.enabled',
+            self::POOL_BONUS->value => 'affiliate.member_commissions.pool_bonus.enabled',
+            self::PURCHASE_COMMISSION->value => 'affiliate.member_commissions.purchase_commission.enabled',
+            self::RENEWAL_BONUS->value => 'affiliate.member_commissions.renewal_bonus.enabled',
+            self::ORIGINATOR_JOINING->value => 'affiliate.originator_commissions.joining_commission.enabled',
+            self::ORIGINATOR_RECURRING->value => 'affiliate.originator_commissions.recurring_commission.enabled',
+            self::AGENT_SALARY->value => 'affiliate.agent_salary.enabled',
+            self::INCOME_DEDUCTION->value => 'affiliate.income_deduction.enabled',
+            self::TASK_COMPLETION->value => 'affiliate.task_commissions.task_completion.enabled',
+            self::MILESTONE_BONUS->value => 'affiliate.task_commissions.milestone_bonus.enabled',
+            self::REFERRAL_BONUS->value => 'affiliate.task_commissions.referral_bonus.enabled',
+            self::PERFORMANCE_BONUS->value => 'affiliate.task_commissions.performance_bonus.enabled',
+            self::CUSTOM->value => 'affiliate.task_commissions.custom.enabled',
             default => null,
         };
     }
 
-    /**
-     * Check if a commission type is enabled in config
-     */
-    public static function isEnabled(string $type): bool
+    public static function isEnabled(self|string $type): bool
     {
         $key = self::configKey($type);
 
         if ($key === null) {
-            return true; // Types without config key are always enabled
+            return true;
         }
 
         return (bool) config($key, false);
     }
 
-    /**
-     * Get label for a specific type
-     */
-    public static function label(string $type): string
-    {
-        return self::labels()[$type] ?? $type;
-    }
-
-    /**
-     * Check if type is a positive commission (adds to balance)
-     */
     public function isPositive(): bool
     {
-        return ! in_array($this->value, [self::REVERSAL], true);
+        return ! in_array($this, [self::REVERSAL, self::INCOME_DEDUCTION], true);
     }
 
-    /**
-     * Check if type requires approval
-     */
     public function requiresApproval(): bool
     {
-        return in_array($this->value, [
-            self::ADJUSTMENT,
-            self::POOL_BONUS,
-        ], true);
+        return in_array($this, [self::ADJUSTMENT, self::POOL_BONUS], true);
     }
 
-    /**
-     * Check if type is one-time (not recurring)
-     */
     public function isOneTime(): bool
     {
-        return in_array($this->value, [
-            self::SPONSOR_BONUS,
-            self::LEVEL_ACHIEVEMENT,
-        ], true);
-    }
-
-    // ========================================
-    // CAST IMPLEMENTATION
-    // ========================================
-
-    private string $value;
-
-    public function __construct(string $value = self::LEVEL_COMMISSION)
-    {
-        if (! in_array($value, self::values(), true)) {
-            throw new InvalidArgumentException("Invalid commission type: {$value}");
-        }
-        $this->value = $value;
-    }
-
-    public function get(Model $model, string $key, mixed $value, array $attributes): self
-    {
-        return new self($value ?? self::LEVEL_COMMISSION);
-    }
-
-    public function set(Model $model, string $key, mixed $value, array $attributes): string
-    {
-        if ($value instanceof self) {
-            return $value->value;
-        }
-
-        if (is_string($value) && in_array($value, self::values(), true)) {
-            return $value;
-        }
-
-        throw new InvalidArgumentException("Invalid commission type: {$value}");
-    }
-
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
+        return in_array($this, [self::SPONSOR_BONUS, self::LEVEL_ACHIEVEMENT], true);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 use App\Models\Wallet;
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\Transaction;
 use App\Casts\TransactionStatusCast;
@@ -15,7 +16,7 @@ beforeEach(function () {
     $this->integration = Integration::factory()->create([
         'name' => 'Cashfree',
         'slug' => 'cashfree',
-        'type' => Integration::TYPE_PAYMENT,
+        'type' => IntegrationTypeCast::PAYMENT->value,
         'is_active' => true,
         'is_default' => true,
         'is_sandbox' => true,

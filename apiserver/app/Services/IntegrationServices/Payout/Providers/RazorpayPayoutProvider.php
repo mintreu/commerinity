@@ -6,6 +6,7 @@ namespace App\Services\IntegrationServices\Payout\Providers;
 
 use App\Casts\BeneficiaryStatusCast;
 use App\Models\BeneficiaryAccount;
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Services\IntegrationServices\Payout\Contracts\PayoutProviderInterface;
 use App\Services\IntegrationServices\Payout\DTOs\PayoutRequest;
@@ -420,7 +421,7 @@ final class RazorpayPayoutProvider implements PayoutProviderInterface
         if ($this->integration === null) {
             $this->integration = Integration::query()
                 ->bySlug('razorpay-payout')
-                ->ofType(Integration::TYPE_PAYOUT)
+                ->ofType(IntegrationTypeCast::PAYOUT->value)
                 ->active()
                 ->first();
         }

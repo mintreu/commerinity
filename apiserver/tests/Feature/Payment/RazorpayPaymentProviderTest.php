@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Casts\PaymentMethodCast;
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\User;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
@@ -21,7 +22,7 @@ beforeEach(function () {
     $this->integration = Integration::create([
         'name' => 'Razorpay Test',
         'slug' => 'razorpay',
-        'type' => Integration::TYPE_PAYMENT,
+        'type' => IntegrationTypeCast::PAYMENT->value,
         'credentials' => [
             'key_id' => 'rzp_test_key',
             'key_secret' => 'rzp_test_secret',

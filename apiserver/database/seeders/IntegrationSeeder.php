@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use Illuminate\Database\Seeder;
 
@@ -22,7 +23,7 @@ class IntegrationSeeder extends Seeder
             ['slug' => 'cashfree'],
             [
                 'name' => 'Cashfree',
-                'type' => Integration::TYPE_PAYMENT,
+                'type' => IntegrationTypeCast::PAYMENT,
                 'credentials' => [
                     'key' => config('services.payment.cashfree.key'),
                     'secret' => config('services.payment.cashfree.secret'),
@@ -39,7 +40,7 @@ class IntegrationSeeder extends Seeder
             ['slug' => 'cashfree-payout'],
             [
                 'name' => 'Cashfree Payout',
-                'type' => Integration::TYPE_PAYOUT,
+                'type' => IntegrationTypeCast::PAYOUT,
                 'credentials' => [
                     'key' => config('services.payout.cashfree.key'),
                     'secret' => config('services.payout.cashfree.secret'),
@@ -56,7 +57,7 @@ class IntegrationSeeder extends Seeder
             ['slug' => 'razorpay'],
             [
                 'name' => 'Razorpay',
-                'type' => Integration::TYPE_PAYMENT,
+                'type' => IntegrationTypeCast::PAYMENT,
                 'credentials' => [
                     'api_key' => config('services.razorpay.key'),
                     'api_secret' => config('services.razorpay.secret'),
@@ -73,7 +74,7 @@ class IntegrationSeeder extends Seeder
             ['slug' => 'razorpay-payout'],
             [
                 'name' => 'Razorpay Payout',
-                'type' => Integration::TYPE_PAYOUT,
+                'type' => IntegrationTypeCast::PAYOUT,
                 'credentials' => [
                     'api_key' => env('RAZORPAY_PAYOUT_KEY'),
                     'api_secret' => env('RAZORPAY_PAYOUT_SECRET'),
@@ -90,7 +91,7 @@ class IntegrationSeeder extends Seeder
             ['slug' => 'native'],
             [
                 'name' => 'Native Payment',
-                'type' => Integration::TYPE_PAYMENT,
+                'type' => IntegrationTypeCast::PAYMENT,
                 'credentials' => [],
                 'settings' => [],
                 'is_sandbox' => false,
@@ -104,7 +105,7 @@ class IntegrationSeeder extends Seeder
             ['slug' => 'native-payout'],
             [
                 'name' => 'Native Payout',
-                'type' => Integration::TYPE_PAYOUT,
+                'type' => IntegrationTypeCast::PAYOUT,
                 'credentials' => [],
                 'settings' => [],
                 'is_sandbox' => false,

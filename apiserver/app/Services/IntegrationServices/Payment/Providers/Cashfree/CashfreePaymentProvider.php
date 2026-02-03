@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\IntegrationServices\Payment\Providers\Cashfree;
 
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Services\IntegrationServices\Payment\Contracts\PaymentProviderInterface;
 use App\Services\IntegrationServices\Payment\DTOs\PaymentInitiateRequest;
@@ -303,8 +304,8 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
     {
         if ($this->integration === null) {
             $this->integration = Integration::query()
-                ->bySlug('cashfree')
-                ->ofType(Integration::TYPE_PAYMENT)
+            ->bySlug('cashfree')
+            ->ofType(IntegrationTypeCast::PAYMENT->value)
                 ->active()
                 ->first();
         }

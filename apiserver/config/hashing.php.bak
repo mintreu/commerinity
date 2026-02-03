@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Default Hash Driver
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the default hash driver that will be used to hash
+    | passwords for your application. By default, we will use the bcrypt
+    | algorithm; however, you remain free to modify this option if you wish.
+    |
+    */
+    'driver' => env('HASHING_DRIVER', 'bcrypt'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Bcrypt Options
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the options used by the Bcrypt hash driver.
+    | These options allow you to tune the algorithm for security and
+    | performance. The default values are tuned for development.
+    |
+    */
+    'bcrypt' => [
+        'rounds' => env('BCRYPT_ROUNDS', 10),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Argon Options
+    |--------------------------------------------------------------------------
+    |
+    | Argon2 is a modern hashing algorithm designed to resist GPU and ASIC
+    | attacks. Here you may configure the memory, time, and threads used by
+    | the Argon2 driver when hashing passwords for your application.
+    |
+    */
+    'argon' => [
+        'memory' => env('ARGON_MEMORY', 1024),
+        'threads' => env('ARGON_THREADS', 2),
+        'time' => env('ARGON_TIME', 2),
+    ],
+];

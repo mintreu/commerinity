@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Casts\IntegrationTypeCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,13 +22,7 @@ class Integration extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public const TYPE_PAYMENT = 'payment';
 
-    public const TYPE_PAYOUT = 'payout';
-
-    public const TYPE_SMS = 'sms';
-
-    public const TYPE_SHIPPING = 'shipping';
 
     protected $fillable = [
         'uuid',
@@ -47,6 +42,7 @@ class Integration extends Model
     protected function casts(): array
     {
         return [
+            'type'  => IntegrationTypeCast::class,
             'settings' => 'array',
             'credentials' => 'array',
             'is_sandbox' => 'boolean',
@@ -213,17 +209,17 @@ class Integration extends Model
 
     public function scopePayment($query)
     {
-        return $query->where('type', self::TYPE_PAYMENT);
+        return $query->where('type', IntegrationTypeCast::PAYMENT->value);
     }
 
     public function scopePayout($query)
     {
-        return $query->where('type', self::TYPE_PAYOUT);
+        return $query->where('type', IntegrationTypeCast::PAYOUT->value);
     }
 
     public function scopeSms($query)
     {
-        return $query->where('type', self::TYPE_SMS);
+        return $query->where('type', IntegrationTypeCast::SMS->value);
     }
 
     public function scopeBySlug($query, string $slug)
@@ -251,7 +247,7 @@ class Integration extends Model
      */
     public static function getDefaultPayment(): ?self
     {
-        return static::getDefault(self::TYPE_PAYMENT);
+        return static::getDefault(IntegrationTypeCast::PAYMENT->value);
     }
 
     /**
@@ -259,7 +255,7 @@ class Integration extends Model
      */
     public static function getDefaultPayout(): ?self
     {
-        return static::getDefault(self::TYPE_PAYOUT);
+        return static::getDefault(IntegrationTypeCast::PAYOUT->value);
     }
 
     /**

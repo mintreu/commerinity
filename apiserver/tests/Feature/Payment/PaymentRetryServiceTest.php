@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Casts\PaymentMethodCast;
 use App\Casts\TransactionStatusCast;
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\Transaction;
 use App\Models\User;
@@ -25,7 +26,7 @@ beforeEach(function () {
     $this->integration = Integration::create([
         'name' => 'Cashfree Test',
         'slug' => 'cashfree',
-        'type' => Integration::TYPE_PAYMENT,
+        'type' => IntegrationTypeCast::PAYMENT->value,
         'credentials' => [
             'app_id' => 'test_app_id',
             'secret_key' => 'test_secret_key',

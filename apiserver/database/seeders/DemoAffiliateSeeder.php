@@ -589,18 +589,18 @@ final class DemoAffiliateSeeder extends Seeder
     private function getRandomCommissionStatus(): string
     {
         $statuses = [
-            CommissionStatusCast::PAID,
-            CommissionStatusCast::PAID,
-            CommissionStatusCast::PAID,
-            CommissionStatusCast::PENDING,
-            CommissionStatusCast::APPROVED,
-            CommissionStatusCast::PROCESSING,
+            CommissionStatusCast::PAID->value,
+            CommissionStatusCast::PAID->value,
+            CommissionStatusCast::PAID->value,
+            CommissionStatusCast::PENDING->value,
+            CommissionStatusCast::APPROVED->value,
+            CommissionStatusCast::PROCESSING->value,
         ];
 
         return $statuses[array_rand($statuses)];
     }
 
-    private function getCommissionDescription(string $type): string
+    private function getCommissionDescription(CommissionTypeCast $type): string
     {
         return match ($type) {
             CommissionTypeCast::SPONSOR_BONUS => 'Direct sponsor bonus for new member',

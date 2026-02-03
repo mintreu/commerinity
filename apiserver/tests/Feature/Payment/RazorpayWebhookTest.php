@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\Transaction;
 use App\Models\User;
@@ -21,7 +22,7 @@ beforeEach(function () {
     $this->integration = Integration::create([
         'name' => 'Razorpay Test',
         'slug' => 'razorpay',
-        'type' => Integration::TYPE_PAYMENT,
+        'type' => IntegrationTypeCast::PAYMENT->value,
         'credentials' => [
             'key_id' => 'rzp_test_key',
             'key_secret' => 'rzp_test_secret',
@@ -220,7 +221,7 @@ describe('Razorpay Payout Webhook (RazorpayX)', function () {
         Integration::create([
             'name' => 'RazorpayX Test',
             'slug' => 'razorpay',
-            'type' => Integration::TYPE_PAYOUT,
+            'type' => IntegrationTypeCast::PAYOUT->value,
             'credentials' => [
                 'key_id' => 'rzp_test_key',
                 'key_secret' => 'rzp_test_secret',

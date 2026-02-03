@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Sms;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

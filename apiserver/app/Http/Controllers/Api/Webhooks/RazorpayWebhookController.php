@@ -9,6 +9,7 @@ use App\Events\PaymentFailed;
 use App\Events\PayoutCompleted;
 use App\Events\PayoutFailed;
 use App\Events\RefundProcessed;
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\Transaction;
 use Illuminate\Http\JsonResponse;
@@ -104,7 +105,7 @@ final class RazorpayWebhookController
         // First try payment integration
         $integration = Integration::query()
             ->bySlug('razorpay')
-            ->ofType(Integration::TYPE_PAYMENT)
+            ->ofType(IntegrationTypeCast::PAYMENT->value)
             ->active()
             ->first();
 
@@ -112,7 +113,7 @@ final class RazorpayWebhookController
         if (! $integration) {
             $integration = Integration::query()
                 ->bySlug('razorpay')
-                ->ofType(Integration::TYPE_PAYOUT)
+                ->ofType(IntegrationTypeCast::PAYOUT->value)
                 ->active()
                 ->first();
         }

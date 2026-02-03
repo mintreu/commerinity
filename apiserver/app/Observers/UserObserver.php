@@ -21,7 +21,7 @@ class UserObserver
             'total_credited' => 0,
             'total_debited' => 0,
             'points' => rand(0, 1000),
-            'pin' => Hash::make('1234'), // Demo PIN
+            'pin' => Hash::make('123456'), // Demo PIN
             'pin_updated_at' => now(),
             'currency' => 'INR',
             'status' => WalletStatusCast::ACTIVE,
@@ -62,3 +62,4 @@ class UserObserver
         //
     }
 }
+

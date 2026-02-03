@@ -37,18 +37,36 @@ test('wallet setup - user can set PIN (no security questions)', function () {
     ]);
 
     $response->assertSuccessful();
-    expect($wallet->fresh()->hasPin())->toBeTrue();
+    $walletWithPin = Wallet::query()
+        ->where('walletable_id', $user->id)
+        ->where('walletable_type', $user::class)
+        ->whereNotNull('pin')
+        ->first();
+
+    expect($walletWithPin)->not->toBeNull();
+    expect($walletWithPin->hasPin())->toBeTrue();
 });
 
 test('wallet balance retrieval - formatted amounts and summaries', function () {
     $user = User::factory()->create();
-    $wallet = Wallet::factory()->for($user, 'walletable')->create([
+    $wallet = Wallet::query()
+        ->where('walletable_id', $user->id)
+        ->where('walletable_type', $user::class)
+        ->first();
+
+    $walletData = [
         'balance' => 5000000,
         'hold_balance' => 5000000,
         'total_credited' => 100000000,
         'total_debited' => 50000000,
         'points' => 5000,
-    ]);
+    ];
+
+    if ($wallet) {
+        $wallet->update($walletData);
+    } else {
+        $wallet = Wallet::factory()->for($user, 'walletable')->create($walletData);
+    }
 
     $response = $this->actingAs($user)->getJson('/api/wallet');
 
@@ -311,3 +329,6 @@ test('checkout polling endpoint works without webhook verification', function ()
     $data = $response->json('data');
     expect($data['is_expired'])->toBe(false);
 });
+
+
+

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Services\IntegrationServices\Payout\Providers\RazorpayPayoutProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,7 +15,7 @@ beforeEach(function () {
     $this->integration = Integration::create([
         'name' => 'RazorpayX Test',
         'slug' => 'razorpay',
-        'type' => Integration::TYPE_PAYOUT,
+        'type' => IntegrationTypeCast::PAYOUT->value,
         'credentials' => [
             'key_id' => 'rzp_test_key',
             'key_secret' => 'rzp_test_secret',
