@@ -33,10 +33,6 @@ useComprehensiveSeo({
 const { isLoggedIn } = useSanctum()
 const user = useCurrentUser()
 
-// API
-const config = useRuntimeConfig()
-const sanctumFetch = useSanctumFetch()
-
 // Get user's first name for greeting
 const userName = computed(() => {
   if (!isLoggedIn.value || !user.value) return ''
@@ -56,15 +52,13 @@ const loadGuestData = async () => {
   if (isLoggedIn.value) return
 
   try {
-    featuredCategoriesData.value = await sanctumFetch(
-      `${config.public.apiBase}/api/catalog/categories/featured?limit=6`
-    )
+    featuredCategoriesData.value = await useSanctumFetch('/api/catalog/categories/featured?limit=6')
   } catch {
     featuredCategoriesData.value = null
   }
 
   try {
-    featuredData.value = await sanctumFetch(`${config.public.apiBase}/api/catalog/featured`)
+    featuredData.value = await useSanctumFetch('/api/catalog/featured')
   } catch {
     featuredData.value = null
   }
