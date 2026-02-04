@@ -7,12 +7,13 @@ namespace App\Services\IntegrationServices\Sms;
 use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\Sms\SmsLog;
-use App\Models\Sms\SmsProvider;
 use App\Services\IntegrationServices\Sms\Contracts\SmsProviderInterface;
 use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
 use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
 use App\Services\IntegrationServices\Sms\DTOs\SmsRequest;
 use App\Services\IntegrationServices\Sms\DTOs\SmsResponse;
+use App\Services\IntegrationServices\Sms\Providers\Fast2SmsProvider;
+use App\Services\IntegrationServices\Sms\Providers\LogSmsProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -31,7 +32,7 @@ final class SmsService
     private ?SmsProviderInterface $currentProvider = null;
 
     /**
-     * @var Collection<int, SmsProvider>|null
+     * @var Collection<int, Integration>|null
      */
     private ?Collection $providers = null;
 
@@ -49,17 +50,17 @@ final class SmsService
         }
 
         // Try each provider in order until one succeeds
-        foreach ($providers as $providerModel) {
-            $driver = $providerModel->createDriver();
+        foreach ($providers as $integration) {
+            $driver = $this->createDriver($integration);
 
             // Create log entry
-            $log = $this->createLog($request, $providerModel);
+            $log = $this->createLog($request, $integration);
 
             try {
                 $response = $driver->send($request);
 
                 // Update log with response
-                $this->updateLog($log, $response, $providerModel);
+                $this->updateLog($log, $response, $integration);
 
                 if ($response->success) {
                     return $response;
@@ -67,18 +68,18 @@ final class SmsService
 
                 // If insufficient balance, try next provider
                 if ($response->errorCode === 'INSUFFICIENT_BALANCE') {
-                    Log::warning("SmsService: Provider {$providerModel->slug} has insufficient balance, trying next");
+                    Log::warning("SmsService: Provider {$integration->slug} has insufficient balance, trying next");
 
                     continue;
                 }
 
             } catch (\Throwable $e) {
-                Log::error("SmsService: Provider {$providerModel->slug} failed", [
+                Log::error("SmsService: Provider {$integration->slug} failed", [
                     'error' => $e->getMessage(),
                 ]);
 
                 $log->markAsFailed($e->getMessage(), 'EXCEPTION');
-                $providerModel->recordFailure($e->getMessage());
+                $this->recordFailure($integration, $e->getMessage());
 
                 continue;
             }
@@ -180,13 +181,13 @@ final class SmsService
      */
     public function getBalance(): BalanceInfo
     {
-        $provider = $this->getDefaultProvider();
+        $integration = $this->getDefaultProvider();
 
-        if (! $provider) {
+        if (! $integration) {
             return BalanceInfo::error('No default provider configured');
         }
 
-        return $provider->createDriver()->getBalance();
+        return $this->createDriver($integration)->getBalance();
     }
 
     /**
@@ -198,8 +199,8 @@ final class SmsService
     {
         $balances = [];
 
-        foreach ($this->getActiveProviders() as $provider) {
-            $balances[$provider->slug] = $provider->createDriver()->getBalance();
+        foreach ($this->getActiveProviders() as $integration) {
+            $balances[$integration->slug] = $this->createDriver($integration)->getBalance();
         }
 
         return $balances;
@@ -221,17 +222,17 @@ final class SmsService
         // Find the log entry to determine which provider was used
         $log = SmsLog::where('request_id', $requestId)->first();
 
-        if (! $log || ! $log->sms_provider_id) {
+        if (! $log || ! $log->integration_id) {
             return DeliveryReport::error('Log not found', $requestId);
         }
 
-        $provider = SmsProvider::find($log->sms_provider_id);
+        $integration = Integration::find($log->integration_id);
 
-        if (! $provider) {
+        if (! $integration) {
             return DeliveryReport::error('Provider not found', $requestId);
         }
 
-        $report = $provider->createDriver()->getDeliveryReport($requestId);
+        $report = $this->createDriver($integration)->getDeliveryReport($requestId);
 
         // Update log with delivery status
         if ($report->success) {
@@ -265,13 +266,13 @@ final class SmsService
      */
     public function getMonthlyProjection(): array
     {
-        $provider = $this->getDefaultProvider();
+        $integration = $this->getDefaultProvider();
 
-        if (! $provider) {
+        if (! $integration) {
             return ['error' => 'No default provider configured'];
         }
 
-        return $provider->getMonthlyExpenseProjection();
+        return $this->getMonthlyProjectionForIntegration($integration);
     }
 
     /**
@@ -283,8 +284,8 @@ final class SmsService
     {
         $projections = [];
 
-        foreach ($this->getActiveProviders() as $provider) {
-            $projections[$provider->slug] = $provider->getMonthlyExpenseProjection();
+        foreach ($this->getActiveProviders() as $integration) {
+            $projections[$integration->slug] = $this->getMonthlyProjectionForIntegration($integration);
         }
 
         return $projections;
@@ -295,22 +296,23 @@ final class SmsService
      */
     public function syncBalance(?string $providerSlug = null): BalanceInfo
     {
-        $provider = $providerSlug
-            ? SmsProvider::where('slug', $providerSlug)->first()
+        $integration = $providerSlug
+            ? Integration::where('slug', $providerSlug)->first()
             : $this->getDefaultProvider();
 
-        if (! $provider) {
+        if (! $integration) {
             return BalanceInfo::error('Provider not found');
         }
 
-        $driver = $provider->createDriver();
+        $driver = $this->createDriver($integration);
         $balance = $driver->getBalance();
 
         if ($balance->success) {
-            $provider->update([
-                'balance' => $balance->balance,
-                'balance_checked_at' => now(),
-            ]);
+            $settings = $integration->settings ?? [];
+            $settings['balance'] = $balance->balance;
+            $settings['balance_checked_at'] = now()->toDateTimeString();
+            $integration->settings = $settings;
+            $integration->save();
         }
 
         return $balance;
@@ -331,7 +333,7 @@ final class SmsService
     /**
      * Get default provider.
      */
-    private function getDefaultProvider(): ?SmsProvider
+    private function getDefaultProvider(): ?Integration
     {
         return $this->getActiveProviders()->first();
     }
@@ -339,7 +341,7 @@ final class SmsService
     /**
      * Get active providers ordered by priority.
      *
-     * @return Collection<int, SmsProvider>
+     * @return Collection<int, Integration>
      */
     private function getActiveProviders(): Collection
     {
@@ -354,19 +356,16 @@ final class SmsService
             ->get();
 
         if ($integrations->isNotEmpty()) {
-            $activeIntegrations = $integrations->where('is_active', true);
-
-            $this->providers = $activeIntegrations
-                ->map(fn (Integration $integration) => $this->resolveProviderFromIntegration($integration))
-                ->filter()
+            $this->providers = $integrations
+                ->where('is_active', true)
                 ->values();
 
             return $this->providers;
         }
 
         // If no integrations exist, fall back to config-based provider
-        $configProvider = $this->getConfigBasedProvider();
-        $this->providers = $configProvider ? collect([$configProvider]) : collect();
+        $configIntegration = $this->getConfigBasedIntegration();
+        $this->providers = $configIntegration ? collect([$configIntegration]) : collect();
 
         return $this->providers;
     }
@@ -374,46 +373,48 @@ final class SmsService
     /**
      * Get serviceable providers (active, healthy, has balance for count).
      *
-     * @return Collection<int, SmsProvider>
+     * @return Collection<int, Integration>
      */
     private function getServiceableProviders(int $requiredCount = 1): Collection
     {
         $providers = $this->getActiveProviders();
 
-        return $providers->filter(function (SmsProvider $provider) use ($requiredCount) {
+        return $providers->filter(function (Integration $integration) use ($requiredCount) {
+            $driver = $this->getDriverSlug($integration);
+
             // Check circuit breaker
-            if ($provider->consecutive_failures >= 5) {
+            if ($this->getConsecutiveFailures($integration) >= 5) {
                 return false;
             }
 
             // For log provider in testing, always allow
-            if ($provider->driver === 'log') {
+            if ($driver === 'log') {
                 return true;
             }
 
             // Check balance
-            return $provider->canSend($requiredCount);
+            return $this->canIntegrationSend($integration, $requiredCount);
         });
     }
 
     /**
      * Get best provider for bulk sends.
      */
-    private function getBestProviderForBulk(int $count): ?SmsProvider
+    private function getBestProviderForBulk(int $count): ?Integration
     {
         $providers = $this->getActiveProviders();
 
         // Find provider with enough balance and best success rate
         return $providers
-            ->filter(fn (SmsProvider $p) => $p->canSend($count))
-            ->sortByDesc('success_rate')
+            ->filter(fn (Integration $integration) => $this->canIntegrationSend($integration, $count))
+            ->sortByDesc(fn (Integration $integration) => $this->getSuccessRate($integration))
             ->first();
     }
 
     /**
      * Get provider from config (fallback).
      */
-    private function getConfigBasedProvider(): ?SmsProvider
+    private function getConfigBasedIntegration(): ?Integration
     {
         $providerName = config('services.sms.provider', 'log');
 
@@ -423,82 +424,36 @@ final class SmsService
         }
 
         // Create a virtual provider model from config
-        $provider = new SmsProvider([
+        $integration = new Integration([
             'name' => match ($providerName) {
                 'fast2sms' => 'Fast2SMS',
                 'log' => 'Log Provider',
                 default => 'Unknown Provider',
             },
             'slug' => $providerName,
-            'driver' => $providerName,
-            'api_key' => config('services.sms.fast2sms.api_key'),
-            'sender_id' => config('services.sms.fast2sms.sender_id'),
-            'entity_id' => config('services.sms.fast2sms.entity_id'),
-            'per_sms_cost' => (float) config('services.sms.fast2sms.per_sms_cost', 0.25),
-            'min_balance_threshold' => (float) config('services.sms.fast2sms.min_balance_threshold', 10.0),
-            'balance' => 999999.99, // Assume sufficient for config-based
+            'type' => IntegrationTypeCast::SMS->value,
+            'credentials' => [
+                'api_key' => config('services.sms.fast2sms.api_key'),
+                'api_secret' => config('services.sms.fast2sms.api_secret'),
+                'sender_id' => config('services.sms.fast2sms.sender_id'),
+                'entity_id' => config('services.sms.fast2sms.entity_id'),
+            ],
+            'settings' => [
+                'driver' => $providerName,
+                'per_sms_cost' => (float) config('services.sms.fast2sms.per_sms_cost', 0.25),
+                'min_balance_threshold' => (float) config('services.sms.fast2sms.min_balance_threshold', 10.0),
+                'balance' => 999999.99,
+                'priority' => 1,
+                'success_rate' => 100.0,
+                'consecutive_failures' => 0,
+            ],
             'is_active' => true,
             'is_default' => true,
-            'priority' => 1,
         ]);
 
-        // Don't persist
-        $provider->exists = false;
+        $integration->exists = false;
 
-        return $provider;
-    }
-
-    /**
-     * Resolve an SMS provider model from an Integration record.
-     */
-    private function resolveProviderFromIntegration(Integration $integration): ?SmsProvider
-    {
-        $settings = $integration->settings ?? [];
-        $credentials = $integration->credentials ?? [];
-
-        $driver = $settings['driver']
-            ?? $settings['provider']
-            ?? $integration->slug;
-
-        $providerSlug = $settings['provider_slug'] ?? $driver;
-
-        $provider = SmsProvider::query()->firstOrNew(['slug' => $providerSlug]);
-
-        $provider->fill([
-            'name' => $integration->name,
-            'slug' => $providerSlug,
-            'driver' => $driver,
-            'api_key' => $credentials['api_key']
-                ?? $credentials['key']
-                ?? $settings['api_key']
-                ?? config('services.sms.fast2sms.api_key'),
-            'api_secret' => $credentials['api_secret']
-                ?? $credentials['secret']
-                ?? $settings['api_secret']
-                ?? config('services.sms.fast2sms.api_secret'),
-            'sender_id' => $credentials['sender_id']
-                ?? $settings['sender_id']
-                ?? config('services.sms.fast2sms.sender_id'),
-            'entity_id' => $credentials['entity_id']
-                ?? $settings['entity_id']
-                ?? config('services.sms.fast2sms.entity_id'),
-            'per_sms_cost' => (float) ($settings['per_sms_cost']
-                ?? config('services.sms.fast2sms.per_sms_cost', 0.25)),
-            'min_balance_threshold' => (float) ($settings['min_balance_threshold']
-                ?? config('services.sms.fast2sms.min_balance_threshold', 10.0)),
-            'balance' => (float) ($settings['balance'] ?? $provider->balance ?? 999999.99),
-            'is_active' => $integration->is_active,
-            'is_default' => $integration->is_default,
-            'priority' => (int) ($settings['priority'] ?? $provider->priority ?? 1),
-        ]);
-
-        if (! $provider->exists) {
-            $provider->save();
-        } else {
-            $provider->save();
-        }
-
-        return $provider;
+        return $integration;
     }
 
     // =========================================================================
@@ -506,13 +461,225 @@ final class SmsService
     // =========================================================================
 
     /**
+     * Create driver instance for an integration.
+     */
+    private function createDriver(Integration $integration): SmsProviderInterface
+    {
+        $driver = $this->getDriverSlug($integration);
+        $settings = $integration->settings ?? [];
+
+        $provider = match ($driver) {
+            'fast2sms' => new Fast2SmsProvider(
+                apiKey: $integration->getApiKey(),
+                senderId: $settings['sender_id'] ?? $integration->getCredential('sender_id'),
+                entityId: $settings['entity_id'] ?? $integration->getCredential('entity_id'),
+                perSmsCost: (float) ($settings['per_sms_cost'] ?? config('services.sms.fast2sms.per_sms_cost', 0.25)),
+                minBalanceThreshold: (float) ($settings['min_balance_threshold'] ?? config('services.sms.fast2sms.min_balance_threshold', 10.0)),
+            ),
+            default => new LogSmsProvider,
+        };
+
+        $provider->setIntegration($integration);
+
+        return $provider;
+    }
+
+    private function getDriverSlug(Integration $integration): string
+    {
+        $settings = $integration->settings ?? [];
+
+        return $settings['driver']
+            ?? $settings['provider']
+            ?? $integration->slug
+            ?? 'log';
+    }
+
+    private function getSetting(Integration $integration, string $key, mixed $default = null): mixed
+    {
+        $settings = $integration->settings ?? [];
+
+        return $settings[$key] ?? $default;
+    }
+
+    private function setSetting(Integration $integration, string $key, mixed $value): void
+    {
+        $settings = $integration->settings ?? [];
+        $settings[$key] = $value;
+        $integration->settings = $settings;
+        $integration->save();
+    }
+
+    private function getBalanceForIntegration(Integration $integration): float
+    {
+        return (float) $this->getSetting($integration, 'balance', 0.0);
+    }
+
+    private function getPerSmsCostForIntegration(Integration $integration): float
+    {
+        return (float) $this->getSetting(
+            $integration,
+            'per_sms_cost',
+            config('services.sms.fast2sms.per_sms_cost', 0.25)
+        );
+    }
+
+    private function getMinBalanceThresholdForIntegration(Integration $integration): float
+    {
+        return (float) $this->getSetting(
+            $integration,
+            'min_balance_threshold',
+            config('services.sms.fast2sms.min_balance_threshold', 10.0)
+        );
+    }
+
+    private function getSuccessRate(Integration $integration): float
+    {
+        return (float) $this->getSetting($integration, 'success_rate', 100.0);
+    }
+
+    private function getConsecutiveFailures(Integration $integration): int
+    {
+        return (int) $this->getSetting($integration, 'consecutive_failures', 0);
+    }
+
+    private function canIntegrationSend(Integration $integration, int $count = 1): bool
+    {
+        $perSmsCost = $this->getPerSmsCostForIntegration($integration);
+        $required = $count * $perSmsCost;
+
+        return $this->getBalanceForIntegration($integration) >= $required
+            && $this->getBalanceForIntegration($integration) >= $this->getMinBalanceThresholdForIntegration($integration);
+    }
+
+    private function recordSuccess(Integration $integration, int $count = 1, float $cost = 0): void
+    {
+        $totalSent = (int) $this->getSetting($integration, 'total_sent', 0) + $count;
+        $totalDelivered = (int) $this->getSetting($integration, 'total_delivered', 0) + $count;
+        $balance = max(0, $this->getBalanceForIntegration($integration) - $cost);
+
+        $this->setSetting($integration, 'total_sent', $totalSent);
+        $this->setSetting($integration, 'total_delivered', $totalDelivered);
+        $this->setSetting($integration, 'balance', $balance);
+        $this->setSetting($integration, 'last_success_at', now()->toDateTimeString());
+        $this->setSetting($integration, 'consecutive_failures', 0);
+
+        $this->updateSuccessRate($integration);
+    }
+
+    private function recordFailure(Integration $integration, string $error, int $count = 1): void
+    {
+        $totalSent = (int) $this->getSetting($integration, 'total_sent', 0) + $count;
+        $totalFailed = (int) $this->getSetting($integration, 'total_failed', 0) + $count;
+        $consecutive = $this->getConsecutiveFailures($integration) + 1;
+
+        $this->setSetting($integration, 'total_sent', $totalSent);
+        $this->setSetting($integration, 'total_failed', $totalFailed);
+        $this->setSetting($integration, 'consecutive_failures', $consecutive);
+        $this->setSetting($integration, 'last_failure_at', now()->toDateTimeString());
+        $this->setSetting($integration, 'last_error', $error);
+
+        $this->updateSuccessRate($integration);
+    }
+
+    private function updateSuccessRate(Integration $integration): void
+    {
+        $totalSent = (int) $this->getSetting($integration, 'total_sent', 0);
+        $totalDelivered = (int) $this->getSetting($integration, 'total_delivered', 0);
+
+        if ($totalSent <= 0) {
+            $this->setSetting($integration, 'success_rate', 0.0);
+
+            return;
+        }
+
+        $rate = ($totalDelivered / $totalSent) * 100;
+        $this->setSetting($integration, 'success_rate', round($rate, 2));
+    }
+
+    /**
+     * Get monthly expense projection for an integration.
+     *
+     * @return array<string, mixed>
+     */
+    private function getMonthlyProjectionForIntegration(Integration $integration): array
+    {
+        $now = now();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $daysInMonth = $now->daysInMonth;
+        $daysPassed = $now->day;
+        $daysRemaining = $daysInMonth - $daysPassed;
+
+        $monthlyStats = SmsLog::query()
+            ->where('integration_id', $integration->id)
+            ->where('created_at', '>=', $startOfMonth)
+            ->selectRaw('COUNT(*) as total_count')
+            ->selectRaw('SUM(cost) as total_cost')
+            ->selectRaw('COUNT(CASE WHEN status = "delivered" THEN 1 END) as delivered_count')
+            ->first();
+
+        $totalSentThisMonth = $monthlyStats->total_count ?? 0;
+        $totalCostThisMonth = (float) ($monthlyStats->total_cost ?? 0);
+        $deliveredThisMonth = $monthlyStats->delivered_count ?? 0;
+
+        $dailyAverage = $daysPassed > 0 ? $totalSentThisMonth / $daysPassed : 0;
+        $dailyCostAverage = $daysPassed > 0 ? $totalCostThisMonth / $daysPassed : 0;
+
+        $projectedMonthlyCount = (int) round($dailyAverage * $daysInMonth);
+        $projectedMonthlyCost = $dailyCostAverage * $daysInMonth;
+        $projectedRemainingCost = $dailyCostAverage * $daysRemaining;
+
+        $balance = $this->getBalanceForIntegration($integration);
+        $daysBalanceWillLast = $dailyCostAverage > 0 ? (int) floor($balance / $dailyCostAverage) : 999;
+        $balanceRunOutDate = $dailyCostAverage > 0 ? $now->copy()->addDays($daysBalanceWillLast) : null;
+        $recommendedRecharge = max(0, $projectedRemainingCost - $balance);
+
+        return [
+            'period' => [
+                'month' => $now->format('F Y'),
+                'days_passed' => $daysPassed,
+                'days_remaining' => $daysRemaining,
+                'days_in_month' => $daysInMonth,
+            ],
+            'actual' => [
+                'sms_sent' => $totalSentThisMonth,
+                'sms_delivered' => $deliveredThisMonth,
+                'total_cost' => round($totalCostThisMonth, 2),
+                'daily_average_count' => round($dailyAverage, 1),
+                'daily_average_cost' => round($dailyCostAverage, 2),
+            ],
+            'projected' => [
+                'monthly_sms_count' => $projectedMonthlyCount,
+                'monthly_cost' => round($projectedMonthlyCost, 2),
+                'remaining_cost' => round($projectedRemainingCost, 2),
+            ],
+            'balance' => [
+                'current' => round($balance, 2),
+                'can_send_count' => $this->getPerSmsCostForIntegration($integration) > 0
+                    ? (int) floor($balance / $this->getPerSmsCostForIntegration($integration))
+                    : 0,
+                'days_will_last' => $daysBalanceWillLast,
+                'run_out_date' => $balanceRunOutDate?->format('Y-m-d'),
+                'is_sufficient_for_month' => $balance >= $projectedRemainingCost,
+            ],
+            'recharge' => [
+                'recommended_amount' => round($recommendedRecharge, 2),
+                'current_per_sms_cost' => $this->getPerSmsCostForIntegration($integration),
+            ],
+            'health' => [
+                'success_rate' => $this->getSuccessRate($integration),
+                'consecutive_failures' => $this->getConsecutiveFailures($integration),
+            ],
+        ];
+    }
+
+    /**
      * Create log entry for SMS request.
      */
-    private function createLog(SmsRequest $request, SmsProvider $provider): SmsLog
+    private function createLog(SmsRequest $request, Integration $integration): SmsLog
     {
         return SmsLog::create([
-            'sms_provider_id' => $provider->id,
-            'provider_slug' => $provider->slug,
+            'integration_id' => $integration->id,
+            'provider_slug' => $integration->slug,
             'recipient' => $request->getRecipient(),
             'message' => $request->message,
             'message_type' => $request->type,
@@ -532,15 +699,15 @@ final class SmsService
     /**
      * Update log entry with response.
      */
-    private function updateLog(SmsLog $log, SmsResponse $response, SmsProvider $provider): void
+    private function updateLog(SmsLog $log, SmsResponse $response, Integration $integration): void
     {
         if ($response->success) {
             $log->markAsSent($response->requestId, $response->messageId);
             $log->update(['cost' => $response->cost]);
-            $provider->recordSuccess(1, $response->cost);
+            $this->recordSuccess($integration, 1, $response->cost);
         } else {
             $log->markAsFailed($response->errorMessage ?? $response->message, $response->errorCode);
-            $provider->recordFailure($response->message);
+            $this->recordFailure($integration, $response->message);
         }
     }
 

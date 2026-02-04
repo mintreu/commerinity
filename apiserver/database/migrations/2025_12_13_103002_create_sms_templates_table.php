@@ -20,7 +20,7 @@ return new class extends Migration
             $table->id();
 
             // Provider Reference
-            $table->foreignId('sms_provider_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('integration_id')->constrained('integrations')->cascadeOnDelete();
 
             // Template Identification
             $table->string('name', 100)->comment('Internal name: otp_login, welcome, etc.');
@@ -55,7 +55,7 @@ return new class extends Migration
             $table->softDeletes();
 
             // Indexes
-            $table->unique(['sms_provider_id', 'slug']);
+            $table->unique(['integration_id', 'slug']);
             $table->index('message_id');
             $table->index('category');
             $table->index('is_active');

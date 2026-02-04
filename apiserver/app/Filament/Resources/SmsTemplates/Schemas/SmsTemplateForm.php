@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\SmsTemplates\Schemas;
 
+use App\Casts\IntegrationTypeCast;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -26,12 +28,17 @@ class SmsTemplateForm
                             'sm' => 2,
                             'md' => 3,
                         ])->schema([
-                            TextInput::make('sms_provider_id')
-                                ->label('SMS Provider ID')
+                            Select::make('integration_id')
+                                ->label('Integration')
                                 ->required()
-                                ->numeric()
-                                ->minValue(0)
-                                ->placeholder('Numeric id'),
+                                ->relationship(
+                                    'integration',
+                                    'name',
+                                    fn ($query) => $query->where('type', IntegrationTypeCast::SMS->value)
+                                )
+                                ->searchable()
+                                ->preload()
+                                ->placeholder('Select integration'),
 
                             TextInput::make('name')
                                 ->label('Name')

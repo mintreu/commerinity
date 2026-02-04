@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\IntegrationServices\Sms\Providers;
 
-use App\Models\Sms\SmsProvider;
+use App\Models\Integration;
 use App\Services\IntegrationServices\Sms\Contracts\SmsProviderInterface;
 use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
 use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Log;
  */
 final class LogSmsProvider implements SmsProviderInterface
 {
-    private ?SmsProvider $providerModel = null;
+    private ?Integration $integration = null;
 
     public function getSlug(): string
     {
@@ -158,13 +158,13 @@ final class LogSmsProvider implements SmsProviderInterface
         ];
     }
 
-    public function setProviderModel(SmsProvider $provider): void
+    public function setIntegration(Integration $integration): void
     {
-        $this->providerModel = $provider;
+        $this->integration = $integration;
     }
 
-    public function getProviderModel(): ?SmsProvider
+    public function getIntegration(): ?Integration
     {
-        return $this->providerModel;
+        return $this->integration;
     }
 }

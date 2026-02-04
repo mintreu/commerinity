@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Sms\SmsProvider;
+use App\Casts\IntegrationTypeCast;
+use App\Models\Integration;
 use App\Models\Sms\SmsTemplate;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -20,10 +21,13 @@ class SmsTemplateSeeder extends Seeder
     {
         $this->command->info('Seeding SMS templates...');
 
-        $provider = SmsProvider::where('is_default', true)->first();
+        $integration = Integration::query()
+            ->ofType(IntegrationTypeCast::SMS->value)
+            ->where('is_default', true)
+            ->first();
 
-        if (! $provider) {
-            $this->command->warn('No default SMS provider found. Run SmsProviderSeeder first.');
+        if (! $integration) {
+            $this->command->warn('No default SMS integration found. Seed integrations first.');
 
             return;
         }
@@ -150,13 +154,13 @@ class SmsTemplateSeeder extends Seeder
             SmsTemplate::updateOrCreate(
                 ['slug' => $data['slug']],
                 [
-                    'sms_provider_id' => $provider->id,
+                    'integration_id' => $integration->id,
                     'name' => $data['name'],
                     'slug' => $data['slug'],
                     'message_id' => $data['message_id'],
-                    'entity_id' => $provider->entity_id,
+                    'entity_id' => $integration->getCredential('entity_id'),
                     'template_id' => Str::upper(Str::random(10)), // Placeholder - replace with actual DLT IDs
-                    'sender_id' => $provider->sender_id,
+                    'sender_id' => $integration->getCredential('sender_id'),
                     'content' => $data['content'],
                     'variables' => $data['variables'],
                     'variable_count' => count($data['variables']),

@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\SmsLogs\Schemas;
 
+use App\Casts\IntegrationTypeCast;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -65,12 +65,16 @@ class SmsLogForm
                 ->description('Template, user, and loggable references')
                 ->columns(['default' => 1, 'md' => 2])
                 ->schema([
-                    Select::make('sms_provider_id')
-                        ->label('Provider Record')
-                        ->relationship('provider', 'name')
+                    Select::make('integration_id')
+                        ->label('Integration')
+                        ->relationship(
+                            'integration',
+                            'name',
+                            fn ($query) => $query->where('type', IntegrationTypeCast::SMS->value)
+                        )
                         ->searchable()
                         ->preload()
-                        ->placeholder('—'),
+                        ->placeholder('-'),
 
                     Select::make('sms_template_id')
                         ->label('Template')

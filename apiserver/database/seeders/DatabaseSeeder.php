@@ -74,7 +74,6 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             // SMS CONFIGURATION - Providers and Templates
             // ═══════════════════════════════════════════════════════════
-            SmsProviderSeeder::class,
             SmsTemplateSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
@@ -121,7 +120,7 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             // TRANSACTIONS - Demo transactions for testing
             // ═══════════════════════════════════════════════════════════
-            TransactionSeeder::class,
+            //  TransactionSeeder::class,   // commet out only for testing
 
             // ═══════════════════════════════════════════════════════════
             // Affiliate NETWORK - Full Affiliate tree with commissions, genealogy

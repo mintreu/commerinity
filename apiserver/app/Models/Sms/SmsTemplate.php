@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * SMS Template Model - DLT approved message templates.
  *
  * @property int $id
- * @property int $sms_provider_id
+ * @property int $integration_id
  * @property string $name
  * @property string $slug
  * @property string $message_id
@@ -42,7 +42,7 @@ class SmsTemplate extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'sms_provider_id',
+        'integration_id',
         'name',
         'slug',
         'message_id',
@@ -82,11 +82,11 @@ class SmsTemplate extends Model
     // =========================================================================
 
     /**
-     * @return BelongsTo<SmsProvider, $this>
+     * @return BelongsTo<\App\Models\Integration, $this>
      */
-    public function provider(): BelongsTo
+    public function integration(): BelongsTo
     {
-        return $this->belongsTo(SmsProvider::class, 'sms_provider_id');
+        return $this->belongsTo(\App\Models\Integration::class, 'integration_id');
     }
 
     /**

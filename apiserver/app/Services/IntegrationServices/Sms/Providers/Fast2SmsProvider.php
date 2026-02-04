@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\IntegrationServices\Sms\Providers;
 
-use App\Models\Sms\SmsProvider;
+use App\Models\Integration;
 use App\Services\IntegrationServices\Sms\Contracts\SmsProviderInterface;
 use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
 use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
@@ -47,7 +47,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
 
     private const BALANCE_CACHE_TTL = 300; // 5 minutes
 
-    private ?SmsProvider $providerModel = null;
+    private ?Integration $integration = null;
 
     private ?BalanceInfo $cachedBalance = null;
 
@@ -300,14 +300,14 @@ final class Fast2SmsProvider implements SmsProviderInterface
         }
     }
 
-    public function setProviderModel(SmsProvider $provider): void
+    public function setIntegration(Integration $integration): void
     {
-        $this->providerModel = $provider;
+        $this->integration = $integration;
     }
 
-    public function getProviderModel(): ?SmsProvider
+    public function getIntegration(): ?Integration
     {
-        return $this->providerModel;
+        return $this->integration;
     }
 
     /**
@@ -430,7 +430,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function resolveTemplate(?string $slug): ?array
     {
-        if (! $slug || ! $this->providerModel) {
+        if (! $slug || ! $this->integration) {
             // Return mock template for testing
             return [
                 'message_id' => '123456', // Demo message ID
@@ -438,7 +438,8 @@ final class Fast2SmsProvider implements SmsProviderInterface
             ];
         }
 
-        $template = $this->providerModel->templates()
+        $template = \App\Models\Sms\SmsTemplate::query()
+            ->where('integration_id', $this->integration->id)
             ->where('slug', $slug)
             ->where('is_active', true)
             ->first();
@@ -463,11 +464,12 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function updateProviderBalance(BalanceInfo $balance): void
     {
-        if ($this->providerModel) {
-            $this->providerModel->update([
-                'balance' => $balance->balance,
-                'balance_checked_at' => now(),
-            ]);
+        if ($this->integration) {
+            $settings = $this->integration->settings ?? [];
+            $settings['balance'] = $balance->balance;
+            $settings['balance_checked_at'] = now()->toDateTimeString();
+            $this->integration->settings = $settings;
+            $this->integration->save();
         }
     }
 
@@ -520,7 +522,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function getApiKey(): ?string
     {
-        return $this->providerModel?->api_key ?? $this->apiKey;
+        return $this->integration?->getApiKey() ?? $this->apiKey;
     }
 
     /**
@@ -528,7 +530,11 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function getSenderId(): ?string
     {
-        return $this->providerModel?->sender_id ?? $this->senderId;
+        $settings = $this->integration?->settings ?? [];
+
+        return $settings['sender_id']
+            ?? $this->integration?->getCredential('sender_id')
+            ?? $this->senderId;
     }
 
     /**
@@ -536,7 +542,11 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function getEntityId(): ?string
     {
-        return $this->providerModel?->entity_id ?? $this->entityId;
+        $settings = $this->integration?->settings ?? [];
+
+        return $settings['entity_id']
+            ?? $this->integration?->getCredential('entity_id')
+            ?? $this->entityId;
     }
 
     /**
@@ -544,7 +554,9 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function getPerSmsCost(): float
     {
-        return $this->providerModel?->per_sms_cost ?? $this->perSmsCost;
+        $settings = $this->integration?->settings ?? [];
+
+        return (float) ($settings['per_sms_cost'] ?? $this->perSmsCost);
     }
 
     /**
@@ -552,6 +564,8 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function getMinBalanceThreshold(): float
     {
-        return $this->providerModel?->min_balance_threshold ?? $this->minBalanceThreshold;
+        $settings = $this->integration?->settings ?? [];
+
+        return (float) ($settings['min_balance_threshold'] ?? $this->minBalanceThreshold);
     }
 }

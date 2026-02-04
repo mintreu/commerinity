@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\IntegrationServices\Sms\Contracts;
 
-use App\Models\Sms\SmsProvider;
+use App\Models\Integration;
 use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
 use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
 use App\Services\IntegrationServices\Sms\DTOs\SmsRequest;
@@ -107,10 +107,10 @@ interface SmsProviderInterface
     /**
      * Set the provider model (for database-backed configuration).
      */
-    public function setProviderModel(SmsProvider $provider): void;
+    public function setIntegration(Integration $integration): void;
 
     /**
      * Get the provider model.
      */
-    public function getProviderModel(): ?SmsProvider;
+    public function getIntegration(): ?Integration;
 }

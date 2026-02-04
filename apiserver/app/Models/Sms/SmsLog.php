@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @property int $id
  * @property string $uuid
- * @property int|null $sms_provider_id
+ * @property int|null $integration_id
  * @property string $provider_slug
  * @property string $recipient
  * @property string $message
@@ -75,7 +75,7 @@ class SmsLog extends Model
 
     protected $fillable = [
         'uuid',
-        'sms_provider_id',
+        'integration_id',
         'provider_slug',
         'recipient',
         'message',
@@ -138,11 +138,11 @@ class SmsLog extends Model
     // =========================================================================
 
     /**
-     * @return BelongsTo<SmsProvider, $this>
+     * @return BelongsTo<\App\Models\Integration, $this>
      */
-    public function provider(): BelongsTo
+    public function integration(): BelongsTo
     {
-        return $this->belongsTo(SmsProvider::class, 'sms_provider_id');
+        return $this->belongsTo(\App\Models\Integration::class, 'integration_id');
     }
 
     /**

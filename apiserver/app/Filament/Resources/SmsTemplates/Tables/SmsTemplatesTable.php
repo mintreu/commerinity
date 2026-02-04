@@ -19,9 +19,9 @@ class SmsTemplatesTable
     {
         return $table
             ->columns([
-                TextColumn::make('sms_provider_id')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('integration.name')
+                    ->label('Integration')
+                    ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('slug')

@@ -76,9 +76,8 @@ class SmsTemplateInfolist
                                     'sm' => 2,
                                     'md' => 12,
                                 ])->schema([
-                                    TextEntry::make('sms_provider_id')
-                                        ->label('SMS Provider ID')
-                                        ->numeric()
+                                    TextEntry::make('integration.name')
+                                        ->label('Integration')
                                         ->badge()
                                         ->columnSpan(['md' => 4])
                                         ->placeholder('-'),

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use App\Models\Sms\SmsLog;
-use App\Models\Sms\SmsProvider;
 use App\Models\Sms\SmsTemplate;
 use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
 use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
@@ -204,161 +203,6 @@ describe('LogSmsProvider', function () {
 // SMS PROVIDER MODEL TESTS
 // =============================================================================
 
-describe('SmsProvider Model', function () {
-    it('creates provider from database', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Fast2SMS',
-            'slug' => 'fast2sms',
-            'driver' => 'fast2sms',
-            'api_key' => 'test_api_key',
-            'sender_id' => 'TESTSMS',
-            'balance' => 100.0,
-            'per_sms_cost' => 0.25,
-            'is_active' => true,
-            'is_default' => true,
-        ]);
-
-        expect($provider->id)->toBeGreaterThan(0)
-            ->and($provider->can_send_count)->toBe(400)
-            ->and($provider->is_healthy)->toBeTrue()
-            ->and($provider->is_balance_low)->toBeFalse();
-    });
-
-    it('encrypts api key', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Test Provider',
-            'slug' => 'test',
-            'driver' => 'log',
-            'api_key' => 'secret_key_123',
-            'is_active' => true,
-        ]);
-
-        // Reload from DB
-        $provider->refresh();
-
-        // API key should be decrypted when accessed
-        expect($provider->api_key)->toBe('secret_key_123');
-
-        // Raw database value should be encrypted
-        $rawValue = \DB::table('sms_providers')->where('id', $provider->id)->value('api_key');
-        expect($rawValue)->not->toBe('secret_key_123');
-    });
-
-    it('records success correctly', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Test',
-            'slug' => 'test',
-            'driver' => 'log',
-            'balance' => 100.0,
-            'is_active' => true,
-        ]);
-
-        $provider->recordSuccess(count: 2, cost: 0.50);
-
-        expect($provider->total_sent)->toBe(2)
-            ->and($provider->total_delivered)->toBe(2)
-            ->and((float) $provider->balance)->toBe(99.50)
-            ->and($provider->consecutive_failures)->toBe(0);
-    });
-
-    it('records failure correctly', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Test',
-            'slug' => 'test',
-            'driver' => 'log',
-            'is_active' => true,
-        ]);
-
-        $provider->recordFailure('Test error', 1);
-
-        expect($provider->total_failed)->toBe(1)
-            ->and($provider->consecutive_failures)->toBe(1)
-            ->and($provider->last_error)->toBe('Test error');
-    });
-
-    it('creates driver instance', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Log Provider',
-            'slug' => 'log',
-            'driver' => 'log',
-            'is_active' => true,
-        ]);
-
-        $driver = $provider->createDriver();
-
-        expect($driver)->toBeInstanceOf(LogSmsProvider::class)
-            ->and($driver->getProviderModel())->toBe($provider);
-    });
-
-    it('gets monthly expense projection', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Test',
-            'slug' => 'test',
-            'driver' => 'log',
-            'balance' => 100.0,
-            'per_sms_cost' => 0.25,
-            'is_active' => true,
-        ]);
-
-        $projection = $provider->getMonthlyExpenseProjection();
-
-        expect($projection)->toHaveKeys([
-            'period',
-            'actual',
-            'projected',
-            'balance',
-            'recharge',
-            'health',
-        ]);
-    });
-
-    it('applies active scope', function () {
-        SmsProvider::create(['name' => 'Active', 'slug' => 'active', 'driver' => 'log', 'is_active' => true, 'priority' => 2]);
-        SmsProvider::create(['name' => 'Inactive', 'slug' => 'inactive', 'driver' => 'log', 'is_active' => false, 'priority' => 1]);
-
-        $active = SmsProvider::active()->get();
-
-        expect($active)->toHaveCount(1)
-            ->and($active->first()->slug)->toBe('active');
-    });
-
-    it('applies serviceable scope', function () {
-        SmsProvider::create([
-            'name' => 'Healthy',
-            'slug' => 'healthy',
-            'driver' => 'log',
-            'is_active' => true,
-            'balance' => 100,
-            'min_balance_threshold' => 10,
-            'consecutive_failures' => 0,
-        ]);
-
-        SmsProvider::create([
-            'name' => 'Low Balance',
-            'slug' => 'low-balance',
-            'driver' => 'log',
-            'is_active' => true,
-            'balance' => 5,
-            'min_balance_threshold' => 10,
-        ]);
-
-        SmsProvider::create([
-            'name' => 'Too Many Failures',
-            'slug' => 'failed',
-            'driver' => 'log',
-            'is_active' => true,
-            'balance' => 100,
-            'min_balance_threshold' => 10,
-            'consecutive_failures' => 10,
-        ]);
-
-        $serviceable = SmsProvider::serviceable()->get();
-
-        expect($serviceable)->toHaveCount(1)
-            ->and($serviceable->first()->slug)->toBe('healthy');
-    });
-});
-
 // =============================================================================
 // SMS LOG MODEL TESTS
 // =============================================================================
@@ -539,7 +383,7 @@ describe('SmsService', function () {
 
         $service = new SmsService;
 
-        expect($service->getActiveProviderSlug())->toBe('log');
+        expect($service->getActiveProviderSlug())->toBe('sms-log');
     });
 
     it('falls back to config provider when no DB providers', function () {
@@ -558,15 +402,21 @@ describe('SmsService', function () {
 
 describe('SmsTemplate Model', function () {
     it('creates template', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Test',
-            'slug' => 'test',
-            'driver' => 'log',
+        $integration = Integration::create([
+            'name' => 'SMS Log Provider',
+            'slug' => 'sms-log',
+            'type' => IntegrationTypeCast::SMS,
+            'credentials' => [],
+            'settings' => [
+                'driver' => 'log',
+            ],
+            'is_sandbox' => false,
             'is_active' => true,
+            'is_default' => true,
         ]);
 
         $template = SmsTemplate::create([
-            'sms_provider_id' => $provider->id,
+            'integration_id' => $integration->id,
             'name' => 'OTP Template',
             'slug' => 'otp-verification',
             'message_id' => '123456',
@@ -579,7 +429,7 @@ describe('SmsTemplate Model', function () {
         ]);
 
         expect($template->id)->toBeGreaterThan(0)
-            ->and($template->provider->id)->toBe($provider->id);
+            ->and($template->integration->id)->toBe($integration->id);
     });
 
     it('renders template with variables', function () {
@@ -603,15 +453,21 @@ describe('SmsTemplate Model', function () {
     });
 
     it('records usage', function () {
-        $provider = SmsProvider::create([
-            'name' => 'Test',
-            'slug' => 'test',
-            'driver' => 'log',
+        $integration = Integration::create([
+            'name' => 'SMS Log Provider',
+            'slug' => 'sms-log',
+            'type' => IntegrationTypeCast::SMS,
+            'credentials' => [],
+            'settings' => [
+                'driver' => 'log',
+            ],
+            'is_sandbox' => false,
             'is_active' => true,
+            'is_default' => true,
         ]);
 
         $template = SmsTemplate::create([
-            'sms_provider_id' => $provider->id,
+            'integration_id' => $integration->id,
             'name' => 'Test',
             'slug' => 'test',
             'message_id' => '123456',

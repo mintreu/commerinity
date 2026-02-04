@@ -21,7 +21,7 @@ return new class extends Migration
             $table->uuid('uuid')->unique()->comment('Unique identifier for API');
 
             // Provider Reference
-            $table->foreignId('sms_provider_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('integration_id')->nullable()->constrained('integrations')->nullOnDelete();
             $table->string('provider_slug', 50)->comment('Provider used: fast2sms, msg91');
 
             // Recipient & Content
@@ -73,7 +73,7 @@ return new class extends Migration
             $table->index('recipient');
             $table->index('status');
             $table->index('message_type');
-            $table->index(['sms_provider_id', 'status']);
+            $table->index(['integration_id', 'status']);
             $table->index(['user_id', 'created_at']);
             $table->index('created_at');
         });

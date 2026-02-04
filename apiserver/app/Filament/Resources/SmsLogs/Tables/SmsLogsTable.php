@@ -18,9 +18,9 @@ class SmsLogsTable
                 TextColumn::make('uuid')
                     ->label('UUID')
                     ->searchable(),
-                TextColumn::make('sms_provider_id')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('integration.name')
+                    ->label('Integration')
+                    ->searchable(),
                 TextColumn::make('provider_slug')
                     ->searchable(),
                 TextColumn::make('recipient')
