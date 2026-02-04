@@ -17,10 +17,15 @@ class BlockSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonPath = storage_path('app/private/data/geo/india.json');
+        $defaultCountry = strtoupper((string) config('geo.default_country', 'IN'));
+        $jsonPath = storage_path('app/private/data/geo/'.strtolower($defaultCountry).'.json');
 
         if (! File::exists($jsonPath)) {
-            $this->command->warn('India JSON file not found. Skipping blocks seeding.');
+            $jsonPath = storage_path('app/private/data/geo/india.json');
+        }
+
+        if (! File::exists($jsonPath)) {
+            $this->command->warn('Country JSON file not found. Skipping blocks seeding.');
 
             return;
         }
@@ -33,7 +38,7 @@ class BlockSeeder extends Seeder
             return;
         }
 
-        $this->command->info('Seeding Indian blocks/cities...');
+        $this->command->info("Seeding {$defaultCountry} blocks/cities...");
 
         $totalBlocks = 0;
         foreach ($indiaData['states'] as $stateData) {

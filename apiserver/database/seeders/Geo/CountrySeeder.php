@@ -16,6 +16,11 @@ class CountrySeeder extends Seeder
     public function run(): void
     {
         $jsonPath = storage_path('app/private/data/geo/countries.json');
+        $allowed = collect(config('geo.allowed_countries', ['IN']))
+            ->map(fn ($code) => strtoupper((string) $code))
+            ->filter()
+            ->values()
+            ->all();
 
         if (! File::exists($jsonPath)) {
             $this->command->warn('Countries JSON file not found. Creating India as fallback.');
@@ -30,6 +35,13 @@ class CountrySeeder extends Seeder
             $this->command->error('Invalid countries JSON format.');
 
             return;
+        }
+
+        if (! empty($allowed)) {
+            $countries = array_values(array_filter(
+                $countries,
+                fn ($country) => in_array(strtoupper($country['iso_code_2'] ?? ''), $allowed, true)
+            ));
         }
 
         $this->command->info('Seeding countries...');
@@ -53,7 +65,9 @@ class CountrySeeder extends Seeder
                     'flag' => $countryData['flag'] ?? null,
                     'exchange_rate' => null,
                     'multiplier' => 1.0,
-                    'is_active' => (bool) ($countryData['status'] ?? false),
+                    'is_active' => empty($allowed)
+                        ? (bool) ($countryData['status'] ?? false)
+                        : in_array(strtoupper($countryData['iso_code_2'] ?? ''), $allowed, true),
                 ]
             );
 

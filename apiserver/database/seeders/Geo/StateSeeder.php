@@ -16,10 +16,15 @@ class StateSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonPath = storage_path('app/private/data/geo/india.json');
+        $defaultCountry = strtoupper((string) config('geo.default_country', 'IN'));
+        $jsonPath = storage_path('app/private/data/geo/'.strtolower($defaultCountry).'.json');
 
         if (! File::exists($jsonPath)) {
-            $this->command->warn('India JSON file not found. Skipping states seeding.');
+            $jsonPath = storage_path('app/private/data/geo/india.json');
+        }
+
+        if (! File::exists($jsonPath)) {
+            $this->command->warn('Country JSON file not found. Skipping states seeding.');
 
             return;
         }
@@ -32,15 +37,15 @@ class StateSeeder extends Seeder
             return;
         }
 
-        $india = Country::query()->where('iso_code_2', 'IN')->first();
+        $country = Country::query()->where('iso_code_2', $defaultCountry)->first();
 
-        if (! $india) {
-            $this->command->error('India country not found. Please seed countries first.');
+        if (! $country) {
+            $this->command->error('Default country not found. Please seed countries first.');
 
             return;
         }
 
-        $this->command->info('Seeding Indian states...');
+        $this->command->info("Seeding {$defaultCountry} states...");
         $bar = $this->command->getOutput()->createProgressBar(count($indiaData['states']));
         $bar->start();
 
@@ -48,7 +53,7 @@ class StateSeeder extends Seeder
             State::query()->updateOrCreate(
                 [
                     'code' => $stateData['code'],
-                    'country_id' => $india->id,
+                    'country_id' => $country->id,
                 ],
                 [
                     'name' => $stateData['name'],
