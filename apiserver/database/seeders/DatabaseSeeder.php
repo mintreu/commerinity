@@ -111,7 +111,7 @@ class DatabaseSeeder extends Seeder
             // USER DATA - Addresses, Wallets for demo users
             // ═══════════════════════════════════════════════════════════
             AddressSeeder::class,
-           // WalletSeeder::class,
+            // WalletSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
             // RECRUITMENT - Job postings for career page
@@ -121,20 +121,20 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             // TRANSACTIONS - Demo transactions for testing
             // ═══════════════════════════════════════════════════════════
-          //  TransactionSeeder::class,
+            TransactionSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
             // Affiliate NETWORK - Full Affiliate tree with commissions, genealogy
             // ═══════════════════════════════════════════════════════════
 
-          //  DemoAffiliateSeeder::class,
+            //  DemoAffiliateSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
             // E-COMMERCE DEMO DATA - Products with images and stock
             // ═══════════════════════════════════════════════════════════
-             ProductSeeder::class,
+            ProductSeeder::class,
             //    MasterDemoSeeder::class,
-           ProductStockSeeder::class,
+            ProductStockSeeder::class,
         ]);
     }
 }

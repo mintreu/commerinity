@@ -35,3 +35,10 @@ Schedule::command('app:sales-reindex')
     ->name('sales-reindex')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Archive transactions older than 1 year (daily)
+Schedule::command('transactions:archive --days=365')
+    ->daily()
+    ->name('transactions-archive')
+    ->withoutOverlapping()
+    ->runInBackground();

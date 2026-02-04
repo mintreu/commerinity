@@ -76,7 +76,6 @@ class Wallet extends Model
         return $this->morphTo();
     }
 
-
     // alish use for checkout
     public function customer()
     {
@@ -89,6 +88,14 @@ class Wallet extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get all historical transactions for this wallet
+     */
+    public function historicalTransactions(): HasMany
+    {
+        return $this->hasMany(HistoricalTransaction::class);
     }
 
     /**
