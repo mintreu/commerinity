@@ -29,6 +29,10 @@ use App\Http\Controllers\Api\TrendController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\Webhooks\CashfreeWebhookController;
 use App\Http\Controllers\Api\Webhooks\RazorpayWebhookController;
+use App\Http\Controllers\Api\Dashboard\AdvisorTeamLeaderController;
+use App\Http\Controllers\Api\Dashboard\AppointmentController;
+use App\Http\Controllers\Api\Dashboard\ChallengeController;
+use App\Http\Controllers\Api\Dashboard\ProgramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -236,6 +240,29 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/status', [SubscriptionController::class, 'status']);
         Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
         Route::get('/history', [SubscriptionController::class, 'history']);
+    });
+
+    // ========================================
+    // Dashboard Modules (Appointments / Challenges / Programs)
+    // ========================================
+    Route::prefix('dashboard')->group(function () {
+        Route::apiResource('appointments', AppointmentController::class)->only(['index', 'store', 'show']);
+        Route::get('appointments/attendee-types', [AppointmentController::class, 'attendeeTypes']);
+        Route::get('appointments/search-users', [AppointmentController::class, 'searchUsers']);
+
+        Route::prefix('challenges')->group(function () {
+            Route::get('/', [ChallengeController::class, 'index']);
+            Route::get('/active', [ChallengeController::class, 'active']);
+            Route::get('/{challenge:uuid}', [ChallengeController::class, 'show']);
+        });
+
+        Route::prefix('programs')->group(function () {
+            Route::get('/', [ProgramController::class, 'index']);
+            Route::post('/', [ProgramController::class, 'store']);
+            Route::get('/{program:uuid}', [ProgramController::class, 'show']);
+        });
+
+        Route::post('/advisor/team-leaders', [AdvisorTeamLeaderController::class, 'store']);
     });
 
     // ========================================
@@ -476,5 +503,3 @@ Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
 Route::prefix('order')->middleware('auth:sanctum')->group(function (){
     Route::post('/checkout',[\App\Http\Controllers\Api\Order\OrderActionController::class,'checkout']);
 });
-
-
