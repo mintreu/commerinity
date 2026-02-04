@@ -290,7 +290,7 @@ final class DemoAffiliateSeeder extends Seeder
             'total_credited' => $balanceInPaisa + rand(100000, 500000),
             'total_debited' => rand(50000, 200000),
             'points' => rand(100, 5000),
-            'pin' => Hash::make('1234'),
+            'pin' => Hash::make('123456'),
             'pin_updated_at' => now()->subDays(rand(1, 60)),
             'currency' => 'INR',
             'status' => WalletStatusCast::ACTIVE->value,

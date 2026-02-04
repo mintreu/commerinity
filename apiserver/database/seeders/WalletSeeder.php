@@ -55,7 +55,7 @@ class WalletSeeder extends Seeder
                 'total_credited' => $totalCredited,
                 'total_debited' => $totalDebited,
                 'points' => rand(0, 1000),
-                'pin' => Hash::make('1234'), // Demo PIN
+                'pin' => Hash::make('123456'), // Demo PIN (matches 6-digit validation)
                 'pin_updated_at' => now()->subDays(rand(1, 30)),
                 'currency' => 'INR',
                 'status' => WalletStatusCast::ACTIVE,
