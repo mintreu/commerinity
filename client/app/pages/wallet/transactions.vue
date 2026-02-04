@@ -9,12 +9,13 @@ definePageMeta({
   layout: 'dashboard'
 })
 
-const { transactions, fetchTransactions } = useWallet()
+const { transactions, fetchTransactions, historyAvailable } = useWallet()
 
 const loading = ref(true)
 const currentPage = ref(1)
 const totalPages = ref(1)
 const perPage = 20
+const includeHistory = ref(false)
 
 // Filter state
 const typeFilter = ref('')
@@ -40,7 +41,9 @@ const statusOptions = [
 // Load transactions
 const loadTransactions = async () => {
   loading.value = true
-  const response = await fetchTransactions(currentPage.value, perPage)
+  const response = await fetchTransactions(currentPage.value, perPage, {
+    includeHistory: includeHistory.value
+  })
   if (response) {
     totalPages.value = response.meta?.last_page || 1
   }
@@ -54,6 +57,12 @@ watch([typeFilter, statusFilter], () => {
   currentPage.value = 1
   loadTransactions()
 })
+
+const enableHistory = async () => {
+  if (!historyAvailable.value) return
+  includeHistory.value = true
+  await loadTransactions()
+}
 
 // Pagination
 const goToPage = (page: number) => {
@@ -252,47 +261,67 @@ const filteredTransactions = computed(() => {
 
     <!-- Pagination -->
     <div
-      v-if="totalPages > 1"
-      class="flex items-center justify-center gap-2"
+      v-if="totalPages > 1 || historyAvailable"
+      class="flex flex-col items-center justify-center gap-3"
     >
-      <UButton
-        variant="outline"
-        color="neutral"
-        size="sm"
-        :disabled="currentPage === 1"
-        @click="goToPage(currentPage - 1)"
+      <div
+        v-if="totalPages > 1"
+        class="flex items-center justify-center gap-2"
       >
-        <UIcon
-          name="i-lucide-chevron-left"
-          class="w-4 h-4"
-        />
-      </UButton>
-
-      <div class="flex items-center gap-1">
         <UButton
-          v-for="page in Math.min(5, totalPages)"
-          :key="page"
-          :variant="currentPage === page ? 'solid' : 'outline'"
-          :color="currentPage === page ? 'primary' : 'neutral'"
+          variant="outline"
+          color="neutral"
           size="sm"
-          @click="goToPage(page)"
+          :disabled="currentPage === 1"
+          @click="goToPage(currentPage - 1)"
         >
-          {{ page }}
+          <UIcon
+            name="i-lucide-chevron-left"
+            class="w-4 h-4"
+          />
+        </UButton>
+
+        <div class="flex items-center gap-1">
+          <UButton
+            v-for="page in Math.min(5, totalPages)"
+            :key="page"
+            :variant="currentPage === page ? 'solid' : 'outline'"
+            :color="currentPage === page ? 'primary' : 'neutral'"
+            size="sm"
+            @click="goToPage(page)"
+          >
+            {{ page }}
+          </UButton>
+        </div>
+
+        <UButton
+          variant="outline"
+          color="neutral"
+          size="sm"
+          :disabled="currentPage === totalPages"
+          @click="goToPage(currentPage + 1)"
+        >
+          <UIcon
+            name="i-lucide-chevron-right"
+            class="w-4 h-4"
+          />
         </UButton>
       </div>
 
-      <UButton
-        variant="outline"
-        color="neutral"
-        size="sm"
-        :disabled="currentPage === totalPages"
-        @click="goToPage(currentPage + 1)"
+      <div
+        v-if="historyAvailable && !includeHistory && currentPage === totalPages"
+        class="flex items-center justify-center"
       >
-        <UIcon
-          name="i-lucide-chevron-right"
-          class="w-4 h-4"
-        />
-      </UButton>
+        <UButton
+          variant="soft"
+          color="primary"
+          size="sm"
+          class="rounded-full px-5"
+          @click="enableHistory"
+        >
+          Browse older transactions
+        </UButton>
+      </div>
     </div>
   </div>
 </template>

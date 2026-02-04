@@ -24,7 +24,7 @@ final class RegisterController extends Controller
         $this->otpManager = new OtpManager(
             cache()->store(),
             app('hash'),
-            config('app.env') !== 'production'
+            (bool) config('services.sms.options.demo_mode', false)
         );
     }
 
@@ -94,9 +94,11 @@ final class RegisterController extends Controller
                 ],
             ], 201);
         } catch (\Exception $e) {
+            \Log::error('Registration failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Registration failed: '.$e->getMessage(),
+                'message' => 'Registration failed. Please try again.',
             ], 500);
         }
     }
@@ -167,9 +169,11 @@ final class RegisterController extends Controller
                 ],
             ], 201);
         } catch (\Exception $e) {
+            \Log::error('Email registration failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Registration failed: '.$e->getMessage(),
+                'message' => 'Registration failed. Please try again.',
             ], 500);
         }
     }

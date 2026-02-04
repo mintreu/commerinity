@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Casts\IntegrationTypeCast;
+use App\Models\Integration;
 use App\Models\Sms\SmsLog;
 use App\Models\Sms\SmsProvider;
 use App\Models\Sms\SmsTemplate;
@@ -522,25 +524,26 @@ describe('SmsService', function () {
     });
 
     it('uses database provider when available', function () {
-        $dbProvider = SmsProvider::create([
-            'name' => 'DB Log Provider',
-            'slug' => 'db-log',
-            'driver' => 'log',
+        Integration::create([
+            'name' => 'SMS Log Provider',
+            'slug' => 'sms-log',
+            'type' => IntegrationTypeCast::SMS,
+            'credentials' => [],
+            'settings' => [
+                'driver' => 'log',
+            ],
+            'is_sandbox' => false,
             'is_active' => true,
             'is_default' => true,
-            'priority' => 1,
-            'balance' => 100.0,
-            'per_sms_cost' => 0.25,
         ]);
 
         $service = new SmsService;
 
-        expect($service->getActiveProviderSlug())->toBe('db-log');
+        expect($service->getActiveProviderSlug())->toBe('log');
     });
 
     it('falls back to config provider when no DB providers', function () {
-        // Ensure no DB providers
-        SmsProvider::query()->delete();
+        Integration::query()->where('type', IntegrationTypeCast::SMS->value)->delete();
 
         $service = new SmsService;
 

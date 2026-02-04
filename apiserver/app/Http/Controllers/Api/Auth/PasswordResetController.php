@@ -23,7 +23,7 @@ final class PasswordResetController extends Controller
         $this->otpManager = new OtpManager(
             cache()->store(),
             app('hash'),
-            config('app.env') !== 'production'
+            (bool) config('services.sms.options.demo_mode', false)
         );
     }
 
@@ -61,13 +61,15 @@ final class PasswordResetController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Password reset link sent to your email',
-                'demo' => config('app.env') !== 'production',
-                'token' => config('app.env') !== 'production' ? $token : null,
+                'demo' => (bool) config('services.sms.options.demo_mode', false),
+                'token' => config('services.sms.options.demo_mode', false) ? $token : null,
             ]);
         } catch (\Exception $e) {
+            \Log::error('Password reset email failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send reset link: '.$e->getMessage(),
+                'message' => 'Failed to send reset link. Please try again.',
             ], 500);
         }
     }
@@ -88,26 +90,27 @@ final class PasswordResetController extends Controller
                 ], 404);
             }
 
-            // Generate and send OTP
-            $otp = $this->otpManager->generate($mobile);
-
-            // TODO: Send actual SMS in production
+            $result = $this->otpManager->sendOtp($mobile, OtpManager::CREDENTIAL_MOBILE, 'password_reset');
 
             return response()->json([
-                'success' => true,
-                'message' => 'OTP sent successfully',
-                'demo' => config('app.env') !== 'production',
-                'otp' => config('app.env') !== 'production' ? $otp : null,
-            ]);
+                'success' => $result['success'] ?? false,
+                'message' => $result['message'] ?? 'OTP send failed',
+                'demo' => $result['demo'] ?? false,
+                'otp' => $result['otp'] ?? null,
+            ], ($result['success'] ?? false) ? 200 : (int) ($result['code'] ?? 422));
         } catch (\RuntimeException $e) {
+            \Log::warning('Password reset OTP failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], $e->getCode() ?: 422);
+                'message' => 'Something went wrong. Please try again.',
+            ], 422);
         } catch (\Exception $e) {
+            \Log::error('Password reset OTP exception', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send OTP: '.$e->getMessage(),
+                'message' => 'Failed to send OTP. Please try again.',
             ], 500);
         }
     }
@@ -175,9 +178,11 @@ final class PasswordResetController extends Controller
                 'message' => 'Password reset successfully',
             ]);
         } catch (\Exception $e) {
+            \Log::error('Password reset failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Password reset failed: '.$e->getMessage(),
+                'message' => 'Password reset failed. Please try again.',
             ], 500);
         }
     }
@@ -229,17 +234,21 @@ final class PasswordResetController extends Controller
                 'message' => 'Password reset successfully',
             ]);
         } catch (\RuntimeException $e) {
+            \Log::warning('Password reset OTP verification failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Invalid or expired OTP',
                 'errors' => [
-                    'otp' => [$e->getMessage()],
+                    'otp' => ['Invalid or expired OTP'],
                 ],
-            ], $e->getCode() ?: 422);
+            ], 422);
         } catch (\Exception $e) {
+            \Log::error('Password reset mobile failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Password reset failed: '.$e->getMessage(),
+                'message' => 'Password reset failed. Please try again.',
             ], 500);
         }
     }

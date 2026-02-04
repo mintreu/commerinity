@@ -93,6 +93,7 @@ export const useWallet = () => {
   const wallet = ref<WalletData | null>(null)
   const stats = ref<WalletStats | null>(null)
   const transactions = ref<Transaction[]>([])
+  const historyAvailable = ref(false)
   const securityQuestions = ref<SecurityQuestion[]>([])
   const userSecurityQuestions = ref<SecurityQuestion[]>([])
   const loading = ref(false)
@@ -127,12 +128,19 @@ export const useWallet = () => {
   }
 
   // Fetch transactions
-  const fetchTransactions = async (page = 1, perPage = 20) => {
+  const fetchTransactions = async (
+    page = 1,
+    perPage = 20,
+    options: { includeHistory?: boolean } = {}
+  ) => {
     try {
+      const includeHistory = options.includeHistory === true
+      const historyParam = includeHistory ? '&include_history=1' : ''
       const response = await useSanctumFetch(
-        `${config.public.apiBase}/api/wallet/transactions?page=${page}&per_page=${perPage}`
+        `${config.public.apiBase}/api/wallet/transactions?page=${page}&per_page=${perPage}${historyParam}`
       )
       transactions.value = response.data || []
+      historyAvailable.value = Boolean(response.history_available)
       return response
     } catch (e: any) {
       console.error('Failed to fetch transactions:', e)
@@ -381,6 +389,7 @@ export const useWallet = () => {
     wallet,
     stats,
     transactions,
+    historyAvailable,
     securityQuestions,
     userSecurityQuestions,
     loading,

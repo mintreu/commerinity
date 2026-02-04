@@ -26,7 +26,7 @@ final class UserAuthService implements \App\Contracts\Services\UserAuthServiceIn
         $this->otpManager = new OtpManager(
             $this->cache,
             $this->hasher,
-            config('app.env') !== 'production'
+            (bool) config('services.sms.options.demo_mode', false)
         );
     }
 

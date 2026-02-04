@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\VerifyOtpRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 final class OtpController extends Controller
 {
@@ -19,7 +20,7 @@ final class OtpController extends Controller
         $this->otpManager = new OtpManager(
             cache()->store(),
             app('hash'),
-            config('app.env') !== 'production'
+            (bool) config('services.sms.options.demo_mode', false)
         );
     }
 
@@ -30,23 +31,23 @@ final class OtpController extends Controller
     {
         try {
             $credential = $request->input('value');
+            $type = $request->input('type');
 
-            $otp = $this->otpManager->generate($credential);
-
-            // TODO: Send actual SMS/Email in production
-            // For now, return OTP in demo mode
+            $result = $this->otpManager->sendOtp($credential, $type);
 
             return response()->json([
-                'success' => true,
-                'message' => 'OTP sent successfully',
-                'demo' => config('app.env') !== 'production',
-                'otp' => config('app.env') !== 'production' ? $otp : null,
-            ]);
+                'success' => $result['success'] ?? false,
+                'message' => $result['message'] ?? 'OTP send failed',
+                'demo' => $result['demo'] ?? false,
+                'otp' => $result['otp'] ?? null,
+            ], ($result['success'] ?? false) ? 200 : (int) ($result['code'] ?? 422));
         } catch (\RuntimeException $e) {
+            Log::warning('OTP send failed', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], $e->getCode() ?: 422);
+                'message' => 'Something went wrong. Please try again.',
+            ], 422);
         }
     }
 
@@ -78,11 +79,17 @@ final class OtpController extends Controller
                 'message' => 'OTP expired or invalid',
             ], 422);
         } catch (\RuntimeException $e) {
+            Log::warning('OTP verify failed', ['error' => $e->getMessage()]);
+            $status = $e->getCode() === 429 ? 429 : 422;
+            $message = $status === 429
+                ? 'Too many attempts. Please request a new OTP.'
+                : 'Something went wrong. Please try again.';
+
             return response()->json([
                 'success' => false,
                 'valid' => false,
-                'message' => $e->getMessage(),
-            ], $e->getCode() ?: 422);
+                'message' => $message,
+            ], $status);
         }
     }
 }

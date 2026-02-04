@@ -10,6 +10,7 @@ use App\Http\Requests\OnboardingProfileRequest;
 use App\Services\OnboardingVerifierService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 final class OnboardingController extends Controller
 {
@@ -20,7 +21,7 @@ final class OnboardingController extends Controller
         $this->otpManager = new OtpManager(
             cache()->store(),
             app('hash'),
-            config('app.env') !== 'production'
+            (bool) config('services.sms.options.demo_mode', false)
         );
     }
 
@@ -55,16 +56,43 @@ final class OnboardingController extends Controller
      */
     public function verifyContact(Request $request): JsonResponse
     {
-        $request->validate([
-            'type' => 'required|in:email,mobile',
-            'value' => 'required|string',
-            'otp' => 'required|string|size:6',
-        ]);
+        $user = $request->user();
+
+        $rules = [
+            'type' => ['required', 'in:email,mobile'],
+            'value' => ['required', 'string'],
+            'otp' => ['required', 'string', 'size:6'],
+        ];
 
         $type = $request->input('type');
+        if ($type === 'email') {
+            $rules['value'][] = 'email';
+            $rules['value'][] = Rule::unique('users', 'email')->ignore($user?->id);
+        } else {
+            $rules['value'][] = 'regex:/^\+[1-9]\d{1,14}$/';
+            $rules['value'][] = Rule::unique('users', 'mobile')->ignore($user?->id);
+        }
+
+        $request->validate($rules, [
+            'value.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+        ]);
+
         $value = $request->input('value');
         $otp = $request->input('otp');
-        $user = $request->user();
+
+        if ($type === 'email' && $user->email === $value && $user->email_verified_at) {
+            return response()->json([
+                'message' => 'Email verified and added successfully',
+                'user' => $user->fresh(),
+            ]);
+        }
+
+        if ($type === 'mobile' && $user->mobile === $value && $user->mobile_verified_at) {
+            return response()->json([
+                'message' => 'Mobile verified and added successfully',
+                'user' => $user->fresh(),
+            ]);
+        }
 
         // Verify OTP
         if (! $this->otpManager->verify($value, $otp)) {

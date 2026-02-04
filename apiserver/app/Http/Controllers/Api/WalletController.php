@@ -9,14 +9,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
 use App\Http\Resources\WalletResource;
 use App\Models\Ecommerce\Order;
-use App\Models\Integration;
 use App\Services\MoneyService;
-use App\Services\TransactionService\WalletService;
 use App\Services\UserServices\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Minishlink\WebPush\Subscription;
@@ -58,11 +56,73 @@ final class WalletController extends Controller
         $user = $request->user();
         $wallet = $this->walletService->getOrCreateWallet($user);
 
-        $transactions = $wallet->transactions()
-            ->latest()
-            ->paginate($request->input('per_page', 20));
+        $perPage = min(max((int) $request->input('per_page', 20), 1), 100);
+        $page = max((int) $request->input('page', 1), 1);
+        $includeHistory = filter_var($request->input('include_history', false), FILTER_VALIDATE_BOOL);
+        $cutoff = now()->subYear();
 
-        return TransactionResource::collection($transactions);
+        $recentQuery = $wallet->transactions()
+            ->where('created_at', '>=', $cutoff);
+
+        if (! $includeHistory) {
+            $transactions = $recentQuery->latest()->paginate($perPage);
+            $hasHistory = $wallet->historicalTransactions()->exists();
+
+            return TransactionResource::collection($transactions)
+                ->additional(['history_available' => $hasHistory]);
+        }
+
+        $recentCount = (clone $recentQuery)->count();
+
+        $historicalQuery = $wallet->historicalTransactions()
+            ->where('created_at', '<', $cutoff);
+
+        $historicalCount = (clone $historicalQuery)->count();
+        $total = $recentCount + $historicalCount;
+
+        $offset = ($page - 1) * $perPage;
+        $items = collect();
+
+        if ($offset < $recentCount) {
+            $recent = (clone $recentQuery)
+                ->latest()
+                ->skip($offset)
+                ->take($perPage)
+                ->get();
+
+            $items = $items->concat($recent);
+            $remaining = $perPage - $recent->count();
+
+            if ($remaining > 0) {
+                $historical = (clone $historicalQuery)
+                    ->latest()
+                    ->take($remaining)
+                    ->get();
+
+                $items = $items->concat($historical);
+            }
+        } else {
+            $historicalOffset = $offset - $recentCount;
+            $items = (clone $historicalQuery)
+                ->latest()
+                ->skip($historicalOffset)
+                ->take($perPage)
+                ->get();
+        }
+
+        $paginator = new LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return TransactionResource::collection($paginator)
+            ->additional(['history_available' => $historicalCount > 0]);
     }
 
     /**
@@ -92,7 +152,6 @@ final class WalletController extends Controller
             ],
         ]);
     }
-
 
     /**
      * Set up wallet PIN for first time (no verification required).
@@ -152,8 +211,15 @@ final class WalletController extends Controller
         }
 
         try {
-            $this->otpManager->generate($user->mobile);
+            $result = $this->otpManager->sendOtp($user->mobile, OtpManager::CREDENTIAL_MOBILE, 'wallet_pin_change');
             RateLimiter::hit($rateLimitKey, 3600); // 1 hour window
+
+            if (! ($result['success'] ?? false)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'OTP send failed',
+                ], (int) ($result['code'] ?? 422));
+            }
 
             return response()->json([
                 'success' => true,
@@ -282,7 +348,6 @@ final class WalletController extends Controller
             'message' => 'PIN verified',
         ]);
     }
-
 
     /**
      * Send money to another user (requires PIN verification).
@@ -664,7 +729,6 @@ final class WalletController extends Controller
         return Hash::check('123456', $wallet->pin);
     }
 
-
     /**
      * Mask credential for display.
      */
@@ -692,7 +756,7 @@ final class WalletController extends Controller
     {
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'], // ₹1 to ₹1,00,000
-           // 'payment_method' => ['nullable', 'string', 'in:wallet,cashfree,razorpay,upi,card'], // Optional payment method
+            // 'payment_method' => ['nullable', 'string', 'in:wallet,cashfree,razorpay,upi,card'], // Optional payment method
         ]);
 
         $user = $request->user();
@@ -703,10 +767,8 @@ final class WalletController extends Controller
         $amountInPaisa = (int) round($validated['amount'] * 100);
 
         // Determine payment method (default: cashfree)
-        $paymentMethod = \App\Casts\PaymentMethodCast::tryFrom($validated['payment_method']?? 'cashfree')
+        $paymentMethod = \App\Casts\PaymentMethodCast::tryFrom($validated['payment_method'] ?? 'cashfree')
             ?? \App\Casts\PaymentMethodCast::CASHFREE;
-
-
 
         try {
             // Create transaction using HasTransaction trait
@@ -721,13 +783,12 @@ final class WalletController extends Controller
                 expireAfterMinutes: 60
             );
 
-
             return response()->json([
                 'success' => true,
                 'message' => 'Checkout initiated successfully',
                 'data' => [
                     'transaction_id' => $transaction->uuid,
-                    'checkout_url' => route('checkout',['transaction' => $transaction->uuid]),  // always checkout with apiserver side
+                    'checkout_url' => route('checkout', ['transaction' => $transaction->uuid]),  // always checkout with apiserver side
                     'amount' => $transaction->amount,
                     'amount_formatted' => MoneyService::format($transaction->amount),
                     'payment_method' => $transaction->payment_method->value,

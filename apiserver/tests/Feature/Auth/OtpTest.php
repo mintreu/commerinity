@@ -265,7 +265,7 @@ test('rate limits verification attempts - 5 attempts', function () {
     ]);
 
     $response->assertStatus(429)
-        ->assertJson(['message' => 'Maximum OTP attempts exceeded. Please request a new OTP.']);
+        ->assertJson(['message' => 'Too many attempts. Please request a new OTP.']);
 });
 
 test('verification rate limit resets after successful verification', function () {

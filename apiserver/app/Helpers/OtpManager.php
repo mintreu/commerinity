@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
+use App\Casts\IntegrationTypeCast;
+use App\Models\Admin;
+use App\Models\Integration;
 use App\Models\User;
+use App\Notifications\GeneralNotification;
 use App\Notifications\OtpNotification;
 use App\Services\IntegrationServices\Sms\SmsService;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use RuntimeException;
 
 final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
@@ -43,7 +48,7 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         $this->validateCredential($credential);
         $this->enforceRateLimit($credential);
 
-        if ($this->isDemoMode) {
+        if ($this->shouldUseDemoMode()) {
             return $this->generateDemo($credential);
         }
 
@@ -68,18 +73,39 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         }
 
         try {
+            if ($this->shouldUseDemoMode()) {
+                $otp = $this->generateDemoOtp($credential);
+
+                return [
+                    'success' => true,
+                    'otp' => $otp,
+                    'demo' => true,
+                    'message' => 'OTP sent successfully',
+                ];
+            }
+
             $otp = $this->generate($credential);
 
             if ($credentialType === self::CREDENTIAL_MOBILE) {
-                $result = $this->sendOtpViaSms($credential, (string) $otp);
-            } else {
-                $result = $this->sendOtpViaEmail($credential, (string) $otp, $purpose);
+                $response = $this->sendOtpViaSms($credential, (string) $otp);
+
+                if ($response->success) {
+                    return [
+                        'success' => true,
+                        'demo' => false,
+                        'message' => 'OTP sent successfully',
+                    ];
+                }
+
+                return $this->handleSmsFailure($credential, $response);
             }
+
+            $result = $this->sendOtpViaEmail($credential, (string) $otp, $purpose);
 
             if ($result) {
                 return [
                     'success' => true,
-                    'otp' => $this->isDemoMode ? $otp : null, // Only return OTP in demo mode
+                    'demo' => false,
                     'message' => 'OTP sent successfully',
                 ];
             }
@@ -87,26 +113,30 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
             return ['success' => false, 'message' => 'Failed to send OTP'];
 
         } catch (RuntimeException $e) {
-            return ['success' => false, 'message' => $e->getMessage()];
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'code' => $e->getCode() ?: 422,
+            ];
         }
     }
 
     /**
      * Send OTP via SMS
      */
-    private function sendOtpViaSms(string $phone, string $otp): bool
+    private function sendOtpViaSms(string $phone, string $otp): \App\Services\IntegrationServices\Sms\DTOs\SmsResponse
     {
         $smsService = app(SmsService::class);
         $result = $smsService->sendOtp($phone, $otp);
 
-        if (! $result['success']) {
+        if (! $result->success) {
             Log::warning('SMS OTP delivery failed', [
                 'phone' => $this->maskCredential($phone),
-                'error' => $result['message'] ?? 'Unknown error',
+                'error' => $result->message ?? 'Unknown error',
             ]);
         }
 
-        return $result['success'];
+        return $result;
     }
 
     /**
@@ -192,6 +222,14 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         ]);
 
         return self::DEMO_OTP;
+    }
+
+    private function generateDemoOtp(string $credential): int
+    {
+        $this->validateCredential($credential);
+        $this->enforceRateLimit($credential);
+
+        return $this->generateDemo($credential);
     }
 
     private function enforceRateLimit(string $credential): void
@@ -299,5 +337,60 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
     public function isDemoMode(): bool
     {
         return $this->isDemoMode;
+    }
+
+    private function shouldUseDemoMode(): bool
+    {
+        $integration = Integration::query()
+            ->ofType(IntegrationTypeCast::SMS->value)
+            ->default()
+            ->first();
+
+        if (! $integration) {
+            return true;
+        }
+
+        $settings = $integration->settings ?? [];
+        if (array_key_exists('demo', $settings)) {
+            return (bool) $settings['demo'];
+        }
+
+        return $this->isDemoMode;
+    }
+
+    private function handleSmsFailure(string $credential, \App\Services\IntegrationServices\Sms\DTOs\SmsResponse $response): array
+    {
+        $user = User::query()->where('mobile', $credential)->first();
+
+        $message = 'OTP delivery failed. Please try again later.';
+        if (in_array($response->errorCode, ['INSUFFICIENT_BALANCE', 'PROVIDER_UNAVAILABLE'], true)) {
+            if ($user?->email) {
+                $message = 'SMS delivery failed. Please try using email OTP.';
+            }
+        }
+
+        $this->notifyAdminsOfSmsFailure($credential, $response);
+
+        return [
+            'success' => false,
+            'demo' => false,
+            'message' => $message,
+        ];
+    }
+
+    private function notifyAdminsOfSmsFailure(
+        string $credential,
+        \App\Services\IntegrationServices\Sms\DTOs\SmsResponse $response
+    ): void {
+        $admins = Admin::query()->get();
+
+        if ($admins->isEmpty()) {
+            return;
+        }
+
+        Notification::send($admins, GeneralNotification::alert(
+            title: 'SMS OTP delivery failed',
+            message: 'Failed to send OTP for '.$this->maskCredential($credential).': '.$response->message,
+        ));
     }
 }

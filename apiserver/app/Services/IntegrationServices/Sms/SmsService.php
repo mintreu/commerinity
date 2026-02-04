@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\IntegrationServices\Sms;
 
+use App\Casts\IntegrationTypeCast;
+use App\Models\Integration;
 use App\Models\Sms\SmsLog;
 use App\Models\Sms\SmsProvider;
 use App\Services\IntegrationServices\Sms\Contracts\SmsProviderInterface;
@@ -331,18 +333,7 @@ final class SmsService
      */
     private function getDefaultProvider(): ?SmsProvider
     {
-        // Check for database provider first
-        $dbProvider = SmsProvider::query()
-            ->default()
-            ->active()
-            ->first();
-
-        if ($dbProvider) {
-            return $dbProvider;
-        }
-
-        // Fall back to config-based provider
-        return $this->getConfigBasedProvider();
+        return $this->getActiveProviders()->first();
     }
 
     /**
@@ -356,15 +347,26 @@ final class SmsService
             return $this->providers;
         }
 
-        $this->providers = SmsProvider::active()->get();
+        $integrations = Integration::query()
+            ->ofType(IntegrationTypeCast::SMS->value)
+            ->orderByDesc('is_default')
+            ->orderBy('id')
+            ->get();
 
-        // If no database providers, create from config
-        if ($this->providers->isEmpty()) {
-            $configProvider = $this->getConfigBasedProvider();
-            if ($configProvider) {
-                $this->providers = collect([$configProvider]);
-            }
+        if ($integrations->isNotEmpty()) {
+            $activeIntegrations = $integrations->where('is_active', true);
+
+            $this->providers = $activeIntegrations
+                ->map(fn (Integration $integration) => $this->resolveProviderFromIntegration($integration))
+                ->filter()
+                ->values();
+
+            return $this->providers;
         }
+
+        // If no integrations exist, fall back to config-based provider
+        $configProvider = $this->getConfigBasedProvider();
+        $this->providers = $configProvider ? collect([$configProvider]) : collect();
 
         return $this->providers;
     }
@@ -442,6 +444,59 @@ final class SmsService
 
         // Don't persist
         $provider->exists = false;
+
+        return $provider;
+    }
+
+    /**
+     * Resolve an SMS provider model from an Integration record.
+     */
+    private function resolveProviderFromIntegration(Integration $integration): ?SmsProvider
+    {
+        $settings = $integration->settings ?? [];
+        $credentials = $integration->credentials ?? [];
+
+        $driver = $settings['driver']
+            ?? $settings['provider']
+            ?? $integration->slug;
+
+        $providerSlug = $settings['provider_slug'] ?? $driver;
+
+        $provider = SmsProvider::query()->firstOrNew(['slug' => $providerSlug]);
+
+        $provider->fill([
+            'name' => $integration->name,
+            'slug' => $providerSlug,
+            'driver' => $driver,
+            'api_key' => $credentials['api_key']
+                ?? $credentials['key']
+                ?? $settings['api_key']
+                ?? config('services.sms.fast2sms.api_key'),
+            'api_secret' => $credentials['api_secret']
+                ?? $credentials['secret']
+                ?? $settings['api_secret']
+                ?? config('services.sms.fast2sms.api_secret'),
+            'sender_id' => $credentials['sender_id']
+                ?? $settings['sender_id']
+                ?? config('services.sms.fast2sms.sender_id'),
+            'entity_id' => $credentials['entity_id']
+                ?? $settings['entity_id']
+                ?? config('services.sms.fast2sms.entity_id'),
+            'per_sms_cost' => (float) ($settings['per_sms_cost']
+                ?? config('services.sms.fast2sms.per_sms_cost', 0.25)),
+            'min_balance_threshold' => (float) ($settings['min_balance_threshold']
+                ?? config('services.sms.fast2sms.min_balance_threshold', 10.0)),
+            'balance' => (float) ($settings['balance'] ?? $provider->balance ?? 999999.99),
+            'is_active' => $integration->is_active,
+            'is_default' => $integration->is_default,
+            'priority' => (int) ($settings['priority'] ?? $provider->priority ?? 1),
+        ]);
+
+        if (! $provider->exists) {
+            $provider->save();
+        } else {
+            $provider->save();
+        }
 
         return $provider;
     }

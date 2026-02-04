@@ -5,10 +5,12 @@ declare(strict_types=1);
 use App\Helpers\OtpManager;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    Cache::flush();
     // Create user who signed up via mobile (simulating pre-onboarding state)
     // Let gender use default value from migration (OTHER)
     $this->userWithMobile = User::factory()->create([
@@ -126,6 +128,30 @@ test('can verify and add email during onboarding (optional)', function () {
     expect($this->userWithMobile->email_verified_at)->not->toBeNull();
 });
 
+test('cannot verify email already used by another user', function () {
+    User::factory()->create([
+        'email' => 'taken@example.com',
+        'email_verified_at' => now(),
+    ]);
+
+    $otpManager = new OtpManager(
+        cache()->store(),
+        app('hash'),
+        true
+    );
+    $otp = $otpManager->generate('taken@example.com');
+
+    $response = $this->actingAs($this->userWithMobile)
+        ->postJson('/api/onboarding/verify-contact', [
+            'type' => 'email',
+            'value' => 'taken@example.com',
+            'otp' => (string) $otp,
+        ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['value']);
+});
+
 test('can verify and add mobile during onboarding (required for email users)', function () {
     // Generate OTP
     $otpManager = new OtpManager(
@@ -149,6 +175,30 @@ test('can verify and add mobile during onboarding (required for email users)', f
     $this->userWithEmail->refresh();
     expect($this->userWithEmail->mobile)->toBe($mobile);
     expect($this->userWithEmail->mobile_verified_at)->not->toBeNull();
+});
+
+test('cannot verify mobile already used by another user', function () {
+    User::factory()->create([
+        'mobile' => '+919999000001',
+        'mobile_verified_at' => now(),
+    ]);
+
+    $otpManager = new OtpManager(
+        cache()->store(),
+        app('hash'),
+        true
+    );
+    $otp = $otpManager->generate('+919999000001');
+
+    $response = $this->actingAs($this->userWithEmail)
+        ->postJson('/api/onboarding/verify-contact', [
+            'type' => 'mobile',
+            'value' => '+919999000001',
+            'otp' => (string) $otp,
+        ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['value']);
 });
 
 test('cannot complete onboarding without mobile verification', function () {
@@ -240,7 +290,7 @@ test('cannot verify contact with invalid OTP', function () {
     $response = $this->actingAs($this->userWithMobile)
         ->postJson('/api/onboarding/verify-contact', [
             'type' => 'email',
-            'value' => 'test@example.com',
+            'value' => 'invalid-otp@example.com',
             'otp' => '000000',
         ]);
 

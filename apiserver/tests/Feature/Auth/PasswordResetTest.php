@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    config(['services.sms.options.demo_mode' => true]);
+    Cache::flush();
+});
 
 // ========================================
 // Forgot Password Tests
