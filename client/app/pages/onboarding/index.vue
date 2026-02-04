@@ -183,6 +183,18 @@
               <div v-else />
 
               <div class="flex items-center gap-3">
+                <!-- Skip Button (Address) -->
+                <UButton
+                  v-if="currentStep === 3 && !addressSkipped"
+                  variant="ghost"
+                  color="neutral"
+                  size="lg"
+                  :disabled="submitting"
+                  @click="handleAddressSkip"
+                >
+                  Skip Address
+                </UButton>
+
                 <!-- Skip Button (KYC only) -->
                 <UButton
                   v-if="currentStep === 4 && !kycData?.skipped"
@@ -264,12 +276,14 @@ const kycStep = ref()
 const loading = ref(true)
 const submitting = ref(false)
 const currentStep = ref(0)
+const onboardingStatus = ref<any>(null)
 
 // Step validity states
 const profileValid = ref(false)
 const contactValid = ref(false)
 const addressValid = ref(false)
 const kycValid = ref(true) // KYC is optional, default true
+const addressSkipped = ref(false)
 
 // Step data
 const profileData = ref<Record<string, unknown>>({})
@@ -290,6 +304,11 @@ onMounted(async () => {
   // Load user data
   try {
     await refreshUser()
+    if ((typedUser.value as User | null)?.onboarded) {
+      router.push('/dashboard')
+      return
+    }
+    await fetchOnboardingStatus()
   } catch {
     // User not loaded, redirect to login
     router.push('/auth/login')
@@ -397,6 +416,9 @@ const currentStepRef = computed(() => {
 
 // Progress calculation
 const progressPercent = computed(() => {
+  if (onboardingStatus.value?.progress !== undefined) {
+    return onboardingStatus.value.progress
+  }
   return ((currentStep.value + 1) / stepItems.value.length) * 100
 })
 
@@ -406,14 +428,14 @@ const canProceed = computed(() => {
     case 0: return true // Welcome - always can proceed
     case 1: return profileValid.value
     case 2: return contactValid.value
-    case 3: return addressValid.value
+    case 3: return addressValid.value || addressSkipped.value
     case 4: return kycValid.value
     default: return false
   }
 })
 
 // Can skip entire onboarding
-const canSkip = computed(() => currentStep.value === 0)
+const canSkip = computed(() => false)
 
 // Data update handlers
 const handleProfileUpdate = (data: Record<string, unknown>) => {
@@ -450,14 +472,20 @@ const handleCurrentStepValidUpdate = (valid: boolean) => {
   }
 }
 
-const handleContactVerified = () => {
+const handleContactVerified = async () => {
   // Refresh user to get updated verification status
-  refreshUser()
+  await refreshUser()
+  await fetchOnboardingStatus()
 }
 
 const handleKycSkip = () => {
   kycData.value = { skipped: true }
   kycValid.value = true
+}
+
+const handleAddressSkip = () => {
+  addressSkipped.value = true
+  addressValid.value = true
 }
 
 // Navigation
@@ -468,7 +496,9 @@ const nextStep = async () => {
   if (currentStep.value === 1) {
     await saveProfile()
   } else if (currentStep.value === 3) {
-    await saveAddress()
+    if (!addressSkipped.value) {
+      await saveAddress()
+    }
   }
 
   if (currentStep.value < stepItems.value.length - 1) {
@@ -488,14 +518,61 @@ const handleSkip = () => {
 }
 
 // API calls
+const fetchOnboardingStatus = async () => {
+  const response = await useSanctumFetch(`${config.public.apiBase}/api/onboarding/status`)
+  onboardingStatus.value = response
+
+  if (response?.steps) {
+    profileValid.value = response.steps.profile?.complete ?? false
+    contactValid.value = response.steps.mobile?.complete ?? false
+    addressValid.value = response.steps.address?.complete ?? false
+    kycValid.value = response.steps.kyc?.complete ?? true
+  }
+
+  const nextStep = response?.next_step as string | null
+  if (nextStep) {
+    currentStep.value = mapStepToIndex(nextStep)
+  }
+}
+
+const mapStepToIndex = (step: string): number => {
+  switch (step) {
+    case 'profile': return 1
+    case 'mobile':
+    case 'email':
+      return 2
+    case 'address': return 3
+    case 'kyc':
+    case 'avatar':
+      return 4
+    default: return 0
+  }
+}
+
 const saveProfile = async () => {
   submitting.value = true
   try {
+    const payload = { ...profileData.value }
+    const avatarFile = (payload as { avatar?: File | null }).avatar || null
+    delete (payload as { avatar?: File | null }).avatar
+
     await useSanctumFetch(`${config.public.apiBase}/api/onboarding/profile`, {
       method: 'PUT',
-      body: profileData.value
+      body: payload
     })
+
+    if (avatarFile) {
+      const formData = new FormData()
+      formData.append('avatar', avatarFile)
+
+      await useSanctumFetch(`${config.public.apiBase}/api/user/avatar`, {
+        method: 'POST',
+        body: formData
+      })
+    }
+
     await refreshUser()
+    await fetchOnboardingStatus()
   } catch (error: unknown) {
     const err = error as { data?: { message?: string } }
     toast.add({
@@ -544,6 +621,8 @@ const saveAddress = async () => {
       method: 'POST',
       body: payload
     })
+
+    await fetchOnboardingStatus()
   } catch (error: unknown) {
     const err = error as { data?: { message?: string } }
     toast.add({
@@ -586,6 +665,7 @@ const completeOnboarding = async () => {
     })
 
     await refreshUser()
+    await fetchOnboardingStatus()
 
     toast.add({
       title: 'Welcome!',

@@ -19,7 +19,7 @@
           </div>
           <div>
             <h1 class="gradient-text-primary text-3xl font-bold">
-              Commerinity Pro
+              {{ config.public.appName }}
             </h1>
             <p class="text-slate-600 dark:text-slate-400 font-medium">Your Shopping Destination</p>
           </div>
