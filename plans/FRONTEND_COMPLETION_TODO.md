@@ -12,11 +12,7 @@ This phase focuses on building the foundational pieces required for a robust and
     -   **Info:** Create a dedicated utility for handling API requests (e.g., using Nuxt's built-in `ofetch`).
     -   **Action:** Configure a base client in `client/utils/api.ts` or similar. It should automatically include the API base URL (`/api`), handle authentication tokens (if any), and standardize error handling.
 
--   [ ] **1.2: Implement State Management (Pinia)**
-    -   **Info:** The dashboards will handle a lot of shared data (user info, stats, lists). Pinia is the official state management library for Vue and is ideal for this.
-    -   **Action:** Install Pinia (`npm install pinia @pinia/nuxt`). Create stores for `auth` (to manage user data) and for each dashboard module (`advisor`, `promoter`, `mentor`).
-
--   [ ] **1.3: Authentication Flow**
+-   [ ] **1.2: Authentication Flow**
     -   **Info:** The application currently lacks login/logout functionality. This is a top priority.
     -   **Action:**
         -   Create `LoginPage.vue` and `RegisterPage.vue`.

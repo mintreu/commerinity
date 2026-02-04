@@ -83,7 +83,23 @@
    - Improve templates + delivery status logging.
 
 16. Nuxt product description (Filament rich editor CSS)
-   - Identify Filament native rich editor output classes.
-   - Add matching CSS in Nuxt (global CSS or Description component).
-   - Ensure product description renders with same styling as admin editor output.
+    - Identify Filament native rich editor output classes.
+    - Add matching CSS in Nuxt (global CSS or Description component).
+    - Ensure product description renders with same styling as admin editor output.
+
+17. Dashboard Part 2 (Frontend Detailed Audit + Completion TODO) — IN PROGRESS
+    - Define DB schema for appointments, challenges, programs, mentees (fields + relations).
+    - Implement migrations + models with proper fillables and relations.
+    - Add API controllers + routes:
+      - GET/POST /api/appointments
+      - GET /api/challenges, /api/challenges/active, /api/challenges/{id}
+      - GET/POST /api/programs, GET /api/programs/{id}
+      - GET /api/mentees
+      - Optional: GET /api/dashboard/{advisor|promoter|mentor} aggregations
+    - Wire dashboards to live APIs (advisor/promoter/mentor) with loading + error states.
+    - Create missing pages:
+      - /appointments, /appointments/new
+      - /challenges, /challenges/[id]
+      - /programs, /programs/new, /programs/[id]
+      - /mentees
 

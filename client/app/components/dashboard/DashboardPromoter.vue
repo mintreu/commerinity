@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { DashboardChallenge } from '~/types/dashboard'
+import { useDashboardChallenges } from '~/composables/useDashboardChallenges'
+import { useNetwork } from '~/composables/useNetwork'
+
 /**
  * Promoter Dashboard Component
  * Team leader dashboard with advanced Affiliate metrics
@@ -11,6 +15,7 @@ const { user } = useUserType()
 const { formatCurrency, formatCompactNumber, formatDate } = useBranding()
 const { fetchTeamGrowth, fetchTransactionVolume, fetchDashboardSummary } = useTrends()
 const { fetchTeam, team } = useNetwork()
+const { fetchActive: fetchActiveChallenges } = useDashboardChallenges()
 
 // Real data - will be replaced with API calls
 const stats = ref({
@@ -26,50 +31,8 @@ const stats = ref({
 
 const loading = ref(true)
 const recentActivity = ref<any[]>([])
-
-// Fetch real data
-onMounted(async () => {
-  try {
-    const [summaryRes, teamRes, activityRes] = await Promise.all([
-      fetchDashboardSummary('month'),
-      fetchTeam(1, 5),
-      loadRecentActivity()
-    ])
-
-    if (summaryRes?.success && summaryRes.data) {
-      const { wallet, team: teamData, commissions } = summaryRes.data
-      stats.value.monthlyEarnings = wallet?.current?.credits || 0
-      stats.value.totalEarnings = commissions?.current?.total || 0
-      stats.value.pendingPayout = commissions?.current?.pending || 0
-      stats.value.teamSize = teamData?.total_members || 0
-      stats.value.activeTeam = teamData?.active_members || 0
-    }
-  } catch (e) {
-    console.error('Failed to load promoter stats:', e)
-  } finally {
-    loading.value = false
-  }
-})
-
-const loadRecentActivity = async () => {
-  try {
-    const response = await useSanctumFetch<any>(`${useRuntimeConfig().public.apiBase}/api/commissions?per_page=5`)
-    if (response?.success) {
-      recentActivity.value = response.data.map((c: any) => ({
-        id: c.uuid,
-        type: 'commission' as const,
-        title: c.type_label,
-        description: `From ${c.from_user?.name || 'Network'}`,
-        amount: c.net_amount / 100,
-        timestamp: new Date(c.created_at)
-      }))
-    }
-  } catch (e) {
-    console.error('Failed to load activity:', e)
-  }
-}
-
-const challenges = ref<any[]>([])
+const challenges = ref<DashboardChallenge[]>([])
+const challengesLoading = ref(false)
 
 const teamPerformance = ref([
   { name: 'Vikash Gupta', role: 'Member', sales: 28500, recruits: 5 },
@@ -107,6 +70,67 @@ const quickActions = computed(() => [
     color: 'purple' as const
   }
 ])
+
+const loadRecentActivity = async () => {
+  try {
+    const response = await useSanctumFetch<any>(`${useRuntimeConfig().public.apiBase}/api/commissions?per_page=5`)
+    if (response?.success) {
+      recentActivity.value = response.data.map((c: any) => ({
+        id: c.uuid,
+        type: 'commission' as const,
+        title: c.type_label,
+        description: `From ${c.from_user?.name || 'Network'}`,
+        amount: c.net_amount / 100,
+        timestamp: new Date(c.created_at)
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to load activity:', e)
+  }
+}
+
+const getChallengeProgress = (challenge: DashboardChallenge) => {
+  const current = Number(challenge.meta?.current ?? 0)
+  const goal = Math.max(1, challenge.goal.value)
+  return Math.min(100, Math.round((current / goal) * 100))
+}
+
+const loadChallenges = async () => {
+  challengesLoading.value = true
+  try {
+    const response = await fetchActiveChallenges()
+    challenges.value = response.data
+  } catch (e) {
+    console.error('Failed to load challenges:', e)
+  } finally {
+    challengesLoading.value = false
+  }
+}
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    const [summaryRes] = await Promise.all([
+      fetchDashboardSummary('month'),
+      fetchTeam(1, 5),
+      loadRecentActivity(),
+      loadChallenges()
+    ])
+
+    if (summaryRes?.success && summaryRes.data) {
+      const { wallet, team: teamData, commissions } = summaryRes.data
+      stats.value.monthlyEarnings = wallet?.current?.credits || 0
+      stats.value.totalEarnings = commissions?.current?.total || 0
+      stats.value.pendingPayout = commissions?.current?.pending || 0
+      stats.value.teamSize = teamData?.total_members || 0
+      stats.value.activeTeam = teamData?.active_members || 0
+    }
+  } catch (e) {
+    console.error('Failed to load promoter stats:', e)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
@@ -168,14 +192,34 @@ const quickActions = computed(() => [
           color="warning"
           variant="soft"
         >
-          2 Active
+          {{ challenges.length }} Active
         </UBadge>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <template v-if="challengesLoading">
+        <div class="space-y-2">
+          <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-3/4 animate-pulse" />
+          <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2 animate-pulse" />
+        </div>
+      </template>
+
+      <template v-else-if="challenges.length === 0">
+        <CommonEmptyState
+          icon="i-lucide-flame"
+          title="No challenges right now"
+          description="Create motivating targets to keep the team engaged."
+          action-label="Create Challenge"
+          action-to="/challenges/new"
+        />
+      </template>
+
+      <div
+        v-else
+        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
         <div
           v-for="challenge in challenges"
-          :key="challenge.id"
+          :key="challenge.uuid"
           class="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700"
         >
           <div class="flex items-start justify-between mb-3">
@@ -184,14 +228,14 @@ const quickActions = computed(() => [
                 {{ challenge.title }}
               </h3>
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                Ends {{ challenge.deadline }}
+                Ends {{ challenge.end_at ? formatDate(challenge.end_at, 'short') : 'Ongoing' }}
               </p>
             </div>
             <UBadge
               color="success"
               variant="soft"
             >
-              +{{ formatCurrency(challenge.reward) }}
+              +{{ formatCurrency(challenge.reward.value || 0) }}
             </UBadge>
           </div>
 
@@ -199,16 +243,13 @@ const quickActions = computed(() => [
             <div class="flex justify-between text-sm">
               <span class="text-slate-600 dark:text-slate-400">Progress</span>
               <span class="font-medium text-slate-900 dark:text-white">
-                {{ typeof challenge.progress === 'number' && challenge.progress > 100
-                  ? formatCurrency(challenge.progress) + ' / ' + formatCurrency(challenge.target)
-                  : challenge.progress + ' / ' + challenge.target
-                }}
+                {{ Number(challenge.meta?.current ?? 0) }} / {{ challenge.goal.value }}
               </span>
             </div>
             <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
                 class="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full transition-all duration-500"
-                :style="{ width: `${Math.min((challenge.progress / challenge.target) * 100, 100)}%` }"
+                :style="{ width: `${getChallengeProgress(challenge)}%` }"
               />
             </div>
           </div>

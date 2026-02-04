@@ -1,16 +1,21 @@
 <script setup lang="ts">
+import type { DashboardAppointment, DashboardProgram } from '~/types/dashboard'
+import { useDashboardAppointments } from '~/composables/useDashboardAppointments'
+import { useDashboardPrograms } from '~/composables/useDashboardPrograms'
+import { useNetwork } from '~/composables/useNetwork'
+
 /**
  * Advisor Dashboard Component
  * Professional advisor dashboard with client management
  * Shows clients, appointments, consultations, and advisory income
  */
 
-import type { User } from '~/types/user'
-
 const { user } = useUserType()
 const { formatCurrency, formatDate } = useBranding()
 const { fetchCommissionEarnings, fetchTransactionVolume, fetchDashboardSummary } = useTrends()
 const { fetchTeam, team } = useNetwork()
+const { fetchList: fetchAppointments } = useDashboardAppointments()
+const { fetchList: fetchPrograms } = useDashboardPrograms()
 
 // Real data for stats
 const stats = ref({
@@ -24,31 +29,18 @@ const stats = ref({
 })
 
 const loading = ref(true)
-const upcomingAppointments = ref<any[]>([])
+const appointmentsLoading = ref(false)
+const programsLoading = ref(false)
+const upcomingAppointments = ref<Array<{
+  id: string
+  client: string
+  date: string
+  time: string
+  type: string
+  duration: string
+}>>([])
+const activePrograms = ref<DashboardProgram[]>([])
 const recentActivity = ref<any[]>([])
-
-// Fetch real data
-onMounted(async () => {
-  try {
-    const [summaryRes, teamRes, activityRes] = await Promise.all([
-      fetchDashboardSummary('month'),
-      fetchTeam(1, 5),
-      loadRecentActivity()
-    ])
-
-    if (summaryRes?.success && summaryRes.data) {
-      const { wallet, team: teamData, commissions } = summaryRes.data
-      stats.value.monthlyIncome = wallet?.current?.credits || 0
-      stats.value.pendingPayouts = commissions?.current?.pending || 0
-      stats.value.totalClients = teamData?.total_members || 0
-      stats.value.activeClients = teamData?.active_members || 0
-    }
-  } catch (e) {
-    console.error('Failed to load advisor stats:', e)
-  } finally {
-    loading.value = false
-  }
-})
 
 const loadRecentActivity = async () => {
   try {
@@ -68,6 +60,47 @@ const loadRecentActivity = async () => {
   }
 }
 
+const formatAppointmentCard = (appointment: DashboardAppointment) => {
+  const start = new Date(appointment.start_at)
+  const end = appointment.end_at ? new Date(appointment.end_at) : null
+  const durationMinutes = end ? Math.max(15, Math.round((end.getTime() - start.getTime()) / 60000)) : 30
+  return {
+    id: appointment.uuid,
+    client: appointment.attendee?.name || 'Client',
+    date: formatDate(start, 'short'),
+    time: start.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+    type: appointment.meeting_mode === 'online' ? 'Online consultation' : 'Offline session',
+    duration: `${durationMinutes} mins`
+  }
+}
+
+const loadAppointments = async () => {
+  appointmentsLoading.value = true
+  try {
+    const { items, meta } = await fetchAppointments({ per_page: 6, status: 'pending' })
+    upcomingAppointments.value = items.map(formatAppointmentCard)
+    stats.value.appointments = meta.total
+    stats.value.consultations = meta.total
+  } catch (e) {
+    console.error('Failed to load appointments:', e)
+  } finally {
+    appointmentsLoading.value = false
+  }
+}
+
+const loadPrograms = async () => {
+  programsLoading.value = true
+  try {
+    const { items } = await fetchPrograms({ per_page: 4, status: 'ongoing' })
+    activePrograms.value = items
+    stats.value.consultations = Math.max(stats.value.consultations, items.length)
+  } catch (e) {
+    console.error('Failed to load programs:', e)
+  } finally {
+    programsLoading.value = false
+  }
+}
+
 const quickActions = computed(() => [
   {
     label: 'Schedule',
@@ -77,28 +110,52 @@ const quickActions = computed(() => [
     description: 'New appointment'
   },
   {
+    label: 'Add Team Leader',
+    icon: 'i-lucide-briefcase-plus',
+    to: '/dashboard/team-leaders/new',
+    color: 'success' as const,
+    description: 'Grow your team'
+  },
+  {
     label: 'Clients',
     icon: 'i-lucide-users',
     to: '/clients',
-    color: 'success' as const,
+    color: 'purple' as const,
     badge: stats.value.activeClients
   },
   {
     label: 'Reports',
     icon: 'i-lucide-file-text',
     to: '/reports',
-    color: 'purple' as const
-  },
-  {
-    label: 'My Team',
-    icon: 'i-lucide-users-round',
-    to: '/team',
-    color: 'amber' as const,
-    description: 'Recruited users'
+    color: 'amber' as const
   }
 ])
 
 const topClients = ref<any[]>([])
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    const [summaryRes] = await Promise.all([
+      fetchDashboardSummary('month'),
+      loadRecentActivity(),
+      loadAppointments(),
+      loadPrograms()
+    ])
+
+    if (summaryRes?.success && summaryRes.data) {
+      const { wallet, team: teamData, commissions } = summaryRes.data
+      stats.value.monthlyIncome = wallet?.current?.credits || 0
+      stats.value.pendingPayouts = commissions?.current?.pending || 0
+      stats.value.totalClients = teamData?.total_members || 0
+      stats.value.activeClients = teamData?.active_members || 0
+    }
+  } catch (e) {
+    console.error('Failed to load advisor stats:', e)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
@@ -212,9 +269,89 @@ const topClients = ref<any[]>([])
             />
             {{ appointment.duration }}
           </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Programs -->
+  <div class="glass-card p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+        <UIcon
+          name="i-lucide-book-open"
+          class="w-5 h-5 text-purple-500"
+        />
+        Active Programs
+      </h2>
+      <UButton
+        to="/programs"
+        variant="soft"
+        size="sm"
+      >
+        View Programs
+      </UButton>
+    </div>
+
+    <template v-if="programsLoading">
+      <div class="space-y-2">
+        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 animate-pulse" />
+        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2 animate-pulse" />
+      </div>
+    </template>
+
+    <template v-else-if="activePrograms.length === 0">
+      <CommonEmptyState
+        icon="i-lucide-book-plus"
+        title="No programs yet"
+        description="Draft a program and invite your mentees."
+        action-label="Create Program"
+        action-to="/programs/new"
+      />
+    </template>
+
+    <div
+      v-else
+      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+    >
+      <div
+        v-for="program in activePrograms"
+        :key="program.uuid"
+        class="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700"
+      >
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h3 class="font-medium text-slate-900 dark:text-white">
+              {{ program.title }}
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ formatDate(program.start_date || program.end_date || new Date(), 'short') }}
+              · {{ program.status }}
+            </p>
+          </div>
+          <UBadge
+            color="success"
+            variant="soft"
+          >
+            {{ program.participants.length }} participants
+          </UBadge>
+        </div>
+
+        <div class="text-sm text-slate-500 dark:text-slate-400 mb-3">
+          {{ program.location?.full_address || 'Virtual Program' }}
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <span>Ends {{ formatDate(program.end_date || program.start_date || new Date(), 'short') }}</span>
+          <NuxtLink
+            :to="`/programs/${program.uuid}`"
+            class="text-primary hover:underline text-xs font-semibold"
+          >
+            View
+          </NuxtLink>
         </div>
       </div>
     </div>
+  </div>
 
     <!-- Upgrade Prompt -->
     <DashboardUserJourneyCard :user="user" />

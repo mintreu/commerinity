@@ -106,11 +106,21 @@ export const useUserType = () => {
   const getNavigationItems = (): NavigationItem[] => {
     if (!user.value) return []
 
-    const baseItems: NavigationItem[] = [
+    const generalItems: NavigationItem[] = [
       {
         label: 'Dashboard',
         icon: 'i-lucide-layout-dashboard',
         to: '/dashboard'
+      },
+      {
+        label: 'Shop',
+        icon: 'i-lucide-shopping-bag',
+        to: '/shop'
+      },
+      {
+        label: 'Orders',
+        icon: 'i-lucide-package',
+        to: '/orders'
       },
       {
         label: 'Wallet',
@@ -119,73 +129,125 @@ export const useUserType = () => {
       }
     ]
 
-    // Add Subscribe Now for regular users (highlighted)
-    if (user.value.type === UserType.REGULAR) {
-      baseItems.splice(1, 0, {
-        label: 'Subscribe Now',
-        icon: 'i-lucide-crown',
-        to: '/subscription',
-        highlight: true,
-        badge: 'Upgrade'
-      })
-    }
-
     if ((jobApplicationsCount.value ?? 0) > 0) {
-      baseItems.push({
+      generalItems.push({
         label: 'My Applications',
         icon: 'i-lucide-briefcase',
         to: '/career/applications'
       })
     }
 
-    const shoppingItems: NavigationItem[] = [
-      { label: 'Shop', icon: 'i-lucide-shopping-bag', to: '/shop' },
-      { label: 'Orders', icon: 'i-lucide-package', to: '/orders' }
-    ]
-
     const typeSpecificItems: Record<UserType, NavigationItem[]> = {
       [UserType.REGULAR]: [
-        ...shoppingItems,
-        { label: 'KYC', icon: 'i-lucide-shield-check', to: '/profile/kyc' }
+        {
+          label: 'Subscribe Now',
+          icon: 'i-lucide-crown',
+          to: '/subscription',
+          highlight: true,
+          badge: 'Upgrade'
+        },
+        {
+          label: 'KYC',
+          icon: 'i-lucide-shield-check',
+          to: '/profile/kyc'
+        }
       ],
       [UserType.MEMBER]: [
-        ...shoppingItems,
-        { label: 'My Network', icon: 'i-lucide-users', to: '/network' },
-        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
-        { label: 'Subscription', icon: 'i-lucide-crown', to: '/subscription' }
+        {
+          label: 'My Network',
+          icon: 'i-lucide-users',
+          to: '/network'
+        },
+        {
+          label: 'Earnings',
+          icon: 'i-lucide-indian-rupee',
+          to: '/earnings'
+        },
+        {
+          label: 'Subscription',
+          icon: 'i-lucide-crown',
+          to: '/subscription'
+        }
       ],
       [UserType.PROMOTER]: [
-        ...shoppingItems,
-        { label: 'My Network', icon: 'i-lucide-users', to: '/network' },
-        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
-        { label: 'Subscription', icon: 'i-lucide-crown', to: '/subscription' },
-        { label: 'Team', icon: 'i-lucide-users-round', to: '/team' }
-        // { label: 'Marketing', icon: 'i-lucide-megaphone', to: '/marketing' }
+        {
+          label: 'My Network',
+          icon: 'i-lucide-users',
+          to: '/network'
+        },
+        {
+          label: 'Earnings',
+          icon: 'i-lucide-indian-rupee',
+          to: '/earnings'
+        },
+        {
+          label: 'Subscription',
+          icon: 'i-lucide-crown',
+          to: '/subscription'
+        },
+        {
+          label: 'Team',
+          icon: 'i-lucide-users-round',
+          to: '/team'
+        },
+        {
+          label: 'Challenges',
+          icon: 'i-lucide-flame',
+          to: '/challenges'
+        }
       ],
       [UserType.ADVISOR]: [
-        ...shoppingItems,
-        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
-        { label: 'My Team', icon: 'i-lucide-users-round', to: '/team' }
-        // { label: 'Clients', icon: 'i-lucide-users', to: '/clients' },
-        // { label: 'Reports', icon: 'i-lucide-bar-chart', to: '/reports' },
-        // { label: 'Training', icon: 'i-lucide-graduation-cap', to: '/training' }
+        {
+          label: 'Appointments',
+          icon: 'i-lucide-calendar',
+          to: '/appointments'
+        },
+        {
+          label: 'Programs',
+          icon: 'i-lucide-book-open',
+          to: '/programs'
+        },
+        {
+          label: 'My Team Leaders',
+          icon: 'i-lucide-user-check',
+          to: '/dashboard/team-leaders/new'
+        },
+        {
+          label: 'Earnings',
+          icon: 'i-lucide-indian-rupee',
+          to: '/earnings'
+        }
       ],
       [UserType.MENTOR]: [
-        ...shoppingItems,
-        { label: 'My Network', icon: 'i-lucide-users', to: '/network' },
-        { label: 'Earnings', icon: 'i-lucide-indian-rupee', to: '/earnings' },
-        { label: 'Subscription', icon: 'i-lucide-crown', to: '/subscription' },
-        { label: 'Team', icon: 'i-lucide-users-round', to: '/team' }
-        /*
-        { label: 'Reports', icon: 'i-lucide-bar-chart', to: '/reports' },
-        { label: 'Training', icon: 'i-lucide-graduation-cap', to: '/training' },
-        { label: 'Leadership', icon: 'i-lucide-star', to: '/leadership' },
-        { label: 'Analytics', icon: 'i-lucide-line-chart', to: '/analytics' }
-        */
+        {
+          label: 'New Session',
+          icon: 'i-lucide-video',
+          to: '/uptime' // placeholder route; adjust when page exists
+        },
+        {
+          label: 'Programs',
+          icon: 'i-lucide-book-open',
+          to: '/programs'
+        },
+        {
+          label: 'Appointments',
+          icon: 'i-lucide-calendar',
+          to: '/appointments'
+        },
+        {
+          label: 'Analytics',
+          icon: 'i-lucide-activity',
+          to: '/analytics'
+        },
+        {
+          label: 'Earnings',
+          icon: 'i-lucide-indian-rupee',
+          to: '/earnings'
+        }
       ]
     }
 
-    return [...baseItems, ...(typeSpecificItems[user.value.type] || [])]
+    return [...generalItems, ...(typeSpecificItems[user.value.type] || [])]
   }
 
   const getAccountMenuItems = (): NavigationItem[] => {

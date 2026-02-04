@@ -7,9 +7,12 @@
 
 import type { User } from '~/types/user'
 
+import { useDashboardPrograms } from '~/composables/useDashboardPrograms'
+
 const user = useCurrentUser() as Ref<User | null>
 const { formatCurrency } = useBranding()
 const { fetchCommissionEarnings } = useTrends()
+const { fetchList: fetchPrograms } = useDashboardPrograms()
 
 // Real data for stats
 const stats = ref({
@@ -17,13 +20,46 @@ const stats = ref({
   activeMentees: 0,
   monthlyIncome: 0,
   pendingPayouts: 0,
-  sessions: 12,
-  programs: 4,
+  sessions: 0,
+  programs: 0,
   avgRating: 4.9,
   completionRate: 92
 })
 
 const loading = ref(true)
+
+const activePrograms = ref<DashboardProgram[]>([])
+const programsLoading = ref(false)
+const upcomingSessions = ref<Array<{
+  id: string
+  program: string
+  topic: string
+  date: string
+  time: string
+  attendees: number
+}>>([])
+
+const loadPrograms = async () => {
+  programsLoading.value = true
+  try {
+    const { items } = await fetchPrograms({ per_page: 6, status: 'ongoing' })
+    activePrograms.value = items
+    stats.value.programs = items.length
+    stats.value.sessions = items.reduce((sum, program) => sum + program.participants.length, 0)
+    upcomingSessions.value = items.slice(0, 2).map(program => ({
+      id: program.uuid,
+      program: program.title,
+      topic: program.description ?? 'Mentorship session',
+      date: program.start_date ? formatDate(program.start_date, 'short') : 'TBD',
+      time: 'All day',
+      attendees: program.participants.length
+    }))
+  } catch (e) {
+    console.error('Failed to load programs:', e)
+  } finally {
+    programsLoading.value = false
+  }
+}
 
 // Fetch real data
 onMounted(async () => {
@@ -42,45 +78,8 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+  await loadPrograms()
 })
-
-const activePrograms = ref([
-  {
-    id: 1,
-    title: 'Business Mastery',
-    enrolled: 24,
-    progress: 68,
-    revenue: 48000,
-    nextSession: 'Tomorrow, 10:00 AM'
-  },
-  {
-    id: 2,
-    title: 'Leadership Excellence',
-    enrolled: 18,
-    progress: 45,
-    revenue: 36000,
-    nextSession: 'Thursday, 2:00 PM'
-  }
-])
-
-const upcomingSessions = ref([
-  {
-    id: 1,
-    program: 'Business Mastery',
-    topic: 'Week 8: Scaling Strategies',
-    time: '10:00 AM',
-    date: 'Tomorrow',
-    attendees: 22
-  },
-  {
-    id: 2,
-    program: 'Leadership Excellence',
-    topic: 'Module 5: Team Building',
-    time: '2:00 PM',
-    date: 'Thursday',
-    attendees: 16
-  }
-])
 
 const recentActivity = ref([
   {
@@ -208,10 +207,30 @@ const topMentees = ref([
         </UButton>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <template v-if="programsLoading">
+        <div class="space-y-3">
+          <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 animate-pulse" />
+          <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2 animate-pulse" />
+        </div>
+      </template>
+
+      <template v-else-if="activePrograms.length === 0">
+        <CommonEmptyState
+          icon="i-lucide-book-plus"
+          title="No programs yet"
+          description="Plan a mentor-led program and start enrolling mentees."
+          action-label="Create Program"
+          action-to="/programs/new"
+        />
+      </template>
+
+      <div
+        v-else
+        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
         <div
           v-for="program in activePrograms"
-          :key="program.id"
+          :key="program.uuid"
           class="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700"
         >
           <div class="flex items-start justify-between mb-3">
@@ -220,37 +239,44 @@ const topMentees = ref([
                 {{ program.title }}
               </h3>
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                Next: {{ program.nextSession }}
+                Starts {{ program.start_date ? formatDate(program.start_date, 'short') : 'TBD' }}
               </p>
             </div>
             <UBadge
-              color="success"
+              color="primary"
               variant="soft"
             >
-              {{ formatCurrency(program.revenue) }}
+              {{ program.status }}
             </UBadge>
           </div>
 
-          <div class="flex items-center gap-4 mb-3">
-            <div class="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-              <UIcon
-                name="i-lucide-users"
-                class="w-4 h-4"
-              />
-              {{ program.enrolled }} enrolled
-            </div>
+          <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 mb-3">
+            <UIcon
+              name="i-lucide-users"
+              class="w-4 h-4"
+            />
+            {{ program.participants.length }} confirmed
+          </div>
+
+          <div class="text-sm text-slate-500 dark:text-slate-400 mb-3">
+            {{ program.location?.full_address || 'Virtual Program' }}
           </div>
 
           <div class="space-y-2">
             <div class="flex justify-between text-sm">
-              <span class="text-slate-600 dark:text-slate-400">Progress</span>
-              <span class="font-medium text-slate-900 dark:text-white">{{ program.progress }}%</span>
+              <span class="text-slate-600 dark:text-slate-400">Participants</span>
+              <span class="font-medium text-slate-900 dark:text-white">
+                {{ program.participants.length }}
+              </span>
             </div>
-            <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full transition-all duration-500"
-                :style="{ width: `${program.progress}%` }"
-              />
+            <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+              <span>Ends {{ program.end_date ? formatDate(program.end_date, 'short') : 'Ongoing' }}</span>
+              <NuxtLink
+                :to="`/programs/${program.uuid}`"
+                class="text-primary hover:underline text-xs font-semibold"
+              >
+                View
+              </NuxtLink>
             </div>
           </div>
         </div>
