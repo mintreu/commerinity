@@ -120,7 +120,7 @@ class IntegrationSeeder extends Seeder
                 'type' => IntegrationTypeCast::SMS,
                 'credentials' => [
                     'api_key' => config('services.sms.fast2sms.api_key'),
-                    'sender_id' => config('services.sms.fast2sms.sender_id'),
+                    'sender_id' => config('services.sms.fast2sms.sender_id') ?? 'COMMERINITY',
                     'entity_id' => config('services.sms.fast2sms.entity_id'),
                 ],
                 'settings' => [

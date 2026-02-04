@@ -32,6 +32,13 @@ class SmsTemplateSeeder extends Seeder
             return;
         }
 
+        $defaultSenderId = (string) ($integration->getCredential('sender_id')
+            ?? config('services.sms.fast2sms.sender_id')
+            ?? 'COMMERINITY');
+        $defaultEntityId = (string) ($integration->getCredential('entity_id')
+            ?? config('services.sms.fast2sms.entity_id')
+            ?? '');
+
         $templates = [
             // ═══════════════════════════════════════════════════════════
             // OTP TEMPLATES
@@ -158,9 +165,9 @@ class SmsTemplateSeeder extends Seeder
                     'name' => $data['name'],
                     'slug' => $data['slug'],
                     'message_id' => $data['message_id'],
-                    'entity_id' => $integration->getCredential('entity_id'),
+                    'entity_id' => $defaultEntityId ?: null,
                     'template_id' => Str::upper(Str::random(10)), // Placeholder - replace with actual DLT IDs
-                    'sender_id' => $integration->getCredential('sender_id'),
+                    'sender_id' => $defaultSenderId,
                     'content' => $data['content'],
                     'variables' => $data['variables'],
                     'variable_count' => count($data['variables']),
