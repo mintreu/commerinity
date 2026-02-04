@@ -16,8 +16,6 @@ class IntegrationSeeder extends Seeder
     public function run(): void
     {
 
-
-
         // Cashfree Payment (Default)
         Integration::firstOrCreate(
             ['slug' => 'cashfree'],
@@ -111,6 +109,29 @@ class IntegrationSeeder extends Seeder
                 'is_sandbox' => false,
                 'is_active' => true,
                 'is_default' => false,
+            ]
+        );
+
+        // SMS Integration (Fast2SMS)
+        Integration::firstOrCreate(
+            ['slug' => 'fast2sms'],
+            [
+                'name' => 'Fast2SMS',
+                'type' => IntegrationTypeCast::SMS,
+                'credentials' => [
+                    'api_key' => config('services.sms.fast2sms.api_key'),
+                    'sender_id' => config('services.sms.fast2sms.sender_id'),
+                    'entity_id' => config('services.sms.fast2sms.entity_id'),
+                ],
+                'settings' => [
+                    'driver' => 'fast2sms',
+                    'per_sms_cost' => config('services.sms.fast2sms.per_sms_cost', 0.25),
+                    'min_balance_threshold' => config('services.sms.fast2sms.min_balance_threshold', 10.0),
+                    'demo' => (bool) config('services.sms.options.demo_mode', false),
+                ],
+                'is_sandbox' => false,
+                'is_active' => false,
+                'is_default' => true,
             ]
         );
     }
