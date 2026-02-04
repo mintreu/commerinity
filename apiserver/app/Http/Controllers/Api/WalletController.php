@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
 use App\Http\Resources\WalletResource;
 use App\Models\Ecommerce\Order;
+use App\Models\Geo\Country;
 use App\Services\MoneyService;
 use App\Services\UserServices\UserWalletService;
 use Illuminate\Http\JsonResponse;
@@ -356,7 +357,7 @@ final class WalletController extends Controller
     {
         $request->validate([
             'pin' => ['required', 'string', 'size:6'],
-            'recipient_mobile' => ['required', 'string', 'size:10'],
+            'recipient_mobile' => ['required', 'string', 'regex:/^\\+?[0-9\\s-]{10,15}$/'],
             'amount' => ['required', 'numeric', 'min:1', 'max:100000'], // Amount in rupees
             'note' => ['nullable', 'string', 'max:200'],
         ]);
@@ -370,8 +371,24 @@ final class WalletController extends Controller
             return $pinResult;
         }
 
-        // Find recipient by mobile
-        $recipient = \App\Models\User::where('mobile', $request->input('recipient_mobile'))->first();
+        $rawMobile = (string) $request->input('recipient_mobile');
+        $digits = preg_replace('/\\D/', '', $rawMobile) ?? '';
+        $indiaIsd = Country::query()
+            ->where('iso_code_2', 'IN')
+            ->value('isd_code') ?? 91;
+
+        $normalizedMobile = null;
+        if (strlen($digits) === 10) {
+            $normalizedMobile = '+'.$indiaIsd.$digits;
+        } elseif (strlen($digits) >= 11) {
+            $normalizedMobile = '+'.$digits;
+        }
+
+        // Find recipient by normalized mobile (E.164 expected)
+        $recipient = null;
+        if ($normalizedMobile) {
+            $recipient = \App\Models\User::where('mobile', $normalizedMobile)->first();
+        }
 
         if (! $recipient) {
             return response()->json([

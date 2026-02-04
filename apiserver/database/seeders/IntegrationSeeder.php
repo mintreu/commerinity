@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Casts\IntegrationTypeCast;
 use App\Models\Integration;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class IntegrationSeeder extends Seeder
 {
@@ -113,6 +114,13 @@ class IntegrationSeeder extends Seeder
         );
 
         // SMS Integration (Fast2SMS)
+        $appSenderId = Str::of((string) config('app.name'))
+            ->upper()
+            ->replaceMatches('/[^A-Z0-9]/', '')
+            ->substr(0, 20)
+            ->toString();
+        $appSenderId = $appSenderId !== '' ? $appSenderId : 'APPNAME';
+
         Integration::firstOrCreate(
             ['slug' => 'fast2sms'],
             [
@@ -120,7 +128,7 @@ class IntegrationSeeder extends Seeder
                 'type' => IntegrationTypeCast::SMS,
                 'credentials' => [
                     'api_key' => config('services.sms.fast2sms.api_key'),
-                    'sender_id' => config('services.sms.fast2sms.sender_id') ?? 'COMMERINITY',
+                    'sender_id' => config('services.sms.fast2sms.sender_id') ?? $appSenderId,
                     'entity_id' => config('services.sms.fast2sms.entity_id'),
                 ],
                 'settings' => [

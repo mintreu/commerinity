@@ -32,9 +32,15 @@ class SmsTemplateSeeder extends Seeder
             return;
         }
 
+        $appSenderId = Str::of((string) config('app.name'))
+            ->upper()
+            ->replaceMatches('/[^A-Z0-9]/', '')
+            ->substr(0, 20)
+            ->toString();
+        $appSenderId = $appSenderId !== '' ? $appSenderId : 'APPNAME';
         $defaultSenderId = (string) ($integration->getCredential('sender_id')
             ?? config('services.sms.fast2sms.sender_id')
-            ?? 'COMMERINITY');
+            ?? $appSenderId);
         $defaultEntityId = (string) ($integration->getCredential('entity_id')
             ?? config('services.sms.fast2sms.entity_id')
             ?? '');
