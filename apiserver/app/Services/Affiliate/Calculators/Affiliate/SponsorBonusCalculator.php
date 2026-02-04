@@ -6,8 +6,8 @@ namespace App\Services\Affiliate\Calculators\Affiliate;
 
 use App\Casts\CommissionTypeCast;
 use App\Contracts\Affiliate\CommissionTrigger;
-use App\Models\Membership\Stage;
 use App\Models\Affiliate\AffiliateGenealogy;
+use App\Models\Membership\Stage;
 use App\Models\User;
 use App\Services\Affiliate\Calculators\BaseCommissionCalculator;
 use Illuminate\Support\Collection;
@@ -24,7 +24,7 @@ final class SponsorBonusCalculator extends BaseCommissionCalculator
 {
     public function getCommissionType(): string
     {
-        return CommissionTypeCast::SPONSOR_BONUS;
+        return CommissionTypeCast::SPONSOR_BONUS->value;
     }
 
     protected function getSupportedTriggerTypes(): array

@@ -64,7 +64,7 @@ describe('commission type checks', function () {
         config(['affiliate.member_commissions.enabled' => false]);
         config(['affiliate.member_commissions.sponsor_bonus.enabled' => true]);
 
-        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::SPONSOR_BONUS))
+        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::SPONSOR_BONUS->value))
             ->toBeFalse();
     });
 
@@ -72,7 +72,7 @@ describe('commission type checks', function () {
         config(['affiliate.originator_commissions.enabled' => false]);
         config(['affiliate.originator_commissions.joining_commission.enabled' => true]);
 
-        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::ORIGINATOR_JOINING))
+        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::ORIGINATOR_JOINING->value))
             ->toBeFalse();
     });
 
@@ -80,7 +80,7 @@ describe('commission type checks', function () {
         config(['affiliate.task_commissions.enabled' => false]);
         config(['affiliate.task_commissions.task_completion.enabled' => true]);
 
-        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::TASK_COMPLETION))
+        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::TASK_COMPLETION->value))
             ->toBeFalse();
     });
 
@@ -88,7 +88,7 @@ describe('commission type checks', function () {
         config(['affiliate.member_commissions.enabled' => true]);
         config(['affiliate.member_commissions.sponsor_bonus.enabled' => true]);
 
-        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::SPONSOR_BONUS))
+        expect($this->configService->isCommissionTypeEnabled(CommissionTypeCast::SPONSOR_BONUS->value))
             ->toBeTrue();
     });
 
@@ -100,9 +100,9 @@ describe('commission type checks', function () {
 
         $enabledTypes = $this->configService->getEnabledMemberTypes();
 
-        expect($enabledTypes)->toContain(CommissionTypeCast::SPONSOR_BONUS);
-        expect($enabledTypes)->toContain(CommissionTypeCast::LEVEL_COMMISSION);
-        expect($enabledTypes)->not->toContain(CommissionTypeCast::MATCHING_BONUS);
+        expect($enabledTypes)->toContain(CommissionTypeCast::SPONSOR_BONUS->value);
+        expect($enabledTypes)->toContain(CommissionTypeCast::LEVEL_COMMISSION->value);
+        expect($enabledTypes)->not->toContain(CommissionTypeCast::MATCHING_BONUS->value);
     });
 
     it('returns empty array when member master switch is off', function () {

@@ -99,7 +99,7 @@ final class CommissionTrendService extends BaseTrendService
 
         foreach ($types as $type) {
             // Skip reversal type for earnings display
-            if ($type === CommissionTypeCast::REVERSAL) {
+            if ($type === CommissionTypeCast::REVERSAL->value) {
                 continue;
             }
 
@@ -162,7 +162,7 @@ final class CommissionTrendService extends BaseTrendService
 
         $baseQuery = fn () => AffiliateCommission::query()
             ->where('user_id', $userId)
-            ->where('type', '!=', CommissionTypeCast::REVERSAL);
+            ->where('type', '!=', CommissionTypeCast::REVERSAL->value);
 
         // Paid commissions
         $paidTrend = Trend::query($baseQuery()->where('status', CommissionStatusCast::PAID))
@@ -233,7 +233,7 @@ final class CommissionTrendService extends BaseTrendService
 
         $query = AffiliateCommission::query()
             ->where('user_id', $userId)
-            ->where('type', '!=', CommissionTypeCast::REVERSAL)
+            ->where('type', '!=', CommissionTypeCast::REVERSAL->value)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']]);
 
         $statuses = CommissionStatusCast::values();
@@ -299,7 +299,7 @@ final class CommissionTrendService extends BaseTrendService
 
         $query = AffiliateCommission::query()
             ->where('status', CommissionStatusCast::PAID)
-            ->where('type', '!=', CommissionTypeCast::REVERSAL);
+            ->where('type', '!=', CommissionTypeCast::REVERSAL->value);
 
         $trend = Trend::query($query)
             ->dateColumn('commission_date')
@@ -368,7 +368,7 @@ final class CommissionTrendService extends BaseTrendService
 
         $topEarners = AffiliateCommission::query()
             ->where('status', CommissionStatusCast::PAID)
-            ->where('type', '!=', CommissionTypeCast::REVERSAL)
+            ->where('type', '!=', CommissionTypeCast::REVERSAL->value)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']])
             ->selectRaw('user_id, SUM(net_amount) as total_earnings, COUNT(*) as commission_count')
             ->groupBy('user_id')
@@ -422,23 +422,23 @@ final class CommissionTrendService extends BaseTrendService
     private function getCommissionTypeColors(): array
     {
         return [
-            CommissionTypeCast::SPONSOR_BONUS => '#10B981',
-            CommissionTypeCast::LEVEL_COMMISSION => '#3B82F6',
-            CommissionTypeCast::MATCHING_BONUS => '#8B5CF6',
-            CommissionTypeCast::POOL_BONUS => '#EC4899',
-            CommissionTypeCast::LEVEL_ACHIEVEMENT => '#F59E0B',
-            CommissionTypeCast::ORIGINATOR_JOINING => '#14B8A6',
-            CommissionTypeCast::ORIGINATOR_RECURRING => '#06B6D4',
-            CommissionTypeCast::AGENT_SALARY => '#6366F1',
-            CommissionTypeCast::INCOME_DEDUCTION => '#EF4444',
-            CommissionTypeCast::TASK_COMPLETION => '#84CC16',
-            CommissionTypeCast::MILESTONE_BONUS => '#F97316',
-            CommissionTypeCast::REFERRAL_BONUS => '#A855F7',
-            CommissionTypeCast::PERFORMANCE_BONUS => '#22C55E',
-            CommissionTypeCast::PURCHASE_COMMISSION => '#0EA5E9',
-            CommissionTypeCast::RENEWAL_BONUS => '#D946EF',
-            CommissionTypeCast::ADJUSTMENT => '#78716C',
-            CommissionTypeCast::CUSTOM => '#6B7280',
+            CommissionTypeCast::SPONSOR_BONUS->value => '#10B981',
+            CommissionTypeCast::LEVEL_COMMISSION->value => '#3B82F6',
+            CommissionTypeCast::MATCHING_BONUS->value => '#8B5CF6',
+            CommissionTypeCast::POOL_BONUS->value => '#EC4899',
+            CommissionTypeCast::LEVEL_ACHIEVEMENT->value => '#F59E0B',
+            CommissionTypeCast::ORIGINATOR_JOINING->value => '#14B8A6',
+            CommissionTypeCast::ORIGINATOR_RECURRING->value => '#06B6D4',
+            CommissionTypeCast::AGENT_SALARY->value => '#6366F1',
+            CommissionTypeCast::INCOME_DEDUCTION->value => '#EF4444',
+            CommissionTypeCast::TASK_COMPLETION->value => '#84CC16',
+            CommissionTypeCast::MILESTONE_BONUS->value => '#F97316',
+            CommissionTypeCast::REFERRAL_BONUS->value => '#A855F7',
+            CommissionTypeCast::PERFORMANCE_BONUS->value => '#22C55E',
+            CommissionTypeCast::PURCHASE_COMMISSION->value => '#0EA5E9',
+            CommissionTypeCast::RENEWAL_BONUS->value => '#D946EF',
+            CommissionTypeCast::ADJUSTMENT->value => '#78716C',
+            CommissionTypeCast::CUSTOM->value => '#6B7280',
         ];
     }
 

@@ -6,8 +6,8 @@ namespace App\Services\Affiliate\Calculators\Affiliate;
 
 use App\Casts\CommissionTypeCast;
 use App\Contracts\Affiliate\CommissionTrigger;
-use App\Models\Membership\Stage;
 use App\Models\Affiliate\AffiliateGenealogy;
+use App\Models\Membership\Stage;
 use App\Models\User;
 use App\Services\Affiliate\Calculators\BaseCommissionCalculator;
 use Illuminate\Support\Collection;
@@ -33,7 +33,7 @@ final class LevelCommissionCalculator extends BaseCommissionCalculator
 
     public function getCommissionType(): string
     {
-        return CommissionTypeCast::LEVEL_COMMISSION;
+        return CommissionTypeCast::LEVEL_COMMISSION->value;
     }
 
     protected function getSupportedTriggerTypes(): array

@@ -25,7 +25,7 @@ final class OriginatorJoiningCalculator extends BaseCommissionCalculator
 {
     public function getCommissionType(): string
     {
-        return CommissionTypeCast::ORIGINATOR_JOINING;
+        return CommissionTypeCast::ORIGINATOR_JOINING->value;
     }
 
     protected function getSupportedTriggerTypes(): array

@@ -29,7 +29,7 @@ final class OriginatorRecurringCalculator extends BaseCommissionCalculator
 {
     public function getCommissionType(): string
     {
-        return CommissionTypeCast::ORIGINATOR_RECURRING;
+        return CommissionTypeCast::ORIGINATOR_RECURRING->value;
     }
 
     protected function getSupportedTriggerTypes(): array

@@ -25,7 +25,7 @@ final class TaskCompletionCalculator extends BaseCommissionCalculator
 {
     public function getCommissionType(): string
     {
-        return CommissionTypeCast::TASK_COMPLETION;
+        return CommissionTypeCast::TASK_COMPLETION->value;
     }
 
     protected function getSupportedTriggerTypes(): array

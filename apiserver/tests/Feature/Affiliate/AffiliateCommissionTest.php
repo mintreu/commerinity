@@ -50,7 +50,7 @@ describe('AffiliateCommission Model', function () {
             ->sponsorBonus()
             ->create();
 
-        expect($commission->type->getValue())->toBe(CommissionTypeCast::SPONSOR_BONUS);
+        expect($commission->type->value)->toBe(CommissionTypeCast::SPONSOR_BONUS->value);
     });
 
     it('can create level commission with rate', function () {
@@ -60,7 +60,7 @@ describe('AffiliateCommission Model', function () {
             ->levelCommission(2, 5.0)
             ->create();
 
-        expect($commission->type->getValue())->toBe(CommissionTypeCast::LEVEL_COMMISSION)
+        expect($commission->type->value)->toBe(CommissionTypeCast::LEVEL_COMMISSION->value)
             ->and($commission->level)->toBe(2)
             ->and($commission->rate_percent)->toBe('5.00');
     });
@@ -107,11 +107,11 @@ describe('AffiliateCommission Model', function () {
             ->pending()
             ->create();
 
-        expect($commission->status->getValue())->toBe(CommissionStatusCast::PENDING);
+        expect($commission->status->value)->toBe(CommissionStatusCast::PENDING->value);
 
         $commission->approve($admin->id);
 
-        expect($commission->status->getValue())->toBe(CommissionStatusCast::APPROVED)
+        expect($commission->status->value)->toBe(CommissionStatusCast::APPROVED->value)
             ->and($commission->approved_by)->toBe($admin->id)
             ->and($commission->approved_at)->not->toBeNull();
     });
@@ -128,7 +128,7 @@ describe('AffiliateCommission Model', function () {
 
         $commission->markPaid($transaction->id);
 
-        expect($commission->status->getValue())->toBe(CommissionStatusCast::PAID)
+        expect($commission->status->value)->toBe(CommissionStatusCast::PAID->value)
             ->and($commission->paid_via_transaction_id)->toBe($transaction->id)
             ->and($commission->paid_at)->not->toBeNull();
     });
@@ -142,7 +142,7 @@ describe('AffiliateCommission Model', function () {
 
         $commission->hold('Under review');
 
-        expect($commission->status->getValue())->toBe(CommissionStatusCast::HELD)
+        expect($commission->status->value)->toBe(CommissionStatusCast::HELD->value)
             ->and($commission->description)->toContain('Under review');
     });
 
@@ -155,7 +155,7 @@ describe('AffiliateCommission Model', function () {
 
         $commission->cancel('Order cancelled');
 
-        expect($commission->status->getValue())->toBe(CommissionStatusCast::CANCELLED);
+        expect($commission->status->value)->toBe(CommissionStatusCast::CANCELLED->value);
     });
 
     it('can be reversed (creates reversal entry)', function () {
@@ -169,8 +169,8 @@ describe('AffiliateCommission Model', function () {
         $reversal = $commission->reverse('Refund requested');
 
         // Reversal uses POSITIVE amounts (type=reversal indicates clawback)
-        expect($commission->status->getValue())->toBe(CommissionStatusCast::REVERSED)
-            ->and($reversal->type->getValue())->toBe(CommissionTypeCast::REVERSAL)
+        expect($commission->status->value)->toBe(CommissionStatusCast::REVERSED->value)
+            ->and($reversal->type->value)->toBe(CommissionTypeCast::REVERSAL->value)
             ->and($reversal->gross_amount)->toBe(10000) // Positive amount being reversed
             ->and($reversal->reversed_commission_id)->toBe($commission->id);
     });
@@ -257,7 +257,7 @@ describe('AffiliateCommission Model', function () {
         AffiliateCommission::factory()->forUser($user)->sponsorBonus()->count(2)->create();
         AffiliateCommission::factory()->forUser($user)->levelCommission()->count(3)->create();
 
-        expect(AffiliateCommission::ofType(CommissionTypeCast::SPONSOR_BONUS)->count())->toBe(2);
+        expect(AffiliateCommission::ofType(CommissionTypeCast::SPONSOR_BONUS->value)->count())->toBe(2);
     });
 
     it('scope forPeriod works', function () {

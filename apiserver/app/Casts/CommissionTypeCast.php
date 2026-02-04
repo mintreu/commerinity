@@ -146,42 +146,68 @@ enum CommissionTypeCast: string implements HasColor, HasIcon, HasLabel
     public static function memberTypes(): array
     {
         return [
-            self::SPONSOR_BONUS,
-            self::LEVEL_COMMISSION,
-            self::MATCHING_BONUS,
-            self::LEVEL_ACHIEVEMENT,
-            self::POOL_BONUS,
-            self::PURCHASE_COMMISSION,
-            self::RENEWAL_BONUS,
+            self::SPONSOR_BONUS->value,
+            self::LEVEL_COMMISSION->value,
+            self::MATCHING_BONUS->value,
+            self::LEVEL_ACHIEVEMENT->value,
+            self::POOL_BONUS->value,
+            self::PURCHASE_COMMISSION->value,
+            self::RENEWAL_BONUS->value,
         ];
     }
 
     public static function originatorTypes(): array
     {
         return [
-            self::ORIGINATOR_JOINING,
-            self::ORIGINATOR_RECURRING,
-            self::AGENT_SALARY,
+            self::ORIGINATOR_JOINING->value,
+            self::ORIGINATOR_RECURRING->value,
+            self::AGENT_SALARY->value,
         ];
     }
 
     public static function taskTypes(): array
     {
         return [
-            self::TASK_COMPLETION,
-            self::MILESTONE_BONUS,
-            self::REFERRAL_BONUS,
-            self::PERFORMANCE_BONUS,
-            self::CUSTOM,
+            self::TASK_COMPLETION->value,
+            self::MILESTONE_BONUS->value,
+            self::REFERRAL_BONUS->value,
+            self::PERFORMANCE_BONUS->value,
+            self::CUSTOM->value,
         ];
     }
 
     public static function deductionTypes(): array
     {
         return [
-            self::INCOME_DEDUCTION,
-            self::REVERSAL,
+            self::INCOME_DEDUCTION->value,
+            self::REVERSAL->value,
         ];
+    }
+
+    public static function values(): array
+    {
+        return array_map(
+            static fn (self $type): string => $type->value,
+            self::cases(),
+        );
+    }
+
+    public static function labels(): array
+    {
+        $labels = [];
+
+        foreach (self::cases() as $type) {
+            $labels[$type->value] = $type->getLabel();
+        }
+
+        return $labels;
+    }
+
+    public static function label(self|string $type): string
+    {
+        $case = $type instanceof self ? $type : self::from($type);
+
+        return $case->getLabel();
     }
 
     public static function configKey(self|string $type): ?string

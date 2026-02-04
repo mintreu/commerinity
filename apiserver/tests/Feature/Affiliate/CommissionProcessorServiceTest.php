@@ -291,11 +291,11 @@ describe('Commission persistence', function () {
         $prop->setValue($service, []);
 
         $service->register(createTestCalculator(
-            CommissionTypeCast::SPONSOR_BONUS,
+            CommissionTypeCast::SPONSOR_BONUS->value,
             calculateFn: fn ($trigger) => collect([
                 CommissionResult::bonus(
                     recipientId: $user->id,
-                    type: CommissionTypeCast::SPONSOR_BONUS,
+                    type: CommissionTypeCast::SPONSOR_BONUS->value,
                     amount: 10000,
                     description: 'Test Sponsor Bonus',
                 ),
@@ -309,7 +309,7 @@ describe('Commission persistence', function () {
         expect(AffiliateCommission::where('user_id', $user->id)->count())->toBe(1);
 
         $saved = AffiliateCommission::where('user_id', $user->id)->first();
-        expect($saved->type->getValue())->toBe(CommissionTypeCast::SPONSOR_BONUS)
+        expect($saved->type->value)->toBe(CommissionTypeCast::SPONSOR_BONUS->value)
             ->and((int) $saved->gross_amount)->toBe(10000);
 
         Event::assertDispatched(CommissionProcessed::class);
@@ -321,7 +321,7 @@ describe('Commission persistence', function () {
         // Create existing commission using factory (which generates UUID properly)
         $existing = AffiliateCommission::factory()->create([
             'user_id' => $user->id,
-            'type' => CommissionTypeCast::SPONSOR_BONUS,
+            'type' => CommissionTypeCast::SPONSOR_BONUS->value,
             'commissionable_type' => User::class,
             'commissionable_id' => 999,
             'gross_amount' => 10000,
@@ -336,7 +336,7 @@ describe('Commission persistence', function () {
             recipientId: $user->id,
             genealogyId: null,
             fromUserId: null,
-            type: CommissionTypeCast::SPONSOR_BONUS,
+            type: CommissionTypeCast::SPONSOR_BONUS->value,
             level: null,
             ratePercent: 10,
             baseAmount: 100000,
@@ -375,7 +375,7 @@ describe('Commission deductions', function () {
         // Create existing commissions to exceed threshold using factory
         AffiliateCommission::factory()->create([
             'user_id' => $user->id,
-            'type' => CommissionTypeCast::SPONSOR_BONUS,
+            'type' => CommissionTypeCast::SPONSOR_BONUS->value,
             'gross_amount' => 200000, // 2000 INR - exceeds threshold
             'net_amount' => 200000,
             'tds_amount' => 0,
@@ -393,11 +393,11 @@ describe('Commission deductions', function () {
         $prop->setValue($service, []);
 
         $service->register(createTestCalculator(
-            CommissionTypeCast::SPONSOR_BONUS,
+            CommissionTypeCast::SPONSOR_BONUS->value,
             calculateFn: fn ($trigger) => collect([
                 CommissionResult::bonus(
                     recipientId: $user->id,
-                    type: CommissionTypeCast::SPONSOR_BONUS,
+                    type: CommissionTypeCast::SPONSOR_BONUS->value,
                     amount: 50000, // 500 INR
                     description: 'New Commission',
                 ),
@@ -432,11 +432,11 @@ describe('Commission deductions', function () {
         $prop->setValue($service, []);
 
         $service->register(createTestCalculator(
-            CommissionTypeCast::SPONSOR_BONUS,
+            CommissionTypeCast::SPONSOR_BONUS->value,
             calculateFn: fn ($trigger) => collect([
                 CommissionResult::bonus(
                     recipientId: $user->id,
-                    type: CommissionTypeCast::SPONSOR_BONUS,
+                    type: CommissionTypeCast::SPONSOR_BONUS->value,
                     amount: 50000,
                     description: 'Small Commission',
                 ),
@@ -470,11 +470,11 @@ describe('Commission deductions', function () {
         $prop->setValue($service, []);
 
         $service->register(createTestCalculator(
-            CommissionTypeCast::SPONSOR_BONUS,
+            CommissionTypeCast::SPONSOR_BONUS->value,
             calculateFn: fn ($trigger) => collect([
                 CommissionResult::bonus(
                     recipientId: $user->id,
-                    type: CommissionTypeCast::SPONSOR_BONUS,
+                    type: CommissionTypeCast::SPONSOR_BONUS->value,
                     amount: 100000, // 1000 INR
                     description: 'Commission with fee',
                 ),
@@ -505,7 +505,7 @@ describe('Commission statistics', function () {
         // Create various commissions using factory
         AffiliateCommission::factory()->create([
             'user_id' => $user->id,
-            'type' => CommissionTypeCast::SPONSOR_BONUS,
+            'type' => CommissionTypeCast::SPONSOR_BONUS->value,
             'gross_amount' => 100000,
             'net_amount' => 90000,
             'tds_amount' => 10000,
@@ -516,7 +516,7 @@ describe('Commission statistics', function () {
 
         AffiliateCommission::factory()->create([
             'user_id' => $user->id,
-            'type' => CommissionTypeCast::LEVEL_COMMISSION,
+            'type' => CommissionTypeCast::LEVEL_COMMISSION->value,
             'gross_amount' => 50000,
             'net_amount' => 45000,
             'tds_amount' => 5000,
@@ -528,7 +528,7 @@ describe('Commission statistics', function () {
         // Old commission (last month)
         AffiliateCommission::factory()->create([
             'user_id' => $user->id,
-            'type' => CommissionTypeCast::SPONSOR_BONUS,
+            'type' => CommissionTypeCast::SPONSOR_BONUS->value,
             'gross_amount' => 200000,
             'net_amount' => 180000,
             'tds_amount' => 20000,
@@ -566,11 +566,11 @@ describe('Commission simulation', function () {
         $prop->setValue($service, []);
 
         $service->register(createTestCalculator(
-            CommissionTypeCast::SPONSOR_BONUS,
+            CommissionTypeCast::SPONSOR_BONUS->value,
             calculateFn: fn ($trigger) => collect([
                 CommissionResult::bonus(
                     recipientId: $user->id,
-                    type: CommissionTypeCast::SPONSOR_BONUS,
+                    type: CommissionTypeCast::SPONSOR_BONUS->value,
                     amount: 10000,
                     description: 'Simulated',
                 ),

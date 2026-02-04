@@ -396,9 +396,11 @@ class AffiliateCommission extends Model
         return $query->where('user_id', $userId);
     }
 
-    public function scopeOfType($query, string $type)
+    public function scopeOfType($query, CommissionTypeCast|string $type)
     {
-        return $query->where('type', $type);
+        $value = $type instanceof CommissionTypeCast ? $type->value : $type;
+
+        return $query->where('type', $value);
     }
 
     public function scopePending($query)

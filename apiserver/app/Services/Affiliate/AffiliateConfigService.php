@@ -52,29 +52,31 @@ final class AffiliateConfigService
     // COMMISSION TYPE CHECKS
     // ========================================
 
-    public function isCommissionTypeEnabled(string $type): bool
+    public function isCommissionTypeEnabled(CommissionTypeCast|string $type): bool
     {
+        $typeValue = $type instanceof CommissionTypeCast ? $type->value : $type;
+
         // Check master switch first
-        if (in_array($type, CommissionTypeCast::memberTypes(), true)) {
+        if (in_array($typeValue, CommissionTypeCast::memberTypes(), true)) {
             if (! $this->isMemberCommissionsEnabled()) {
                 return false;
             }
         }
 
-        if (in_array($type, CommissionTypeCast::originatorTypes(), true)) {
+        if (in_array($typeValue, CommissionTypeCast::originatorTypes(), true)) {
             if (! $this->isOriginatorCommissionsEnabled()) {
                 return false;
             }
         }
 
-        if (in_array($type, CommissionTypeCast::taskTypes(), true)) {
+        if (in_array($typeValue, CommissionTypeCast::taskTypes(), true)) {
             if (! $this->isTaskCommissionsEnabled()) {
                 return false;
             }
         }
 
         // Check specific type config
-        return CommissionTypeCast::isEnabled($type);
+        return CommissionTypeCast::isEnabled($typeValue);
     }
 
     /**

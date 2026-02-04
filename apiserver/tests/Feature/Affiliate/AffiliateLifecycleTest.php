@@ -222,7 +222,7 @@ describe('Affiliate Commission Distribution', function () {
         expect($commission)->not->toBeNull()
             ->and($commission->user_id)->toBe($agent->id)
             ->and($commission->from_user_id)->toBe($user->id)
-            ->and($commission->type->getValue())->toBe(CommissionTypeCast::SPONSOR_BONUS)
+            ->and($commission->type->value)->toBe(CommissionTypeCast::SPONSOR_BONUS->value)
             ->and($commission->gross_amount)->toBe(5000); // 5% of 100000
     });
 
