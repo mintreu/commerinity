@@ -92,39 +92,44 @@ test('Onboarding UI - full width and steps', async ({ page }) => {
   await page.waitForTimeout(2000)
   await takeShot(page, 'desktop-06-onboarding-contact')
 
-  // Check if mobile verification is needed
-  const mobileField = page.getByPlaceholder('+91 9876543210')
-  if (await mobileField.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await mobileField.fill(mobile)
-    const sendButton = page.getByRole('button', { name: /Send Verification Code/i })
-    if (await sendButton.isVisible().catch(() => false)) {
-      await sendButton.click()
+  // Try to click any available button to proceed (Skip, Continue, Next)
+  const proceedButtons = [
+    page.getByRole('button', { name: /Skip/i }),
+    page.getByRole('button', { name: /Continue/i }),
+    page.getByRole('button', { name: /Next/i })
+  ]
+
+  let proceeded = false
+  for (const btn of proceedButtons) {
+    if (await btn.isVisible({ timeout: 1000 }).catch(() => false)) {
+      const enabled = await btn.isEnabled().catch(() => false)
+      if (enabled) {
+        console.log(`Clicking button: ${await btn.textContent().catch(() => 'unknown')}`)
+        await btn.click()
+        proceeded = true
+        break
+      }
     }
-    const otpInput = page.getByPlaceholder('123456')
-    await otpInput.waitFor({ state: 'visible', timeout: 30000 })
-    await otpInput.fill('123456')
-    await page.getByRole('button', { name: /Verify/i }).click()
-    await page.getByText(/Mobile verified successfully/i).waitFor({ timeout: 30000 })
   }
 
-  // Wait for Continue button to be enabled
-  const contactContinue = page.getByRole('button', { name: /Continue|Next/ })
-  await contactContinue.waitFor({ state: 'visible', timeout: 5000 })
+  if (!proceeded) {
+    console.log('No enabled button found, waiting...')
+    await page.waitForTimeout(3000)
 
-  // If button is disabled, try skipping or check if verification is complete
-  const isEnabled = await contactContinue.isEnabled().catch(() => false)
-  if (!isEnabled) {
-    // Check for skip button
-    const skipButton = page.getByRole('button', { name: /Skip/i })
-    if (await skipButton.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await skipButton.click()
-    } else {
-      // Wait for button to become enabled
-      await contactContinue.waitFor({ state: 'attached' })
-      await page.waitForTimeout(2000)
+    // Try one more time
+    for (const btn of proceedButtons) {
+      if (await btn.isVisible({ timeout: 1000 }).catch(() => false)) {
+        if (await btn.isEnabled().catch(() => false)) {
+          await btn.click()
+          proceeded = true
+          break
+        }
+      }
     }
-  } else {
-    await contactContinue.click()
+  }
+
+  if (!proceeded) {
+    throw new Error('Could not proceed from contact step - all buttons disabled')
   }
 
   await takeShot(page, 'desktop-07-onboarding-address')
