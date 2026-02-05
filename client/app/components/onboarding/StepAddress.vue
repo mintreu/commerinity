@@ -2,7 +2,7 @@
   <div class="step-address">
     <div class="max-w-3xl mx-auto">
       <!-- Header -->
-      <div class="text-center mb-6">
+      <div class="text-center mb-8">
         <div class="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <UIcon
             name="i-lucide-map-pin"
@@ -13,7 +13,10 @@
           Add your delivery address
         </h2>
         <p class="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-          This will be your default home address for deliveries
+          This will be your default delivery address.
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          You can add multiple addresses later from your profile.
         </p>
       </div>
 

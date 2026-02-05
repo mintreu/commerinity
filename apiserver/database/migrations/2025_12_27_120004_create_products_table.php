@@ -31,6 +31,10 @@ return new class extends Migration
             $table->unsignedInteger('min_quantity')->default(1)->comment('Min order quantity for the product');
             $table->unsignedInteger('max_quantity')->nullable()->comment('Max order quantity (null = unlimited)');
             $table->unsignedInteger('wholesale_unit_quantity')->nullable()->comment('Quantity threshold for wholesale pricing');
+            $table->unsignedInteger('weight_grams')->default(0)->comment('Product weight in grams');
+            $table->unsignedInteger('length_cm')->default(0)->comment('Product length in centimeters');
+            $table->unsignedInteger('width_cm')->default(0)->comment('Product width in centimeters');
+            $table->unsignedInteger('height_cm')->default(0)->comment('Product height in centimeters');
             $table->boolean('is_commissionable')->default(true)->comment('Whether product generates affiliate commissions');
             $table->decimal('commission_rate', 5, 2)->nullable()->comment('Override commission rate for product');
             $table->string('status')->default(\App\Casts\ProductStatusCast::DRAFT);

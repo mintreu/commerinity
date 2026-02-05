@@ -2,7 +2,7 @@
   <div class="step-kyc">
     <div class="max-w-lg mx-auto">
       <!-- Header -->
-      <div class="text-center mb-6">
+      <div class="text-center mb-8">
         <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <UIcon
             name="i-lucide-shield-check"
@@ -13,7 +13,10 @@
           KYC Verification
         </h2>
         <p class="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-          Verify your identity to unlock all features
+          Verify your identity to unlock all features.
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          Your documents are encrypted and never shared with third parties.
         </p>
       </div>
 
@@ -42,7 +45,7 @@
           <div
             v-for="benefit in benefits"
             :key="benefit.title"
-            class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
+            class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200/60 dark:border-gray-700/60"
           >
             <UIcon
               :name="benefit.icon"
@@ -87,6 +90,9 @@
             :maxlength="documentMaxLength"
             class="uppercase"
           />
+          <template #hint>
+            <span class="text-xs text-gray-500">Enter exactly as shown on the document.</span>
+          </template>
         </UFormField>
 
         <!-- Document Upload -->

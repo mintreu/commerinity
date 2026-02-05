@@ -2,13 +2,18 @@
 
 namespace App\Filament\Resources\JobApplications\Tables;
 
+use App\Casts\UserTypeCast;
 use App\Filament\Exports\Recruitment\JobApplicationExporter;
+use App\Models\Recruitment\JobApplication;
+use App\Models\User;
+use Filament\Notifications\Notification;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -72,6 +77,48 @@ class JobApplicationsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('makeAdvisor')
+                    ->label('Make Advisor')
+                    ->icon('heroicon-o-user')
+                    ->requiresConfirmation()
+                    ->visible(fn (JobApplication $record) => $record->applicant_type === User::class
+                        && $record->applicant?->type !== UserTypeCast::ADVISOR)
+                    ->action(function (JobApplication $record): void {
+                        /** @var User|null $user */
+                        $user = $record->applicant;
+                        if (! $user) {
+                            return;
+                        }
+
+                        $user->update(['type' => UserTypeCast::ADVISOR]);
+                        $record->accept('Promoted to advisor via admin action.');
+
+                        Notification::make()
+                            ->title('User promoted to Advisor')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('makeMentor')
+                    ->label('Make Mentor')
+                    ->icon('heroicon-o-academic-cap')
+                    ->requiresConfirmation()
+                    ->visible(fn (JobApplication $record) => $record->applicant_type === User::class
+                        && $record->applicant?->type !== UserTypeCast::MENTOR)
+                    ->action(function (JobApplication $record): void {
+                        /** @var User|null $user */
+                        $user = $record->applicant;
+                        if (! $user) {
+                            return;
+                        }
+
+                        $user->update(['type' => UserTypeCast::MENTOR]);
+                        $record->accept('Promoted to mentor via admin action.');
+
+                        Notification::make()
+                            ->title('User promoted to Mentor')
+                            ->success()
+                            ->send();
+                    }),
                 EditAction::make(),
             ])
             ->toolbarActions([

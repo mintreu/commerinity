@@ -2,7 +2,7 @@
   <div class="step-profile">
     <div class="max-w-3xl mx-auto">
       <!-- Header -->
-      <div class="text-center mb-6">
+      <div class="text-center mb-8">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <UIcon
             name="i-lucide-user"
@@ -55,8 +55,8 @@
           >
         </div>
       </div>
-      <p class="text-center text-xs text-gray-500 dark:text-gray-400 mb-6">
-        Click to upload photo (optional)
+      <p class="text-center text-xs text-gray-500 dark:text-gray-400 mb-8">
+        Optional. Use a clear headshot for a more trusted profile.
       </p>
 
       <!-- Form Fields -->
@@ -78,6 +78,9 @@
             size="lg"
             icon="i-lucide-user"
           />
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            This will appear on invoices and your public profile.
+          </p>
         </UFormField>
 
         <!-- Date of Birth & Gender (2 columns on desktop) -->
@@ -94,6 +97,9 @@
               icon="i-lucide-calendar"
               :max="maxDate"
             />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              You must be at least 13 years old.
+            </p>
           </UFormField>
 
           <UFormField
@@ -106,6 +112,9 @@
               :items="genderOptions"
               class="flex flex-wrap gap-3 mt-2"
             />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Used to personalize recommendations.
+            </p>
           </UFormField>
         </div>
 
@@ -121,6 +130,9 @@
             :rows="3"
             size="lg"
           />
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            Keep it short and professional (max 280 characters).
+          </p>
         </UFormField>
       </UForm>
     </div>

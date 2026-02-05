@@ -48,6 +48,10 @@ class Product extends Model implements HasMedia
         'min_quantity',  // for cart
         'max_quantity',  // for cart
         'wholesale_unit_quantity',  // for distributor case .. not applicable for users in nuxt client side
+        'weight_grams',
+        'length_cm',
+        'width_cm',
+        'height_cm',
         'is_commissionable',  // for advisor type user to get commisison from their own originator user teams
         'commission_rate',  // for advisor type user
         'view_count',
@@ -69,6 +73,10 @@ class Product extends Model implements HasMedia
             'min_quantity' => 'integer',
             'max_quantity' => 'integer',
             'wholesale_unit_quantity' => 'integer',
+            'weight_grams' => 'integer',
+            'length_cm' => 'integer',
+            'width_cm' => 'integer',
+            'height_cm' => 'integer',
             'is_commissionable' => 'boolean',
             'commission_rate' => 'decimal:2',
         ];

@@ -229,6 +229,7 @@ definePageMeta({
 
 const router = useRouter()
 const config = useRuntimeConfig()
+const nuxtApp = useNuxtApp()
 const { refreshUser, user } = useSanctum()
 const toast = useToast()
 
@@ -238,13 +239,8 @@ const activeMode = ref<'mobile' | 'email'>(defaultMode)
 
 // Handle successful registration from child components
 const handleRegistrationSuccess = async (token: string) => {
-  // Store token
-  const tokenCookie = useCookie('commerinity_auth_token', {
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
-  })
-  tokenCookie.value = token
+  // Store token using Sanctum module storage
+  await useTokenStorage(nuxtApp).set(token)
 
   // Refresh user data
   await refreshUser()

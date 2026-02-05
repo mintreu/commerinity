@@ -103,6 +103,12 @@ class ProductSeeder extends Seeder
             ? ProductTypeCast::CONFIGURABLE->value
             : ProductTypeCast::SIMPLE->value;
 
+        $seed = abs(crc32((string) $productData->sku));
+        $weightGrams = 100 + ($seed % 2000);
+        $lengthCm = 5 + ($seed % 50);
+        $widthCm = 5 + ($seed % 40);
+        $heightCm = 2 + ($seed % 30);
+
         return Product::updateOrCreate(
             ['sku' => $productData->sku],
             [
@@ -117,6 +123,10 @@ class ProductSeeder extends Seeder
                 'min_quantity' => 1,
                 'max_quantity' => 50,
                 'wholesale_unit_quantity' => null,
+                'weight_grams' => $weightGrams,
+                'length_cm' => $lengthCm,
+                'width_cm' => $widthCm,
+                'height_cm' => $heightCm,
                 'is_commissionable' => true,
                 'commission_rate' => null,
                 'short_description' => $productData->short_description ?? null,
@@ -132,49 +142,46 @@ class ProductSeeder extends Seeder
 
     protected function attachMediaFiles(Product $product, Category $category): void
     {
-        $dir = $category->url.'/'.$product->url.'/';
-        $displayImagePath = Storage::path('data/products/'.$dir.$product->url.'.png');
+        try {
+            $dir = $category->url.'/'.$product->url.'/';
+            $displayImagePath = Storage::path('data/products/'.$dir.$product->url.'.png');
 
-
-        if (file_exists($displayImagePath)) {
-            $product->clearMediaCollection('displayImage');
-            $product->addMedia($displayImagePath)
-                ->preservingOriginal()
-                ->toMediaCollection('displayImage');
-        }
-
-        $allImages = Storage::disk('local')->allFiles('data/products/'.$dir);
-
-        foreach ($allImages as $image) {
-            $imagePath = Storage::path($image);
-            if (file_exists($imagePath)) {
-                $alreadyAdded = $product->getMedia('bannerImage')
-                    ->contains(fn ($media) => $media->file_name === basename($imagePath));
-
-                if (! $alreadyAdded) {
-                    $product->addMedia($imagePath)
-                        ->preservingOriginal()
-                        ->toMediaCollection('bannerImage');
-                }
-            }
-        }
-
-
-
-        if($product->type == ProductTypeCast::CONFIGURABLE->value)
-        {
-            $variants = $product->variants()->get();
-            foreach ($variants as $variant)
-            {
-                $variant->addMedia($displayImagePath)
+            if (file_exists($displayImagePath)) {
+                $product->clearMediaCollection('displayImage');
+                $product->addMedia($displayImagePath)
                     ->preservingOriginal()
                     ->toMediaCollection('displayImage');
             }
+
+            $allImages = Storage::disk('local')->allFiles('data/products/'.$dir);
+
+            foreach ($allImages as $image) {
+                $imagePath = Storage::path($image);
+                if (file_exists($imagePath)) {
+                    $alreadyAdded = $product->getMedia('bannerImage')
+                        ->contains(fn ($media) => $media->file_name === basename($imagePath));
+
+                    if (! $alreadyAdded) {
+                        $product->addMedia($imagePath)
+                            ->preservingOriginal()
+                            ->toMediaCollection('bannerImage');
+                    }
+                }
+            }
+
+            if ($product->type == ProductTypeCast::CONFIGURABLE->value) {
+                $variants = $product->variants()->get();
+                foreach ($variants as $variant) {
+                    $variant->addMedia($displayImagePath)
+                        ->preservingOriginal()
+                        ->toMediaCollection('displayImage');
+                }
+            }
+        } catch (\Throwable $e) {
+            $product->status = ProductStatusCast::DRAFT->value;
+            $product->save();
+            $this->command->warn("Media failed for {$product->name}. Marked as draft. Reason: {$e->getMessage()}");
         }
-
-
-
-
     }
 
     protected function getFromStorage(string $path): array

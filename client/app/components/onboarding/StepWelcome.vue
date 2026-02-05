@@ -21,7 +21,7 @@
 
         <!-- Welcome Message -->
         <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Welcome, {{ userName }}! 👋
+          Welcome, {{ userName }}!
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
           Let's get you started! This will only take a <strong>few seconds</strong> to complete your profile setup.
@@ -67,7 +67,7 @@
             name="i-lucide-zap"
             class="w-4 h-4"
           />
-          <span>Super quick – takes less than 60 seconds!</span>
+          <span>Super quick - takes less than 60 seconds!</span>
         </div>
       </div>
     </div>
@@ -85,7 +85,7 @@
 
         <!-- Welcome Message - Shorter for mobile -->
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-          Welcome, {{ userName }}! 👋
+          Welcome, {{ userName }}!
         </h1>
         <p class="text-gray-600 dark:text-gray-400 mb-6">
           Let's set up your profile in under <strong>60 seconds</strong>!
@@ -111,7 +111,7 @@
             name="i-lucide-zap"
             class="w-4 h-4"
           />
-          Quick & Easy – Under 60 seconds!
+          Quick & Easy - Under 60 seconds!
         </p>
       </div>
     </div>

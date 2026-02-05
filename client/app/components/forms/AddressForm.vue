@@ -66,32 +66,38 @@
     >
       <!-- Full Name & Phone (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <UFormField
-          label="Full Name"
-          name="person_name"
-          required
-        >
-          <UInput
-            v-model="formState.person_name"
-            placeholder="Enter recipient name"
-            size="lg"
-            icon="i-lucide-user"
-          />
-        </UFormField>
+      <UFormField
+        label="Full Name"
+        name="person_name"
+        required
+      >
+        <UInput
+          v-model="formState.person_name"
+          placeholder="Enter recipient name"
+          size="lg"
+          icon="i-lucide-user"
+        />
+        <template #hint>
+          <span class="text-xs text-gray-500">Name of the person receiving the delivery.</span>
+        </template>
+      </UFormField>
 
-        <UFormField
-          label="Phone Number"
-          name="person_mobile"
-          required
-        >
-          <UInput
-            v-model="formState.person_mobile"
-            type="tel"
-            placeholder="+91 9876543210"
-            size="lg"
-            icon="i-lucide-phone"
-          />
-        </UFormField>
+      <UFormField
+        label="Phone Number"
+        name="person_mobile"
+        required
+      >
+        <UInput
+          v-model="formState.person_mobile"
+          type="tel"
+          placeholder="+91 9876543210"
+          size="lg"
+          icon="i-lucide-phone"
+        />
+        <template #hint>
+          <span class="text-xs text-gray-500">Include country code for faster verification.</span>
+        </template>
+      </UFormField>
       </div>
 
       <!-- Address Line 1 (Full width) -->
@@ -106,6 +112,9 @@
           size="lg"
           icon="i-lucide-home"
         />
+        <template #hint>
+          <span class="text-xs text-gray-500">Use the exact address shown on courier labels.</span>
+        </template>
       </UFormField>
 
       <!-- Address Line 2 (Full width) -->
@@ -124,11 +133,11 @@
 
       <!-- Country & State (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <UFormField
-          label="Country"
-          name="country_code"
-          required
-        >
+      <UFormField
+        label="Country"
+        name="country_code"
+        required
+      >
           <USelectMenu
             v-model="formState.country_code"
             :options="countries"
@@ -141,11 +150,11 @@
           />
         </UFormField>
 
-        <UFormField
-          label="State / Province"
-          name="state_code"
-          required
-        >
+      <UFormField
+        label="State / Province"
+        name="state_code"
+        required
+      >
           <USelectMenu
             v-model="formState.state_code"
             :options="states"
@@ -162,11 +171,11 @@
 
       <!-- City & Block (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-        <UFormField
-          label="City / District"
-          name="city"
-          required
-        >
+      <UFormField
+        label="City / District"
+        name="city"
+        required
+      >
           <UInput
             v-model="formState.city"
             placeholder="Enter city name"
@@ -175,11 +184,11 @@
           />
         </UFormField>
 
-        <UFormField
-          label="Block / Area"
-          name="block_id"
-          hint="Optional"
-        >
+      <UFormField
+        label="Block / Area"
+        name="block_id"
+        hint="Optional"
+      >
           <USelectMenu
             v-model="formState.block_id"
             :options="blocks"
@@ -207,6 +216,9 @@
           icon="i-lucide-hash"
           maxlength="10"
         />
+        <template #hint>
+          <span class="text-xs text-gray-500">Ensure it matches your delivery zone.</span>
+        </template>
       </UFormField>
 
       <!-- Hidden lat/lng fields -->

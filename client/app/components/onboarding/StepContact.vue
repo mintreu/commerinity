@@ -2,7 +2,7 @@
   <div class="step-contact">
     <div class="max-w-lg mx-auto">
       <!-- Header -->
-      <div class="text-center mb-6">
+      <div class="text-center mb-8">
         <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <UIcon
             name="i-lucide-smartphone"
@@ -18,12 +18,15 @@
             : 'Mobile verification is required to continue'
           }}
         </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          We will never share your contact details with anyone.
+        </p>
       </div>
 
       <!-- Mobile Section (REQUIRED if not verified) -->
       <div
         v-if="!hasMobileVerified"
-        class="space-y-5"
+        class="space-y-6"
       >
         <!-- Mobile Already Verified Badge -->
         <div
@@ -61,7 +64,7 @@
               icon="i-lucide-smartphone"
             />
             <template #hint>
-              <span class="text-xs text-gray-500">Enter in E.164 format (e.g., +919876543210)</span>
+              <span class="text-xs text-gray-500">Use international format, e.g. +919876543210</span>
             </template>
           </UFormField>
 
@@ -108,6 +111,9 @@
                   maxlength="6"
                   class="text-center tracking-widest font-mono"
                 />
+                <template #hint>
+                  <span class="text-xs text-gray-500">Enter the 6-digit code</span>
+                </template>
               </UFormField>
 
               <div class="flex items-center justify-between">
@@ -185,6 +191,9 @@
               size="lg"
               icon="i-lucide-mail"
             />
+            <template #hint>
+              <span class="text-xs text-gray-500">Used for recovery and account alerts.</span>
+            </template>
           </UFormField>
 
           <!-- OTP Section -->

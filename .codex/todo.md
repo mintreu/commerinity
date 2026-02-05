@@ -103,3 +103,10 @@
       - /programs, /programs/new, /programs/[id]
       - /mentees
 
+18. Account deletion lifecycle (last job)
+    - Design safe deletion plan (soft delete + restore + audit retention).
+    - Map all user relations (morphs + non-null FKs) and decide cleanup/anonymization.
+    - Implement deletion flow + restore OTP + 90-day purge + wallet transfer to company.
+    - Preserve orders/transactions/commissions for audit; validate no FK breaks.
+    - Add scheduler + tests + admin notifications.
+

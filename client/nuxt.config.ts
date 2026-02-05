@@ -136,7 +136,7 @@ export default defineNuxtConfig({
     userResponseWrapperKey: 'data', // Laravel UserResource wraps response in { data: {...} }
     token: {
       storageKey: 'commerinity_auth_token',
-      provider: 'cookie',
+      provider: process.env.NUXT_PUBLIC_TOKEN_PROVIDER || 'localStorage',
       responseKey: 'token'
     },
     sanctumEndpoints: {
