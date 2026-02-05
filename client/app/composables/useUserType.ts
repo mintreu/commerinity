@@ -258,11 +258,6 @@ export const useUserType = () => {
         to: '/profile'
       },
       {
-        label: 'Edit Profile',
-        icon: 'i-lucide-user-pen',
-        to: '/profile/edit'
-      },
-      {
         label: 'Change Password',
         icon: 'i-lucide-key-round',
         to: '/profile/change-password'
