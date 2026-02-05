@@ -149,13 +149,12 @@
       >
         <USelectMenu
           v-model="formState.country_code"
-          :options="countries"
+          :items="countries"
           placeholder="Select country"
           size="lg"
           icon="i-lucide-globe"
-          option-attribute="label"
-          value-attribute="value"
-          :loading="loadingCountries"
+          value-key="value"
+          label-key="label"
           searchable
           class="w-full"
           @update:model-value="handleCountryChange"
@@ -170,12 +169,12 @@
       >
         <USelectMenu
           v-model="formState.state_code"
-          :options="states"
+          :items="states"
           placeholder="Select state"
           size="lg"
           icon="i-lucide-map-pinned"
-          option-attribute="label"
-          value-attribute="value"
+          value-key="value"
+          label-key="label"
           :loading="loadingStates"
           :disabled="!formState.country_code || loadingStates"
           searchable
@@ -209,12 +208,12 @@
       >
         <USelectMenu
           v-model="formState.block_id"
-          :options="blocks"
+          :items="blocks"
           placeholder="Select block"
           size="lg"
           icon="i-lucide-map"
-          option-attribute="label"
-          value-attribute="value"
+          value-key="value"
+          label-key="label"
           :loading="loadingBlocks"
           :disabled="!formState.state_code || loadingBlocks"
           searchable
@@ -455,14 +454,23 @@ defineExpose({
 
 // Load countries on mount
 onMounted(async () => {
+  // Temporarily clear country_code to avoid mismatch
+  const tempCountry = formState.country_code
+  formState.country_code = ''
+
   await fetchCountries()
   console.log('Countries loaded:', countries.value.length, countries.value)
 
-  // Load states if country is pre-selected
-  if (formState.country_code) {
-    console.log('Loading states for preselected country:', formState.country_code)
-    await fetchStates(formState.country_code)
+  // Restore and validate country_code
+  if (tempCountry && countries.value.some(c => c.value === tempCountry)) {
+    formState.country_code = tempCountry
+    console.log('Loading states for preselected country:', tempCountry)
+    await fetchStates(tempCountry)
     console.log('States loaded:', states.value.length, states.value)
+  } else if (tempCountry) {
+    // Country not found, use default
+    console.warn(`Country ${tempCountry} not found, setting default`)
+    formState.country_code = countries.value[0]?.value || ''
   }
 
   // Load blocks if state is pre-selected
@@ -473,6 +481,6 @@ onMounted(async () => {
   }
 
   geoReady.value = true
-  console.log('Geo data ready')
+  console.log('Geo data ready, final country_code:', formState.country_code)
 })
 </script>

@@ -39,11 +39,14 @@ export function useGeoData() {
       const fetchedCountries = response.data || []
 
       // Extract countries and cache their states
-      countries.value = fetchedCountries.map(country => ({
-        value: country.value,
-        label: country.label,
+      const cleanCountries = fetchedCountries.map(country => ({
+        value: String(country.value),
+        label: String(country.label),
         isd_code: country.isd_code
       }))
+
+      countries.value = cleanCountries
+      console.log('useGeoData: Setting countries:', cleanCountries)
 
       // Cache states for each country
       statesByCountry.value = {}
@@ -73,7 +76,8 @@ export function useGeoData() {
 
     const cachedStates = statesByCountry.value[countryCode]
     if (cachedStates && cachedStates.length) {
-      states.value = cachedStates
+      states.value = [...cachedStates]
+      console.log('useGeoData: Using cached states:', states.value.length)
       return states.value
     }
 
@@ -82,7 +86,8 @@ export function useGeoData() {
       const response = await useSanctumFetch<{ data: GeoOption[] }>(
         `${config.public.apiBase}/api/geo/states?country_code=${countryCode}`
       )
-      states.value = response.data || []
+      states.value = [...(response.data || [])]
+      console.log('useGeoData: Fetched states from API:', states.value.length)
       return states.value
     } catch (error) {
       console.error('Failed to fetch states:', error)
