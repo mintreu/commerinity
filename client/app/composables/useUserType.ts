@@ -273,6 +273,16 @@ export const useUserType = () => {
         to: '/addresses'
       },
       {
+        label: 'KYC',
+        icon: 'i-lucide-shield-check',
+        to: '/profile/kyc'
+      },
+      {
+        label: 'Settings',
+        icon: 'i-lucide-settings',
+        to: '/profile/settings'
+      },
+      {
         label: 'Notifications',
         icon: 'i-lucide-bell',
         to: '/notifications'
