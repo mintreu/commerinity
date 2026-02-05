@@ -16,12 +16,13 @@
           </div>
         </div>
         <div class="flex-1">
-          <h4 class="font-semibold text-gray-900 dark:text-white mb-1">
-            Enable Location Access (Optional)
-          </h4>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-            Allow location access to automatically detect your coordinates for more accurate delivery.
-          </p>
+      <h4 class="font-semibold text-gray-900 dark:text-white mb-1">
+        Enable Location Access
+      </h4>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+        Allow location access to automatically detect your coordinates for more accurate delivery.
+        You can skip if you prefer to enter them manually.
+      </p>
           <div class="flex gap-2">
             <UButton
               size="sm"
@@ -62,7 +63,7 @@
     <UForm
       :state="formState"
       :schema="schema"
-      class="space-y-5"
+      class="space-y-6 w-full"
     >
       <!-- Full Name & Phone (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
@@ -70,12 +71,14 @@
         label="Full Name"
         name="person_name"
         required
+        class="w-full"
       >
         <UInput
           v-model="formState.person_name"
           placeholder="Enter recipient name"
           size="lg"
           icon="i-lucide-user"
+          class="w-full"
         />
         <template #hint>
           <span class="text-xs text-gray-500">Name of the person receiving the delivery.</span>
@@ -86,16 +89,18 @@
         label="Phone Number"
         name="person_mobile"
         required
+        class="w-full"
       >
         <UInput
           v-model="formState.person_mobile"
           type="tel"
-          placeholder="+91 9876543210"
+          placeholder="10-digit mobile number"
           size="lg"
           icon="i-lucide-phone"
+          class="w-full"
         />
         <template #hint>
-          <span class="text-xs text-gray-500">Include country code for faster verification.</span>
+          <span class="text-xs text-gray-500">Enter the 10-digit mobile number.</span>
         </template>
       </UFormField>
       </div>
@@ -105,12 +110,14 @@
         label="Address Line 1"
         name="address_1"
         required
+        class="w-full"
       >
         <UInput
           v-model="formState.address_1"
           placeholder="House no., Building name, Street"
           size="lg"
           icon="i-lucide-home"
+          class="w-full"
         />
         <template #hint>
           <span class="text-xs text-gray-500">Use the exact address shown on courier labels.</span>
@@ -121,13 +128,14 @@
       <UFormField
         label="Address Line 2"
         name="address_2"
-        hint="Optional"
+        class="w-full"
       >
         <UInput
           v-model="formState.address_2"
           placeholder="Area, Landmark"
           size="lg"
           icon="i-lucide-map"
+          class="w-full"
         />
       </UFormField>
 
@@ -137,35 +145,43 @@
         label="Country"
         name="country_code"
         required
+        class="w-full"
       >
-          <USelectMenu
-            v-model="formState.country_code"
-            :options="countries"
-            placeholder="Select country"
-            size="lg"
-            icon="i-lucide-globe"
-            :loading="loadingCountries"
-            searchable
-            @update:model-value="handleCountryChange"
-          />
+        <USelectMenu
+          v-model="formState.country_code"
+          :options="countries"
+          placeholder="Select country"
+          size="lg"
+          icon="i-lucide-globe"
+          option-attribute="label"
+          value-attribute="value"
+          :loading="loadingCountries"
+          searchable
+          class="w-full"
+          @update:model-value="handleCountryChange"
+        />
         </UFormField>
 
       <UFormField
         label="State / Province"
         name="state_code"
         required
+        class="w-full"
       >
-          <USelectMenu
-            v-model="formState.state_code"
-            :options="states"
-            placeholder="Select state"
-            size="lg"
-            icon="i-lucide-map-pinned"
-            :loading="loadingStates"
-            :disabled="!formState.country_code || loadingStates"
-            searchable
-            @update:model-value="handleStateChange"
-          />
+        <USelectMenu
+          v-model="formState.state_code"
+          :options="states"
+          placeholder="Select state"
+          size="lg"
+          icon="i-lucide-map-pinned"
+          option-attribute="label"
+          value-attribute="value"
+          :loading="loadingStates"
+          :disabled="!formState.country_code || loadingStates"
+          searchable
+          class="w-full"
+          @update:model-value="handleStateChange"
+        />
         </UFormField>
       </div>
 
@@ -175,31 +191,36 @@
         label="City / District"
         name="city"
         required
+        class="w-full"
       >
-          <UInput
-            v-model="formState.city"
-            placeholder="Enter city name"
-            size="lg"
-            icon="i-lucide-building-2"
-          />
+        <UInput
+          v-model="formState.city"
+          placeholder="Enter city name"
+          size="lg"
+          icon="i-lucide-building-2"
+          class="w-full"
+        />
         </UFormField>
 
       <UFormField
         label="Block / Area"
         name="block_id"
-        hint="Optional"
+        class="w-full"
       >
-          <USelectMenu
-            v-model="formState.block_id"
-            :options="blocks"
-            placeholder="Select block (optional)"
-            size="lg"
-            icon="i-lucide-map"
-            :loading="loadingBlocks"
-            :disabled="!formState.state_code || loadingBlocks"
-            searchable
-            @update:model-value="handleBlockChange"
-          />
+        <USelectMenu
+          v-model="formState.block_id"
+          :options="blocks"
+          placeholder="Select block"
+          size="lg"
+          icon="i-lucide-map"
+          option-attribute="label"
+          value-attribute="value"
+          :loading="loadingBlocks"
+          :disabled="!formState.state_code || loadingBlocks"
+          searchable
+          class="w-full"
+          @update:model-value="handleBlockChange"
+        />
         </UFormField>
       </div>
 
@@ -208,6 +229,7 @@
         label="Postal Code / ZIP"
         name="postal_code"
         required
+        class="w-full"
       >
         <UInput
           v-model="formState.postal_code"
@@ -215,6 +237,7 @@
           size="lg"
           icon="i-lucide-hash"
           maxlength="10"
+          class="w-full"
         />
         <template #hint>
           <span class="text-xs text-gray-500">Ensure it matches your delivery zone.</span>
@@ -296,6 +319,7 @@ const {
 } = useGeoData()
 
 // Geolocation state
+const geoReady = ref(false)
 const showGeolocationPrompt = ref(props.showGeolocation)
 const geolocationDenied = ref(false)
 const fetchingLocation = ref(false)
@@ -343,28 +367,28 @@ watch(
 )
 
 // Handle country change
-const handleCountryChange = async (countryCode: string) => {
+const handleCountryChange = async (countryCode: string | number | null) => {
+  if (!countryCode) return
   formState.state_code = ''
   formState.block_id = null
   resetStates()
 
-  if (countryCode) {
-    await fetchStates(countryCode)
-  }
+  await fetchStates(String(countryCode))
 }
 
 // Handle state change
-const handleStateChange = async (stateCode: string) => {
+const handleStateChange = async (stateCode: string | number | null) => {
   formState.block_id = null
   resetBlocks()
 
   if (stateCode) {
-    await fetchBlocks(stateCode)
+    await fetchBlocks(String(stateCode))
   }
 }
 
 // Handle block change (optional - may have coordinates)
-const handleBlockChange = (blockId: number) => {
+const handleBlockChange = (blockId: string | number | null) => {
+  if (!blockId) return
   const block = blocks.value.find((b: GeoOption) => b.value === blockId)
   if (block?.coordinates) {
     formState.latitude = block.coordinates.lat
@@ -432,15 +456,23 @@ defineExpose({
 // Load countries on mount
 onMounted(async () => {
   await fetchCountries()
+  console.log('Countries loaded:', countries.value.length, countries.value)
 
   // Load states if country is pre-selected
   if (formState.country_code) {
+    console.log('Loading states for preselected country:', formState.country_code)
     await fetchStates(formState.country_code)
+    console.log('States loaded:', states.value.length, states.value)
   }
 
   // Load blocks if state is pre-selected
   if (formState.state_code) {
+    console.log('Loading blocks for preselected state:', formState.state_code)
     await fetchBlocks(formState.state_code)
+    console.log('Blocks loaded:', blocks.value.length)
   }
+
+  geoReady.value = true
+  console.log('Geo data ready')
 })
 </script>

@@ -9,12 +9,14 @@ export interface GeoOption {
   isd_code?: number
   district?: string
   coordinates?: { lat: number, lng: number } | null
+  states?: GeoOption[]
 }
 
 export function useGeoData() {
   const config = useRuntimeConfig()
 
   const countries = ref<GeoOption[]>([])
+  const statesByCountry = ref<Record<string, GeoOption[]>>({})
   const states = ref<GeoOption[]>([])
   const blocks = ref<GeoOption[]>([])
   const districts = ref<GeoOption[]>([])
@@ -31,9 +33,26 @@ export function useGeoData() {
     loadingCountries.value = true
     try {
       const response = await useSanctumFetch<{ data: GeoOption[] }>(
-        `${config.public.apiBase}/api/geo/countries`
+        `${config.public.apiBase}/api/geo/countries?with_states=1`
       )
-      countries.value = response.data || []
+
+      const fetchedCountries = response.data || []
+
+      // Extract countries and cache their states
+      countries.value = fetchedCountries.map(country => ({
+        value: country.value,
+        label: country.label,
+        isd_code: country.isd_code
+      }))
+
+      // Cache states for each country
+      statesByCountry.value = {}
+      fetchedCountries.forEach((country) => {
+        if (country.states && Array.isArray(country.states)) {
+          statesByCountry.value[String(country.value)] = country.states
+        }
+      })
+
       return countries.value
     } catch (error) {
       console.error('Failed to fetch countries:', error)
@@ -50,6 +69,12 @@ export function useGeoData() {
     if (!countryCode) {
       states.value = []
       return []
+    }
+
+    const cachedStates = statesByCountry.value[countryCode]
+    if (cachedStates && cachedStates.length) {
+      states.value = cachedStates
+      return states.value
     }
 
     loadingStates.value = true
