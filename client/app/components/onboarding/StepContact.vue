@@ -1,6 +1,6 @@
 <template>
   <div class="step-contact">
-    <div class="max-w-lg mx-auto">
+    <div class="w-full">
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -10,12 +10,19 @@
           />
         </div>
         <h2 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          {{ hasMobileVerified ? 'Add your email (optional)' : 'Verify your mobile number' }}
+          {{ missingContact === 'mobile'
+            ? 'Verify your mobile number'
+            : missingContact === 'email'
+              ? 'Add your email'
+              : 'Contact details verified'
+          }}
         </h2>
         <p class="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-          {{ hasMobileVerified
-            ? 'Add an email for account recovery and updates'
-            : 'Mobile verification is required to continue'
+          {{ missingContact === 'mobile'
+            ? 'Mobile verification is required to continue'
+            : missingContact === 'email'
+              ? 'Add an email for account recovery and updates'
+              : 'Your contact details are already verified.'
           }}
         </p>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -25,7 +32,7 @@
 
       <!-- Mobile Section (REQUIRED if not verified) -->
       <div
-        v-if="!hasMobileVerified"
+        v-if="missingContact === 'mobile'"
         class="space-y-6"
       >
         <!-- Mobile Already Verified Badge -->
@@ -49,7 +56,7 @@
           v-if="!mobileVerified"
           :state="mobileFormState"
           :schema="mobileSchema"
-          class="space-y-5"
+          class="space-y-6 w-full"
         >
           <UFormField
             label="Mobile Number"
@@ -59,12 +66,13 @@
             <UInput
               v-model="mobileFormState.mobile"
               type="tel"
-              placeholder="+91 9876543210"
+              placeholder="10-digit mobile number"
               size="lg"
               icon="i-lucide-smartphone"
+              class="w-full"
             />
             <template #hint>
-              <span class="text-xs text-gray-500">Use international format, e.g. +919876543210</span>
+              <span class="text-xs text-gray-500">Enter a 10-digit mobile number.</span>
             </template>
           </UFormField>
 
@@ -143,7 +151,7 @@
 
       <!-- Email Section (OPTIONAL - only shown after mobile is verified) -->
       <div
-        v-else
+        v-else-if="missingContact === 'email'"
         class="space-y-5"
       >
         <!-- Mobile Already Verified Info -->
@@ -178,10 +186,10 @@
           v-if="!hasEmailVerified && !emailVerified"
           :state="emailFormState"
           :schema="emailSchema"
-          class="space-y-5"
+          class="space-y-6 w-full"
         >
           <UFormField
-            label="Email Address (Optional)"
+            label="Email Address"
             name="email"
           >
             <UInput
@@ -190,6 +198,7 @@
               placeholder="you@example.com"
               size="lg"
               icon="i-lucide-mail"
+              class="w-full"
             />
             <template #hint>
               <span class="text-xs text-gray-500">Used for recovery and account alerts.</span>
@@ -284,6 +293,33 @@
         >
           You can skip this step and add email later from your profile settings.
         </p>
+
+        <div class="flex justify-center">
+          <UButton
+            v-if="!hasEmailVerified && !emailVerified"
+            variant="ghost"
+            color="neutral"
+            size="sm"
+            @click="skipEmail"
+          >
+            Skip for now
+          </UButton>
+        </div>
+      </div>
+
+      <div
+        v-else
+        class="space-y-4"
+      >
+        <div class="flex items-center justify-center gap-2 py-3 px-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
+          <UIcon
+            name="i-lucide-check-circle"
+            class="w-5 h-5 text-green-600 dark:text-green-400"
+          />
+          <span class="text-green-700 dark:text-green-300 font-medium">
+            Contact details verified.
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -311,9 +347,29 @@ const emit = defineEmits<{
 const config = useRuntimeConfig()
 const toast = useToast()
 
-// Check verification status from props
-const hasMobileVerified = computed(() => !!props.mobileVerifiedAt)
-const hasEmailVerified = computed(() => !!props.emailVerifiedAt)
+// Check verification status from props.
+// If user signed up with a contact method, assume it was verified during registration.
+const hasMobileVerified = computed(() => {
+  if (props.signupMethod === 'mobile' && props.userMobile) {
+    return true
+  }
+  return !!props.mobileVerifiedAt
+})
+const hasEmailVerified = computed(() => {
+  if (props.signupMethod === 'email' && props.userEmail) {
+    return true
+  }
+  return !!props.emailVerifiedAt
+})
+
+const missingContact = computed<'mobile' | 'email' | 'none'>(() => {
+  if (!hasMobileVerified.value && hasEmailVerified.value) return 'mobile'
+  if (!hasEmailVerified.value && hasMobileVerified.value) return 'email'
+  if (!hasMobileVerified.value && !hasEmailVerified.value) {
+    return props.signupMethod === 'mobile' ? 'email' : 'mobile'
+  }
+  return 'none'
+})
 
 // Mobile form state
 const mobileFormState = reactive({
@@ -341,7 +397,7 @@ const emailResendCooldown = ref(0)
 
 // Validation
 const isValidMobile = computed(() => {
-  const mobileRegex = /^\+[1-9]\d{1,14}$/
+  const mobileRegex = /^\d{10}$/
   return mobileRegex.test(mobileFormState.mobile.replace(/[\s-]/g, ''))
 })
 
@@ -352,7 +408,7 @@ const isValidEmail = computed(() => {
 
 // Schemas
 const mobileSchema = z.object({
-  mobile: z.string().regex(/^\+[1-9]\d{1,14}$/, 'Please enter a valid mobile number in E.164 format'),
+  mobile: z.string().regex(/^\d{10}$/, 'Please enter a valid 10-digit mobile number'),
   otp: z.string().optional()
 })
 
@@ -361,17 +417,19 @@ const emailSchema = z.object({
   otp: z.string().optional()
 })
 
-// Step is valid when mobile is verified (email is optional)
-const isStepValid = computed(() => hasMobileVerified.value || mobileVerified.value)
+// Step is valid when required contact is verified; email is optional
+const isStepValid = computed(() => {
+  if (missingContact.value === 'mobile') {
+    return hasMobileVerified.value || mobileVerified.value
+  }
+  return true
+})
 
 // Watch and emit validity
 watch(
   isStepValid,
   (isValid) => {
     emit('valid', isValid)
-    if (isValid) {
-      emit('verified')
-    }
   },
   { immediate: true }
 )
@@ -402,19 +460,11 @@ const sendMobileOtp = async () => {
     mobileOtpSent.value = true
     startMobileResendCooldown()
 
-    if (response.demo && response.otp) {
-      toast.add({
-        title: 'Demo Mode',
-        description: `Your OTP is: ${response.otp}`,
-        color: 'info'
-      })
-    } else {
-      toast.add({
-        title: 'Code Sent',
-        description: 'Verification code sent to your mobile',
-        color: 'success'
-      })
-    }
+    toast.add({
+      title: 'Code Sent',
+      description: 'Verification code sent to your mobile',
+      color: 'success'
+    })
   } catch (error: unknown) {
     const err = error as { data?: { message?: string } }
     toast.add({
@@ -443,6 +493,7 @@ const verifyMobileOtp = async () => {
     })
 
     mobileVerified.value = true
+    emit('verified')
     toast.add({
       title: 'Verified!',
       description: 'Your mobile has been verified',
@@ -491,19 +542,11 @@ const sendEmailOtp = async () => {
     emailOtpSent.value = true
     startEmailResendCooldown()
 
-    if (response.demo && response.otp) {
-      toast.add({
-        title: 'Demo Mode',
-        description: `Your OTP is: ${response.otp}`,
-        color: 'info'
-      })
-    } else {
-      toast.add({
-        title: 'Code Sent',
-        description: 'Verification code sent to your email',
-        color: 'success'
-      })
-    }
+    toast.add({
+      title: 'Code Sent',
+      description: 'Verification code sent to your email',
+      color: 'success'
+    })
   } catch (error: unknown) {
     const err = error as { data?: { message?: string } }
     toast.add({
@@ -530,6 +573,7 @@ const verifyEmailOtp = async () => {
     })
 
     emailVerified.value = true
+    emit('verified')
     toast.add({
       title: 'Verified!',
       description: 'Your email has been verified',
@@ -550,6 +594,13 @@ const verifyEmailOtp = async () => {
 const resendEmailOtp = () => {
   emailFormState.otp = ''
   sendEmailOtp()
+}
+
+const skipEmail = () => {
+  emailFormState.email = ''
+  emailFormState.otp = ''
+  emailOtpSent.value = false
+  emailVerified.value = false
 }
 
 const startEmailResendCooldown = () => {

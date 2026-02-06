@@ -68,19 +68,11 @@ const handleSendOtp = async () => {
 
     otpSent.value = true
 
-    if (response.demo && response.otp) {
-      toast.add({
-        title: 'OTP Sent',
-        description: `Demo OTP: ${response.otp}`,
-        color: 'success'
-      })
-    } else {
-      toast.add({
-        title: 'OTP Sent',
-        description: 'Check your email for the verification code',
-        color: 'success'
-      })
-    }
+    toast.add({
+      title: 'OTP Sent',
+      description: 'Check your email for the verification code',
+      color: 'success'
+    })
   } catch (err: unknown) {
     const fetchError = err as { data?: { message?: string } }
     error.value = fetchError.data?.message || 'Failed to send OTP'
@@ -341,7 +333,7 @@ const handleRegister = async () => {
             <input
               v-model="form.mobile"
               type="tel"
-              placeholder="+91 9XXXXXXXXX"
+              placeholder="10-digit mobile number"
               class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
             <UIcon
@@ -350,7 +342,7 @@ const handleRegister = async () => {
             />
           </div>
           <p class="text-xs text-slate-500 dark:text-slate-400">
-            Include country code (e.g., +91 for India)
+            Enter a 10-digit mobile number.
           </p>
         </div>
 

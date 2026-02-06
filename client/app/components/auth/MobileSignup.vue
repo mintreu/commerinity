@@ -49,8 +49,13 @@ const handleSendOtp = async () => {
     return
   }
 
-  if (!form.mobile.match(/^\+[1-9]\d{1,14}$/)) {
-    error.value = 'Please enter a valid mobile number with country code (e.g., +919876543210)'
+  if (!form.mobile.match(/^\d{10}$/)) {
+    error.value = 'Please enter a valid 10-digit mobile number'
+    toast.add({
+      title: 'Invalid Mobile',
+      description: 'Mobile number must be 10 digits',
+      color: 'error'
+    })
     return
   }
 
@@ -68,19 +73,11 @@ const handleSendOtp = async () => {
 
     otpSent.value = true
 
-    if (response.demo && response.otp) {
-      toast.add({
-        title: 'OTP Sent',
-        description: `Demo OTP: ${response.otp}`,
-        color: 'success'
-      })
-    } else {
-      toast.add({
-        title: 'OTP Sent',
-        description: 'Check your mobile for the OTP',
-        color: 'success'
-      })
-    }
+    toast.add({
+      title: 'OTP Sent',
+      description: 'Check your mobile for the OTP',
+      color: 'success'
+    })
   } catch (err: unknown) {
     const fetchError = err as { data?: { message?: string } }
     error.value = fetchError.data?.message || 'Failed to send OTP'
@@ -216,7 +213,7 @@ const handleRegister = async () => {
               v-model="form.mobile"
               type="tel"
               required
-              placeholder="+91 9XXXXXXXXX"
+              placeholder="10-digit mobile number"
               :disabled="otpSent"
               class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
@@ -226,7 +223,7 @@ const handleRegister = async () => {
             />
           </div>
           <p class="text-xs text-slate-500 dark:text-slate-400">
-            Include country code (e.g., +91 for India)
+            Enter a 10-digit mobile number.
           </p>
         </div>
 

@@ -182,7 +182,7 @@
               <input
                 v-model="form.mobile"
                 type="text"
-                placeholder="+919876543210"
+                placeholder="10-digit mobile number"
                 class="w-full h-12 pl-4 pr-12 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-semibold"
                 :class="{
                   'border-red-500 bg-red-50 dark:bg-red-900/20': errors.mobile,
@@ -202,7 +202,7 @@
               </NuxtLink>
             </div>
             <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-              International format (e.g., +919876543210)
+              Enter a 10-digit mobile number.
             </p>
             <p
               v-if="errors.mobile"
@@ -442,7 +442,7 @@ const canChangeEmail = computed(() => {
 
 const canChangeMobile = computed(() => {
   // Indian mobile validation: starts with 6-9, 10 digits
-  const mobileRegex = /^\+91[6-9]\d{9}$/
+  const mobileRegex = /^\d{10}$/
   return mobileRegex.test(form.mobile)
 })
 

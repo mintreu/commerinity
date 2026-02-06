@@ -213,7 +213,6 @@ const formattedAmount = computed(() => {
             maxlength="10"
           >
             <template #leading>
-              <span class="text-slate-400">+91</span>
             </template>
           </UInput>
         </UFormField>
@@ -266,7 +265,7 @@ const formattedAmount = computed(() => {
               Sending to
             </span>
             <span class="font-medium text-slate-900 dark:text-white">
-              +91 {{ formData.recipient_mobile }}
+              {{ formData.recipient_mobile }}
             </span>
           </div>
           <div class="flex justify-between">

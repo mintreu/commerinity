@@ -209,7 +209,7 @@
                     v-model="form.mobile"
                     type="tel"
                     required
-                    placeholder="+91 9XXXXXXXXX"
+                    placeholder="10-digit mobile number"
                     class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   >
                   <UIcon
@@ -511,19 +511,11 @@ const handleSendOtp = async () => {
 
     otpSent.value = true
 
-    if (response.demo && response.otp) {
-      useToast().add({
-        title: 'OTP Sent',
-        description: `Demo OTP: ${response.otp}`,
-        color: 'green'
-      })
-    } else {
-      useToast().add({
-        title: 'OTP Sent',
-        description: 'Check your mobile for the OTP',
-        color: 'green'
-      })
-    }
+    useToast().add({
+      title: 'OTP Sent',
+      description: 'Check your mobile for the OTP',
+      color: 'green'
+    })
   } catch (err: unknown) {
     const fetchError = err as { data?: { message?: string } }
     error.value = fetchError.data?.message || 'Failed to send OTP'

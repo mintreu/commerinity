@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Product as CatalogProduct } from '~/types/catalog'
+import FilamentContent from '~/components/FilamentContent.vue'
 /**
  * Product Detail Page - Flipkart/Amazon Style
  * Displays product with gallery, variants, reviews, wishlist, sales
@@ -331,7 +332,88 @@ const formatDate = (dateString: string) => {
 
 // Star rating display
 const getStarArray = (rating: number) => {
-  return Array.from({ length: 5 }, (_, i) => i < rating ? 'full' : 'empty')
+  return Array.from({ length: 5 }, (_, i) => ({
+    id: `${rating}-${i}`,
+    filled: i < rating
+  }))
+}
+
+const reviewRating = ref(5)
+const reviewText = ref('')
+const reviewSubmitting = ref(false)
+const helpingReviewId = ref<number | null>(null)
+
+const hoverRating = ref<number | null>(null)
+
+const getStarButtonClass = (star: number) => {
+  const active = (hoverRating.value ?? reviewRating.value) >= star
+  return [
+    'review-star-btn flex items-center justify-center',
+    active
+      ? 'border-amber-400 bg-amber-50 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300'
+      : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-amber-200 dark:hover:border-amber-500'
+  ]
+}
+
+const submitReview = async () => {
+  if (!product.value) return
+  reviewSubmitting.value = true
+  try {
+    await useSanctumFetch(`${config.public.apiBase}/api/products/${slug.value}/reviews`, {
+      method: 'POST',
+      body: {
+        rating: reviewRating.value,
+        review: reviewText.value || null
+      }
+    })
+    toast.add({
+      title: 'Review submitted',
+      description: 'Thank you for sharing your feedback.',
+      color: 'success'
+    })
+    reviewText.value = ''
+    reviewRating.value = 5
+    await loadReviews()
+  } catch (err: unknown) {
+    const message = (err as any)?.data?.message || 'Unable to submit review'
+    toast.add({
+      title: 'Review failed',
+      description: message,
+      color: 'error'
+    })
+  } finally {
+    reviewSubmitting.value = false
+  }
+}
+
+const markReviewHelpful = async (reviewId: number) => {
+  if (!isLoggedIn.value) {
+    toast.add({
+      title: 'Login required',
+      description: 'Please login to mark a review as helpful.',
+      color: 'warning'
+    })
+    return
+  }
+  helpingReviewId.value = reviewId
+  try {
+    const response = await useSanctumFetch<{ success: boolean; data: { helpful_votes: number } }>(
+      `${config.public.apiBase}/api/reviews/${reviewId}/helpful`,
+      { method: 'POST' }
+    )
+    if (response.success) {
+      const review = reviews.value?.reviews?.find(r => r.id === reviewId)
+      if (review) {
+        review.helpful_votes = response.data.helpful_votes
+      }
+      toast.add({ title: 'Marked helpful', color: 'success' })
+    }
+  } catch (err: unknown) {
+    const message = (err as any)?.data?.message || 'Unable to mark helpful'
+    toast.add({ title: 'Action failed', description: message, color: 'error' })
+  } finally {
+    helpingReviewId.value = null
+  }
 }
 
 watch(slug, () => {
@@ -548,11 +630,11 @@ onMounted(() => {
                 <div class="flex items-center gap-1">
                   <template
                     v-for="star in getStarArray(Math.round(reviews?.stats.average_rating || 0))"
-                    :key="star"
+                    :key="star.id"
                   >
                     <UIcon
                       name="i-lucide-star"
-                      :class="['w-4 h-4', star === 'full' ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
+                      :class="['w-4 h-4', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
                     />
                   </template>
                 </div>
@@ -903,9 +985,9 @@ onMounted(() => {
             <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">
               Product Description
             </h2>
-            <div
-              class="prose prose-slate dark:prose-invert max-w-none"
-              v-html="product.description"
+            <FilamentContent
+              class="track-content"
+              :content="product.description"
             />
           </div>
         </div>
@@ -965,15 +1047,15 @@ onMounted(() => {
                   {{ reviews.stats.average_rating }}
                 </div>
                 <div class="flex items-center justify-center gap-1 my-2">
-                  <template
-                    v-for="star in getStarArray(Math.round(reviews.stats.average_rating))"
-                    :key="star"
-                  >
-                    <UIcon
-                      name="i-lucide-star"
-                      :class="['w-5 h-5', star === 'full' ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
-                    />
-                  </template>
+                    <template
+                      v-for="star in getStarArray(Math.round(reviews.stats.average_rating))"
+                      :key="star.id"
+                    >
+                      <UIcon
+                        name="i-lucide-star"
+                        :class="['w-5 h-5', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
+                      />
+                    </template>
                 </div>
                 <div class="text-sm text-slate-500">
                   {{ reviews.stats.total_reviews }} reviews
@@ -987,7 +1069,10 @@ onMounted(() => {
                   :key="star"
                   class="flex items-center gap-3"
                 >
-                  <span class="text-sm w-8 text-slate-600 dark:text-slate-400">{{ star }} ?</span>
+                  <span class="text-sm w-8 flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                    {{ star }}
+                    <UIcon name="i-lucide-star" class="w-3 h-3 text-amber-400" />
+                  </span>
                   <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
                       class="h-full bg-amber-400 rounded-full transition-all"
@@ -996,6 +1081,71 @@ onMounted(() => {
                   </div>
                   <span class="text-sm w-8 text-slate-500">{{ reviews.stats.distribution[star] }}</span>
                 </div>
+              </div>
+            </div>
+
+            <!-- Review Submission -->
+            <div class="mt-10 border-b border-slate-200 dark:border-slate-700 pb-8">
+              <div v-if="isLoggedIn" class="space-y-4">
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                  Share your experience with other buyers. Pick a rating and tell us what you liked or what we can improve.
+                </p>
+                <div class="flex items-center gap-2 text-sm font-semibold">
+                  <span class="text-slate-500 dark:text-slate-400">Your Rating:</span>
+                <div class="flex items-center gap-2">
+                  <button
+                    v-for="star in [1,2,3,4,5]"
+                    :key="star"
+                    type="button"
+                    :class="getStarButtonClass(star)"
+                    @click="reviewRating = star"
+                    @mouseenter="hoverRating = star"
+                    @mouseleave="hoverRating = null"
+                  >
+                    <UIcon
+                      name="i-lucide-star"
+                      class="w-4 h-4"
+                    />
+                  </button>
+                  <span class="text-xs text-slate-400">
+                    {{ (hoverRating ?? reviewRating) }} / 5
+                  </span>
+                </div>
+                </div>
+                <UTextarea
+                  v-model="reviewText"
+                  placeholder="Write your review (optional, max 2,000 characters)"
+                  :rows="4"
+                  maxlength="2000"
+                  size="lg"
+                  class="w-full"
+                />
+                <div class="flex items-center gap-3">
+                  <UButton
+                    color="primary"
+                    size="md"
+                    :loading="reviewSubmitting"
+                    :disabled="reviewSubmitting"
+                    class="rounded-xl px-6 py-3 font-semibold"
+                    @click="submitReview"
+                  >
+                    Submit Review
+                  </UButton>
+                  <span class="text-xs text-slate-400">
+                    Reviews are moderated before publication.
+                  </span>
+                </div>
+              </div>
+              <div v-else class="text-sm text-slate-500 dark:text-slate-400">
+                Please
+                <NuxtLink to="/auth/login" class="text-primary-600 hover:underline dark:text-primary-400">
+                  login
+                </NuxtLink>
+                to leave a review, or
+                <NuxtLink to="/auth/register" class="text-primary-600 hover:underline dark:text-primary-400">
+                  register
+                </NuxtLink>
+                if you don’t have an account yet.
               </div>
             </div>
 
@@ -1031,15 +1181,15 @@ onMounted(() => {
                       </span>
                     </div>
                     <div class="flex items-center gap-1 mb-2">
-                      <template
-                        v-for="star in getStarArray(review.rating)"
-                        :key="star"
-                      >
-                        <UIcon
-                          name="i-lucide-star"
-                          :class="['w-4 h-4', star === 'full' ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
-                        />
-                      </template>
+                    <template
+                      v-for="star in getStarArray(review.rating)"
+                      :key="star.id"
+                    >
+                      <UIcon
+                        name="i-lucide-star"
+                        :class="['w-4 h-4', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
+                      />
+                    </template>
                     </div>
                     <p
                       v-if="review.review"
@@ -1048,14 +1198,35 @@ onMounted(() => {
                       {{ review.review }}
                     </p>
                     <div
-                      v-if="review.helpful_votes"
-                      class="mt-2 text-xs text-slate-400"
+                      v-if="review.helpful_votes !== undefined"
+                      class="mt-2 flex items-center gap-3 text-xs text-slate-400"
                     >
-                      <UIcon
-                        name="i-lucide-thumbs-up"
-                        class="w-3 h-3 inline mr-1"
-                      />
-                      {{ review.helpful_votes }} found this helpful
+                      <div class="flex items-center gap-1">
+                        <UIcon
+                          name="i-lucide-thumbs-up"
+                          class="w-3 h-3"
+                        />
+                        {{ review.helpful_votes }} found this helpful
+                      </div>
+                     <UTooltip v-if="isLoggedIn" text="Mark helpful">
+                        <UButton
+                          size="xs"
+                          variant="ghost"
+                          circle
+                          :loading="helpingReviewId === review.id"
+                          :disabled="helpingReviewId === review.id"
+                          class="text-amber-500 border border-slate-200 dark:border-slate-700 hover:bg-amber-100 dark:hover:bg-amber-900/40"
+                          @click="markReviewHelpful(review.id)"
+                        >
+                          <span class="sr-only">Mark review helpful</span>
+                          <span aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up">
+                              <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                              <path d="M7 10v12"/>
+                            </svg>
+                          </span>
+                        </UButton>
+                      </UTooltip>
                     </div>
                   </div>
                 </div>
@@ -1126,3 +1297,23 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.review-star-btn {
+  border: none;
+  padding: 0.35rem;
+  display: inline-flex;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.review-star-btn svg {
+  transition: transform 0.2s ease, fill 0.2s ease, color 0.2s ease;
+}
+.review-star-btn:hover {
+  transform: translateY(-2px);
+}
+.review-star-btn svg {
+  color: currentColor;
+  fill: currentColor;
+}
+</style>

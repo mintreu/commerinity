@@ -1,6 +1,6 @@
 <template>
   <div class="step-kyc">
-    <div class="max-w-lg mx-auto">
+    <div class="w-full">
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -29,8 +29,8 @@
           />
           <div>
             <p class="text-sm text-blue-800 dark:text-blue-200">
-              <strong>This step is optional.</strong> You can complete it later from your profile settings.
-              However, some features like withdrawals require KYC verification.
+              You can complete this later from your profile settings.
+              Some features like withdrawals require KYC verification.
             </p>
           </div>
         </div>
@@ -59,7 +59,7 @@
       <!-- Document Type Selection -->
       <div
         v-if="!skipping"
-        class="space-y-5"
+        class="space-y-6"
       >
         <UFormField
           label="Select Document Type"
@@ -72,6 +72,7 @@
             placeholder="Choose document type"
             size="lg"
             icon="i-lucide-file-text"
+            class="w-full"
           />
         </UFormField>
 
@@ -155,7 +156,7 @@
             </div>
           </div>
 
-          <!-- Back Side (optional for some docs) -->
+          <!-- Back Side (required for some docs) -->
           <div v-if="requiresBackSide">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {{ selectedDocumentLabel }} - Back Side

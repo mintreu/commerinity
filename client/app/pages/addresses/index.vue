@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { nextTick } from 'vue'
+import { useGeoData } from '~/composables/useGeoData'
+
 /**
  * Addresses Management Page
  * CRUD for user addresses with default toggler
@@ -19,6 +22,7 @@ interface Address {
   landmark?: string
   city: string
   postal_code: string
+  block_id?: number | null
   state_code: string
   country_code: string
   type: 'home' | 'work' | 'other'
@@ -26,7 +30,20 @@ interface Address {
 }
 
 const config = useRuntimeConfig()
-const { formatCurrency } = useBranding()
+
+const {
+  countries,
+  states,
+  blocks,
+  loadingCountries,
+  loadingStates,
+  loadingBlocks,
+  fetchCountries,
+  fetchStates,
+  fetchBlocks,
+  resetStates,
+  resetBlocks
+} = useGeoData()
 
 const addresses = ref<Address[]>([])
 const loading = ref(true)
@@ -47,11 +64,28 @@ const formData = ref({
   postal_code: '',
   state_code: '',
   country_code: 'IN',
+  block_id: null as number | null,
   type: 'home' as const
 })
 
-const formErrors = ref<Record<string, string>>({})
+const formErrors = ref<Record<string, string[] | string>>({})
 const submitting = ref(false)
+const editingFormLoading = ref(false)
+const modalOpen = computed({
+  get: () => showAddModal.value || showEditModal.value,
+  set: (value: boolean) => {
+    if (!value) {
+      showAddModal.value = false
+      showEditModal.value = false
+    }
+  }
+})
+
+const fieldError = (key: string) => {
+  const error = formErrors.value[key]
+  if (!error) return undefined
+  return Array.isArray(error) ? error[0] : String(error)
+}
 
 // Fetch addresses
 const fetchAddresses = async () => {
@@ -66,7 +100,49 @@ const fetchAddresses = async () => {
   }
 }
 
+const loadInitialGeo = async () => {
+  await fetchCountries()
+  if (formData.value.country_code) {
+    await fetchStates(formData.value.country_code)
+  }
+}
+
+const stateItems = computed(() => states.value)
+const blockItems = computed(() => blocks.value)
+
+const handleStateChange = async (value: string | null) => {
+  formData.value.state_code = value || ''
+  formData.value.block_id = null
+  resetBlocks()
+  if (value) {
+    await fetchBlocks(value)
+  }
+}
+
+const handleBlockChange = (value: number | string | null) => {
+  formData.value.block_id = value ? Number(value) : null
+}
+
+const hydrateStateAndBlock = async (countryCode: string, stateCode?: string | null, blockId?: number | null) => {
+  await fetchStates(countryCode)
+  await nextTick()
+
+  if (stateCode) {
+    formData.value.state_code = stateCode
+    await fetchBlocks(stateCode)
+    await nextTick()
+    formData.value.block_id = blockId ?? null
+  } else {
+    formData.value.state_code = ''
+    formData.value.block_id = null
+  }
+}
+
 // Create address
+const sanitizeMobile = (value: string) => {
+  return value.replace(/\D/g, '').slice(-10)
+}
+
 const createAddress = async () => {
   submitting.value = true
   formErrors.value = {}
@@ -74,7 +150,11 @@ const createAddress = async () => {
   try {
     await useSanctumFetch(`${config.public.apiBase}/api/addresses`, {
       method: 'POST',
-      body: formData.value
+      body: {
+        ...formData.value,
+        block_id: formData.value.block_id ?? null,
+        person_mobile: sanitizeMobile(formData.value.person_mobile)
+      }
     })
 
     showAddModal.value = false
@@ -99,7 +179,11 @@ const updateAddress = async () => {
   try {
     await useSanctumFetch(`${config.public.apiBase}/api/addresses/${editingAddress.value.uuid}`, {
       method: 'PUT',
-      body: formData.value
+      body: {
+        ...formData.value,
+        block_id: formData.value.block_id ?? null,
+        person_mobile: sanitizeMobile(formData.value.person_mobile)
+      }
     })
 
     showEditModal.value = false
@@ -143,7 +227,8 @@ const setDefaultAddress = async (uuid: string) => {
 }
 
 // Open edit modal
-const openEditModal = (address: Address) => {
+const openEditModal = async (address: Address) => {
+  editingFormLoading.value = true
   editingAddress.value = address
   formData.value = {
     title: address.title,
@@ -155,9 +240,13 @@ const openEditModal = (address: Address) => {
     city: address.city,
     postal_code: address.postal_code,
     state_code: address.state_code,
-    country_code: address.country_code,
+    country_code: address.country_code || 'IN',
+    block_id: address.block_id ?? null,
     type: address.type
   }
+  const countryCode = address.country_code || 'IN'
+  await hydrateStateAndBlock(countryCode, address.state_code, address.block_id ?? null)
+  editingFormLoading.value = false
   showEditModal.value = true
 }
 
@@ -179,9 +268,11 @@ const resetForm = () => {
   formErrors.value = {}
 }
 
-// Open add modal
-const openAddModal = () => {
+const openAddModal = async () => {
+  editingFormLoading.value = true
   resetForm()
+  await hydrateStateAndBlock('IN')
+  editingFormLoading.value = false
   showAddModal.value = true
 }
 
@@ -207,8 +298,9 @@ const getTypeColor = (type: string) => {
   }
 }
 
-onMounted(() => {
-  fetchAddresses()
+onMounted(async () => {
+  await loadInitialGeo()
+  await fetchAddresses()
 })
 </script>
 
@@ -407,9 +499,8 @@ onMounted(() => {
 
     <!-- Address Form Modal (Shared for Add/Edit) -->
     <UModal
-      :model-value="showAddModal || showEditModal"
+      v-model:open="modalOpen"
       :ui="{ width: 'sm:max-w-2xl' }"
-      @update:model-value="val => { if (!val) { showAddModal = false; showEditModal = false; } }"
     >
       <template #content>
         <UCard :ui="{ body: { padding: 'p-8' }, header: { padding: 'px-8 py-6' }, footer: { padding: 'px-8 py-6' } }">
@@ -437,7 +528,13 @@ onMounted(() => {
             </div>
           </template>
 
-          <div class="space-y-6">
+          <div class="space-y-6 relative">
+            <div
+              v-if="editingFormLoading"
+              class="absolute inset-0 bg-white/90 dark:bg-slate-900/80 flex items-center justify-center z-10 rounded-lg"
+            >
+              <UIcon name="i-lucide-loader-2" class="w-16 h-16 animate-spin text-primary-500" />
+            </div>
             <!-- Row 1: Title & Type -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UFormField
@@ -536,11 +633,11 @@ onMounted(() => {
               />
             </UFormField>
 
-            <!-- Row 3: City, PIN, State -->
+            <!-- Row 3: City, PIN, State / Block -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <UFormField
                 label="City"
-                :error="formErrors.city"
+                :error="fieldError('city')"
                 required
               >
                 <UInput
@@ -552,7 +649,7 @@ onMounted(() => {
               </UFormField>
               <UFormField
                 label="PIN Code"
-                :error="formErrors.postal_code"
+                :error="fieldError('postal_code')"
                 required
               >
                 <UInput
@@ -564,14 +661,42 @@ onMounted(() => {
               </UFormField>
               <UFormField
                 label="State"
-                :error="formErrors.state_code"
+                :error="fieldError('state_code')"
                 required
               >
-                <UInput
+                <USelectMenu
                   v-model="formData.state_code"
-                  placeholder="e.g. WB"
+                  :items="stateItems"
+                  placeholder="Select state"
                   size="lg"
                   class="w-full"
+                  :loading="loadingStates"
+                  :disabled="loadingStates || editingFormLoading"
+                  value-key="value"
+                  label-key="label"
+                  searchable
+                  @update:model-value="handleStateChange"
+                />
+              </UFormField>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <UFormField
+                label="Block / Area"
+                :error="fieldError('block_id')"
+              >
+                <USelectMenu
+                  v-model="formData.block_id"
+                  :items="blockItems"
+                  placeholder="Select block"
+                  size="lg"
+                  class="w-full"
+                  :loading="loadingBlocks"
+                  :disabled="loadingBlocks || !formData.state_code || editingFormLoading"
+                  value-key="value"
+                  label-key="label"
+                  searchable
+                  @update:model-value="handleBlockChange"
                 />
               </UFormField>
             </div>

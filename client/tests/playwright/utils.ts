@@ -19,8 +19,8 @@ export const takeShot = async (page: Page, name: string) => {
 }
 
 export const randomMobile = () => {
-  const suffix = Math.floor(1000000 + Math.random() * 8999999)
-  return `+9199${suffix}`
+  const suffix = Math.floor(100000000 + Math.random() * 899999999)
+  return `9${suffix}`
 }
 
 export const randomEmail = () => {

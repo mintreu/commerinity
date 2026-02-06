@@ -1,6 +1,6 @@
 <template>
   <div class="step-profile">
-    <div class="max-w-3xl mx-auto">
+    <div class="w-full">
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -56,14 +56,14 @@
         </div>
       </div>
       <p class="text-center text-xs text-gray-500 dark:text-gray-400 mb-8">
-        Optional. Use a clear headshot for a more trusted profile.
+        Use a clear headshot for a more trusted profile.
       </p>
 
       <!-- Form Fields -->
       <UForm
         :state="formState"
         :schema="schema"
-        class="space-y-5"
+        class="space-y-6 w-full"
         @submit="handleSubmit"
       >
         <!-- Full Name (Full width) -->
@@ -71,12 +71,14 @@
           label="Full Name"
           name="name"
           required
+          class="w-full"
         >
           <UInput
             v-model="formState.name"
             placeholder="Enter your full name"
             size="lg"
             icon="i-lucide-user"
+            class="w-full"
           />
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
             This will appear on invoices and your public profile.
@@ -89,6 +91,7 @@
             label="Date of Birth"
             name="dob"
             required
+            class="w-full"
           >
             <UInput
               v-model="formState.dob"
@@ -96,6 +99,7 @@
               size="lg"
               icon="i-lucide-calendar"
               :max="maxDate"
+              class="w-full"
             />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
               You must be at least 13 years old.
@@ -106,6 +110,7 @@
             label="Gender"
             name="gender"
             required
+            class="w-full"
           >
             <URadioGroup
               v-model="formState.gender"
@@ -122,13 +127,14 @@
         <UFormField
           label="Bio"
           name="bio"
-          hint="Optional"
+          class="w-full"
         >
           <UTextarea
             v-model="formState.bio"
             placeholder="Tell us a little about yourself..."
             :rows="3"
             size="lg"
+            class="w-full"
           />
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
             Keep it short and professional (max 280 characters).

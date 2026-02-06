@@ -140,6 +140,16 @@ const formatDate = (dateString: string | null) => {
   })
 }
 
+const roundedDaysRemaining = computed(() => {
+  const expiresAt = status.value?.subscription?.expires_at
+  if (!expiresAt) return 0
+  const expires = new Date(expiresAt)
+  const now = new Date()
+  const diffMs = expires.getTime() - now.getTime()
+  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  return Math.max(0, days)
+})
+
 const getStatusColor = (statusStr: string) => {
   const colors: Record<string, string> = {
     active: 'success',
@@ -279,7 +289,7 @@ const tabs = [
             <div class="space-y-1">
               <span class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Time Remaining</span>
               <p class="text-xl font-black text-slate-900 dark:text-white">
-                {{ status.subscription.days_remaining }} <span class="text-xs font-normal text-slate-500">Days</span>
+                {{ roundedDaysRemaining }} <span class="text-xs font-normal text-slate-500">Days</span>
               </p>
             </div>
             <div class="space-y-1">
@@ -676,7 +686,7 @@ const tabs = [
                       </p>
                     </div>
                     <div class="ml-auto">
-                      <UToggle
+                      <USwitch
                         :model-value="true"
                         disabled
                       />

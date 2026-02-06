@@ -48,13 +48,13 @@
 
       <!-- Main Content Area -->
       <div class="flex-1 flex items-center justify-center p-4 md:p-8">
-        <div class="w-full max-w-4xl">
+        <div class="w-full max-w-6xl">
           <!-- Desktop Card -->
           <UCard
             class="shadow-xl"
             :ui="{
               root: 'overflow-visible',
-              body: 'p-6 md:p-8'
+              body: 'p-6 md:p-10'
             }"
           >
             <!-- Header -->
@@ -86,18 +86,17 @@
               </div>
             </template>
 
-            <!-- Stepper -->
+            <!-- Stepper (Desktop only) -->
             <UStepper
+              v-if="!isMobile"
               ref="stepper"
               v-model="currentStep"
               :items="stepItems"
               :disabled="true"
               :linear="true"
               color="primary"
-              :orientation="isMobile ? 'vertical' : 'horizontal'"
-              :ui="{
-                root: isMobile ? 'hidden' : 'mb-8'
-              }"
+              :orientation="'horizontal'"
+              :ui="{ root: 'mb-8' }"
             >
               <!-- Welcome Step -->
               <template #welcome>
@@ -129,30 +128,11 @@
                 />
               </template>
 
-              <!-- Address Step -->
-              <template #address>
-                <OnboardingStepAddress
-                  ref="addressStep"
-                  :user-name="userName"
-                  :user-phone="userMobile"
-                  @update:data="handleAddressUpdate"
-                  @valid="addressValid = $event"
-                />
-              </template>
-
-              <!-- KYC Step -->
-              <template #kyc>
-                <OnboardingStepKyc
-                  ref="kycStep"
-                  @update:data="handleKycUpdate"
-                  @valid="kycValid = $event"
-                  @skip="handleKycSkip"
-                />
-              </template>
+            <!-- (Address and KYC steps removed as per latest requirements) -->
             </UStepper>
 
             <!-- Mobile: Show current step content -->
-            <div class="md:hidden">
+            <div v-else>
               <component
                 :is="currentStepComponent"
                 v-bind="currentStepProps"
@@ -183,30 +163,6 @@
               <div v-else />
 
               <div class="flex items-center gap-3">
-                <!-- Skip Button (Address) -->
-                <UButton
-                  v-if="currentStep === 3 && !addressSkipped"
-                  variant="ghost"
-                  color="neutral"
-                  size="lg"
-                  :disabled="submitting"
-                  @click="handleAddressSkip"
-                >
-                  Skip Address
-                </UButton>
-
-                <!-- Skip Button (KYC only) -->
-                <UButton
-                  v-if="currentStep === 4 && !kycData?.skipped"
-                  variant="ghost"
-                  color="neutral"
-                  size="lg"
-                  :disabled="submitting"
-                  @click="handleKycSkip"
-                >
-                  Skip KYC
-                </UButton>
-
                 <!-- Next / Complete Button -->
                 <UButton
                   v-if="currentStep < stepItems.length - 1"
@@ -252,8 +208,6 @@ import type { User } from '~/types/user'
 import OnboardingStepWelcome from '~/components/onboarding/StepWelcome.vue'
 import OnboardingStepProfile from '~/components/onboarding/StepProfile.vue'
 import OnboardingStepContact from '~/components/onboarding/StepContact.vue'
-import OnboardingStepAddress from '~/components/onboarding/StepAddress.vue'
-import OnboardingStepKyc from '~/components/onboarding/StepKyc.vue'
 
 definePageMeta({
   layout: 'guest',
@@ -269,8 +223,6 @@ const { user, refreshUser } = useSanctum()
 const stepper = useTemplateRef('stepper')
 const profileStep = ref()
 const contactStep = ref()
-const addressStep = ref()
-const kycStep = ref()
 
 // State
 const loading = ref(true)
@@ -281,18 +233,20 @@ const onboardingStatus = ref<any>(null)
 // Step validity states
 const profileValid = ref(false)
 const contactValid = ref(false)
-const addressValid = ref(false)
-const kycValid = ref(true) // KYC is optional, default true
-const addressSkipped = ref(false)
-
 // Step data
 const profileData = ref<Record<string, unknown>>({})
 const contactData = ref<Record<string, unknown>>({})
-const addressData = ref<Record<string, unknown>>({})
-const kycData = ref<Record<string, unknown>>({})
-
 // Responsive check
 const isMobile = ref(false)
+
+const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout>
+  const timeout = new Promise<T>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`${label} timeout`)), ms)
+  })
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId))
+}
 
 onMounted(async () => {
   // Check screen size
@@ -303,19 +257,19 @@ onMounted(async () => {
 
   // Load user data
   try {
-    await refreshUser()
+    await withTimeout(refreshUser(), 15000, 'refreshUser')
     if ((typedUser.value as User | null)?.onboarded) {
       router.push('/dashboard')
       return
     }
-    await fetchOnboardingStatus()
+  await withTimeout(fetchOnboardingStatus(), 15000, 'fetchOnboardingStatus')
   } catch {
     // User not loaded, redirect to login
     router.push('/auth/login')
     return
+  } finally {
+    loading.value = false
   }
-
-  loading.value = false
 })
 
 // User computed properties
@@ -360,18 +314,6 @@ const stepItems = computed<StepperItem[]>(() => [
     title: 'Contact',
     description: signupMethod.value === 'mobile' ? 'Add email' : 'Add mobile',
     icon: 'i-lucide-mail'
-  },
-  {
-    slot: 'address',
-    title: 'Address',
-    description: 'Delivery address',
-    icon: 'i-lucide-map-pin'
-  },
-  {
-    slot: 'kyc',
-    title: 'KYC',
-    description: 'Optional',
-    icon: 'i-lucide-shield-check'
   }
 ])
 
@@ -381,8 +323,6 @@ const currentStepComponent = computed(() => {
     case 0: return OnboardingStepWelcome
     case 1: return OnboardingStepProfile
     case 2: return OnboardingStepContact
-    case 3: return OnboardingStepAddress
-    case 4: return OnboardingStepKyc
     default: return null
   }
 })
@@ -398,8 +338,6 @@ const currentStepProps = computed(() => {
       emailVerifiedAt: emailVerifiedAt.value,
       mobileVerifiedAt: mobileVerifiedAt.value
     }
-    case 3: return { userName: typedUser.value?.name, userPhone: userMobile.value }
-    case 4: return {}
     default: return {}
   }
 })
@@ -408,8 +346,6 @@ const currentStepRef = computed(() => {
   switch (currentStep.value) {
     case 1: return 'profileStep'
     case 2: return 'contactStep'
-    case 3: return 'addressStep'
-    case 4: return 'kycStep'
     default: return undefined
   }
 })
@@ -428,8 +364,6 @@ const canProceed = computed(() => {
     case 0: return true // Welcome - always can proceed
     case 1: return profileValid.value
     case 2: return contactValid.value
-    case 3: return addressValid.value || addressSkipped.value
-    case 4: return kycValid.value
     default: return false
   }
 })
@@ -446,20 +380,10 @@ const handleContactUpdate = (data: Record<string, unknown>) => {
   contactData.value = data
 }
 
-const handleAddressUpdate = (data: Record<string, unknown>) => {
-  addressData.value = data
-}
-
-const handleKycUpdate = (data: Record<string, unknown>) => {
-  kycData.value = data
-}
-
 const handleCurrentStepDataUpdate = (data: Record<string, unknown>) => {
   switch (currentStep.value) {
     case 1: handleProfileUpdate(data); break
     case 2: handleContactUpdate(data); break
-    case 3: handleAddressUpdate(data); break
-    case 4: handleKycUpdate(data); break
   }
 }
 
@@ -467,8 +391,6 @@ const handleCurrentStepValidUpdate = (valid: boolean) => {
   switch (currentStep.value) {
     case 1: profileValid.value = valid; break
     case 2: contactValid.value = valid; break
-    case 3: addressValid.value = valid; break
-    case 4: kycValid.value = valid; break
   }
 }
 
@@ -478,16 +400,6 @@ const handleContactVerified = async () => {
   await fetchOnboardingStatus()
 }
 
-const handleKycSkip = () => {
-  kycData.value = { skipped: true }
-  kycValid.value = true
-}
-
-const handleAddressSkip = () => {
-  addressSkipped.value = true
-  addressValid.value = true
-}
-
 // Navigation
 const nextStep = async () => {
   if (!canProceed.value || submitting.value) return
@@ -495,10 +407,6 @@ const nextStep = async () => {
   // Save data for current step before proceeding
   if (currentStep.value === 1) {
     await saveProfile()
-  } else if (currentStep.value === 3) {
-    if (!addressSkipped.value) {
-      await saveAddress()
-    }
   }
 
   if (currentStep.value < stepItems.value.length - 1) {
@@ -524,9 +432,7 @@ const fetchOnboardingStatus = async () => {
 
   if (response?.steps) {
     profileValid.value = response.steps.profile?.complete ?? false
-    contactValid.value = response.steps.mobile?.complete ?? false
-    addressValid.value = response.steps.address?.complete ?? false
-    kycValid.value = response.steps.kyc?.complete ?? true
+    contactValid.value = (response.steps.mobile?.complete ?? false) || (response.steps.email?.complete ?? false)
   }
 
   const nextStep = response?.next_step as string | null
@@ -541,10 +447,9 @@ const mapStepToIndex = (step: string): number => {
     case 'mobile':
     case 'email':
       return 2
-    case 'address': return 3
     case 'kyc':
     case 'avatar':
-      return 4
+      return 2
     default: return 0
   }
 }
@@ -586,54 +491,10 @@ const saveProfile = async () => {
   }
 }
 
-// Helper: Format phone to E.164 format
+// Helper: Normalize phone to 10 digits
 const formatPhoneNumber = (phone: string): string => {
   if (!phone) return ''
-  let formatted = phone.replace(/[\s-]/g, '')
-  if (formatted && !formatted.startsWith('+')) {
-    formatted = '+91' + formatted.replace(/^0+/, '')
-  }
-  return formatted
-}
-
-const saveAddress = async () => {
-  submitting.value = true
-  try {
-    // Transform frontend form data to backend API format
-    const data = addressData.value as Record<string, unknown>
-    const payload = {
-      type: 'home', // Always home for onboarding
-      person_name: (data.person_name || '') as string,
-      person_mobile: formatPhoneNumber((data.person_mobile || '') as string),
-      address_1: (data.address_1 || '') as string,
-      address_2: (data.address_2 || '') as string,
-      city: (data.city || '') as string,
-      postal_code: (data.postal_code || '') as string,
-      block_id: (data.block_id || null) as number | null,
-      state_code: (data.state_code || '') as string,
-      country_code: (data.country_code || 'IN') as string,
-      latitude: (data.latitude || null) as number | null,
-      longitude: (data.longitude || null) as number | null,
-      default: true
-    }
-
-    await useSanctumFetch(`${config.public.apiBase}/api/addresses`, {
-      method: 'POST',
-      body: payload
-    })
-
-    await fetchOnboardingStatus()
-  } catch (error: unknown) {
-    const err = error as { data?: { message?: string } }
-    toast.add({
-      title: 'Error',
-      description: err.data?.message || 'Failed to save address',
-      color: 'error'
-    })
-    throw error
-  } finally {
-    submitting.value = false
-  }
+  return phone.replace(/\D/g, '').slice(-10)
 }
 
 const completeOnboarding = async () => {
@@ -641,25 +502,6 @@ const completeOnboarding = async () => {
 
   submitting.value = true
   try {
-    // Submit KYC if not skipped
-    if (!kycData.value?.skipped && kycData.value?.document_type) {
-      const formData = new FormData()
-      formData.append('document_type', kycData.value.document_type as string)
-      formData.append('document_number', kycData.value.document_number as string)
-      if (kycData.value.front_file) {
-        formData.append('front_image', kycData.value.front_file as File)
-      }
-      if (kycData.value.back_file) {
-        formData.append('back_image', kycData.value.back_file as File)
-      }
-
-      await useSanctumFetch(`${config.public.apiBase}/api/kyc/submit`, {
-        method: 'POST',
-        body: formData
-      })
-    }
-
-    // Complete onboarding
     await useSanctumFetch(`${config.public.apiBase}/api/onboarding/complete`, {
       method: 'POST'
     })

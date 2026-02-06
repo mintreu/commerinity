@@ -107,7 +107,7 @@
 
           <div class="relative group focus-within:scale-[1.02] transition-transform duration-300">
             <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-300 flex items-center">
-              <span class="text-sm font-medium">+91</span>
+              <span class="text-sm font-medium"></span>
             </div>
             <input
               id="mobile"
@@ -401,7 +401,7 @@ async function sendOtp() {
       method: 'POST',
       body: {
         type: 'mobile',
-        value: '+91' + mobile.value.trim()
+        value: mobile.value.trim()
       }
     })
 
@@ -462,7 +462,7 @@ async function verifyOtp() {
       method: 'POST',
       body: {
         type: 'mobile',
-        value: '+91' + mobile.value.trim(),
+        value: mobile.value.trim(),
         otp: code
       }
     })
@@ -503,11 +503,11 @@ async function saveMobile() {
     }>(`${config.public.apiBase}/api/user/profile`, {
       method: 'PUT',
       body: {
-        mobile: '+91' + mobile.value.trim()
+        mobile: mobile.value.trim()
       }
     })
 
-    updatedMobile.value = '+91' + mobile.value.trim()
+    updatedMobile.value = mobile.value.trim()
     showSuccessModal.value = true
 
     // Reset form state
@@ -536,7 +536,7 @@ async function saveMobile() {
 function resetForm() {
   otpVerified.value = false
   otp.value = ['', '', '', '', '', '', '']
-  originalMobile = '+91' + mobile.value.trim()
+  originalMobile = mobile.value.trim()
   canSendOtp.value = false
   resetOtpState()
 }

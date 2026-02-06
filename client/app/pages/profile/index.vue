@@ -216,7 +216,7 @@ const formatGender = (gender: string | null) => {
               <template #leading>
                 <UIcon name="i-lucide-user-cog" />
               </template>
-              Settings
+              Edit Profile
             </UButton>
           </div>
         </div>

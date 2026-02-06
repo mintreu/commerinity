@@ -126,10 +126,21 @@ test.describe('Guest to Regular Onboarding - Desktop', () => {
     await page.getByPlaceholder('Enter postal code').fill('700001')
 
     // Find country select by field name
-    const countrySelect = page.locator('[name="country_code"]').locator('button').first()
-    await countrySelect.waitFor({ state: 'visible', timeout: 10000 })
-    await countrySelect.scrollIntoViewIfNeeded()
-    await countrySelect.click()
+    const getSelectButtonByLabel = async (labelText: string, timeout = 60000) => {
+      const label = page.getByLabel(labelText).first()
+      await label.waitFor({ state: 'visible', timeout })
+      const forId = await label.getAttribute('for')
+      if (!forId) {
+        throw new Error(`Label ${labelText} missing for attribute`)
+      }
+      const button = page.locator(`#${forId}`)
+      await button.waitFor({ state: 'visible', timeout })
+      return button
+    }
+
+    const countryButton = await getSelectButtonByLabel('Country')
+    await countryButton.scrollIntoViewIfNeeded()
+    await countryButton.click()
 
     // Wait for dropdown and select India
     await page.waitForTimeout(1000)
@@ -143,11 +154,10 @@ test.describe('Guest to Regular Onboarding - Desktop', () => {
     await page.waitForTimeout(2000)
 
     // Find state select by field name
-    const stateSelect = page.locator('[name="state_code"]').locator('button').first()
-    await stateSelect.waitFor({ state: 'visible', timeout: 10000 })
-    await expect(stateSelect).toBeEnabled()
-    await stateSelect.scrollIntoViewIfNeeded()
-    await stateSelect.click()
+    const stateButton = await getSelectButtonByLabel('State / Province')
+    await expect(stateButton).toBeEnabled()
+    await stateButton.scrollIntoViewIfNeeded()
+    await stateButton.click()
 
     // Wait for state dropdown and select West Bengal
     await page.waitForTimeout(1000)
@@ -161,12 +171,12 @@ test.describe('Guest to Regular Onboarding - Desktop', () => {
 
     // Verify block select is enabled after state selection
     await page.waitForTimeout(1000)
-    const blockSelect = page.locator('[name="block_id"]').locator('button').first()
-    if (await blockSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await expect(blockSelect).toBeEnabled()
+    const blockButton = await getSelectButtonByLabel('Block / Area', 120000).catch(() => null)
+    if (blockButton) {
+      await expect(blockButton).toBeEnabled()
       console.log('✓ Block select enabled after state selection')
-      await blockSelect.scrollIntoViewIfNeeded()
-      await blockSelect.click()
+      await blockButton.scrollIntoViewIfNeeded()
+      await blockButton.click()
       await page.waitForTimeout(500)
       const blockOptions = await page.getByRole('option').count()
       expect(blockOptions).toBeGreaterThan(0)
