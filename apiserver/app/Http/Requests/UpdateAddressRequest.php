@@ -20,7 +20,7 @@ final class UpdateAddressRequest extends FormRequest
             'title' => ['nullable', 'string', 'max:255'],
             'person_name' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
             'person_email' => ['nullable', 'email', 'max:255'],
-            'person_mobile' => ['sometimes', 'required', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
+            'person_mobile' => ['required', 'string', 'digits:10'],
             'alternate_contact' => ['nullable', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
             'type' => ['sometimes', 'required', 'string', Rule::in(['home', 'office', 'warehouse', 'store', 'pickup'])],
             'address_1' => ['sometimes', 'required', 'string', 'max:500'],

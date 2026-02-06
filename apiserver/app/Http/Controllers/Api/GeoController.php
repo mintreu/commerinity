@@ -10,6 +10,8 @@ use App\Models\Geo\Country;
 use App\Models\Geo\State;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 final class GeoController extends Controller
 {
@@ -18,15 +20,50 @@ final class GeoController extends Controller
      */
     public function countries(): JsonResponse
     {
-        $countries = Country::query()
-            ->active()
-            ->orderBy('name')
-            ->get(['id', 'name', 'iso_code_2', 'iso_code_3', 'isd_code'])
-            ->map(fn ($country) => [
-                'value' => $country->iso_code_2,
-                'label' => $country->name,
-                'isd_code' => $country->isd_code,
+        $withStates = request()->boolean('with_states');
+        $cacheKey = $withStates ? 'geo:countries:active:with_states' : 'geo:countries:active';
+
+        try {
+            $countries = Cache::remember($cacheKey, now()->addHours(12), function () use ($withStates) {
+                $query = Country::query()
+                ->active()
+                ->orderBy('name')
+                ->select(['id', 'name', 'iso_code_2', 'iso_code_3', 'isd_code']);
+
+                if ($withStates) {
+                    $query->with(['states' => function ($stateQuery) {
+                        $stateQuery->orderBy('name')->select(['id', 'name', 'code', 'country_id']);
+                    }]);
+                }
+
+                return $query->get()->map(function ($country) use ($withStates) {
+                    $payload = [
+                        'value' => $country->iso_code_2,
+                        'label' => $country->name,
+                        'isd_code' => $country->isd_code,
+                    ];
+
+                    if ($withStates) {
+                        $payload['states'] = $country->states->map(fn ($state) => [
+                            'value' => $state->code,
+                            'label' => $state->name,
+                        ])->values()->all();
+                    }
+
+                    return $payload;
+                })->values()->all();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Geo countries failed', [
+                'with_states' => $withStates,
+                'error' => $e->getMessage(),
             ]);
+
+            return response()->json([
+                'data' => [],
+                'message' => 'Failed to load countries',
+            ], 500);
+        }
 
         return response()->json([
             'data' => $countries,
@@ -43,15 +80,30 @@ final class GeoController extends Controller
         ]);
 
         $countryCode = $request->input('country_code');
-
-        $states = State::query()
-            ->byCountryCode($countryCode)
-            ->orderBy('name')
-            ->get(['id', 'name', 'code'])
-            ->map(fn ($state) => [
-                'value' => $state->code,
-                'label' => $state->name,
+        try {
+            $states = Cache::remember("geo:states:{$countryCode}", now()->addHours(12), function () use ($countryCode) {
+                return State::query()
+                    ->byCountryCode($countryCode)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'code'])
+                    ->map(fn ($state) => [
+                        'value' => $state->code,
+                        'label' => $state->name,
+                    ])
+                    ->values()
+                    ->all();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Geo states failed', [
+                'country_code' => $countryCode,
+                'error' => $e->getMessage(),
             ]);
+
+            return response()->json([
+                'data' => [],
+                'message' => 'Failed to load states',
+            ], 500);
+        }
 
         return response()->json([
             'data' => $states,
@@ -68,20 +120,35 @@ final class GeoController extends Controller
         ]);
 
         $stateCode = $request->input('state_code');
-
-        $blocks = Block::query()
-            ->byState($stateCode)
-            ->orderBy('name')
-            ->get(['id', 'name', 'district_name', 'latitude', 'longitude'])
-            ->map(fn ($block) => [
-                'value' => $block->id,
-                'label' => $block->name,
-                'district' => $block->district_name,
-                'coordinates' => $block->hasCoordinates() ? [
-                    'lat' => $block->latitude,
-                    'lng' => $block->longitude,
-                ] : null,
+        try {
+            $blocks = Cache::remember("geo:blocks:{$stateCode}", now()->addHours(6), function () use ($stateCode) {
+                return Block::query()
+                    ->byState($stateCode)
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'district_name', 'latitude', 'longitude'])
+                    ->map(fn ($block) => [
+                        'value' => $block->id,
+                        'label' => $block->name,
+                        'district' => $block->district_name,
+                        'coordinates' => $block->hasCoordinates() ? [
+                            'lat' => $block->latitude,
+                            'lng' => $block->longitude,
+                        ] : null,
+                    ])
+                    ->values()
+                    ->all();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Geo blocks failed', [
+                'state_code' => $stateCode,
+                'error' => $e->getMessage(),
             ]);
+
+            return response()->json([
+                'data' => [],
+                'message' => 'Failed to load blocks',
+            ], 500);
+        }
 
         return response()->json([
             'data' => $blocks,
@@ -98,18 +165,32 @@ final class GeoController extends Controller
         ]);
 
         $stateCode = $request->input('state_code');
+        try {
+            $districts = Cache::remember("geo:districts:{$stateCode}", now()->addHours(6), function () use ($stateCode) {
+                return Block::query()
+                    ->byState($stateCode)
+                    ->distinct()
+                    ->orderBy('district_name')
+                    ->pluck('district_name')
+                    ->filter()
+                    ->map(fn ($district) => [
+                        'value' => $district,
+                        'label' => $district,
+                    ])
+                    ->values()
+                    ->all();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Geo districts failed', [
+                'state_code' => $stateCode,
+                'error' => $e->getMessage(),
+            ]);
 
-        $districts = Block::query()
-            ->byState($stateCode)
-            ->distinct()
-            ->orderBy('district_name')
-            ->pluck('district_name')
-            ->filter()
-            ->map(fn ($district) => [
-                'value' => $district,
-                'label' => $district,
-            ])
-            ->values();
+            return response()->json([
+                'data' => [],
+                'message' => 'Failed to load districts',
+            ], 500);
+        }
 
         return response()->json([
             'data' => $districts,

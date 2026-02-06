@@ -69,12 +69,12 @@ final class OnboardingController extends Controller
             $rules['value'][] = 'email';
             $rules['value'][] = Rule::unique('users', 'email')->ignore($user?->id);
         } else {
-            $rules['value'][] = 'regex:/^\+[1-9]\d{1,14}$/';
+            $rules['value'][] = 'digits:10';
             $rules['value'][] = Rule::unique('users', 'mobile')->ignore($user?->id);
         }
 
         $request->validate($rules, [
-            'value.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+            'value.digits' => 'Mobile number must be 10 digits.',
         ]);
 
         $value = $request->input('value');

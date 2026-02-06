@@ -33,7 +33,7 @@ final class EmailRegisterRequest extends FormRequest
             'mobile' => [
                 'nullable',
                 'string',
-                'regex:/^\+[1-9]\d{1,14}$/',
+                'digits:10',
                 'unique:users,mobile',
             ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -52,7 +52,7 @@ final class EmailRegisterRequest extends FormRequest
             'otp.regex' => 'OTP must contain only numbers.',
             'name.required' => 'Name is required.',
             'name.min' => 'Name must be at least 2 characters.',
-            'mobile.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+            'mobile.digits' => 'Mobile number must be 10 digits.',
             'mobile.unique' => 'This mobile number is already registered.',
             'password.required' => 'Password is required.',
             'password.min' => 'Password must be at least 8 characters.',

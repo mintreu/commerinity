@@ -31,3 +31,5 @@ auth.json
 .idea
 ccm
 logs
+
+/client/test-results

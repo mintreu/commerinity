@@ -19,7 +19,7 @@ final class RegisterRequest extends FormRequest
             'mobile' => [
                 'required',
                 'string',
-                'regex:/^\+[1-9]\d{1,14}$/',
+                'digits:10',
                 'unique:users,mobile',
             ],
             'otp' => ['required', 'string', 'size:6', 'regex:/^\d{6}$/'],
@@ -34,7 +34,7 @@ final class RegisterRequest extends FormRequest
     {
         return [
             'mobile.required' => 'Mobile number is required.',
-            'mobile.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+            'mobile.digits' => 'Mobile number must be 10 digits.',
             'mobile.unique' => 'This mobile number is already registered.',
             'otp.required' => 'OTP is required.',
             'otp.size' => 'OTP must be exactly 6 digits.',

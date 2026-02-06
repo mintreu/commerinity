@@ -17,7 +17,7 @@ final class ResetPasswordRequest extends FormRequest
     {
         return [
             'email' => ['nullable', 'string', 'email'],
-            'mobile' => ['nullable', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
+            'mobile' => ['nullable', 'string', 'digits:10'],
             'token' => ['nullable', 'string'],
             'otp' => ['nullable', 'string', 'size:6', 'regex:/^\d{6}$/'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -28,7 +28,7 @@ final class ResetPasswordRequest extends FormRequest
     {
         return [
             'email.email' => 'Please provide a valid email address.',
-            'mobile.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+            'mobile.digits' => 'Mobile number must be 10 digits.',
             'otp.size' => 'OTP must be exactly 6 digits.',
             'otp.regex' => 'OTP must contain only numbers.',
             'password.required' => 'Password is required.',

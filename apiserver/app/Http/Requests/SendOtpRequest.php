@@ -23,9 +23,8 @@ final class SendOtpRequest extends FormRequest
                 }
 
                 if ($this->input('type') === 'mobile') {
-                    // E.164 format validation: +[country][number]
-                    if (! preg_match('/^\+[1-9]\d{1,14}$/', $value)) {
-                        $fail('The mobile number must be in valid E.164 format (e.g., +919876543210).');
+                    if (! preg_match('/^\d{10}$/', (string) $value)) {
+                        $fail('The mobile number must be 10 digits.');
                     }
                 } elseif ($this->input('type') === 'email') {
                     if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {

@@ -17,7 +17,14 @@ final class VerifyOtpRequest extends FormRequest
     {
         return [
             'type' => ['required', 'in:mobile,email'],
-            'value' => ['required', 'string'],
+            'value' => ['required', 'string', function ($attribute, $value, $fail) {
+                if ($this->input('type') === 'mobile' && ! preg_match('/^\d{10}$/', (string) $value)) {
+                    $fail('The mobile number must be 10 digits.');
+                }
+                if ($this->input('type') === 'email' && ! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $fail('The value must be a valid email address.');
+                }
+            }],
             'otp' => ['required', 'string', 'size:6', 'regex:/^\d{6}$/'],
         ];
     }

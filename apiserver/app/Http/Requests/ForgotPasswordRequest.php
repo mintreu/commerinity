@@ -17,7 +17,7 @@ final class ForgotPasswordRequest extends FormRequest
     {
         return [
             'email' => ['nullable', 'string', 'email'],
-            'mobile' => ['nullable', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
+            'mobile' => ['nullable', 'string', 'digits:10'],
         ];
     }
 
@@ -25,7 +25,7 @@ final class ForgotPasswordRequest extends FormRequest
     {
         return [
             'email.email' => 'Please provide a valid email address.',
-            'mobile.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+            'mobile.digits' => 'Mobile number must be 10 digits.',
         ];
     }
 }

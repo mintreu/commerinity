@@ -373,21 +373,10 @@ final class WalletController extends Controller
 
         $rawMobile = (string) $request->input('recipient_mobile');
         $digits = preg_replace('/\\D/', '', $rawMobile) ?? '';
-        $indiaIsd = Country::query()
-            ->where('iso_code_2', 'IN')
-            ->value('isd_code') ?? 91;
 
-        $normalizedMobile = null;
-        if (strlen($digits) === 10) {
-            $normalizedMobile = '+'.$indiaIsd.$digits;
-        } elseif (strlen($digits) >= 11) {
-            $normalizedMobile = '+'.$digits;
-        }
-
-        // Find recipient by normalized mobile (E.164 expected)
         $recipient = null;
-        if ($normalizedMobile) {
-            $recipient = \App\Models\User::where('mobile', $normalizedMobile)->first();
+        if (strlen($digits) === 10) {
+            $recipient = \App\Models\User::where('mobile', $digits)->first();
         }
 
         if (! $recipient) {

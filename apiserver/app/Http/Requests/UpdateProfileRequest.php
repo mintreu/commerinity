@@ -38,7 +38,7 @@ final class UpdateProfileRequest extends FormRequest
             'mobile' => [
                 'nullable',
                 'string',
-                'regex:/^\+[1-9]\d{1,14}$/',
+                'digits:10',
                 Rule::unique('users')->ignore($user->id),
             ],
             'bio' => ['nullable', 'string', 'max:500'],
@@ -58,7 +58,7 @@ final class UpdateProfileRequest extends FormRequest
             'name.max' => 'Name cannot exceed 255 characters.',
             'email.email' => 'Please provide a valid email address.',
             'email.unique' => 'This email is already registered to another account.',
-            'mobile.regex' => 'Mobile number must be in international format (e.g., +919876543210).',
+            'mobile.digits' => 'Mobile number must be 10 digits.',
             'mobile.unique' => 'This mobile number is already registered to another account.',
             'bio.max' => 'Bio cannot exceed 500 characters.',
             'gender.in' => 'Please select a valid gender option (male, female, or other).',

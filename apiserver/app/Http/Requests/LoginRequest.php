@@ -17,7 +17,7 @@ final class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required_without:mobile', 'nullable', 'string', 'email'],
-            'mobile' => ['required_without:email', 'nullable', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
+            'mobile' => ['required_without:email', 'nullable', 'string', 'digits:10'],
             'password' => ['required_without:otp', 'nullable', 'string'],
             'otp' => ['required_without:password', 'nullable', 'string', 'size:6', 'regex:/^\d{6}$/'],
             'device_name' => ['nullable', 'string', 'max:255'],
@@ -29,7 +29,7 @@ final class LoginRequest extends FormRequest
         return [
             'email.required_without' => 'Either email or mobile is required.',
             'mobile.required_without' => 'Either mobile or email is required.',
-            'mobile.regex' => 'Mobile number must be in E.164 format (e.g., +919876543210).',
+            'mobile.digits' => 'Mobile number must be 10 digits.',
             'password.required_without' => 'Either password or OTP is required.',
             'otp.required_without' => 'Either OTP or password is required.',
             'otp.size' => 'OTP must be exactly 6 digits.',

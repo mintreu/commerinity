@@ -37,18 +37,6 @@ final class OnboardingVerifierService
             'required' => false,
             'weight' => 1,
         ],
-        'address' => [
-            'name' => 'Add Address',
-            'description' => 'Add your default address',
-            'required' => false,
-            'weight' => 1,
-        ],
-        'kyc' => [
-            'name' => 'Complete KYC',
-            'description' => 'Submit your identity documents for verification',
-            'required' => false,
-            'weight' => 1,
-        ],
         'avatar' => [
             'name' => 'Upload Avatar',
             'description' => 'Upload a profile picture',
@@ -85,8 +73,6 @@ final class OnboardingVerifierService
             'profile' => $this->isProfileComplete(),
             'mobile' => $this->isMobileVerified(),
             'email' => $this->isEmailVerified(),
-            'address' => $this->hasAddress(),
-            'kyc' => $this->hasKyc(),
             'avatar' => $this->hasAvatar(),
         ];
     }
@@ -115,22 +101,6 @@ final class OnboardingVerifierService
     private function isEmailVerified(): bool
     {
         return $this->user->hasVerifiedEmail();
-    }
-
-    /**
-     * Check if user has an address.
-     */
-    private function hasAddress(): bool
-    {
-        return $this->user->addresses()->exists();
-    }
-
-    /**
-     * Check if user has submitted KYC.
-     */
-    private function hasKyc(): bool
-    {
-        return $this->user->kyc !== null;
     }
 
     /**

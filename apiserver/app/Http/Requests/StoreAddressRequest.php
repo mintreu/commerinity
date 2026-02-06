@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Casts\AddressTypeCast;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,15 +15,21 @@ final class StoreAddressRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $type = $this->input('type') ?? $this->input('address_type') ?? AddressTypeCast::HOME->value;
+        $this->merge(['type' => $type]);
+    }
+
     public function rules(): array
     {
         return [
             'title' => ['nullable', 'string', 'max:255'],
             'person_name' => ['required', 'string', 'min:2', 'max:255'],
             'person_email' => ['nullable', 'email', 'max:255'],
-            'person_mobile' => ['required', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
-            'alternate_contact' => ['nullable', 'string', 'regex:/^\+[1-9]\d{1,14}$/'],
-            'type' => ['required', 'string', Rule::in(['home', 'office', 'warehouse', 'store', 'pickup'])],
+            'person_mobile' => ['required', 'string', 'digits:10'],
+            'alternate_contact' => ['nullable', 'string', 'digits:10'],
+            'type' => ['required', 'string', Rule::in(['home', 'office', 'shipping', 'others'])],
             'address_1' => ['required', 'string', 'max:500'],
             'address_2' => ['nullable', 'string', 'max:500'],
             'landmark' => ['nullable', 'string', 'max:255'],
@@ -44,7 +51,7 @@ final class StoreAddressRequest extends FormRequest
         return [
             'person_name.required' => 'Contact person name is required.',
             'person_mobile.required' => 'Contact mobile number is required.',
-            'person_mobile.regex' => 'Mobile number must be in E.164 format.',
+            'person_mobile.digits' => 'Mobile number must be 10 digits.',
             'type.required' => 'Address type is required.',
             'address_1.required' => 'Address line 1 is required.',
             'city.required' => 'City is required.',
