@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionResource;
+use App\Models\Affiliate\AffiliatePayout;
 use App\Models\Lifecycle\UserSubscription;
 use App\Models\Order\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -149,6 +150,18 @@ class TransactionDisplayController extends Controller
 
         return $pdf->stream();
 
+    }
+
+    /**
+     * Download/stream affiliate payout invoice PDF
+     */
+    public function affiliatePayoutInvoice(AffiliatePayout $payout)
+    {
+        $pdf = Pdf::loadView('invoices.affiliate_payout_invoice', [
+            'payout' => $payout,
+        ])->setPaper('a4')->setWarnings(false);
+
+        return $pdf->stream('affiliate-payout-'.$payout->uuid.'.pdf');
     }
 
 

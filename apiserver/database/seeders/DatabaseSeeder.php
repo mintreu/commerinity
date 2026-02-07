@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use Database\Seeders\Geo\BlockSeeder;
 use Database\Seeders\Geo\CountrySeeder;
 use Database\Seeders\Geo\StateSeeder;
+use Database\Seeders\RewardEarningSeeder;
 use Illuminate\Database\Seeder;
 
 /**
@@ -112,6 +113,9 @@ class DatabaseSeeder extends Seeder
             AddressSeeder::class,
             // WalletSeeder::class,
 
+            // Rewards - demo earnings (challenge/game vouchers)
+            RewardEarningSeeder::class,
+
             // ═══════════════════════════════════════════════════════════
             // RECRUITMENT - Job postings for career page
             // ═══════════════════════════════════════════════════════════
@@ -121,7 +125,6 @@ class DatabaseSeeder extends Seeder
             // TRANSACTIONS - Demo transactions for testing
             // ═══════════════════════════════════════════════════════════
             //  TransactionSeeder::class,   // commet out only for testing
-
             // ═══════════════════════════════════════════════════════════
             // Affiliate NETWORK - Full Affiliate tree with commissions, genealogy
             // ═══════════════════════════════════════════════════════════
@@ -134,6 +137,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             //    MasterDemoSeeder::class,
             ProductStockSeeder::class,
+            PromotionSeeder::class,
         ]);
     }
 }

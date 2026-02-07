@@ -6,6 +6,7 @@ namespace App\Console\Commands\Ecommerce;
 
 use App\Casts\OrderStatusCast;
 use App\Models\Ecommerce\Order;
+use App\Services\Affiliate\AffiliateVolumeService;
 use App\Services\Affiliate\CommissionProcessorService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,7 @@ class CompleteDeliveredOrders extends Command
 
     public function __construct(
         private readonly CommissionProcessorService $commissionProcessor,
+        private readonly AffiliateVolumeService $volumeService,
     ) {
         parent::__construct();
     }
@@ -76,6 +78,9 @@ class CompleteDeliveredOrders extends Command
 
                     $this->line("  ✓ Completed order #{$order->order_number}");
                     $completed++;
+
+                    // Confirm affiliate volumes after return window
+                    $this->volumeService->confirmForOrder($order);
 
                     // Process Affiliate commission if eligible
                     if ($order->canGenerateCommission() && ! $order->isCommissionProcessed()) {
