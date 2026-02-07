@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\Wallet\CheckPayoutStatusJob;
+use App\Jobs\Affiliate\ProcessMonthlyDisbursementJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -40,5 +41,12 @@ Schedule::command('app:sales-reindex')
 Schedule::command('transactions:archive --days=365')
     ->daily()
     ->name('transactions-archive')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+// Monthly affiliate disbursement to wallet (1st day, 01:30 AM)
+Schedule::job(new ProcessMonthlyDisbursementJob)
+    ->monthlyOn(1, '01:30')
+    ->name('affiliate-monthly-disbursement')
     ->withoutOverlapping()
     ->runInBackground();

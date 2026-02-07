@@ -251,6 +251,40 @@ final class AffiliateConfigService
     }
 
     // ========================================
+    // TCS CONFIG
+    // ========================================
+
+    public function isTcsEnabled(): bool
+    {
+        return (bool) config('affiliate.tcs.enabled', false);
+    }
+
+    public function getTcsConfig(): array
+    {
+        return [
+            'enabled' => $this->isTcsEnabled(),
+            'threshold_monthly' => (int) config('affiliate.tcs.threshold_monthly', 500000),
+            'rate_percent' => (float) config('affiliate.tcs.rate_percent', 1),
+        ];
+    }
+
+    public function calculateTcs(int $amount, int $monthlyTotal): int
+    {
+        if (! $this->isTcsEnabled()) {
+            return 0;
+        }
+
+        $threshold = (int) config('affiliate.tcs.threshold_monthly', 500000);
+        $rate = (float) config('affiliate.tcs.rate_percent', 1);
+
+        if (($monthlyTotal + $amount) <= $threshold) {
+            return 0;
+        }
+
+        return (int) round($amount * ($rate / 100));
+    }
+
+    // ========================================
     // ADMIN FEE CONFIG
     // ========================================
 
@@ -307,6 +341,7 @@ final class AffiliateConfigService
             'enabled' => $this->isPlatformFeeEnabled(),
             'type' => config('affiliate.platform_fee.default.type', 'percent'),
             'value' => (float) config('affiliate.platform_fee.default.value', 2),
+            'gst_percent' => (float) config('affiliate.platform_fee.gst_percent', 18),
             'triggers' => config('affiliate.platform_fee.triggers', []),
             'min_threshold' => (int) config('affiliate.platform_fee.min_amount_threshold', 10000),
             'show_on_invoice' => (bool) config('affiliate.platform_fee.show_on_invoice', true),
@@ -335,6 +370,7 @@ final class AffiliateConfigService
             'enabled' => $this->isPlatformFeeEnabled() && ($userConfig['enabled'] ?? true),
             'type' => $userConfig['type'] ?? $default['type'],
             'value' => (float) ($userConfig['value'] ?? $default['value']),
+            'gst_percent' => (float) ($userConfig['gst_percent'] ?? $default['gst_percent']),
             'triggers' => $default['triggers'],
             'min_threshold' => $default['min_threshold'],
             'show_on_invoice' => $default['show_on_invoice'],
@@ -396,6 +432,18 @@ final class AffiliateConfigService
 
         // Fixed amount
         return (int) $value;
+    }
+
+    public function calculatePlatformFeeGst(int $platformFeeAmount, string $userType): int
+    {
+        if ($platformFeeAmount <= 0) {
+            return 0;
+        }
+
+        $config = $this->getPlatformFeeConfig($userType);
+        $gst = (float) ($config['gst_percent'] ?? 18);
+
+        return (int) round($platformFeeAmount * ($gst / 100));
     }
 
     /**

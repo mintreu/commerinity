@@ -293,6 +293,9 @@ return [
         // Master switch
         'enabled' => (bool) env('Affiliate_PLATFORM_FEE_ENABLED', false),
 
+        // GST applied on platform fee
+        'gst_percent' => (float) env('Affiliate_PLATFORM_FEE_GST', 18),
+
         // Default fee for all applicable user types
         'default' => [
             'type' => env('Affiliate_PLATFORM_FEE_TYPE', 'percent'), // 'percent' or 'fixed'
@@ -375,6 +378,41 @@ return [
         3 => (float) env('Affiliate_DEFAULT_LEVEL_3_RATE', 2),
         4 => (float) env('Affiliate_DEFAULT_LEVEL_4_RATE', 1),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Affiliate Disbursement / Payout Configuration
+    |--------------------------------------------------------------------------
+    */
+    'payout' => [
+        'frequency' => env('Affiliate_PAYOUT_FREQUENCY', 'monthly'),
+        'min_threshold_paisa' => (int) env('Affiliate_PAYOUT_MIN_THRESHOLD', 10000), // Default ₹100
+        'pv_to_paisa_rate' => (int) env('Affiliate_PV_TO_PAISA_RATE', 100), // per 100 PV
+        'bv_to_paisa_rate' => (int) env('Affiliate_BV_TO_PAISA_RATE', 100), // per 100 BV
+        'fund_split' => [
+            'default' => [
+                'wallet' => 100,
+            ],
+            'stages' => [
+                // 'basic' => ['wallet' => 90, 'housing' => 10],
+            ],
+            'levels' => [
+                // 'basic-bronze' => ['wallet' => 80, 'travel' => 20],
+            ],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | TCS (Tax Collected at Source) - Affiliate Payouts
+    |--------------------------------------------------------------------------
+    */
+    'tcs' => [
+        'enabled' => (bool) env('Affiliate_TCS_ENABLED', false),
+        'threshold_monthly' => (int) env('Affiliate_TCS_THRESHOLD', 500000),
+        'rate_percent' => (float) env('Affiliate_TCS_RATE', 1),
+    ],
+
 
     /*
     |--------------------------------------------------------------------------
