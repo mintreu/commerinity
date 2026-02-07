@@ -25,6 +25,8 @@ return new class extends Migration
             $table->text('short_description')->nullable();
             $table->unsignedBigInteger('product_display_id')->nullable();
             $table->unsignedBigInteger('price')->default(0)->comment('Canonical price in paise');
+            $table->string('hsn')->nullable()->comment('HSN/SAC code for GST classification');
+            $table->string('gst_tax_type')->nullable()->comment('GST slab/percentage (product override)');
             $table->unsignedInteger('bv')->default(0)->comment('Business Volume default for the product');
             $table->unsignedInteger('pv')->default(0)->comment('Personal Volume default for the product');
             $table->unsignedInteger('reward_points')->default(0)->comment('Reward points earned per unit');

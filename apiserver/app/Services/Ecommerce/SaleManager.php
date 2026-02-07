@@ -203,13 +203,21 @@ final class SaleManager
 
         $rows = [];
         $productIds = $this->getMatchingProductIds($sale, $product);
-        $startsFrom = $sale->starts_from ? Carbon::createFromTimeString($sale->starts_from.' 00:00:01') : null;
-        $endsTill = $sale->ends_till ? Carbon::createFromTimeString($sale->ends_till.' 23:59:59') : null;
+        $startsFrom = $sale->starts_from
+            ? Carbon::parse($sale->starts_from)->startOfDay()
+            : null;
+        $endsTill = $sale->ends_till
+            ? Carbon::parse($sale->ends_till)->endOfDay()
+            : null;
         $targets = $this->getSaleTargets($sale);
 
-        $productCollection = Product::with(['tiers' => function ($q): void {
-            $q->where('in_stock', true)->orderBy('price');
-        }])->whereIn('id', $productIds)->get();
+        $productQuery = Product::query();
+        if (method_exists(Product::class, 'tiers')) {
+            $productQuery->with(['tiers' => function ($q): void {
+                $q->where('in_stock', true)->orderBy('price');
+            }]);
+        }
+        $productCollection = $productQuery->whereIn('id', $productIds)->get();
 
         foreach ($productCollection as $product) {
             $calculated = $this->calculate($sale, $product);
@@ -327,9 +335,31 @@ final class SaleManager
         $allCatProducts = $this->resolveCategoryProducts($bag);
         $allQueryProducts = $this->resolveQueryableProducts($sale, $bag);
 
-        $uniques = collect(array_replace(array_keys($allQueryProducts), array_keys($allCatProducts)))
-            ->unique();
-        $ids = $uniques->values()->all();
+        $conditionIds = collect(array_replace(array_keys($allQueryProducts), array_keys($allCatProducts)))
+            ->unique()
+            ->values()
+            ->all();
+
+        $targetProductIds = $sale->products()->pluck('products.id')->toArray();
+        $targetCategoryIds = $sale->categories()->pluck('categories.id')->toArray();
+        if (! empty($targetCategoryIds)) {
+            $categoryProductIds = Product::whereIn('category_id', $targetCategoryIds)->pluck('id')->toArray();
+            $targetProductIds = array_unique(array_merge($targetProductIds, $categoryProductIds));
+        }
+
+        $hasConditions = ! empty($bag);
+        $hasTargets = ! empty($targetProductIds);
+
+        if (! $hasConditions) {
+            $ids = $hasTargets
+                ? $targetProductIds
+                : Product::pluck('id')->toArray();
+        } else {
+            $ids = $conditionIds;
+            if ($hasTargets) {
+                $ids = array_values(array_intersect($ids, $targetProductIds));
+            }
+        }
 
         if (isset($ids[0]) && $ids[0] === 0) {
             unset($ids[0]);
@@ -404,21 +434,26 @@ final class SaleManager
 
             foreach ($bag['att'] as $item) {
                 if ($item['column'] === 'price') {
+                    $hasTiers = method_exists(Product::class, 'tiers');
                     if ($sale->condition_type) {
-                        $query->where(function ($q) use ($item): void {
-                            $q->where('price', $item['operator'], $item['value'])
-                                ->orWhereHas('tiers', function ($tq) use ($item): void {
+                        $query->where(function ($q) use ($item, $hasTiers): void {
+                            $q->where('price', $item['operator'], $item['value']);
+                            if ($hasTiers) {
+                                $q->orWhereHas('tiers', function ($tq) use ($item): void {
                                     $tq->where('in_stock', true)
                                         ->where('price', $item['operator'], $item['value']);
                                 });
+                            }
                         });
                     } else {
-                        $query->orWhere(function ($q) use ($item): void {
-                            $q->where('price', $item['operator'], $item['value'])
-                                ->orWhereHas('tiers', function ($tq) use ($item): void {
+                        $query->orWhere(function ($q) use ($item, $hasTiers): void {
+                            $q->where('price', $item['operator'], $item['value']);
+                            if ($hasTiers) {
+                                $q->orWhereHas('tiers', function ($tq) use ($item): void {
                                     $tq->where('in_stock', true)
                                         ->where('price', $item['operator'], $item['value']);
                                 });
+                            }
                         });
                     }
                 } elseif (in_array($item['column'], $availableColumns)) {

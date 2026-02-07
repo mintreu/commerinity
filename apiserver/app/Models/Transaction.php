@@ -55,6 +55,7 @@ class Transaction extends Model
         'reference_number',
         'parent_transaction_id',
         'expires_at',
+        // Snapshot of wallet balance after this transaction (audit/trends)
         'balance_after',
         'metadata',
         'provider_response',

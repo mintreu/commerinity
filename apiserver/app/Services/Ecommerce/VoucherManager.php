@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Services\Ecommerce;
 
 use App\Casts\VoucherActionTypeCast;
+use App\Models\Ecommerce\Category;
+use App\Models\Ecommerce\Filter;
+use App\Models\Ecommerce\FilterGroup;
 use App\Models\Ecommerce\Voucher;
 use App\Models\Ecommerce\VoucherCode;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
@@ -17,6 +21,165 @@ use Illuminate\Support\Str;
  */
 final class VoucherManager
 {
+    protected array $category;
+    protected array $filterGroup;
+    protected Collection $filters;
+
+    public function __construct()
+    {
+        $this->category = Category::with('children', 'parent')
+            ->where('status', true)
+            ->pluck('name', 'id')
+            ->toArray();
+
+        $this->filterGroup = FilterGroup::all()->pluck('name', 'id')->toArray();
+
+        $this->filters = Filter::with('options')
+            ->has('options')
+            ->get();
+    }
+
+    public static function make(): static
+    {
+        return new self;
+    }
+
+    /**
+     * Get available condition options for Filament form schema
+     */
+    public function getCondition(): Collection
+    {
+        $collection = collect([
+            [
+                'key' => 'cart',
+                'label' => trans('Cart Attributes'),
+                'children' => $this->getCartRelatedChildren(),
+            ],
+            [
+                'key' => 'cart_item',
+                'label' => trans('Cart Item Attributes'),
+                'children' => $this->getCartItemRelatedChildren(),
+            ],
+            [
+                'key' => 'product',
+                'label' => trans('Product Attributes'),
+                'children' => $this->getProductRelatedChildren(),
+            ],
+        ]);
+
+        $conditions = collect();
+        $conditions = $collection->map(function ($item) use ($conditions) {
+            return $conditions->merge($item['children']);
+        });
+
+        return collect(array_merge(
+            $conditions[0]->toArray(),
+            $conditions[1]->toArray(),
+            $conditions[2]->toArray()
+        ));
+    }
+
+    protected function getOperator(string $operatorType): array
+    {
+        return match ($operatorType) {
+            'text' => [
+                '{}' => 'Contain',
+                '!{}' => 'Not Contain',
+            ],
+            'number', 'price', 'integer', 'decimal' => [
+                '==' => 'Equal With',
+                '!=' => 'Not Equal',
+                '>' => 'Greater than',
+                '<' => 'Less than',
+                '>=' => 'Greater than or Equal',
+                '<=' => 'Less than or Equal',
+            ],
+            'select', 'multiselect' => [
+                '==' => 'Equal With',
+                '!=' => 'Not Equal',
+            ],
+            default => [],
+        };
+    }
+
+    private function getCartRelatedChildren(): array
+    {
+        return [
+            [
+                'key' => 'cart|subTotal',
+                'type' => 'price',
+                'operator' => $this->getOperator('price'),
+                'label' => trans('Cart Subtotal'),
+            ],
+            [
+                'key' => 'cart|totalQuantity',
+                'type' => 'integer',
+                'operator' => $this->getOperator('integer'),
+                'label' => trans('Cart Total Item Qty'),
+            ],
+        ];
+    }
+
+    private function getCartItemRelatedChildren(): array
+    {
+        return [
+            [
+                'key' => 'cart_item|quantity',
+                'type' => 'integer',
+                'operator' => $this->getOperator('integer'),
+                'label' => trans('Cart Item Qty'),
+            ],
+        ];
+    }
+
+    private function getProductRelatedChildren(): array
+    {
+        $productArray = [
+            [
+                'key' => 'product|category_id',
+                'type' => 'multiselect',
+                'operator' => $this->getOperator('multiselect'),
+                'label' => trans('Product Categories'),
+                'options' => $this->category,
+            ],
+            [
+                'key' => 'product|children::category_id',
+                'type' => 'multiselect',
+                'operator' => $this->getOperator('multiselect'),
+                'label' => trans('Product Categories (Children)'),
+                'options' => Category::whereNotNull('parent_id')->pluck('name', 'id')->toArray(),
+            ],
+            [
+                'key' => 'product|parent::category_id',
+                'type' => 'multiselect',
+                'operator' => $this->getOperator('multiselect'),
+                'label' => trans('Product Categories (Parent)'),
+                'options' => Category::whereNull('parent_id')->pluck('name', 'id')->toArray(),
+            ],
+        ];
+
+        return array_merge($productArray, $this->getAttributeList());
+    }
+
+    private function getAttributeList(): array
+    {
+        $attrBag = [];
+        $allAttribute = $this->filters;
+
+        foreach ($allAttribute as $attr) {
+            $key = 'product|'.$attr->name;
+            $attrBag[] = [
+                'key' => Str::lower($key),
+                'type' => $attr->type,
+                'operator' => $this->getOperator(Str::lower($attr->type)),
+                'label' => trans(Str::ucfirst($attr->name)),
+                'options' => $attr->options->pluck('value', 'id')->toArray(),
+            ];
+        }
+
+        return $attrBag;
+    }
+
     /**
      * Create a new voucher with optional coupon codes
      */
@@ -119,12 +282,13 @@ final class VoucherManager
 
         for ($i = 0; $i < $count; $i++) {
             $codes[] = [
+                'voucher_id' => $voucher->id,
                 'code' => self::generateUniqueCode(),
                 'is_primary' => $i === 0,
                 'starts_from' => $voucher->starts_from,
                 'ends_till' => $voucher->ends_till,
                 'coupon_usage_limit' => $voucher->coupon_usage_limit,
-                'usage_per_customer' => $voucher->usage_per_customer,
+                'usage_per_user' => $voucher->usage_per_customer,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

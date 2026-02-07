@@ -6,6 +6,7 @@ namespace App\Services\Ecommerce\OrderService;
 
 use App\Casts\OrderStatusCast;
 use App\Casts\ShipmentStatusCast;
+use App\Models\Admin;
 use App\Models\Ecommerce\Order;
 use App\Models\Ecommerce\OrderInvoice;
 use App\Models\Ecommerce\OrderItem;
@@ -14,7 +15,11 @@ use App\Models\Ecommerce\Shipment;
 use App\Models\Ecommerce\ShipmentItem;
 use App\Models\Transaction;
 use App\Services\Affiliate\CommissionProcessorService;
+use App\Services\Affiliate\AffiliateVolumeService;
 use App\Services\Ecommerce\PriceCalculationService;
+use App\Services\Ecommerce\InvoiceService;
+use App\Notifications\Ecommerce\OrderInvoiceNotification;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -25,21 +30,29 @@ class OrderValidationService
     protected Order $order;
 
     protected ?CommissionProcessorService $commissionProcessor = null;
+    protected AffiliateVolumeService $volumeService;
 
     public function __construct(
         Transaction $transaction,
         Order $order,
-        ?CommissionProcessorService $commissionProcessor = null
+        ?CommissionProcessorService $commissionProcessor = null,
+        ?AffiliateVolumeService $volumeService = null
     ) {
         $this->transaction = $transaction;
         $this->order = $order;
         $this->commissionProcessor = $commissionProcessor;
+        $this->volumeService = $volumeService ?? app(AffiliateVolumeService::class);
         $this->order->load(['items.product', 'items.stock', 'shippingAddress']);
     }
 
-    public static function make(Transaction $transaction, Order $order, ?CommissionProcessorService $commissionProcessor = null): self
+    public static function make(
+        Transaction $transaction,
+        Order $order,
+        ?CommissionProcessorService $commissionProcessor = null,
+        ?AffiliateVolumeService $volumeService = null
+    ): self
     {
-        return new self($transaction, $order, $commissionProcessor);
+        return new self($transaction, $order, $commissionProcessor, $volumeService);
     }
 
     public function validate(): void
@@ -55,6 +68,9 @@ class OrderValidationService
                 'payment_success' => true,
             ]);
 
+            // Record pending BV/PV volumes for affiliate lifecycle
+            $this->volumeService->recordPendingForOrder($this->order);
+
             // Process commissions if CommissionProcessorService is provided
             if ($this->commissionProcessor) {
                 $this->processCommissions();
@@ -66,6 +82,10 @@ class OrderValidationService
                 'transaction_id' => $this->transaction->uuid,
             ]);
         });
+
+        DB::afterCommit(function () {
+            $this->notifyOrderConfirmed();
+        });
     }
 
     /**
@@ -74,13 +94,11 @@ class OrderValidationService
      */
     protected function processCommissions(): void
     {
-        $customer = $this->order->customer;
-
-        // Only process if customer exists and has affiliate status
-        if (! $customer || ! $this->customerIsAffiliate($customer)) {
-            Log::info('Skipping commission processing - customer is not an affiliate', [
+        if (! $this->order->canGenerateCommission()) {
+            Log::info('Skipping commission processing - order not eligible', [
                 'order_id' => $this->order->id,
-                'customer_type' => $customer?->type?->value ?? 'null',
+                'customer_type' => $this->order->customer?->type?->value ?? 'null',
+                'total_bv' => $this->order->total_bv,
             ]);
 
             return;
@@ -89,11 +107,12 @@ class OrderValidationService
         // Process commissions asynchronously (non-blocking)
         // Commissions are created in PENDING status
         // They will be approved and paid to wallet when order is COMPLETED
+        $customer = $this->order->customer;
         $this->commissionProcessor->processAsync($this->order, persistImmediately: false);
 
         Log::info('Commissions queued for processing', [
             'order_id' => $this->order->id,
-            'customer_id' => $customer->id,
+            'customer_id' => $customer?->id,
             'total_bv' => $this->order->total_bv,
         ]);
     }
@@ -104,12 +123,13 @@ class OrderValidationService
     protected function customerIsAffiliate(object $customer): bool
     {
         $type = $customer->type ?? null;
+        $typeValue = $type instanceof \App\Casts\UserTypeCast ? $type->value : $type;
 
-        return in_array($type, [
-            \App\Casts\UserTypeCast::MEMBER,
-            \App\Casts\UserTypeCast::PROMOTER,
-            \App\Casts\UserTypeCast::ADVISOR,
-            \App\Casts\UserTypeCast::MENTOR,
+        return in_array($typeValue, [
+            \App\Casts\UserTypeCast::MEMBER->value,
+            \App\Casts\UserTypeCast::PROMOTER->value,
+            \App\Casts\UserTypeCast::ADVISOR->value,
+            \App\Casts\UserTypeCast::MENTOR->value,
         ], true);
     }
 
@@ -199,7 +219,7 @@ class OrderValidationService
             $orderShipment = $this->order->shipments()->create([
                 'pickup_address_id' => $pickupAddressId,
                 'delivery_address_id' => $this->order->shipping_address_id,
-                'total_quantity' => $this->order->quantity,
+                'total_quantity' => $totalQuantity,
                 'status'    => ShipmentStatusCast::PROCESSING->value,
 //                    'shipping_method',
                 'provider' => 'native',
@@ -279,9 +299,40 @@ class OrderValidationService
     protected function makeOrderInvoice(Shipment $shipment, OrderItem $orderItem): ?OrderInvoice
     {
         return $shipment->invoice()->create([
-            'uuid' => 'INV_'.$this->order->uuid,
             'order_id' => $this->order->id,
             'order_item_id' => $orderItem->id,
         ]);
+    }
+
+    private function notifyOrderConfirmed(): void
+    {
+        $order = $this->order->fresh();
+
+        if (! $order) {
+            return;
+        }
+
+        $order->loadMissing([
+            'customer',
+            'items.product.category',
+            'items.stock.address',
+            'shippingAddress',
+            'billingAddress',
+            'shipments',
+            'transaction',
+        ]);
+
+        $invoiceService = app(InvoiceService::class);
+        $invoiceService->ensureInvoice($order);
+
+        $customer = $order->customer;
+        if ($customer && method_exists($customer, 'notify')) {
+            $customer->notify(new OrderInvoiceNotification($order));
+        }
+
+        Notification::make()
+            ->title('Order confirmed')
+            ->body('Order #'.$order->order_number.' confirmed. Invoice is ready.')
+            ->sendToDatabase(Admin::all());
     }
 }

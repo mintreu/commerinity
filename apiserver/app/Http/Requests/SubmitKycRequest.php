@@ -16,10 +16,10 @@ final class SubmitKycRequest extends FormRequest
 
     public function rules(): array
     {
-        $kycType = $this->input('kyc_type', 'personal');
+        $kycType = $this->input('kyc_type', \App\Casts\KycTypeCast::PERSONAL->value);
 
         $rules = [
-            'kyc_type' => ['required', 'string', Rule::in(['personal', 'business'])],
+            'kyc_type' => ['required', 'string', Rule::in([\App\Casts\KycTypeCast::PERSONAL->value, \App\Casts\KycTypeCast::BUSINESS->value])],
             'pan_number' => [
                 'required',
                 'string',

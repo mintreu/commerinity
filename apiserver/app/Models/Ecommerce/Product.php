@@ -6,6 +6,7 @@ namespace App\Models\Ecommerce;
 
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
+use App\Casts\GstTaxCast;
 use App\Models\Address;
 use App\Models\Traits\HasSaleAccess;
 use App\Models\User;
@@ -42,6 +43,8 @@ class Product extends Model implements HasMedia
         'category_id',
         'base_price', // mrp
         'price',  // default current offering sale price without applying any sales
+        'hsn',
+        'gst_tax_type',
         'bv',  // for members and promoters type users only
         'pv',  // for members and promoters type users only
         'reward_points',  // for who purchase wallet reward points count increasing on purchase
@@ -63,6 +66,8 @@ class Product extends Model implements HasMedia
         return [
             'view_count' => 'integer',
             'price' => 'integer',
+            'hsn' => 'string',
+            'gst_tax_type' => GstTaxCast::class,
             'status' => ProductStatusCast::class,
             'is_returnable' => 'boolean',
             'return_days' => 'integer',

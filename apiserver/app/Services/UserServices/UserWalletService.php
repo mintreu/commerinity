@@ -591,7 +591,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
 
         // Conversion rate: config driven (default 10 points = Rs. 1 = 100 paisa)
         $conversionRate = config('wallet.points_conversion_rate', 10);
-        $amountInPaisa = (int) floor($points / $conversionRate) * 100;
+        $amountInPaisa = intdiv($points * 100, (int) $conversionRate);
 
         if ($amountInPaisa <= 0) {
             throw new RuntimeException('Minimum '.$conversionRate.' points required for conversion');
@@ -608,6 +608,8 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
             // Create transaction record
             return Transaction::create([
                 'wallet_id' => $wallet->id,
+                'transactionable_type' => $wallet->getMorphClass(),
+                'transactionable_id' => $wallet->getKey(),
                 'type' => TransactionTypeCast::CREDIT,
                 'status' => TransactionStatusCast::COMPLETED,
                 'amount' => $amountInPaisa,

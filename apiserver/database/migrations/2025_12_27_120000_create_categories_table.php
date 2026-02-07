@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('view_count')->default(0);
             $table->integer('order')->default(0);
             $table->text('desc')->nullable();
+            $table->string('tax_slab')->nullable()->comment('Default GST slab for category');
             $table->json('meta_data')->nullable();
             $table->json('banners')->nullable();
             $table->foreignId('category_image_id')->nullable()->constrained('media')->nullOnDelete();

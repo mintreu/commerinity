@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Casts\KycStatusCast;
+use App\Casts\KycTypeCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ class Kyc extends Model implements HasMedia
     protected function casts(): array
     {
         return [
+            'kyc_type' => KycTypeCast::class,
             'status' => KycStatusCast::class,
             'submitted_at' => 'datetime',
             'reviewed_at' => 'datetime',

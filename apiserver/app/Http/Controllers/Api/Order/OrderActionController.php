@@ -6,14 +6,17 @@ namespace App\Http\Controllers\Api\Order;
 
 use App\Casts\OrderStatusCast;
 use App\Casts\PaymentMethodCast;
+use App\Casts\GiftOptionCast;
 use App\Http\Controllers\Controller;
 use App\Models\Ecommerce\Order;
 use App\Services\Ecommerce\CartService\CartService;
 use App\Services\Ecommerce\OrderService\OrderCreationService;
+use App\Services\Ecommerce\OrderService\OrderRefundService;
 use App\Services\UserServices\UserWalletService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 final class OrderActionController extends Controller
 {
@@ -30,11 +33,13 @@ final class OrderActionController extends Controller
     {
 
         $request->validate([
-            'payment_method' => ['required', 'string', 'in:wallet,online'],
+            'payment_method' => ['required', 'string', 'in:wallet,online,coins'],
             'shipping_address_id' => ['required', 'string', 'exists:addresses,uuid'],
             'billing_address_id' => ['nullable', 'string', 'exists:addresses,uuid'],
             'billing_is_shipping' => ['boolean'],
             'gift' => ['boolean'],
+            'gift_option' => ['nullable', 'string', Rule::in(array_map(fn ($case) => $case->value, GiftOptionCast::cases()))],
+            'gift_message' => ['nullable', 'string', 'max:500'],
             'pin' => ['nullable']
         ]);
 
@@ -71,13 +76,21 @@ final class OrderActionController extends Controller
         }
 
         $cartTotal = $validation['cart_total'];
-        $paymentMethod = $request->payment_method == 'wallet' ? $request->payment_method : PaymentMethodCast::CASHFREE->value;
+        $paymentMethod = $request->payment_method == 'wallet' || $request->payment_method == 'coins'
+            ? $request->payment_method
+            : PaymentMethodCast::CASHFREE->value;
         $paymentMethod = PaymentMethodCast::tryFrom($paymentMethod);
 
         try {
             return DB::transaction(function () use ($user, $cartTotal, $paymentMethod, $request, $cartService,$shippingAddress,$billingAddress) {
 
-                $orderService = OrderCreationService::make($cartService,null);
+                $orderService = OrderCreationService::make($cartService, null);
+                if ($request->boolean('gift')) {
+                    $orderService->gift(
+                        $request->input('gift_option'),
+                        $request->input('gift_message')
+                    );
+                }
                 // 1. Create Order
                 $order = $orderService->createOrder($user,$cartTotal,$shippingAddress,$billingAddress);
 
@@ -88,7 +101,43 @@ final class OrderActionController extends Controller
                 // 3. Clear Cart
                 $cartService->empty();
 
-                // 4. Handle Wallet Payment directly if chosen
+                // 4. Handle coins -> wallet conversion if chosen
+                if ($paymentMethod === PaymentMethodCast::COINS) {
+                    $walletService = new UserWalletService();
+                    $wallet = $walletService->getOrCreateWallet($user);
+                    $rate = max(1, (int) config('wallet.points_conversion_rate', 10));
+                    $requiredPoints = (int) ceil(($cartTotal['total'] * $rate) / 100);
+
+                    if ($wallet->points < $requiredPoints) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Insufficient coins for this order.',
+                            'required_coins' => $requiredPoints,
+                            'available_coins' => $wallet->points,
+                        ], 422);
+                    }
+
+                    // Convert required coins to wallet balance
+                    $walletService->convertPointsToBalance($wallet, $requiredPoints);
+                    $wallet->refresh();
+
+                    // Proceed as wallet payment
+                    $orderService->payWithWallet($user);
+                    $order = $orderService->getOrder();
+                    $transaction = $orderService->getTransaction();
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Order placed and paid successfully via coins',
+                        'data' => [
+                            'order_uuid' => $order->uuid,
+                            'order_number' => $order->order_number,
+                            'status' => $order->status->value,
+                        ]
+                    ], 201);
+                }
+
+                // 5. Handle Wallet Payment directly if chosen
                 if ($paymentMethod === PaymentMethodCast::WALLET) {
                     $orderService->payWithWallet($user);
                     $order = $orderService->getOrder();
@@ -104,7 +153,7 @@ final class OrderActionController extends Controller
                     ], 201);
                 }
 
-                // 5. External Payment (Cashfree/Razorpay)
+                // 6. External Payment (Cashfree/Razorpay)
                 $orderService->payWithOnline($user,$paymentMethod);
                 $order = $orderService->getOrder();
                 $transaction = $orderService->getTransaction();
@@ -127,5 +176,57 @@ final class OrderActionController extends Controller
             ], 500);
         }
 
+    }
+
+    /**
+     * Request return for an order item
+     */
+    public function requestReturn(Request $request): JsonResponse
+    {
+        $request->validate([
+            'order_item_uuid' => ['required', 'string', 'exists:order_items,uuid'],
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $user = $request->user();
+        $orderItem = \App\Models\Ecommerce\OrderItem::where('uuid', $request->order_item_uuid)->first();
+
+        if (! $orderItem || $orderItem->order?->customerable_id !== $user->id || $orderItem->order?->customerable_type !== get_class($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order item not found',
+            ], 404);
+        }
+
+        $service = OrderRefundService::make();
+        $result = $service->requestReturn($user, $orderItem, $request->input('reason'));
+
+        return response()->json($result, $result['success'] ? 200 : 422);
+    }
+
+    /**
+     * Request refund for an order item (after return)
+     */
+    public function requestRefund(Request $request): JsonResponse
+    {
+        $request->validate([
+            'order_item_uuid' => ['required', 'string', 'exists:order_items,uuid'],
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $user = $request->user();
+        $orderItem = \App\Models\Ecommerce\OrderItem::where('uuid', $request->order_item_uuid)->first();
+
+        if (! $orderItem || $orderItem->order?->customerable_id !== $user->id || $orderItem->order?->customerable_type !== get_class($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order item not found',
+            ], 404);
+        }
+
+        $service = OrderRefundService::make();
+        $result = $service->requestRefund($user, $orderItem, $request->input('reason'));
+
+        return response()->json($result, $result['success'] ? 200 : 422);
     }
 }

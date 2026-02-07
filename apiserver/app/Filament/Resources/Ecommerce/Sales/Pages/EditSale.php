@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Ecommerce\Sales\Pages;
 
 use App\Filament\Resources\Ecommerce\Sales\SaleResource;
+use App\Services\Ecommerce\SaleManager;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
@@ -17,5 +18,10 @@ class EditSale extends EditRecord
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function afterSave(): void
+    {
+        SaleManager::make()->reindexSaleableProducts();
     }
 }

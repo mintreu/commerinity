@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use App\Casts\GstTaxCast;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
@@ -36,6 +37,7 @@ class Category extends Model implements HasMedia
         'view_count',
         'order',
         'desc',
+        'tax_slab',
         'meta_data',
         'banners',
         'seo_meta',
@@ -45,6 +47,7 @@ class Category extends Model implements HasMedia
     {
         return [
             'status' => 'boolean',
+            'tax_slab' => GstTaxCast::class,
             'meta_data' => AsArrayObject::class,
             'seo_meta' => 'array',
             'banners' => AsArrayObject::class,

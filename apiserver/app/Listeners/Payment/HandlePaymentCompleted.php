@@ -67,23 +67,32 @@ final class HandlePaymentCompleted
         ]);
 
         // Route to appropriate handler
-        match (true) {
-            $payable instanceof Wallet => $this->handleWalletTopup($transaction, $payable),
-            $payable instanceof UserSubscription => $this->handleSubscriptionPayment($transaction, $payable),
-            $payable instanceof JobApplication => $this->handleRecruitmentPayment($transaction, $payable),
-            $payable instanceof Order => $this->handleOrderConfirmation($transaction,$payable),
-            default => Log::warning('Unhandled payable type', [
-                'type' => get_class($payable),
-                'transaction_id' => $transaction->uuid,
-            ]),
-        };
+        if ($payable instanceof Wallet) {
+            // Wallet top-ups rely on TransactionObserver updates.
+            // Handler kept for potential notifications, but balance updates happen elsewhere.
+            // $this->handleWalletTopup($transaction, $payable);
+            return;
+        }
 
+        if ($payable instanceof UserSubscription) {
+            $this->handleSubscriptionPayment($transaction, $payable);
+            return;
+        }
 
-        // Notify HR/Admin  (Filament DB Notification)
+        if ($payable instanceof JobApplication) {
+            $this->handleRecruitmentPayment($transaction, $payable);
+            return;
+        }
 
-        Notification::make()->sendToDatabase(Admin::all())
-            ->title('New Application Submitted')
-            ->body('Application ID : '. $payable->uuid);
+        if ($payable instanceof Order) {
+            $this->handleOrderConfirmation($transaction, $payable);
+            return;
+        }
+
+        Log::warning('Unhandled payable type', [
+            'type' => get_class($payable),
+            'transaction_id' => $transaction->uuid,
+        ]);
 
         // Notify applicant (User Side Notification eg: push notification and mail notification)
         // 1. Push Notification
@@ -102,11 +111,14 @@ final class HandlePaymentCompleted
      */
     private function handleWalletTopup(mixed $transaction, Wallet $wallet): void
     {
+        // Wallet balance updates are managed by TransactionObserver when the transaction status flips to completed.
+        // This function remains for future notification hooks but deliberately no longer changes balances.
+        // Uncomment below if additional actions are required beyond balance accounting.
+        /*
         DB::transaction(function () use ($transaction, $wallet) {
             $currentBalance = MoneyService::make($wallet->balance);
             $topupAmount = MoneyService::make($transaction->amount);
 
-            // Add money to wallet
             $newBalance = $currentBalance->add($topupAmount->getAmount());
 
             $wallet->update([
@@ -121,6 +133,7 @@ final class HandlePaymentCompleted
                 'new_balance' => $newBalance->getAmount(),
             ]);
         });
+        */
     }
 
     /**
@@ -172,7 +185,6 @@ final class HandlePaymentCompleted
     private function handleRecruitmentPayment(mixed $transaction, JobApplication $application): void
     {
         DB::transaction(function () use ($transaction, $application) {
-            // Change status from awaiting_payment to submitted
             $application->update([
                 'status' => JobApplicationStatusCast::Submitted,
                 'is_paid' => true,
@@ -180,7 +192,6 @@ final class HandlePaymentCompleted
                 'submitted_at' => now(),
             ]);
 
-            // Refresh to ensure we have the latest data
             $application->refresh();
 
             Log::info('Recruitment fee paid, application submitted', [
@@ -189,9 +200,11 @@ final class HandlePaymentCompleted
                 'transaction_id' => $transaction->uuid,
                 'status' => $application->status->value,
             ]);
-
-
         });
+
+        Notification::make()->sendToDatabase(Admin::all())
+            ->title('New Application Submitted')
+            ->body('Application ID : '. $application->uuid);
     }
 
 

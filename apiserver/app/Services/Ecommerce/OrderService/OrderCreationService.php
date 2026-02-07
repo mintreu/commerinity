@@ -22,6 +22,7 @@ class OrderCreationService
 
     protected Order $order;
     protected Transaction $transaction;
+    protected array $giftPayload = [];
 
 
     public function __construct(CartService $cartService,?CommissionProcessorService $commissionProcessor = null
@@ -67,6 +68,7 @@ class OrderCreationService
             'total_bv' => $cartTotal['bv'],
             'total_pv' => $cartTotal['pv'],
             'total_reward_points' => $cartTotal['reward_points'],
+            'total_coins' => $cartTotal['reward_points'],
             'shipping_address_id' => $shippingAddress->id,
             'billing_address_id' => $billingAddress->id,
             'quantity' => $cartTotal['total_quantity'],
@@ -77,7 +79,7 @@ class OrderCreationService
 
     public function createOrderItem(array $item)
     {
-        return $this->order->items()->create([
+        return $this->order->items()->create(array_merge([
             'product_id' => $item['product_id'],
             'quantity' => $item['allocated_quantity'],
             'unit_price' => $item['unit_price'],
@@ -86,10 +88,34 @@ class OrderCreationService
             'bv' => $item['bv'],
             'pv' => $item['pv'],
             'reward_points' => $item['reward_points'],
+            'total_coins' => $item['reward_points'],
             'metadata' => [
                 'stock_allocations' => $item['stock_entries'],
             ],
-        ]);
+        ], $this->giftPayload));
+    }
+
+    public function gift(?string $giftOption = null, ?string $message = null): self
+    {
+        $giftOption = $giftOption ? trim($giftOption) : null;
+        $message = $message ? trim($message) : null;
+
+        if (! $giftOption) {
+            $this->giftPayload = [];
+            return $this;
+        }
+
+        $details = [
+            'option' => $giftOption,
+            'message' => $message,
+        ];
+
+        $this->giftPayload = [
+            'is_gift' => true,
+            'gift_details' => json_encode($details, JSON_UNESCAPED_UNICODE),
+        ];
+
+        return $this;
     }
 
     public function payWithWallet(User $user)
@@ -107,7 +133,8 @@ class OrderCreationService
             $wallet,
             $this->order->total,
             'order_payment',
-            "Payment for Order #{$this->order->order_number}"
+            "Payment for Order #{$this->order->order_number}",
+            $this->order
         );
 
         // Update order

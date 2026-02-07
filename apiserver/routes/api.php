@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\CommissionController;
 use App\Http\Controllers\Api\KycController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NoticeController;
-use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\Order\OrderDisplayController;
 use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Notification\PushSubscriptionController;
 use App\Http\Controllers\Api\OnboardingController;
@@ -140,6 +140,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/children', [AccountController::class, 'directChildren']);
         Route::get('/upline', [AccountController::class, 'upline']);
         Route::get('/tree', [AccountController::class, 'tree']);
+        Route::get('/disbursements', [\App\Http\Controllers\Api\Affiliate\AffiliateDisbursementController::class, 'index']);
+        Route::get('/disbursements/{payout:uuid}', [\App\Http\Controllers\Api\Affiliate\AffiliateDisbursementController::class, 'show']);
+        Route::get('/disbursements/{payout:uuid}/invoice', [\App\Http\Controllers\Api\Affiliate\AffiliateDisbursementController::class, 'invoice']);
     });
 
     // ========================================
@@ -461,6 +464,8 @@ Route::prefix('cart')->middleware('auth:sanctum')->group(function () {
     Route::get('/count', [CartController::class, 'count']);
     Route::get('/', [CartController::class, 'index']);
     Route::post('/', [CartController::class, 'store']);
+    Route::post('/coupon', [CartController::class, 'applyCoupon']);
+    Route::delete('/coupon', [CartController::class, 'removeCoupon']);
     Route::put('/{productId}', [CartController::class, 'update']);
     Route::delete('/{productId}', [CartController::class, 'destroy']);
     Route::delete('/', [CartController::class, 'clear']);
@@ -494,12 +499,15 @@ Route::get('/wishlist/{product:url}/check', [\App\Http\Controllers\Api\WishlistC
 // Orders (Auth required) [ECOMMERCE]
 // ========================================
 Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [OrderController::class, 'index']);
-    Route::get('/stats', [OrderController::class, 'stats']);
-    Route::get('/{uuid}', [OrderController::class, 'show']);
+    Route::get('/', [OrderDisplayController::class, 'index']);
+    Route::get('/stats', [OrderDisplayController::class, 'stats']);
+    Route::get('/{uuid}', [OrderDisplayController::class, 'show']);
+    Route::get('/{uuid}/invoice', [OrderDisplayController::class, 'invoice']);
 });
 
 
 Route::prefix('order')->middleware('auth:sanctum')->group(function (){
     Route::post('/checkout',[\App\Http\Controllers\Api\Order\OrderActionController::class,'checkout']);
+    Route::post('/return',[\App\Http\Controllers\Api\Order\OrderActionController::class,'requestReturn']);
+    Route::post('/refund',[\App\Http\Controllers\Api\Order\OrderActionController::class,'requestRefund']);
 });

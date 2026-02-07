@@ -54,8 +54,8 @@ class CartController extends Controller
         }
 
         $cartItems = CartItemResource::collection($items);
-        $cartTotal = $this->cartService->getCartTotal($shippingAddress);
-        $subtotal = $cartTotal['subtotal'] ?? 0;
+        $cartMeta = $this->cartService->getMeta($shippingAddress, true);
+        $subtotal = $cartMeta['summary']['sub_total'] ?? 0;
 
         return response()->json([
             'success' => true,
@@ -65,9 +65,10 @@ class CartController extends Controller
                     'items_count' => $this->cartService->count(),
                     'total_quantity' => $this->cartService->getTotalQuantity(),
                     'subtotal' => $subtotal,
-                    'subtotal_formatted' => $cartTotal['formatted']['subtotal'] ?? MoneyService::format($subtotal),
+                    'subtotal_formatted' => MoneyService::format($subtotal),
                 ],
                 'is_guest' => $this->cartService->isGuest(),
+                'meta' => $cartMeta,
             ],
         ]);
     }
@@ -200,6 +201,51 @@ class CartController extends Controller
             'data' => [
                 'items_count' => $this->cartService->count(),
                 'total_quantity' => $this->cartService->getTotalQuantity(),
+            ],
+        ]);
+    }
+
+    /**
+     * Apply coupon/voucher code to cart
+     */
+    public function applyCoupon(Request $request): JsonResponse
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $this->cartService->capture($request);
+        $this->cartService->setCouponCode($request->input('code'));
+
+        if ($this->cartService->hasErrors()) {
+            return response()->json([
+                'success' => false,
+                'message' => $this->cartService->getErrors(),
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Coupon applied.',
+            'data' => [
+                'meta' => $this->cartService->getMeta($this->resolveShippingAddress($request), true),
+            ],
+        ]);
+    }
+
+    /**
+     * Remove coupon from cart
+     */
+    public function removeCoupon(Request $request): JsonResponse
+    {
+        $this->cartService->capture($request);
+        $this->cartService->clearCoupon();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Coupon removed.',
+            'data' => [
+                'meta' => $this->cartService->getMeta($this->resolveShippingAddress($request), true),
             ],
         ]);
     }

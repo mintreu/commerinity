@@ -65,7 +65,7 @@ return new class extends Migration
             // Expiry for pending transactions
             $table->timestamp('expires_at')->nullable();
 
-            // Balance snapshot after transaction
+            // Balance snapshot after transaction (audit/trend usage)
             $table->unsignedBigInteger('balance_after')->nullable();
 
             // Metadata

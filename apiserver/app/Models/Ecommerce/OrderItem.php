@@ -25,6 +25,9 @@ class OrderItem extends Model
         'bv',
         'pv',
         'reward_points',
+        'total_coins',
+        'is_gift',
+        'gift_details',
     ];
 
     protected function casts(): array
@@ -36,6 +39,8 @@ class OrderItem extends Model
             'bv' => 'integer',
             'pv' => 'integer',
             'reward_points' => 'integer',
+            'total_coins' => 'integer',
+            'is_gift' => 'boolean',
         ];
     }
 

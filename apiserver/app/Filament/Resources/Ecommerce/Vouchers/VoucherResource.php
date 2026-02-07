@@ -6,6 +6,7 @@ use App\Filament\Resources\Ecommerce\Vouchers\Pages\CreateVoucher;
 use App\Filament\Resources\Ecommerce\Vouchers\Pages\EditVoucher;
 use App\Filament\Resources\Ecommerce\Vouchers\Pages\ListVouchers;
 use App\Filament\Resources\Ecommerce\Vouchers\Pages\ViewVoucher;
+use App\Filament\Resources\Ecommerce\Vouchers\RelationManagers\VoucherCodesRelationManager;
 use App\Filament\Resources\Ecommerce\Vouchers\Schemas\VoucherForm;
 use App\Filament\Resources\Ecommerce\Vouchers\Schemas\VoucherInfolist;
 use App\Filament\Resources\Ecommerce\Vouchers\Tables\VouchersTable;
@@ -42,7 +43,7 @@ class VoucherResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            VoucherCodesRelationManager::class,
         ];
     }
 

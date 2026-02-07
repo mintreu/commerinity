@@ -29,6 +29,9 @@ return new class extends Migration
             $table->unsignedInteger('bv')->default(0)->comment('Business Volume for this item');
             $table->unsignedInteger('pv')->default(0)->comment('Personal Volume earned');
             $table->unsignedInteger('reward_points')->default(0)->comment('Reward points for this item');
+            $table->unsignedInteger('total_coins')->default(0)->comment('Coins earned for this item');
+            $table->boolean('is_gift')->default(false)->comment('Gift wrap requested');
+            $table->text('gift_details')->nullable()->comment('Gift message/details');
 
             $table->timestamps();
 

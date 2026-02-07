@@ -6,6 +6,7 @@ use App\Filament\Resources\Ecommerce\Sales\Pages\CreateSale;
 use App\Filament\Resources\Ecommerce\Sales\Pages\EditSale;
 use App\Filament\Resources\Ecommerce\Sales\Pages\ListSales;
 use App\Filament\Resources\Ecommerce\Sales\Pages\ViewSale;
+use App\Filament\Resources\Ecommerce\Sales\RelationManagers\SaleProductsRelationManager;
 use App\Filament\Resources\Ecommerce\Sales\Schemas\SaleForm;
 use App\Filament\Resources\Ecommerce\Sales\Schemas\SaleInfolist;
 use App\Filament\Resources\Ecommerce\Sales\Tables\SalesTable;
@@ -41,7 +42,7 @@ class SaleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SaleProductsRelationManager::class,
         ];
     }
 

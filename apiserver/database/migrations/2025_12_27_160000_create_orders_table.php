@@ -32,6 +32,7 @@ return new class extends Migration
             $table->unsignedInteger('total_bv')->default(0)->comment('Total Business Volume');
             $table->unsignedInteger('total_pv')->default(0)->comment('Total Personal Volume');
             $table->unsignedInteger('total_reward_points')->default(0)->comment('Total reward points earned');
+            $table->unsignedInteger('total_coins')->default(0)->comment('Total coins earned');
             $table->boolean('commission_processed')->default(false)->comment('Commission payout processed flag');
 
             // Addresses (snapshot at order time)

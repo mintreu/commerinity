@@ -17,6 +17,7 @@ enum PaymentMethodCast: string implements HasColor, HasIcon, HasLabel
     case CASH = 'cash';
     case COD = 'cod';
     case WALLET = 'wallet';
+    case COINS = 'coins';
     case BANK_TRANSFER = 'bank_transfer';
 
     // Third-party payment methods
@@ -36,6 +37,7 @@ enum PaymentMethodCast: string implements HasColor, HasIcon, HasLabel
             self::CASH => 'Cash',
             self::COD => 'Cash on Delivery',
             self::WALLET => 'Wallet',
+            self::COINS => 'Coins',
             self::BANK_TRANSFER => 'Bank Transfer',
             self::CASHFREE => 'Cashfree',
             self::RAZORPAY => 'Razorpay',
@@ -52,6 +54,7 @@ enum PaymentMethodCast: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::CASH, self::COD => 'success',
             self::WALLET => 'primary',
+            self::COINS => 'emerald',
             self::BANK_TRANSFER => 'info',
             self::CASHFREE => 'purple',
             self::RAZORPAY => 'blue',
@@ -67,6 +70,7 @@ enum PaymentMethodCast: string implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::CASH, self::COD => 'heroicon-o-banknotes',
             self::WALLET => 'heroicon-o-wallet',
+            self::COINS => 'heroicon-o-currency-rupee',
             self::BANK_TRANSFER => 'heroicon-o-building-library',
             self::CASHFREE, self::RAZORPAY, self::STRIPE, self::PAYTM => 'heroicon-o-credit-card',
             self::UPI => 'heroicon-o-qr-code',
@@ -84,6 +88,7 @@ enum PaymentMethodCast: string implements HasColor, HasIcon, HasLabel
             self::CASH,
             self::COD,
             self::WALLET,
+            self::COINS,
             self::BANK_TRANSFER,
         ]);
     }
