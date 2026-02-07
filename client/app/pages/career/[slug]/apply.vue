@@ -28,15 +28,16 @@ interface Recruitment {
 }
 
 interface Address {
-  id: number
-  label: string
-  address_line_1: string
-  address_line_2: string | null
-  city: string | Record<string, unknown> | null
-  state: string | Record<string, unknown> | null
-  pincode: string | number | null
-  country: string | Record<string, unknown> | null
+  uuid: string
+  title: string
+  address_1: string
+  address_2: string | null
+  city: string | null
+  postal_code: string | null
+  state: { code?: string; name?: string } | null
+  country: { code?: string; name?: string } | null
   default: boolean
+  full_address?: string
 }
 
 interface Education {
@@ -65,7 +66,7 @@ const { data: addressesData } = await useAsyncData<{ data: Address[] }>(
 const addresses = computed(() => addressesData.value?.data || [])
 const selectedAddress = computed(() => {
   if (!selectedAddressId.value) return null
-  return addresses.value.find((a: Address) => a.id === selectedAddressId.value) || null
+  return addresses.value.find((a: Address) => a.uuid === selectedAddressId.value) || null
 })
 
 // Typed user for profile display
@@ -73,7 +74,7 @@ const typedUser = computed(() => user.value as User | null)
 
 // Form state
 const guardianName = ref('')
-const selectedAddressId = ref<number | null>(null)
+const selectedAddressId = ref<string | null>(null)
 const educations = ref<Education[]>([])
 const skills = ref<Skill[]>([])
 
@@ -81,14 +82,14 @@ const skills = ref<Skill[]>([])
 watch(addresses, (addrs) => {
   if (addrs.length && !selectedAddressId.value) {
     const def = addrs.find((a: Address) => a.default)
-    selectedAddressId.value = def?.id || addrs[0]?.id || null
+    selectedAddressId.value = def?.uuid || addrs[0]?.uuid || null
   }
 }, { immediate: true })
 
 const addressOptions = computed(() => {
   return addresses.value.map((addr: Address) => ({
-    label: `${addr.label} - ${addr.address_line_1}${getAddressPartLabel(addr.city) ? `, ${getAddressPartLabel(addr.city)}` : ''}`,
-    value: addr.id
+    label: `${addr.title} - ${addr.address_1}${addr.city ? `, ${addr.city}` : ''}`,
+    value: addr.uuid
   }))
 })
 
@@ -137,7 +138,7 @@ async function submitApplication() {
   try {
     const payload: Record<string, unknown> = {
       guardian_name: guardianName.value,
-      address_id: selectedAddressId.value
+      address_uuid: selectedAddressId.value
     }
 
     if (referenceName.value.trim()) {
@@ -222,17 +223,15 @@ function getAddressPartLabel(value: unknown): string {
 
 function formatFullAddress(addr: Address | null): string {
   if (!addr) return ''
+  // Use full_address if available from API
+  if (addr.full_address) return addr.full_address
   const parts: string[] = []
-  if (addr.address_line_1) parts.push(addr.address_line_1)
-  if (addr.address_line_2) parts.push(addr.address_line_2)
-  const city = getAddressPartLabel(addr.city)
-  const state = getAddressPartLabel(addr.state)
-  const pincode = getAddressPartLabel(addr.pincode)
-  const country = getAddressPartLabel(addr.country)
-  if (city) parts.push(city)
-  if (state) parts.push(state)
-  if (pincode) parts.push(pincode)
-  if (country) parts.push(country)
+  if (addr.address_1) parts.push(addr.address_1)
+  if (addr.address_2) parts.push(addr.address_2)
+  if (addr.city) parts.push(addr.city)
+  if (addr.state?.name) parts.push(addr.state.name)
+  if (addr.postal_code) parts.push(addr.postal_code)
+  if (addr.country?.name) parts.push(addr.country.name)
   return parts.filter(Boolean).join(', ')
 }
 
@@ -471,7 +470,6 @@ function formatDob(dob: string | null | undefined): string {
               <USelect
                 v-model="selectedAddressId"
                 :items="addressOptions"
-                value-key="value"
                 placeholder="Choose an address"
                 size="lg"
                 :disabled="submitting"
@@ -491,7 +489,7 @@ function formatDob(dob: string | null | undefined): string {
                 />
                 <div>
                   <p class="font-medium text-gray-900 dark:text-white mb-1">
-                    {{ selectedAddress.label }}
+                    {{ selectedAddress.title }}
                   </p>
                   <p class="text-sm text-gray-600 dark:text-gray-400">
                     {{ formatFullAddress(selectedAddress) }}

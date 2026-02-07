@@ -510,8 +510,9 @@ Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [OrderDisplayController::class, 'index']);
     Route::get('/stats', [OrderDisplayController::class, 'stats']);
     Route::get('/{uuid}', [OrderDisplayController::class, 'show']);
-    Route::get('/{uuid}/invoice', [OrderDisplayController::class, 'invoice']);
 });
+
+Route::get('orders/{uuid}/invoice', [OrderDisplayController::class, 'invoice']);
 
 Route::prefix('order')->middleware('auth:sanctum')->group(function () {
     Route::post('/checkout', [\App\Http\Controllers\Api\Order\OrderActionController::class, 'checkout']);
