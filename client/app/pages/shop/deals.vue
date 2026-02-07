@@ -53,7 +53,7 @@ const loadDeals = async () => {
     if (selectedCategory.value) {
       queryParams.set('category', selectedCategory.value)
     }
-    const url = `/api/catalog/on-sale?${queryParams.toString()}`
+    const url = `/api/catalog/on-deal?${queryParams.toString()}`
     dealsResponse.value = await sanctumFetch(url)
     dealsStatus.value = 'success'
   } catch (err) {

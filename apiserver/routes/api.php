@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\Dashboard\AdvisorTeamLeaderController;
 use App\Http\Controllers\Api\Dashboard\AppointmentController;
 use App\Http\Controllers\Api\Dashboard\ChallengeController;
 use App\Http\Controllers\Api\Dashboard\ProgramController;
+use App\Http\Controllers\Api\DealsController;
 use App\Http\Controllers\Api\KycController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NoticeController;
@@ -452,6 +453,8 @@ Route::prefix('catalog')->group(function () {
     Route::get('/on-sale', [\App\Http\Controllers\Api\CatalogController::class, 'onSale']);
     Route::get('/search', [\App\Http\Controllers\Api\CatalogController::class, 'search']);
     Route::get('/filters', [\App\Http\Controllers\Api\CatalogController::class, 'filters']);
+
+    Route::get('/on-deal',[DealsController::class,'index']);
 });
 
 // ========================================
