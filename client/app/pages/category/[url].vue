@@ -77,12 +77,9 @@ const queryParams = computed(() => {
 
 // Fetch category with products using the combined API
 const { data: categoryResponse, status, error } = await useFetch<{
-  success: boolean
-  data: {
-    category: CategoryData
-    items: Product[]
-    pagination: Pagination
-  }
+  category: CategoryData
+  items: Product[]
+  pagination: Pagination
 }>(`/api/catalog/categories/${route.params.url}`, {
   $fetch: sanctumFetch,
   query: queryParams,
@@ -90,9 +87,9 @@ const { data: categoryResponse, status, error } = await useFetch<{
   server: false
 })
 
-const category = computed(() => categoryResponse.value?.data?.category)
-const products = computed(() => categoryResponse.value?.data?.items || [])
-const pagination = computed(() => categoryResponse.value?.data?.pagination)
+const category = computed(() => categoryResponse.value?.category)
+const products = computed(() => categoryResponse.value?.items || [])
+const pagination = computed(() => categoryResponse.value?.pagination)
 
 // Dynamic SEO using category.seo_meta
 watchEffect(() => {

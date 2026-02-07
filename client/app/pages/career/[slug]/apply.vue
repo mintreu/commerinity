@@ -471,6 +471,7 @@ function formatDob(dob: string | null | undefined): string {
               <USelect
                 v-model="selectedAddressId"
                 :items="addressOptions"
+                value-key="value"
                 placeholder="Choose an address"
                 size="lg"
                 :disabled="submitting"

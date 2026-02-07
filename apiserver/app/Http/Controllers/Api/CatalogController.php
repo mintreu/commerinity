@@ -146,7 +146,7 @@ class CatalogController extends Controller
 
         return response()->json([
             'category' => new CategoryResource($category),
-            'items' => $resourceCollection->data,
+            'items' => $resourceCollection->response()->getData(true)['data'],
             'pagination' => [
                 'current_page' => $productsQuery->currentPage(),
                 'last_page' => $productsQuery->lastPage(),

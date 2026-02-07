@@ -23,26 +23,32 @@ interface HomepageCategory {
 }
 
 interface CategoriesResponse {
-  success: boolean
   data: HomepageCategory[]
 }
 
 const config = useRuntimeConfig()
-const sanctumFetch = useSanctumFetch()
 
-const { data: categoriesResponse, status } = await useFetch<CategoriesResponse>(
-  `${config.public.apiBase}/api/catalog/categories`,
-  {
-    $fetch: sanctumFetch,
-    lazy: true,
-    server: false
+const categoriesResponse = ref<CategoriesResponse | null>(null)
+const status = ref<'pending' | 'success' | 'error'>('pending')
+
+const loadCategories = async () => {
+  status.value = 'pending'
+  try {
+    categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
+    status.value = 'success'
+  } catch {
+    status.value = 'error'
   }
-)
+}
 
 // Show top-level categories limited to 6
 const topCategories = computed(() => {
   const items = categoriesResponse.value?.data || []
   return items.slice(0, 6)
+})
+
+onMounted(() => {
+  loadCategories()
 })
 </script>
 
