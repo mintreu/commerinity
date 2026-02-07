@@ -173,6 +173,50 @@ useSeoMeta({
   description: () => product.value?.short_description || product.value?.description?.slice(0, 160) || 'Shop premium products at Mintreu'
 })
 
+// Structured Data for Rich Snippets
+useHead(() => {
+  if (!product.value) {
+    return {}
+  }
+  const availability = product.value.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
+  const mainImage = product.value.gallery?.[0]?.src || ''
+
+  return {
+    script: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.value.name,
+          description: product.value.short_description || product.value.description,
+          image: mainImage,
+          sku: product.value.sku,
+          brand: {
+            '@type': 'Brand',
+            name: config.public.companyName || 'VVIndia'
+          },
+          offers: {
+            '@type': 'Offer',
+            url: `${config.public.siteUrl}/shop/product/${product.value.slug}`,
+            priceCurrency: config.public.currencyCode || 'INR',
+            price: product.value.price,
+            availability,
+            itemCondition: 'https://schema.org/NewCondition'
+          },
+          ...(reviews.value?.stats?.total_reviews && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: reviews.value.stats.average_rating.toFixed(1),
+              reviewCount: reviews.value.stats.total_reviews
+            }
+          })
+        }, null, 2)
+      }
+    ]
+  }
+})
+
 // Gallery state
 const selectedImage = ref(0)
 const selectedVariant = ref<string | null>(null)

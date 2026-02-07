@@ -23,6 +23,7 @@ const highlights = [
     summary: 'VVIndia mobile gets offline catalog browsing, order tracking, and wallet syncing.'
   },
   {
+    
     title: 'Community meetup in Bengaluru',
     date: 'Jan 15, 2026',
     summary: 'An invite-only gathering for top affiliates to network with category managers.'

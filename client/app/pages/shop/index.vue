@@ -92,6 +92,7 @@ const newArrivals = computed(() => featuredData.value?.data?.new_arrivals || [])
 
     <!-- Product list with filters (Flipkart-style) for all users -->
     <ShopAuthUserView
+      v-else
       :user-name="userName"
     />
   </div>

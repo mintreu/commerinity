@@ -36,8 +36,10 @@ interface SaleProduct extends Product {
   sale_ends_at: string | null
 }
 
+const { isLoggedIn } = useSanctum()
+
 // Filter state
-const selectedCategory = ref('')
+const selectedCategory = ref(null)
 const selectedDiscount = ref('')
 const sortBy = ref('discount_desc')
 const currentPage = ref(1)
@@ -54,7 +56,7 @@ const loadDeals = async () => {
       queryParams.set('category', selectedCategory.value)
     }
     const url = `/api/catalog/on-deal?${queryParams.toString()}`
-    dealsResponse.value = await sanctumFetch(url)
+    dealsResponse.value = await useSanctumFetch(url)
     dealsStatus.value = 'success'
   } catch (err) {
     dealsStatus.value = 'error'
@@ -70,7 +72,7 @@ const loadDeals = async () => {
 const categoriesData = ref<{ success: boolean; data: Array<{ name: string; slug: string; product_count: number }> } | null>(null)
 const loadCategories = async () => {
   try {
-    categoriesData.value = await sanctumFetch('/api/catalog/categories')
+    categoriesData.value = await useSanctumFetch('/api/catalog/categories')
   } catch (err) {
     toast.add({
       title: 'Categories Load Failed',
@@ -201,7 +203,7 @@ const addToCart = async (product: SaleProduct) => {
 
 // Clear filters
 const clearFilters = () => {
-  selectedCategory.value = ''
+  selectedCategory.value = null
   selectedDiscount.value = ''
   sortBy.value = 'discount_desc'
 }
@@ -352,7 +354,7 @@ const discountOptions = [
             <!-- Category -->
             <USelect
               v-model="selectedCategory"
-              :items="[{ label: 'All Categories', id: '' }, ...categories.map(c => ({ label: c.name, id: c.slug }))]"
+              :items="[{ label: 'All Categories', id: null }, ...categories.map(c => ({ label: c.name, id: c.slug }))]"
               value-key="id"
               placeholder="Category"
               class="w-40"
@@ -439,8 +441,8 @@ const discountOptions = [
             >
               <div class="relative aspect-square bg-slate-100 dark:bg-slate-700 overflow-hidden">
                 <img
-                  v-if="deal.image"
-                  :src="deal.image.url || deal.image"
+                  v-if="deal.image?.src"
+                  :src="deal.image.src"
                   :alt="deal.name"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
@@ -495,6 +497,7 @@ const discountOptions = [
 
               <!-- Add to Cart -->
               <UButton
+                v-if="isLoggedIn"
                 block
                 :disabled="!deal.in_stock || addingToCart === deal.slug"
                 :loading="addingToCart === deal.slug"
@@ -508,6 +511,18 @@ const discountOptions = [
                 />
                 {{ deal.in_stock ? 'Add to Cart' : 'Sold Out' }}
               </UButton>
+
+              <UButton
+                v-else
+                block
+                variant="outline"
+                color="primary"
+                @click.prevent="navigateTo(`/shop/product/${deal.slug || (deal as any).url || ''}`)"
+              >
+                View Product
+              </UButton>
+
+
             </div>
           </div>
         </div>
