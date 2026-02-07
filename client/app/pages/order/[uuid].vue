@@ -176,7 +176,7 @@ const submitAction = async () => {
           <UButton
             v-if="invoiceUrl"
             :href="invoiceUrl"
-            download
+            target="_blank"
             external
             variant="soft"
             icon="i-lucide-receipt"
