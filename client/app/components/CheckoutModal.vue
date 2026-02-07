@@ -13,6 +13,7 @@ interface Props {
   checkoutEndpoint: string
   checkoutPayload?: Record<string, any>
   coinsRequired?: number
+  allowCoins?: boolean
   onSuccess?: () => void
 }
 
@@ -41,11 +42,21 @@ const insufficientWalletBalance = computed(() => {
 })
 
 const insufficientCoins = computed(() => {
-  if (paymentMethod.value !== 'coins') return false
+  if (!props.allowCoins || paymentMethod.value !== 'coins') return false
   if (!wallet.value) return true
   const required = props.coinsRequired || 0
   return wallet.value.points < required
 })
+
+watch(
+  () => props.allowCoins,
+  (allowed) => {
+    if (allowed === false && paymentMethod.value === 'coins') {
+      paymentMethod.value = 'online'
+    }
+  },
+  { immediate: true }
+)
 
 async function processPayment() {
   if (isProcessing.value || insufficientWalletBalance.value || insufficientCoins.value) return
@@ -184,7 +195,10 @@ function close() {
                   {{ wallet.available_balance_formatted }}
                 </span>
               </div>
-              <div class="flex items-center justify-between mt-2">
+              <div
+                v-if="props.allowCoins !== false"
+                class="flex items-center justify-between mt-2"
+              >
                 <span class="text-sm text-slate-600 dark:text-slate-400">Coins Balance</span>
                 <span class="font-semibold text-slate-900 dark:text-white">
                   {{ wallet.points }}
@@ -227,6 +241,7 @@ function close() {
 
               <!-- Pay via Coins -->
               <label
+                v-if="props.allowCoins !== false"
                 class="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
                 :class="paymentMethod === 'coins'
                   ? 'border-emerald-500 bg-emerald-50/60 dark:bg-emerald-900/10'
@@ -316,7 +331,7 @@ function close() {
             />
 
             <UAlert
-              v-if="insufficientCoins"
+              v-if="props.allowCoins !== false && insufficientCoins"
               color="warning"
               icon="i-lucide-alert-triangle"
               title="Insufficient Coins"

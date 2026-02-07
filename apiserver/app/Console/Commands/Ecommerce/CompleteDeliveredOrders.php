@@ -84,7 +84,7 @@ class CompleteDeliveredOrders extends Command
 
                     // Process Affiliate commission if eligible
                     if ($order->canGenerateCommission() && ! $order->isCommissionProcessed()) {
-                        $this->commissionProcessor->processCommission($order);
+                        $this->commissionProcessor->processAndPersist($order);
                         $order->markCommissionProcessed();
                         $commissionsProcessed++;
                         $this->line("    → Affiliate commission processed (BV: {$order->total_bv})");

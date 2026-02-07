@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 
@@ -141,16 +140,15 @@ class Order extends Model implements CommissionTrigger
         return $this->hasMany(OrderItem::class);
     }
 
-
-//
-//    /**
-//     * Transactions linked to this order
-//     */
-//    public function transactions(): HasMany
-//    {
-//        return $this->hasMany(Transaction::class, 'transactionable_id')
-//            ->where('transactionable_type', self::class);
-//    }
+    //
+    //    /**
+    //     * Transactions linked to this order
+    //     */
+    //    public function transactions(): HasMany
+    //    {
+    //        return $this->hasMany(Transaction::class, 'transactionable_id')
+    //            ->where('transactionable_type', self::class);
+    //    }
 
     /**
      * Shipping address
@@ -367,6 +365,16 @@ class Order extends Model implements CommissionTrigger
      */
     public function getCommissionContext(): array
     {
+        // Get customer's active subscription stage for commission rate lookup
+        $stageId = null;
+        $customer = $this->customerable;
+        if ($customer instanceof User) {
+            $activeSubscription = UserSubscription::where('user_id', $customer->id)
+                ->where('status', UserSubscription::STATUS_ACTIVE)
+                ->first();
+            $stageId = $activeSubscription?->stage_id;
+        }
+
         return [
             'order_id' => $this->id,
             'order_number' => $this->order_number,
@@ -376,6 +384,7 @@ class Order extends Model implements CommissionTrigger
             'total_reward_points' => $this->total_reward_points,
             'item_count' => $this->quantity,
             'status' => $this->getStatusValue(),
+            'stage_id' => $stageId,
         ];
     }
 

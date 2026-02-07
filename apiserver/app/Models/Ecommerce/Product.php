@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models\Ecommerce;
 
+use App\Casts\GstTaxCast;
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
-use App\Casts\GstTaxCast;
 use App\Models\Address;
 use App\Models\Traits\HasSaleAccess;
 use App\Models\User;
@@ -55,8 +55,9 @@ class Product extends Model implements HasMedia
         'length_cm',
         'width_cm',
         'height_cm',
-        'is_commissionable',  // for advisor type user to get commisison from their own originator user teams
-        'commission_rate',  // for advisor type user
+        'is_commissionable',  // for distributor type user to get commission from their own originator user teams
+        'commission_rate',  // legacy name: distributor_percentage
+        'distributor_percentage',
         'view_count',
         'seo_meta', // this can be rename as only meta .. json column
     ];
@@ -84,7 +85,21 @@ class Product extends Model implements HasMedia
             'height_cm' => 'integer',
             'is_commissionable' => 'boolean',
             'commission_rate' => 'decimal:2',
+            'distributor_percentage' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Alias for commission_rate to keep naming clear for distributors.
+     */
+    public function getDistributorPercentageAttribute(): ?float
+    {
+        return $this->commission_rate;
+    }
+
+    public function setDistributorPercentageAttribute(?float $value): void
+    {
+        $this->attributes['commission_rate'] = $value;
     }
 
     protected static function booted(): void
@@ -449,7 +464,7 @@ class Product extends Model implements HasMedia
     /**
      * Get the correct price for this product
      *
-     * @param Address|string|null $delivery Delivery context (ignored for price, kept for compatibility)
+     * @param  Address|string|null  $delivery  Delivery context (ignored for price, kept for compatibility)
      * @return int Price in paise
      */
     public function getPrice(Address|string|null $delivery = null): int

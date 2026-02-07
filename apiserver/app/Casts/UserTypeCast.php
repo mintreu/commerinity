@@ -13,7 +13,6 @@ enum UserTypeCast: string implements HasColor, HasIcon, HasLabel
     case PROMOTER = 'promoter';   // Actively refers others (Affiliate participant)
     case ADVISOR = 'advisor';     // Company-appointed, gets salary
     case MENTOR = 'mentor';       // Trains users, gets training fees
-    case APPLICANT = 'applicant'; // Applied for mentor/advisor role
 
     public function getLabel(): string
     {
@@ -23,7 +22,6 @@ enum UserTypeCast: string implements HasColor, HasIcon, HasLabel
             self::PROMOTER => 'Promoter',
             self::ADVISOR => 'Advisor',
             self::MENTOR => 'Mentor',
-            self::APPLICANT => 'Applicant',
         };
     }
 
@@ -35,7 +33,6 @@ enum UserTypeCast: string implements HasColor, HasIcon, HasLabel
             self::PROMOTER => 'info',
             self::ADVISOR => 'primary',
             self::MENTOR => 'warning',
-            self::APPLICANT => 'secondary',
         };
     }
 
@@ -47,7 +44,6 @@ enum UserTypeCast: string implements HasColor, HasIcon, HasLabel
             self::PROMOTER => 'heroicon-o-share',
             self::ADVISOR => 'heroicon-o-briefcase',
             self::MENTOR => 'heroicon-o-academic-cap',
-            self::APPLICANT => 'heroicon-o-document-text',
         };
     }
 }

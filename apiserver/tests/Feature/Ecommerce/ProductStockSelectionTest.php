@@ -35,8 +35,6 @@ it('prioritizes exact postal code matches before falling back to FIFO', function
     $first = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouseA->id,
         'landing_cost' => 10000,
-        'profit_margin' => 20.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'created_at' => now()->subDays(2),
@@ -45,8 +43,6 @@ it('prioritizes exact postal code matches before falling back to FIFO', function
     $exact = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouseB->id,
         'landing_cost' => 12000,
-        'profit_margin' => 10.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'created_at' => now()->subDay(),
@@ -57,7 +53,7 @@ it('prioritizes exact postal code matches before falling back to FIFO', function
         ['postal_code' => '222222']
     );
 
-    expect($stock)->toBe($exact);
+    expect($stock?->id)->toBe($exact->id);
 });
 
 it('orders stocks by expiry within the same postal code', function () {
@@ -68,8 +64,6 @@ it('orders stocks by expiry within the same postal code', function () {
     $laterExpiry = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouse->id,
         'landing_cost' => 10000,
-        'profit_margin' => 20.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'expiry_date' => now()->addMonths(3),
@@ -79,8 +73,6 @@ it('orders stocks by expiry within the same postal code', function () {
     $earlierExpiry = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouse->id,
         'landing_cost' => 12000,
-        'profit_margin' => 10.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'expiry_date' => now()->addMonth(),
@@ -92,14 +84,14 @@ it('orders stocks by expiry within the same postal code', function () {
         ['postal_code' => '333333']
     );
 
-    expect($stock)->toBe($earlierExpiry);
+    expect($stock?->id)->toBe($earlierExpiry->id);
 
     $withoutContext = $service->getBestStockForContext(
         $product->availableStocks,
         ['postal_code' => '000000']
     );
 
-    expect($withoutContext)->toBe($laterExpiry);
+    expect($withoutContext?->id)->toBe($laterExpiry->id);
 });
 
 it('prefers non-null expiry before null expiry for the same postal code', function () {
@@ -110,8 +102,6 @@ it('prefers non-null expiry before null expiry for the same postal code', functi
     $nullExpiry = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouse->id,
         'landing_cost' => 8000,
-        'profit_margin' => 25.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'expiry_date' => null,
@@ -121,8 +111,6 @@ it('prefers non-null expiry before null expiry for the same postal code', functi
     $withExpiry = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouse->id,
         'landing_cost' => 9000,
-        'profit_margin' => 20.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'expiry_date' => now()->addDays(10),
@@ -134,7 +122,7 @@ it('prefers non-null expiry before null expiry for the same postal code', functi
         ['postal_code' => '444444']
     );
 
-    expect($stock)->toBe($withExpiry);
+    expect($stock?->id)->toBe($withExpiry->id);
 });
 
 it('orders by batch number when expiry timestamps match', function () {
@@ -146,8 +134,6 @@ it('orders by batch number when expiry timestamps match', function () {
     $batchB = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouse->id,
         'landing_cost' => 11000,
-        'profit_margin' => 15.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'expiry_date' => $expiry,
@@ -158,8 +144,6 @@ it('orders by batch number when expiry timestamps match', function () {
     $batchA = ProductStock::factory()->for($product)->create([
         'address_id' => $warehouse->id,
         'landing_cost' => 10000,
-        'profit_margin' => 15.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
         'expiry_date' => $expiry,
@@ -172,5 +156,5 @@ it('orders by batch number when expiry timestamps match', function () {
         ['postal_code' => '555555']
     );
 
-    expect($stock)->toBe($batchA);
+    expect($stock?->id)->toBe($batchA->id);
 });

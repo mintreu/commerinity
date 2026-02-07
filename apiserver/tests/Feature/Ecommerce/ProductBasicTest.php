@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Casts\ProductTypeCast;
 use App\Models\Ecommerce\Category;
 use App\Models\Ecommerce\FilterGroup;
 use App\Models\Ecommerce\Product;
@@ -17,7 +18,7 @@ it('can create a product', function () {
         'name' => 'Test Product',
         'sku' => 'TEST-001',
         'url' => 'test-product',
-        'type' => 'physical',
+        'type' => ProductTypeCast::SIMPLE->value,
         'status' => 'Draft',
         'filter_group_id' => $filterGroup->id,
         'price' => 100000, // ₹1000 in paise
@@ -36,7 +37,7 @@ it('can create product with stock', function () {
         'name' => 'Product with Stock',
         'sku' => 'TEST-002',
         'url' => 'product-with-stock',
-        'type' => 'physical',
+        'type' => ProductTypeCast::SIMPLE->value,
         'status' => 'Published',
         'filter_group_id' => $filterGroup->id,
         'price' => 50000,
@@ -86,7 +87,7 @@ it('stock in_stock_quantity is calculated correctly', function () {
         'name' => 'Stock Test',
         'sku' => 'TEST-003',
         'url' => 'stock-test',
-        'type' => 'physical',
+        'type' => ProductTypeCast::SIMPLE->value,
         'status' => 'Published',
         'filter_group_id' => $filterGroup->id,
         'price' => 50000,

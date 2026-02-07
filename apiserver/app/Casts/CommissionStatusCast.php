@@ -110,4 +110,29 @@ enum CommissionStatusCast: string implements HasColor, HasIcon, HasLabel
     {
         return $this === self::PAID;
     }
+
+    /**
+     * Get all enum values.
+     *
+     * @return array<int, string>
+     */
+    public static function values(): array
+    {
+        return array_map(static fn (self $case) => $case->value, self::cases());
+    }
+
+    /**
+     * Get labels keyed by value.
+     *
+     * @return array<string, string>
+     */
+    public static function labels(): array
+    {
+        $labels = [];
+        foreach (self::cases() as $case) {
+            $labels[$case->value] = $case->getLabel();
+        }
+
+        return $labels;
+    }
 }

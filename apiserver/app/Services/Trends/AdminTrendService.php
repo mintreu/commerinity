@@ -475,7 +475,6 @@ final class AdminTrendService extends BaseTrendService
             UserTypeCast::PROMOTER->value => '#3B82F6',
             UserTypeCast::ADVISOR->value => '#8B5CF6',
             UserTypeCast::MENTOR->value => '#F59E0B',
-            UserTypeCast::APPLICANT->value => '#9CA3AF',
         ];
     }
 }

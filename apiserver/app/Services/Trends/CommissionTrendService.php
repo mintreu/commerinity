@@ -452,7 +452,7 @@ final class CommissionTrendService extends BaseTrendService
 
         $currentQuery = AffiliateCommission::query()
             ->where('user_id', $userId)
-            ->where('status', '!=', CommissionStatusCast::REVERSAL)
+            ->where('status', '!=', CommissionStatusCast::REVERSED->value)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']]);
 
         $previousStart = $dates['start']->copy()->subDays($dates['days']);
@@ -460,7 +460,7 @@ final class CommissionTrendService extends BaseTrendService
 
         $previousQuery = AffiliateCommission::query()
             ->where('user_id', $userId)
-            ->where('status', '!=', CommissionStatusCast::REVERSAL)
+            ->where('status', '!=', CommissionStatusCast::REVERSED->value)
             ->whereBetween('commission_date', [$previousStart, $previousEnd]);
 
         $currentTotal = (int) ($currentQuery->sum('net_amount') ?? 0);
@@ -501,13 +501,13 @@ final class CommissionTrendService extends BaseTrendService
     private function getStatusColors(): array
     {
         return [
-            CommissionStatusCast::PENDING => '#F59E0B',
-            CommissionStatusCast::APPROVED => '#3B82F6',
-            CommissionStatusCast::PROCESSING => '#8B5CF6',
-            CommissionStatusCast::PAID => '#10B981',
-            CommissionStatusCast::HELD => '#F97316',
-            CommissionStatusCast::CANCELLED => '#6B7280',
-            CommissionStatusCast::REVERSED => '#EF4444',
+            CommissionStatusCast::PENDING->value => '#F59E0B',
+            CommissionStatusCast::APPROVED->value => '#3B82F6',
+            CommissionStatusCast::PROCESSING->value => '#8B5CF6',
+            CommissionStatusCast::PAID->value => '#10B981',
+            CommissionStatusCast::HELD->value => '#F97316',
+            CommissionStatusCast::CANCELLED->value => '#6B7280',
+            CommissionStatusCast::REVERSED->value => '#EF4444',
         ];
     }
 }

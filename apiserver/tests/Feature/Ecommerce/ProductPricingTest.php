@@ -18,8 +18,6 @@ it('always returns the canonical product price regardless of stock details', fun
 
     ProductStock::factory()->for($product)->create([
         'landing_cost' => 10000,
-        'profit_margin' => 50.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
     ]);

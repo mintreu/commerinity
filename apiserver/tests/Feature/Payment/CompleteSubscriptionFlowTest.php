@@ -5,19 +5,18 @@ declare(strict_types=1);
 use App\Casts\TransactionStatusCast;
 use App\Casts\TransactionTypeCast;
 use App\Casts\UserTypeCast;
-use App\Models\Address;
+use App\Events\PaymentCompleted;
+use App\Models\Affiliate\AffiliateCommission;
+use App\Models\Affiliate\AffiliateGenealogy;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Events\PaymentCompleted;
-use App\Models\Affiliate\AffiliateGenealogy;
-use App\Models\Affiliate\AffiliateCommission;
+use Database\Seeders\LevelSeeder;
+use Database\Seeders\StageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
-use Database\Seeders\StageSeeder;
-use Database\Seeders\LevelSeeder;
 
 uses(RefreshDatabase::class);
 
@@ -34,7 +33,6 @@ uses(RefreshDatabase::class);
  * 7. User is placed in affiliate tree (if has sponsor)
  * 8. Initial commissions are triggered
  */
-
 beforeEach(function () {
     // Create payment integration
     $this->integration = \App\Models\Integration::factory()->cashfree()->create();
@@ -76,7 +74,7 @@ describe('Subscription Flow - New Member Registration', function () {
 
         // Create pending transaction for subscription
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-NEW-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-NEW-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -122,7 +120,7 @@ describe('Subscription Flow - New Member Registration', function () {
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-EXP-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-EXP-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -167,7 +165,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-AFF-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-AFF-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -185,7 +183,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
         // Verify user is now in affiliate tree
         $genealogy = AffiliateGenealogy::where('user_id', $this->user->id)->first();
         expect($genealogy)->not->toBeNull();
-        expect($genealogy->parent_id)->toBe($this->sponsor->id);
+        expect($genealogy->placement_parent_id)->toBe($this->sponsor->id);
 
         // Verify sponsor now has this user in children
         expect($this->sponsor->fresh()->children->contains($this->user))->toBeTrue();
@@ -202,7 +200,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-COMM-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-COMM-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -219,7 +217,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
 
         // Verify commissions were created for sponsor
         $commissions = AffiliateCommission::all();
-        expect($commissions)->toHaveCountGreaterThan(0);
+        expect($commissions->count())->toBeGreaterThan(0);
 
         // Verify at least one commission for the sponsor
         $hasSponsorCommission = $commissions->contains(fn ($c) => $c->user_id === $this->sponsor->id);
@@ -242,7 +240,7 @@ describe('Subscription Flow - Without Sponsor (Team Head)', function () {
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-HEAD-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-HEAD-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -296,7 +294,7 @@ describe('Subscription Flow - Subscription Renewal', function () {
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-RENEW-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-RENEW-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $renewalSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -341,7 +339,7 @@ describe('Subscription Flow - Subscription Renewal', function () {
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-PV-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-PV-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $renewalSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -371,7 +369,7 @@ describe('Subscription Flow - Error Cases', function () {
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-FAIL-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-FAIL-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -411,7 +409,7 @@ describe('Subscription Flow - Error Cases', function () {
 
         // Try to create transaction for already active subscription
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-DUP-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-DUP-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $activeSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
@@ -464,7 +462,7 @@ describe('Subscription Flow - Level Upgrades', function () {
             ]);
 
         $transaction = Transaction::create([
-            'uuid' => 'TXN-SUB-UPG-' . fake()->randomNumber(6),
+            'uuid' => 'TXN-SUB-UPG-'.fake()->randomNumber(6),
             'transactionable_type' => UserSubscription::class,
             'transactionable_id' => $upgradeSubscription->id,
             'type' => TransactionTypeCast::CREDIT,

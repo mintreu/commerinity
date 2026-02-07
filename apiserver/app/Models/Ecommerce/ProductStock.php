@@ -15,8 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * ProductStock - Purchase Entry Pattern
  *
  * Each stock record represents a purchase/inventory entry:
- * - Tracks landing cost, profit margin for accurate pricing
- * - BV/PV/reward_points for Affiliate commission calculations
+ * - Tracks landing cost for audit and purchase accounting
  * - Batch/lot tracking for inventory management
  * - FIFO consumption for sales
  *
@@ -38,7 +37,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ProductStock extends Model
 {
-    use HasFactory,HasAddress;
+    use HasAddress,HasFactory;
 
     protected $fillable = [
         // Fixed column as it is
@@ -132,15 +131,6 @@ class ProductStock extends Model
     }
 
     /**
-     * Check if quantity is within min/max range for this stock
-     */
-    public function isInRange(int $quantity): bool
-    {
-        return $quantity >= $this->min_quantity &&
-            (is_null($this->max_quantity) || $quantity <= $this->max_quantity);
-    }
-
-    /**
      * Consume stock from this entry (FIFO pattern)
      * Returns false if not enough stock available
      */
@@ -156,103 +146,6 @@ class ProductStock extends Model
     }
 
     // ========================================
-    // Price & Cost Calculations
-    // ========================================
-
-    /**
-     * Get the effective price for this stock entry
-     * Uses override price if set, otherwise calculates from landing cost + profit margin
-     */
-    public function getEffectivePrice(): int
-    {
-        if ($this->price !== null && $this->price > 0) {
-            return $this->price;
-        }
-
-        return $this->calculatePriceFromCost();
-    }
-
-    private function calculatePriceFromCost(): int
-    {
-        if ($this->landing_cost <= 0) {
-            return 0;
-        }
-
-        $marginMultiplier = 1 + ($this->profit_margin / 100);
-        $price = (int) round($this->landing_cost * $marginMultiplier);
-
-        return max(0, $price);
-    }
-
-    /**
-     * Calculate profit amount per unit (in paise)
-     */
-    public function getProfitPerUnit(): int
-    {
-        $price = $this->getEffectivePrice();
-        $cost = $this->landing_cost;
-
-        return max(0, $price - $cost);
-    }
-
-    /**
-     * Calculate actual profit margin percentage
-     */
-    public function getActualProfitMargin(): float
-    {
-        $cost = $this->landing_cost;
-        if ($cost <= 0) {
-            return 0.0;
-        }
-
-        return round(($this->getProfitPerUnit() / $cost) * 100, 2);
-    }
-
-    // ========================================
-    // Affiliate Commission Helpers
-    // ========================================
-
-    /**
-     * Check if this stock can generate Affiliate commissions
-     */
-    public function canGenerateCommission(): bool
-    {
-        return $this->is_commissionable && $this->bv > 0;
-    }
-
-    /**
-     * Get commissionable amount for Affiliate calculations
-     * Uses BV if set, otherwise calculates from price
-     */
-    public function getCommissionableAmount(): int
-    {
-        if ($this->bv > 0) {
-            return $this->bv;
-        }
-
-        // Fallback: use profit as commissionable amount
-        return $this->getProfitPerUnit();
-    }
-
-    /**
-     * Calculate BV based on profit margin
-     * Standard formula: BV = (profit * bv_percentage)
-     */
-    public static function calculateBvFromProfit(int $profitPaise, float $bvPercentage = 10.0): int
-    {
-        return (int) round($profitPaise * ($bvPercentage / 100));
-    }
-
-    /**
-     * Calculate reward points from profit margin
-     * Formula: reward_points = floor(profit / 100) (1 point per rupee profit)
-     */
-    public static function calculateRewardPoints(int $profitPaise): int
-    {
-        return (int) floor($profitPaise / 100);
-    }
-
-    // ========================================
     // Scopes
     // ========================================
 
@@ -262,30 +155,6 @@ class ProductStock extends Model
     public function scopeInStock(Builder $query): Builder
     {
         return $query->where('in_stock', true);
-    }
-
-    /**
-     * Filter to commissionable stock entries
-     */
-    public function scopeCommissionable(Builder $query): Builder
-    {
-        return $query->where('is_commissionable', true)
-            ->where('bv', '>', 0);
-    }
-
-    /**
-     * Filter by quantity range (for wholesale pricing)
-     */
-    public function scopeForQuantity(Builder $query, int $quantity): Builder
-    {
-        return $query
-            ->inStock()
-            ->where('min_quantity', '<=', $quantity)
-            ->where(function ($q) use ($quantity) {
-                $q->whereNull('max_quantity')
-                    ->orWhere('max_quantity', '>=', $quantity);
-            })
-            ->orderBy('created_at'); // FIFO-style
     }
 
     /**

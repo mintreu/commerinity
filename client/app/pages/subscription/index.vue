@@ -794,6 +794,7 @@ const tabs = [
       :description="selectedPlan.name"
       checkout-endpoint="/api/subscription/subscribe"
       :checkout-payload="{ plan_uuid: selectedPlan.uuid }"
+      :allow-coins="false"
       @success="handleSubscriptionSuccess"
     />
   </div>

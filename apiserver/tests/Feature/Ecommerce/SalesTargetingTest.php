@@ -16,9 +16,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('applies stage-targeted sale for authenticated users and global sale for guests', function () {
-    $product = Product::factory()->create();
+    $product = Product::factory()->create(['price' => 10000]);
     ProductStock::factory()->for($product)->create([
-        'price' => 10000,
         'init_quantity' => 10,
         'sold_quantity' => 0,
     ]);
@@ -57,9 +56,8 @@ it('applies stage-targeted sale for authenticated users and global sale for gues
 });
 
 it('applies user-type sale only for matching users in product detail', function () {
-    $product = Product::factory()->create();
+    $product = Product::factory()->create(['price' => 12000]);
     ProductStock::factory()->for($product)->create([
-        'price' => 12000,
         'init_quantity' => 10,
         'sold_quantity' => 0,
     ]);

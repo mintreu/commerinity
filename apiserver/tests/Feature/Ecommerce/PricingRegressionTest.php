@@ -17,11 +17,8 @@ test('product price remains canonical even if stocks imply a different value', f
 
     ProductStock::factory()->for($product)->create([
         'landing_cost' => 10000,
-        'profit_margin' => 50.0,
-        'price' => null,
         'init_quantity' => 10,
         'sold_quantity' => 0,
-        'in_stock' => true,
     ]);
 
     expect($product->getPrice())->toBe(5000);

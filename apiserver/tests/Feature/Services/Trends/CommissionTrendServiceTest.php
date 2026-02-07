@@ -124,7 +124,7 @@ describe('CommissionTrendService Earnings By Type', function () {
 
         // Should not include reversal in breakdown
         $breakdown = $result['data']['summary']['breakdown'];
-        expect(array_key_exists(CommissionTypeCast::REVERSAL, $breakdown))->toBeFalse();
+        expect(array_key_exists(CommissionTypeCast::REVERSAL->value, $breakdown))->toBeFalse();
     });
 });
 

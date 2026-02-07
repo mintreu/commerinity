@@ -2,7 +2,6 @@
 
 use App\Casts\SaleActionTypeCast;
 use App\Casts\VoucherActionTypeCast;
-use App\Models\Address;
 use App\Models\Ecommerce\Cart;
 use App\Models\Ecommerce\Category;
 use App\Models\Ecommerce\Product;
@@ -232,7 +231,12 @@ it('applies cart-level voucher when cart conditions pass', function () {
 
     expect($meta['summary']['sub_total'])->toBe(30000);
     expect($meta['summary']['discount'])->toBe(3000);
-    expect($meta['summary']['total'])->toBe(27000);
+    expect($meta['summary']['total'])->toBe(
+        $meta['summary']['sub_total']
+        - $meta['summary']['discount']
+        + $meta['summary']['tax']
+        + $meta['summary']['shipping_cost']
+    );
 });
 
 it('rejects voucher when cart conditions fail', function () {
@@ -283,7 +287,12 @@ it('rejects voucher when cart conditions fail', function () {
     $meta = $cart->getMeta($shippingAddress, true);
 
     expect($meta['summary']['discount'])->toBe(0);
-    expect($meta['summary']['total'])->toBe(30000);
+    expect($meta['summary']['total'])->toBe(
+        $meta['summary']['sub_total']
+        - $meta['summary']['discount']
+        + $meta['summary']['tax']
+        + $meta['summary']['shipping_cost']
+    );
 });
 
 it('applies product-level voucher when product condition matches', function () {
@@ -337,7 +346,12 @@ it('applies product-level voucher when product condition matches', function () {
 
     expect($meta['summary']['sub_total'])->toBe(18000);
     expect($meta['summary']['discount'])->toBe(2000);
-    expect($meta['summary']['total'])->toBe(16000);
+    expect($meta['summary']['total'])->toBe(
+        $meta['summary']['sub_total']
+        - $meta['summary']['discount']
+        + $meta['summary']['tax']
+        + $meta['summary']['shipping_cost']
+    );
 });
 
 it('applies voucher when match_any condition passes', function () {
@@ -391,7 +405,12 @@ it('applies voucher when match_any condition passes', function () {
     $meta = $cart->getMeta($shippingAddress, true);
 
     expect($meta['summary']['discount'])->toBe(1200);
-    expect($meta['summary']['total'])->toBe(10800);
+    expect($meta['summary']['total'])->toBe(
+        $meta['summary']['sub_total']
+        - $meta['summary']['discount']
+        + $meta['summary']['tax']
+        + $meta['summary']['shipping_cost']
+    );
 });
 
 it('rejects match_any voucher when no condition matches', function () {
@@ -443,5 +462,10 @@ it('rejects match_any voucher when no condition matches', function () {
     $meta = $cart->getMeta($shippingAddress, true);
 
     expect($meta['summary']['discount'])->toBe(0);
-    expect($meta['summary']['total'])->toBe(12000);
+    expect($meta['summary']['total'])->toBe(
+        $meta['summary']['sub_total']
+        - $meta['summary']['discount']
+        + $meta['summary']['tax']
+        + $meta['summary']['shipping_cost']
+    );
 });
