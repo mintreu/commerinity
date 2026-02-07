@@ -175,8 +175,9 @@ const submitAction = async () => {
         <div class="mt-4 flex flex-wrap gap-3">
           <UButton
             v-if="invoiceUrl"
-            :to="invoiceUrl"
-            target="_blank"
+            :href="invoiceUrl"
+            download
+            external
             variant="soft"
             icon="i-lucide-receipt"
           >
