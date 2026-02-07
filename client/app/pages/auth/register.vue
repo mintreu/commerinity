@@ -73,7 +73,7 @@
             </div>
             <div>
               <h3 class="font-bold text-slate-900 dark:text-white mb-2">
-                Earn Rewards
+                Earn Coins
               </h3>
               <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                 Get cashback, bonuses and level-based commissions

@@ -5,6 +5,7 @@
 
 export interface OrderItem {
   id: string
+  uuid?: string
   product_name: string
   product_slug: string
   quantity: number
@@ -12,6 +13,8 @@ export interface OrderItem {
   unit_price_formatted: string
   subtotal: number
   subtotal_formatted: string
+  reward_points?: number
+  total_coins?: number
   image?: string
 }
 
@@ -31,6 +34,8 @@ export interface Order {
   discount_formatted: string
   total: number
   total_formatted: string
+  total_reward_points?: number
+  total_coins?: number
   quantity: number
   payment_success: boolean
   payment_status: string
@@ -40,6 +45,23 @@ export interface Order {
   created_at: string
   created_at_formatted: string
   items: OrderItem[]
+  shipping_address?: {
+    name?: string
+    phone?: string
+    address_line_1?: string
+    address_line_2?: string
+    city?: string
+    state?: string
+    postal_code?: string
+  } | null
+  transactions?: Array<{
+    uuid: string
+    amount: number
+    amount_formatted: string
+    status: string
+    method: string
+    created_at: string
+  }>
 }
 
 export interface OrdersResponse {

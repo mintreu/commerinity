@@ -95,7 +95,7 @@ defineProps<Props>()
                   name="i-lucide-gift"
                   class="w-5 h-5"
                 />
-                Join for Rewards
+                Join for Coins
               </UButton>
             </div>
           </div>
@@ -348,7 +348,7 @@ defineProps<Props>()
                 />
               </div>
               <h3 class="font-bold text-slate-900 dark:text-white text-sm md:text-base">
-                Member Rewards
+                Member Coins
               </h3>
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Earn on purchases
@@ -366,7 +366,7 @@ defineProps<Props>()
             class="w-12 h-12 mx-auto mb-4 text-yellow-300"
           />
           <h2 class="text-2xl md:text-3xl font-black mb-3">
-            Unlock Exclusive Rewards
+            Unlock Exclusive Coins
           </h2>
           <p class="text-white/90 mb-6">
             Join now to earn BV/PV points and get exclusive member discounts

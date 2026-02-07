@@ -9,6 +9,7 @@ definePageMeta({
   layout: 'default'
 })
 
+const { isMember, isPromoter } = useUserType()
 const { summary, commissions, commissionsMeta, byType, monthly, isLoading, fetchSummary, fetchCommissions, fetchByType, fetchMonthly } = useCommissions()
 const toast = useToast()
 
@@ -20,6 +21,10 @@ const filters = ref({
 })
 
 onMounted(async () => {
+  if (!isMember.value && !isPromoter.value) {
+    await navigateTo('/dashboard')
+    return
+  }
   try {
     await Promise.all([
       fetchSummary(),

@@ -275,6 +275,7 @@
 
       <!-- Commissions -->
       <NuxtLink
+        v-if="showEarnings"
         to="/dashboard/commissions"
         class="menu-item"
         @click="isMoreMenuOpen = false"
@@ -438,6 +439,8 @@ import { useSanctum } from '#imports'
 
 const route = useRoute()
 const { isLoggedIn } = useSanctum()
+const { isMember, isPromoter } = useUserType()
+const showEarnings = computed(() => isMember.value || isPromoter.value)
 
 // More menu state
 const isMoreMenuOpen = ref(false)

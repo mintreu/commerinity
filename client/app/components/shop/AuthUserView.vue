@@ -321,7 +321,7 @@ const openMobileFilters = () => {
             </div>
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
               <div class="text-lg font-bold text-yellow-300">
-                Rewards
+                Coins
               </div>
               <div class="text-[10px] text-white/70">
                 Every Order

@@ -14,6 +14,12 @@ interface CartProduct {
   subtotal: number
   subtotal_formatted: string
   image?: string | null
+  tax?: number
+  tax_formatted?: string
+  discount?: number
+  bv?: number
+  pv?: number
+  reward_points?: number
 }
 
 interface CartSummary {
@@ -23,9 +29,51 @@ interface CartSummary {
   subtotal_formatted: string
 }
 
+interface CartMetaSummary {
+  sub_total: number
+  original_sub_total?: number
+  shipping_cost: number
+  tax: number
+  discount: number
+  sale_discount?: number
+  voucher_discount?: number
+  total_discount?: number
+  coins?: number
+  coins_required?: number
+  total: number
+  quantity: number
+  coupon_applied?: boolean
+  coupon_code?: string | null
+  formatted?: {
+    sub_total?: string
+    subtotal?: string
+    shipping_cost?: string
+    tax?: string
+    discount?: string
+    total?: string
+  }
+}
+
+interface CartMeta {
+  summary?: CartMetaSummary
+  items?: any[]
+  customer?: any
+  tax_breakdown?: any[]
+  gift_options?: Array<{ value: string, label: string }>
+  voucher_details?: {
+    name?: string
+    code?: string
+    action_type?: string
+    applies_to_shipping?: boolean
+    free_shipping?: boolean
+  } | null
+  voucher_validation?: { valid: boolean, message?: string }
+}
+
 interface CartState {
   items: CartProduct[]
   summary: CartSummary
+  meta: CartMeta | null
   isGuest: boolean
   loading: boolean
 }
@@ -39,6 +87,7 @@ const cartState = reactive<CartState>({
     subtotal: 0,
     subtotal_formatted: '₹0.00'
   },
+  meta: null,
   isGuest: true,
   loading: false
 })
@@ -56,6 +105,7 @@ const flyingItems = ref<Array<{
 export const useCart = () => {
   const config = useRuntimeConfig()
   const toast = useToast()
+  const { formatCurrency } = useBranding()
 
   /**
    * Fetch cart from API
@@ -72,16 +122,46 @@ export const useCart = () => {
           items: CartProduct[]
           summary: CartSummary
           is_guest: boolean
+          meta?: CartMeta
         }
       }>(`${config.public.apiBase}/api/cart${query}`)
 
       if (response.success && response.data) {
-        cartState.items = response.data.items || []
+        cartState.meta = response.data.meta || null
+        const metaItems = response.data.meta?.items || []
+
+        cartState.items = metaItems.length > 0
+          ? metaItems.map((item: any) => ({
+              product_slug: item.product?.url || item.product_slug || '',
+              name: item.product_name || item.product?.name || '',
+              sku: item.product_sku || item.product?.sku || '',
+              quantity: item.requested_quantity || item.quantity || 0,
+              price: item.unit_price || 0,
+              price_formatted: formatCurrency((item.unit_price || 0) / 100),
+              subtotal: item.item_total || 0,
+              subtotal_formatted: formatCurrency((item.item_total || 0) / 100),
+              image: item.product?.thumbnail || item.image || null,
+              tax: item.item_tax || 0,
+              tax_formatted: formatCurrency((item.item_tax || 0) / 100),
+              discount: item.summary?.discount || 0,
+              bv: item.bv || 0,
+              pv: item.pv || 0,
+              reward_points: item.reward_points || 0
+            }))
+          : (response.data.items || [])
+
         cartState.summary = response.data.summary || {
           items_count: 0,
           total_quantity: 0,
           subtotal: 0,
           subtotal_formatted: '₹0.00'
+        }
+        if (response.data.meta?.summary) {
+          const metaSummary = response.data.meta.summary
+          cartState.summary.subtotal = metaSummary.sub_total || 0
+          cartState.summary.subtotal_formatted = metaSummary.formatted?.sub_total
+            || metaSummary.formatted?.subtotal
+            || formatCurrency((metaSummary.sub_total || 0) / 100)
         }
         cartState.isGuest = response.data.is_guest ?? true
       }
@@ -293,6 +373,74 @@ export const useCart = () => {
     }
   }
 
+  const applyCoupon = async (code: string, options?: { shippingAddressId?: string | null }): Promise<boolean> => {
+    try {
+      const response = await useSanctumFetch<{
+        success: boolean
+        message?: string
+        data?: { meta?: CartMeta }
+      }>(`${config.public.apiBase}/api/cart/coupon`, {
+        method: 'POST',
+        body: { code, shipping_address_id: options?.shippingAddressId || null }
+      })
+
+      if (response.success) {
+        if (response.data?.meta) {
+          cartState.meta = response.data.meta
+        }
+        await fetchCart(options)
+        toast.add({
+          title: 'Coupon Applied',
+          description: response.message || 'Coupon applied successfully',
+          color: 'success'
+        })
+        return true
+      }
+      toast.add({
+        title: 'Coupon Error',
+        description: response.message || 'Unable to apply coupon',
+        color: 'error'
+      })
+      return false
+    } catch {
+      toast.add({
+        title: 'Coupon Error',
+        description: 'Unable to apply coupon',
+        color: 'error'
+      })
+      return false
+    }
+  }
+
+  const removeCoupon = async (options?: { shippingAddressId?: string | null }): Promise<boolean> => {
+    try {
+      const response = await useSanctumFetch<{
+        success: boolean
+        message?: string
+        data?: { meta?: CartMeta }
+      }>(`${config.public.apiBase}/api/cart/coupon`, {
+        method: 'DELETE',
+        body: { shipping_address_id: options?.shippingAddressId || null }
+      })
+
+      if (response.success) {
+        if (response.data?.meta) {
+          cartState.meta = response.data.meta
+        }
+        await fetchCart(options)
+        toast.add({
+          title: 'Coupon Removed',
+          description: response.message || 'Coupon removed',
+          color: 'neutral'
+        })
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+
   return {
     // State
     cart: readonly(cartState),
@@ -304,12 +452,15 @@ export const useCart = () => {
     isCartLoading: computed(() => cartState.loading),
     isGuest: computed(() => cartState.isGuest),
     flyingItems: readonly(flyingItems),
+    cartMeta: computed(() => cartState.meta),
 
     // Methods
     fetchCart,
     addToCart,
     updateQuantity,
     removeFromCart,
+    applyCoupon,
+    removeCoupon,
     clearCart,
     triggerFlyAnimation
   }

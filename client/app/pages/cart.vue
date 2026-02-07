@@ -17,13 +17,16 @@ const {
   cart,
   cartItems,
   cartCount,
-  cartTotalFormatted,
+  cartMeta,
   isCartLoading,
   fetchCart,
   updateQuantity,
   removeFromCart,
-  clearCart
+  clearCart,
+  applyCoupon,
+  removeCoupon
 } = useCart()
+const { formatCurrency } = useBranding()
 
 const userAddresses = ref<{ uuid: string, label: string }[]>([])
 const isAddressesLoading = ref(false)
@@ -104,15 +107,47 @@ const handleClearCart = async () => {
 
 // Checkout modal state
 const showCheckoutModal = ref(false)
-const cartTotal = computed(() => cart.value?.total || 0)
-const cartTotalAmount = computed(() => cart.value?.total_amount || 0)
+const cartSummary = computed(() => cartMeta.value?.summary || null)
+const cartTotals = computed(() => ({
+  subTotal: cartSummary.value?.sub_total || 0,
+  originalSubTotal: cartSummary.value?.original_sub_total || cartSummary.value?.sub_total || 0,
+  shipping: cartSummary.value?.shipping_cost || 0,
+  tax: cartSummary.value?.tax || 0,
+  discount: cartSummary.value?.discount || 0,
+  saleDiscount: cartSummary.value?.sale_discount || 0,
+  voucherDiscount: cartSummary.value?.voucher_discount || 0,
+  totalDiscount: cartSummary.value?.total_discount || cartSummary.value?.discount || 0,
+  coins: cartSummary.value?.coins || 0,
+  coinsRequired: cartSummary.value?.coins_required || 0,
+  total: cartSummary.value?.total || 0,
+  formatted: cartSummary.value?.formatted || {}
+}))
+const cartTotal = computed(() => cartTotals.value.total)
+const cartTotalAmount = computed(() => cartTotals.value.total)
+const cartTotalFormattedDisplay = computed(() => cartTotals.value.formatted?.total || formatCurrency(cartTotals.value.total / 100))
+const cartSubTotalFormatted = computed(() => cartTotals.value.formatted?.sub_total
+  || cartTotals.value.formatted?.subtotal
+  || formatCurrency(cartTotals.value.subTotal / 100))
+const cartTaxFormatted = computed(() => cartTotals.value.formatted?.tax || formatCurrency(cartTotals.value.tax / 100))
+const cartShippingFormatted = computed(() => cartTotals.value.formatted?.shipping_cost || formatCurrency(cartTotals.value.shipping / 100))
+const cartDiscountFormatted = computed(() => cartTotals.value.formatted?.discount || formatCurrency(cartTotals.value.discount / 100))
+const cartSaleDiscountFormatted = computed(() => cartTotals.value.formatted?.sale_discount || formatCurrency(cartTotals.value.saleDiscount / 100))
+const cartVoucherDiscountFormatted = computed(() => cartTotals.value.formatted?.voucher_discount || formatCurrency(cartTotals.value.voucherDiscount / 100))
+const cartTotalDiscountFormatted = computed(() => cartTotals.value.formatted?.total_discount || formatCurrency(cartTotals.value.totalDiscount / 100))
+
+const taxBreakdown = computed(() => cartMeta.value?.tax_breakdown || [])
+const voucherDetails = computed(() => cartMeta.value?.voucher_details || null)
+const voucherValidation = computed(() => cartMeta.value?.voucher_validation || null)
 
 const addresses = ref<any[]>([])
 const addressesLoading = ref(false)
-const shippingAddressId = ref<number | null>(null)
-const billingAddressId = ref<number | null>(null)
+const shippingAddressId = ref<string | null>(null)
+const billingAddressId = ref<string | null>(null)
 const billingIsShipping = ref(true)
 const isGift = ref(false)
+const giftOption = ref<string | null>(null)
+const giftMessage = ref('')
+const couponCode = ref('')
 
 const fetchAddresses = async () => {
   addressesLoading.value = true
@@ -144,6 +179,22 @@ watch(shippingAddressId, (id) => {
   }
 })
 
+watch(cartMeta, (meta) => {
+  if (meta?.summary?.coupon_code) {
+    couponCode.value = meta.summary.coupon_code
+  }
+})
+
+watch(isGift, (enabled) => {
+  if (enabled && !giftOption.value) {
+    giftOption.value = giftOptions.value[0]?.value || null
+  }
+  if (!enabled) {
+    giftOption.value = null
+    giftMessage.value = ''
+  }
+})
+
 const canCheckout = computed(() => {
   return !!shippingAddressId.value && (!billingIsShipping.value ? !!billingAddressId.value : true) && cartCount.value > 0
 })
@@ -153,10 +204,47 @@ const checkoutPayload = computed(() => {
     billing_is_shipping: billingIsShipping.value,
     gift: isGift.value
   }
+  if (isGift.value) {
+    payload.gift_option = giftOption.value
+    payload.gift_message = giftMessage.value
+  }
   payload.shipping_address_id = shippingAddressId.value
   payload.billing_address_id = billingIsShipping.value ? shippingAddressId.value : billingAddressId.value
   return payload
 })
+
+const isMemberPromoter = computed(() => {
+  const type = cartMeta.value?.customer?.profile?.type
+  return type === 'member' || type === 'promoter'
+})
+
+const giftOptions = computed(() => {
+  return cartMeta.value?.gift_options || [
+    { value: 'gift_wrap', label: 'Gift Wrap' },
+    { value: 'festive_wrap', label: 'Festive Wrap' },
+    { value: 'custom_message', label: 'Custom Message' }
+  ]
+})
+
+const totalBv = computed(() => {
+  return cartMeta.value?.items?.reduce((sum: number, item: any) => sum + (item.bv || 0), 0) || 0
+})
+
+const totalPv = computed(() => {
+  return cartMeta.value?.items?.reduce((sum: number, item: any) => sum + (item.pv || 0), 0) || 0
+})
+
+const totalCoins = computed(() => cartTotals.value.coins || 0)
+
+const applyCouponCode = async () => {
+  if (!couponCode.value) return
+  await applyCoupon(couponCode.value, { shippingAddressId: shippingAddressId.value })
+}
+
+const removeCouponCode = async () => {
+  await removeCoupon({ shippingAddressId: shippingAddressId.value })
+  couponCode.value = ''
+}
 
 // Proceed to checkout
 const proceedToCheckout = () => {
@@ -278,7 +366,7 @@ useComprehensiveSeo({
               </div>
               <div class="text-left">
                 <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {{ cartTotalFormatted }}
+                  {{ cartTotalFormattedDisplay }}
                 </p>
                 <p class="text-sm text-slate-500 dark:text-slate-400">
                   Total
@@ -387,6 +475,14 @@ useComprehensiveSeo({
                           {{ item.quantity }} x {{ item.price_formatted }}
                         </span>
                       </div>
+
+                      <div class="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+                        <span v-if="item.tax_formatted">GST: {{ item.tax_formatted }}</span>
+                        <span v-if="item.discount && item.discount > 0">Discount: -{{ formatCurrency(item.discount / 100) }}</span>
+                        <span v-if="item.reward_points">Coins: {{ item.reward_points }}</span>
+                        <span v-if="isMemberPromoter">BV: {{ item.bv || 0 }}</span>
+                        <span v-if="isMemberPromoter">PV: {{ item.pv || 0 }}</span>
+                      </div>
                     </div>
 
                     <!-- Quantity & Actions -->
@@ -477,14 +573,72 @@ useComprehensiveSeo({
                     Subtotal ({{ cartCount }} items)
                   </span>
                   <span class="font-semibold text-slate-900 dark:text-white">
-                    {{ cartTotalFormatted }}
+                    {{ cartSubTotalFormatted }}
                   </span>
                 </div>
 
                 <div class="flex justify-between items-center py-2">
                   <span class="text-slate-700 dark:text-slate-300">Shipping</span>
+                  <span class="font-semibold text-slate-900 dark:text-white">
+                    {{ cartShippingFormatted }}
+                  </span>
+                </div>
+
+                <div class="flex justify-between items-center py-2">
+                  <span class="text-slate-700 dark:text-slate-300">GST / Tax</span>
+                  <span class="font-semibold text-slate-900 dark:text-white">
+                    {{ cartTaxFormatted }}
+                  </span>
+                </div>
+                <div
+                  v-if="taxBreakdown.length"
+                  class="rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 p-3 text-xs"
+                >
+                  <p class="text-slate-600 dark:text-slate-300 font-semibold mb-2">Tax Breakdown</p>
+                  <div
+                    v-for="(row, idx) in taxBreakdown"
+                    :key="`${row.product_id || 'tax'}-${idx}`"
+                    class="flex items-center justify-between py-1 text-slate-600 dark:text-slate-300"
+                  >
+                    <span>{{ row.label || row.name || row.tax_name || 'Tax' }}</span>
+                    <span class="font-semibold">
+                      {{ formatCurrency((row.amount || row.tax_amount || 0) / 100) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  v-if="cartTotals.saleDiscount > 0"
+                  class="flex justify-between items-center py-2"
+                >
+                  <span class="text-slate-700 dark:text-slate-300">Sale Discount</span>
                   <span class="font-semibold text-emerald-600 dark:text-emerald-400">
-                    Calculated at checkout
+                    -{{ cartSaleDiscountFormatted }}
+                  </span>
+                </div>
+
+                <div
+                  v-if="cartTotals.voucherDiscount > 0"
+                  class="flex justify-between items-center py-2"
+                >
+                  <span class="text-slate-700 dark:text-slate-300">
+                    Coupon Discount
+                    <span v-if="cartMeta?.summary?.coupon_code" class="text-xs text-slate-500 dark:text-slate-400">
+                      ({{ cartMeta?.summary?.coupon_code }})
+                    </span>
+                  </span>
+                  <span class="font-semibold text-emerald-600 dark:text-emerald-400">
+                    -{{ cartVoucherDiscountFormatted }}
+                  </span>
+                </div>
+
+                <div
+                  v-if="cartTotals.totalDiscount > 0"
+                  class="flex justify-between items-center py-2 text-sm"
+                >
+                  <span class="text-slate-600 dark:text-slate-400">Total Discount</span>
+                  <span class="font-semibold text-emerald-700 dark:text-emerald-300">
+                    -{{ cartTotalDiscountFormatted }}
                   </span>
                 </div>
 
@@ -492,10 +646,81 @@ useComprehensiveSeo({
                   <div class="flex justify-between items-center">
                     <span class="text-xl font-bold text-slate-900 dark:text-white">Total</span>
                     <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {{ cartTotalFormatted }}
+                      {{ cartTotalFormattedDisplay }}
                     </span>
                   </div>
                 </div>
+              </div>
+
+              <div
+                v-if="isMemberPromoter"
+                class="rounded-2xl border border-emerald-200/50 dark:border-emerald-700/50 bg-emerald-50/60 dark:bg-emerald-900/20 p-4"
+              >
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-emerald-700 dark:text-emerald-300 font-semibold">BV Earned</span>
+                  <span class="text-emerald-800 dark:text-emerald-200 font-bold">{{ totalBv }}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mt-2">
+                  <span class="text-emerald-700 dark:text-emerald-300 font-semibold">PV Earned</span>
+                  <span class="text-emerald-800 dark:text-emerald-200 font-bold">{{ totalPv }}</span>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-slate-50/60 dark:bg-slate-800/50 p-4">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-slate-700 dark:text-slate-300 font-semibold">Coins Earned</span>
+                  <span class="text-slate-900 dark:text-white font-bold">{{ totalCoins }}</span>
+                </div>
+              </div>
+
+              <!-- Coupon -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Coupon</h3>
+                  <UButton
+                    v-if="cartMeta?.summary?.coupon_code"
+                    size="xs"
+                    variant="ghost"
+                    icon="i-lucide-x"
+                    @click="removeCouponCode"
+                  >
+                    Remove
+                  </UButton>
+                </div>
+                <div class="flex gap-2">
+                  <UInput
+                    v-model="couponCode"
+                    placeholder="Enter coupon code"
+                    size="lg"
+                    class="flex-1"
+                  />
+                  <UButton
+                    size="lg"
+                    color="primary"
+                    :disabled="!couponCode"
+                    @click="applyCouponCode"
+                  >
+                    Apply
+                  </UButton>
+                </div>
+                <p
+                  v-if="cartMeta?.summary?.coupon_code"
+                  class="text-xs text-emerald-600 dark:text-emerald-400"
+                >
+                  Applied: {{ cartMeta?.summary?.coupon_code }}
+                </p>
+                <p
+                  v-if="voucherDetails?.name"
+                  class="text-xs text-slate-500 dark:text-slate-400"
+                >
+                  {{ voucherDetails?.name }}{{ voucherDetails?.code ? ` (${voucherDetails.code})` : '' }}
+                </p>
+                <p
+                  v-if="voucherValidation?.message"
+                  class="text-xs text-slate-500 dark:text-slate-400"
+                >
+                  {{ voucherValidation?.message }}
+                </p>
               </div>
 
               <div class="space-y-6">
@@ -559,6 +784,26 @@ useComprehensiveSeo({
                         label="Mark as gift"
                       />
                     </div>
+                    <div
+                      v-if="isGift"
+                      class="space-y-3"
+                    >
+                      <UFormField label="Gift option">
+                        <USelect
+                          v-model="giftOption"
+                          :items="giftOptions.map(o => ({ label: o.label, value: o.value }))"
+                          size="lg"
+                          :ui="{ base: 'w-full' }"
+                        />
+                      </UFormField>
+                      <UFormField label="Gift message">
+                        <UTextarea
+                          v-model="giftMessage"
+                          :rows="3"
+                          placeholder="Write a short message"
+                        />
+                      </UFormField>
+                    </div>
                   </div>
                   <UAlert
                     v-else
@@ -604,7 +849,8 @@ useComprehensiveSeo({
                 v-model:open="showCheckoutModal"
                 title="Complete Your Order"
                 :amount="cartTotalAmount"
-                :amount-formatted="cartTotalFormatted"
+                :amount-formatted="cartTotalFormattedDisplay"
+                :coins-required="cartTotals.coinsRequired"
                 description="Shopping Cart Checkout"
                 checkout-endpoint="/api/order/checkout"
                 :checkout-payload="checkoutPayload"

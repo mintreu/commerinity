@@ -155,9 +155,10 @@ const securityActions = computed(() => [
           </div>
           <div class="bg-white/10 rounded-xl p-3">
             <p class="text-blue-100 text-xs">
-              Points
+              Coins
             </p>
-            <p class="font-semibold">
+            <p class="font-semibold flex items-center gap-1">
+              <UIcon name="i-lucide-coins" class="w-4 h-4" />
               {{ stats?.points || 0 }}
             </p>
           </div>

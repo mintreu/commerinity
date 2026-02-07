@@ -284,6 +284,7 @@ const toggleWishlist = async () => {
 
 // Cart functionality
 const addingToCart = ref(false)
+const buyingNow = ref(false)
 
 // Use cart composable for add to cart
 const { addToCart: addToCartComposable } = useCart()
@@ -336,6 +337,27 @@ const getStarArray = (rating: number) => {
     id: `${rating}-${i}`,
     filled: i < rating
   }))
+}
+
+const buyNow = async () => {
+  if (!product.value || !currentInStock.value) return
+  buyingNow.value = true
+  try {
+    const productSlug = currentVariant.value?.slug || product.value.slug
+    const ok = await addToCartComposable(productSlug, quantity.value, {
+      productName: product.value.name,
+      productImage: product.value.gallery[0]?.src,
+      skipAnimation: true
+    })
+    if (ok) {
+      await navigateTo('/cart')
+    }
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Failed to add to cart'
+    toast.add({ title: 'Error', description: errorMessage, color: 'error', icon: 'i-lucide-alert-circle' })
+  } finally {
+    buyingNow.value = false
+  }
 }
 
 const reviewRating = ref(5)
@@ -708,9 +730,9 @@ onMounted(() => {
                 class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
               >
                 <UIcon
-                  name="i-lucide-gift"
+                  name="i-lucide-coins"
                   class="w-4 h-4 mr-1"
-                />{{ product.reward_points }} Points
+                />{{ product.reward_points }} Coins
               </span>
             </div>
 
@@ -720,10 +742,10 @@ onMounted(() => {
               class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 font-medium bg-purple-50 dark:bg-purple-900/20 px-3 py-2 rounded-lg"
             >
               <UIcon
-                name="i-lucide-gift"
+                name="i-lucide-coins"
                 class="w-4 h-4"
               />
-              Sign in to earn rewards on this purchase
+              Sign in to earn coins on this purchase
             </div>
 
             <!-- Short Description -->
@@ -910,7 +932,9 @@ onMounted(() => {
               <UButton
                 size="lg"
                 variant="outline"
-                :disabled="!currentInStock"
+                :disabled="!currentInStock || buyingNow"
+                :loading="buyingNow"
+                @click="buyNow"
               >
                 <UIcon
                   name="i-lucide-zap"

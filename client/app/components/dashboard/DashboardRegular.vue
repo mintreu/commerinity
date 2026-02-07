@@ -132,7 +132,7 @@ const activities = computed(() => {
         to="/wallet"
       />
       <CommonStatCard
-        title="Reward Points"
+        title="Coins Earned"
         :value="loading ? '...' : stats.points.toLocaleString()"
         icon="i-lucide-star"
         color="warning"

@@ -3,7 +3,7 @@
  * Smart Product Card Component
  * Adapts based on authentication status and user type:
  * - Guest/Regular: Shows pricing, rewards CTA
- * - Member/Promoter: Shows BV/PV, reward points (Affiliate benefits)
+ * - Member/Promoter: Shows BV/PV, coins (Affiliate benefits)
  * - Advisor/Mentor: Shows rewards but no BV/PV (company employees)
  */
 import type { Product } from '~/types/catalog'
@@ -150,12 +150,13 @@ const truncatedDescription = computed(() => {
         {{ product.bv }} BV
       </div>
 
-      <!-- Guest Reward Badge -->
+      <!-- Guest Coins Badge -->
       <div
         v-else-if="!isLoggedIn && product.reward_points > 0"
         class="absolute top-3 right-3 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg"
       >
-        🎁 Rewards
+        <UIcon name="i-lucide-coins" class="w-3.5 h-3.5 mr-1 inline-block" />
+        Coins
       </div>
 
       <!-- Quick View on Hover -->
@@ -213,16 +214,16 @@ const truncatedDescription = computed(() => {
         v-if="canEarnAffiliateBenefits"
         class="mt-auto"
       >
-        <!-- Reward Points -->
+        <!-- Coins -->
         <div
           v-if="product.reward_points > 0"
           class="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold mb-2 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1.5 rounded-lg"
         >
           <UIcon
-            name="i-lucide-gift"
+            name="i-lucide-coins"
             class="w-3.5 h-3.5"
           />
-          Earn {{ product.reward_points }} points
+          Earn {{ product.reward_points }} coins
         </div>
 
         <!-- BV/PV Info -->
@@ -250,7 +251,8 @@ const truncatedDescription = computed(() => {
         v-else-if="!isLoggedIn && product.reward_points > 0"
         class="text-xs text-purple-600 dark:text-purple-400 font-semibold mb-2 bg-purple-50 dark:bg-purple-900/20 px-2 py-1.5 rounded-lg mt-auto"
       >
-        🎁 Sign in to earn rewards
+        <UIcon name="i-lucide-coins" class="w-3.5 h-3.5 mr-1 inline-block" />
+        Sign in to earn coins
       </div>
 
       <!-- Spacer for consistent card height -->

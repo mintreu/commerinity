@@ -541,12 +541,13 @@ const clearPriceFilter = () => {
                       {{ product.bv }} BV
                     </div>
 
-                    <!-- Guest Reward Badge -->
+                    <!-- Guest Coins Badge -->
                     <div
                       v-else-if="!isLoggedIn && product.reward_points > 0"
-                      class="absolute top-2 right-2 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white text-xs font-bold px-2 py-1 rounded shadow-lg"
+                      class="absolute top-2 right-2 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white text-xs font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1"
                     >
-                      Rewards
+                      <UIcon name="i-lucide-coins" class="w-3.5 h-3.5" />
+                      <span>Coins</span>
                     </div>
                   </div>
 
@@ -594,15 +595,16 @@ const clearPriceFilter = () => {
                       v-if="canSeeAffiliateBenefits && product.reward_points > 0"
                       class="text-xs text-emerald-600 dark:text-emerald-400 mb-3"
                     >
-                      Earn {{ product.reward_points }} reward points
+                      Earn {{ product.reward_points }} coins
                     </div>
 
                     <!-- Guest reward teaser -->
                     <div
                       v-else-if="!isLoggedIn && product.reward_points > 0"
-                      class="text-xs text-purple-600 dark:text-purple-400 mb-3"
+                      class="text-xs text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-1"
                     >
-                      Sign in to earn rewards
+                      <UIcon name="i-lucide-coins" class="w-3.5 h-3.5" />
+                      <span>Sign in to earn coins</span>
                     </div>
                   </div>
                 </NuxtLink>

@@ -20,6 +20,8 @@ const includeHistory = ref(false)
 // Filter state
 const typeFilter = ref('')
 const statusFilter = ref('')
+const selectedTxn = ref<any | null>(null)
+const showTxnModal = ref(false)
 
 // Type filter options
 const typeOptions = [
@@ -120,6 +122,11 @@ const filteredTransactions = computed(() => {
 
   return result
 })
+
+const openTxn = (txn: any) => {
+  selectedTxn.value = txn
+  showTxnModal.value = true
+}
 </script>
 
 <template>
@@ -205,7 +212,8 @@ const filteredTransactions = computed(() => {
       <div
         v-for="txn in filteredTransactions"
         :key="txn.uuid"
-        class="flex items-center gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+        class="flex items-center gap-4 p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+        @click="openTxn(txn)"
       >
         <!-- Icon -->
         <div
@@ -324,4 +332,59 @@ const filteredTransactions = computed(() => {
       </div>
     </div>
   </div>
+
+  <UModal v-model="showTxnModal">
+    <UCard v-if="selectedTxn">
+      <template #header>
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+          Transaction Details
+        </h3>
+      </template>
+      <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+        <div class="flex items-center justify-between">
+          <span>UUID</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ selectedTxn.uuid }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Type</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ selectedTxn.type_label || selectedTxn.type }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Status</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ selectedTxn.status_label || selectedTxn.status }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Amount</span>
+          <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ selectedTxn.amount_formatted }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Fee</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ selectedTxn.fee_formatted }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Net Amount</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ selectedTxn.net_amount_formatted }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Reference</span>
+          <span class="font-semibold text-slate-900 dark:text-white">{{ selectedTxn.reference_number || '—' }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Created</span>
+          <span class="font-semibold text-slate-900 dark:text-white">
+            {{ formatDate(selectedTxn.created_at).date }} {{ formatDate(selectedTxn.created_at).time }}
+          </span>
+        </div>
+        <div v-if="selectedTxn.description" class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+          <p class="text-xs text-slate-500 dark:text-slate-400">Description</p>
+          <p class="text-slate-700 dark:text-slate-300">{{ selectedTxn.description }}</p>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex items-center justify-end">
+          <UButton variant="ghost" @click="showTxnModal = false">Close</UButton>
+        </div>
+      </template>
+    </UCard>
+  </UModal>
 </template>

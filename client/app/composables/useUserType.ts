@@ -211,11 +211,6 @@ export const useUserType = () => {
           label: 'My Team Leaders',
           icon: 'i-lucide-user-check',
           to: '/dashboard/team-leaders/new'
-        },
-        {
-          label: 'Earnings',
-          icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
         }
       ],
       [UserType.MENTOR]: [
@@ -238,11 +233,6 @@ export const useUserType = () => {
           label: 'Analytics',
           icon: 'i-lucide-activity',
           to: '/analytics'
-        },
-        {
-          label: 'Earnings',
-          icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
         }
       ]
     }
