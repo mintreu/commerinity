@@ -263,6 +263,7 @@ const truncatedDescription = computed(() => {
 
       <!-- Add to Cart Button -->
       <UButton
+        v-if="isLoggedIn"
         block
         size="sm"
         :disabled="!product.in_stock || addingToCart || loading"
@@ -277,6 +278,18 @@ const truncatedDescription = computed(() => {
         />
         {{ product.in_stock ? 'Add to Cart' : 'Out of Stock' }}
       </UButton>
+
+      <UButton
+        v-else
+        block
+        variant="outline"
+        color="primary"
+        @click.prevent="navigateTo(`/shop/product/${product.slug || (product as any).url || ''}`)"
+      >
+        View Product
+      </UButton>
+
+
     </div>
   </div>
 </template>
