@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace Tests\Feature\Imports;
 
 use App\Imports\EnhancedBulkJobApplicationImport;
+use App\Models\Geo\Block;
+use App\Models\Geo\Country;
+use App\Models\Geo\State;
 use App\Models\Recruitment\Recruitment;
 use App\Models\User;
+use Database\Seeders\Geo\BlockSeeder;
+use Database\Seeders\Geo\CountrySeeder;
+use Database\Seeders\Geo\StateSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -14,27 +20,33 @@ use Illuminate\Support\Facades\DB;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Seed geo data using proper seeders
+    $this->seed(CountrySeeder::class);
+    $this->seed(StateSeeder::class);
+    $this->seed(BlockSeeder::class);
+
     // Create a recruitment for testing
     $this->recruitment = Recruitment::factory()->create([
         'id' => 101,
         'title' => 'Software Developer Position',
+        'slug' => 'software-developer-position',
         'is_payable' => true,
         'fees' => 500,
     ]);
 
-    $this->factory = new JobApplicationImportFactory();
+    $this->factory = new JobApplicationImportFactory;
 });
 
 test('can import 1000 job applications end-to-end with realistic data', function () {
     $this->markTestSkipped('Skipping 1000 entry test in CI - run locally for performance testing');
 
     // Generate 1000 realistic entries
-    $rows = $this->factory->generateRows(1000, ['type' => 'applicant', 'recruitment_id' => 101]);
+    $rows = $this->factory->generateRows(1000, ['recruitment_slug' => 'software-developer-position', 'block_name' => 'Sadar']);
 
     // Build collection with headers
     $collection = new Collection([
         collect($this->factory->generateHeaderRow()),
-        ...array_map(fn($row) => collect(array_values($row)), $rows),
+        ...array_map(fn ($row) => collect(array_values($row)), $rows),
     ]);
 
     // Track time
@@ -42,7 +54,7 @@ test('can import 1000 job applications end-to-end with realistic data', function
     $memoryBefore = memory_get_usage();
 
     // Perform import
-    $import = new EnhancedBulkJobApplicationImport();
+    $import = new EnhancedBulkJobApplicationImport;
     $import->collection($collection);
 
     $endTime = microtime(true);
@@ -59,8 +71,8 @@ test('can import 1000 job applications end-to-end with realistic data', function
     foreach ($sampleUsers as $user) {
         expect($user->name)->not->toBeEmpty();
         expect($user->email)->toContain('@');
-        expect(strlen((string)$user->mobile))->toBe(10);
-        expect($user->type)->toBe('applicant');
+        expect(strlen((string) $user->mobile))->toBe(10);
+        expect($user->type)->toBe('regular');
         expect($user->onboarded)->toBeTrue();
         expect($user->addresses)->toHaveCount(1);
         expect($user->jobApplications)->toHaveCount(1);
@@ -81,7 +93,7 @@ test('can import 1000 job applications end-to-end with realistic data', function
     echo "\n\n📊 Performance Metrics:\n";
     echo "⏱️  Import Duration: {$duration} seconds\n";
     echo "💾 Memory Used: {$memoryUsed} MB\n";
-    echo "⚡ Records/Second: " . round(1000 / $duration, 2) . "\n";
+    echo '⚡ Records/Second: '.round(1000 / $duration, 2)."\n";
 })->group('performance');
 
 test('can handle 1000 entries with mixed valid and invalid data', function () {
@@ -98,7 +110,7 @@ test('can handle 1000 entries with mixed valid and invalid data', function () {
     // 50 rows with invalid emails
     for ($i = 900; $i < 950; $i++) {
         $row = $this->factory->generateRow($i + 1);
-        $row['email'] = 'invalid-email-' . $i;
+        $row['email'] = 'invalid-email-'.$i;
         $rows[] = $row;
     }
 
@@ -111,10 +123,10 @@ test('can handle 1000 entries with mixed valid and invalid data', function () {
 
     $collection = new Collection([
         collect($this->factory->generateHeaderRow()),
-        ...array_map(fn($row) => collect(array_values($row)), $rows),
+        ...array_map(fn ($row) => collect(array_values($row)), $rows),
     ]);
 
-    $import = new EnhancedBulkJobApplicationImport();
+    $import = new EnhancedBulkJobApplicationImport;
 
     try {
         $import->collection($collection);
@@ -135,10 +147,10 @@ test('password generation works correctly for all 1000 entries', function () {
 
     $collection = new Collection([
         collect($this->factory->generateHeaderRow()),
-        ...array_map(fn($row) => collect(array_values($row)), $rows),
+        ...array_map(fn ($row) => collect(array_values($row)), $rows),
     ]);
 
-    $import = new EnhancedBulkJobApplicationImport();
+    $import = new EnhancedBulkJobApplicationImport;
     $import->collection($collection);
 
     // Verify password generation for sample users
@@ -159,10 +171,10 @@ test('notification is sent to all imported users', function () {
 
     $collection = new Collection([
         collect($this->factory->generateHeaderRow()),
-        ...array_map(fn($row) => collect(array_values($row)), $rows),
+        ...array_map(fn ($row) => collect(array_values($row)), $rows),
     ]);
 
-    $import = new EnhancedBulkJobApplicationImport();
+    $import = new EnhancedBulkJobApplicationImport;
     $import->collection($collection);
 
     // Verify notifications were sent to all users
@@ -182,10 +194,10 @@ test('kyc data is auto-approved for imported users', function () {
 
     $collection = new Collection([
         collect($this->factory->generateHeaderRow()),
-        ...array_map(fn($row) => collect(array_values($row)), $rows),
+        ...array_map(fn ($row) => collect(array_values($row)), $rows),
     ]);
 
-    $import = new EnhancedBulkJobApplicationImport();
+    $import = new EnhancedBulkJobApplicationImport;
     $import->collection($collection);
 
     // Verify KYC records are auto-approved
@@ -203,10 +215,10 @@ test('job applications are created with correct relationships', function () {
 
     $collection = new Collection([
         collect($this->factory->generateHeaderRow()),
-        ...array_map(fn($row) => collect(array_values($row)), $rows),
+        ...array_map(fn ($row) => collect(array_values($row)), $rows),
     ]);
 
-    $import = new EnhancedBulkJobApplicationImport();
+    $import = new EnhancedBulkJobApplicationImport;
     $import->collection($collection);
 
     // Verify job applications
@@ -235,29 +247,37 @@ test('sample excel data is properly formatted', function () {
             'name' => 'Rahul Sharma',
             'email' => 'rahul.sharma@example.com',
             'mobile' => '9876543210',
-            'type' => 'applicant',
-            'recruitment_id' => 101,
-            'addr_line1' => 'Street 12, ABC Nagar',
+            'job_posting_slug' => 'software-developer-position',
+            'street_address' => 'Street 12, ABC Nagar',
             'city' => 'Delhi',
-            'postal_code' => '110001',
-            'state' => 'DL',
-            'country' => 'IN',
-            'address_type' => 'present',
+            'pin_code' => '110001',
+            'state_name' => 'Delhi',
+            'block_name' => 'Sadar',
             'pan_number' => 'ABCDE1234F',
-            'dob' => '1998-05-21',
+            'date_of_birth' => '1998-05-21',
+            'payment_status' => 'no',
+            'payment_amount' => null,
+            'guardian_name' => null,
+            'education_qualification' => null,
+            'skills' => null,
+            'work_experience' => null,
+            'referee_name' => null,
+            'referee_mobile' => null,
+            'gender' => null,
+            'aadhaar_number' => null,
         ],
     ];
 
     $headers = array_keys($sampleData[0]);
 
     // Verify all required columns are present
-    $requiredColumns = ['name', 'email', 'mobile', 'type', 'recruitment_id', 'addr_line1', 'city', 'postal_code', 'state', 'country', 'address_type'];
+    $requiredColumns = ['name', 'email', 'mobile', 'job_posting_slug', 'street_address', 'city', 'pin_code', 'state_name', 'block_name'];
     foreach ($requiredColumns as $col) {
         expect(in_array($col, $headers))->toBeTrue();
     }
 
     // Verify data formats
     expect(filter_var($sampleData[0]['email'], FILTER_VALIDATE_EMAIL))->not->toBeFalse();
-    expect(strlen((string)$sampleData[0]['mobile']))->toBe(10);
+    expect(strlen((string) $sampleData[0]['mobile']))->toBe(10);
     expect(preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/', $sampleData[0]['pan_number']))->toBe(1);
 });

@@ -14,23 +14,32 @@ final class ImportSchema
      * User-friendly column headers for Excel template
      */
     public const HEADERS = [
-        // Required columns
-        'full_name',
-        'email_address',
-        'mobile_number',
-        'user_type',
-        'job_posting_title',
+        // Optional columns
+        ...self::REQUIRED_HEADERS,
+        ...self::OPTIONAL_HEADERS,
+    ];
+
+    /**
+     * Required columns for import
+     */
+    public const REQUIRED_HEADERS = [
+        'name',
+        'email',
+        'mobile',
+        'job_posting_slug',
         'street_address',
         'city',
         'pin_code',
         'state_name',
-        'country_name',
-        'address_category',
+        'block_name',
+    ];
 
-        // Optional columns
+    /**
+     * Optional columns for import
+     */
+    public const OPTIONAL_HEADERS = [
         'gender',
         'date_of_birth',
-        'brief_bio',
         'pan_number',
         'aadhaar_number',
         'guardian_name',
@@ -41,30 +50,25 @@ final class ImportSchema
         'referee_mobile',
         'payment_status',
         'payment_amount',
-        'transaction_id',
-        'verify_email',
-        'verify_mobile',
-        'activate_account',
     ];
 
     /**
      * Mapping from user-friendly name to internal database column name
      */
     public const HEADER_MAP = [
-        'full_name' => 'name',
-        'email_address' => 'email',
-        'mobile_number' => 'mobile',
-        'user_type' => 'type',
-        'job_posting_title' => 'recruitment',
+        'name' => 'name',
+        'email' => 'email',
+        'mobile' => 'mobile',
+        'job_posting_slug' => 'recruitment_slug',
         'street_address' => 'addr_line1',
         'city' => 'city',
         'pin_code' => 'postal_code',
         'state_name' => 'state',
+        'block_name' => 'block',
         'country_name' => 'country',
         'address_category' => 'address_type',
         'gender' => 'gender',
         'date_of_birth' => 'dob',
-        'brief_bio' => 'bio',
         'pan_number' => 'pan_number',
         'aadhaar_number' => 'aadhaar_number',
         'guardian_name' => 'guardian_name',
@@ -75,10 +79,6 @@ final class ImportSchema
         'referee_mobile' => 'reference_mobile',
         'payment_status' => 'is_paid',
         'payment_amount' => 'amount',
-        'transaction_id' => 'transaction_id',
-        'verify_email' => 'verify_email',
-        'verify_mobile' => 'verify_mobile',
-        'activate_account' => 'onboard_user',
     ];
 
     /**
@@ -86,26 +86,25 @@ final class ImportSchema
      */
     public const OPTIONAL_DEFAULTS = [
         'payment_status' => 'no',
-        'verify_email' => 'yes',
-        'verify_mobile' => 'yes',
-        'activate_account' => 'yes',
+        'country_name' => 'India',
+        'address_category' => 'home',
     ];
 
     /**
      * Validation rules for each column
      */
     public const VALIDATION_RULES = [
-        'full_name' => 'required|string|max:255',
-        'email_address' => 'required|email|unique:users,email',
-        'mobile_number' => 'required|digits:10|unique:users,mobile',
-        'user_type' => 'required|in:regular,member,promoter,advisor,mentor,applicant',
-        'job_posting_title' => 'required|string|exists:recruitments,title',
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'mobile' => 'required|digits:10|unique:users,mobile',
+        'job_posting_slug' => 'required|string|exists:recruitments,slug',
         'street_address' => 'required|string',
         'city' => 'required|string',
         'pin_code' => 'required|string',
         'state_name' => 'required|string',
-        'country_name' => 'required|string',
-        'address_category' => 'required|in:present,permanent,business',
+        'block_name' => 'required|string',
+        'country_name' => 'nullable|string',
+        'address_category' => 'nullable|in:home,work,delivery,pickup,hub,warehouse,service_point,other,present,permanent,business',
         'pan_number' => 'nullable|string|size:10',
         'aadhaar_number' => 'nullable|string|size:12',
         'payment_status' => 'nullable|in:yes,no',
@@ -119,20 +118,30 @@ final class ImportSchema
     {
         // Inline documentation - no external service needed
         return [
-            'full_name' => [
+            'name' => [
                 'description' => 'Full name of the applicant',
                 'required' => true,
                 'example' => 'Rahul Sharma',
             ],
-            'email_address' => [
+            'email' => [
                 'description' => 'Valid email address (must be unique)',
                 'required' => true,
                 'example' => 'rahul.sharma@example.com',
             ],
-            'mobile_number' => [
+            'mobile' => [
                 'description' => '10-digit mobile number (must be unique)',
                 'required' => true,
                 'example' => '9876543210',
+            ],
+            'job_posting_slug' => [
+                'description' => 'Slug of the recruitment/job posting (use the URL segment)',
+                'required' => true,
+                'example' => 'software-developer-laravel',
+            ],
+            'block_name' => [
+                'description' => 'Block name (must exist in system)',
+                'required' => true,
+                'example' => 'Sadar',
             ],
         ];
     }
@@ -145,23 +154,20 @@ final class ImportSchema
         return [
             [
                 // **REQUIRED FIELDS - DO NOT DELETE THESE COLUMNS**
-                'full_name' => 'Rahul Sharma',
-                'email_address' => 'rahul.sharma@example.com',
-                'mobile_number' => '9876543210',
-                'user_type' => 'applicant',
-                'job_posting_title' => 'Software Developer - Laravel', // Use job title or slug
+                'name' => 'Rahul Sharma',
+                'email' => 'rahul.sharma@example.com',
+                'mobile' => '9876543210',
+                'job_posting_slug' => 'software-developer-laravel',
                 'street_address' => 'Street 12, ABC Nagar, Near City Mall',
                 'city' => 'Delhi',
                 'pin_code' => '110001',
                 'state_name' => 'Delhi', // Full state name
-                'country_name' => 'India', // Full country name
-                'address_category' => 'present', // Options: present, permanent, business
+                'block_name' => 'Sadar', // Block name
+                // Country and address type are auto-set internally
 
                 // **OPTIONAL FIELDS - You can leave these blank if not needed**
                 'gender' => 'male', // male, female, other
                 'date_of_birth' => '1998-05-21',
-                'brief_bio' => '3 years experience in web development',
-
                 // **KYC DETAILS (Optional but Recommended)**
                 'pan_number' => 'ABCDE1234F', // Format: 5 letters + 4 digits + 1 letter
                 'aadhaar_number' => '123456789012', // Exactly 12 digits
@@ -177,12 +183,9 @@ final class ImportSchema
                 // **PAYMENT INFORMATION (If applicable)**
                 'payment_status' => 'yes', // yes or no
                 'payment_amount' => 500,
-                'transaction_id' => 'TXN123456',
 
                 // **VERIFICATION SETTINGS (Default: yes)**
-                'verify_email' => 'yes', // yes/no - Mark email as verified
-                'verify_mobile' => 'yes', // yes/no - Mark mobile as verified
-                'activate_account' => 'yes', // yes/no - Activate account immediately
+                // No column required; system auto-verifies email/mobile & activates account
             ],
         ];
     }

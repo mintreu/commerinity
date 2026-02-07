@@ -110,3 +110,17 @@
     - Preserve orders/transactions/commissions for audit; validate no FK breaks.
     - Add scheduler + tests + admin notifications.
 
+19. Product stock/pricing regression & affiliate calculations (critical)
+    - Investigate Pest failures (`PricingRegressionTest`, `ProductBasicTest`, `ProductStockTest`, `ProductStockSelectionTest`, `SalesTargetingTest`) to determine which model fields/relations are miscomputed (enums, generated columns, BV/PV totals).
+    - Fix `ProductStock` computations for profit, effective price, billing value, commissionability, and location-based ordering so BV/PV and stock selection behave as expected.
+    - Ensure sale targeting logic properly applies user-type and location-based pricing before order creation, then re-run tests until they pass.
+
+20. Order/cart totals & affiliate metadata (urgent follow-up)
+    - Trace the order/cart pipeline for tax/shipping/discount/affiliate metadata and log each stage to understand why your manual order shows zero tax/shipping and no BV/PV credits.
+    - Add Pest coverage that asserts the cart/order APIs surface the calculated totals (tax, shipping, commission, BV, PV) for both guest and member purchases.
+    - Make the MLM commission generator and wallet accumulator depend on the `COMPLETED` order status so wallet/top-up tests reflect real payouts.
+
+21. Fix failing tests (regression)
+    - `Tests\Unit\Models\KycTest`: personal/business scopes + field assertions failing.
+    - `Tests\Feature\AddressApiTest`: default address, create/update, cross-user update, and mobile validation failures.
+
