@@ -23,9 +23,8 @@ use Illuminate\Http\Request;
  */
 final class OrderDisplayController extends Controller
 {
-    public function __construct(private readonly InvoiceService $invoiceService)
-    {
-    }
+    public function __construct(private readonly InvoiceService $invoiceService) {}
+
     /**
      * List user's orders with pagination
      *
@@ -45,8 +44,6 @@ final class OrderDisplayController extends Controller
             ->with(['items.product.media'])
             ->orderByDesc('created_at');
 
-
-
         // Filter by status if provided
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
@@ -55,15 +52,9 @@ final class OrderDisplayController extends Controller
         $perPage = $request->input('per_page', 10);
         $orders = $query->paginate($perPage);
 
-
-
-
-
         $formattedOrders = $orders->getCollection()->map(function (Order $order) {
             return $this->formatOrder($order);
         });
-
-
 
         return response()->json([
             'success' => true,
@@ -105,17 +96,13 @@ final class OrderDisplayController extends Controller
     }
 
     /**
-     * Download/stream invoice PDF for order
+     * Download invoice PDF for order (public endpoint)
      *
      * GET /api/orders/{uuid}/invoice
      */
-    public function invoice(Request $request, string $uuid)
+    public function invoice(string $uuid)
     {
-        $user = $request->user();
-
-        $order = Order::forCustomer($user)
-            ->where('uuid', $uuid)
-            ->first();
+        $order = Order::where('uuid', $uuid)->first();
 
         if (! $order) {
             return response()->json([
@@ -126,7 +113,7 @@ final class OrderDisplayController extends Controller
 
         $this->invoiceService->ensureInvoice($order);
 
-        return $this->invoiceService->stream($order);
+        return $this->invoiceService->download($order);
     }
 
     /**
@@ -187,12 +174,10 @@ final class OrderDisplayController extends Controller
             'shipped_at' => $order->shipped_at?->toIso8601String(),
             'delivered_at' => $order->delivered_at?->toIso8601String(),
             'created_at' => $order->created_at->toIso8601String(),
-//            'created_at_formatted' => $order->created_at->toLocaleDateString('en-IN'),
+            //            'created_at_formatted' => $order->created_at->toLocaleDateString('en-IN'),
             'created_at_formatted' => $order->created_at->format('en-IN'),
             'items' => $order->items->map(fn (OrderItem $item) => $this->formatOrderItem($item)),
         ];
-
-
 
         if ($detailed) {
             $data['shipping_address'] = $order->shippingAddress ? [
