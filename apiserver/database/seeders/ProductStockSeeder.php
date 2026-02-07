@@ -48,7 +48,9 @@ class ProductStockSeeder extends Seeder
 
 
 
-        $products = Product::whereNull('parent_id')->get();
+//        $products = Product::whereNull('parent_id')->get();
+
+        $products = Product::all();
 
         if ($products->isEmpty()) {
             $this->command->warn('No products found. Run ProductSeeder first.');
