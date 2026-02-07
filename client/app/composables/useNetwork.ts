@@ -51,7 +51,6 @@ export interface UplineMember {
 
 export const useNetwork = () => {
   const config = useRuntimeConfig()
-  const { useSanctumFetch } = useSanctum()
 
   const stats: Ref<AffiliateStats | null> = ref(null)
   const team: Ref<TeamMember[]> = ref([])

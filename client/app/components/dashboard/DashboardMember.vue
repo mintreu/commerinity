@@ -13,6 +13,9 @@ const { formatCurrency } = useBranding()
 const { fetchDashboardSummary, fetchCommissionEarnings, fetchTransactionVolume } = useTrends()
 const { wallet, fetchWallet } = useWallet()
 const { fetchTeam, team } = useNetwork()
+const { entries: ledgerEntries, fetchLedger } = useAffiliateLedger()
+const { accounts: fundAccounts, fetchAccounts } = useAffiliateFunds()
+const { rewards, fetchRewards, markUsed } = useRewards()
 
 // Stats with real data
 const stats = ref({
@@ -50,7 +53,10 @@ onMounted(async () => {
       fetchWallet(),
       fetchTeam(1, 5), // Get top 5 referrals
       loadDashboardData(),
-      loadRecentCommissions()
+      loadRecentCommissions(),
+      fetchLedger({ per_page: 5 }),
+      fetchAccounts(),
+      fetchRewards({ per_page: 5 })
     ])
   } catch (e) {
     console.error('Failed to load dashboard data:', e)
@@ -153,6 +159,9 @@ const copyReferralCode = () => {
 const openShareModal = () => {
   showShareModal.value = true
 }
+
+const recentLedger = computed(() => ledgerEntries.value?.slice(0, 5) || [])
+const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => sum + (acc.balance || 0), 0))
 </script>
 
 <template>
@@ -350,6 +359,99 @@ const openShareModal = () => {
           title="Recent Commissions"
           view-all-link="/earnings/commissions"
         />
+
+        <!-- BV/PV Ledger -->
+        <div class="glass-card p-4 md:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">
+              BV/PV Ledger
+            </h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">Latest</span>
+          </div>
+          <div class="space-y-2">
+            <div
+              v-for="entry in recentLedger"
+              :key="entry.uuid"
+              class="flex items-center justify-between text-sm bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2"
+            >
+              <div>
+                <p class="font-medium text-slate-900 dark:text-white">
+                  BV {{ entry.bv }} / PV {{ entry.pv }}
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ entry.status_label || entry.status }} • {{ formatDate(entry.created_at, 'short') }}
+                </p>
+              </div>
+              <span class="text-xs text-slate-500 dark:text-slate-400">L{{ entry.depth }}</span>
+            </div>
+            <div v-if="recentLedger.length === 0" class="text-center text-sm text-slate-500">
+              No ledger entries yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Fund Accounts -->
+        <div class="glass-card p-4 md:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">
+              Fund Accounts
+            </h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">Total {{ formatCurrency(totalFundBalance) }}</span>
+          </div>
+          <div class="space-y-2">
+            <div
+              v-for="account in fundAccounts"
+              :key="account.id"
+              class="flex items-center justify-between text-sm bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2"
+            >
+              <span class="font-medium text-slate-900 dark:text-white capitalize">{{ account.fund_type }}</span>
+              <span class="text-slate-700 dark:text-slate-300">{{ account.balance_formatted || formatCurrency(account.balance / 100) }}</span>
+            </div>
+            <div v-if="fundAccounts.length === 0" class="text-center text-sm text-slate-500">
+              No fund accounts yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Rewards -->
+        <div class="glass-card p-4 md:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">
+              Rewards & Vouchers
+            </h3>
+            <span class="text-xs text-slate-500 dark:text-slate-400">Latest</span>
+          </div>
+          <div class="space-y-2">
+            <div
+              v-for="reward in rewards"
+              :key="reward.uuid"
+              class="flex items-center justify-between text-sm bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2"
+            >
+              <div>
+                <p class="font-medium text-slate-900 dark:text-white">
+                  {{ reward.reward_type_label || reward.reward_type }}
+                  <span v-if="reward.coins">• {{ reward.coins }} coins</span>
+                  <span v-if="reward.voucher_code">• {{ reward.voucher_code }}</span>
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ reward.status_label || reward.status }}
+                </p>
+              </div>
+              <UButton
+                v-if="reward.reward_type === 'voucher' && !reward.is_used"
+                size="xs"
+                color="primary"
+                variant="soft"
+                @click="markUsed(reward.uuid)"
+              >
+                Mark Used
+              </UButton>
+            </div>
+            <div v-if="rewards.length === 0" class="text-center text-sm text-slate-500">
+              No rewards yet.
+            </div>
+          </div>
+        </div>
 
         <!-- Referral Code Card -->
         <div class="glass-card p-4 md:p-6">

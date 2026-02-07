@@ -59,7 +59,6 @@ export interface MonthlyEarning {
 
 export const useCommissions = () => {
   const config = useRuntimeConfig()
-  const { useSanctumFetch } = useSanctum()
 
   const summary: Ref<CommissionSummary | null> = ref(null)
   const commissions: Ref<Commission[]> = ref([])

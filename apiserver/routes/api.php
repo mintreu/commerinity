@@ -5,6 +5,9 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AddressController;
+use App\Http\Controllers\Api\AdvisorEarningsController;
+use App\Http\Controllers\Api\Affiliate\AffiliateFundController;
+use App\Http\Controllers\Api\Affiliate\AffiliateLedgerController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\OtpController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
@@ -13,26 +16,27 @@ use App\Http\Controllers\Api\BeneficiaryAccountController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CommissionController;
+use App\Http\Controllers\Api\Dashboard\AdvisorTeamLeaderController;
+use App\Http\Controllers\Api\Dashboard\AppointmentController;
+use App\Http\Controllers\Api\Dashboard\ChallengeController;
+use App\Http\Controllers\Api\Dashboard\ProgramController;
 use App\Http\Controllers\Api\KycController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NoticeController;
-use App\Http\Controllers\Api\Order\OrderDisplayController;
 use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Notification\PushSubscriptionController;
 use App\Http\Controllers\Api\OnboardingController;
+use App\Http\Controllers\Api\Order\OrderDisplayController;
 use App\Http\Controllers\Api\PayoutController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PublicProfileController;
 use App\Http\Controllers\Api\RecruitmentController;
+use App\Http\Controllers\Api\Rewards\RewardEarningController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\TrendController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\Webhooks\CashfreeWebhookController;
 use App\Http\Controllers\Api\Webhooks\RazorpayWebhookController;
-use App\Http\Controllers\Api\Dashboard\AdvisorTeamLeaderController;
-use App\Http\Controllers\Api\Dashboard\AppointmentController;
-use App\Http\Controllers\Api\Dashboard\ChallengeController;
-use App\Http\Controllers\Api\Dashboard\ProgramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -143,11 +147,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/disbursements', [\App\Http\Controllers\Api\Affiliate\AffiliateDisbursementController::class, 'index']);
         Route::get('/disbursements/{payout:uuid}', [\App\Http\Controllers\Api\Affiliate\AffiliateDisbursementController::class, 'show']);
         Route::get('/disbursements/{payout:uuid}/invoice', [\App\Http\Controllers\Api\Affiliate\AffiliateDisbursementController::class, 'invoice']);
+        Route::get('/ledger', [AffiliateLedgerController::class, 'index']);
+        Route::get('/funds', [AffiliateFundController::class, 'accounts']);
+        Route::get('/funds/{fundType}/transactions', [AffiliateFundController::class, 'transactions']);
     });
 
     // ========================================
     // Commissions / Earnings
     // ========================================
+    Route::get('/advisor/earnings', [AdvisorEarningsController::class, 'show']);
     Route::prefix('commissions')->group(function () {
         Route::get('/', [CommissionController::class, 'index']);
         Route::get('/summary', [CommissionController::class, 'summary']);
@@ -334,6 +342,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/action', [ActivityController::class, 'trackAction']);
         Route::post('/batch', [ActivityController::class, 'trackBatch']);
     });
+
+    // ========================================
+    // Rewards (Coins / Voucher)
+    // ========================================
+    Route::prefix('rewards')->group(function () {
+        Route::get('/', [RewardEarningController::class, 'index']);
+        Route::post('/{reward:uuid}/use', [RewardEarningController::class, 'markUsed']);
+    });
 });
 
 // ========================================
@@ -378,8 +394,6 @@ Route::prefix('checkout')->group(function () {
     Route::get('/{transaction:uuid}/status', [CheckoutController::class, 'status']);
 });
 
-
-
 // ========================
 // 💳 TRANSACTION ROUTES
 // ========================
@@ -388,12 +402,6 @@ Route::prefix('_transaction')
         Route::get('/validate/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'confirmTransaction'])->name('transaction.validate');
         Route::get('/failed/{transaction:uuid}', [\App\Http\Controllers\Api\Transaction\TransactionActionController::class, 'failureTransaction'])->name('transaction.failure');
     });
-
-
-
-
-
-
 
 // ========================================
 // Webhooks (No Auth - Signature Verified)
@@ -505,9 +513,8 @@ Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
     Route::get('/{uuid}/invoice', [OrderDisplayController::class, 'invoice']);
 });
 
-
-Route::prefix('order')->middleware('auth:sanctum')->group(function (){
-    Route::post('/checkout',[\App\Http\Controllers\Api\Order\OrderActionController::class,'checkout']);
-    Route::post('/return',[\App\Http\Controllers\Api\Order\OrderActionController::class,'requestReturn']);
-    Route::post('/refund',[\App\Http\Controllers\Api\Order\OrderActionController::class,'requestRefund']);
+Route::prefix('order')->middleware('auth:sanctum')->group(function () {
+    Route::post('/checkout', [\App\Http\Controllers\Api\Order\OrderActionController::class, 'checkout']);
+    Route::post('/return', [\App\Http\Controllers\Api\Order\OrderActionController::class, 'requestReturn']);
+    Route::post('/refund', [\App\Http\Controllers\Api\Order\OrderActionController::class, 'requestRefund']);
 });

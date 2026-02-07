@@ -439,8 +439,8 @@ import { useSanctum } from '#imports'
 
 const route = useRoute()
 const { isLoggedIn } = useSanctum()
-const { isMember, isPromoter } = useUserType()
-const showEarnings = computed(() => isMember.value || isPromoter.value)
+const { isMember, isPromoter, isAdvisor } = useUserType()
+const showEarnings = computed(() => isMember.value || isPromoter.value || isAdvisor.value)
 
 // More menu state
 const isMoreMenuOpen = ref(false)

@@ -123,6 +123,11 @@ export const useUserType = () => {
         to: '/orders'
       },
       {
+        label: 'My Wishlist',
+        icon: 'i-lucide-heart',
+        to: '/dashboard/wishlist'
+      },
+      {
         label: 'Wallet',
         icon: 'i-lucide-wallet',
         to: '/wallet'
@@ -161,7 +166,12 @@ export const useUserType = () => {
         {
           label: 'Earnings',
           icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
+          to: '/dashboard/earnings'
+        },
+        {
+          label: 'Lifecycle',
+          icon: 'i-lucide-git-branch',
+          to: '/affiliate/lifecycle'
         },
         {
           label: 'Subscription',
@@ -178,7 +188,12 @@ export const useUserType = () => {
         {
           label: 'Earnings',
           icon: 'i-lucide-indian-rupee',
-          to: '/earnings'
+          to: '/dashboard/earnings'
+        },
+        {
+          label: 'Lifecycle',
+          icon: 'i-lucide-git-branch',
+          to: '/affiliate/lifecycle'
         },
         {
           label: 'Subscription',

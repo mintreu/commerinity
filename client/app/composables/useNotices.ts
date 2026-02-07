@@ -17,7 +17,6 @@ export interface Notice {
 
 export const useNotices = () => {
   const config = useRuntimeConfig()
-  const { useSanctumFetch } = useSanctum()
 
   const notices: Ref<Notice[]> = ref([])
   const isLoading = ref(false)

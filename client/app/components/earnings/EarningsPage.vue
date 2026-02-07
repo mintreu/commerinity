@@ -4,12 +4,8 @@
  * Shows commission history, summary, and breakdown
  */
 
-definePageMeta({
-  middleware: '$auth',
-  layout: 'default'
-})
-
-const { isMember, isPromoter } = useUserType()
+const { user, isMember, isPromoter, isAdvisor } = useUserType()
+const { isLoggedIn } = useSanctum()
 const { summary, commissions, commissionsMeta, byType, monthly, isLoading, fetchSummary, fetchCommissions, fetchByType, fetchMonthly } = useCommissions()
 const toast = useToast()
 
@@ -19,17 +15,30 @@ const filters = ref({
   type: '',
   period: ''
 })
+const hasLoaded = ref(false)
 
-onMounted(async () => {
-  if (!isMember.value && !isPromoter.value) {
-    await navigateTo('/dashboard')
-    return
-  }
+const loadEarnings = async () => {
+  if (isAdvisor.value) return
   try {
-    await Promise.all([
+    const [summaryResult, commissionsResult] = await Promise.allSettled([
       fetchSummary(),
       fetchCommissions()
     ])
+    const summaryResponse = summaryResult.status === 'fulfilled' ? summaryResult.value : null
+    const commissionsResponse = commissionsResult.status === 'fulfilled' ? commissionsResult.value : null
+    const summaryOk = summaryResponse?.success === true
+    const commissionsOk = commissionsResponse?.success === true
+
+    if (!summaryOk || !commissionsOk) {
+      const issues: string[] = []
+      if (!summaryOk) issues.push('summary')
+      if (!commissionsOk) issues.push('commissions')
+      toast.add({
+        title: 'Error',
+        description: `Failed to load earnings ${issues.join(' & ')}`,
+        color: 'error'
+      })
+    }
   } catch {
     toast.add({
       title: 'Error',
@@ -37,6 +46,32 @@ onMounted(async () => {
       color: 'error'
     })
   }
+}
+
+const isUserReady = computed(() => !!user.value)
+
+const triggerLoad = async () => {
+  if (!isLoggedIn.value || !isUserReady.value) return
+  if (!isMember.value && !isPromoter.value && !isAdvisor.value) {
+    await navigateTo('/dashboard')
+    return
+  }
+  if ((isMember.value || isPromoter.value) && !hasLoaded.value) {
+    hasLoaded.value = true
+    await loadEarnings()
+  }
+}
+
+watch(
+  () => [isLoggedIn.value, isUserReady.value, isMember.value, isPromoter.value, isAdvisor.value],
+  () => {
+    void triggerLoad()
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  void triggerLoad()
 })
 
 const loadPage = async (page: number) => {
@@ -111,7 +146,11 @@ const statusOptions = [
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+  <EarningsAdvisor v-if="isAdvisor" />
+  <div
+    v-else
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8"
+  >
     <!-- Page Header -->
     <div class="relative">
       <div class="absolute inset-0 bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-teal-500/20 rounded-2xl sm:rounded-3xl blur-3xl -z-10" />

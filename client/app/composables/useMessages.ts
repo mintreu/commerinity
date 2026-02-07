@@ -45,7 +45,6 @@ export interface ConversationDetail {
 
 export const useMessages = () => {
   const config = useRuntimeConfig()
-  const { useSanctumFetch } = useSanctum()
 
   const conversations: Ref<Conversation[]> = ref([])
   const broadcasts: Ref<Conversation[]> = ref([])
