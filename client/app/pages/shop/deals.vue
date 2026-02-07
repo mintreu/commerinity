@@ -43,43 +43,56 @@ const sortBy = ref('discount_desc')
 const currentPage = ref(1)
 
 // Fetch deals
-const { data: dealsResponse, status: dealsStatus, refresh: refreshDeals } = await useFetch<{
-  success: boolean
-  data: {
-    stats: SaleStats
-    items: SaleProduct[]
-    pagination: {
-      current_page: number
-      last_page: number
-      per_page: number
-      total: number
-      has_more: boolean
+const dealsResponse = ref<{ success: boolean; data: { stats: SaleStats; items: SaleProduct[]; pagination: { current_page: number; last_page: number; per_page: number; total: number; has_more: boolean } } } | null>(null)
+const dealsStatus = ref<'pending' | 'success' | 'error'>('pending')
+const loadDeals = async () => {
+  dealsStatus.value = 'pending'
+  try {
+    const queryParams = new URLSearchParams()
+    queryParams.set('page', String(currentPage.value))
+    if (selectedCategory.value) {
+      queryParams.set('category', selectedCategory.value)
     }
+    const url = `/api/catalog/on-sale?${queryParams.toString()}`
+    dealsResponse.value = await sanctumFetch(url)
+    dealsStatus.value = 'success'
+  } catch (err) {
+    dealsStatus.value = 'error'
+    toast.add({
+      title: 'Deals Load Failed',
+      description: err instanceof Error ? err.message : 'Unable to load deals at the moment.',
+      color: 'error',
+      icon: 'i-lucide-alert-circle'
+    })
   }
-}>(`/api/catalog/on-sale`, {
-  $fetch: sanctumFetch,
-  query: computed(() => ({
-    page: currentPage.value,
-    category: selectedCategory.value || undefined
-  })),
-  lazy: true,
-  server: false
-})
+}
 
-// Fetch categories for filter
-const { data: categoriesData } = await useFetch<{
-  success: boolean
-  data: Array<{ name: string, slug: string, product_count: number }>
-}>(`/api/catalog/categories`, {
-  $fetch: sanctumFetch,
-  lazy: true,
-  server: false
-})
+const categoriesData = ref<{ success: boolean; data: Array<{ name: string; slug: string; product_count: number }> } | null>(null)
+const loadCategories = async () => {
+  try {
+    categoriesData.value = await sanctumFetch('/api/catalog/categories')
+  } catch (err) {
+    toast.add({
+      title: 'Categories Load Failed',
+      description: err instanceof Error ? err.message : 'Unable to load categories',
+      color: 'warning',
+      icon: 'i-lucide-alert-circle'
+    })
+  }
+}
 
-const deals = computed(() => dealsResponse.value?.data?.items || [])
-const stats = computed(() => dealsResponse.value?.data?.stats || { total_deals: 0, avg_discount: 0, ends_at: null })
-const pagination = computed(() => dealsResponse.value?.data?.pagination)
+const deals = computed(() => dealsResponse.value?.data.items || [])
+const stats = computed(() => dealsResponse.value?.data.stats || { total_deals: 0, avg_discount: 0, ends_at: null })
+const pagination = computed(() => dealsResponse.value?.data.pagination)
 const categories = computed(() => categoriesData.value?.data || [])
+
+watch([currentPage, selectedCategory], () => {
+  loadDeals()
+}, { immediate: true })
+
+onMounted(() => {
+  loadCategories()
+})
 
 // Filter deals by discount
 const filteredDeals = computed(() => {
