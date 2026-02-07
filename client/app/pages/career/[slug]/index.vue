@@ -342,7 +342,7 @@ const handleGuestApplication = async (formData: any) => {
                   description="Please login to apply for this position."
                 />
                 <UButton
-                  to="/auth/login"
+                  :to="`/auth/login?redirect=/career/${slug}`"
                   color="primary"
                   block
                   class="mt-4"
