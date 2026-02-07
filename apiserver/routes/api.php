@@ -447,7 +447,7 @@ Route::prefix('catalog')->group(function () {
     Route::get('/products/{product:url}', [\App\Http\Controllers\Api\CatalogController::class, 'show']);
     Route::get('/categories', [\App\Http\Controllers\Api\CatalogController::class, 'categories']);
     Route::get('/categories/featured', [\App\Http\Controllers\Api\CatalogController::class, 'featuredCategories']);
-    Route::get('/categories/{category:url}', [\App\Http\Controllers\Api\CatalogController::class, 'category']);
+    Route::get('/category/{category:url}', [\App\Http\Controllers\Api\CatalogController::class, 'category']);
     Route::get('/featured', [\App\Http\Controllers\Api\CatalogController::class, 'featured']);
     Route::get('/on-sale', [\App\Http\Controllers\Api\CatalogController::class, 'onSale']);
     Route::get('/search', [\App\Http\Controllers\Api\CatalogController::class, 'search']);

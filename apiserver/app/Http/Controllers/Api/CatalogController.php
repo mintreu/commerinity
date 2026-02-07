@@ -117,10 +117,19 @@ class CatalogController extends Controller
     public function category(Request $request, Category $category): JsonResponse
     {
         $this->applyStockContext($request);
-        $category->loadMissing('media');
+        $childrenQuery = fn ($query) => $query
+            ->with(['media', 'children' => fn ($gc) => $gc->with(['media'])->withCount(['catalogProducts as products_count'])])
+            ->withCount(['catalogProducts as products_count']);
+
+        $category->loadMissing([
+            'media',
+            'children' => $childrenQuery,
+        ]);
+        $category->loadCount(['catalogProducts as products_count']);
 
         $perPage = $request->input('per_page', 20);
         $page = $request->input('page', 1);
+        $categoryIds = $category->descendantsAndSelf()->pluck('id');
 
         $productsQuery = Product::query()
             ->purchasable()
@@ -128,7 +137,10 @@ class CatalogController extends Controller
             ->with(['category', 'media'])
             ->withStockInfo()
             ->search($request->input('search'))
-            ->where('category_id', $category->id)
+            ->where(function ($query) use ($categoryIds) {
+                $query->whereIn('category_id', $categoryIds)
+                    ->orWhereHas('categories', fn ($q) => $q->whereIn('categories.id', $categoryIds));
+            })
             ->byPrice(
                 $request->input('min_price') ? (int) $request->input('min_price') * 100 : null,
                 $request->input('max_price') ? (int) $request->input('max_price') * 100 : null
@@ -233,8 +245,12 @@ class CatalogController extends Controller
      */
     public function categories(): AnonymousResourceCollection
     {
-        $categories = Category::with(['media', 'children.media'])
-            ->withCount('products')
+        $childrenQuery = fn ($query) => $query
+            ->with(['media', 'children' => fn ($gc) => $gc->with(['media'])->withCount(['catalogProducts as products_count'])])
+            ->withCount(['catalogProducts as products_count']);
+
+        $categories = Category::with(['media', 'children' => $childrenQuery])
+            ->withCount(['catalogProducts as products_count'])
             ->whereNull('parent_id')
             ->orderBy('order')
             ->get();
@@ -247,9 +263,13 @@ class CatalogController extends Controller
      */
     public function featuredCategories(): AnonymousResourceCollection
     {
+        $childrenQuery = fn ($query) => $query
+            ->with(['media', 'children' => fn ($gc) => $gc->with(['media'])->withCount(['catalogProducts as products_count'])])
+            ->withCount(['catalogProducts as products_count']);
+
         return CategoryResource::collection(
-            Category::with(['media', 'children.media'])
-                ->withCount('products')
+            Category::with(['media', 'children' => $childrenQuery])
+                ->withCount(['catalogProducts as products_count'])
                 ->where('is_featured', true)
                 ->take(8)
                 ->get()

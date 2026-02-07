@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Product extends Model implements HasMedia
 {
@@ -27,6 +28,7 @@ class Product extends Model implements HasMedia
 
     use HasSaleAccess;
     use InteractsWithMedia;
+
 
     protected $fillable = [
         'name',
@@ -172,6 +174,12 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'product_categories')
+            ->withTimestamps();
+    }
+
     public function siblingsAndSelf()
     {
         return Product::where('category_id', $this->category_id)
@@ -233,17 +241,17 @@ class Product extends Model implements HasMedia
             return $query;
         }
 
-        return $query->whereHas('category', function ($q) use ($categoryUrl) {
-            // Find category by URL, then get ID and children
-            $category = Category::where('url', $categoryUrl)->first();
-            if ($category) {
-                // Simplified: Just this category for now.
-                // Ideally use a closure table or nested set for strict hierarchy
-                $q->where('id', $category->id)
-                    ->orWhere('parent_id', $category->id);
-            } else {
-                $q->where('url', $categoryUrl);
-            }
+        $category = Category::where('url', $categoryUrl)->first();
+
+        if (! $category) {
+            return $query->whereHas('categories', fn ($q) => $q->where('url', $categoryUrl));
+        }
+
+        $categoryIds = $category->descendantsAndSelf()->pluck('id');
+
+        return $query->where(function ($q) use ($categoryIds) {
+            $q->whereIn('category_id', $categoryIds)
+                ->orWhereHas('categories', fn ($sub) => $sub->whereIn('categories.id', $categoryIds));
         });
     }
 

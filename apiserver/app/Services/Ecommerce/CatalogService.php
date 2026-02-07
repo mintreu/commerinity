@@ -111,23 +111,26 @@ final class CatalogService
     public function getCategories(): array
     {
         return Cache::remember('catalog_categories', self::CACHE_TTL, function () {
-            return Category::query()
-                ->where('status', true)
-                ->whereNull('parent_id')
-                ->with([
-                    'children' => fn ($q) => $q->where('status', true)
-                        ->withCount(['products' => fn ($p) => $p->purchasable()])
-                        ->with([
-                            'children' => fn ($gc) => $gc->where('status', true)
-                                ->withCount(['products' => fn ($p) => $p->purchasable()]),
-                        ]),
-                ])
-                ->withCount(['products' => fn ($q) => $q->purchasable()])
-                ->orderBy('order')
-                ->get()
-                ->map(fn ($category) => $this->formatCategoryListing($category))
-                ->filter(fn ($category) => $category['total_products'] > 0)
-                ->values();
+        return Category::query()
+            ->where('status', true)
+            ->whereNull('parent_id')
+            ->with([
+                'children' => fn ($q) => $q->where('status', true)
+                    ->with([
+                        'media',
+                        'children' => fn ($gc) => $gc->where('status', true)
+                            ->with('media')
+                            ->withCount(['catalogProducts as products_count' => fn ($p) => $p->purchasable()]),
+                    ])
+                    ->withCount(['catalogProducts as products_count' => fn ($p) => $p->purchasable()])
+                    ->with('media'),
+            ])
+            ->withCount(['catalogProducts as products_count' => fn ($q) => $q->purchasable()])
+            ->orderBy('order')
+            ->get()
+            ->map(fn ($category) => $this->formatCategoryListing($category))
+            ->filter(fn ($category) => $category['total_products'] > 0)
+            ->values();
         });
     }
 
@@ -139,8 +142,10 @@ final class CatalogService
         $category = Category::where('url', $slug)
             ->where('status', true)
             ->with([
+                'media',
                 'children' => fn ($q) => $q->where('status', true)
-                    ->withCount(['products' => fn ($p) => $p->purchasable()])
+                    ->with('media')
+                    ->withCount(['catalogProducts as products_count' => fn ($p) => $p->purchasable()])
                     ->orderBy('order'),
             ])
             ->first();
@@ -162,7 +167,10 @@ final class CatalogService
         $query = Product::query()
             ->purchasable()
             ->whereNull('parent_id')
-            ->whereIn('category_id', $categoryIds)
+            ->where(function ($query) use ($categoryIds) {
+                $query->whereIn('category_id', $categoryIds)
+                    ->orWhereHas('categories', fn ($sub) => $sub->whereIn('categories.id', $categoryIds));
+            })
             ->with([
                 'media' => fn ($q) => $q->where('collection_name', 'displayImage'),
                 'category',
@@ -512,7 +520,10 @@ final class CatalogService
 
         return Product::query()
             ->purchasable()
-            ->whereIn('category_id', $categoryIds)
+            ->where(function ($query) use ($categoryIds) {
+                $query->whereIn('category_id', $categoryIds)
+                    ->orWhereHas('categories', fn ($sub) => $sub->whereIn('categories.id', $categoryIds));
+            })
             ->whereHas('availableStocks', fn ($q) => $q->where('in_stock_quantity', '>', 0))
             ->exists();
     }

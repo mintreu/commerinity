@@ -10,7 +10,6 @@ definePageMeta({
 })
 
 const config = useRuntimeConfig()
-const sanctumFetch = useSanctumFetch()
 const route = useRoute()
 const toast = useToast()
 
@@ -76,20 +75,50 @@ const queryParams = computed(() => {
 })
 
 // Fetch category with products using the combined API
-const { data: categoryResponse, status, error } = await useFetch<{
+const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
+const error = ref<Error | null>(null)
+const categoryResponse = ref<{
   category: CategoryData
   items: Product[]
   pagination: Pagination
-}>(`/api/catalog/categories/${route.params.url}`, {
-  $fetch: sanctumFetch,
-  query: queryParams,
-  watch: [queryParams],
-  server: false
-})
+} | null>(null)
 
 const category = computed(() => categoryResponse.value?.category)
 const products = computed(() => categoryResponse.value?.items || [])
 const pagination = computed(() => categoryResponse.value?.pagination)
+
+const buildQueryString = (params: Record<string, string | number>) => {
+  const searchParams = new URLSearchParams()
+  Object.entries(params).forEach(([key, value]) => {
+    searchParams.append(key, String(value))
+  })
+  return searchParams.toString() ? `?${searchParams.toString()}` : ''
+}
+
+const loadCategory = async () => {
+  if (!route.params.url) return
+
+  status.value = 'pending'
+  error.value = null
+
+  const queryString = buildQueryString(queryParams.value)
+  const url = `${config.public.apiBase}/api/catalog/category/${route.params.url}${queryString}`
+
+  try {
+    categoryResponse.value = await useSanctumFetch(url)
+    status.value = 'success'
+  } catch (fetchError) {
+    categoryResponse.value = null
+    status.value = 'error'
+    error.value = fetchError instanceof Error ? fetchError : new Error('Failed to load category')
+  }
+}
+
+watch(
+  () => [route.params.url, queryParams.value],
+  loadCategory,
+  { immediate: true, deep: true }
+)
 
 // Dynamic SEO using category.seo_meta
 watchEffect(() => {

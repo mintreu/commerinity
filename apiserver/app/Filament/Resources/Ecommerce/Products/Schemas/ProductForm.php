@@ -4,10 +4,12 @@ namespace App\Filament\Resources\Ecommerce\Products\Schemas;
 
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
+use App\Models\Ecommerce\Category;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\MultiSelect;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -113,14 +115,35 @@ class ProductForm
                                 ->native(false),
 
                             Select::make('category_id')
+                                ->label('Base Category')
                                 ->relationship('category', 'name')
                                 ->searchable()
                                 ->preload()
                                 ->required()
+                                ->live()
                                 ->createOptionForm([
                                     TextInput::make('name')->required(),
                                     TextInput::make('url')->required(),
                                 ]),
+
+                            MultiSelect::make('categories')
+                                ->label('Additional Categories')
+                                ->relationship('categories', 'name')
+                                ->multiple()
+                                ->preload()
+                                ->searchable()
+                                ->helperText('Link the product to other categories for navigation and counts')
+                                ->options(fn (Get $get) => Category::query()
+                                    ->where('status', true)
+                                    ->when($get('category_id'), function ($query, $baseId) {
+                                        $query->where(function ($query) use ($baseId) {
+                                            $query->where('id', $baseId)
+                                                ->orWhere('parent_id', $baseId);
+                                        });
+                                    })
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->toArray()),
 
                             Select::make('filter_group_id')
                                 ->relationship('filterGroup', 'name')

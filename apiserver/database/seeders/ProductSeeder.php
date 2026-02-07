@@ -86,6 +86,7 @@ class ProductSeeder extends Seeder
         foreach ($products as $productData) {
             try {
                 $product = $this->createProduct($productData, $category, $filterGroup);
+                $this->assignProductCategories($product, $category, $productData);
                 $this->attachMediaFiles($product, $category);
                 $seededCount++;
                 $this->command->info("  ✓ {$product->name}");
@@ -172,11 +173,35 @@ class ProductSeeder extends Seeder
             if ($product->type == ProductTypeCast::CONFIGURABLE->value) {
                 $variants = $product->variants()->get();
                 foreach ($variants as $variant) {
+                    $variant->clearMediaCollection('displayImage');
                     $variant->addMedia($displayImagePath)
                         ->preservingOriginal()
                         ->toMediaCollection('displayImage');
+
+
+                    foreach ($allImages as $image) {
+                        $imagePath = Storage::path($image);
+                        if (file_exists($imagePath)) {
+                            $alreadyAdded = $product->getMedia('bannerImage')
+                                ->contains(fn ($media) => $media->file_name === basename($imagePath));
+
+                            if (! $alreadyAdded) {
+                                $product->addMedia($imagePath)
+                                    ->preservingOriginal()
+                                    ->toMediaCollection('bannerImage');
+                            }
+                        }
+                    }
+
                 }
             }
+
+
+
+
+            // |||||||||||||||||||||||||||||||||
+
+
         } catch (\Throwable $e) {
             $product->status = ProductStatusCast::DRAFT->value;
             $product->save();
@@ -203,5 +228,66 @@ class ProductSeeder extends Seeder
         }
 
         return $decoded;
+    }
+
+    protected function assignProductCategories(Product $product, Category $baseCategory, object $productData): void
+    {
+        $additionalCategoryIds = $this->resolveAdditionalCategoryIds($productData);
+        if (empty($additionalCategoryIds)) {
+            $additionalCategoryIds = $this->randomCategoryIds($baseCategory, 3);
+        }
+        $categoryIds = array_unique(array_merge([$baseCategory->id], $additionalCategoryIds));
+
+        if (empty($categoryIds)) {
+            $categoryIds = [$baseCategory->id];
+        }
+
+        $product->categories()->sync($categoryIds);
+    }
+
+    protected function resolveAdditionalCategoryIds(object $productData): array
+    {
+        $urls = [];
+
+        if (isset($productData->categories)) {
+            $urls = array_merge($urls, $this->normalizeCategorySlugs($productData->categories));
+        }
+
+        if (isset($productData->category_slugs)) {
+            $urls = array_merge($urls, $this->normalizeCategorySlugs($productData->category_slugs));
+        }
+
+        if (empty($urls)) {
+            return [];
+        }
+
+        return Category::query()
+            ->whereIn('url', array_unique($urls))
+            ->pluck('id')
+            ->toArray();
+    }
+
+    protected function normalizeCategorySlugs(mixed $value): array
+    {
+        if (is_string($value)) {
+            return [$value];
+        }
+
+        if (is_iterable($value)) {
+            return array_map('strval', (array) $value);
+        }
+
+        return [];
+    }
+
+    protected function randomCategoryIds(Category $baseCategory, int $limit = 3): array
+    {
+        return Category::query()
+            ->where('status', true)
+            ->where('id', '!=', $baseCategory->id)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->pluck('id')
+            ->toArray();
     }
 }

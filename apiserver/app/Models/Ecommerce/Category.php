@@ -8,6 +8,7 @@ use Database\Factories\Ecommerce\CategoryFactory;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use App\Casts\GstTaxCast;
@@ -76,5 +77,12 @@ class Category extends Model implements HasMedia
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function catalogProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_categories')
+            ->withPivot('is_primary')
+            ->withTimestamps();
     }
 }
