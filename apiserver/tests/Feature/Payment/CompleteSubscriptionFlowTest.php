@@ -6,16 +6,18 @@ use App\Casts\TransactionStatusCast;
 use App\Casts\TransactionTypeCast;
 use App\Casts\UserTypeCast;
 use App\Models\Address;
-use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Events\PaymentCompleted;
-use App\Services\Affiliate\AffiliateGenealogy;
+use App\Models\Affiliate\AffiliateGenealogy;
+use App\Models\Affiliate\AffiliateCommission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Database\Seeders\StageSeeder;
+use Database\Seeders\LevelSeeder;
 
 uses(RefreshDatabase::class);
 
@@ -42,21 +44,10 @@ beforeEach(function () {
     $this->user = User::factory()->create(['type' => UserTypeCast::REGULAR->value]);
     $this->wallet = Wallet::factory()->for($this->user, 'walletable')->create();
 
-    // Create membership stage and level
-    $this->stage = Stage::factory()->create([
-        'base_price' => 99900, // ₹999
-        'discount' => 0,
-        'tax_amount' => 17982,
-        'price' => 117882, // ₹1178.82
-    ]);
-
-    $this->level = Level::factory()->create([
-        'stage_id' => $this->stage->id,
-        'base_price' => 99900,
-        'price' => 117882,
-        'bv' => 99900, // Business Volume for affiliate
-        'pv' => 99900, // Personal Volume
-    ]);
+    $this->seed([StageSeeder::class, LevelSeeder::class]);
+    $this->stage = Stage::query()->where('slug', 'pro')->first()
+        ?? Stage::query()->orderBy('sort_order')->first();
+    $this->level = $this->stage?->getFirstLevel();
 
     // Mock Cashfree API for subscription payment
     Http::fake(['sandbox.cashfree.com/pg/orders' => Http::response([
@@ -76,7 +67,7 @@ describe('Subscription Flow - New Member Registration', function () {
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         expect($subscription->is_paid)->toBeFalse();
@@ -90,7 +81,7 @@ describe('Subscription Flow - New Member Registration', function () {
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
             'payment_method' => 'cashfree',
         ]);
@@ -127,7 +118,7 @@ describe('Subscription Flow - New Member Registration', function () {
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -136,7 +127,7 @@ describe('Subscription Flow - New Member Registration', function () {
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
         ]);
 
@@ -172,7 +163,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -181,7 +172,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
         ]);
 
@@ -207,7 +198,7 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -216,18 +207,18 @@ describe('Subscription Flow - With Sponsor (Affiliate Tree Placement)', function
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
         ]);
 
         // No commissions before payment
-        expect(\App\Models\AffiliateCommission::count())->toBe(0);
+        expect(AffiliateCommission::count())->toBe(0);
 
         $transaction->update(['status' => TransactionStatusCast::COMPLETED, 'verified' => true, 'verified_at' => now()]);
         event(new PaymentCompleted($transaction));
 
         // Verify commissions were created for sponsor
-        $commissions = \App\Models\AffiliateCommission::all();
+        $commissions = AffiliateCommission::all();
         expect($commissions)->toHaveCountGreaterThan(0);
 
         // Verify at least one commission for the sponsor
@@ -247,7 +238,7 @@ describe('Subscription Flow - Without Sponsor (Team Head)', function () {
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -256,7 +247,7 @@ describe('Subscription Flow - Without Sponsor (Team Head)', function () {
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
         ]);
 
@@ -301,7 +292,7 @@ describe('Subscription Flow - Subscription Renewal', function () {
                 'level_id' => $this->level->id,
                 'previous_subscription_id' => $this->previousSubscription->id,
                 'renewal_count' => 1,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -310,7 +301,7 @@ describe('Subscription Flow - Subscription Renewal', function () {
             'transactionable_id' => $renewalSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Subscription Renewal',
         ]);
 
@@ -346,7 +337,7 @@ describe('Subscription Flow - Subscription Renewal', function () {
                 'renewal_count' => 1,
                 'personal_pv' => 50000, // Should be carried over
                 'team_pv' => 150000,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -355,7 +346,7 @@ describe('Subscription Flow - Subscription Renewal', function () {
             'transactionable_id' => $renewalSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Subscription Renewal',
         ]);
 
@@ -376,7 +367,7 @@ describe('Subscription Flow - Error Cases', function () {
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -385,7 +376,7 @@ describe('Subscription Flow - Error Cases', function () {
             'transactionable_id' => $subscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
         ]);
 
@@ -415,7 +406,7 @@ describe('Subscription Flow - Error Cases', function () {
             ->create([
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->level->id,
-                'amount' => 117882,
+                'amount' => $this->stage->price,
             ]);
 
         // Try to create transaction for already active subscription
@@ -425,7 +416,7 @@ describe('Subscription Flow - Error Cases', function () {
             'transactionable_id' => $activeSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 117882,
+            'amount' => $this->stage->price,
             'purpose' => 'Membership Subscription',
         ]);
 
@@ -440,13 +431,8 @@ describe('Subscription Flow - Error Cases', function () {
 
 describe('Subscription Flow - Level Upgrades', function () {
     beforeEach(function () {
-        // User is already a member at level 1
-        $this->currentLevel = Level::factory()->create([
-            'stage_id' => $this->stage->id,
-            'name' => 'Starter',
-            'base_price' => 50000,
-            'price' => 59000,
-        ]);
+        $this->currentLevel = $this->stage?->getLevelByNumber(1)
+            ?? $this->stage?->getFirstLevel();
 
         $this->currentSubscription = UserSubscription::factory()
             ->forUser($this->user)
@@ -455,18 +441,13 @@ describe('Subscription Flow - Level Upgrades', function () {
                 'stage_id' => $this->stage->id,
                 'level_id' => $this->currentLevel->id,
                 'current_level_id' => $this->currentLevel->id,
-                'amount' => 59000,
+                'amount' => $this->stage->price,
             ]);
 
         $this->user->update(['type' => UserTypeCast::MEMBER->value]);
 
-        // Create higher level
-        $this->higherLevel = Level::factory()->create([
-            'stage_id' => $this->stage->id,
-            'name' => 'Pro',
-            'base_price' => 150000,
-            'price' => 177000,
-        ]);
+        $this->higherLevel = $this->stage?->getLevelByNumber(2)
+            ?? $this->stage?->getLastLevel();
     });
 
     it('upgrades user to higher membership level', function () {
@@ -479,7 +460,7 @@ describe('Subscription Flow - Level Upgrades', function () {
                 'level_id' => $this->higherLevel->id,
                 'current_level_id' => $this->currentLevel->id,
                 'highest_level_id' => $this->currentLevel->id,
-                'amount' => 177000,
+                'amount' => $this->stage->price,
             ]);
 
         $transaction = Transaction::create([
@@ -488,7 +469,7 @@ describe('Subscription Flow - Level Upgrades', function () {
             'transactionable_id' => $upgradeSubscription->id,
             'type' => TransactionTypeCast::CREDIT,
             'status' => TransactionStatusCast::PENDING,
-            'amount' => 177000,
+            'amount' => $this->stage->price,
             'purpose' => 'Level Upgrade',
         ]);
 
