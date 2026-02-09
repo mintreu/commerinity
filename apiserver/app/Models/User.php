@@ -300,6 +300,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia, MustVerify
     {
         $this->addMediaCollection('avatar')
             ->singleFile()
+            ->useFallbackUrl(asset('images/placeholder-avatar.png'))
             //->useFallbackUrl($this->gender == GenderCast::FEMALE->value ? 'https://avatar.iran.liara.run/public/girl' : 'https://avatar.iran.liara.run/public/boy')
             ->acceptsMimeTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']);
         // File size validation done in controller (2MB max)

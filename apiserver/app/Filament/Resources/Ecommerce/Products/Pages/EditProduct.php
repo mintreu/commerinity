@@ -21,7 +21,7 @@ class EditProduct extends EditRecord
     public function getRelationManagers(): array
     {
         $relationManagers = [];
-        if ($this->record->type == 'configurable') {
+        if ($this->record->type == ProductTypeCast::CONFIGURABLE->value) {
             $relationManagers[] = VariantsRelationManager::class;
         }
 

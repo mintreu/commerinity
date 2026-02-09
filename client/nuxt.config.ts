@@ -1,12 +1,32 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 
+  site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in'
+  },
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/ui',
-    '@qirolab/nuxt-sanctum-authentication'
+    '@qirolab/nuxt-sanctum-authentication',
+    '@nuxtjs/sitemap'
   ],
+
+  sitemap: {
+    exclude: [
+      '/dashboard/**',
+      '/auth/login',
+      '/auth/forgot-password',
+      '/auth/reset-password',
+      '/blogs',
+      '/news'
+    ],
+    sources: [
+      '/api/__sitemap__/products'
+    ]
+  },
+
   ssr: false,
 
   devtools: {
@@ -27,7 +47,7 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
         { name: 'apple-mobile-web-app-title', content: 'CMP' },
-        { name: 'application-name', content: 'Commerinity Pro' },
+        { name: 'application-name', content: 'VVIndia' },
         { name: 'msapplication-TileColor', content: '#a855f7' },
         // Open Graph
         { property: 'og:type', content: 'website' },
@@ -35,8 +55,7 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+		{ rel: 'apple-touch-icon', href: '/favicon.ico' },
         { rel: 'manifest', href: '/site.webmanifest' }
       ]
     }
@@ -131,7 +150,7 @@ export default defineNuxtConfig({
     // Development
     apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
     // Production
-    // apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+    //apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
     authMode: 'token',
     userResponseWrapperKey: 'data', // Laravel UserResource wraps response in { data: {...} }
     token: {

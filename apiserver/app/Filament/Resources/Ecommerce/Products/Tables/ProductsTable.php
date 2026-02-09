@@ -34,9 +34,10 @@ class ProductsTable
                 TextColumn::make('category.name')
                     ->searchable(),
 
-//                TextColumn::make('price')
-//                    ->money()
-//                    ->sortable(),
+                TextColumn::make('orderItems_count')
+                    ->counts('orderItems')
+                    ->default(0)
+                    ->sortable(),
                 TextColumn::make('status')
                     ->badge()
                     ->searchable(),

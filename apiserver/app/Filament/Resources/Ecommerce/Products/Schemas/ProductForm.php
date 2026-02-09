@@ -2,8 +2,11 @@
 
 namespace App\Filament\Resources\Ecommerce\Products\Schemas;
 
+use App\Casts\GstTaxCast;
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
+use App\Filament\Forms\Components\MoneyInput;
+use App\Filament\Forms\Components\RichEditor\HeroBlock;
 use App\Models\Ecommerce\Category;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Placeholder;
@@ -14,6 +17,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
@@ -61,13 +65,27 @@ class ProductForm
                                 Select::make('type')
                                     ->options(fn() => collect(ProductTypeCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
                                     ->required()
-                                    ->default('simple')
+                                    ->default(ProductTypeCast::SIMPLE->value)
                                     ->native(false),
 
                                 Select::make('parent_id')
                                     ->relationship('parent', 'name')
                                     ->searchable()
                                     ->placeholder('Select Parent (if variant)'),
+
+
+
+                                MoneyInput::make('price')
+                                    ->label('Base Price')
+                                    ->required()
+                                    ->columnSpan(2)
+                                    ->helperText('Enter paise (e.g., 45000 = ₹450.00)'),
+
+                                TextInput::make('hsn')->placeholder('HSN Code'),
+                                Select::make('gst_tax_type')
+                                    ->options(collect(GstTaxCast::cases())->mapWithKeys(fn($case) => [$case->value => $case->getLabel()]))
+                                    ->required(),
+
                             ]),
                         ]),
 
@@ -81,6 +99,10 @@ class ProductForm
                             RichEditor::make('description')
                                 ->label('Full Description')
                                 ->columnSpanFull()
+                                ->json()
+                                ->customBlocks([
+                                    HeroBlock::class,
+                                ])
                                 ->fileAttachmentsDirectory('products/content'),
                         ]),
 
@@ -132,7 +154,7 @@ class ProductForm
                                 ->multiple()
                                 ->preload()
                                 ->searchable()
-                                ->helperText('Link the product to other categories for navigation and counts')
+                                ->helperText('Link the product to other categories for describe it more')
                                 ->options(fn (Get $get) => Category::query()
                                     ->where('status', true)
                                     ->when($get('category_id'), function ($query, $baseId) {
@@ -152,6 +174,97 @@ class ProductForm
                                 ->helperText('Defines available filters for this product.'),
                         ]),
 
+
+
+                        Section::make('Order Qty')
+                            ->description('Set how many can orders at a time')
+                            ->collapsible()
+                            ->collapsed()
+                            ->columns(1)->schema([
+                                TextInput::make('min_quantity')
+                                    ->label('Min Qty')
+                                    ->numeric()
+                                    ->default(1)
+                                    ->helperText('Minimum quantity sold without stock entry override'),
+
+                                TextInput::make('max_quantity')
+                                    ->label('Max Qty')
+                                    ->numeric()
+                                    ->helperText('Leave empty for no max limit'),
+
+                                TextInput::make('wholesale_unit_quantity')
+                                    ->label('Wholesale Unit')
+                                    ->numeric()
+                                    ->columnSpanFull()
+                                    ->helperText('Break packs into this quantity when shipped'),
+                            ]),
+
+
+                        Section::make('Customer Benefit')
+                            ->description('Common benefits for all')
+                            ->collapsible()
+                            ->collapsed()
+                            ->schema([
+                                TextInput::make('reward_points')
+                                    ->label('Coins (Reward Points)')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->helperText('Customer reward points per purchase'),
+
+                            ]),
+
+
+                        Section::make('Affiliate Benefit')
+                            ->description('Benefits for members and promoters')
+                            ->collapsible()
+                            ->collapsed()
+                            ->schema([
+                                Grid::make(2)->schema([
+                                    TextInput::make('bv')
+                                        ->label('Business Volume')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->helperText('BV points awarded per unit sold'),
+
+                                    TextInput::make('pv')
+                                        ->label('Personal Volume')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->helperText('PV points for the affiliate'),
+                                ]),
+
+                            ]),
+
+                        Section::make('Distributor Benefit')
+                            ->collapsible()
+                            ->collapsed()
+                            ->description('Wholesale Benefits for distributor')
+                            ->schema([
+                                TextInput::make('commission_rate')
+                                    ->label('Commission Rate')
+                                    ->numeric()
+                                    ->suffix('%')
+                                    ->helperText('Treats null as using level rate'),
+
+                                Toggle::make('is_commissionable')
+                                    ->label('Is Commissionable')
+                                    ->inline(false)
+                                    ->helperText('Toggle whether this product generates affiliate commissions')
+                                    ->default(true),
+                            ]),
+
+
+                        Section::make('Shipping')
+                            ->collapsed()
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('weight_grams'),
+                                TextInput::make('length_cm'),
+                                TextInput::make('width_cm'),
+                                TextInput::make('height_cm'),
+                            ]),
+
+
                         Section::make('Settings')->schema([
                             Toggle::make('is_returnable')
                                 ->label('Returnable Product')
@@ -170,73 +283,12 @@ class ProductForm
                                 ->label('Total Views'),
                         ]),
 
-                        Section::make('Pricing')
-                            ->schema([
-                                Grid::make(2)->schema([
-                                    TextInput::make('price')
-                                        ->label('Base Price (paise)')
-                                        ->numeric()
-                                        ->required()
-                                        ->helperText('Enter paise (e.g., 45000 = ₹450.00)'),
-
-                                    TextInput::make('bv')
-                                        ->label('Business Volume')
-                                        ->numeric()
-                                        ->default(0)
-                                        ->helperText('BV points awarded per unit sold'),
-                                ]),
-
-                                Grid::make(2)->schema([
-                                    TextInput::make('pv')
-                                        ->label('Personal Volume')
-                                        ->numeric()
-                                        ->default(0)
-                                        ->helperText('PV points for the affiliate'),
-
-                                    TextInput::make('reward_points')
-                                        ->label('Reward Points')
-                                        ->numeric()
-                                        ->default(0)
-                                        ->helperText('Customer reward points per purchase'),
-                                ]),
-
-                                Grid::make(3)->schema([
-                                    TextInput::make('min_quantity')
-                                        ->label('Min Order Qty')
-                                        ->numeric()
-                                        ->default(1)
-                                        ->helperText('Minimum quantity sold without stock entry override'),
-
-                                    TextInput::make('max_quantity')
-                                        ->label('Max Order Qty')
-                                        ->numeric()
-                                        ->helperText('Leave empty for no max limit'),
-
-                                    TextInput::make('wholesale_unit_quantity')
-                                        ->label('Wholesale Unit Qty')
-                                        ->numeric()
-                                        ->helperText('Break packs into this quantity when shipped'),
-                                ]),
-
-                                Grid::make(2)->schema([
-                                    TextInput::make('commission_rate')
-                                        ->label('Commission Rate')
-                                        ->numeric()
-                                        ->suffix('%')
-                                        ->helperText('Treats null as using level rate'),
-
-                                    Toggle::make('is_commissionable')
-                                        ->label('Is Commissionable')
-                                        ->inline(false)
-                                        ->helperText('Toggle whether this product generates affiliate commissions')
-                                        ->default(true),
-                                ]),
-                            ]),
-
 
                         KeyValue::make('seo_meta')
                             ->label('SEO Title/Meta')
                             ->hint('Add Product Meta Tags ')
+                            ->addable()
+                            ->deletable()
                             ->addActionLabel('Add Tags'),
 
                     ])->columnSpan(1),

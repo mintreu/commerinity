@@ -41,7 +41,7 @@ class Address extends Model
         'longitude',
         'default',
         'priority',
-        'pickup_location',
+        'pickup_location',   // may be redundant need to check and delete
         'addressable_type',
         'addressable_id',
 

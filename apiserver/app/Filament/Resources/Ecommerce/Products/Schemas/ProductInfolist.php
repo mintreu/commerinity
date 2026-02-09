@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Ecommerce\Products\Schemas;
 
 use App\Services\MoneyService;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -140,6 +141,7 @@ class ProductInfolist
                                         ->placeholder('-')
                                         ->html()
                                         ->alignJustify()
+                                        ->getStateUsing(fn(Model $record) => RichContentRenderer::make($record->description)->toHtml())
                                         ->columnSpanFull(),
                                 ])
                                 ->columnSpanFull(),

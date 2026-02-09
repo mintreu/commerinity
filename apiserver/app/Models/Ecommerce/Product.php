@@ -571,4 +571,21 @@ class Product extends Model implements HasMedia
 
         return null;
     }
+
+
+
+    /**
+     * Orders Related
+     */
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class,'product_id');
+    }
+
+
+
+
+
+
 }

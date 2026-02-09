@@ -1,0 +1,471 @@
+<script setup lang="ts">
+import { contentToHtml } from '~/utils/tiptapToHtml'
+
+const props = withDefaults(defineProps<{
+  content: string
+  tag?: string
+  class?: string
+  ariaLabel?: string
+}>(), {
+  tag: 'div',
+  class: ''
+})
+
+const renderedHtml = computed(() => contentToHtml(props.content))
+</script>
+
+<template>
+  <component
+    :is="props.tag"
+    class="filament-content"
+    :class="props.class"
+    :aria-label="props.ariaLabel"
+    v-html="renderedHtml"
+  />
+</template>
+
+<style scoped>
+/* Base content styling */
+.filament-content {
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.75;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Dark mode base - lighter colors close to white */
+:global(.dark) .filament-content {
+  color: #f3f4f6;
+}
+
+/* Headings */
+.filament-content :deep(h1),
+.filament-content :deep(h2),
+.filament-content :deep(h3),
+.filament-content :deep(h4),
+.filament-content :deep(h5),
+.filament-content :deep(h6) {
+  color: #111827;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+.filament-content :deep(h1) {
+  font-size: 2em;
+}
+
+.filament-content :deep(h2) {
+  font-size: 1.5em;
+}
+
+.filament-content :deep(h3) {
+  font-size: 1.25em;
+}
+
+.filament-content :deep(h4) {
+  font-size: 1.125em;
+}
+
+.filament-content :deep(h5) {
+  font-size: 1em;
+}
+
+.filament-content :deep(h6) {
+  font-size: 0.875em;
+}
+
+:global(.dark) .filament-content :deep(h1),
+:global(.dark) .filament-content :deep(h2),
+:global(.dark) .filament-content :deep(h3),
+:global(.dark) .filament-content :deep(h4),
+:global(.dark) .filament-content :deep(h5),
+:global(.dark) .filament-content :deep(h6) {
+  color: #ffffff;
+}
+
+/* Paragraphs */
+.filament-content :deep(p) {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.filament-content :deep(p:first-child) {
+  margin-top: 0;
+}
+
+.filament-content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+/* Lists */
+.filament-content :deep(ol),
+.filament-content :deep(ul) {
+  padding-inline-start: 1.625em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.filament-content :deep(ul) {
+  list-style-type: disc;
+}
+
+.filament-content :deep(ol) {
+  list-style-type: decimal;
+}
+
+.filament-content :deep(li) {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding-inline-start: 0.375em;
+}
+
+.filament-content :deep(li > p) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.filament-content :deep(ul ul),
+.filament-content :deep(ul ol),
+.filament-content :deep(ol ul),
+.filament-content :deep(ol ol) {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Blockquotes */
+.filament-content :deep(blockquote) {
+  border-inline-start: 4px solid #6366f1;
+  padding-inline-start: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  color: #4b5563;
+  font-style: italic;
+  margin: 1.5em 0;
+  background: linear-gradient(to right, rgba(99, 102, 241, 0.05), transparent);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+:global(.dark) .filament-content :deep(blockquote) {
+  border-inline-start-color: #a5b4fc;
+  color: #e5e7eb;
+  background: linear-gradient(to right, rgba(165, 180, 252, 0.08), transparent);
+}
+
+/* Code blocks (pre) */
+.filament-content :deep(pre) {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.875em;
+  line-height: 1.7;
+  margin: 1.5em 0;
+  border: 1px solid #334155;
+}
+
+:global(.dark) .filament-content :deep(pre) {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-color: #1e293b;
+}
+
+/* Inline code */
+.filament-content :deep(code) {
+  background: #f1f5f9;
+  color: #dc2626;
+  padding: 0.2em 0.4em;
+  border-radius: 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+
+:global(.dark) .filament-content :deep(code) {
+  background: #374151;
+  color: #fca5a5;
+}
+
+/* Code inside pre should not have background */
+.filament-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-weight: normal;
+  border-radius: 0;
+}
+
+/* Tables */
+.filament-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.875em;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+:global(.dark) .filament-content :deep(table) {
+  border-color: #374151;
+}
+
+.filament-content :deep(thead) {
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+}
+
+:global(.dark) .filament-content :deep(thead) {
+  background: linear-gradient(to bottom, #1f2937, #111827);
+}
+
+.filament-content :deep(th) {
+  border-bottom: 2px solid #e5e7eb;
+  text-align: left;
+  padding: 0.75em 1em;
+  font-weight: 600;
+  color: #111827;
+}
+
+:global(.dark) .filament-content :deep(th) {
+  border-bottom-color: #4b5563;
+  color: #ffffff;
+}
+
+.filament-content :deep(td) {
+  padding: 0.75em 1em;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+:global(.dark) .filament-content :deep(td) {
+  border-bottom-color: #4b5563;
+  color: #e5e7eb;
+}
+
+.filament-content :deep(tbody tr:last-child td) {
+  border-bottom: none;
+}
+
+.filament-content :deep(tbody tr:hover) {
+  background: #f9fafb;
+}
+
+:global(.dark) .filament-content :deep(tbody tr:hover) {
+  background: #1f2937;
+}
+
+/* Links */
+.filament-content :deep(a) {
+  color: #6366f1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.15s ease;
+}
+
+.filament-content :deep(a:hover) {
+  color: #4f46e5;
+  text-decoration-thickness: 2px;
+}
+
+:global(.dark) .filament-content :deep(a) {
+  color: #c4b5fd;
+}
+
+:global(.dark) .filament-content :deep(a:hover) {
+  color: #e9d5ff;
+}
+
+/* Images */
+.filament-content :deep(img) {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5em auto;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+:global(.dark) .filament-content :deep(img) {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+}
+
+/* Horizontal rules */
+.filament-content :deep(hr) {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 2em 0;
+}
+
+:global(.dark) .filament-content :deep(hr) {
+  border-top-color: #374151;
+}
+
+/* Strong/Bold text */
+.filament-content :deep(strong),
+.filament-content :deep(b) {
+  font-weight: 600;
+  color: #111827;
+}
+
+:global(.dark) .filament-content :deep(strong),
+:global(.dark) .filament-content :deep(b) {
+  color: #ffffff;
+}
+
+/* Emphasis/Italic */
+.filament-content :deep(em),
+.filament-content :deep(i) {
+  font-style: italic;
+}
+
+/* Underline */
+.filament-content :deep(u) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Strikethrough */
+.filament-content :deep(s),
+.filament-content :deep(del) {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+:global(.dark) .filament-content :deep(s),
+:global(.dark) .filament-content :deep(del) {
+  color: #d1d5db;
+}
+
+/* Mark/Highlight */
+.filament-content :deep(mark) {
+  background: #fef08a;
+  color: #111827;
+  padding: 0.1em 0.2em;
+  border-radius: 0.25rem;
+}
+
+:global(.dark) .filament-content :deep(mark) {
+  background: #854d0e;
+  color: #fef3c7;
+}
+
+/* Subscript & Superscript */
+.filament-content :deep(sub),
+.filament-content :deep(sup) {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.filament-content :deep(sup) {
+  top: -0.5em;
+}
+
+.filament-content :deep(sub) {
+  bottom: -0.25em;
+}
+
+/* Details/Summary (collapsible) */
+.filament-content :deep(details) {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin: 1em 0;
+}
+
+:global(.dark) .filament-content :deep(details) {
+  border-color: #374151;
+}
+
+.filament-content :deep(summary) {
+  font-weight: 600;
+  cursor: pointer;
+  color: #111827;
+  padding: 0.25rem 0;
+}
+
+:global(.dark) .filament-content :deep(summary) {
+  color: #ffffff;
+}
+
+.filament-content :deep(details[open] summary) {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+:global(.dark) .filament-content :deep(details[open] summary) {
+  border-bottom-color: #374151;
+}
+
+/* Definition lists */
+.filament-content :deep(dl) {
+  margin: 1em 0;
+}
+
+.filament-content :deep(dt) {
+  font-weight: 600;
+  color: #111827;
+  margin-top: 1em;
+}
+
+:global(.dark) .filament-content :deep(dt) {
+  color: #ffffff;
+}
+
+.filament-content :deep(dd) {
+  margin-inline-start: 1.5rem;
+  color: #4b5563;
+}
+
+:global(.dark) .filament-content :deep(dd) {
+  color: #d1d5db;
+}
+
+/* Scrollbar styling for overflow content */
+.filament-content :deep(::-webkit-scrollbar) {
+  height: 8px;
+  width: 8px;
+}
+
+.filament-content :deep(::-webkit-scrollbar-track) {
+  background: #f1f5f9;
+  border-radius: 999px;
+}
+
+:global(.dark) .filament-content :deep(::-webkit-scrollbar-track) {
+  background: #1e293b;
+}
+
+.filament-content :deep(::-webkit-scrollbar-thumb) {
+  background: #94a3b8;
+  border-radius: 999px;
+}
+
+.filament-content :deep(::-webkit-scrollbar-thumb:hover) {
+  background: #64748b;
+}
+
+:global(.dark) .filament-content :deep(::-webkit-scrollbar-thumb) {
+  background: #475569;
+}
+
+:global(.dark) .filament-content :deep(::-webkit-scrollbar-thumb:hover) {
+  background: #64748b;
+}
+
+/* First and last child margin adjustments */
+.filament-content :deep(> :first-child) {
+  margin-top: 0;
+}
+
+.filament-content :deep(> :last-child) {
+  margin-bottom: 0;
+}
+</style>
