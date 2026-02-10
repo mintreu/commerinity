@@ -167,6 +167,8 @@
               </div>
             </div>
 
+            <ContentFooterHighlights />
+
             <!-- Bottom Bar -->
             <div class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
               <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-600 dark:text-slate-400">

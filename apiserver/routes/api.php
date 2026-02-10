@@ -21,6 +21,8 @@ use App\Http\Controllers\Api\Dashboard\AppointmentController;
 use App\Http\Controllers\Api\Dashboard\ChallengeController;
 use App\Http\Controllers\Api\Dashboard\ProgramController;
 use App\Http\Controllers\Api\DealsController;
+use App\Http\Controllers\Api\Content\BlogController;
+use App\Http\Controllers\Api\Content\NewsController;
 use App\Http\Controllers\Api\KycController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NoticeController;
@@ -427,6 +429,23 @@ Route::prefix('faq')->group(function () {
     Route::get('/{topicSlug}', [\App\Http\Controllers\Api\FaqController::class, 'byTopic']);
     Route::post('/{url}/helpful', [\App\Http\Controllers\Api\FaqController::class, 'markHelpful']);
     Route::post('/{url}/not-helpful', [\App\Http\Controllers\Api\FaqController::class, 'markNotHelpful']);
+});
+
+// ========================================
+// Blogs & News (Public)
+// ========================================
+Route::prefix('blogs')->group(function () {
+    Route::get('/', [BlogController::class, 'index']);
+    Route::get('/categories', [BlogController::class, 'categories']);
+    Route::get('/{slug}', [BlogController::class, 'show']);
+    Route::get('/{slug}/related', [BlogController::class, 'related']);
+});
+
+Route::prefix('news')->group(function () {
+    Route::get('/', [NewsController::class, 'index']);
+    Route::get('/categories', [NewsController::class, 'categories']);
+    Route::get('/{slug}', [NewsController::class, 'show']);
+    Route::get('/{slug}/related', [NewsController::class, 'related']);
 });
 
 // ========================================
