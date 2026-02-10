@@ -128,7 +128,16 @@
                 />
               </template>
 
-            <!-- (Address and KYC steps removed as per latest requirements) -->
+              <!-- Address Step -->
+              <template #address>
+                <OnboardingStepAddress
+                  ref="addressStep"
+                  :user-name="userName"
+                  :user-phone="userMobile"
+                  @update:data="addressData = $event"
+                  @valid="addressValid = $event"
+                />
+              </template>
             </UStepper>
 
             <!-- Mobile: Show current step content -->
@@ -208,6 +217,7 @@ import type { User } from '~/types/user'
 import OnboardingStepWelcome from '~/components/onboarding/StepWelcome.vue'
 import OnboardingStepProfile from '~/components/onboarding/StepProfile.vue'
 import OnboardingStepContact from '~/components/onboarding/StepContact.vue'
+import OnboardingStepAddress from '~/components/onboarding/StepAddress.vue'
 
 definePageMeta({
   layout: 'guest',
@@ -223,6 +233,7 @@ const { user, refreshUser } = useSanctum()
 const stepper = useTemplateRef('stepper')
 const profileStep = ref()
 const contactStep = ref()
+const addressStep = ref()
 
 // State
 const loading = ref(true)
@@ -233,9 +244,11 @@ const onboardingStatus = ref<any>(null)
 // Step validity states
 const profileValid = ref(false)
 const contactValid = ref(false)
+const addressValid = ref(false)
 // Step data
 const profileData = ref<Record<string, unknown>>({})
 const contactData = ref<Record<string, unknown>>({})
+const addressData = ref<Record<string, unknown>>({})
 // Responsive check
 const isMobile = ref(false)
 
@@ -314,6 +327,12 @@ const stepItems = computed<StepperItem[]>(() => [
     title: 'Contact',
     description: signupMethod.value === 'mobile' ? 'Add email' : 'Add mobile',
     icon: 'i-lucide-mail'
+  },
+  {
+    slot: 'address',
+    title: 'Address',
+    description: 'Delivery location',
+    icon: 'i-lucide-map-pin'
   }
 ])
 
@@ -323,6 +342,7 @@ const currentStepComponent = computed(() => {
     case 0: return OnboardingStepWelcome
     case 1: return OnboardingStepProfile
     case 2: return OnboardingStepContact
+    case 3: return OnboardingStepAddress
     default: return null
   }
 })
@@ -338,6 +358,11 @@ const currentStepProps = computed(() => {
       emailVerifiedAt: emailVerifiedAt.value,
       mobileVerifiedAt: mobileVerifiedAt.value
     }
+    case 3: return {
+      userName: userName.value,
+      userPhone: userMobile.value,
+      initialData: addressData.value
+    }
     default: return {}
   }
 })
@@ -346,6 +371,7 @@ const currentStepRef = computed(() => {
   switch (currentStep.value) {
     case 1: return 'profileStep'
     case 2: return 'contactStep'
+    case 3: return 'addressStep'
     default: return undefined
   }
 })
@@ -364,6 +390,7 @@ const canProceed = computed(() => {
     case 0: return true // Welcome - always can proceed
     case 1: return profileValid.value
     case 2: return contactValid.value
+    case 3: return addressValid.value
     default: return false
   }
 })
@@ -384,6 +411,7 @@ const handleCurrentStepDataUpdate = (data: Record<string, unknown>) => {
   switch (currentStep.value) {
     case 1: handleProfileUpdate(data); break
     case 2: handleContactUpdate(data); break
+    case 3: addressData.value = data; break
   }
 }
 
@@ -391,6 +419,7 @@ const handleCurrentStepValidUpdate = (valid: boolean) => {
   switch (currentStep.value) {
     case 1: profileValid.value = valid; break
     case 2: contactValid.value = valid; break
+    case 3: addressValid.value = valid; break
   }
 }
 
@@ -444,6 +473,7 @@ const fetchOnboardingStatus = async () => {
 const mapStepToIndex = (step: string): number => {
   switch (step) {
     case 'profile': return 1
+    case 'address': return 3
     case 'mobile':
     case 'email':
       return 2
@@ -491,10 +521,35 @@ const saveProfile = async () => {
   }
 }
 
-// Helper: Normalize phone to 10 digits
-const formatPhoneNumber = (phone: string): string => {
+// Helper: Normalize phone to E.164 for India if needed
+const normalizeMobile = (phone: string, countryCode = 'IN'): string => {
   if (!phone) return ''
-  return phone.replace(/\D/g, '').slice(-10)
+  if (phone.startsWith('+')) return phone
+  const digits = phone.replace(/\D/g, '')
+  if (countryCode === 'IN' && digits.length === 10) {
+    return `+91${digits}`
+  }
+  return digits ? `+${digits}` : ''
+}
+
+const fetchAddresses = async () => {
+  try {
+    const response = await useSanctumFetch<{ data: any[] }>(`${config.public.apiBase}/api/addresses`)
+    return response.data || []
+  } catch {
+    return []
+  }
+}
+
+const saveAddress = async () => {
+  const payload = { ...addressData.value } as Record<string, unknown>
+  const countryCode = (payload.country_code as string) || 'IN'
+  payload.person_mobile = normalizeMobile(String(payload.person_mobile || ''), countryCode)
+
+  await useSanctumFetch(`${config.public.apiBase}/api/addresses`, {
+    method: 'POST',
+    body: payload
+  })
 }
 
 const completeOnboarding = async () => {
@@ -502,6 +557,11 @@ const completeOnboarding = async () => {
 
   submitting.value = true
   try {
+    const existingAddresses = await fetchAddresses()
+    if (existingAddresses.length === 0) {
+      await saveAddress()
+    }
+
     await useSanctumFetch(`${config.public.apiBase}/api/onboarding/complete`, {
       method: 'POST'
     })

@@ -94,13 +94,13 @@
         <UInput
           v-model="formState.person_mobile"
           type="tel"
-          placeholder="10-digit mobile number"
+          placeholder="+91XXXXXXXXXX"
           size="lg"
           icon="i-lucide-phone"
           class="w-full"
         />
         <template #hint>
-          <span class="text-xs text-gray-500">Enter the 10-digit mobile number.</span>
+          <span class="text-xs text-gray-500">Enter number with country code (e.g. +91XXXXXXXXXX).</span>
         </template>
       </UFormField>
       </div>
@@ -341,7 +341,9 @@ const formState = reactive<AddressFormData>({
 // Validation schema
 const schema = z.object({
   person_name: z.string().min(2, 'Name must be at least 2 characters'),
-  person_mobile: z.string().min(10, 'Please enter a valid phone number'),
+  person_mobile: z.string()
+    .min(10, 'Please enter a valid phone number')
+    .refine((value) => /^\+?\d{10,15}$/.test(value), 'Use country code (e.g. +91XXXXXXXXXX)'),
   address_1: z.string().min(5, 'Please enter your address'),
   address_2: z.string().optional(),
   city: z.string().min(2, 'Please enter your city'),

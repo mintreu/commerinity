@@ -25,6 +25,12 @@ final class OnboardingVerifierService
             'required' => true,
             'weight' => 1,
         ],
+        'address' => [
+            'name' => 'Add Address',
+            'description' => 'Add at least one delivery address',
+            'required' => true,
+            'weight' => 1,
+        ],
         'mobile' => [
             'name' => 'Verify Mobile',
             'description' => 'Verify your mobile number via OTP',
@@ -71,6 +77,7 @@ final class OnboardingVerifierService
     {
         $this->stepStatus = [
             'profile' => $this->isProfileComplete(),
+            'address' => $this->hasAddress(),
             'mobile' => $this->isMobileVerified(),
             'email' => $this->isEmailVerified(),
             'avatar' => $this->hasAvatar(),
@@ -85,6 +92,14 @@ final class OnboardingVerifierService
         return ! empty($this->user->name)
             && $this->user->dob !== null
             && $this->user->gender !== null;
+    }
+
+    /**
+     * Check if user has at least one saved address.
+     */
+    private function hasAddress(): bool
+    {
+        return $this->user->addresses()->exists();
     }
 
     /**
