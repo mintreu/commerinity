@@ -4,6 +4,8 @@
  * Displays products from the API with filters and categories
  */
 
+import { getContextualApiError, getEmptyStateMessage } from '~/utils/api-error'
+
 definePageMeta({
   layout: 'public'
 })
@@ -257,17 +259,20 @@ const queryParams = computed(() => {
 
 const productsResponse = ref<CatalogProductsResponse | null>(null)
 const productsStatus = ref<'pending' | 'success' | 'error'>('pending')
+const productsError = ref<string | null>(null)
 
 const loadProducts = async () => {
   productsStatus.value = 'pending'
+  productsError.value = null
   try {
     const queryString = buildQueryString(queryParams.value)
     productsResponse.value = await useSanctumFetch(
       `${config.public.apiBase}/api/catalog/products${queryString}`
     )
     productsStatus.value = 'success'
-  } catch {
+  } catch (err: unknown) {
     productsStatus.value = 'error'
+    productsError.value = getContextualApiError(err, 'products').message
   }
 }
 
@@ -282,9 +287,20 @@ const categoriesResponse = ref<{
     children: Array<{ id: number; name: string; slug: string; product_count: number }>
   }>
 } | null>(null)
+const categoriesStatus = ref<'pending' | 'success' | 'error'>('pending')
+const categoriesError = ref<string | null>(null)
 
 const loadCategories = async () => {
-  categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
+  categoriesStatus.value = 'pending'
+  categoriesError.value = null
+  try {
+    categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
+    categoriesStatus.value = 'success'
+  } catch (err: unknown) {
+    categoriesResponse.value = null
+    categoriesStatus.value = 'error'
+    categoriesError.value = getContextualApiError(err, 'categories').message
+  }
 }
 
 const products = computed<CatalogProduct[]>(() => productsResponse.value?.data ?? [])
@@ -305,6 +321,9 @@ const categories = computed(() => {
   const cats = categoriesResponse.value?.data || []
   return [{ id: 0, name: 'All Products', slug: '', product_count: 0 }, ...cats]
 })
+const categoriesEmpty = computed(() =>
+  categoriesStatus.value === 'success' && (categoriesResponse.value?.data?.length ?? 0) === 0
+)
 
 const activeFilterCount = computed(() => {
   let count = 0
@@ -471,7 +490,7 @@ const addToCart = async (product: typeof products.value[0]) => {
       })
     }
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Failed to add to cart'
+    const errorMessage = getContextualApiError(error, 'cart').message
     toast.add({
       title: 'Error',
       description: errorMessage,
@@ -528,6 +547,12 @@ const addToCart = async (product: typeof products.value[0]) => {
               <UIcon name="i-lucide-folder" class="w-5 h-5 text-primary-500" />
               Categories
             </h3>
+            <p v-if="categoriesError" class="text-xs text-red-600 dark:text-red-400 mb-2">
+              {{ categoriesError }}
+            </p>
+            <p v-else-if="categoriesEmpty" class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+              {{ getEmptyStateMessage('categories') }}
+            </p>
             <ul class="space-y-1 max-h-64 overflow-y-auto">
               <li v-for="cat in categories" :key="cat.id">
                 <button
@@ -663,6 +688,22 @@ const addToCart = async (product: typeof products.value[0]) => {
                 <div class="h-10 bg-slate-200 dark:bg-slate-700 rounded" />
               </div>
             </div>
+          </div>
+
+          <!-- Error State -->
+          <div
+            v-else-if="productsStatus === 'error'"
+            class="text-center py-12 text-red-600 dark:text-red-400"
+          >
+            {{ productsError || getContextualApiError(null, 'products').message }}
+          </div>
+
+          <!-- Empty State -->
+          <div
+            v-else-if="productsStatus === 'success' && products.length === 0"
+            class="text-center py-12 text-slate-600 dark:text-slate-300"
+          >
+            {{ getEmptyStateMessage('products') }}
           </div>
 
           <!-- Products Grid -->

@@ -5,6 +5,8 @@
  * Only shows categories that have products
  */
 
+import { getContextualApiError, getEmptyStateMessage } from '~/utils/api-error'
+
 definePageMeta({
   layout: 'public'
 })
@@ -27,18 +29,18 @@ const config = useRuntimeConfig()
 
 const categoriesResponse = ref<{ success: boolean; data: Category[] } | null>(null)
 const status = ref<'pending' | 'success' | 'error'>('pending')
-const error = ref<unknown>(null)
+const errorMessage = ref<string | null>(null)
 
 const categories = computed(() => categoriesResponse.value?.data || [])
 
 const loadCategories = async () => {
   status.value = 'pending'
-  error.value = null
+  errorMessage.value = null
   try {
     categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
     status.value = 'success'
   } catch (err) {
-    error.value = err
+    errorMessage.value = getContextualApiError(err, 'categories').message
     status.value = 'error'
   }
 }
@@ -215,7 +217,7 @@ const getLeafCategories = (category: Category): Category[] => {
 
       <!-- Error State -->
       <div
-        v-else-if="error"
+        v-else-if="errorMessage"
         class="text-center py-12"
       >
         <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
@@ -228,7 +230,7 @@ const getLeafCategories = (category: Category): Category[] => {
           Failed to Load
         </h3>
         <p class="text-slate-500 mb-4">
-          {{ error.message }}
+          {{ errorMessage }}
         </p>
         <UButton
           color="primary"
@@ -253,7 +255,7 @@ const getLeafCategories = (category: Category): Category[] => {
           No Categories
         </h3>
         <p class="text-slate-500 mb-4">
-          No categories with products found
+          {{ getEmptyStateMessage('categories') }}
         </p>
         <NuxtLink to="/shop">
           <UButton color="primary">Browse All Products</UButton>

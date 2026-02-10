@@ -92,6 +92,8 @@ export default defineNuxtConfig({
       // Theme Colors (for dynamic branding)
       primaryColor: process.env.NUXT_PUBLIC_PRIMARY_COLOR || '#a855f7',
       secondaryColor: process.env.NUXT_PUBLIC_SECONDARY_COLOR || '#d946ef',
+      // Theme switcher: "default" keeps current violet/fuchsia, "amber" enables amber/orange
+      themeName: process.env.NUXT_PUBLIC_THEME || 'default',
 
       // Feature Flags
       enablePwa: process.env.NUXT_PUBLIC_ENABLE_PWA !== 'false',

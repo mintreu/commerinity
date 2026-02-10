@@ -28,47 +28,16 @@ const {
 } = useCart()
 const { formatCurrency } = useBranding()
 
-const userAddresses = ref<{ uuid: string, label: string }[]>([])
-const isAddressesLoading = ref(false)
-
-async function fetchUserAddresses() {
-  isAddressesLoading.value = true
-  try {
-    // Assuming an API endpoint exists to fetch user addresses
-    const { data } = await useSanctumFetch('/api/addresses', { method: 'GET' })
-    if (data.value && Array.isArray(data.value.addresses)) {
-      userAddresses.value = data.value.addresses.map((addr: any) => ({
-        uuid: addr.uuid,
-        label: `${addr.address_line_1}, ${addr.city}, ${addr.state}, ${addr.zip}` // Adjust based on actual address structure
-      }))
-
-      // Set default selected addresses if available
-      if (userAddresses.value.length > 0) {
-        shippingAddressId.value = userAddresses.value[0].uuid
-        billingAddressId.value = userAddresses.value[0].uuid
-      }
-    }
-  } catch (error) {
-    toast.add({
-      title: 'Error fetching addresses',
-      description: 'Could not load user addresses.',
-      color: 'error'
-    })
-  } finally {
-    isAddressesLoading.value = false
-  }
-}
-
 // Local state
 const updatingItem = ref<string | null>(null)
 const removingItem = ref<string | null>(null)
 
 // Fetch cart and addresses on mount
 onMounted(async () => {
-  await Promise.all([
-    fetchCart(),
-    fetchUserAddresses()
-  ])
+  await fetchCart()
+  if (isLoggedIn.value) {
+    await fetchAddresses()
+  }
 })
 
 // Quantity handlers
@@ -150,6 +119,12 @@ const giftMessage = ref('')
 const couponCode = ref('')
 
 const fetchAddresses = async () => {
+  if (!isLoggedIn.value) {
+    addresses.value = []
+    shippingAddressId.value = null
+    billingAddressId.value = null
+    return
+  }
   addressesLoading.value = true
   try {
     const response = await useSanctumFetch<{ data: any[] }>(`${config.public.apiBase}/api/addresses`)
@@ -163,10 +138,6 @@ const fetchAddresses = async () => {
     addressesLoading.value = false
   }
 }
-
-onMounted(() => {
-  fetchAddresses()
-})
 
 watch(billingIsShipping, (v) => {
   if (v) billingAddressId.value = shippingAddressId.value

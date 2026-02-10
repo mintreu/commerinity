@@ -52,7 +52,8 @@ useHead({
     { rel: 'icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'en'
+    lang: 'en',
+    'data-theme': config.public.themeName
   }
 })
 </script>

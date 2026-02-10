@@ -5,6 +5,8 @@
  * Shows beautiful category cards with thumbnails
  */
 
+import { getContextualApiError, getEmptyStateMessage } from '~/utils/api-error'
+
 interface CategoryImage {
   url: string
   thumbnail?: string
@@ -30,13 +32,16 @@ const config = useRuntimeConfig()
 
 const categoriesResponse = ref<CategoriesResponse | null>(null)
 const status = ref<'pending' | 'success' | 'error'>('pending')
+const errorMessage = ref<string | null>(null)
 
 const loadCategories = async () => {
   status.value = 'pending'
+  errorMessage.value = null
   try {
     categoriesResponse.value = await useSanctumFetch(`${config.public.apiBase}/api/catalog/categories`)
     status.value = 'success'
-  } catch {
+  } catch (err: unknown) {
+    errorMessage.value = getContextualApiError(err, 'categories').message
     status.value = 'error'
   }
 }
@@ -46,6 +51,7 @@ const topCategories = computed(() => {
   const items = categoriesResponse.value?.data || []
   return items.slice(0, 6)
 })
+const categoriesEmpty = computed(() => status.value === 'success' && topCategories.value.length === 0)
 
 onMounted(() => {
   loadCategories()
@@ -93,6 +99,22 @@ onMounted(() => {
         >
           <div class="h-full bg-slate-200 dark:bg-slate-700" />
         </div>
+      </div>
+
+      <!-- Error State -->
+      <div
+        v-else-if="errorMessage"
+        class="text-center py-8 text-red-600 dark:text-red-400"
+      >
+        {{ errorMessage }}
+      </div>
+
+      <!-- Empty State -->
+      <div
+        v-else-if="categoriesEmpty"
+        class="text-center py-8 text-slate-600 dark:text-slate-300"
+      >
+        {{ getEmptyStateMessage('categories') }}
       </div>
 
       <!-- Categories Grid -->

@@ -488,10 +488,10 @@ const hasContent = computed(() => {
 .rich-content .text-blue { color: #3b82f6; }
 
 .rich-content [style*="color: rgb(139, 92, 246)"],
-.rich-content .text-violet { color: #8b5cf6; }
+.rich-content .text-violet { color: var(--theme-primary-500); }
 
 .rich-content [style*="color: rgb(236, 72, 153)"],
-.rich-content .text-pink { color: #ec4899; }
+.rich-content .text-pink { color: var(--theme-accent-600); }
 
 /* ========================================
    Placeholder (Editor empty state)

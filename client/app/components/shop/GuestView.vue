@@ -237,7 +237,7 @@ defineProps<Props>()
       </section>
 
       <!-- DEAL BANNER -->
-      <section class="py-8 md:py-12 bg-gradient-to-r from-red-600 via-pink-600 to-fuchsia-600">
+      <section class="py-8 md:py-12 flash-deals-banner">
         <div class="max-w-7xl mx-auto px-4 md:px-6">
           <NuxtLink
             to="/shop/deals"
@@ -248,7 +248,7 @@ defineProps<Props>()
                 <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
                   <UIcon
                     name="i-lucide-zap"
-                    class="w-8 h-8 text-yellow-300"
+                    class="w-8 h-8 text-white/90"
                   />
                 </div>
                 <div>
