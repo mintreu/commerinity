@@ -42,22 +42,11 @@ class EditProduct extends EditRecord
         // Build filter_options from the form data
         $filterOptions = $this->buildFilterOptions($data);
 
-        // Prepare data for ProductManager
-        $productData = [
-            'name' => $data['name'],
-            'sku' => $data['sku'],
-            'url' => $data['url'],
-            'status' => $data['status'] ?? ProductStatusCast::DRAFT->value,
-            'type' => $data['type'] ?? ProductTypeCast::SIMPLE->value,
-            'filter_group_id' => $data['filter_group_id'] ?? null,
-            'category_id' => $data['category_id'] ?? null,
-            'price' => $data['price'] ?? 0,
-            'description' => $data['description'] ?? null,
-            'short_description' => $data['short_description'] ?? null,
-            'is_returnable' => $data['is_returnable'] ?? false,
-            'return_days' => $data['return_days'] ?? 0,
-            'filter_options' => $filterOptions,
-        ];
+        // Prepare data for ProductManager (keep all form fields)
+        $productData = $data;
+        $productData['status'] = $data['status'] ?? ProductStatusCast::DRAFT->value;
+        $productData['type'] = $data['type'] ?? ProductTypeCast::SIMPLE->value;
+        $productData['filter_options'] = $filterOptions;
 
         // Use ProductManager to update product (handles variants automatically)
         $product = ProductManager::update($record, $productData);

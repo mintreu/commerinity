@@ -54,7 +54,7 @@ final class ProductManager
                 $filterOptions = $data['filter_options'] ?? [];
                 unset($data['filter_options']);
 
-                $record = Product::create([
+                $record = Product::create(array_merge($data, [
                     'name' => $data['name'],
                     'sku' => $data['sku'],
                     'url' => $data['url'],
@@ -62,17 +62,18 @@ final class ProductManager
                     'type' => $case->value,
                     'filter_group_id' => $data['filter_group_id'],
                     'category_id' => $data['category_id'] ?? null,
-                   // 'price' => $data['price'] ?? 0,
+                    'price' => $data['price'] ?? 0,
+                    'gst_tax_type' => $data['gst_tax_type'] ?? null,
                     'description' => $data['description'] ?? null,
                     'short_description' => $data['short_description'] ?? null,
                     'is_returnable' => $data['is_returnable'] ?? false,
                     'return_days' => $data['return_days'] ?? 0,
-                ]);
+                ]));
 
                 if (! empty($filterOptions)) {
                     $instance = new self;
 
-                    if (in_array($case->value, [ProductTypeCast::SIMPLE->value])) {
+                    if (in_array($case->value, [ProductTypeCast::SIMPLE->value, ProductTypeCast::WHOLESALE->value])) {
                         $instance->attachFilterOptionsToProduct($record, $filterOptions);
                     } elseif ($case->value === ProductTypeCast::CONFIGURABLE->value) {
                         $instance->attachFilterOptionsToParent($record, $filterOptions);
@@ -103,11 +104,15 @@ final class ProductManager
     {
         return DB::transaction(function () use ($product, $data, $reload) {
             try {
-                if (! ProductTypeCast::validate($data['type'])) {
-                    throw new \InvalidArgumentException("Invalid product type: {$data['type']}");
+                $type = $data['type'] instanceof ProductTypeCast
+                    ? $data['type']->value
+                    : ($data['type'] ?? $product->type);
+
+                if (! ProductTypeCast::validate($type)) {
+                    throw new \InvalidArgumentException("Invalid product type: {$type}");
                 }
 
-                $case = ProductTypeCast::tryFrom($data['type']);
+                $case = ProductTypeCast::tryFrom($type);
 
                 $recreateVariants = isset($data['filter_group_id'])
                     && $product->filter_group_id != $data['filter_group_id'];
@@ -115,20 +120,11 @@ final class ProductManager
                 $filterOptions = $data['filter_options'] ?? [];
                 unset($data['filter_options']);
 
-                $product->update([
-                    'name' => $data['name'] ?? $product->name,
-                    'sku' => $data['sku'] ?? $product->sku,
-                    'url' => $data['url'] ?? $product->url,
-                    'status' => $data['status'] ?? $product->status,
-                    'type' => $data['type'] ?? $product->type,
-                    'filter_group_id' => $data['filter_group_id'] ?? $product->filter_group_id,
-                    'category_id' => $data['category_id'] ?? $product->category_id,
-                  //  'price' => $data['price'] ?? $product->price,
-                    'description' => $data['description'] ?? $product->description,
-                    'short_description' => $data['short_description'] ?? $product->short_description,
-                    'is_returnable' => $data['is_returnable'] ?? $product->is_returnable,
-                    'return_days' => $data['return_days'] ?? $product->return_days,
-                ]);
+                $product->update(array_merge($data, [
+                    'type' => $type,
+                    'price' => $data['price'] ?? $product->price,
+                    'gst_tax_type' => $data['gst_tax_type'] ?? $product->gst_tax_type,
+                ]));
 
                 $instance = new self;
 
@@ -232,10 +228,16 @@ final class ProductManager
      */
     private function attachFilterOptionsToParent(Product $product, array $filterOptions): void
     {
-        foreach ($filterOptions as $filterId => $optionIds) {
-            foreach ($optionIds as $optionId) {
-                $product->filterOptions()->attach($optionId, ['filter_id' => $filterId]);
-            }
+        $pivotData = collect($filterOptions)
+            ->reduce(function (array $carry, $optionIds, $filterId) {
+                foreach ($optionIds as $optionId) {
+                    $carry[$optionId] = ['filter_id' => $filterId];
+                }
+                return $carry;
+            }, []);
+
+        if (! empty($pivotData)) {
+            $product->filterOptions()->attach($pivotData);
         }
     }
 
@@ -244,34 +246,48 @@ final class ProductManager
      */
     private function attachFilterOptionsToProduct(Product $product, array $filterOptions): void
     {
-        if (is_numeric(array_key_first($filterOptions))) {
-            foreach ($filterOptions as $optionId) {
-                if (is_object($optionId)) {
-                    $optionId = $optionId->id;
-                } elseif (is_array($optionId)) {
-                    $optionId = $product->type === ProductTypeCast::CONFIGURABLE->value ? $optionId[0] : $optionId;
-                }
+        $firstArrayKeyIsNumber = is_numeric(array_key_first($filterOptions));
 
-                $option = FilterOption::with('filter')->find($optionId);
+        foreach ($filterOptions as $key => $ids) {
+            if (is_array($ids)) {
+                foreach ($ids as $option) {
+                    $optionId = $this->getOptionId($product, $option, $firstArrayKeyIsNumber);
+                    $filterId = $firstArrayKeyIsNumber
+                        ? FilterOption::find($optionId)?->filter_id
+                        : $key;
 
-                if ($option && $option->filter) {
-                    $product->filterOptions()->attach($optionId, ['filter_id' => $option->filter->id]);
-                }
-            }
-        } else {
-            foreach ($filterOptions as $filterId => $optionIds) {
-                $optionIds = is_array($optionIds) ? $optionIds : [$optionIds];
-                foreach ($optionIds as $optionId) {
-                    if (is_object($optionId)) {
-                        $optionId = $optionId->id;
-                    } elseif (is_array($optionId)) {
-                        $optionId = $optionId['id'] ?? $optionId[0];
+                    if ($optionId && $filterId) {
+                        $product->filterOptions()->attach($optionId, ['filter_id' => $filterId]);
                     }
+                }
+            } else {
+                $optionId = $this->getOptionId($product, $ids, $firstArrayKeyIsNumber);
+                $filterId = $firstArrayKeyIsNumber
+                    ? FilterOption::find($optionId)?->filter_id
+                    : $key;
 
+                if ($optionId && $filterId) {
                     $product->filterOptions()->attach($optionId, ['filter_id' => $filterId]);
                 }
             }
         }
+    }
+
+    private function getOptionId(Product $product, array|object|int $option, bool $isVariant = false): ?int
+    {
+        if (is_object($option)) {
+            return $option->id;
+        }
+
+        if (is_array($option)) {
+            if ($isVariant) {
+                return $product->type == ProductTypeCast::CONFIGURABLE ? $option[0] : $option;
+            }
+
+            return $option['id'] ?? $option[0] ?? null;
+        }
+
+        return $option;
     }
 
     /**
@@ -316,16 +332,19 @@ final class ProductManager
         foreach ($newVariants as $variant) {
             $variantProduct = Product::create([
                 'parent_id' => $parentProduct->id,
-                'type' => 'simple',
-                'name' => $productData['name'],
+                'type' => ProductTypeCast::SIMPLE->value,
+                'name' => $parentProduct->name,
                 'sku' => $variant['sku'],
                 'url' => $variant['url'],
                 'status' => $parentProduct->status,
-                'description' => $productData['description'] ?? null,
-                'short_description' => $parentProduct->short_description,
-                'filter_group_id' => $productData['filter_group_id'],
-                'category_id' => $productData['category_id'] ?? null,
-               // 'price' => $parentProduct->price,
+                'description' => $parentProduct->description ?? null,
+                'short_description' => $parentProduct->short_description ?? null,
+                'filter_group_id' => $parentProduct->filter_group_id,
+                'category_id' => $parentProduct->category_id,
+                'min_quantity' => $parentProduct->min_quantity ?? 1,
+                'max_quantity' => $parentProduct->max_quantity ?? 1,
+                'price' => $parentProduct->price ?? 0,
+                'gst_tax_type' => $parentProduct->gst_tax_type,
                 'is_returnable' => $parentProduct->is_returnable,
                 'return_days' => $parentProduct->return_days,
             ]);
@@ -435,7 +454,7 @@ final class ProductManager
         $variantsToCreate = $toCreate->map(fn ($signature) => $newSignatures[$signature])->values()->all();
 
         if (! empty($variantsToCreate)) {
-            $this->createVariants($product, $productData, $variantsToCreate);
+            $this->createVariants($product, $product->toArray(), $variantsToCreate);
         }
     }
 }

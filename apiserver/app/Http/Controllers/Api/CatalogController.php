@@ -25,32 +25,7 @@ use Illuminate\Support\Carbon;
 
 class CatalogController extends Controller
 {
-    /**
-     * Get all products with filtering
-     */
-    //    public function products(Request $request): AnonymousResourceCollection
-    //    {
-    //        $products = Product::query()
-    //            ->purchasable()
-    //            ->whereNull('parent_id')
-    //            ->with(['category', 'media'])
-    //            // Load stock for price calculation and availability
-    //            ->withStockInfo()
-    //            // Apply Scopes
-    //            ->search($request->input('search'))
-    //            ->byCategory($request->input('category'))
-    //            // Filter options logic (TBD if needed via scope, currently basic)
-    //            // Price range filter
-    //            ->byPrice(
-    //                $request->input('min_price') ? (int) $request->input('min_price') : null,
-    //                $request->input('max_price') ? (int) $request->input('max_price') : null
-    //            )
-    //            ->sort($request->input('sort'))
-    //            ->paginate($request->input('per_page', 20));
-    //
-    //        // Pass context if needed via additional data wrapper or transform
-    //        return ProductResource::collection($products);
-    //    }
+
 
     public function products(Request $request): AnonymousResourceCollection
     {

@@ -59,7 +59,6 @@ class Product extends Model implements HasMedia
         'height_cm',
         'is_commissionable',  // for distributor type user to get commission from their own originator user teams
         'commission_rate',  // legacy name: distributor_percentage
-        'distributor_percentage',
         'view_count',
         'seo_meta', // this can be rename as only meta .. json column
     ];
@@ -87,21 +86,7 @@ class Product extends Model implements HasMedia
             'height_cm' => 'integer',
             'is_commissionable' => 'boolean',
             'commission_rate' => 'decimal:2',
-            'distributor_percentage' => 'decimal:2',
         ];
-    }
-
-    /**
-     * Alias for commission_rate to keep naming clear for distributors.
-     */
-    public function getDistributorPercentageAttribute(): ?float
-    {
-        return $this->commission_rate;
-    }
-
-    public function setDistributorPercentageAttribute(?float $value): void
-    {
-        $this->attributes['commission_rate'] = $value;
     }
 
     protected static function booted(): void

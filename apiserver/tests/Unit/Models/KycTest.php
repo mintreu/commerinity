@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Casts\KycStatusCast;
+use App\Casts\KycTypeCast;
 use App\Models\Kyc;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -161,7 +162,7 @@ test('personal scope filters personal KYC records', function () {
     $personal = Kyc::personal()->get();
 
     expect($personal)->toHaveCount(1)
-        ->and($personal->first()->kyc_type)->toBe('personal');
+        ->and($personal->first()->kyc_type)->toBe(KycTypeCast::PERSONAL);
 });
 
 test('business scope filters business KYC records', function () {
@@ -173,7 +174,7 @@ test('business scope filters business KYC records', function () {
 
     expect($business)->toHaveCount(2);
     foreach ($business as $kyc) {
-        expect($kyc->kyc_type)->toBe('business');
+        expect($kyc->kyc_type)->toBe(KycTypeCast::BUSINESS);
     }
 });
 
@@ -236,7 +237,7 @@ test('personal KYC has correct fields', function () {
         'aadhaar_number' => '123456789012',
     ]);
 
-    expect($kyc->kyc_type)->toBe('personal')
+    expect($kyc->kyc_type)->toBe(KycTypeCast::PERSONAL)
         ->and($kyc->pan_number)->toBe('ABCDE1234F')
         ->and($kyc->aadhaar_number)->toBe('123456789012');
 });
@@ -244,7 +245,7 @@ test('personal KYC has correct fields', function () {
 test('business KYC has company fields', function () {
     $kyc = Kyc::factory()->business()->create();
 
-    expect($kyc->kyc_type)->toBe('business')
+    expect($kyc->kyc_type)->toBe(KycTypeCast::BUSINESS)
         ->and($kyc->company_name)->not->toBeNull()
         ->and($kyc->company_type)->not->toBeNull();
 });
