@@ -30,7 +30,7 @@ test('first address is automatically set as default', function () {
 
     $response = $this->actingAs($user)->postJson('/api/addresses', [
         'person_name' => 'John Doe',
-        'person_mobile' => '+919876543210',
+        'person_mobile' => '9876543210',
         'type' => 'home',
         'address_1' => '123 Main St',
         'city' => 'Kolkata',
@@ -49,7 +49,7 @@ test('user can create new address', function () {
     $response = $this->actingAs($user)->postJson('/api/addresses', [
         'title' => 'Home',
         'person_name' => 'John Doe',
-        'person_mobile' => '+919876543210',
+        'person_mobile' => '9876543210',
         'type' => 'home',
         'address_1' => '123 Main St',
         'address_2' => 'Apt 4B',
@@ -153,7 +153,7 @@ test('validation requires person name', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/api/addresses', [
-        'person_mobile' => '+919876543210',
+        'person_mobile' => '9876543210',
         'type' => 'home',
         'address_1' => '123 Main St',
         'city' => 'Kolkata',
@@ -171,7 +171,7 @@ test('validation requires valid mobile format', function () {
 
     $response = $this->actingAs($user)->postJson('/api/addresses', [
         'person_name' => 'John Doe',
-        'person_mobile' => '1234567890',
+        'person_mobile' => '123456789',
         'type' => 'home',
         'address_1' => '123 Main St',
         'city' => 'Kolkata',
@@ -189,7 +189,7 @@ test('validation requires valid address type', function () {
 
     $response = $this->actingAs($user)->postJson('/api/addresses', [
         'person_name' => 'John Doe',
-        'person_mobile' => '+919876543210',
+        'person_mobile' => '9876543210',
         'type' => 'invalid',
         'address_1' => '123 Main St',
         'city' => 'Kolkata',
