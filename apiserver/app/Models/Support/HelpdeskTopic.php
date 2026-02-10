@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Helpdesk;
+namespace App\Models\Support;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -108,3 +108,7 @@ class HelpdeskTopic extends Model
         return 'slug';
     }
 }
+
+
+
+

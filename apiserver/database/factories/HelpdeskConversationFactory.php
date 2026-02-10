@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Admin;
-use App\Models\Helpdesk\Helpdesk;
-use App\Models\Helpdesk\HelpdeskConversation;
+use App\Models\Support\Helpdesk;
+use App\Models\Support\HelpdeskConversation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Helpdesk\HelpdeskConversation>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Support\HelpdeskConversation>
  */
 class HelpdeskConversationFactory extends Factory
 {
@@ -90,3 +90,4 @@ class HelpdeskConversationFactory extends Factory
         ]);
     }
 }
+

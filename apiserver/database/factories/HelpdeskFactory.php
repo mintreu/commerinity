@@ -7,14 +7,14 @@ namespace Database\Factories;
 use App\Casts\HelpdeskPriorityCast;
 use App\Casts\HelpdeskStatusCast;
 use App\Models\Admin;
-use App\Models\Helpdesk\Helpdesk;
-use App\Models\Helpdesk\HelpdeskTopic;
+use App\Models\Support\Helpdesk;
+use App\Models\Support\HelpdeskTopic;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Helpdesk\Helpdesk>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Support\Helpdesk>
  */
 class HelpdeskFactory extends Factory
 {
@@ -164,8 +164,9 @@ class HelpdeskFactory extends Factory
     public function withConversations(int $count = 3): static
     {
         return $this->has(
-            \App\Models\Helpdesk\HelpdeskConversation::factory()->count($count),
+            \App\Models\Support\HelpdeskConversation::factory()->count($count),
             'conversations'
         );
     }
 }
+

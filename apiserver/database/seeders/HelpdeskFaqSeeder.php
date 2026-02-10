@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Helpdesk\HelpdeskFaq;
-use App\Models\Helpdesk\HelpdeskTopic;
+use App\Models\Support\HelpdeskFaq;
+use App\Models\Support\HelpdeskTopic;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -186,3 +186,4 @@ class HelpdeskFaqSeeder extends Seeder
         $this->command->info("Seeded {$count} helpdesk FAQs.");
     }
 }
+

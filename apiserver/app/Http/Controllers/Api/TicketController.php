@@ -10,21 +10,20 @@ use App\Http\Requests\StoreTicketRequest;
 use App\Http\Resources\HelpdeskTopicResource;
 use App\Http\Resources\TicketConversationResource;
 use App\Http\Resources\TicketResource;
-use App\Models\HelpdeskConversation;
-use App\Models\HelpdeskTopic;
-use App\Models\Ticket;
+use App\Models\Support\Helpdesk;
+use App\Models\Support\HelpdeskConversation;
+use App\Models\Support\HelpdeskTopic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 final class TicketController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $tickets = Ticket::query()
-            ->forUser($request->user()->id)
-            ->with(['topic', 'user'])
-            ->recent()
+        $tickets = Helpdesk::query()
+            ->forUser($request->user())
+            ->with(['topic', 'authorable'])
+            ->orderByDesc('created_at')
             ->get();
 
         return response()->json([
@@ -35,15 +34,16 @@ final class TicketController extends Controller
     public function store(StoreTicketRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $data['user_id'] = $request->user()->id;
+        $data['authorable_type'] = $request->user()->getMorphClass();
+        $data['authorable_id'] = $request->user()->getKey();
+
+        $ticket = Helpdesk::create($data);
 
         if ($request->hasFile('screenshot')) {
-            $path = $request->file('screenshot')->store('helpdesk/attachments', 'public');
-            $data['attachment'] = [Storage::url($path)];
+            $ticket->addMediaFromRequest('screenshot')->toMediaCollection('ticketAttachment');
         }
 
-        $ticket = Ticket::create($data);
-        $ticket->load(['topic', 'user']);
+        $ticket->load(['topic', 'authorable']);
 
         return response()->json([
             'message' => 'Ticket created successfully',
@@ -51,13 +51,13 @@ final class TicketController extends Controller
         ], 201);
     }
 
-    public function show(Ticket $ticket, Request $request): JsonResponse
+    public function show(Helpdesk $ticket, Request $request): JsonResponse
     {
-        if ($ticket->user_id !== $request->user()->id) {
+        if ($ticket->authorable_id !== $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $ticket->load(['topic', 'user', 'conversations.authorable']);
+        $ticket->load(['topic', 'authorable', 'conversations.authorable']);
 
         return response()->json([
             'data' => [
@@ -67,29 +67,27 @@ final class TicketController extends Controller
         ]);
     }
 
-    public function reply(ReplyTicketRequest $request, Ticket $ticket): JsonResponse
+    public function reply(ReplyTicketRequest $request, Helpdesk $ticket): JsonResponse
     {
-        if ($ticket->user_id !== $request->user()->id) {
+        if ($ticket->authorable_id !== $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $data = $request->validated();
-        $attachments = [];
+        $conversation = HelpdeskConversation::create([
+            'helpdesk_id' => $ticket->id,
+            'message' => $data['message'],
+            'authorable_type' => $request->user()->getMorphClass(),
+            'authorable_id' => $request->user()->getKey(),
+            'source' => 'human',
+            'is_internal' => false,
+        ]);
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $path = $file->store('helpdesk/conversations', 'public');
-                $attachments[] = Storage::url($path);
+                $conversation->addMedia($file)->toMediaCollection('ticketConversationAttachment');
             }
         }
-
-        $conversation = HelpdeskConversation::create([
-            'ticket_id' => $ticket->id,
-            'message' => $data['message'],
-            'authorable_type' => get_class($request->user()),
-            'authorable_id' => $request->user()->id,
-            'attachment' => $attachments,
-        ]);
 
         $conversation->load('authorable');
 
@@ -103,7 +101,7 @@ final class TicketController extends Controller
     {
         $topics = HelpdeskTopic::query()
             ->active()
-            ->tickable()
+            ->ticketable()
             ->ordered()
             ->get();
 

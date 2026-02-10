@@ -11,9 +11,13 @@ final class TicketConversationResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $attachments = method_exists($this, 'getMedia')
+            ? $this->getMedia('ticketConversationAttachment')->map(fn ($media) => $media->getFullUrl())->values()->all()
+            : ($this->attachment ?? []);
+
         return [
             'message' => $this->message,
-            'attachment' => $this->attachment,
+            'attachments' => $attachments,
             'created_at' => $this->created_at->toISOString(),
             'author' => $this->whenLoaded('authorable', fn () => [
                 'name' => $this->authorable->name ?? 'Unknown',

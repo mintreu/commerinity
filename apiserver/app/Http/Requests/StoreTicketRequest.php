@@ -27,7 +27,7 @@ final class StoreTicketRequest extends FormRequest
     public function prepareForValidation(): void
     {
         if ($this->has('topic_slug')) {
-            $topic = \App\Models\HelpdeskTopic::where('slug', $this->topic_slug)->first();
+            $topic = \App\Models\Support\HelpdeskTopic::where('slug', $this->topic_slug)->first();
             if ($topic) {
                 $this->merge(['topic_id' => $topic->id]);
             }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\HelpdeskTopic;
+use App\Models\Support\HelpdeskTopic;
 use Illuminate\Database\Seeder;
 
 final class HelpdeskSeeder extends Seeder
@@ -29,3 +29,4 @@ final class HelpdeskSeeder extends Seeder
         }
     }
 }
+

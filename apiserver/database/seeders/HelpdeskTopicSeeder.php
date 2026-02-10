@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Helpdesk\HelpdeskTopic;
+use App\Models\Support\HelpdeskTopic;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -137,3 +137,4 @@ class HelpdeskTopicSeeder extends Seeder
         $this->command->info('Seeded '.count($topics).' helpdesk topics.');
     }
 }
+

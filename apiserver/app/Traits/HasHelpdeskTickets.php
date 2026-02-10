@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
-use App\Models\Helpdesk\Helpdesk;
-use App\Models\Helpdesk\HelpdeskConversation;
+use App\Models\Support\Helpdesk;
+use App\Models\Support\HelpdeskConversation;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasHelpdeskTickets

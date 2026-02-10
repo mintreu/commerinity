@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Helpdesk;
+namespace App\Models\Support;
 
+use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -150,3 +152,7 @@ class HelpdeskConversation extends Model implements HasMedia
         return $query->orderBy('created_at');
     }
 }
+
+
+
+

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Helpdesk\HelpdeskFaq;
-use App\Models\Helpdesk\HelpdeskTopic;
+use App\Models\Support\HelpdeskFaq;
+use App\Models\Support\HelpdeskTopic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
