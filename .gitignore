@@ -33,3 +33,6 @@ ccm
 logs
 
 /client/test-results
+apiserver/coverage.txt
+apiserver/coverage.xml
+user_talks/last time.txt
