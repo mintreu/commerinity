@@ -160,3 +160,4 @@ class PromotionSeeder extends Seeder
         }
     }
 }
+

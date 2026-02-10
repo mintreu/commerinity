@@ -51,3 +51,4 @@ class SeoMetaSeeder extends Seeder
         $this->command->info("   Products: {$productCount}");
     }
 }
+

@@ -15,3 +15,4 @@ class BeneficiaryAccountSeeder extends Seeder
         //
     }
 }
+

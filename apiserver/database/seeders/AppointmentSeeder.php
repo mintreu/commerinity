@@ -15,3 +15,4 @@ class AppointmentSeeder extends Seeder
         //
     }
 }
+

@@ -97,3 +97,4 @@ class FilterSeeder extends Seeder
         return $decoded;
     }
 }
+

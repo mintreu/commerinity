@@ -185,3 +185,4 @@ class WalletFactory extends Factory
         ]);
     }
 }
+

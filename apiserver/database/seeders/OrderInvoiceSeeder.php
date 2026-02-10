@@ -15,3 +15,4 @@ class OrderInvoiceSeeder extends Seeder
         //
     }
 }
+

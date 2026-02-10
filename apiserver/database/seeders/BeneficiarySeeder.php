@@ -64,3 +64,4 @@ final class BeneficiarySeeder extends Seeder
         echo "✅ Beneficiary seeder completed\n";
     }
 }
+

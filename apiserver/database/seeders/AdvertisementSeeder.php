@@ -118,3 +118,4 @@ class AdvertisementSeeder extends Seeder
             ->create();
     }
 }
+

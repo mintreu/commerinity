@@ -169,3 +169,4 @@ class AffiliateGenealogyFactory extends Factory
         });
     }
 }
+

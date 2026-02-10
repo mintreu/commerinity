@@ -8,6 +8,7 @@ use Database\Seeders\Geo\BlockSeeder;
 use Database\Seeders\Geo\CountrySeeder;
 use Database\Seeders\Geo\StateSeeder;
 use Database\Seeders\RewardEarningSeeder;
+use Database\Seeders\ContentSeeder;
 use Illuminate\Database\Seeder;
 
 /**
@@ -120,6 +121,7 @@ class DatabaseSeeder extends Seeder
             // RECRUITMENT - Job postings for career page
             // ═══════════════════════════════════════════════════════════
             RecruitmentSeeder::class,
+            ContentSeeder::class,
 
             // ═══════════════════════════════════════════════════════════
             // TRANSACTIONS - Demo transactions for testing
@@ -141,3 +143,4 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
+

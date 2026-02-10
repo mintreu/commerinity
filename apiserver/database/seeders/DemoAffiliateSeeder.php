@@ -611,3 +611,4 @@ final class DemoAffiliateSeeder extends Seeder
         };
     }
 }
+

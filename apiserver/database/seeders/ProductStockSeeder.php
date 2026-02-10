@@ -140,3 +140,4 @@ class ProductStockSeeder extends Seeder
         ]);
     }
 }
+

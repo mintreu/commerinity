@@ -169,3 +169,4 @@ class AddressFactory extends Factory
         ]);
     }
 }
+

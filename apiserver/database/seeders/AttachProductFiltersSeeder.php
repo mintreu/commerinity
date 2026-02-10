@@ -30,3 +30,4 @@ class AttachProductFiltersSeeder extends Seeder
         echo "Attached filters to " . $products->count() . " products\n";
     }
 }
+

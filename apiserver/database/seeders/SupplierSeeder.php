@@ -24,3 +24,4 @@ class SupplierSeeder extends Seeder
         ]);
     }
 }
+

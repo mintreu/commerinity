@@ -79,3 +79,4 @@ class LevelSeeder extends Seeder
         $this->command->info("Seeded {$count} membership levels across ".count($stages).' stages.');
     }
 }
+

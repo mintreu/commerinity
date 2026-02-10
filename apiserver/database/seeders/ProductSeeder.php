@@ -291,3 +291,4 @@ class ProductSeeder extends Seeder
             ->toArray();
     }
 }
+

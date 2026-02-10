@@ -15,3 +15,4 @@ class ChallengeSeeder extends Seeder
         //
     }
 }
+

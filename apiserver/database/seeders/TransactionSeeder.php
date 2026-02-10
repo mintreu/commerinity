@@ -171,3 +171,4 @@ class TransactionSeeder extends Seeder
         $this->command->info("Seeded {$totalCreated} demo transactions.");
     }
 }
+

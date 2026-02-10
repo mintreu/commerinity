@@ -196,3 +196,4 @@ class JobApplicationFactory extends Factory
         ]);
     }
 }
+

@@ -67,3 +67,4 @@ class WalletSeeder extends Seeder
         $this->command->info('Seeded '.Wallet::count().' wallets for demo users.');
     }
 }
+

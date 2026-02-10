@@ -172,3 +172,4 @@ class RecruitmentFactory extends Factory
         return $this->forRole(RecruitmentRoleCast::Trainer);
     }
 }
+

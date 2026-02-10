@@ -188,3 +188,4 @@ class SmsTemplateSeeder extends Seeder
         $this->command->info('Seeded '.count($templates).' SMS templates.');
     }
 }
+

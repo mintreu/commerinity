@@ -310,3 +310,4 @@ class AffiliateCommissionFactory extends Factory
         });
     }
 }
+

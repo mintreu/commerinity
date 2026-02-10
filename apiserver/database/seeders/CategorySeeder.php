@@ -104,3 +104,4 @@ class CategorySeeder extends Seeder
         return $decoded;
     }
 }
+

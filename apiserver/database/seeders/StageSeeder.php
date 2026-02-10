@@ -104,3 +104,4 @@ class StageSeeder extends Seeder
         $this->command->info('Seeded '.count($stages).' membership stages.');
     }
 }
+

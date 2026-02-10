@@ -88,3 +88,4 @@ class RewardEarningSeeder extends Seeder
         );
     }
 }
+

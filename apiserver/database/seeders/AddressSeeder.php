@@ -125,3 +125,4 @@ class AddressSeeder extends Seeder
         $this->command->info('Seeded '.Address::count().' addresses for demo users.');
     }
 }
+

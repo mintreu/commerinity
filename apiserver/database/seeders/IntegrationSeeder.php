@@ -144,3 +144,4 @@ class IntegrationSeeder extends Seeder
         );
     }
 }
+

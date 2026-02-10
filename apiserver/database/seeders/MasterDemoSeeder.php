@@ -393,3 +393,4 @@ class MasterDemoSeeder extends Seeder
         return is_array($decoded) ? $decoded : [];
     }
 }
+

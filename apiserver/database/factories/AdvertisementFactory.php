@@ -173,3 +173,4 @@ class AdvertisementFactory extends Factory
         ]);
     }
 }
+

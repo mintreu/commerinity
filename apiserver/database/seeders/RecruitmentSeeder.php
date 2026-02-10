@@ -625,3 +625,4 @@ class RecruitmentSeeder extends Seeder
 
     }
 }
+
