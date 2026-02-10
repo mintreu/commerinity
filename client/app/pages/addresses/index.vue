@@ -139,14 +139,8 @@ const hydrateStateAndBlock = async (countryCode: string, stateCode?: string | nu
 }
 
 // Create address
-const sanitizeMobile = (value: string, countryCode = 'IN') => {
-  if (!value) return ''
-  if (value.startsWith('+')) return value
-  const digits = value.replace(/\D/g, '')
-  if (countryCode === 'IN' && digits.length === 10) {
-    return `+91${digits}`
-  }
-  return digits ? `+${digits}` : ''
+const sanitizeMobile = (value: string) => {
+  return value.replace(/\D/g, '').slice(-10)
 }
 
 const createAddress = async () => {
@@ -159,7 +153,7 @@ const createAddress = async () => {
       body: {
         ...formData.value,
         block_id: formData.value.block_id ?? null,
-        person_mobile: sanitizeMobile(formData.value.person_mobile, formData.value.country_code || 'IN')
+        person_mobile: sanitizeMobile(formData.value.person_mobile)
       }
     })
 
@@ -188,7 +182,7 @@ const updateAddress = async () => {
       body: {
         ...formData.value,
         block_id: formData.value.block_id ?? null,
-        person_mobile: sanitizeMobile(formData.value.person_mobile, formData.value.country_code || 'IN')
+        person_mobile: sanitizeMobile(formData.value.person_mobile)
       }
     })
 

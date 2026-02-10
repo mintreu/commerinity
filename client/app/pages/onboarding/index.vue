@@ -521,15 +521,10 @@ const saveProfile = async () => {
   }
 }
 
-// Helper: Normalize phone to E.164 for India if needed
-const normalizeMobile = (phone: string, countryCode = 'IN'): string => {
+// Helper: Normalize phone to 10 digits
+const normalizeMobile = (phone: string): string => {
   if (!phone) return ''
-  if (phone.startsWith('+')) return phone
-  const digits = phone.replace(/\D/g, '')
-  if (countryCode === 'IN' && digits.length === 10) {
-    return `+91${digits}`
-  }
-  return digits ? `+${digits}` : ''
+  return phone.replace(/\D/g, '').slice(-10)
 }
 
 const fetchAddresses = async () => {
@@ -543,8 +538,7 @@ const fetchAddresses = async () => {
 
 const saveAddress = async () => {
   const payload = { ...addressData.value } as Record<string, unknown>
-  const countryCode = (payload.country_code as string) || 'IN'
-  payload.person_mobile = normalizeMobile(String(payload.person_mobile || ''), countryCode)
+  payload.person_mobile = normalizeMobile(String(payload.person_mobile || ''))
 
   await useSanctumFetch(`${config.public.apiBase}/api/addresses`, {
     method: 'POST',
