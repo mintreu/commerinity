@@ -1,5 +1,5 @@
 /**
- * Composable for fetching geo location data (countries, states, blocks)
+ * Composable for fetching geo location data (countries, states, districts, blocks)
  * Provides dependent select functionality for address forms
  */
 
@@ -101,7 +101,7 @@ export function useGeoData() {
   /**
    * Fetch blocks for a state
    */
-  const fetchBlocks = async (stateCode: string) => {
+  const fetchBlocks = async (stateCode: string, districtId?: number | null) => {
     if (!stateCode) {
       blocks.value = []
       return []
@@ -109,8 +109,9 @@ export function useGeoData() {
 
     loadingBlocks.value = true
     try {
+      const districtQuery = districtId ? `&district_id=${districtId}` : ''
       const response = await useSanctumFetch<{ data: GeoOption[] }>(
-        `${config.public.apiBase}/api/geo/blocks?state_code=${stateCode}`
+        `${config.public.apiBase}/api/geo/blocks?state_code=${stateCode}${districtQuery}`
       )
       blocks.value = response.data || []
       return blocks.value
@@ -153,12 +154,16 @@ export function useGeoData() {
    */
   const resetStates = () => {
     states.value = []
+    resetDistricts()
+  }
+
+  const resetDistricts = () => {
+    districts.value = []
     resetBlocks()
   }
 
   const resetBlocks = () => {
     blocks.value = []
-    districts.value = []
   }
 
   return {
@@ -180,6 +185,7 @@ export function useGeoData() {
     fetchBlocks,
     fetchDistricts,
     resetStates,
+    resetDistricts,
     resetBlocks
   }
 }

@@ -184,20 +184,26 @@
         </UFormField>
       </div>
 
-      <!-- City & Block (2 columns on desktop) -->
+      <!-- District & Block (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
       <UFormField
-        label="City / District"
-        name="city"
-        required
+        label="District"
+        name="district_id"
         class="w-full"
       >
-        <UInput
-          v-model="formState.city"
-          placeholder="Enter city name"
+        <USelectMenu
+          v-model="formState.district_id"
+          :items="districts"
+          placeholder="Select district"
           size="lg"
-          icon="i-lucide-building-2"
+          icon="i-lucide-map"
+          value-key="value"
+          label-key="label"
+          :loading="loadingDistricts"
+          :disabled="!formState.state_code || loadingDistricts"
+          searchable
           class="w-full"
+          @update:model-value="handleDistrictChange"
         />
         </UFormField>
 
@@ -215,7 +221,7 @@
           value-key="value"
           label-key="label"
           :loading="loadingBlocks"
-          :disabled="!formState.state_code || loadingBlocks"
+          :disabled="!formState.district_id || loadingBlocks"
           searchable
           class="w-full"
           @update:model-value="handleBlockChange"
@@ -223,7 +229,23 @@
         </UFormField>
       </div>
 
-      <!-- Postal Code (Full width) -->
+      <!-- City & Postal (2 columns on desktop) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+      <UFormField
+        label="City"
+        name="city"
+        required
+        class="w-full"
+      >
+        <UInput
+          v-model="formState.city"
+          placeholder="Enter city name"
+          size="lg"
+          icon="i-lucide-building-2"
+          class="w-full"
+        />
+        </UFormField>
+
       <UFormField
         label="Postal Code / ZIP"
         name="postal_code"
@@ -242,6 +264,7 @@
           <span class="text-xs text-gray-500">Ensure it matches your delivery zone.</span>
         </template>
       </UFormField>
+      </div>
 
       <!-- Hidden lat/lng fields -->
       <input
@@ -279,6 +302,7 @@ interface AddressFormData {
   address_2: string
   city: string
   postal_code: string
+  district_id: number | null
   block_id: number | null
   state_code: string
   country_code: string
@@ -306,14 +330,18 @@ const emit = defineEmits<{
 const {
   countries,
   states,
+  districts,
   blocks,
   loadingCountries,
   loadingStates,
+  loadingDistricts,
   loadingBlocks,
   fetchCountries,
   fetchStates,
+  fetchDistricts,
   fetchBlocks,
   resetStates,
+  resetDistricts,
   resetBlocks
 } = useGeoData()
 
@@ -331,6 +359,7 @@ const formState = reactive<AddressFormData>({
   address_2: props.initialData?.address_2 || '',
   city: props.initialData?.city || '',
   postal_code: props.initialData?.postal_code || '',
+  district_id: props.initialData?.district_id || null,
   block_id: props.initialData?.block_id || null,
   state_code: props.initialData?.state_code || '',
   country_code: props.initialData?.country_code || props.defaultCountry,
@@ -350,6 +379,7 @@ const schema = z.object({
   postal_code: z.string().min(4, 'Please enter a valid postal code'),
   state_code: z.string().min(1, 'Please select your state'),
   country_code: z.string().min(2, 'Please select your country'),
+  district_id: z.number().nullable().optional(),
   block_id: z.number().nullable().optional(),
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional()
@@ -371,6 +401,7 @@ watch(
 const handleCountryChange = async (countryCode: string | number | null) => {
   if (!countryCode) return
   formState.state_code = ''
+  formState.district_id = null
   formState.block_id = null
   resetStates()
 
@@ -379,11 +410,23 @@ const handleCountryChange = async (countryCode: string | number | null) => {
 
 // Handle state change
 const handleStateChange = async (stateCode: string | number | null) => {
+  formState.district_id = null
+  formState.block_id = null
+  resetDistricts()
+
+  if (stateCode) {
+    await fetchDistricts(String(stateCode))
+  }
+}
+
+// Handle district change
+const handleDistrictChange = async (districtId: string | number | null) => {
+  formState.district_id = districtId ? Number(districtId) : null
   formState.block_id = null
   resetBlocks()
 
-  if (stateCode) {
-    await fetchBlocks(String(stateCode))
+  if (formState.state_code && formState.district_id) {
+    await fetchBlocks(formState.state_code, formState.district_id)
   }
 }
 
@@ -475,11 +518,17 @@ onMounted(async () => {
     formState.country_code = countries.value[0]?.value || ''
   }
 
-  // Load blocks if state is pre-selected
+  // Load districts and blocks if state/district are pre-selected
   if (formState.state_code) {
-    console.log('Loading blocks for preselected state:', formState.state_code)
-    await fetchBlocks(formState.state_code)
-    console.log('Blocks loaded:', blocks.value.length)
+    console.log('Loading districts for preselected state:', formState.state_code)
+    await fetchDistricts(formState.state_code)
+    console.log('Districts loaded:', districts.value.length)
+
+    if (formState.district_id) {
+      console.log('Loading blocks for preselected district:', formState.district_id)
+      await fetchBlocks(formState.state_code, formState.district_id)
+      console.log('Blocks loaded:', blocks.value.length)
+    }
   }
 
   geoReady.value = true

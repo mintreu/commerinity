@@ -40,6 +40,7 @@ interface AddressData {
   address_2: string
   city: string
   postal_code: string
+  district_id: number | null
   block_id: number | null
   state_code: string
   country_code: string
@@ -70,6 +71,7 @@ const addressInitialData = computed(() => ({
   address_2: props.initialData?.address_2 || '',
   city: props.initialData?.city || '',
   postal_code: props.initialData?.postal_code || '',
+  district_id: props.initialData?.district_id || null,
   block_id: props.initialData?.block_id || null,
   state_code: props.initialData?.state_code || '',
   country_code: props.initialData?.country_code || 'IN',

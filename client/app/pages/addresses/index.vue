@@ -22,9 +22,13 @@ interface Address {
   landmark?: string
   city: string
   postal_code: string
+  district_id?: number | null
   block_id?: number | null
-  state_code: string
-  country_code: string
+  state_code?: string
+  country_code?: string
+  state?: { code?: string, name?: string } | null
+  country?: { code?: string, name?: string } | null
+  district?: { id?: number, name?: string } | null
   type: 'home' | 'work' | 'other'
   default: boolean
 }
@@ -34,14 +38,18 @@ const config = useRuntimeConfig()
 const {
   countries,
   states,
+  districts,
   blocks,
   loadingCountries,
   loadingStates,
+  loadingDistricts,
   loadingBlocks,
   fetchCountries,
   fetchStates,
+  fetchDistricts,
   fetchBlocks,
   resetStates,
+  resetDistricts,
   resetBlocks
 } = useGeoData()
 
@@ -64,6 +72,7 @@ const formData = ref({
   postal_code: '',
   state_code: '',
   country_code: 'IN',
+  district_id: null as number | null,
   block_id: null as number | null,
   type: 'home' as const
 })
@@ -108,14 +117,26 @@ const loadInitialGeo = async () => {
 }
 
 const stateItems = computed(() => states.value)
+const districtItems = computed(() => districts.value)
 const blockItems = computed(() => blocks.value)
 
 const handleStateChange = async (value: string | null) => {
   formData.value.state_code = value || ''
+  formData.value.district_id = null
+  formData.value.block_id = null
+  resetDistricts()
+  if (value) {
+    await fetchDistricts(value)
+  }
+}
+
+const handleDistrictChange = async (value: number | string | null) => {
+  formData.value.district_id = value ? Number(value) : null
   formData.value.block_id = null
   resetBlocks()
-  if (value) {
-    await fetchBlocks(value)
+
+  if (formData.value.state_code && formData.value.district_id) {
+    await fetchBlocks(formData.value.state_code, formData.value.district_id)
   }
 }
 
@@ -123,17 +144,30 @@ const handleBlockChange = (value: number | string | null) => {
   formData.value.block_id = value ? Number(value) : null
 }
 
-const hydrateStateAndBlock = async (countryCode: string, stateCode?: string | null, blockId?: number | null) => {
+const hydrateStateDistrictAndBlock = async (
+  countryCode: string,
+  stateCode?: string | null,
+  districtId?: number | null,
+  blockId?: number | null
+) => {
   await fetchStates(countryCode)
   await nextTick()
 
   if (stateCode) {
     formData.value.state_code = stateCode
-    await fetchBlocks(stateCode)
+    await fetchDistricts(stateCode)
     await nextTick()
+
+    formData.value.district_id = districtId ?? null
+    if (districtId) {
+      await fetchBlocks(stateCode, districtId)
+      await nextTick()
+    }
+
     formData.value.block_id = blockId ?? null
   } else {
     formData.value.state_code = ''
+    formData.value.district_id = null
     formData.value.block_id = null
   }
 }
@@ -152,6 +186,7 @@ const createAddress = async () => {
       method: 'POST',
       body: {
         ...formData.value,
+        district_id: formData.value.district_id ?? null,
         block_id: formData.value.block_id ?? null,
         person_mobile: sanitizeMobile(formData.value.person_mobile)
       }
@@ -181,6 +216,7 @@ const updateAddress = async () => {
       method: 'PUT',
       body: {
         ...formData.value,
+        district_id: formData.value.district_id ?? null,
         block_id: formData.value.block_id ?? null,
         person_mobile: sanitizeMobile(formData.value.person_mobile)
       }
@@ -239,13 +275,19 @@ const openEditModal = async (address: Address) => {
     landmark: address.landmark || '',
     city: address.city,
     postal_code: address.postal_code,
-    state_code: address.state_code,
-    country_code: address.country_code || 'IN',
+    state_code: address.state_code || address.state?.code || '',
+    country_code: address.country_code || address.country?.code || 'IN',
+    district_id: address.district_id ?? address.district?.id ?? null,
     block_id: address.block_id ?? null,
     type: address.type
   }
-  const countryCode = address.country_code || 'IN'
-  await hydrateStateAndBlock(countryCode, address.state_code, address.block_id ?? null)
+  const countryCode = address.country_code || address.country?.code || 'IN'
+  await hydrateStateDistrictAndBlock(
+    countryCode,
+    address.state_code || address.state?.code || null,
+    address.district_id ?? address.district?.id ?? null,
+    address.block_id ?? null
+  )
   editingFormLoading.value = false
   showEditModal.value = true
 }
@@ -263,6 +305,8 @@ const resetForm = () => {
     postal_code: '',
     state_code: '',
     country_code: 'IN',
+    district_id: null,
+    block_id: null,
     type: 'home'
   }
   formErrors.value = {}
@@ -271,7 +315,7 @@ const resetForm = () => {
 const openAddModal = async () => {
   editingFormLoading.value = true
   resetForm()
-  await hydrateStateAndBlock('IN')
+  await hydrateStateDistrictAndBlock('IN')
   editingFormLoading.value = false
   showAddModal.value = true
 }
@@ -446,7 +490,7 @@ onMounted(async () => {
                 Landmark: {{ address.landmark }}
               </p>
               <p class="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                {{ address.city }}, {{ address.state_code }} - {{ address.postal_code }}
+                {{ address.city }}<span v-if="address.district?.name">, {{ address.district?.name }}</span>, {{ address.state_code || address.state?.code }} - {{ address.postal_code }}
               </p>
               <p class="text-sm text-primary-600 dark:text-primary-400 font-bold mt-2 flex items-center gap-2">
                 <UIcon
@@ -682,6 +726,25 @@ onMounted(async () => {
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <UFormField
+                label="District"
+                :error="fieldError('district_id')"
+              >
+                <USelectMenu
+                  v-model="formData.district_id"
+                  :items="districtItems"
+                  placeholder="Select district"
+                  size="lg"
+                  class="w-full"
+                  :loading="loadingDistricts"
+                  :disabled="loadingDistricts || !formData.state_code || editingFormLoading"
+                  value-key="value"
+                  label-key="label"
+                  searchable
+                  @update:model-value="handleDistrictChange"
+                />
+              </UFormField>
+
+              <UFormField
                 label="Block / Area"
                 :error="fieldError('block_id')"
               >
@@ -692,7 +755,7 @@ onMounted(async () => {
                   size="lg"
                   class="w-full"
                   :loading="loadingBlocks"
-                  :disabled="loadingBlocks || !formData.state_code || editingFormLoading"
+                  :disabled="loadingBlocks || !formData.district_id || editingFormLoading"
                   value-key="value"
                   label-key="label"
                   searchable

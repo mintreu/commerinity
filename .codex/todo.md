@@ -108,3 +108,12 @@
     - `Tests\Unit\Models\KycTest`: personal/business scopes + field assertions now verified via suite.
     - `Tests\Feature\AddressApiTest`: default address, create/update, cross-user update, and mobile validation assertions are green.
 
+22. Geo address hierarchy update (`country -> state -> district -> block`) — ✅ completed and validated (2026-02-11)
+    - Added district model/migrations/seeder integration and enabled district filtering in geo APIs.
+    - Updated client onboarding + address management flows to use district before block.
+    - Address flow tests now pass for district chain: `tests/playwright/address-form-selects.spec.ts`, `tests/playwright/verify-address-selects.spec.ts`.
+
+23. Filament Product Resource parity (Simple/Configurable/Bundle) — ✅ CRUD + tests verified (2026-02-11)
+    - Create/Edit/Delete flows are covered per product type via ProductManager-driven flow.
+    - Filament regression test suite passes: `Tests\Feature\Filament\Ecommerce\Products\ProductResourceCrudTest`.
+

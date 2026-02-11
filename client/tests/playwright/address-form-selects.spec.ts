@@ -1,51 +1,30 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Address Form Select Dropdowns', () => {
-  test('should display and populate country, state, and block select dropdowns', async ({ page }) => {
+  test('should display and populate country, state, district and block select dropdowns', async ({ page }) => {
     // Enable console logging
     page.on('console', (msg) => {
       console.log(`BROWSER ${msg.type()}: ${msg.text()}`)
     })
 
-    const apiBase = 'http://localhost:8000'
-    const mobile = `+91990${Math.floor(1000000 + Math.random() * 8999999)}`
+    const email = 'e2e.address1@demo.com'
+    const password = 'TestPass@123'
 
-    // Register a new user
-    const sendOtpResponse = await page.request.post(`${apiBase}/api/auth/send-otp`, {
-      data: { type: 'mobile', value: mobile }
-    })
-    expect(sendOtpResponse.ok()).toBeTruthy()
-
-    const registerResponse = await page.request.post(`${apiBase}/api/auth/register`, {
-      data: {
-        name: 'Address Form Test User',
-        mobile,
-        otp: '123456',
-        password: 'TestPass@123',
-        password_confirmation: 'TestPass@123'
-      }
-    })
-    expect(registerResponse.ok()).toBeTruthy()
-
-    // Login
+    // Login with seeded E2E account
     await page.goto('/auth/login', { waitUntil: 'networkidle' })
     await page.waitForLoadState('domcontentloaded')
 
-    const mobileButton = page.getByRole('button', { name: /Mobile/i })
-    await mobileButton.waitFor({ state: 'visible', timeout: 10000 })
-    await mobileButton.click()
+    const emailButton = page.getByRole('button', { name: /Email/i })
+    await emailButton.waitFor({ state: 'visible', timeout: 10000 })
+    await emailButton.click()
 
-    const mobileInput = page.getByPlaceholder('10-digit mobile number')
-    await mobileInput.waitFor({ state: 'visible', timeout: 5000 })
-    await mobileInput.fill(mobile.replace('+91', ''))
-
-    const passwordButton = page.getByRole('button', { name: /Password/i })
-    await passwordButton.waitFor({ state: 'visible', timeout: 5000 })
-    await passwordButton.click()
+    const emailInput = page.getByPlaceholder('you@example.com')
+    await emailInput.waitFor({ state: 'visible', timeout: 5000 })
+    await emailInput.fill(email)
 
     const passwordInput = page.getByPlaceholder('Enter your password')
     await passwordInput.waitFor({ state: 'visible', timeout: 5000 })
-    await passwordInput.fill('TestPass@123')
+    await passwordInput.fill(password)
 
     const signInButton = page.getByRole('main').getByRole('button', { name: 'Sign In' })
     await signInButton.waitFor({ state: 'visible', timeout: 5000 })
@@ -64,56 +43,50 @@ test.describe('Address Form Select Dropdowns', () => {
       await getStartedButton.click()
     }
 
-    // Navigate through onboarding steps to reach address form
-    // Profile step
-    const profileNameInput = page.getByPlaceholder('Enter your full name')
-    await profileNameInput.waitFor({ state: 'visible', timeout: 30000 })
-    await profileNameInput.fill('Address Form Test User')
-    await page.getByLabel('Date of Birth').fill('1995-05-05')
-    await page.getByText('Male', { exact: true }).click()
-    await page.getByRole('button', { name: /Continue|Next/ }).click()
+    const addressForm = page.locator('.address-form')
+    if (!await addressForm.isVisible({ timeout: 2000 }).catch(() => false)) {
+      // Navigate through onboarding steps to reach address form
+      const profileNameInput = page.getByPlaceholder('Enter your full name')
+      await profileNameInput.waitFor({ state: 'visible', timeout: 30000 })
+      await profileNameInput.fill('Address Form Test User')
+      await page.locator('input[type="date"]').first().fill('1995-05-05')
+      await page.getByText('Male', { exact: true }).click()
+      await page.getByPlaceholder('Tell us a little about yourself...').fill('E2E onboarding profile bio text.')
+      const profileContinue = page.getByRole('button', { name: /Continue|Next/ }).first()
+      await expect(profileContinue).toBeEnabled({ timeout: 30000 })
+      await profileContinue.click()
 
-    // Contact step - skip if present
-    await page.waitForTimeout(2000)
-    const continueButton = page.getByRole('button', { name: /Continue|Next/ })
-    if (await continueButton.isVisible().catch(() => false)) {
-      await continueButton.click()
+      // Contact step - skip email if shown, then continue
+      const contactHeading = page.getByRole('heading', { name: /Add your email|Verify your mobile number|Contact details verified/i })
+      if (await contactHeading.isVisible({ timeout: 4000 }).catch(() => false)) {
+        const skipEmailButton = page.getByRole('button', { name: /Skip for now/i }).first()
+        if (await skipEmailButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await skipEmailButton.click()
+        }
+        const contactContinue = page.getByRole('button', { name: /Continue|Next/ }).first()
+        await expect(contactContinue).toBeEnabled({ timeout: 30000 })
+        await contactContinue.click()
+      }
     }
 
     // Address step
-    await page.waitForTimeout(2000)
-    const addressForm = page.locator('.address-form')
+    await page.getByRole('heading', { name: /Add your delivery address/i }).first().waitFor({ state: 'visible', timeout: 30000 })
     await addressForm.waitFor({ state: 'visible', timeout: 10000 })
 
     console.log('Address form visible, testing select dropdowns...')
 
-    // Test Country Select
-    const countrySelectButton = page.locator('[name="country_code"]').locator('button').first()
-    await countrySelectButton.waitFor({ state: 'visible', timeout: 10000 })
-    console.log('Country select button found, clicking...')
-    await countrySelectButton.click()
+    const getSelectButtonByIndex = async (index: number, timeout = 30000) => {
+      const button = addressForm.getByRole('button', { name: 'Show popup' }).nth(index)
+      await button.waitFor({ state: 'visible', timeout })
+      return button
+    }
 
-    // Wait for dropdown menu
+    // Country is pre-selected in onboarding; continue with state/district/block checks.
+    await getSelectButtonByIndex(0)
     await page.waitForTimeout(1000)
-    const countryDropdown = page.locator('[role="listbox"]')
-    await countryDropdown.waitFor({ state: 'visible', timeout: 5000 })
-    console.log('Country dropdown visible')
-
-    // Check if India option is visible
-    const indiaOption = countryDropdown.locator('text=India')
-    const indiaVisible = await indiaOption.isVisible({ timeout: 5000 }).catch(() => false)
-    console.log(`India option visible: ${indiaVisible}`)
-    expect(indiaVisible).toBeTruthy()
-
-    // Select India
-    await indiaOption.click()
-    console.log('India selected')
-
-    // Wait for states to load
-    await page.waitForTimeout(2000)
 
     // Test State Select
-    const stateSelectButton = page.locator('[name="state_code"]').locator('button').first()
+    const stateSelectButton = await getSelectButtonByIndex(1)
     await stateSelectButton.waitFor({ state: 'visible', timeout: 10000 })
     await expect(stateSelectButton).toBeEnabled()
     console.log('State select enabled, clicking...')
@@ -125,21 +98,37 @@ test.describe('Address Form Select Dropdowns', () => {
     await stateDropdown.waitFor({ state: 'visible', timeout: 5000 })
     console.log('State dropdown visible')
 
-    // Check if Maharashtra option is visible
-    const maharashtraOption = stateDropdown.locator('text=Maharashtra')
-    const maharashtraVisible = await maharashtraOption.isVisible({ timeout: 5000 }).catch(() => false)
-    console.log(`Maharashtra option visible: ${maharashtraVisible}`)
-    expect(maharashtraVisible).toBeTruthy()
+    // Check if West Bengal option is visible
+    const westBengalOption = stateDropdown.locator('text=West Bengal')
+    const westBengalVisible = await westBengalOption.isVisible({ timeout: 5000 }).catch(() => false)
+    console.log(`West Bengal option visible: ${westBengalVisible}`)
+    expect(westBengalVisible).toBeTruthy()
 
-    // Select Maharashtra
-    await maharashtraOption.click()
-    console.log('Maharashtra selected')
+    // Select West Bengal
+    await westBengalOption.click()
+    console.log('West Bengal selected')
 
-    // Wait for blocks to potentially load
+    // Wait for districts to load
     await page.waitForTimeout(2000)
 
-    // Test Block Select (should be enabled)
-    const blockSelectButton = page.locator('[name="block_id"]').locator('button').first()
+    // Test District Select (should be enabled)
+    const districtSelectButton = await getSelectButtonByIndex(2)
+    await expect(districtSelectButton).toBeEnabled()
+    console.log('District select is enabled')
+
+    // Select Kolkata district
+    await districtSelectButton.click()
+    await page.waitForTimeout(1000)
+    const districtDropdown = page.locator('[role="listbox"]')
+    await districtDropdown.waitFor({ state: 'visible', timeout: 5000 })
+    const kolkataOption = districtDropdown.locator('text=Kolkata')
+    const kolkataVisible = await kolkataOption.isVisible({ timeout: 5000 }).catch(() => false)
+    expect(kolkataVisible).toBeTruthy()
+    await kolkataOption.click()
+    await page.waitForTimeout(1000)
+
+    // Test Block Select (should be enabled after district)
+    const blockSelectButton = await getSelectButtonByIndex(3)
     await expect(blockSelectButton).toBeEnabled()
     console.log('Block select is enabled')
 
