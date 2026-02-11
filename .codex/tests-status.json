@@ -1,0 +1,160 @@
+{
+  "tests": [
+    {
+      "file": "tests/Feature/ExampleTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter ExampleTest",
+      "timestamp": "2026-02-10T21:53:45.218834Z"
+    },
+    {
+      "file": "tests/Feature/TokenDebugTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter TokenDebugTest",
+      "timestamp": "2026-02-10T21:54:58.634290Z"
+    },
+    {
+      "file": "tests/Feature/TransactionTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter TransactionTest",
+      "timestamp": "2026-02-10T21:55:52.017840Z"
+    },
+    {
+      "file": "tests/Feature/WalletTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter WalletTest",
+      "timestamp": "2026-02-10T21:56:52.101066Z"
+    },
+    {
+      "file": "tests/Feature/AddressManagementTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter AddressManagementTest",
+      "timestamp": "2026-02-10T21:58:00.144738Z"
+    },
+    {
+      "file": "tests/Feature/AddressApiTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter AddressApiTest",
+      "timestamp": "2026-02-10T21:59:06.842560Z"
+    },
+    {
+      "file": "tests/Feature/GeoDataTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter GeoDataTest",
+      "timestamp": "2026-02-10T22:01:47.217098Z"
+    },
+    {
+      "file": "tests/Feature/KycApiTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter KycApiTest",
+      "timestamp": "2026-02-10T22:02:58.191305Z"
+    },
+    {
+      "file": "tests/Feature/OnboardingFlowTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter OnboardingFlowTest",
+      "timestamp": "2026-02-10T22:04:13.279152Z"
+    },
+    {
+      "file": "tests/Feature/OrderApiTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter OrderApiTest",
+      "timestamp": "2026-02-10T22:05:35.957209Z"
+    },
+    {
+      "file": "tests/Feature/UserAddressTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter UserAddressTest",
+      "timestamp": "2026-02-10T22:07:14.392030Z"
+    },
+    {
+      "file": "tests/Feature/CompleteWalletFlowTest.php",
+      "status": "blocked",
+      "details": "Attempted to run individual test cases; entire suite hangs on cashfree withdraw success path even after lowering amount",
+      "timestamp": "2026-02-10T22:48:22.299762Z"
+    },
+    {
+      "file": "tests/Feature/Affiliate/AffiliateEndToEndTest.php",
+      "status": "pass",
+      "details": "php artisan test tests/Feature/Affiliate/AffiliateEndToEndTest.php",
+      "timestamp": "2026-02-10T23:52:49.609466Z"
+    },
+    {
+      "file": "tests/Feature/Affiliate/AffiliateEndToEndTest.php",
+      "status": "pass",
+      "details": "php artisan test tests/Feature/Affiliate/AffiliateEndToEndTest.php",
+      "timestamp": "2026-02-11T00:21:01.800573Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/PricingRegressionTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter PricingRegressionTest",
+      "timestamp": "2026-02-11T00:47:46.9069229Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/ProductBasicTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter ProductBasicTest",
+      "timestamp": "2026-02-11T00:48:56.5135104Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/ProductStockTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter ProductStockTest",
+      "timestamp": "2026-02-11T00:49:59.7413297Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/ProductStockSelectionTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter ProductStockSelectionTest",
+      "timestamp": "2026-02-11T00:51:00.3332001Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/SalesTargetingTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter SalesTargetingTest",
+      "timestamp": "2026-02-11T00:52:00.8012766Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/CartMetaTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter CartMetaTest",
+      "timestamp": "2026-02-11T00:53:07.2769923Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/CartTaxShippingTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter CartTaxShippingTest",
+      "timestamp": "2026-02-11T00:54:06.5501140Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/CartApiTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter CartApiTest",
+      "timestamp": "2026-02-11T00:55:12.1514227Z"
+    },
+    {
+      "file": "tests/Unit/Models/KycTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter KycTest",
+      "timestamp": "2026-02-11T00:57:47.5013279Z"
+    },
+    {
+      "file": "tests/Feature/AddressApiTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter AddressApiTest",
+      "timestamp": "2026-02-11T01:00:01.4731427Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/OrderReturnRefundTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter OrderReturnRefundTest",
+      "timestamp": "2026-02-11T01:03:30.0164443Z"
+    },
+    {
+      "file": "tests/Feature/Ecommerce/OrderCoinsCheckoutTest.php",
+      "status": "pass",
+      "details": "php artisan test --filter OrderCoinsCheckoutTest",
+      "timestamp": "2026-02-11T01:04:33.6824612Z"
+    }
+  ]
+}
