@@ -86,6 +86,7 @@ class Product extends Model implements HasMedia
             'height_cm' => 'integer',
             'is_commissionable' => 'boolean',
             'commission_rate' => 'decimal:2',
+            'seo_meta' => 'array',
         ];
     }
 

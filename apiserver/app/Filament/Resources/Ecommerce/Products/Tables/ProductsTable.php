@@ -5,10 +5,12 @@ namespace App\Filament\Resources\Ecommerce\Products\Tables;
 use App\Casts\ProductTypeCast;
 use App\Filament\Exports\Ecommerce\ProductExporter;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ViewAction;
+use App\Services\Ecommerce\ProductManager;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -63,10 +65,17 @@ class ProductsTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make()
+                    ->action(fn ($record): bool => ProductManager::delete($record)),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->action(function ($records): void {
+                            foreach ($records as $record) {
+                                ProductManager::delete($record);
+                            }
+                        }),
                     ExportBulkAction::make()
                         ->exporter(ProductExporter::class),
                 ]),

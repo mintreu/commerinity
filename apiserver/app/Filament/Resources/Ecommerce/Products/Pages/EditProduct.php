@@ -8,11 +8,13 @@ use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Filament\Resources\Ecommerce\Products\ProductResource;
 use App\Filament\Resources\Ecommerce\Products\RelationManagers\VariantsRelationManager;
+use App\Filament\Resources\Ecommerce\Products\Support\ProductFilterOptions;
 use App\Services\Ecommerce\ProductManager;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditProduct extends EditRecord
 {
@@ -33,14 +35,17 @@ class EditProduct extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->action(function (Model $record): void {
+                    ProductManager::delete($record);
+                }),
         ];
     }
 
     protected function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
     {
         // Build filter_options from the form data
-        $filterOptions = $this->buildFilterOptions($data);
+        $filterOptions = ProductFilterOptions::normalize($data['filter_options'] ?? []);
 
         // Prepare data for ProductManager (keep all form fields)
         $productData = $data;
@@ -68,33 +73,4 @@ class EditProduct extends EditRecord
         return $product;
     }
 
-    /**
-     * Build filter_options array from form data
-     * Form sends: filter_options[filter_id][option_id] = true
-     */
-    protected function buildFilterOptions(array $data): array
-    {
-        if (! isset($data['filter_options']) || ! is_array($data['filter_options'])) {
-            return [];
-        }
-
-        $filterOptions = [];
-
-        foreach ($data['filter_options'] as $filterId => $options) {
-            if (is_array($options)) {
-                // Collect selected option IDs
-                $selectedOptions = [];
-                foreach ($options as $optionId => $isSelected) {
-                    if ($isSelected) {
-                        $selectedOptions[] = (string) $optionId;
-                    }
-                }
-                if (! empty($selectedOptions)) {
-                    $filterOptions[(string) $filterId] = $selectedOptions;
-                }
-            }
-        }
-
-        return $filterOptions;
-    }
 }

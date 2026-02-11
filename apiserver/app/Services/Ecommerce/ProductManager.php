@@ -54,26 +54,16 @@ final class ProductManager
                 $filterOptions = $data['filter_options'] ?? [];
                 unset($data['filter_options']);
 
-                $record = Product::create(array_merge($data, [
-                    'name' => $data['name'],
-                    'sku' => $data['sku'],
-                    'url' => $data['url'],
-                    'status' => $data['status'] ?? ProductStatusCast::DRAFT,
-                    'type' => $case->value,
-                    'filter_group_id' => $data['filter_group_id'],
-                    'category_id' => $data['category_id'] ?? null,
-                    'price' => $data['price'] ?? 0,
-                    'gst_tax_type' => $data['gst_tax_type'] ?? null,
-                    'description' => $data['description'] ?? null,
-                    'short_description' => $data['short_description'] ?? null,
-                    'is_returnable' => $data['is_returnable'] ?? false,
-                    'return_days' => $data['return_days'] ?? 0,
-                ]));
+                $record = Product::create(self::buildCreatePayload($data, $case));
 
                 if (! empty($filterOptions)) {
                     $instance = new self;
 
-                    if (in_array($case->value, [ProductTypeCast::SIMPLE->value, ProductTypeCast::WHOLESALE->value])) {
+                    if (in_array($case->value, [
+                        ProductTypeCast::SIMPLE->value,
+                        ProductTypeCast::WHOLESALE->value,
+                        ProductTypeCast::BUNDLE->value,
+                    ])) {
                         $instance->attachFilterOptionsToProduct($record, $filterOptions);
                     } elseif ($case->value === ProductTypeCast::CONFIGURABLE->value) {
                         $instance->attachFilterOptionsToParent($record, $filterOptions);
@@ -120,11 +110,7 @@ final class ProductManager
                 $filterOptions = $data['filter_options'] ?? [];
                 unset($data['filter_options']);
 
-                $product->update(array_merge($data, [
-                    'type' => $type,
-                    'price' => $data['price'] ?? $product->price,
-                    'gst_tax_type' => $data['gst_tax_type'] ?? $product->gst_tax_type,
-                ]));
+                $product->update(self::buildUpdatePayload($product, $data, $type));
 
                 $instance = new self;
 
@@ -273,7 +259,7 @@ final class ProductManager
         }
     }
 
-    private function getOptionId(Product $product, array|object|int $option, bool $isVariant = false): ?int
+    private function getOptionId(Product $product, array|object|int|string $option, bool $isVariant = false): ?int
     {
         if (is_object($option)) {
             return $option->id;
@@ -287,7 +273,7 @@ final class ProductManager
             return $option['id'] ?? $option[0] ?? null;
         }
 
-        return $option;
+        return is_numeric($option) ? (int) $option : null;
     }
 
     /**
@@ -382,8 +368,18 @@ final class ProductManager
     private function updateProductFilterOption(Product $product, array $filterOptions): void
     {
         $pivotData = [];
-        foreach ($filterOptions as $filterId => $filterOptionId) {
-            $pivotData[$filterOptionId] = ['filter_id' => $filterId];
+        foreach ($filterOptions as $filterId => $filterOptionIds) {
+            if (is_array($filterOptionIds)) {
+                $filterOptionId = $filterOptionIds[0] ?? null;
+            } else {
+                $filterOptionId = $filterOptionIds;
+            }
+
+            if (! $filterOptionId) {
+                continue;
+            }
+
+            $pivotData[(int) $filterOptionId] = ['filter_id' => $filterId];
         }
 
         $product->filterOptions()->sync($pivotData);
@@ -402,6 +398,110 @@ final class ProductManager
         }
 
         $product->filterOptions()->sync($pivotData);
+    }
+
+    private static function buildCreatePayload(array $data, ProductTypeCast $type): array
+    {
+        return [
+            'name' => (string) ($data['name'] ?? 'Unnamed Product'),
+            'sku' => (string) ($data['sku'] ?? ''),
+            'url' => (string) ($data['url'] ?? ''),
+            'status' => $data['status'] ?? ProductStatusCast::DRAFT->value,
+            'type' => $type->value,
+            'parent_id' => self::nullableInt($data['parent_id'] ?? null),
+            'filter_group_id' => (int) ($data['filter_group_id'] ?? 0),
+            'category_id' => self::nullableInt($data['category_id'] ?? null),
+            'price' => self::toInt($data['price'] ?? 0),
+            'hsn' => self::nullableString($data['hsn'] ?? null),
+            'gst_tax_type' => self::nullableString($data['gst_tax_type'] ?? null),
+            'description' => self::normalizeTextContent($data['description'] ?? null),
+            'short_description' => self::nullableString($data['short_description'] ?? null),
+            'is_returnable' => (bool) ($data['is_returnable'] ?? false),
+            'return_days' => self::toInt($data['return_days'] ?? 0),
+            'bv' => self::toInt($data['bv'] ?? 0),
+            'pv' => self::toInt($data['pv'] ?? 0),
+            'reward_points' => self::toInt($data['reward_points'] ?? 0),
+            'min_quantity' => max(1, self::toInt($data['min_quantity'] ?? 1)),
+            'max_quantity' => self::nullableInt($data['max_quantity'] ?? null),
+            'wholesale_unit_quantity' => self::nullableInt($data['wholesale_unit_quantity'] ?? null),
+            'weight_grams' => self::toInt($data['weight_grams'] ?? 0),
+            'length_cm' => self::toInt($data['length_cm'] ?? 0),
+            'width_cm' => self::toInt($data['width_cm'] ?? 0),
+            'height_cm' => self::toInt($data['height_cm'] ?? 0),
+            'is_commissionable' => (bool) ($data['is_commissionable'] ?? true),
+            'commission_rate' => self::nullableNumericString($data['commission_rate'] ?? null),
+            'view_count' => self::toInt($data['view_count'] ?? 0),
+            'seo_meta' => self::normalizeSeoMeta($data['seo_meta'] ?? null),
+        ];
+    }
+
+    private static function buildUpdatePayload(Product $product, array $data, string $type): array
+    {
+        return self::buildCreatePayload(
+            array_merge($product->toArray(), $data, ['type' => $type]),
+            ProductTypeCast::from($type),
+        );
+    }
+
+    private static function toInt(mixed $value): int
+    {
+        if ($value === null || $value === '') {
+            return 0;
+        }
+
+        return (int) $value;
+    }
+
+    private static function nullableInt(mixed $value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (int) $value;
+    }
+
+    private static function nullableString(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (string) $value;
+    }
+
+    private static function nullableNumericString(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (string) $value;
+    }
+
+    private static function normalizeTextContent(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if (is_array($value)) {
+            return json_encode($value, JSON_UNESCAPED_UNICODE);
+        }
+
+        return (string) $value;
+    }
+
+    private static function normalizeSeoMeta(mixed $value): ?array
+    {
+        if (! is_array($value) || empty($value)) {
+            return null;
+        }
+
+        return collect($value)
+            ->filter(fn ($metaValue, $metaKey) => filled($metaKey) && filled($metaValue))
+            ->mapWithKeys(fn ($metaValue, $metaKey) => [(string) $metaKey => (string) $metaValue])
+            ->all();
     }
 
     /**

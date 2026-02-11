@@ -30,6 +30,24 @@ it('can create a product', function () {
         ->and($product->price)->toBe(100000);
 });
 
+it('can create a bundle product', function () {
+    $filterGroup = FilterGroup::create(['name' => 'Bundles', 'type' => 'product']);
+
+    $bundle = Product::create([
+        'name' => 'Bundle Pack',
+        'sku' => 'BUNDLE-001',
+        'url' => 'bundle-pack',
+        'type' => ProductTypeCast::BUNDLE->value,
+        'status' => 'Draft',
+        'filter_group_id' => $filterGroup->id,
+        'price' => 150000,
+        'view_count' => 0,
+    ]);
+
+    expect($bundle->type->value)->toBe(ProductTypeCast::BUNDLE->value)
+        ->and($bundle->sku)->toBe('BUNDLE-001');
+});
+
 it('can create product with stock', function () {
     $filterGroup = FilterGroup::create(['name' => 'Electronics', 'type' => 'product']);
 

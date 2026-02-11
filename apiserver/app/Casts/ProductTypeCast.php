@@ -13,6 +13,7 @@ enum ProductTypeCast: string implements HasColor, HasIcon, HasLabel
     case SIMPLE = 'simple';
     case CONFIGURABLE = 'configurable';
     case WHOLESALE = 'wholesale';
+    case BUNDLE = 'bundle';
 
     public static function validate(string $type): bool
     {
@@ -20,6 +21,7 @@ enum ProductTypeCast: string implements HasColor, HasIcon, HasLabel
             self::SIMPLE->value,
             self::CONFIGURABLE->value,
             self::WHOLESALE->value,
+            self::BUNDLE->value,
         ]);
     }
 
@@ -29,6 +31,7 @@ enum ProductTypeCast: string implements HasColor, HasIcon, HasLabel
             self::SIMPLE => 'Simple',
             self::CONFIGURABLE => 'Configurable',
             self::WHOLESALE => 'Wholesale',
+            self::BUNDLE => 'Bundle',
         };
     }
 
@@ -38,6 +41,7 @@ enum ProductTypeCast: string implements HasColor, HasIcon, HasLabel
             self::SIMPLE => 'info',
             self::CONFIGURABLE => 'warning',
             self::WHOLESALE => 'gray',
+            self::BUNDLE => 'success',
         };
     }
 
@@ -47,6 +51,7 @@ enum ProductTypeCast: string implements HasColor, HasIcon, HasLabel
             self::SIMPLE => 'heroicon-m-cube',
             self::CONFIGURABLE => 'heroicon-m-adjustments-horizontal',
             self::WHOLESALE => 'heroicon-m-truck',
+            self::BUNDLE => 'heroicon-m-squares-2x2',
         };
     }
 
