@@ -29,7 +29,7 @@ final class DemoUserSeeder extends Seeder
             'status' => UserStatusCast::ACTIVE->value,
             'mobile_verified_at' => now(),
             'email_verified_at' => now(),
-            'onboarded' => true,
+            'onboarded' => false,
         ]);
 
         // 2. Member

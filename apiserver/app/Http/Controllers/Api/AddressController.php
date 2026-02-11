@@ -21,7 +21,7 @@ final class AddressController extends Controller
     {
         $addresses = auth()->user()
             ->addresses()
-            ->with(['country', 'state', 'block'])
+            ->with(['country', 'state', 'district', 'block'])
             ->orderByDesc('default')
             ->orderBy('created_at')
             ->get();
@@ -38,7 +38,7 @@ final class AddressController extends Controller
 
         $address = $user->addresses()->create($request->validated());
 
-        $address->load(['country', 'state', 'block']);
+        $address->load(['country', 'state', 'district', 'block']);
 
         return response()->json([
             'message' => 'Address created successfully',
@@ -58,7 +58,7 @@ final class AddressController extends Controller
             ], 404);
         }
 
-        $address->load(['country', 'state', 'block']);
+        $address->load(['country', 'state', 'district', 'block']);
 
         return response()->json([
             'data' => new AddressResource($address),
@@ -79,7 +79,7 @@ final class AddressController extends Controller
 
         $address->update($request->validated());
 
-        $address->load(['country', 'state', 'block']);
+        $address->load(['country', 'state', 'district', 'block']);
 
         return response()->json([
             'message' => 'Address updated successfully',
@@ -122,7 +122,7 @@ final class AddressController extends Controller
         // the model event to unset other addresses
         $address->update(['default' => true]);
 
-        $address->load(['country', 'state', 'block']);
+        $address->load(['country', 'state', 'district', 'block']);
 
         return response()->json([
             'message' => 'Default address updated successfully',

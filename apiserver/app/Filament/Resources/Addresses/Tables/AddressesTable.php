@@ -42,6 +42,8 @@ class AddressesTable
                     ->searchable(),
                 TextColumn::make('block.name')
                     ->searchable(),
+                TextColumn::make('district.name')
+                    ->searchable(),
                 TextColumn::make('state_code')
                     ->searchable(),
                 TextColumn::make('country_code')

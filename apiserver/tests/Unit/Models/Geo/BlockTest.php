@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Address;
 use App\Models\Geo\Block;
 use App\Models\Geo\Country;
+use App\Models\Geo\District;
 use App\Models\Geo\State;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -31,6 +32,19 @@ test('block belongs to state', function () {
     expect($block->state)->not->toBeNull()
         ->and($block->state->id)->toBe($state->id)
         ->and($block->state->name)->toBe('Maharashtra');
+});
+
+test('block belongs to district when district_id is set', function () {
+    $country = Country::factory()->create();
+    $state = State::factory()->forCountry($country)->create(['name' => 'West Bengal', 'code' => 'WB']);
+    $district = District::factory()->forState($state)->create(['name' => 'Kolkata']);
+    $block = Block::factory()->forState($state)->create([
+        'district_id' => $district->id,
+        'district_name' => $district->name,
+    ]);
+
+    expect($block->district)->not->toBeNull()
+        ->and($block->district->id)->toBe($district->id);
 });
 
 test('block has addresses relationship', function () {

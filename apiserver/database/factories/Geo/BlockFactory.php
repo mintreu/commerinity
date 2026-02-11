@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories\Geo;
 
 use App\Models\Geo\Block;
+use App\Models\Geo\District;
 use App\Models\Geo\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,11 +23,16 @@ class BlockFactory extends Factory
      */
     public function definition(): array
     {
+        $state = State::query()->inRandomOrder()->first() ?? State::factory()->create();
+        $district = District::query()->where('state_id', $state->id)->inRandomOrder()->first()
+            ?? District::factory()->forState($state)->create();
+
         return [
             'name' => fake()->city(),
             'url' => fake()->slug(),
-            'district_name' => fake()->city(),
-            'state_code' => State::factory(),
+            'district_name' => $district->name,
+            'district_id' => $district->id,
+            'state_code' => $state->code,
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
         ];
@@ -37,9 +43,16 @@ class BlockFactory extends Factory
      */
     public function forState(State $state): static
     {
-        return $this->state(fn (array $attributes) => [
-            'state_code' => $state->code,
-        ]);
+        return $this->state(function () use ($state): array {
+            $district = District::query()->where('state_id', $state->id)->inRandomOrder()->first()
+                ?? District::factory()->forState($state)->create();
+
+            return [
+                'district_id' => $district->id,
+                'district_name' => $district->name,
+                'state_code' => $state->code,
+            ];
+        });
     }
 
     /**

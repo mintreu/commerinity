@@ -36,6 +36,7 @@ final class StoreAddressRequest extends FormRequest
             'city' => ['required', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:20'],
             'block_id' => ['nullable', 'integer', 'exists:blocks,id'],
+            'district_id' => ['nullable', 'integer', 'exists:districts,id'],
             'state_code' => ['required', 'string', 'exists:states,code'],
             'country_code' => ['required', 'string', 'size:2', 'exists:countries,iso_code_2'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],

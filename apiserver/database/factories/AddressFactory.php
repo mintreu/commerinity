@@ -46,6 +46,7 @@ class AddressFactory extends Factory
             'city' => fake()->city(),
             'postal_code' => fake()->postcode(),
             'block_id' => $block->id,
+            'district_id' => $block->district_id,
             'state_code' => $state->code,
             'country_code' => $state->country->iso_code_2,
             'latitude' => fake()->boolean(70) ? fake()->latitude() : null,
@@ -164,6 +165,7 @@ class AddressFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'block_id' => $block->id,
+            'district_id' => $block->district_id,
             'state_code' => $block->state_code,
             'country_code' => $block->state->country->iso_code_2,
         ]);

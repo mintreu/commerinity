@@ -115,6 +115,11 @@ class AddressInfolist
                                         ->label('Block')
                                         ->placeholder('-')
                                         ->columnSpan(['md' => 4]),
+
+                                    TextEntry::make('district.name')
+                                        ->label('District')
+                                        ->placeholder('-')
+                                        ->columnSpan(['md' => 4]),
                                 ]),
                             ])
                             ->compact()

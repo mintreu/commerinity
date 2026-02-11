@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Address;
+use App\Models\Geo\Block;
+use App\Models\Geo\District;
 
 final class AddressObserver
 {
@@ -35,6 +37,25 @@ final class AddressObserver
      */
     public function saving(Address $address): void
     {
+        if (empty($address->district_id) && ! empty($address->block_id)) {
+            $address->district_id = Block::query()
+                ->whereKey($address->block_id)
+                ->value('district_id');
+        }
+
+        if (! empty($address->district_id) && empty($address->state_code)) {
+            $stateCode = District::query()
+                ->whereKey($address->district_id)
+                ->with('state:id,code')
+                ->first()
+                ?->state
+                ?->code;
+
+            if (! empty($stateCode)) {
+                $address->state_code = $stateCode;
+            }
+        }
+
         if (! $address->default) {
             return;
         }

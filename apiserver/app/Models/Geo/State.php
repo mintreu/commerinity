@@ -43,6 +43,14 @@ class State extends Model
     }
 
     /**
+     * Get all districts in this state.
+     */
+    public function districts(): HasMany
+    {
+        return $this->hasMany(District::class);
+    }
+
+    /**
      * Get all addresses in this state
      */
     public function addresses(): HasMany

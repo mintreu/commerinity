@@ -17,6 +17,7 @@ class Block extends Model
         'name',
         'url',
         'district_name',
+        'district_id',
         'state_code',
         'latitude',
         'longitude',
@@ -25,6 +26,7 @@ class Block extends Model
     protected function casts(): array
     {
         return [
+            'district_id' => 'integer',
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
         ];
@@ -36,6 +38,14 @@ class Block extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class, 'state_code', 'code');
+    }
+
+    /**
+     * Get the district this block belongs to.
+     */
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     /**

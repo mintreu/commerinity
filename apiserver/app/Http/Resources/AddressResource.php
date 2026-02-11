@@ -24,6 +24,10 @@ final class AddressResource extends JsonResource
             'landmark' => $this->landmark,
             'city' => $this->city,
             'postal_code' => $this->postal_code,
+            'block_id' => $this->block_id,
+            'district_id' => $this->district_id,
+            'state_code' => $this->state_code,
+            'country_code' => $this->country_code,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'default' => $this->default,
@@ -38,10 +42,14 @@ final class AddressResource extends JsonResource
                 'code' => $this->state?->code,
                 'name' => $this->state?->name,
             ],
-            'block' => $this->whenLoaded('block', [
+            'district' => [
+                'id' => $this->district?->id,
+                'name' => $this->district?->name,
+            ],
+            'block' => $this->whenLoaded('block', fn () => [
                 'id' => $this->block?->id,
                 'name' => $this->block?->name,
-                'district' => $this->block?->district,
+                'district_name' => $this->block?->district_name,
             ]),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),

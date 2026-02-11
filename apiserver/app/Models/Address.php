@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\Geo\Block;
 use App\Models\Geo\Country;
+use App\Models\Geo\District;
 use App\Models\Geo\State;
 use App\Observers\AddressObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -35,6 +36,7 @@ class Address extends Model
         'city',
         'postal_code',
         'block_id',
+        'district_id',
         'state_code',
         'country_code',
         'latitude',
@@ -56,6 +58,7 @@ class Address extends Model
             'longitude' => 'decimal:8',
             'priority' => 'integer',
             'block_id' => 'integer',
+            'district_id' => 'integer',
         ];
     }
 
@@ -82,6 +85,14 @@ class Address extends Model
     public function block(): BelongsTo
     {
         return $this->belongsTo(Block::class);
+    }
+
+    /**
+     * Get the district this address belongs to
+     */
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     /**
@@ -159,6 +170,7 @@ class Address extends Model
             $this->address_2,
             $this->landmark,
             $this->city,
+            $this->district?->name,
             $this->state?->name,
             $this->postal_code,
             $this->country?->name,

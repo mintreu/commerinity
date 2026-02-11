@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use Database\Seeders\Geo\BlockSeeder;
 use Database\Seeders\Geo\CountrySeeder;
+use Database\Seeders\Geo\DistrictSeeder;
 use Database\Seeders\Geo\StateSeeder;
 use Database\Seeders\RewardEarningSeeder;
 use Database\Seeders\ContentSeeder;
@@ -58,6 +59,7 @@ class DatabaseSeeder extends Seeder
             // ═══════════════════════════════════════════════════════════
             CountrySeeder::class,
             StateSeeder::class,
+            DistrictSeeder::class,
             BlockSeeder::class,
 
             IntegrationSeeder::class,

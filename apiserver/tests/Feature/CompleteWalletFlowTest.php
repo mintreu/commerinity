@@ -192,12 +192,29 @@ test('withdrawal flow - success with bank transfer', function () {
 
     Http::fake([
         'payout-gamma.cashfree.com/payout/v1/getBalance' => Http::response(['status' => 'SUCCESS', 'data' => ['balance' => 100000000]], 200),
+        'https://payout-gamma.cashfree.com/payout/v1.2/getBalance' => Http::response(['status' => 'SUCCESS', 'data' => ['balance' => 100000000]], 200),
         'payout-gamma.cashfree.com/payout/v1/requestTransfer' => Http::response(['status' => 'SUCCESS', 'data' => ['transferId' => 'TXN_123', 'status' => 'SUCCESS']], 200),
+        'https://payout-gamma.cashfree.com/payout/v1.2/requestTransfer' => Http::response(['status' => 'SUCCESS', 'data' => ['transferId' => 'TXN_123', 'status' => 'SUCCESS']], 200),
+        'https://payout-gamma.cashfree.com/payout/v1.2/transfers' => Http::response([
+            'status' => 'SUCCESS',
+            'data' => [
+                'transfer_status' => 'SUCCESS',
+                'cf_transfer_id' => 'CF-12345',
+                'transfer_utr' => 'UTR123',
+            ],
+        ], 200),
+        'https://payout-gamma.cashfree.com/payout/v1.2/beneficiaries' => Http::response([
+            'status' => 'SUCCESS',
+            'data' => ['bene_id' => 'BENE-123'],
+            'subCode' => '200',
+        ], 200),
+        'payout-gamma.cashfree.com/payout/*' => Http::response(['status' => 'SUCCESS', 'data' => []], 200),
+        'https://payout-gamma.cashfree.com/payout/v1.2/*' => Http::response(['status' => 'SUCCESS', 'data' => []], 200),
     ]);
 
     // Amount is in rupees, min is 100
     $response = $this->actingAs($user)->postJson('/api/wallet/withdraw', [
-        'amount' => 5000, // ₹50.00 - must be at least ₹100
+        'amount' => 50, // ₹50.00 - must be at least ₹100
         'pin' => '123456',
         'beneficiary_uuid' => $beneficiary->uuid,
     ]);
@@ -329,6 +346,3 @@ test('checkout polling endpoint works without webhook verification', function ()
     $data = $response->json('data');
     expect($data['is_expired'])->toBe(false);
 });
-
-
-

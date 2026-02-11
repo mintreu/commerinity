@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Geo\Block;
 use App\Models\Geo\Country;
+use App\Models\Geo\District;
 use App\Models\Geo\State;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -43,6 +44,8 @@ test('blocks can be seeded for indian states', function () {
         ->assertSuccessful();
     $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\StateSeeder'])
         ->assertSuccessful();
+    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\DistrictSeeder'])
+        ->assertSuccessful();
     $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\BlockSeeder'])
         ->assertSuccessful();
 
@@ -54,6 +57,8 @@ test('seeded blocks have valid state relationships', function () {
         ->assertSuccessful();
     $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\StateSeeder'])
         ->assertSuccessful();
+    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\DistrictSeeder'])
+        ->assertSuccessful();
     $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\BlockSeeder'])
         ->assertSuccessful();
 
@@ -61,6 +66,18 @@ test('seeded blocks have valid state relationships', function () {
 
     expect($block->state)->not->toBeNull()
         ->and($block->state->country)->not->toBeNull();
+});
+
+test('districts are seeded (all states if clean, else minimum west bengal)', function () {
+    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\CountrySeeder'])
+        ->assertSuccessful();
+    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\StateSeeder'])
+        ->assertSuccessful();
+    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\Geo\\DistrictSeeder'])
+        ->assertSuccessful();
+
+    expect(District::count())->toBeGreaterThan(0);
+    expect(District::whereHas('state', fn ($query) => $query->where('code', 'WB'))->count())->toBeGreaterThanOrEqual(23);
 });
 
 test('geo hierarchical relationships work correctly', function () {

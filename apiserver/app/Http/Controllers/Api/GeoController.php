@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Geo\Block;
 use App\Models\Geo\Country;
+use App\Models\Geo\District;
 use App\Models\Geo\State;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -117,13 +118,20 @@ final class GeoController extends Controller
     {
         $request->validate([
             'state_code' => 'required|string',
+            'district_id' => 'nullable|integer|exists:districts,id',
         ]);
 
         $stateCode = $request->input('state_code');
+        $districtId = $request->integer('district_id') ?: null;
         try {
-            $blocks = Cache::remember("geo:blocks:{$stateCode}", now()->addHours(6), function () use ($stateCode) {
+            $cacheKey = $districtId
+                ? "geo:blocks:{$stateCode}:district:{$districtId}"
+                : "geo:blocks:{$stateCode}";
+
+            $blocks = Cache::remember($cacheKey, now()->addHours(6), function () use ($stateCode, $districtId) {
                 return Block::query()
                     ->byState($stateCode)
+                    ->when($districtId, fn ($query) => $query->where('district_id', $districtId))
                     ->orderBy('name')
                     ->get(['id', 'name', 'district_name', 'latitude', 'longitude'])
                     ->map(fn ($block) => [
@@ -167,15 +175,14 @@ final class GeoController extends Controller
         $stateCode = $request->input('state_code');
         try {
             $districts = Cache::remember("geo:districts:{$stateCode}", now()->addHours(6), function () use ($stateCode) {
-                return Block::query()
-                    ->byState($stateCode)
-                    ->distinct()
-                    ->orderBy('district_name')
-                    ->pluck('district_name')
-                    ->filter()
+                return District::query()
+                    ->whereHas('state', fn ($query) => $query->where('code', $stateCode))
+                    ->where('is_active', true)
+                    ->orderBy('name')
+                    ->get(['id', 'name'])
                     ->map(fn ($district) => [
-                        'value' => $district,
-                        'label' => $district,
+                        'value' => $district->id,
+                        'label' => $district->name,
                     ])
                     ->values()
                     ->all();

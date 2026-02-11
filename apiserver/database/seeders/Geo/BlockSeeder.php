@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Database\Seeders\Geo;
 
 use App\Models\Geo\Block;
+use App\Models\Geo\District;
 use App\Models\Geo\State;
+use App\Support\Geo\DistrictNameMapper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -81,7 +83,8 @@ class BlockSeeder extends Seeder
                     ],
                     [
                         'url' => $url,
-                        'district_name' => $cityData['district_name'] ?? '',
+                        'district_name' => $this->resolveDistrictName($state->code, $cityData['district_name'] ?? null),
+                        'district_id' => $this->resolveDistrictId($state->id, $state->code, $cityData['district_name'] ?? null),
                         'latitude' => isset($cityData['latitude']) ? (float) $cityData['latitude'] : null,
                         'longitude' => isset($cityData['longitude']) ? (float) $cityData['longitude'] : null,
                     ]
@@ -94,5 +97,28 @@ class BlockSeeder extends Seeder
         $bar->finish();
         $this->command->newLine();
         $this->command->info('Indian blocks/cities seeded successfully.');
+    }
+
+    private function resolveDistrictName(string $stateCode, ?string $rawDistrict): ?string
+    {
+        if (! filled($rawDistrict)) {
+            return null;
+        }
+
+        return DistrictNameMapper::canonicalize($stateCode, $rawDistrict)
+            ?? DistrictNameMapper::toDisplayName((string) $rawDistrict);
+    }
+
+    private function resolveDistrictId(int $stateId, string $stateCode, ?string $rawDistrict): ?int
+    {
+        $districtName = $this->resolveDistrictName($stateCode, $rawDistrict);
+        if (! $districtName) {
+            return null;
+        }
+
+        return District::query()
+            ->where('state_id', $stateId)
+            ->where('name', $districtName)
+            ->value('id');
     }
 }

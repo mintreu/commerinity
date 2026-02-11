@@ -4,6 +4,10 @@ namespace App\Filament\Resources\Addresses\Schemas;
 
 use App\Casts\AddressTypeCast;
 use App\Models\Admin;      // <-- adjust namespace if different
+use App\Models\Geo\Block;
+use App\Models\Geo\Country;
+use App\Models\Geo\District;
+use App\Models\Geo\State;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -100,20 +104,94 @@ class AddressForm
                     ->schema([
                         Grid::make(2)->schema([
                             Select::make('block_id')
-                                ->relationship('block', 'name')
+                                ->label('Block')
+                                ->options(fn (Get $get): array => Block::query()
+                                    ->when(
+                                        filled($get('state_code')),
+                                        fn ($query) => $query->where('state_code', (string) $get('state_code'))
+                                    )
+                                    ->when(
+                                        filled($get('district_id')),
+                                        fn ($query) => $query->where('district_id', (int) $get('district_id'))
+                                    )
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->toArray())
+                                ->getOptionLabelUsing(
+                                    fn ($value): ?string => filled($value)
+                                        ? Block::query()->whereKey($value)->value('name')
+                                        : null
+                                )
                                 ->searchable()
                                 ->preload()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set): void {
+                                    if (! filled($state)) {
+                                        return;
+                                    }
+
+                                    $block = Block::query()->whereKey((int) $state)->first(['state_code', 'district_id']);
+                                    if (! $block) {
+                                        return;
+                                    }
+
+                                    if (filled($block->state_code)) {
+                                        $set('state_code', $block->state_code);
+                                    }
+                                    if (filled($block->district_id)) {
+                                        $set('district_id', $block->district_id);
+                                    }
+                                })
                                 ->placeholder('Optional'),
 
-                            TextInput::make('state_code')
-                                ->placeholder('e.g. WB'),
+                            Select::make('state_code')
+                                ->label('State')
+                                ->options(fn (): array => State::query()->orderBy('name')->pluck('name', 'code')->toArray())
+                                ->searchable()
+                                ->preload()
+                                ->live()
+                                ->afterStateUpdated(function (Set $set): void {
+                                    $set('district_id', null);
+                                    $set('block_id', null);
+                                })
+                                ->placeholder('Select state'),
                         ]),
 
                         Grid::make(2)->schema([
-                            TextInput::make('country_code')
-                                ->required()
-                                ->default('IN'),
+                            Select::make('district_id')
+                                ->label('District')
+                                ->options(fn (Get $get): array => District::query()
+                                    ->when(
+                                        filled($get('state_code')),
+                                        fn ($query) => $query->whereHas(
+                                            'state',
+                                            fn ($stateQuery) => $stateQuery->where('code', (string) $get('state_code'))
+                                        )
+                                    )
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                    ->toArray())
+                                ->getOptionLabelUsing(
+                                    fn ($value): ?string => filled($value)
+                                        ? District::query()->whereKey($value)->value('name')
+                                        : null
+                                )
+                                ->searchable()
+                                ->preload()
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set) => $set('block_id', null))
+                                ->placeholder('Optional'),
 
+                            Select::make('country_code')
+                                ->label('Country')
+                                ->options(fn (): array => Country::query()->orderBy('name')->pluck('name', 'iso_code_2')->toArray())
+                                ->required()
+                                ->default('IN')
+                                ->searchable()
+                                ->preload(),
+                        ]),
+
+                        Grid::make(2)->schema([
                             TextInput::make('pickup_location')
                                 ->placeholder('Optional'),
                         ]),
