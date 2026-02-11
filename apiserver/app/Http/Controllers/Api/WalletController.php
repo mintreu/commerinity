@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\OtpManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
+use App\Casts\TransactionTypeCast;
 use App\Http\Resources\WalletResource;
 use App\Models\Ecommerce\Order;
 use App\Models\Geo\Country;
@@ -499,7 +500,8 @@ final class WalletController extends Controller
                 $wallet,
                 $amountInPaisa,
                 'withdrawal',
-                "Withdrawal to bank account ending {$beneficiary->account_number_masked}"
+                "Withdrawal to bank account ending {$beneficiary->account_number_masked}",
+                TransactionTypeCast::WITHDRAWAL
             );
 
             // Update transaction with beneficiary info

@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 // ========================================
 
 test('can register with mobile and OTP', function () {
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
     $otp = '123456'; // Demo mode OTP
 
     // Send OTP first
@@ -49,7 +49,7 @@ test('can register with mobile and OTP', function () {
 });
 
 test('can register with mobile and optional email', function () {
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
     $email = 'test@example.com';
     $otp = '123456';
 
@@ -79,7 +79,7 @@ test('can register with mobile and optional email', function () {
 
 test('can register with referral code', function () {
     $referrer = User::factory()->create();
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
 
     // Send OTP first
     $this->postJson('/api/auth/send-otp', [
@@ -103,7 +103,7 @@ test('can register with referral code', function () {
 });
 
 test('cannot register with invalid OTP', function () {
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -123,7 +123,7 @@ test('cannot register with invalid OTP', function () {
 });
 
 test('cannot register with expired OTP', function () {
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -146,10 +146,10 @@ test('cannot register with expired OTP', function () {
 });
 
 test('cannot register with existing mobile', function () {
-    User::factory()->create(['mobile' => '+919876543210']);
+    User::factory()->create(['mobile' => '9876543210']);
 
     $response = $this->postJson('/api/auth/register', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'otp' => '123456',
         'name' => 'Duplicate User',
         'password' => 'Password123!',
@@ -177,7 +177,7 @@ test('cannot register with existing email', function () {
 
 test('cannot register with invalid referral code', function () {
     $response = $this->postJson('/api/auth/register', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'otp' => '123456',
         'name' => 'Test User',
         'password' => 'Password123!',
@@ -191,7 +191,7 @@ test('cannot register with invalid referral code', function () {
 
 test('validates password strength', function () {
     $response = $this->postJson('/api/auth/register', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'otp' => '123456',
         'name' => 'Test User',
         'password' => '123', // Too weak
@@ -204,7 +204,7 @@ test('validates password strength', function () {
 
 test('validates password confirmation', function () {
     $response = $this->postJson('/api/auth/register', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'otp' => '123456',
         'name' => 'Test User',
         'password' => 'Password123!',
@@ -229,7 +229,7 @@ test('requires mobile', function () {
 });
 
 test('registration creates Sanctum token', function () {
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
 
     // Send OTP first
     $this->postJson('/api/auth/send-otp', [
@@ -299,7 +299,7 @@ test('can register with email and OTP', function () {
 
 test('can register with email and optional mobile', function () {
     $email = 'fullusertest@example.com';
-    $mobile = '+919876543210';
+    $mobile = '9876543210';
     $otp = '123456';
 
     $this->postJson('/api/auth/send-otp', [

@@ -66,7 +66,8 @@ test('user can initiate wallet topup and get checkout url', function () {
     expect($transaction->amount)->toBe(50000); // 500 * 100
     expect($transaction->purpose)->toBe('Wallet TopUp');
     expect($transaction->status->value)->toBe('pending');
-    expect($transaction->wallet_id)->toBe($wallet->id);
+    expect($transaction->wallet->walletable_id)->toBe($user->id);
+    expect($transaction->wallet->walletable_type)->toBe($user::class);
     expect($transaction->provider_gen_session)->toBe('test_session_123');
 });
 
@@ -144,7 +145,7 @@ test('checkout status endpoint works for polling', function () {
             'success' => true,
             'data' => [
                 'status' => 'pending',
-                'is_verified' => false,
+                'verified' => false,
                 'is_expired' => false,
             ],
         ]);

@@ -25,12 +25,6 @@ final class OnboardingVerifierService
             'required' => true,
             'weight' => 1,
         ],
-        'address' => [
-            'name' => 'Add Address',
-            'description' => 'Add at least one delivery address',
-            'required' => true,
-            'weight' => 1,
-        ],
         'mobile' => [
             'name' => 'Verify Mobile',
             'description' => 'Verify your mobile number via OTP',
@@ -43,11 +37,17 @@ final class OnboardingVerifierService
             'required' => false,
             'weight' => 1,
         ],
-        'avatar' => [
-            'name' => 'Upload Avatar',
-            'description' => 'Upload a profile picture',
+        'address' => [
+            'name' => 'Add Address',
+            'description' => 'Add at least one delivery address',
             'required' => false,
-            'weight' => 0.5,
+            'weight' => 1,
+        ],
+        'kyc' => [
+            'name' => 'KYC Verification',
+            'description' => 'Submit KYC documents and get approval',
+            'required' => false,
+            'weight' => 1,
         ],
     ];
 
@@ -77,11 +77,27 @@ final class OnboardingVerifierService
     {
         $this->stepStatus = [
             'profile' => $this->isProfileComplete(),
-            'address' => $this->hasAddress(),
             'mobile' => $this->isMobileVerified(),
             'email' => $this->isEmailVerified(),
-            'avatar' => $this->hasAvatar(),
+            'address' => $this->hasAddress(),
+            'kyc' => $this->hasApprovedKyc(),
         ];
+    }
+
+    /**
+     * Check if user has an approved KYC record.
+     */
+    private function hasApprovedKyc(): bool
+    {
+        return $this->user->kyc?->isApproved() ?? false;
+    }
+
+    /**
+     * Check if user has at least one saved address.
+     */
+    private function hasAddress(): bool
+    {
+        return $this->user->addresses()->exists();
     }
 
     /**
@@ -92,14 +108,6 @@ final class OnboardingVerifierService
         return ! empty($this->user->name)
             && $this->user->dob !== null
             && $this->user->gender !== null;
-    }
-
-    /**
-     * Check if user has at least one saved address.
-     */
-    private function hasAddress(): bool
-    {
-        return $this->user->addresses()->exists();
     }
 
     /**
@@ -116,14 +124,6 @@ final class OnboardingVerifierService
     private function isEmailVerified(): bool
     {
         return $this->user->hasVerifiedEmail();
-    }
-
-    /**
-     * Check if user has uploaded an avatar.
-     */
-    private function hasAvatar(): bool
-    {
-        return $this->user->getFirstMediaUrl('avatar') !== '';
     }
 
     /**

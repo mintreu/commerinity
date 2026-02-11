@@ -17,6 +17,7 @@ enum TransactionTypeCast: string implements HasColor, HasIcon, HasLabel
     case ADJUSTMENT = 'adjustment';
     case HOLD = 'hold';
     case RELEASE = 'release';
+    case WITHDRAWAL = 'withdrawal';
 
     public function getLabel(): string
     {
@@ -28,6 +29,7 @@ enum TransactionTypeCast: string implements HasColor, HasIcon, HasLabel
             self::ADJUSTMENT => 'Adjustment',
             self::HOLD => 'Hold',
             self::RELEASE => 'Release',
+            self::WITHDRAWAL => 'Withdrawal',
         };
     }
 
@@ -41,6 +43,7 @@ enum TransactionTypeCast: string implements HasColor, HasIcon, HasLabel
             self::ADJUSTMENT => 'gray',
             self::HOLD => 'warning',
             self::RELEASE => 'success',
+            self::WITHDRAWAL => 'warning',
         };
     }
 
@@ -54,6 +57,7 @@ enum TransactionTypeCast: string implements HasColor, HasIcon, HasLabel
             self::ADJUSTMENT => 'heroicon-o-adjustments-horizontal',
             self::HOLD => 'heroicon-o-pause-circle',
             self::RELEASE => 'heroicon-o-play-circle',
+            self::WITHDRAWAL => 'heroicon-o-currency-rupee',
         };
     }
 
@@ -70,6 +74,6 @@ enum TransactionTypeCast: string implements HasColor, HasIcon, HasLabel
      */
     public function isNegative(): bool
     {
-        return in_array($this, [self::DEBIT, self::CHARGEBACK, self::HOLD]);
+        return in_array($this, [self::DEBIT, self::CHARGEBACK, self::HOLD, self::WITHDRAWAL]);
     }
 }

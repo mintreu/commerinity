@@ -166,7 +166,8 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
         Wallet $wallet,
         int $amountInPaisa,
         string $purpose,
-        ?string $description = null
+        ?string $description = null,
+        TransactionTypeCast $type = TransactionTypeCast::HOLD
     ): Transaction {
         if (! $wallet->canTransact()) {
             throw new RuntimeException('Wallet cannot transact');
@@ -183,7 +184,7 @@ final class UserWalletService implements \App\Contracts\Services\UserWalletServi
 
             return Transaction::create([
                 'wallet_id' => $wallet->id,
-                'type' => TransactionTypeCast::HOLD,
+                'type' => $type,
                 'status' => TransactionStatusCast::COMPLETED,
                 'amount' => $amountInPaisa,
                 'fee' => 0,

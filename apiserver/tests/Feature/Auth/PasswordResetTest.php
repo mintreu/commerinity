@@ -35,10 +35,10 @@ test('can request password reset link via email', function () {
 });
 
 test('can request password reset via mobile OTP', function () {
-    $user = User::factory()->create(['mobile' => '+919876543210']);
+    $user = User::factory()->create(['mobile' => '9876543210']);
 
     $response = $this->postJson('/api/auth/forgot-password-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
     ]);
 
     $response->assertSuccessful()
@@ -56,7 +56,7 @@ test('cannot request password reset for non-existent email', function () {
 
 test('cannot request password reset for non-existent mobile', function () {
     $response = $this->postJson('/api/auth/forgot-password-mobile', [
-        'mobile' => '+919999999999',
+        'mobile' => '9999999999',
     ]);
 
     $response->assertStatus(404)
@@ -167,18 +167,18 @@ test('token is deleted after successful password reset', function () {
 
 test('can reset password with mobile and OTP', function () {
     $user = User::factory()->create([
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => Hash::make('OldPassword123!'),
     ]);
 
     // Request OTP
     $this->postJson('/api/auth/forgot-password-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
     ]);
 
     // Reset with OTP
     $response = $this->postJson('/api/auth/reset-password-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'otp' => '123456', // Demo mode
         'password' => 'NewPassword123!',
         'password_confirmation' => 'NewPassword123!',
@@ -188,20 +188,20 @@ test('can reset password with mobile and OTP', function () {
 
     // Verify new password works
     $this->postJson('/api/auth/login', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => 'NewPassword123!',
     ])->assertSuccessful();
 });
 
 test('cannot reset password with mobile and invalid OTP', function () {
-    $user = User::factory()->create(['mobile' => '+919876543210']);
+    $user = User::factory()->create(['mobile' => '9876543210']);
 
     $this->postJson('/api/auth/forgot-password-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
     ]);
 
     $response = $this->postJson('/api/auth/reset-password-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'otp' => '000000', // Wrong OTP
         'password' => 'NewPassword123!',
         'password_confirmation' => 'NewPassword123!',

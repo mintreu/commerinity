@@ -14,7 +14,7 @@ beforeEach(function () {
     // Create user who signed up via mobile (simulating pre-onboarding state)
     // Let gender use default value from migration (OTHER)
     $this->userWithMobile = User::factory()->create([
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'mobile_verified_at' => now(),
         'email' => null,
         'email_verified_at' => null,
@@ -159,7 +159,7 @@ test('can verify and add mobile during onboarding (required for email users)', f
         app('hash'),
         true
     );
-    $mobile = '+919999888877';
+    $mobile = '9999888877';
     $otp = $otpManager->generate($mobile);
 
     $response = $this->actingAs($this->userWithEmail)
@@ -179,7 +179,7 @@ test('can verify and add mobile during onboarding (required for email users)', f
 
 test('cannot verify mobile already used by another user', function () {
     User::factory()->create([
-        'mobile' => '+919999000001',
+        'mobile' => '9999000001',
         'mobile_verified_at' => now(),
     ]);
 
@@ -188,12 +188,12 @@ test('cannot verify mobile already used by another user', function () {
         app('hash'),
         true
     );
-    $otp = $otpManager->generate('+919999000001');
+    $otp = $otpManager->generate('9999000001');
 
     $response = $this->actingAs($this->userWithEmail)
         ->postJson('/api/onboarding/verify-contact', [
             'type' => 'mobile',
-            'value' => '+919999000001',
+            'value' => '9999000001',
             'otp' => (string) $otp,
         ]);
 
@@ -256,7 +256,7 @@ test('email user can complete onboarding after adding mobile', function () {
         app('hash'),
         true
     );
-    $mobile = '+919999888877';
+    $mobile = '9999888877';
     $otp = $otpManager->generate($mobile);
 
     // Add mobile

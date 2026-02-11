@@ -69,13 +69,20 @@ final class OnboardingController extends Controller
             $rules['value'][] = 'email';
             $rules['value'][] = Rule::unique('users', 'email')->ignore($user?->id);
         } else {
-            $rules['value'][] = 'digits:10';
+            $rules['value'][] = function ($attribute, $value, $fail) {
+                $digits = preg_replace('/\D/', '', $value);
+
+                $isTenDigits = strlen($digits) === 10;
+                $isWithCountryPrefix = strlen($digits) === 12 && str_starts_with($digits, '91');
+
+                if (! $isTenDigits && ! $isWithCountryPrefix) {
+                    $fail('Mobile number must be 10 digits.');
+                }
+            };
             $rules['value'][] = Rule::unique('users', 'mobile')->ignore($user?->id);
         }
 
-        $request->validate($rules, [
-            'value.digits' => 'Mobile number must be 10 digits.',
-        ]);
+        $request->validate($rules);
 
         $value = $request->input('value');
         $otp = $request->input('otp');

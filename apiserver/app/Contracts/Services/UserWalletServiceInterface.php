@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Contracts\Services;
 
 use App\Models\Transaction;
+use App\Casts\TransactionTypeCast;
 use App\Models\Wallet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -56,7 +57,8 @@ interface UserWalletServiceInterface
         Wallet $wallet,
         int $amountInPaisa,
         string $purpose,
-        ?string $description = null
+        ?string $description = null,
+        TransactionTypeCast $type = TransactionTypeCast::HOLD
     ): Transaction;
 
     /**

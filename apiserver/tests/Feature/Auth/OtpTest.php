@@ -19,7 +19,7 @@ beforeEach(function () {
 test('can send OTP to mobile number', function () {
     $response = $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
     ]);
 
     $response->assertSuccessful()
@@ -44,7 +44,7 @@ test('can send OTP to email', function () {
 });
 
 test('OTP is stored in cache', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -57,7 +57,7 @@ test('OTP is stored in cache', function () {
 });
 
 test('OTP expires after 10 minutes', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -79,7 +79,7 @@ test('OTP expires after 10 minutes', function () {
 });
 
 test('new OTP overwrites previous OTP', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     // Send first OTP
     $response1 = $this->postJson('/api/auth/send-otp', [
@@ -114,7 +114,7 @@ test('new OTP overwrites previous OTP', function () {
 // ========================================
 
 test('can verify correct OTP', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $sendResponse = $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -134,7 +134,7 @@ test('can verify correct OTP', function () {
 });
 
 test('cannot verify incorrect OTP', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -154,7 +154,7 @@ test('cannot verify incorrect OTP', function () {
 test('cannot verify OTP without sending first', function () {
     $response = $this->postJson('/api/auth/verify-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
         'otp' => '123456',
     ]);
 
@@ -163,7 +163,7 @@ test('cannot verify OTP without sending first', function () {
 });
 
 test('OTP verification is case-insensitive', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -186,7 +186,7 @@ test('OTP verification is case-insensitive', function () {
 // ========================================
 
 test('rate limits OTP generation - 3 requests per 15 minutes', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     // Make 3 successful requests
     for ($i = 0; $i < 3; $i++) {
@@ -209,7 +209,7 @@ test('rate limits OTP generation - 3 requests per 15 minutes', function () {
 });
 
 test('rate limit resets after 15 minutes', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     // Exhaust rate limit
     for ($i = 0; $i < 3; $i++) {
@@ -238,7 +238,7 @@ test('rate limit resets after 15 minutes', function () {
 });
 
 test('rate limits verification attempts - 5 attempts', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     // Send OTP
     $this->postJson('/api/auth/send-otp', [
@@ -269,7 +269,7 @@ test('rate limits verification attempts - 5 attempts', function () {
 });
 
 test('verification rate limit resets after successful verification', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     // Send OTP
     $sendResponse = $this->postJson('/api/auth/send-otp', [
@@ -374,7 +374,7 @@ test('validates credential cannot be whitespace', function () {
 test('validates OTP is required for verification', function () {
     $response = $this->postJson('/api/auth/verify-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
     ]);
 
     $response->assertStatus(422)
@@ -384,12 +384,12 @@ test('validates OTP is required for verification', function () {
 test('validates OTP is exactly 6 digits', function () {
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
     ]);
 
     $response = $this->postJson('/api/auth/verify-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
         'otp' => '123', // Too short
     ]);
 
@@ -402,7 +402,7 @@ test('validates OTP is exactly 6 digits', function () {
 // ========================================
 
 test('OTP is hashed in cache', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -419,7 +419,7 @@ test('OTP is hashed in cache', function () {
 });
 
 test('credential is hashed in cache key', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -434,7 +434,7 @@ test('credential is hashed in cache key', function () {
 });
 
 test('OTP is cleared after successful verification', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $sendResponse = $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -456,7 +456,7 @@ test('OTP is cleared after successful verification', function () {
 });
 
 test('OTP is cleared after max failed attempts', function () {
-    $credential = '+919876543210';
+    $credential = '9876543210';
 
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
@@ -484,7 +484,7 @@ test('OTP is cleared after max failed attempts', function () {
 test('demo mode returns fixed OTP 123456', function () {
     $response = $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
     ]);
 
     expect($response->json('otp'))->toBe(123456)
@@ -496,7 +496,7 @@ test('demo mode OTP is logged', function () {
     // For now, we just verify the behavior exists
     $this->postJson('/api/auth/send-otp', [
         'type' => 'mobile',
-        'value' => '+919876543210',
+        'value' => '9876543210',
     ])->assertSuccessful();
 
     // OTP manager should log demo OTP

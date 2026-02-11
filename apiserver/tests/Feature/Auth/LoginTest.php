@@ -29,12 +29,12 @@ test('can login with email and password', function () {
 
 test('can login with mobile and password', function () {
     $user = User::factory()->create([
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => Hash::make('Password123!'),
     ]);
 
     $response = $this->postJson('/api/auth/login', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => 'Password123!',
     ]);
 
@@ -376,18 +376,18 @@ test('loginMobile with ios device_type works', function () {
 
 test('loginMobile returns token with correct device name', function () {
     $user = User::factory()->create([
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => Hash::make('Password123!'),
     ]);
 
     $this->postJson('/api/auth/login-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => 'Password123!',
         'device_type' => 'android',
     ]);
 
     $this->postJson('/api/auth/login-mobile', [
-        'mobile' => '+919876543210',
+        'mobile' => '9876543210',
         'password' => 'Password123!',
         'device_type' => 'ios',
     ]);
