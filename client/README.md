@@ -1,60 +1,89 @@
-# Nuxt Starter Template
+# Commerinity Client App
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+Nuxt 4 frontend for the Commerinity digital product.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+This app delivers the customer-facing experience for onboarding, catalog, cart, orders, subscription, wallet, recruitment apply flow, and user dashboards.
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+## Stack
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-  </picture>
-</a>
+- Node.js 20+ (recommended)
+- Nuxt 4
+- Nuxt UI
+- TypeScript
+- Vitest
+- Playwright
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+## Core Experience
 
-## Quick Start
+- Authentication UI with password/OTP support
+- Address onboarding with geo selection and validation
+- Product listing/detail, filters, cart, and checkout flow
+- Order status, invoice access, and purchase confirmation UX
+- Subscription plans and activation journey
+- Wallet views, transfer/transaction views, and earnings pages
+- FAQ/help and global search experience
+- PWA support (`site.webmanifest` + service worker registration)
 
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/starter
-```
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
-
-## Setup
-
-Make sure to install the dependencies:
+## Local Setup
 
 ```bash
-pnpm install
+cd client
+npm install
+npm run dev
 ```
 
-## Development Server
+App URL: `http://localhost:3000`
 
-Start the development server on `http://localhost:3000`:
+## Runtime Configuration
+
+Set environment values in `client/.env` as needed:
+
+- `NUXT_PUBLIC_API_BASE` (e.g. `http://localhost:8000`)
+- `NUXT_PUBLIC_SITE_URL` (e.g. `http://localhost:3000`)
+- `NUXT_PUBLIC_ENABLE_PWA=true`
+- Optional branding/contact/public UI variables from `nuxt.config.ts`
+
+## Quality Commands
 
 ```bash
-pnpm dev
+# lint
+npm run lint
+
+# type checking
+npm run typecheck
+
+# unit/integration tests
+npm run test
+
+# production build
+npm run build
+
+# local production preview
+npm run preview
 ```
 
-## Production
+## API Integration Notes
 
-Build the application for production:
+- Sanctum token-mode auth is configured in `nuxt.config.ts`
+- Backend API should be reachable from `NUXT_PUBLIC_API_BASE`
+- Ensure backend `APP_CLIENT_URL` and `SANCTUM_STATEFUL_DOMAINS` match client host
 
-```bash
-pnpm build
-```
+## PWA Notes
 
-Locally preview production build:
+PWA assets and registration are included:
+- `public/site.webmanifest`
+- `public/sw.js`
+- `app/plugins/pwa.client.ts`
 
-```bash
-pnpm preview
-```
+After deployment, verify manifest and service worker from browser DevTools.
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Release Checklist
+
+- Run `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`
+- Verify auth/onboarding/cart/subscription/wallet critical paths
+- Verify PWA installability and manifest validity
+- Verify production API base URL and sitemap routes
+
+## License
+
+Proprietary. All rights reserved.
