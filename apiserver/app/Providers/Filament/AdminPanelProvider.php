@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\AdminBusinessVolumeChart;
+use App\Filament\Widgets\AdminOrderStatusChart;
+use App\Filament\Widgets\AdminPlatformStats;
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
 use BinaryBuilds\CommandRunner\CommandRunnerPlugin;
 use BinaryBuilds\FilamentCacheManager\FilamentCacheManagerPlugin;
@@ -66,6 +69,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
+                AdminPlatformStats::class,
+                AdminBusinessVolumeChart::class,
+                AdminOrderStatusChart::class,
 
             ])
             ->middleware([

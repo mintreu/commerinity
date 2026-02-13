@@ -24,7 +24,7 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
 
     public const CREDENTIAL_EMAIL = 'email';
 
-    private const OTP_TTL_MINUTES = 10;
+    private const OTP_TTL_MINUTES = 15;
 
     private const OTP_MIN = 100000;
 
@@ -73,18 +73,10 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         }
 
         try {
-            if ($this->shouldUseDemoMode()) {
-                $otp = $this->generateDemoOtp($credential);
-
-                return [
-                    'success' => true,
-                    'otp' => $otp,
-                    'demo' => true,
-                    'message' => 'OTP sent successfully',
-                ];
-            }
-
-            $otp = $this->generate($credential);
+            $isDemo = $credentialType === self::CREDENTIAL_MOBILE && $this->shouldUseDemoMode();
+            $otp = $isDemo
+                ? $this->generateDemoOtp($credential)
+                : $this->generateRealOtp($credential);
 
             if ($credentialType === self::CREDENTIAL_MOBILE) {
                 $response = $this->sendOtpViaSms($credential, (string) $otp);
@@ -92,7 +84,7 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
                 if ($response->success) {
                     return [
                         'success' => true,
-                        'demo' => false,
+                        'demo' => $isDemo,
                         'message' => 'OTP sent successfully',
                     ];
                 }
@@ -202,7 +194,7 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         $key = $this->getCacheKey($credential);
         $hashedOtp = $this->hasher->make((string) $otp);
 
-        $this->cache->put($key, $hashedOtp, now()->addMinutes(self::OTP_TTL_MINUTES));
+        $this->cache->put($key, $hashedOtp, now()->addMinutes($this->otpTtlMinutes()));
     }
 
     private function retrieve(string $credential): ?string
@@ -230,6 +222,17 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         $this->enforceRateLimit($credential);
 
         return $this->generateDemo($credential);
+    }
+
+    private function generateRealOtp(string $credential): int
+    {
+        $this->validateCredential($credential);
+        $this->enforceRateLimit($credential);
+
+        $otp = random_int(self::OTP_MIN, self::OTP_MAX);
+        $this->store($credential, $otp);
+
+        return $otp;
     }
 
     private function enforceRateLimit(string $credential): void
@@ -356,6 +359,13 @@ final class OtpManager implements \App\Contracts\Helpers\OtpManagerInterface
         }
 
         return $this->isDemoMode;
+    }
+
+    private function otpTtlMinutes(): int
+    {
+        $configured = (int) config('auth.otp_ttl_minutes', self::OTP_TTL_MINUTES);
+
+        return max(5, $configured);
     }
 
     private function handleSmsFailure(string $credential, \App\Services\IntegrationServices\Sms\DTOs\SmsResponse $response): array

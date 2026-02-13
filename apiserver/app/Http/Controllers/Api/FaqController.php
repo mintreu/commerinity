@@ -72,9 +72,6 @@ final class FaqController extends Controller
                 'tags' => $faq->tags,
                 'keywords' => $faq->keywords,
                 'views' => $faq->views,
-                'helpful_count' => $faq->helpful_count,
-                'not_helpful_count' => $faq->not_helpful_count,
-                'helpful_percentage' => $faq->helpful_percentage,
             ]);
 
         return response()->json([
@@ -125,9 +122,6 @@ final class FaqController extends Controller
                     'tags' => $faq->tags,
                     'keywords' => $faq->keywords,
                     'views' => $faq->views,
-                    'helpful_count' => $faq->helpful_count,
-                    'not_helpful_count' => $faq->not_helpful_count,
-                    'helpful_percentage' => $faq->helpful_percentage,
                     'topic' => [
                         'name' => $faq->topic->name,
                         'slug' => $faq->topic->slug,
@@ -179,60 +173,6 @@ final class FaqController extends Controller
                 'results' => $faqs,
                 'count' => $faqs->count(),
             ],
-        ]);
-    }
-
-    /**
-     * Mark FAQ as helpful.
-     *
-     * POST /api/faq/{url}/helpful
-     */
-    public function markHelpful(string $url): JsonResponse
-    {
-        $faq = HelpdeskFaq::query()
-            ->where('url', $url)
-            ->active()
-            ->first();
-
-        if (! $faq) {
-            return response()->json([
-                'success' => false,
-                'message' => 'FAQ not found',
-            ], 404);
-        }
-
-        $faq->markHelpful();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Thank you for your feedback!',
-        ]);
-    }
-
-    /**
-     * Mark FAQ as not helpful.
-     *
-     * POST /api/faq/{url}/not-helpful
-     */
-    public function markNotHelpful(string $url): JsonResponse
-    {
-        $faq = HelpdeskFaq::query()
-            ->where('url', $url)
-            ->active()
-            ->first();
-
-        if (! $faq) {
-            return response()->json([
-                'success' => false,
-                'message' => 'FAQ not found',
-            ], 404);
-        }
-
-        $faq->markNotHelpful();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Thank you for your feedback! We\'ll work on improving this answer.',
         ]);
     }
 

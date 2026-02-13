@@ -83,6 +83,24 @@ final class SubscriptionService
 
         try {
             DB::transaction(function () use ($subscription, $transactionId, $processCommissions, &$results) {
+                $subscription = UserSubscription::query()
+                    ->lockForUpdate()
+                    ->findOrFail($subscription->id);
+
+                // Idempotency guard: gateway/webhook retries can fire the same flow multiple times.
+                // If already active, skip activation side-effects (commissions + notifications).
+                if ($subscription->status === UserSubscription::STATUS_ACTIVE && $subscription->is_paid) {
+                    $results['subscription'] = $subscription;
+                    $results['commissions'] = collect();
+
+                    Log::info('Subscription activation skipped (already active)', [
+                        'subscription_id' => $subscription->id,
+                        'transaction_id' => $transactionId,
+                    ]);
+
+                    return;
+                }
+
                 // 1. Activate the subscription
                 $subscription->activate($transactionId);
                 $subscription->refresh();

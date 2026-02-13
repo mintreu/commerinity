@@ -10,6 +10,8 @@ use App\Observers\AddressObserver;
 use App\Observers\BeneficiaryAccountObserver;
 use App\Observers\TransactionObserver;
 use App\Observers\UserObserver;
+use App\Services\Notification\NotificationSmsSender;
+use App\Contracts\Services\NotificationSmsSenderInterface;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -22,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(NotificationSmsSenderInterface::class, NotificationSmsSender::class);
     }
 
     /**

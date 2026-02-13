@@ -58,8 +58,8 @@ class OrderInvoiceNotification extends Notification implements ShouldQueue
             'type' => 'order_invoice',
             'title' => 'Order confirmed',
             'message' => 'Order #'.$this->order->order_number.' confirmed. Invoice is ready.',
-            'action_url' => $this->orderUrl(),
-            'action_text' => 'View Order',
+            'action_url' => $this->notificationsUrl(),
+            'action_text' => 'View Notifications',
         ];
     }
 
@@ -71,12 +71,21 @@ class OrderInvoiceNotification extends Notification implements ShouldQueue
             ->body('Order #'.$this->order->order_number.' confirmed. Invoice is ready.')
             ->badge('/badge-72x72.png')
             ->options(['TTL' => 3600])
-            ->data(['url' => $this->orderUrl()]);
+            ->data(['url' => $this->notificationsUrl()]);
     }
 
     private function orderUrl(): string
     {
-        return rtrim((string) config('app.client_url'), '/').'/order/'.$this->order->uuid;
+        $base = config('app.client_url', 'http://localhost:3000');
+
+        return rtrim($base, '/').'/order/'.$this->order->uuid;
+    }
+
+    private function notificationsUrl(): string
+    {
+        $base = config('app.client_url', 'http://localhost:3000');
+
+        return rtrim($base, '/').'/notifications';
     }
 
     private function filename(): string

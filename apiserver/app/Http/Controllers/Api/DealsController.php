@@ -13,6 +13,7 @@ use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Models\User;
+use App\Services\Ecommerce\ProductQueryService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +22,10 @@ use Illuminate\Support\Carbon;
 
 class DealsController extends Controller
 {
+    public function __construct(
+        private readonly ProductQueryService $productQueryService
+    ) {}
+
     public function index(Request $request): JsonResponse
     {
         $this->applyStockContext($request);
@@ -83,12 +88,10 @@ class DealsController extends Controller
             ]);
         }
 
-        $products = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
+        $productsQuery = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyStorefrontEagerLoads($productsQuery);
+        $products = $productsQuery
             ->whereIn('id', $productIds)
-            ->with(['category', 'media'])
-            ->withStockInfo()
             ->get()
             ->keyBy('id');
 

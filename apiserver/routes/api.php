@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\Dashboard\AppointmentController;
 use App\Http\Controllers\Api\Dashboard\ChallengeController;
 use App\Http\Controllers\Api\Dashboard\ProgramController;
 use App\Http\Controllers\Api\DealsController;
+use App\Http\Controllers\Api\GlobalSearchController;
 use App\Http\Controllers\Api\Content\BlogController;
 use App\Http\Controllers\Api\Content\NewsController;
 use App\Http\Controllers\Api\KycController;
@@ -427,9 +428,12 @@ Route::prefix('faq')->group(function () {
     Route::get('/search', [\App\Http\Controllers\Api\FaqController::class, 'search']);
     Route::get('/view/{url}', [\App\Http\Controllers\Api\FaqController::class, 'show']);
     Route::get('/{topicSlug}', [\App\Http\Controllers\Api\FaqController::class, 'byTopic']);
-    Route::post('/{url}/helpful', [\App\Http\Controllers\Api\FaqController::class, 'markHelpful']);
-    Route::post('/{url}/not-helpful', [\App\Http\Controllers\Api\FaqController::class, 'markNotHelpful']);
 });
+
+// ========================================
+// Global Search - Public (No auth required)
+// ========================================
+Route::get('/search/global', GlobalSearchController::class);
 
 // ========================================
 // Blogs & News (Public)

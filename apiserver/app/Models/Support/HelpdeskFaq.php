@@ -29,8 +29,6 @@ class HelpdeskFaq extends Model
         'active',
         'order',
         'views',
-        'helpful_count',
-        'not_helpful_count',
         'tags',
         'keywords',
     ];
@@ -41,8 +39,6 @@ class HelpdeskFaq extends Model
             'active' => 'boolean',
             'order' => 'integer',
             'views' => 'integer',
-            'helpful_count' => 'integer',
-            'not_helpful_count' => 'integer',
             'tags' => 'array',
             'keywords' => 'array',
         ];
@@ -69,26 +65,6 @@ class HelpdeskFaq extends Model
     public function audience(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
-    }
-
-    // ========================================
-    // Accessors
-    // ========================================
-
-    public function getHelpfulPercentageAttribute(): float
-    {
-        $total = $this->helpful_count + $this->not_helpful_count;
-
-        if ($total === 0) {
-            return 0.0;
-        }
-
-        return round(($this->helpful_count / $total) * 100, 1);
-    }
-
-    public function getTotalFeedbackAttribute(): int
-    {
-        return $this->helpful_count + $this->not_helpful_count;
     }
 
     // ========================================
@@ -149,11 +125,6 @@ class HelpdeskFaq extends Model
         return $query->orderByDesc('views');
     }
 
-    public function scopeMostHelpful(Builder $query): Builder
-    {
-        return $query->orderByDesc('helpful_count');
-    }
-
     // ========================================
     // Actions
     // ========================================
@@ -162,24 +133,6 @@ class HelpdeskFaq extends Model
     {
         if (config('helpdesk.faq.track_views', true)) {
             $this->increment('views');
-        }
-
-        return $this;
-    }
-
-    public function markHelpful(): self
-    {
-        if (config('helpdesk.faq.feedback_enabled', true)) {
-            $this->increment('helpful_count');
-        }
-
-        return $this;
-    }
-
-    public function markNotHelpful(): self
-    {
-        if (config('helpdesk.faq.feedback_enabled', true)) {
-            $this->increment('not_helpful_count');
         }
 
         return $this;

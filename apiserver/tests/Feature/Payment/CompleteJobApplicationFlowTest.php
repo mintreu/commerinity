@@ -12,6 +12,7 @@ use App\Models\Recruitment\Recruitment;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Events\PaymentCompleted;
+use App\Notifications\GeneralNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
@@ -85,8 +86,7 @@ describe('Job Application Flow - Free Recruitment', function () {
         expect($application->transaction_id)->toBeNull(); // No transaction for free
         expect($application->submitted_at)->not->toBeNull();
 
-        // Verify no Filament notification sent (free applications don't need payment notification)
-        Notification::assertNothingSent();
+        Notification::assertSentTo($this->user, GeneralNotification::class);
     });
 
     it('allows optional details in free application', function () {

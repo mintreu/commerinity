@@ -122,4 +122,14 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | OTP Configuration
+    |--------------------------------------------------------------------------
+    |
+    | OTP expiry in minutes. Runtime enforces a minimum of 5 minutes.
+    |
+    */
+    'otp_ttl_minutes' => env('OTP_TTL_MINUTES', 15),
+
 ];

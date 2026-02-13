@@ -16,6 +16,7 @@ use App\Models\Membership\Level;
 use App\Models\Membership\Stage;
 use App\Models\Membership\UserSubscription;
 use App\Models\User;
+use App\Services\Ecommerce\ProductQueryService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\JsonResponse;
@@ -25,29 +26,23 @@ use Illuminate\Support\Carbon;
 
 class CatalogController extends Controller
 {
+    public function __construct(
+        private readonly ProductQueryService $productQueryService
+    ) {}
 
 
     public function products(Request $request): AnonymousResourceCollection
     {
         $this->applyStockContext($request);
-        $query = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
-            ->with(['category', 'media'])
-            ->withStockInfo()
-            ->search($request->input('search'))
-            ->byCategory($request->input('category'))
-            ->byPrice(
-                $request->input('min_price') ? (int) $request->input('min_price') * 100 : null,
-                $request->input('max_price') ? (int) $request->input('max_price') * 100 : null
-            );
-        $query->with(['availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at')]);
+        $query = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyStorefrontEagerLoads($query);
+        $this->productQueryService->withAvailableStocks($query);
+        $this->productQueryService->applyCatalogRequestFilters($query, $request);
 
         $this->applyOptionFilters($query, $request);
 
-        $products = $query
-            ->sort($request->input('sort'))
-            ->paginate($request->input('per_page', 20));
+        $this->productQueryService->applySort($query, $request->input('sort'));
+        $products = $query->paginate($request->input('per_page', 20));
 
         $this->applyActiveSalesToProducts(
             $products->getCollection(),
@@ -108,22 +103,16 @@ class CatalogController extends Controller
         $page = $request->input('page', 1);
         $categoryIds = $category->descendantsAndSelf()->pluck('id');
 
-        $productsQuery = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
-            ->with(['category', 'media'])
-            ->withStockInfo()
-            ->search($request->input('search'))
+        $productsQuery = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyStorefrontEagerLoads($productsQuery);
+        $this->productQueryService->applyCatalogRequestFilters($productsQuery, $request, includeCategory: false);
+        $productsQuery
             ->where(function ($query) use ($categoryIds) {
                 $query->whereIn('category_id', $categoryIds)
                     ->orWhereHas('categories', fn ($q) => $q->whereIn('categories.id', $categoryIds));
-            })
-            ->byPrice(
-                $request->input('min_price') ? (int) $request->input('min_price') * 100 : null,
-                $request->input('max_price') ? (int) $request->input('max_price') * 100 : null
-            )
-            ->sort($request->input('sort'))
-            ->paginate($perPage, ['*'], 'page', $page);
+            });
+        $this->productQueryService->applySort($productsQuery, $request->input('sort'));
+        $productsQuery = $productsQuery->paginate($perPage, ['*'], 'page', $page);
         $productsQuery->getCollection()->load(['availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at')]);
 
         $this->applyActiveSalesToProducts(
@@ -159,14 +148,11 @@ class CatalogController extends Controller
     public function onSale(Request $request): AnonymousResourceCollection
     {
         $this->applyStockContext($request);
-        $products = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
-            ->with(['category', 'media'])
-            ->withStockInfo()
-            // ->whereHas('activeSaleInfo') // TODO: Implement sale relation
-            ->sort($request->input('sort'))
-            ->paginate($request->input('per_page', 20));
+        $productsQuery = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyStorefrontEagerLoads($productsQuery);
+        // ->whereHas('activeSaleInfo') // TODO: Implement sale relation
+        $this->productQueryService->applySort($productsQuery, $request->input('sort'));
+        $products = $productsQuery->paginate($request->input('per_page', 20));
         $products->getCollection()->load(['availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at')]);
 
         $this->applyActiveSalesToProducts(
@@ -183,21 +169,17 @@ class CatalogController extends Controller
     public function featured(Request $request): JsonResponse
     {
         $this->applyStockContext($request);
-        $bestSellers = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
-            ->with(['category', 'media'])
-            ->withStockInfo()
+        $bestSellersQuery = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyStorefrontEagerLoads($bestSellersQuery);
+        $bestSellers = $bestSellersQuery
             ->inRandomOrder()
             ->limit(10)
             ->get();
         $bestSellers->load(['availableStocks' => fn ($q) => $q->with('address')->orderBy('created_at')]);
 
-        $newArrivals = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
-            ->with(['category', 'media'])
-            ->withStockInfo()
+        $newArrivalsQuery = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyStorefrontEagerLoads($newArrivalsQuery);
+        $newArrivals = $newArrivalsQuery
             ->latest('created_at')
             ->limit(10)
             ->get();
@@ -263,15 +245,8 @@ class CatalogController extends Controller
     public function filters(Request $request): JsonResponse
     {
         $this->applyStockContext($request);
-        $productsQuery = Product::query()
-            ->purchasable()
-            ->whereNull('parent_id')
-            ->search($request->input('search'))
-            ->byCategory($request->input('category'))
-            ->byPrice(
-                $request->input('min_price') ? (int) $request->input('min_price') * 100 : null,
-                $request->input('max_price') ? (int) $request->input('max_price') * 100 : null
-            );
+        $productsQuery = $this->productQueryService->storefrontBaseQuery();
+        $this->productQueryService->applyCatalogRequestFilters($productsQuery, $request);
 
         $this->applyOptionFilters($productsQuery, $request);
 

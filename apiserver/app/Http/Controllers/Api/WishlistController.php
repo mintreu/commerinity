@@ -9,7 +9,7 @@ use App\Http\Resources\Ecommerce\WishlistItemResource;
 use App\Models\Ecommerce\Product;
 use App\Models\Ecommerce\ProductWishlist;
 use App\Models\User;
-use App\Services\MoneyService;
+use App\Services\Ecommerce\ProductQueryService;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -19,6 +19,10 @@ use Illuminate\Http\JsonResponse;
  */
 final class WishlistController extends Controller
 {
+    public function __construct(
+        private readonly ProductQueryService $productQueryService
+    ) {}
+
     /**
      * Get user's wishlist
      */
@@ -38,13 +42,7 @@ final class WishlistController extends Controller
             ->where('authorable_type', User::class)
             // with() optimizations same as before
             ->with([
-                'product' => function ($q) {
-                    $q->with([
-                        'media' => fn ($mq) => $mq->where('collection_name', 'displayImage'),
-                        'category',
-                    ])
-                        ->withStockInfo();
-                },
+                'product' => fn ($q) => $this->productQueryService->applyWishlistProductRelation($q),
             ])
             ->latest()
             ->paginate(20);

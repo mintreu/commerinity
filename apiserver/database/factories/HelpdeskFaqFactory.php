@@ -30,8 +30,6 @@ class HelpdeskFaqFactory extends Factory
             'active' => true,
             'order' => fake()->numberBetween(0, 20),
             'views' => fake()->numberBetween(0, 1000),
-            'helpful_count' => fake()->numberBetween(0, 100),
-            'not_helpful_count' => fake()->numberBetween(0, 20),
             'tags' => fake()->randomElements(['account', 'payment', 'wallet', 'security', 'mobile', 'subscription', 'commission'], 3),
             'keywords' => fake()->words(5),
         ];
@@ -71,7 +69,6 @@ class HelpdeskFaqFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'views' => fake()->numberBetween(500, 5000),
-            'helpful_count' => fake()->numberBetween(50, 500),
         ]);
     }
 
@@ -79,8 +76,6 @@ class HelpdeskFaqFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'views' => fake()->numberBetween(0, 10),
-            'helpful_count' => 0,
-            'not_helpful_count' => 0,
         ]);
     }
 

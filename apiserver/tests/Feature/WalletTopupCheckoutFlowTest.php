@@ -5,7 +5,9 @@ declare(strict_types=1);
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Notifications\GeneralNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
@@ -152,6 +154,8 @@ test('checkout status endpoint works for polling', function () {
 });
 
 test('wallet balance updates after successful payment', function () {
+    Notification::fake();
+
     $user = User::factory()->create();
     $wallet = Wallet::factory()->for($user, 'walletable')->create([
         'balance' => 0,
@@ -180,6 +184,41 @@ test('wallet balance updates after successful payment', function () {
 
     // Wallet balance should be updated
     expect($wallet->fresh()->balance)->toBe(50000);
+
+    Notification::assertSentTo(
+        $user,
+        GeneralNotification::class,
+    );
+});
+
+test('wallet topup notification is sent once for duplicate payment events', function () {
+    Notification::fake();
+
+    $user = User::factory()->create();
+    $wallet = Wallet::factory()->for($user, 'walletable')->create([
+        'balance' => 0,
+    ]);
+
+    $transaction = Transaction::factory()->create([
+        'wallet_id' => $wallet->id,
+        'transactionable_type' => Wallet::class,
+        'transactionable_id' => $wallet->id,
+        'type' => \App\Casts\TransactionTypeCast::CREDIT,
+        'status' => \App\Casts\TransactionStatusCast::PENDING,
+        'amount' => 12000,
+        'purpose' => 'Wallet TopUp',
+    ]);
+
+    $transaction->update([
+        'status' => \App\Casts\TransactionStatusCast::COMPLETED,
+        'verified' => true,
+        'verified_at' => now(),
+    ]);
+
+    event(new \App\Events\PaymentCompleted($transaction));
+    event(new \App\Events\PaymentCompleted($transaction->fresh()));
+
+    Notification::assertSentToTimes($user, GeneralNotification::class, 1);
 });
 
 test('expired transactions cannot be paid', function () {

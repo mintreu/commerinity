@@ -14,6 +14,7 @@ use App\Models\Ecommerce\ProductStock;
 use App\Models\Ecommerce\Shipment;
 use App\Models\Ecommerce\ShipmentItem;
 use App\Models\Transaction;
+use App\Contracts\Services\NotificationSmsSenderInterface;
 use App\Services\Affiliate\CommissionProcessorService;
 use App\Services\Affiliate\AffiliateVolumeService;
 use App\Services\Ecommerce\PriceCalculationService;
@@ -328,11 +329,55 @@ class OrderValidationService
         $customer = $order->customer;
         if ($customer && method_exists($customer, 'notify')) {
             $customer->notify(new OrderInvoiceNotification($order));
+
+            $this->sendOrderSmsNotification($customer->mobile, $customer->id, $order);
         }
 
         Notification::make()
             ->title('Order confirmed')
             ->body('Order #'.$order->order_number.' confirmed. Invoice is ready.')
             ->sendToDatabase(Admin::all());
+    }
+
+    private function sendOrderSmsNotification(?string $mobile, ?int $userId, Order $order): void
+    {
+        if (! $mobile) {
+            return;
+        }
+
+        $smsSender = app(NotificationSmsSenderInterface::class);
+
+        if (! $smsSender->canSend(1)) {
+            Log::info('Order confirmation SMS skipped: insufficient balance', [
+                'order_id' => $order->id,
+                'user_id' => $userId,
+            ]);
+
+            return;
+        }
+
+        $message = $this->buildOrderSmsMessage($order);
+        $response = $smsSender->sendSingle($mobile, $message, 'transactional', $userId);
+
+        if (! $response->success) {
+            Log::warning('Order confirmation SMS failed', [
+                'order_id' => $order->id,
+                'user_id' => $userId,
+                'error' => $response->errorMessage,
+            ]);
+        }
+    }
+
+    private function buildOrderSmsMessage(Order $order): string
+    {
+        $url = $this->notificationsUrl();
+
+        return "Your order {$order->order_number} has been confirmed. Your invoice is now available. View details: {$url}";
+    }
+
+    private function notificationsUrl(): string
+    {
+        $base = config('app.client_url', 'http://localhost:3000');
+        return rtrim($base, '/').'/notifications';
     }
 }

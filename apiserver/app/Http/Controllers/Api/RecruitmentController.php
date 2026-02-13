@@ -10,6 +10,7 @@ use App\Http\Requests\ApplyJobRequest;
 use App\Http\Resources\JobApplicationResource;
 use App\Http\Resources\RecruitmentResource;
 use App\Models\Recruitment\Recruitment;
+use App\Services\Recruitment\JobApplicationNotificationService;
 use App\Services\Recruitment\JobApplicationService;
 use App\Services\Recruitment\RecruitmentService;
 use Illuminate\Http\JsonResponse;
@@ -25,6 +26,7 @@ class RecruitmentController extends Controller
 {
     public function __construct(
         private readonly RecruitmentService $recruitmentService,
+        private readonly JobApplicationNotificationService $jobApplicationNotificationService,
     ) {}
 
     /**
@@ -108,7 +110,11 @@ class RecruitmentController extends Controller
         $application = $result->getApplication();
         $application->load(['recruitment', 'address']);
 
-
+        $this->jobApplicationNotificationService->notifyApplied(
+            $request->user(),
+            $application,
+            $result->requiresPayment(),
+        );
 
         return response()->json([
             'message' => $result->requiresPayment()

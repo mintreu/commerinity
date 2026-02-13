@@ -31,7 +31,8 @@ class WishlistItemResource extends JsonResource
         }
 
         $displayMedia = $product->getFirstMedia('displayImage');
-        $price = $product->getPrice();
+        $price = $product->getDisplayPrice();
+        $mrp = (int) ($product->base_price ?: $product->getPrice());
 
         return [
             'id' => $this->id,
@@ -42,6 +43,8 @@ class WishlistItemResource extends JsonResource
                 'sku' => $product->sku,
                 'price' => $price,
                 'price_formatted' => MoneyService::format($price),
+                'mrp' => $mrp,
+                'mrp_formatted' => MoneyService::format($mrp),
                 'image' => $displayMedia ? (new ImageResource($displayMedia))->toArray($request) : null,
                 'in_stock' => $product->total_stock > 0,
                 'category' => $product->category ? new CategoryBriefResource($product->category) : null,

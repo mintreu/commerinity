@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace App\Listeners\Payment;
 
 use App\Casts\JobApplicationStatusCast;
+use App\Casts\OrderStatusCast;
 use App\Casts\UserTypeCast;
 use App\Events\PaymentCompleted;
 use App\Models\Admin;
 use App\Models\Ecommerce\Order;
 use App\Models\Membership\UserSubscription;
 use App\Models\Recruitment\JobApplication;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Notifications\GeneralNotification;
 use App\Services\Affiliate\CommissionProcessorService;
 use App\Services\Ecommerce\OrderService\OrderValidationService;
 use App\Services\Membership\SubscriptionService;
-use App\Services\MoneyService;
+use App\Services\Recruitment\JobApplicationNotificationService;
 use App\Services\UserServices\UserAffiliateService;
+use App\Services\Wallet\WalletTransactionNotificationService;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use function Pest\Laravel\instance;
 
 /**
  * HandlePaymentCompleted - Routes confirmed payments to appropriate handlers
@@ -68,9 +69,9 @@ final class HandlePaymentCompleted
 
         // Route to appropriate handler
         if ($payable instanceof Wallet) {
-            // Wallet top-ups rely on TransactionObserver updates.
-            // Handler kept for potential notifications, but balance updates happen elsewhere.
-            // $this->handleWalletTopup($transaction, $payable);
+            // Wallet top-up balance accounting is handled by TransactionObserver.
+            // This handler sends user-facing notifications only.
+            $this->handleWalletTopup($transaction, $payable);
             return;
         }
 
@@ -109,31 +110,57 @@ final class HandlePaymentCompleted
     /**
      * Handle wallet topup (add money to wallet)
      */
-    private function handleWalletTopup(mixed $transaction, Wallet $wallet): void
+    private function handleWalletTopup(Transaction $transaction, Wallet $wallet): void
     {
-        // Wallet balance updates are managed by TransactionObserver when the transaction status flips to completed.
-        // This function remains for future notification hooks but deliberately no longer changes balances.
-        // Uncomment below if additional actions are required beyond balance accounting.
-        /*
-        DB::transaction(function () use ($transaction, $wallet) {
-            $currentBalance = MoneyService::make($wallet->balance);
-            $topupAmount = MoneyService::make($transaction->amount);
+        $notifiableUser = null;
+        $notifiableTransaction = null;
+        $notifiableWallet = null;
 
-            $newBalance = $currentBalance->add($topupAmount->getAmount());
+        DB::transaction(function () use ($transaction, $wallet, &$notifiableUser, &$notifiableTransaction, &$notifiableWallet) {
+            $lockedTransaction = Transaction::query()
+                ->lockForUpdate()
+                ->with(['wallet.walletable'])
+                ->find($transaction->id);
 
-            $wallet->update([
-                'balance' => $newBalance->getAmount(),
+            if (! $lockedTransaction) {
+                return;
+            }
+
+            $metadata = $lockedTransaction->metadata ?? [];
+            if (($metadata['wallet_topup_notification_sent'] ?? false) === true) {
+                Log::info('Skipping duplicate wallet top-up notification', [
+                    'transaction_id' => $lockedTransaction->uuid,
+                ]);
+
+                return;
+            }
+
+            $lockedWallet = $lockedTransaction->wallet ?? $wallet;
+            if (! $lockedWallet) {
+                return;
+            }
+
+            $walletOwner = $lockedWallet->walletable;
+            if (! $walletOwner instanceof User) {
+                return;
+            }
+
+            $lockedTransaction->update([
+                'metadata' => array_merge($metadata, [
+                    'wallet_topup_notification_sent' => true,
+                    'wallet_topup_notified_at' => now()->toIso8601String(),
+                ]),
             ]);
 
-            Log::info('Wallet topup completed', [
-                'wallet_id' => $wallet->id,
-                'transaction_id' => $transaction->uuid,
-                'old_balance' => $currentBalance->getAmount(),
-                'topup_amount' => $topupAmount->getAmount(),
-                'new_balance' => $newBalance->getAmount(),
-            ]);
+            $notifiableUser = $walletOwner;
+            $notifiableTransaction = $lockedTransaction;
+            $notifiableWallet = $lockedWallet;
         });
-        */
+
+        if ($notifiableUser instanceof User && $notifiableTransaction instanceof Transaction && $notifiableWallet instanceof Wallet) {
+            app(WalletTransactionNotificationService::class)
+                ->notifyTopupCompleted($notifiableUser, $notifiableTransaction, $notifiableWallet);
+        }
     }
 
     /**
@@ -143,7 +170,20 @@ final class HandlePaymentCompleted
     {
 
         DB::transaction(function () use ($transaction, $subscription) {
-            $subscription->load('user');
+            $subscription = UserSubscription::query()
+                ->lockForUpdate()
+                ->with('user')
+                ->findOrFail($subscription->id);
+
+            if ($subscription->status === UserSubscription::STATUS_ACTIVE && $subscription->is_paid) {
+                Log::info('Skipping duplicate subscription payment completion', [
+                    'subscription_id' => $subscription->id,
+                    'transaction_id' => $transaction->uuid,
+                ]);
+
+                return;
+            }
+
             $user = $subscription->user;
 
             // 1. Auto-placement in Affiliate tree (if has sponsor)
@@ -184,7 +224,24 @@ final class HandlePaymentCompleted
      */
     private function handleRecruitmentPayment(mixed $transaction, JobApplication $application): void
     {
-        DB::transaction(function () use ($transaction, $application) {
+        $notifiableApplicant = null;
+
+        DB::transaction(function () use ($transaction, $application, &$notifiableApplicant) {
+            $application = JobApplication::query()
+                ->lockForUpdate()
+                ->with(['recruitment', 'applicant'])
+                ->findOrFail($application->id);
+
+            if ($application->is_paid && $application->status === JobApplicationStatusCast::Submitted) {
+                Log::info('Skipping duplicate job application payment completion', [
+                    'application_id' => $application->id,
+                    'application_uuid' => $application->uuid,
+                    'transaction_id' => $transaction->uuid,
+                ]);
+
+                return;
+            }
+
             $application->update([
                 'status' => JobApplicationStatusCast::Submitted,
                 'is_paid' => true,
@@ -192,7 +249,10 @@ final class HandlePaymentCompleted
                 'submitted_at' => now(),
             ]);
 
-            $application->refresh();
+            $application->refresh()->loadMissing(['recruitment', 'applicant']);
+            if ($application->applicant instanceof User) {
+                $notifiableApplicant = $application->applicant;
+            }
 
             Log::info('Recruitment fee paid, application submitted', [
                 'application_id' => $application->id,
@@ -205,17 +265,58 @@ final class HandlePaymentCompleted
         Notification::make()->sendToDatabase(Admin::all())
             ->title('New Application Submitted')
             ->body('Application ID : '. $application->uuid);
+
+        if ($notifiableApplicant instanceof User) {
+            app(JobApplicationNotificationService::class)
+                ->notifyPaymentConfirmed($notifiableApplicant, $application->fresh(['recruitment']));
+        }
     }
 
 
 
     private function handleOrderConfirmation(\App\Models\Transaction $transaction, Order $payable): void
     {
-        // Get CommissionProcessorService for processing affiliate commissions
-        $commissionProcessor = app(CommissionProcessorService::class);
+        DB::transaction(function () use ($transaction, $payable) {
+            $order = Order::query()
+                ->lockForUpdate()
+                ->find($payable->id);
 
-        $orderService = OrderValidationService::make($transaction, $payable, $commissionProcessor);
-        $orderService->validate();
+            if (! $order) {
+                Log::warning('Order payment completed but order not found', [
+                    'transaction_id' => $transaction->uuid,
+                    'order_id' => $payable->id,
+                ]);
+
+                return;
+            }
+
+            if ($order->payment_success || $this->isOrderAlreadyProcessed($order)) {
+                Log::info('Skipping duplicate order payment completion', [
+                    'transaction_id' => $transaction->uuid,
+                    'order_id' => $order->id,
+                    'order_status' => $order->status->value,
+                ]);
+
+                return;
+            }
+
+            // Get CommissionProcessorService for processing affiliate commissions
+            $commissionProcessor = app(CommissionProcessorService::class);
+
+            $orderService = OrderValidationService::make($transaction, $order, $commissionProcessor);
+            $orderService->validate();
+        });
+    }
+
+    private function isOrderAlreadyProcessed(Order $order): bool
+    {
+        return in_array($order->status, [
+            OrderStatusCast::CONFIRMED,
+            OrderStatusCast::PROCESSING,
+            OrderStatusCast::SHIPPED,
+            OrderStatusCast::DELIVERED,
+            OrderStatusCast::COMPLETED,
+        ], true);
     }
 
 

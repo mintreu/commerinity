@@ -317,23 +317,6 @@ describe('HelpdeskFaq Model', function () {
         expect($faq->fresh()->views)->toBe(2);
     });
 
-    it('can track helpful feedback', function () {
-        $topic = HelpdeskTopic::factory()->create();
-        $faq = HelpdeskFaq::factory()->forTopic($topic)->create([
-            'helpful_count' => 0,
-            'not_helpful_count' => 0,
-        ]);
-
-        $faq->markHelpful();
-        $faq->markHelpful();
-        $faq->markNotHelpful();
-
-        $faq->refresh();
-        expect($faq->helpful_count)->toBe(2);
-        expect($faq->not_helpful_count)->toBe(1);
-        expect($faq->helpful_percentage)->toBe(66.7);
-    });
-
     it('can search by question and answer', function () {
         $topic = HelpdeskTopic::factory()->create();
 

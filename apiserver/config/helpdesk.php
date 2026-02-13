@@ -53,9 +53,6 @@ return [
     ],
 
     'faq' => [
-        // Enable FAQ feedback (helpful/not helpful)
-        'feedback_enabled' => env('HELPDESK_FAQ_FEEDBACK_ENABLED', true),
-
         // Track FAQ views
         'track_views' => env('HELPDESK_FAQ_TRACK_VIEWS', true),
     ],

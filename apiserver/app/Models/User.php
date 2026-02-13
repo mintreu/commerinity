@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Casts\GenderCast;
 use App\Casts\UserStatusCast;
 use App\Casts\UserTypeCast;
+use App\Models\Ecommerce\Order;
+use App\Models\Transaction;
 use App\Models\Traits\HasAddress;
 use App\Models\Traits\HasBeneficiary;
 use App\Models\Traits\HasFingerprint;
@@ -24,6 +26,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -157,6 +160,29 @@ class User extends Authenticatable implements FilamentUser, HasMedia, MustVerify
     public function children(): HasMany
     {
         return $this->hasMany(User::class, 'parent_id');
+    }
+
+    /**
+     * User orders (polymorphic customer relation).
+     */
+    public function orders(): MorphMany
+    {
+        return $this->morphMany(Order::class, 'customerable');
+    }
+
+    /**
+     * User wallet transactions via wallet relation.
+     */
+    public function transactions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Transaction::class,
+            Wallet::class,
+            'walletable_id',
+            'wallet_id',
+            'id',
+            'id'
+        )->where('wallets.walletable_type', self::class);
     }
 
     /**
