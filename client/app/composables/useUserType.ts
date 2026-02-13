@@ -97,12 +97,6 @@ export const useUserType = () => {
     badge?: string
   }
 
-  interface NavigationGroup {
-    label: string
-    icon: string
-    items: NavigationItem[]
-  }
-
   const getNavigationItems = (): NavigationItem[] => {
     if (!user.value) return []
 
@@ -131,6 +125,11 @@ export const useUserType = () => {
         label: 'Wallet',
         icon: 'i-lucide-wallet',
         to: '/wallet'
+      },
+      {
+        label: 'FAQ',
+        icon: 'i-lucide-circle-help',
+        to: '/dashboard/faq'
       }
     ]
 

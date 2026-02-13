@@ -9,25 +9,25 @@
 
       <div class="relative z-10 max-w-lg">
         <!-- Brand Logo & Name -->
-<!--        <NuxtLink-->
-<!--          to="/"-->
-<!--          class="flex items-center gap-4 mb-12"-->
-<!--        >-->
-<!--          <div-->
-<!--            class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl transform transition-transform hover:scale-105 duration-300"-->
-<!--          >-->
-<!--            <UIcon-->
-<!--              name="i-lucide-hexagon"-->
-<!--              class="w-8 h-8 text-white"-->
-<!--            />-->
-<!--          </div>-->
-<!--          <div>-->
-<!--            <h1 class="gradient-text-primary text-3xl font-bold">-->
-<!--              {{ config.public.appName }}-->
-<!--            </h1>-->
-<!--            <p class="text-slate-600 dark:text-slate-400 font-medium">Your Shopping Destination</p>-->
-<!--          </div>-->
-<!--        </NuxtLink>-->
+        <!--        <NuxtLink -->
+        <!--          to="/" -->
+        <!--          class="flex items-center gap-4 mb-12" -->
+        <!--        > -->
+        <!--          <div -->
+        <!--            class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl transform transition-transform hover:scale-105 duration-300" -->
+        <!--          > -->
+        <!--            <UIcon -->
+        <!--              name="i-lucide-hexagon" -->
+        <!--              class="w-8 h-8 text-white" -->
+        <!--            /> -->
+        <!--          </div> -->
+        <!--          <div> -->
+        <!--            <h1 class="gradient-text-primary text-3xl font-bold"> -->
+        <!--              {{ config.public.appName }} -->
+        <!--            </h1> -->
+        <!--            <p class="text-slate-600 dark:text-slate-400 font-medium">Your Shopping Destination</p> -->
+        <!--          </div> -->
+        <!--        </NuxtLink> -->
 
         <!-- Main Heading -->
         <h2 class="text-5xl xl:text-6xl font-bold mb-8 leading-tight">

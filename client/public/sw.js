@@ -21,8 +21,8 @@ self.addEventListener('push', function (event) {
 
   const options = {
     body: data.body || data.message || '',
-    icon: data.icon || '/icon-192x192.png',
-    badge: '/badge-72x72.png',
+    icon: data.icon || '/web-app-manifest-192x192.png',
+    badge: '/web-app-manifest-192x192.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.action_url || data.url || '/',
@@ -61,4 +61,9 @@ self.addEventListener('notificationclick', function (event) {
 // Service worker activation
 self.addEventListener('activate', function (event) {
   event.waitUntil(self.clients.claim())
+})
+
+// Minimal fetch handler keeps the service worker active for PWA installability checks.
+self.addEventListener('fetch', function () {
+  // Intentionally passthrough: no offline caching strategy yet.
 })

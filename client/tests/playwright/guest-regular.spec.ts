@@ -201,5 +201,4 @@ test.describe('Guest to Regular Onboarding - Desktop', () => {
   test('Desktop registration + onboarding (email verify)', async ({ page }) => {
     await completeOnboarding(page, { verifyEmail: true })
   })
-
 })

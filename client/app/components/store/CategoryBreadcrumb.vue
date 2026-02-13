@@ -32,7 +32,7 @@ defineProps<Props>()
 
     <template v-if="ancestors && ancestors.length">
       <template
-        v-for="(ancestor, index) in ancestors"
+        v-for="ancestor in ancestors"
         :key="ancestor.id"
       >
         <NuxtLink

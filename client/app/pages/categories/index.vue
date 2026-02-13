@@ -27,7 +27,7 @@ interface Category {
 
 const config = useRuntimeConfig()
 
-const categoriesResponse = ref<{ success: boolean; data: Category[] } | null>(null)
+const categoriesResponse = ref<{ success: boolean, data: Category[] } | null>(null)
 const status = ref<'pending' | 'success' | 'error'>('pending')
 const errorMessage = ref<string | null>(null)
 

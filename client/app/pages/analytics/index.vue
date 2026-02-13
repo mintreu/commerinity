@@ -119,7 +119,10 @@ const formatNumber = (num: number) => {
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div class="flex items-center gap-3 sm:gap-4">
             <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
-              <UIcon name="i-lucide-bar-chart-3" class="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+              <UIcon
+                name="i-lucide-bar-chart-3"
+                class="w-6 h-6 sm:w-8 sm:h-8 text-white"
+              />
             </div>
             <div>
               <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
@@ -152,15 +155,27 @@ const formatNumber = (num: number) => {
     </div>
 
     <!-- Overview Tab -->
-    <div v-if="activeTab === 'overview'" class="space-y-6">
+    <div
+      v-if="activeTab === 'overview'"
+      class="space-y-6"
+    >
       <!-- Quick Stats Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <UIcon name="i-lucide-users" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <UIcon
+                name="i-lucide-users"
+                class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+              />
             </div>
-            <UBadge color="success" size="xs" class="hidden sm:inline-flex">+{{ analytics.userGrowth.growth }}%</UBadge>
+            <UBadge
+              color="success"
+              size="xs"
+              class="hidden sm:inline-flex"
+            >
+              +{{ analytics.userGrowth.growth }}%
+            </UBadge>
           </div>
           <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.userGrowth.totalUsers) }}
@@ -173,9 +188,18 @@ const formatNumber = (num: number) => {
         <div class="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <UIcon name="i-lucide-indian-rupee" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <UIcon
+                name="i-lucide-indian-rupee"
+                class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+              />
             </div>
-            <UBadge color="success" size="xs" class="hidden sm:inline-flex">+{{ analytics.sales.growth }}%</UBadge>
+            <UBadge
+              color="success"
+              size="xs"
+              class="hidden sm:inline-flex"
+            >
+              +{{ analytics.sales.growth }}%
+            </UBadge>
           </div>
           <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
             {{ formatCurrency(analytics.sales.totalRevenue) }}
@@ -188,7 +212,10 @@ const formatNumber = (num: number) => {
         <div class="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <UIcon name="i-lucide-users-round" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <UIcon
+                name="i-lucide-users-round"
+                class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
@@ -202,7 +229,10 @@ const formatNumber = (num: number) => {
         <div class="glass-card p-4 sm:p-5 lg:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300">
           <div class="flex items-center justify-between mb-3">
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <UIcon name="i-lucide-target" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <UIcon
+                name="i-lucide-target"
+                class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
@@ -218,10 +248,18 @@ const formatNumber = (num: number) => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <!-- User Growth Chart -->
         <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Growth Trend</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            User Growth Trend
+          </h3>
           <div class="space-y-3">
-            <div v-for="item in analytics.userGrowth.chartData" :key="item.date" class="flex items-center gap-3">
-              <div class="w-12 text-xs font-medium text-gray-600 dark:text-gray-400">{{ item.date }}</div>
+            <div
+              v-for="item in analytics.userGrowth.chartData"
+              :key="item.date"
+              class="flex items-center gap-3"
+            >
+              <div class="w-12 text-xs font-medium text-gray-600 dark:text-gray-400">
+                {{ item.date }}
+              </div>
               <div class="flex-1">
                 <div class="h-8 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
                   <div
@@ -239,9 +277,15 @@ const formatNumber = (num: number) => {
 
         <!-- Traffic Sources -->
         <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Traffic Sources</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Traffic Sources
+          </h3>
           <div class="space-y-4">
-            <div v-for="source in analytics.traffic.sources" :key="source.source" class="space-y-2">
+            <div
+              v-for="source in analytics.traffic.sources"
+              :key="source.source"
+              class="space-y-2"
+            >
               <div class="flex items-center justify-between text-sm">
                 <span class="font-medium text-gray-900 dark:text-white">{{ source.source }}</span>
                 <span class="text-gray-500 dark:text-gray-400">{{ source.percent }}%</span>
@@ -259,50 +303,76 @@ const formatNumber = (num: number) => {
     </div>
 
     <!-- User Growth Tab -->
-    <div v-if="activeTab === 'users'" class="space-y-6">
+    <div
+      v-if="activeTab === 'users'"
+      class="space-y-6"
+    >
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-users" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-users"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.userGrowth.totalUsers) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Users</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Total Users
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-user-check" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-user-check"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.userGrowth.activeUsers) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Active Users</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Active Users
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-user-plus" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-user-plus"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.userGrowth.newUsersToday) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">New Today</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            New Today
+          </div>
         </div>
       </div>
 
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Monthly Growth Trend</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+          Monthly Growth Trend
+        </h3>
         <div class="space-y-4">
-          <div v-for="item in analytics.userGrowth.chartData" :key="item.date" class="flex items-center gap-4">
-            <div class="w-16 text-sm font-medium text-gray-600 dark:text-gray-400">{{ item.date }}</div>
+          <div
+            v-for="item in analytics.userGrowth.chartData"
+            :key="item.date"
+            class="flex items-center gap-4"
+          >
+            <div class="w-16 text-sm font-medium text-gray-600 dark:text-gray-400">
+              {{ item.date }}
+            </div>
             <div class="flex-1">
               <div class="h-10 bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden">
                 <div
@@ -320,67 +390,103 @@ const formatNumber = (num: number) => {
     </div>
 
     <!-- Sales Tab -->
-    <div v-if="activeTab === 'sales'" class="space-y-6">
+    <div
+      v-if="activeTab === 'sales'"
+      class="space-y-6"
+    >
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-indian-rupee" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-indian-rupee"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatCurrency(analytics.sales.totalRevenue) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Revenue</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Total Revenue
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-calendar" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatCurrency(analytics.sales.todayRevenue) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Today's Revenue</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Today's Revenue
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-shopping-cart" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-shopping-cart"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.sales.orders) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Orders</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Total Orders
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-trending-up" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-trending-up"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatCurrency(analytics.sales.avgOrderValue) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Avg Order Value</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Avg Order Value
+          </div>
         </div>
       </div>
 
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Products</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+          Top Products
+        </h3>
         <div class="space-y-4">
-          <div v-for="product in analytics.sales.topProducts" :key="product.name" class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+          <div
+            v-for="product in analytics.sales.topProducts"
+            :key="product.name"
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
+          >
             <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
-              <UIcon name="i-lucide-package" class="w-5 h-5 text-white" />
+              <UIcon
+                name="i-lucide-package"
+                class="w-5 h-5 text-white"
+              />
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="font-semibold text-gray-900 dark:text-white">{{ product.name }}</h4>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ product.sales }} sales</p>
+              <h4 class="font-semibold text-gray-900 dark:text-white">
+                {{ product.name }}
+              </h4>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                {{ product.sales }} sales
+              </p>
             </div>
             <div class="text-lg font-bold text-green-600 dark:text-green-400">
               {{ formatCurrency(product.revenue) }}
@@ -391,61 +497,90 @@ const formatNumber = (num: number) => {
     </div>
 
     <!-- Team Stats Tab -->
-    <div v-if="activeTab === 'team'" class="space-y-6">
+    <div
+      v-if="activeTab === 'team'"
+      class="space-y-6"
+    >
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-users-round" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-users-round"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.team.totalMembers) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Members</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Total Members
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-user-check" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-user-check"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.team.activeMembers) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Active Members</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Active Members
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-award" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-award"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.team.topPerformers) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Top Performers</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Top Performers
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-trending-up" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-trending-up"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.team.avgPerformance }}%
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Avg Performance</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Avg Performance
+          </div>
         </div>
       </div>
 
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Team Distribution by Level</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+          Team Distribution by Level
+        </h3>
         <div class="space-y-4">
-          <div v-for="level in analytics.team.levels" :key="level.level" class="space-y-2">
+          <div
+            v-for="level in analytics.team.levels"
+            :key="level.level"
+            class="space-y-2"
+          >
             <div class="flex items-center justify-between text-sm">
               <span class="font-medium text-gray-900 dark:text-white">{{ level.level }}</span>
               <span class="text-gray-500 dark:text-gray-400">{{ level.active }}/{{ level.count }} active</span>
@@ -462,61 +597,90 @@ const formatNumber = (num: number) => {
     </div>
 
     <!-- Conversions Tab -->
-    <div v-if="activeTab === 'conversions'" class="space-y-6">
+    <div
+      v-if="activeTab === 'conversions'"
+      class="space-y-6"
+    >
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-user-plus" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-user-plus"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.conversions.signupRate }}%
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Signup Rate</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Signup Rate
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-zap" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-zap"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.conversions.activationRate }}%
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Activation Rate</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Activation Rate
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-shopping-bag" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-shopping-bag"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.conversions.purchaseRate }}%
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Purchase Rate</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Purchase Rate
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-repeat" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-repeat"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.conversions.retentionRate }}%
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Retention Rate</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Retention Rate
+          </div>
         </div>
       </div>
 
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Conversion Funnel</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+          Conversion Funnel
+        </h3>
         <div class="space-y-4">
-          <div v-for="stage in analytics.conversions.funnel" :key="stage.stage" class="space-y-2">
+          <div
+            v-for="stage in analytics.conversions.funnel"
+            :key="stage.stage"
+            class="space-y-2"
+          >
             <div class="flex items-center justify-between text-sm">
               <span class="font-medium text-gray-900 dark:text-white">{{ stage.stage }}</span>
               <span class="text-gray-500 dark:text-gray-400">{{ formatNumber(stage.count) }} ({{ stage.percent }}%)</span>
@@ -535,62 +699,91 @@ const formatNumber = (num: number) => {
     </div>
 
     <!-- Traffic Tab -->
-    <div v-if="activeTab === 'traffic'" class="space-y-6">
+    <div
+      v-if="activeTab === 'traffic'"
+      class="space-y-6"
+    >
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-eye" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-eye"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.traffic.totalVisits) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Visits</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Total Visits
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-file-text" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-file-text"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ formatNumber(analytics.traffic.pageViews) }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Page Views</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Page Views
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-clock" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-clock"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.traffic.avgDuration }}
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Avg Duration</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Avg Duration
+          </div>
         </div>
 
         <div class="glass-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-              <UIcon name="i-lucide-arrow-right-left" class="w-6 h-6 text-white" />
+              <UIcon
+                name="i-lucide-arrow-right-left"
+                class="w-6 h-6 text-white"
+              />
             </div>
           </div>
           <div class="text-2xl font-bold text-gray-900 dark:text-white">
             {{ analytics.traffic.bounceRate }}%
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Bounce Rate</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Bounce Rate
+          </div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Traffic Sources</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+            Traffic Sources
+          </h3>
           <div class="space-y-4">
-            <div v-for="source in analytics.traffic.sources" :key="source.source" class="space-y-2">
+            <div
+              v-for="source in analytics.traffic.sources"
+              :key="source.source"
+              class="space-y-2"
+            >
               <div class="flex items-center justify-between text-sm">
                 <span class="font-medium text-gray-900 dark:text-white">{{ source.source }}</span>
                 <span class="text-gray-500 dark:text-gray-400">{{ formatNumber(source.visits) }}</span>
@@ -606,15 +799,28 @@ const formatNumber = (num: number) => {
         </div>
 
         <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Top Pages</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+            Top Pages
+          </h3>
           <div class="space-y-4">
-            <div v-for="page in analytics.traffic.topPages" :key="page.page" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+            <div
+              v-for="page in analytics.traffic.topPages"
+              :key="page.page"
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
+            >
               <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg flex-shrink-0">
-                <UIcon name="i-lucide-file" class="w-5 h-5 text-white" />
+                <UIcon
+                  name="i-lucide-file"
+                  class="w-5 h-5 text-white"
+                />
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="font-semibold text-gray-900 dark:text-white truncate">{{ page.page }}</h4>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ page.duration }} avg duration</p>
+                <h4 class="font-semibold text-gray-900 dark:text-white truncate">
+                  {{ page.page }}
+                </h4>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  {{ page.duration }} avg duration
+                </p>
               </div>
               <div class="text-base font-bold text-gray-900 dark:text-white">
                 {{ formatNumber(page.views) }}
@@ -626,4 +832,3 @@ const formatNumber = (num: number) => {
     </div>
   </div>
 </template>
-

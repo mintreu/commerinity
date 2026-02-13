@@ -45,12 +45,17 @@ onMounted(() => {
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold">Programs</h1>
+        <h1 class="text-2xl font-semibold">
+          Programs
+        </h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">
           View your programs and invite mentees.
         </p>
       </div>
-      <UButton to="/programs/new" color="primary">
+      <UButton
+        to="/programs/new"
+        color="primary"
+      >
         Create Program
       </UButton>
     </div>
@@ -60,15 +65,26 @@ onMounted(() => {
         <table class="min-w-full text-sm text-left">
           <thead class="text-xs uppercase text-slate-500 dark:text-slate-400 border-b">
             <tr>
-              <th class="px-3 py-2">Title</th>
-              <th class="px-3 py-2">Dates</th>
-              <th class="px-3 py-2">Participants</th>
-              <th class="px-3 py-2">Status</th>
-              <th class="px-3 py-2"></th>
+              <th class="px-3 py-2">
+                Title
+              </th>
+              <th class="px-3 py-2">
+                Dates
+              </th>
+              <th class="px-3 py-2">
+                Participants
+              </th>
+              <th class="px-3 py-2">
+                Status
+              </th>
+              <th class="px-3 py-2" />
             </tr>
           </thead>
           <tbody>
-            <tr v-for="program in programs" :key="program.uuid">
+            <tr
+              v-for="program in programs"
+              :key="program.uuid"
+            >
               <td class="px-3 py-3 font-medium text-slate-900 dark:text-white">
                 {{ program.title }}
               </td>
@@ -79,7 +95,10 @@ onMounted(() => {
                 {{ program.participants.length }} confirmed
               </td>
               <td class="px-3 py-3 capitalize">
-                <UBadge color="primary" variant="soft">
+                <UBadge
+                  color="primary"
+                  variant="soft"
+                >
                   {{ program.status }}
                 </UBadge>
               </td>
@@ -93,13 +112,22 @@ onMounted(() => {
               </td>
             </tr>
             <tr v-if="!programs.length && !loading">
-              <td colspan="5" class="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              <td
+                colspan="5"
+                class="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400"
+              >
                 You have no programs yet.
               </td>
             </tr>
             <tr v-if="loading">
-              <td colspan="5" class="px-3 py-6 text-center">
-                <UIcon name="i-lucide-loader-circle" class="animate-spin w-5 h-5 text-primary mx-auto" />
+              <td
+                colspan="5"
+                class="px-3 py-6 text-center"
+              >
+                <UIcon
+                  name="i-lucide-loader-circle"
+                  class="animate-spin w-5 h-5 text-primary mx-auto"
+                />
               </td>
             </tr>
           </tbody>
@@ -107,7 +135,10 @@ onMounted(() => {
       </div>
     </div>
 
-    <div v-if="totalPages > 1" class="flex items-center justify-between">
+    <div
+      v-if="totalPages > 1"
+      class="flex items-center justify-between"
+    >
       <span class="text-sm text-slate-500 dark:text-slate-400">
         Page {{ page }} of {{ totalPages }}
       </span>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { DashboardAppointment } from '~/types/dashboard'
 
+import { useDashboardAppointments } from '~/composables/useDashboardAppointments'
+
 definePageMeta({
   middleware: '$auth',
   layout: 'dashboard'
 })
-
-import { useDashboardAppointments } from '~/composables/useDashboardAppointments'
 
 const { formatDate } = useBranding()
 const { fetchList } = useDashboardAppointments()
@@ -35,15 +35,18 @@ const loadAppointments = async (newPage = 1) => {
 onMounted(() => {
   loadAppointments()
 })
-
 </script>
 
 <template>
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold">Appointments</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Manage your sessions and client consultations.</p>
+        <h1 class="text-2xl font-semibold">
+          Appointments
+        </h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          Manage your sessions and client consultations.
+        </p>
       </div>
       <UButton
         to="/appointments/new"
@@ -58,15 +61,28 @@ onMounted(() => {
         <table class="min-w-full text-sm text-left">
           <thead class="text-xs uppercase text-slate-500 dark:text-slate-400 border-b">
             <tr>
-              <th class="px-3 py-2">Client</th>
-              <th class="px-3 py-2">Date & Time</th>
-              <th class="px-3 py-2">Mode</th>
-              <th class="px-3 py-2">Status</th>
-              <th class="px-3 py-2">Advisor</th>
+              <th class="px-3 py-2">
+                Client
+              </th>
+              <th class="px-3 py-2">
+                Date & Time
+              </th>
+              <th class="px-3 py-2">
+                Mode
+              </th>
+              <th class="px-3 py-2">
+                Status
+              </th>
+              <th class="px-3 py-2">
+                Advisor
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="appointment in appointments" :key="appointment.uuid">
+            <tr
+              v-for="appointment in appointments"
+              :key="appointment.uuid"
+            >
               <td class="px-3 py-3 font-medium text-slate-900 dark:text-white">
                 {{ appointment.attendee?.name || 'Client' }}
               </td>
@@ -77,20 +93,34 @@ onMounted(() => {
                 {{ appointment.meeting_mode }}
               </td>
               <td class="px-3 py-3">
-                <UBadge color="primary" variant="soft">{{ appointment.status }}</UBadge>
+                <UBadge
+                  color="primary"
+                  variant="soft"
+                >
+                  {{ appointment.status }}
+                </UBadge>
               </td>
               <td class="px-3 py-3">
                 {{ appointment.advisor?.name || 'Self' }}
               </td>
             </tr>
             <tr v-if="!appointments.length && !loading">
-              <td colspan="5" class="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              <td
+                colspan="5"
+                class="px-3 py-6 text-center text-sm text-slate-500 dark:text-slate-400"
+              >
                 No appointments scheduled. Use the button above to create one.
               </td>
             </tr>
             <tr v-if="loading">
-              <td colspan="5" class="px-3 py-6 text-center">
-                <UIcon name="i-lucide-loader-circle" class="animate-spin w-5 h-5 text-primary mx-auto" />
+              <td
+                colspan="5"
+                class="px-3 py-6 text-center"
+              >
+                <UIcon
+                  name="i-lucide-loader-circle"
+                  class="animate-spin w-5 h-5 text-primary mx-auto"
+                />
               </td>
             </tr>
           </tbody>

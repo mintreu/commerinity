@@ -34,19 +34,33 @@ onMounted(loadChallenge)
 
 <template>
   <div class="space-y-6">
-    <div v-if="loading" class="glass-card p-6">
-      <UIcon name="i-lucide-loader-circle" class="animate-spin w-6 h-6 text-primary" />
+    <div
+      v-if="loading"
+      class="glass-card p-6"
+    >
+      <UIcon
+        name="i-lucide-loader-circle"
+        class="animate-spin w-6 h-6 text-primary"
+      />
     </div>
 
-    <div v-else-if="challenge" class="space-y-4">
+    <div
+      v-else-if="challenge"
+      class="space-y-4"
+    >
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-semibold">{{ challenge.title }}</h1>
+          <h1 class="text-2xl font-semibold">
+            {{ challenge.title }}
+          </h1>
           <p class="text-sm text-slate-500 dark:text-slate-400">
             Reward: {{ formatCurrency(challenge.reward.value || 0) }}
           </p>
         </div>
-        <UBadge color="warning" variant="soft">
+        <UBadge
+          color="warning"
+          variant="soft"
+        >
           {{ challenge.status }}
         </UBadge>
       </div>
@@ -57,29 +71,50 @@ onMounted(loadChallenge)
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h4 class="text-xs uppercase text-slate-500">Start Date</h4>
-            <p class="font-semibold">{{ challenge.start_at || 'TBD' }}</p>
+            <h4 class="text-xs uppercase text-slate-500">
+              Start Date
+            </h4>
+            <p class="font-semibold">
+              {{ challenge.start_at || 'TBD' }}
+            </p>
           </div>
           <div>
-            <h4 class="text-xs uppercase text-slate-500">End Date</h4>
-            <p class="font-semibold">{{ challenge.end_at || 'TBD' }}</p>
+            <h4 class="text-xs uppercase text-slate-500">
+              End Date
+            </h4>
+            <p class="font-semibold">
+              {{ challenge.end_at || 'TBD' }}
+            </p>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h4 class="text-xs uppercase text-slate-500">Goal</h4>
-            <p class="font-semibold">{{ challenge.goal.value }}</p>
+            <h4 class="text-xs uppercase text-slate-500">
+              Goal
+            </h4>
+            <p class="font-semibold">
+              {{ challenge.goal.value }}
+            </p>
           </div>
           <div>
-            <h4 class="text-xs uppercase text-slate-500">Target</h4>
-            <p class="font-semibold">{{ challenge.target_user_type || 'Team' }}</p>
+            <h4 class="text-xs uppercase text-slate-500">
+              Target
+            </h4>
+            <p class="font-semibold">
+              {{ challenge.target_user_type || 'Team' }}
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-else class="glass-card p-6">
-      <p class="text-sm text-slate-500 dark:text-slate-400">Challenge not found.</p>
+    <div
+      v-else
+      class="glass-card p-6"
+    >
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Challenge not found.
+      </p>
     </div>
   </div>
 </template>

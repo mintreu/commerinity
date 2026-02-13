@@ -565,7 +565,9 @@ useComprehensiveSeo({
                   v-if="taxBreakdown.length"
                   class="rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 p-3 text-xs"
                 >
-                  <p class="text-slate-600 dark:text-slate-300 font-semibold mb-2">Tax Breakdown</p>
+                  <p class="text-slate-600 dark:text-slate-300 font-semibold mb-2">
+                    Tax Breakdown
+                  </p>
                   <div
                     v-for="(row, idx) in taxBreakdown"
                     :key="`${row.product_id || 'tax'}-${idx}`"
@@ -594,7 +596,10 @@ useComprehensiveSeo({
                 >
                   <span class="text-slate-700 dark:text-slate-300">
                     Coupon Discount
-                    <span v-if="cartMeta?.summary?.coupon_code" class="text-xs text-slate-500 dark:text-slate-400">
+                    <span
+                      v-if="cartMeta?.summary?.coupon_code"
+                      class="text-xs text-slate-500 dark:text-slate-400"
+                    >
                       ({{ cartMeta?.summary?.coupon_code }})
                     </span>
                   </span>
@@ -647,7 +652,9 @@ useComprehensiveSeo({
               <!-- Coupon -->
               <div class="space-y-3">
                 <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Coupon</h3>
+                  <h3 class="text-sm font-semibold text-slate-900 dark:text-white">
+                    Coupon
+                  </h3>
                   <UButton
                     v-if="cartMeta?.summary?.coupon_code"
                     size="xs"

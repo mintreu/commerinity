@@ -274,10 +274,14 @@ const submitAction = async () => {
           </h3>
         </template>
         <div class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
-          <p class="font-medium text-slate-900 dark:text-white">{{ currentOrder.shipping_address?.name || '—' }}</p>
+          <p class="font-medium text-slate-900 dark:text-white">
+            {{ currentOrder.shipping_address?.name || '—' }}
+          </p>
           <p>{{ currentOrder.shipping_address?.phone || '—' }}</p>
           <p>{{ currentOrder.shipping_address?.address_line_1 || '' }}</p>
-          <p v-if="currentOrder.shipping_address?.address_line_2">{{ currentOrder.shipping_address?.address_line_2 }}</p>
+          <p v-if="currentOrder.shipping_address?.address_line_2">
+            {{ currentOrder.shipping_address?.address_line_2 }}
+          </p>
           <p>
             {{ currentOrder.shipping_address?.city || '' }}
             {{ currentOrder.shipping_address?.state ? `, ${currentOrder.shipping_address?.state}` : '' }}
@@ -342,12 +346,20 @@ const submitAction = async () => {
           >
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p class="text-slate-500 dark:text-slate-400 text-xs">Transaction</p>
-                <p class="font-semibold text-slate-900 dark:text-white">{{ txn.uuid }}</p>
+                <p class="text-slate-500 dark:text-slate-400 text-xs">
+                  Transaction
+                </p>
+                <p class="font-semibold text-slate-900 dark:text-white">
+                  {{ txn.uuid }}
+                </p>
               </div>
               <div class="text-right">
-                <p class="text-slate-500 dark:text-slate-400 text-xs">Amount</p>
-                <p class="font-semibold text-emerald-600 dark:text-emerald-400">{{ txn.amount_formatted }}</p>
+                <p class="text-slate-500 dark:text-slate-400 text-xs">
+                  Amount
+                </p>
+                <p class="font-semibold text-emerald-600 dark:text-emerald-400">
+                  {{ txn.amount_formatted }}
+                </p>
               </div>
             </div>
             <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
@@ -417,8 +429,18 @@ const submitAction = async () => {
       </div>
       <template #footer>
         <div class="flex items-center justify-end gap-2">
-          <UButton variant="ghost" @click="actionModalOpen = false">Cancel</UButton>
-          <UButton color="primary" @click="submitAction">Submit</UButton>
+          <UButton
+            variant="ghost"
+            @click="actionModalOpen = false"
+          >
+            Cancel
+          </UButton>
+          <UButton
+            color="primary"
+            @click="submitAction"
+          >
+            Submit
+          </UButton>
         </div>
       </template>
     </UCard>

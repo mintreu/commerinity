@@ -50,34 +50,65 @@ onMounted(fetchLatest)
   <section class="mt-12 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 p-8 backdrop-blur">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Latest updates</p>
-        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">From the blog and newsroom</h3>
+        <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
+          Latest updates
+        </p>
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">
+          From the blog and newsroom
+        </h3>
       </div>
       <div class="flex items-center gap-4 text-sm">
-        <NuxtLink to="/blogs" class="theme-text-primary font-semibold hover:underline">View blog</NuxtLink>
-        <NuxtLink to="/news" class="theme-text-primary font-semibold hover:underline">View news</NuxtLink>
+        <NuxtLink
+          to="/blogs"
+          class="theme-text-primary font-semibold hover:underline"
+        >View blog</NuxtLink>
+        <NuxtLink
+          to="/news"
+          class="theme-text-primary font-semibold hover:underline"
+        >View news</NuxtLink>
       </div>
     </div>
 
-    <div v-if="status === 'loading'" class="mt-8 grid gap-6 md:grid-cols-2">
-      <div v-for="i in 2" :key="i" class="space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 p-6 animate-pulse">
+    <div
+      v-if="status === 'loading'"
+      class="mt-8 grid gap-6 md:grid-cols-2"
+    >
+      <div
+        v-for="i in 2"
+        :key="i"
+        class="space-y-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 p-6 animate-pulse"
+      >
         <div class="h-4 w-1/2 rounded bg-slate-200 dark:bg-slate-800" />
         <div class="h-6 w-3/4 rounded bg-slate-200 dark:bg-slate-800" />
         <div class="h-4 w-full rounded bg-slate-200 dark:bg-slate-800" />
       </div>
     </div>
 
-    <div v-else-if="status === 'error'" class="mt-6 text-sm text-red-600 dark:text-red-400">
+    <div
+      v-else-if="status === 'error'"
+      class="mt-6 text-sm text-red-600 dark:text-red-400"
+    >
       {{ errorMessage }}
     </div>
 
-    <div v-else class="mt-8 grid gap-6 md:grid-cols-2">
+    <div
+      v-else
+      class="mt-8 grid gap-6 md:grid-cols-2"
+    >
       <div>
         <div class="flex items-center justify-between">
-          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">Blog</h4>
-          <NuxtLink to="/blogs" class="text-xs font-semibold theme-text-primary hover:underline">All posts</NuxtLink>
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+            Blog
+          </h4>
+          <NuxtLink
+            to="/blogs"
+            class="text-xs font-semibold theme-text-primary hover:underline"
+          >All posts</NuxtLink>
         </div>
-        <div v-if="blogs.length" class="mt-4 space-y-4">
+        <div
+          v-if="blogs.length"
+          class="mt-4 space-y-4"
+        >
           <NuxtLink
             v-for="post in blogs"
             :key="post.id"
@@ -95,17 +126,28 @@ onMounted(fetchLatest)
             </p>
           </NuxtLink>
         </div>
-        <p v-else class="mt-4 text-sm text-slate-500 dark:text-slate-400">
+        <p
+          v-else
+          class="mt-4 text-sm text-slate-500 dark:text-slate-400"
+        >
           {{ getEmptyStateMessage('general', 'No blog posts available.') }}
         </p>
       </div>
 
       <div>
         <div class="flex items-center justify-between">
-          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">News</h4>
-          <NuxtLink to="/news" class="text-xs font-semibold theme-text-primary hover:underline">All updates</NuxtLink>
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+            News
+          </h4>
+          <NuxtLink
+            to="/news"
+            class="text-xs font-semibold theme-text-primary hover:underline"
+          >All updates</NuxtLink>
         </div>
-        <div v-if="news.length" class="mt-4 space-y-4">
+        <div
+          v-if="news.length"
+          class="mt-4 space-y-4"
+        >
           <NuxtLink
             v-for="post in news"
             :key="post.id"
@@ -123,7 +165,10 @@ onMounted(fetchLatest)
             </p>
           </NuxtLink>
         </div>
-        <p v-else class="mt-4 text-sm text-slate-500 dark:text-slate-400">
+        <p
+          v-else
+          class="mt-4 text-sm text-slate-500 dark:text-slate-400"
+        >
           {{ getEmptyStateMessage('general', 'No news available.') }}
         </p>
       </div>

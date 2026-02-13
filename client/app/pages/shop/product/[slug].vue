@@ -87,12 +87,22 @@ interface RelatedProductsResponse {
   data: CatalogProduct[]
 }
 
-const productResponse = ref<{ success: boolean; data: ProductData } | null>(null)
-const productStatus = ref<'pending' | 'success' | 'error'>('pending')
-const productError = ref<unknown>(null)
+const normalizedSiteUrl = computed(() => String(config.public.siteUrl || '').replace(/\/$/, ''))
+const productPublicUrl = computed(() => `${normalizedSiteUrl.value}/shop/product/${slug.value}`)
+const ssrProductKey = computed(() => `product-detail:${slug.value}`)
+
+const { data: ssrProductResponse, error: ssrProductError } = await useAsyncData(
+  () => ssrProductKey.value,
+  () => useSanctumFetch<{ success: boolean, data: ProductData }>(`${config.public.apiBase}/api/catalog/products/${slug.value}`),
+  { watch: [slug] }
+)
+
+const productResponse = ref<{ success: boolean, data: ProductData } | null>(ssrProductResponse.value ?? null)
+const productStatus = ref<'pending' | 'success' | 'error'>(productResponse.value ? 'success' : (ssrProductError.value ? 'error' : 'pending'))
+const productError = ref<unknown>(ssrProductError.value ?? null)
 const product = computed(() => productResponse.value?.data)
 
-const reviewsResponse = ref<{ success: boolean; data: ReviewData } | null>(null)
+const reviewsResponse = ref<{ success: boolean, data: ReviewData } | null>(null)
 const reviews = computed(() => reviewsResponse.value?.data)
 
 const relatedResponse = ref<RelatedProductsResponse | null>(null)
@@ -167,10 +177,37 @@ const relatedProducts = computed(() => {
 
 const relatedLoading = computed(() => relatedStatus.value === 'pending')
 
-// SEO
-useSeoMeta({
-  title: () => product.value ? `${product.value.name} - Mintreu Shop` : 'Product - Mintreu Shop',
-  description: () => product.value?.short_description || product.value?.description?.slice(0, 160) || 'Shop premium products at Mintreu'
+watchEffect(() => {
+  if (!product.value) {
+    useComprehensiveSeo({
+      title: 'Product',
+      description: 'Shop premium products online.',
+      url: productPublicUrl.value,
+      type: 'website'
+    })
+    return
+  }
+
+  const seoDescription = product.value.short_description
+    || product.value.description?.slice(0, 160)
+    || `Buy ${product.value.name} online at ${config.public.companyName || 'VVIndia'}.`
+  const seoImage = product.value.gallery?.[0]?.src || product.value.gallery?.[0]?.thumbnail || undefined
+
+  useComprehensiveSeo({
+    title: product.value.name,
+    description: seoDescription,
+    image: seoImage,
+    imageAlt: product.value.name,
+    url: productPublicUrl.value,
+    type: 'product',
+    product: {
+      price: product.value.price,
+      currency: config.public.currencyCode || 'INR',
+      availability: product.value.in_stock ? 'in stock' : 'out of stock',
+      brand: config.public.companyName || 'VVIndia',
+      condition: 'new'
+    }
+  })
 })
 
 // Structured Data for Rich Snippets
@@ -188,27 +225,27 @@ useHead(() => {
         children: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'Product',
-          name: product.value.name,
-          description: product.value.short_description || product.value.description,
-          image: mainImage,
-          sku: product.value.sku,
-          brand: {
+          'name': product.value.name,
+          'description': product.value.short_description || product.value.description,
+          'image': mainImage,
+          'sku': product.value.sku,
+          'brand': {
             '@type': 'Brand',
-            name: config.public.companyName || 'VVIndia'
+            'name': config.public.companyName || 'VVIndia'
           },
-          offers: {
+          'offers': {
             '@type': 'Offer',
-            url: `${config.public.siteUrl}/shop/product/${product.value.slug}`,
-            priceCurrency: config.public.currencyCode || 'INR',
-            price: product.value.price,
+            'url': productPublicUrl.value,
+            'priceCurrency': config.public.currencyCode || 'INR',
+            'price': product.value.price,
             availability,
-            itemCondition: 'https://schema.org/NewCondition'
+            'itemCondition': 'https://schema.org/NewCondition'
           },
           ...(reviews.value?.stats?.total_reviews && {
             aggregateRating: {
               '@type': 'AggregateRating',
-              ratingValue: reviews.value.stats.average_rating.toFixed(1),
-              reviewCount: reviews.value.stats.total_reviews
+              'ratingValue': reviews.value.stats.average_rating.toFixed(1),
+              'reviewCount': reviews.value.stats.total_reviews
             }
           })
         }, null, 2)
@@ -254,7 +291,7 @@ const highlights = computed(() => {
 })
 
 const specRows = computed(() => {
-  const rows: Array<{ label: string; value: string }> = []
+  const rows: Array<{ label: string, value: string }> = []
   if (product.value?.sku) rows.push({ label: 'SKU', value: product.value.sku })
   if (product.value?.category?.name) rows.push({ label: 'Category', value: product.value.category.name })
   if (typeof product.value?.view_count === 'number') {
@@ -463,7 +500,7 @@ const markReviewHelpful = async (reviewId: number) => {
   }
   helpingReviewId.value = reviewId
   try {
-    const response = await useSanctumFetch<{ success: boolean; data: { helpful_votes: number } }>(
+    const response = await useSanctumFetch<{ success: boolean, data: { helpful_votes: number } }>(
       `${config.public.apiBase}/api/reviews/${reviewId}/helpful`,
       { method: 'POST' }
     )
@@ -806,7 +843,10 @@ onMounted(() => {
               class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-700/60 rounded-xl p-4"
             >
               <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
-                <UIcon name="i-lucide-sparkles" class="w-4 h-4 text-amber-500" />
+                <UIcon
+                  name="i-lucide-sparkles"
+                  class="w-4 h-4 text-amber-500"
+                />
                 Highlights
               </h3>
               <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 dark:text-slate-300">
@@ -815,7 +855,10 @@ onMounted(() => {
                   :key="item"
                   class="flex items-center gap-2"
                 >
-                  <UIcon name="i-lucide-check" class="w-4 h-4 text-emerald-500" />
+                  <UIcon
+                    name="i-lucide-check"
+                    class="w-4 h-4 text-emerald-500"
+                  />
                   <span>{{ item }}</span>
                 </li>
               </ul>
@@ -1019,24 +1062,39 @@ onMounted(() => {
             <!-- Delivery & Services -->
             <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 rounded-xl p-4">
               <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
-                <UIcon name="i-lucide-truck" class="w-4 h-4 text-blue-500" />
+                <UIcon
+                  name="i-lucide-truck"
+                  class="w-4 h-4 text-blue-500"
+                />
                 Delivery & Services
               </h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-600 dark:text-slate-300">
                 <div class="flex items-center gap-2">
-                  <UIcon name="i-lucide-calendar" class="w-4 h-4 text-slate-500" />
+                  <UIcon
+                    name="i-lucide-calendar"
+                    class="w-4 h-4 text-slate-500"
+                  />
                   <span>Delivery timeline shown at checkout</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <UIcon name="i-lucide-receipt" class="w-4 h-4 text-slate-500" />
+                  <UIcon
+                    name="i-lucide-receipt"
+                    class="w-4 h-4 text-slate-500"
+                  />
                   <span>Shipping cost calculated at checkout</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <UIcon name="i-lucide-shield-check" class="w-4 h-4 text-slate-500" />
+                  <UIcon
+                    name="i-lucide-shield-check"
+                    class="w-4 h-4 text-slate-500"
+                  />
                   <span>Secure payments & trusted sellers</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <UIcon name="i-lucide-headset" class="w-4 h-4 text-slate-500" />
+                  <UIcon
+                    name="i-lucide-headset"
+                    class="w-4 h-4 text-slate-500"
+                  />
                   <span>Support available 10am–8pm</span>
                 </div>
               </div>
@@ -1096,7 +1154,10 @@ onMounted(() => {
               </div>
               <div class="flex items-center gap-3">
                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-sm font-semibold">
-                  <UIcon name="i-lucide-star" class="w-4 h-4" />
+                  <UIcon
+                    name="i-lucide-star"
+                    class="w-4 h-4"
+                  />
                   {{ reviews?.stats.average_rating || 0 }}
                 </span>
                 <span class="text-sm text-slate-500">{{ reviews?.stats.total_reviews || 0 }} ratings</span>
@@ -1115,15 +1176,15 @@ onMounted(() => {
                   {{ reviews.stats.average_rating }}
                 </div>
                 <div class="flex items-center justify-center gap-1 my-2">
-                    <template
-                      v-for="star in getStarArray(Math.round(reviews.stats.average_rating))"
-                      :key="star.id"
-                    >
-                      <UIcon
-                        name="i-lucide-star"
-                        :class="['w-5 h-5', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
-                      />
-                    </template>
+                  <template
+                    v-for="star in getStarArray(Math.round(reviews.stats.average_rating))"
+                    :key="star.id"
+                  >
+                    <UIcon
+                      name="i-lucide-star"
+                      :class="['w-5 h-5', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
+                    />
+                  </template>
                 </div>
                 <div class="text-sm text-slate-500">
                   {{ reviews.stats.total_reviews }} reviews
@@ -1139,7 +1200,10 @@ onMounted(() => {
                 >
                   <span class="text-sm w-8 flex items-center gap-1 text-slate-600 dark:text-slate-400">
                     {{ star }}
-                    <UIcon name="i-lucide-star" class="w-3 h-3 text-amber-400" />
+                    <UIcon
+                      name="i-lucide-star"
+                      class="w-3 h-3 text-amber-400"
+                    />
                   </span>
                   <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
@@ -1154,31 +1218,34 @@ onMounted(() => {
 
             <!-- Review Submission -->
             <div class="mt-10 border-b border-slate-200 dark:border-slate-700 pb-8">
-              <div v-if="isLoggedIn" class="space-y-4">
+              <div
+                v-if="isLoggedIn"
+                class="space-y-4"
+              >
                 <p class="text-sm text-slate-600 dark:text-slate-400">
                   Share your experience with other buyers. Pick a rating and tell us what you liked or what we can improve.
                 </p>
                 <div class="flex items-center gap-2 text-sm font-semibold">
                   <span class="text-slate-500 dark:text-slate-400">Your Rating:</span>
-                <div class="flex items-center gap-2">
-                  <button
-                    v-for="star in [1,2,3,4,5]"
-                    :key="star"
-                    type="button"
-                    :class="getStarButtonClass(star)"
-                    @click="reviewRating = star"
-                    @mouseenter="hoverRating = star"
-                    @mouseleave="hoverRating = null"
-                  >
-                    <UIcon
-                      name="i-lucide-star"
-                      class="w-4 h-4"
-                    />
-                  </button>
-                  <span class="text-xs text-slate-400">
-                    {{ (hoverRating ?? reviewRating) }} / 5
-                  </span>
-                </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      v-for="star in [1, 2, 3, 4, 5]"
+                      :key="star"
+                      type="button"
+                      :class="getStarButtonClass(star)"
+                      @click="reviewRating = star"
+                      @mouseenter="hoverRating = star"
+                      @mouseleave="hoverRating = null"
+                    >
+                      <UIcon
+                        name="i-lucide-star"
+                        class="w-4 h-4"
+                      />
+                    </button>
+                    <span class="text-xs text-slate-400">
+                      {{ (hoverRating ?? reviewRating) }} / 5
+                    </span>
+                  </div>
                 </div>
                 <UTextarea
                   v-model="reviewText"
@@ -1204,13 +1271,22 @@ onMounted(() => {
                   </span>
                 </div>
               </div>
-              <div v-else class="text-sm text-slate-500 dark:text-slate-400">
+              <div
+                v-else
+                class="text-sm text-slate-500 dark:text-slate-400"
+              >
                 Please
-                <NuxtLink to="/auth/login" class="text-primary-600 hover:underline dark:text-primary-400">
+                <NuxtLink
+                  to="/auth/login"
+                  class="text-primary-600 hover:underline dark:text-primary-400"
+                >
                   login
                 </NuxtLink>
                 to leave a review, or
-                <NuxtLink to="/auth/register" class="text-primary-600 hover:underline dark:text-primary-400">
+                <NuxtLink
+                  to="/auth/register"
+                  class="text-primary-600 hover:underline dark:text-primary-400"
+                >
                   register
                 </NuxtLink>
                 if you don’t have an account yet.
@@ -1249,15 +1325,15 @@ onMounted(() => {
                       </span>
                     </div>
                     <div class="flex items-center gap-1 mb-2">
-                    <template
-                      v-for="star in getStarArray(review.rating)"
-                      :key="star.id"
-                    >
-                      <UIcon
-                        name="i-lucide-star"
-                        :class="['w-4 h-4', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
-                      />
-                    </template>
+                      <template
+                        v-for="star in getStarArray(review.rating)"
+                        :key="star.id"
+                      >
+                        <UIcon
+                          name="i-lucide-star"
+                          :class="['w-4 h-4', star.filled ? 'text-amber-400 fill-amber-400' : 'text-slate-300']"
+                        />
+                      </template>
                     </div>
                     <p
                       v-if="review.review"
@@ -1276,7 +1352,10 @@ onMounted(() => {
                         />
                         {{ review.helpful_votes }} found this helpful
                       </div>
-                     <UTooltip v-if="isLoggedIn" text="Mark helpful">
+                      <UTooltip
+                        v-if="isLoggedIn"
+                        text="Mark helpful"
+                      >
                         <UButton
                           size="xs"
                           variant="ghost"
@@ -1288,9 +1367,20 @@ onMounted(() => {
                         >
                           <span class="sr-only">Mark review helpful</span>
                           <span aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up">
-                              <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
-                              <path d="M7 10v12"/>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-thumbs-up"
+                            >
+                              <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+                              <path d="M7 10v12" />
                             </svg>
                           </span>
                         </UButton>
@@ -1342,8 +1432,12 @@ onMounted(() => {
     <div class="fixed bottom-0 inset-x-0 z-50 bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800 backdrop-blur lg:hidden">
       <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
         <div class="flex-1">
-          <p class="text-xs text-slate-500 dark:text-slate-400">Price</p>
-          <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">{{ currentPrice }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Price
+          </p>
+          <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+            {{ currentPrice }}
+          </p>
         </div>
         <UButton
           size="md"

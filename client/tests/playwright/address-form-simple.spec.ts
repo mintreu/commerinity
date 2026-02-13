@@ -34,7 +34,7 @@ test.describe('Address Form Dropdowns - Simple Test', () => {
     await page.waitForTimeout(3000)
 
     // Try to get past initial steps quickly
-    let continueBtn = page.getByRole('button', { name: /Get Started|Continue|Next|Skip/i })
+    const continueBtn = page.getByRole('button', { name: /Get Started|Continue|Next|Skip/i })
     let attempts = 0
     while (attempts < 10) {
       if (await continueBtn.first().isVisible({ timeout: 2000 }).catch(() => false)) {

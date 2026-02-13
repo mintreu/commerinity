@@ -119,7 +119,10 @@ const submit = async () => {
           <div class="space-y-2">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30 flex-shrink-0">
-                <UIcon name="i-lucide-graduation-cap" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <UIcon
+                  name="i-lucide-graduation-cap"
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+                />
               </div>
               <div>
                 <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
@@ -146,16 +149,26 @@ const submit = async () => {
     </div>
 
     <!-- Form Section -->
-    <form @submit.prevent="submit" class="space-y-4 sm:space-y-6">
+    <form
+      class="space-y-4 sm:space-y-6"
+      @submit.prevent="submit"
+    >
       <!-- Basic Information Card -->
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-file-text" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-file-text"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Basic Information</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Program title, status and description</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              Basic Information
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Program title, status and description
+            </p>
           </div>
         </div>
 
@@ -207,11 +220,18 @@ const submit = async () => {
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-calendar-range" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-calendar-range"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Program Schedule</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Define program duration and timeline</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              Program Schedule
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Define program duration and timeline
+            </p>
           </div>
         </div>
 
@@ -247,11 +267,18 @@ const submit = async () => {
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-map-pin" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-map-pin"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Location Details</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Optional venue and contact information</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              Location Details
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Optional venue and contact information
+            </p>
           </div>
         </div>
 
@@ -332,11 +359,18 @@ const submit = async () => {
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-lucide-users" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <UIcon
+                name="i-lucide-users"
+                class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+              />
             </div>
             <div>
-              <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Program Participants</h2>
-              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Add mentees and advisors to this program</p>
+              <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+                Program Participants
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Add mentees and advisors to this program
+              </p>
             </div>
           </div>
           <UButton
@@ -344,26 +378,39 @@ const submit = async () => {
             variant="soft"
             color="primary"
             icon="i-lucide-user-plus"
-            @click="showParticipantModal = true"
             class="w-full sm:w-auto"
+            @click="showParticipantModal = true"
           >
             Add Participant
           </UButton>
         </div>
 
-        <div v-if="participants.length === 0" class="rounded-2xl border-2 border-dashed border-slate-300/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center">
+        <div
+          v-if="participants.length === 0"
+          class="rounded-2xl border-2 border-dashed border-slate-300/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center"
+        >
           <div class="flex flex-col items-center gap-3">
             <div class="w-16 h-16 rounded-2xl bg-slate-200/50 dark:bg-slate-700/50 flex items-center justify-center">
-              <UIcon name="i-lucide-users" class="w-8 h-8 text-slate-400" />
+              <UIcon
+                name="i-lucide-users"
+                class="w-8 h-8 text-slate-400"
+              />
             </div>
             <div>
-              <p class="text-sm font-medium text-slate-600 dark:text-slate-400">No participants added yet</p>
-              <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Click "Add Participant" to invite mentees and advisors</p>
+              <p class="text-sm font-medium text-slate-600 dark:text-slate-400">
+                No participants added yet
+              </p>
+              <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                Click "Add Participant" to invite mentees and advisors
+              </p>
             </div>
           </div>
         </div>
 
-        <div v-else class="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden backdrop-blur-sm">
+        <div
+          v-else
+          class="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 overflow-hidden backdrop-blur-sm"
+        >
           <UTable
             :rows="participants"
             :columns="participantColumns"
@@ -376,7 +423,10 @@ const submit = async () => {
           >
             <template #label-data="{ row }">
               <div class="flex items-center gap-3 py-1">
-                <UAvatar size="sm" :alt="row.label" />
+                <UAvatar
+                  size="sm"
+                  :alt="row.label"
+                />
                 <span class="font-semibold text-slate-900 dark:text-white">{{ row.label }}</span>
               </div>
             </template>
@@ -427,17 +477,27 @@ const submit = async () => {
     </form>
 
     <!-- Participant Modal -->
-    <UModal v-model:open="showParticipantModal" :ui="{ width: 'sm:max-w-xl' }">
+    <UModal
+      v-model:open="showParticipantModal"
+      :ui="{ width: 'sm:max-w-xl' }"
+    >
       <template #content>
         <div class="glass-card rounded-3xl border border-white/20 dark:border-white/10 overflow-hidden">
           <div class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-green-500/10 p-6 border-b border-slate-200/50 dark:border-slate-700/50">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
-                <UIcon name="i-lucide-users" class="w-6 h-6 text-white" />
+                <UIcon
+                  name="i-lucide-users"
+                  class="w-6 h-6 text-white"
+                />
               </div>
               <div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Add Participants</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400">Search by mobile, email, or referral code</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+                  Add Participants
+                </h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                  Search by mobile, email, or referral code
+                </p>
               </div>
             </div>
           </div>
@@ -463,7 +523,10 @@ const submit = async () => {
               </UButton>
             </div>
 
-            <div v-if="participantQuery && participantSearchResults.length" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm shadow-lg overflow-hidden max-h-[300px] overflow-y-auto">
+            <div
+              v-if="participantQuery && participantSearchResults.length"
+              class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm shadow-lg overflow-hidden max-h-[300px] overflow-y-auto"
+            >
               <button
                 v-for="option in participantSearchResults"
                 :key="`${option.uuid}-modal`"
@@ -472,19 +535,37 @@ const submit = async () => {
                 @click="() => addParticipant(option)"
               >
                 <div class="flex items-center gap-3">
-                  <UAvatar size="sm" :alt="option.label" />
+                  <UAvatar
+                    size="sm"
+                    :alt="option.label"
+                  />
                   <div class="flex-1">
-                    <div class="text-sm font-medium text-slate-900 dark:text-white">{{ option.label }}</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">{{ option.details }}</div>
+                    <div class="text-sm font-medium text-slate-900 dark:text-white">
+                      {{ option.label }}
+                    </div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400">
+                      {{ option.details }}
+                    </div>
                   </div>
-                  <UIcon name="i-lucide-plus-circle" class="w-5 h-5 text-emerald-500" />
+                  <UIcon
+                    name="i-lucide-plus-circle"
+                    class="w-5 h-5 text-emerald-500"
+                  />
                 </div>
               </button>
             </div>
 
-            <div v-else class="rounded-2xl border-2 border-dashed border-slate-300/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center">
-              <UIcon name="i-lucide-search" class="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-              <p class="text-sm text-slate-500 dark:text-slate-400">Search results will appear here</p>
+            <div
+              v-else
+              class="rounded-2xl border-2 border-dashed border-slate-300/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center"
+            >
+              <UIcon
+                name="i-lucide-search"
+                class="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3"
+              />
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                Search results will appear here
+              </p>
             </div>
           </div>
 

@@ -6,7 +6,7 @@
 interface SeoOptions {
   title: string
   description?: string
-  keywords?: string[]
+  keywords?: string | string[]
   image?: string
   imageAlt?: string
   url?: string
@@ -39,12 +39,18 @@ export function useComprehensiveSeo(options: SeoOptions) {
   const config = useRuntimeConfig()
   const route = useRoute()
 
-  const siteName = 'Mintreu'
-  const siteUrl = config.public.siteUrl || 'https://mintreu.com'
+  const siteName = config.public.companyName || config.public.appName || 'VVIndia'
+  const siteUrl = String(config.public.siteUrl || 'https://www.vvindia.in').replace(/\/$/, '')
   const defaultImage = `${siteUrl}/og-image.png`
 
+  const toAbsoluteUrl = (value?: string) => {
+    if (!value) return undefined
+    if (/^https?:\/\//i.test(value)) return value
+    return `${siteUrl}${value.startsWith('/') ? '' : '/'}${value}`
+  }
+
   // Build full URL
-  const fullUrl = options.url || `${siteUrl}${route.fullPath}`
+  const fullUrl = toAbsoluteUrl(options.url) || `${siteUrl}${route.fullPath}`
 
   // Build title with site name
   const fullTitle = `${options.title} | ${siteName}`
@@ -57,8 +63,11 @@ export function useComprehensiveSeo(options: SeoOptions) {
     meta.push({ name: 'description', content: options.description })
   }
 
-  if (options.keywords && options.keywords.length > 0) {
-    meta.push({ name: 'keywords', content: options.keywords.join(', ') })
+  const keywords = Array.isArray(options.keywords)
+    ? options.keywords
+    : (options.keywords ? [options.keywords] : [])
+  if (keywords.length > 0) {
+    meta.push({ name: 'keywords', content: keywords.join(', ') })
   }
 
   // Robots
@@ -82,9 +91,11 @@ export function useComprehensiveSeo(options: SeoOptions) {
     meta.push({ property: 'og:description', content: options.description })
   }
 
+  const imageUrl = toAbsoluteUrl(options.image) || defaultImage
+
   meta.push({
     property: 'og:image',
-    content: options.image || defaultImage
+    content: imageUrl
   })
 
   if (options.imageAlt) {
@@ -159,7 +170,7 @@ export function useComprehensiveSeo(options: SeoOptions) {
 
   meta.push({
     name: 'twitter:image',
-    content: options.image || defaultImage
+    content: imageUrl
   })
 
   if (options.imageAlt) {
@@ -192,11 +203,11 @@ export function useComprehensiveSeo(options: SeoOptions) {
     description: options.description,
     ogTitle: options.title,
     ogDescription: options.description,
-    ogImage: options.image || defaultImage,
+    ogImage: imageUrl,
     ogUrl: fullUrl,
     twitterTitle: options.title,
     twitterDescription: options.description,
-    twitterImage: options.image || defaultImage,
+    twitterImage: imageUrl,
     twitterCard: twitterCard
   })
 }

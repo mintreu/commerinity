@@ -87,7 +87,7 @@ const quickActions = computed(() => [
   {
     label: 'Support',
     icon: 'i-lucide-headphones',
-    to: '/support',
+    to: '/dashboard/faq',
     color: 'warning' as const
   }
 ])

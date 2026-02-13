@@ -269,89 +269,89 @@ onMounted(async () => {
             />
             {{ appointment.duration }}
           </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Active Programs -->
-  <div class="glass-card p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-        <UIcon
-          name="i-lucide-book-open"
-          class="w-5 h-5 text-purple-500"
+    <!-- Active Programs -->
+    <div class="glass-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+          <UIcon
+            name="i-lucide-book-open"
+            class="w-5 h-5 text-purple-500"
+          />
+          Active Programs
+        </h2>
+        <UButton
+          to="/programs"
+          variant="soft"
+          size="sm"
+        >
+          View Programs
+        </UButton>
+      </div>
+
+      <template v-if="programsLoading">
+        <div class="space-y-2">
+          <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 animate-pulse" />
+          <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2 animate-pulse" />
+        </div>
+      </template>
+
+      <template v-else-if="activePrograms.length === 0">
+        <CommonEmptyState
+          icon="i-lucide-book-plus"
+          title="No programs yet"
+          description="Draft a program and invite your mentees."
+          action-label="Create Program"
+          action-to="/programs/new"
         />
-        Active Programs
-      </h2>
-      <UButton
-        to="/programs"
-        variant="soft"
-        size="sm"
-      >
-        View Programs
-      </UButton>
-    </div>
+      </template>
 
-    <template v-if="programsLoading">
-      <div class="space-y-2">
-        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 animate-pulse" />
-        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2 animate-pulse" />
-      </div>
-    </template>
-
-    <template v-else-if="activePrograms.length === 0">
-      <CommonEmptyState
-        icon="i-lucide-book-plus"
-        title="No programs yet"
-        description="Draft a program and invite your mentees."
-        action-label="Create Program"
-        action-to="/programs/new"
-      />
-    </template>
-
-    <div
-      v-else
-      class="grid grid-cols-1 md:grid-cols-2 gap-4"
-    >
       <div
-        v-for="program in activePrograms"
-        :key="program.uuid"
-        class="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700"
+        v-else
+        class="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="font-medium text-slate-900 dark:text-white">
-              {{ program.title }}
-            </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              {{ formatDate(program.start_date || program.end_date || new Date(), 'short') }}
-              · {{ program.status }}
-            </p>
+        <div
+          v-for="program in activePrograms"
+          :key="program.uuid"
+          class="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="font-medium text-slate-900 dark:text-white">
+                {{ program.title }}
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                {{ formatDate(program.start_date || program.end_date || new Date(), 'short') }}
+                · {{ program.status }}
+              </p>
+            </div>
+            <UBadge
+              color="success"
+              variant="soft"
+            >
+              {{ program.participants.length }} participants
+            </UBadge>
           </div>
-          <UBadge
-            color="success"
-            variant="soft"
-          >
-            {{ program.participants.length }} participants
-          </UBadge>
-        </div>
 
-        <div class="text-sm text-slate-500 dark:text-slate-400 mb-3">
-          {{ program.location?.full_address || 'Virtual Program' }}
-        </div>
+          <div class="text-sm text-slate-500 dark:text-slate-400 mb-3">
+            {{ program.location?.full_address || 'Virtual Program' }}
+          </div>
 
-        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-          <span>Ends {{ formatDate(program.end_date || program.start_date || new Date(), 'short') }}</span>
-          <NuxtLink
-            :to="`/programs/${program.uuid}`"
-            class="text-primary hover:underline text-xs font-semibold"
-          >
-            View
-          </NuxtLink>
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+            <span>Ends {{ formatDate(program.end_date || program.start_date || new Date(), 'short') }}</span>
+            <NuxtLink
+              :to="`/programs/${program.uuid}`"
+              class="text-primary hover:underline text-xs font-semibold"
+            >
+              View
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
     <!-- Upgrade Prompt -->
     <DashboardUserJourneyCard :user="user" />

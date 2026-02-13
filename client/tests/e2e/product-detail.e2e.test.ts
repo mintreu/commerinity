@@ -3,7 +3,7 @@ import { setup, createPage, url, waitForHydration } from '@nuxt/test-utils/e2e'
 
 interface CatalogProduct {
   slug: string
-  category: { slug: string; name: string } | null
+  category: { slug: string, name: string } | null
 }
 
 interface ProductsResponse {
@@ -12,7 +12,7 @@ interface ProductsResponse {
 
 const apiBase = process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
 
-const findProductWithRelated = async (): Promise<{ productSlug: string; categorySlug: string } | null> => {
+const findProductWithRelated = async (): Promise<{ productSlug: string, categorySlug: string } | null> => {
   const response = await fetch(`${apiBase}/api/catalog/products?per_page=50`)
   if (!response.ok) return null
   const payload = (await response.json()) as ProductsResponse

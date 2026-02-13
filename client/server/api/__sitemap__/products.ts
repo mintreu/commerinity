@@ -1,5 +1,4 @@
-import { defineSitemapEventHandler } from '#imports'
-import { useRuntimeConfig } from '#imports'
+import { defineSitemapEventHandler, useRuntimeConfig } from '#imports'
 
 type SitemapUrl = {
   loc: string

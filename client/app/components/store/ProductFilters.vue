@@ -249,7 +249,6 @@ const selectedFilterCount = computed(() => {
           </div>
         </div>
 
-
         <!-- Custom Price Input -->
         <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
           <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
@@ -286,9 +285,9 @@ const selectedFilterCount = computed(() => {
         </div>
 
         <!-- Price Range Display -->
-          <p class="text-xs text-slate-400 mt-2">
-            Range: {{ formatCurrencyValue(filters.price_range.min) }} - {{ formatCurrencyValue(filters.price_range.max) }}
-          </p>
+        <p class="text-xs text-slate-400 mt-2">
+          Range: {{ formatCurrencyValue(filters.price_range.min) }} - {{ formatCurrencyValue(filters.price_range.max) }}
+        </p>
       </div>
 
       <!-- Dynamic Filter Options (Color, Size, etc.) - Flipkart Style -->

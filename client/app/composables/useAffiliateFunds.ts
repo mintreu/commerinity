@@ -26,7 +26,7 @@ export function useAffiliateFunds() {
   const config = useRuntimeConfig()
   const accounts = ref<AffiliateFundAccount[]>([])
   const transactions = ref<AffiliateFundTransaction[]>([])
-  const transactionsMeta = ref<{ current_page: number; last_page: number; per_page: number; total: number } | null>(null)
+  const transactionsMeta = ref<{ current_page: number, last_page: number, per_page: number, total: number } | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -45,7 +45,7 @@ export function useAffiliateFunds() {
     }
   }
 
-  const fetchTransactions = async (fundType: string, params: { page?: number; per_page?: number } = {}) => {
+  const fetchTransactions = async (fundType: string, params: { page?: number, per_page?: number } = {}) => {
     loading.value = true
     error.value = null
     try {

@@ -212,8 +212,7 @@ const formattedAmount = computed(() => {
             inputmode="numeric"
             maxlength="10"
           >
-            <template #leading>
-            </template>
+            <template #leading />
           </UInput>
         </UFormField>
 

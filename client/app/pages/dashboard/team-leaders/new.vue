@@ -113,7 +113,10 @@ const submit = async () => {
           <div class="space-y-2">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <UIcon name="i-lucide-user-plus" class="w-6 h-6 text-white" />
+                <UIcon
+                  name="i-lucide-user-plus"
+                  class="w-6 h-6 text-white"
+                />
               </div>
               <div>
                 <h1 class="text-3xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
@@ -140,16 +143,26 @@ const submit = async () => {
     </div>
 
     <!-- Form Section -->
-    <form @submit.prevent="submit" class="space-y-6">
+    <form
+      class="space-y-6"
+      @submit.prevent="submit"
+    >
       <!-- Personal Information Card -->
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-user" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-user"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Personal Information</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Basic details and contact information</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              Personal Information
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Basic details and contact information
+            </p>
           </div>
         </div>
 
@@ -234,9 +247,9 @@ const submit = async () => {
               <input
                 type="file"
                 accept="image/*"
-                @change="handleAvatar"
                 class="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 file:mr-2 sm:file:mr-4 file:py-1.5 sm:file:py-2 file:px-3 sm:file:px-4 file:rounded-lg file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-300"
-              />
+                @change="handleAvatar"
+              >
             </div>
           </div>
         </div>
@@ -246,11 +259,18 @@ const submit = async () => {
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">KYC Information</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Identity verification and tax details</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              KYC Information
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Identity verification and tax details
+            </p>
           </div>
         </div>
 
@@ -354,11 +374,18 @@ const submit = async () => {
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-map-pin" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-map-pin"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Address Details</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Complete address and contact information</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              Address Details
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Complete address and contact information
+            </p>
           </div>
         </div>
 
@@ -455,11 +482,18 @@ const submit = async () => {
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-xl">
         <div class="flex items-center gap-3 mb-4 sm:mb-6">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
-            <UIcon name="i-lucide-landmark" class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <UIcon
+              name="i-lucide-landmark"
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+            />
           </div>
           <div>
-            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">Beneficiary Details</h2>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Bank account or UPI information (optional)</p>
+            <h2 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white">
+              Beneficiary Details
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Bank account or UPI information (optional)
+            </p>
           </div>
         </div>
 

@@ -6,26 +6,26 @@ export interface FriendlyApiErrorMeta {
   kind?: 'network' | 'server' | 'authorization' | 'validation' | 'general'
 }
 
-export type ApiErrorContext =
-  | 'categories'
-  | 'products'
-  | 'product_details'
-  | 'login'
-  | 'register'
-  | 'cart'
-  | 'wishlist'
-  | 'orders'
-  | 'profile'
-  | 'wallet'
-  | 'onboarding'
-  | 'helpdesk'
-  | 'contact'
-  | 'messages'
-  | 'appointments'
-  | 'careers'
-  | 'subscriptions'
-  | 'network'
-  | 'general'
+export type ApiErrorContext
+  = | 'categories'
+    | 'products'
+    | 'product_details'
+    | 'login'
+    | 'register'
+    | 'cart'
+    | 'wishlist'
+    | 'orders'
+    | 'profile'
+    | 'wallet'
+    | 'onboarding'
+    | 'helpdesk'
+    | 'contact'
+    | 'messages'
+    | 'appointments'
+    | 'careers'
+    | 'subscriptions'
+    | 'network'
+    | 'general'
 
 type ContextMessages = Partial<Record<NonNullable<FriendlyApiErrorMeta['kind']>, string>>
 
@@ -203,10 +203,10 @@ const getServerMessage = (error: Record<string, unknown>): string | undefined =>
 const isNetworkError = (error: Record<string, unknown>) => {
   const message = typeof error.message === 'string' ? error.message.toLowerCase() : ''
   const code = typeof error.code === 'string' ? error.code.toLowerCase() : ''
-  if (message && NETWORK_INDICATORS.some((token) => message.includes(token))) {
+  if (message && NETWORK_INDICATORS.some(token => message.includes(token))) {
     return true
   }
-  if (code && NETWORK_INDICATORS.some((token) => code.includes(token))) {
+  if (code && NETWORK_INDICATORS.some(token => code.includes(token))) {
     return true
   }
   return false
@@ -339,7 +339,7 @@ export const getContextualApiError = (
   return base
 }
 
-const CONTEXT_ROUTE_MAP: Array<{ pattern: RegExp; context: ApiErrorContext }> = [
+const CONTEXT_ROUTE_MAP: Array<{ pattern: RegExp, context: ApiErrorContext }> = [
   { pattern: /\/api\/catalog\/categories/i, context: 'categories' },
   { pattern: /\/api\/catalog\/products/i, context: 'products' },
   { pattern: /\/api\/catalog\/featured/i, context: 'products' },

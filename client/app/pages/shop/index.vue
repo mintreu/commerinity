@@ -39,7 +39,7 @@ const userName = computed(() => {
   return user.value.name?.split(' ')[0] || user.value.name || 'Member'
 })
 
-const featuredCategoriesData = ref<{ success: boolean; data: FeaturedCategory[] } | null>(null)
+const featuredCategoriesData = ref<{ success: boolean, data: FeaturedCategory[] } | null>(null)
 const featuredData = ref<{
   success: boolean
   data: {

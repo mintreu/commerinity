@@ -157,7 +157,10 @@ const statusOptions = [
       <div class="glass-card p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10">
         <div class="flex items-center gap-3 sm:gap-4">
           <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/30 flex-shrink-0">
-            <UIcon name="i-lucide-trending-up" class="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            <UIcon
+              name="i-lucide-trending-up"
+              class="w-6 h-6 sm:w-8 sm:h-8 text-white"
+            />
           </div>
           <div>
             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 dark:from-white dark:via-slate-100 dark:to-slate-300 bg-clip-text text-transparent">

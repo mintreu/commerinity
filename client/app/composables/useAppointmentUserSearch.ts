@@ -4,7 +4,7 @@ export const useAppointmentUserSearch = () => {
     if (!query) {
       return []
     }
-    const response = await useSanctumFetch<{ data: Array<{ uuid: string; label: string; details: string; type: string }> }>(
+    const response = await useSanctumFetch<{ data: Array<{ uuid: string, label: string, details: string, type: string }> }>(
       `${config.public.apiBase}/api/dashboard/appointments/search-users`,
       {
         query: { q: query, type, scope }
@@ -14,7 +14,7 @@ export const useAppointmentUserSearch = () => {
   }
 
   const fetchAttendeeTypes = async () => {
-    const response = await useSanctumFetch<{ data: Array<{ value: string; label: string }> }>(
+    const response = await useSanctumFetch<{ data: Array<{ value: string, label: string }> }>(
       `${config.public.apiBase}/api/dashboard/appointments/attendee-types`
     )
     return response.data

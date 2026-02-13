@@ -123,13 +123,81 @@
 
           <!-- Right: Actions (Desktop Only) -->
           <div class="flex items-center gap-3">
-            <!-- Search -->
-            <button class="w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-gradient-to-r hover:from-violet-500 hover:to-fuchsia-500 text-slate-600 dark:text-slate-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105">
-              <UIcon
-                name="i-lucide-search"
-                class="w-5 h-5"
-              />
-            </button>
+            <!-- Global Search -->
+            <div
+              ref="searchBoxRef"
+              class="relative"
+            >
+              <form
+                class="flex items-center rounded-xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-800"
+                @submit.prevent="submitGlobalSearch"
+              >
+                <UIcon
+                  name="i-lucide-search"
+                  class="h-4 w-4 text-slate-400"
+                />
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search products, blogs, news"
+                  class="ml-2 w-64 bg-transparent text-sm text-slate-700 outline-none dark:text-slate-200"
+                  @focus="openSuggestionsIfNeeded"
+                >
+              </form>
+
+              <div
+                v-if="showSuggestions"
+                class="absolute right-0 mt-2 w-96 max-w-[90vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+              >
+                <div
+                  v-if="suggestionLoading"
+                  class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400"
+                >
+                  Searching...
+                </div>
+
+                <div
+                  v-else-if="suggestions.length === 0"
+                  class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400"
+                >
+                  No matches found.
+                </div>
+
+                <div v-else>
+                  <button
+                    v-for="item in suggestions"
+                    :key="`${item.type}-${item.id}`"
+                    type="button"
+                    class="flex w-full items-center gap-3 border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 last:border-b-0 dark:border-slate-800 dark:hover:bg-slate-800"
+                    @click="openSuggestion(item.url)"
+                  >
+                    <img
+                      v-if="item.thumbnail"
+                      :src="item.thumbnail"
+                      :alt="item.title"
+                      class="h-10 w-10 rounded-lg object-cover"
+                    >
+                    <div
+                      v-else
+                      class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
+                    >
+                      <UIcon
+                        :name="item.type === 'product' ? 'i-lucide-package' : item.type === 'blog' ? 'i-lucide-newspaper' : 'i-lucide-megaphone'"
+                        class="h-5 w-5 text-slate-400"
+                      />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="line-clamp-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {{ item.title }}
+                      </p>
+                      <p class="line-clamp-1 text-xs capitalize text-slate-500 dark:text-slate-400">
+                        {{ item.type }}
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <!-- Cart -->
             <NuxtLink
@@ -355,12 +423,22 @@
 </template>
 
 <script setup lang="ts">
+import type { GlobalSearchItem } from '~/composables/useGlobalSearch'
+
 const { isLoggedIn: isAuthenticated } = useSanctum()
 const colorMode = useColorMode()
 const config = useRuntimeConfig()
 const { cartCount, fetchCart } = useCart()
+const router = useRouter()
+const { search, buildSuggestions } = useGlobalSearch()
 
 const mobileMenuOpen = ref(false)
+const searchQuery = ref('')
+const suggestions = ref<GlobalSearchItem[]>([])
+const suggestionLoading = ref(false)
+const showSuggestions = ref(false)
+const searchBoxRef = ref<HTMLElement | null>(null)
+let suggestionTimer: ReturnType<typeof setTimeout> | null = null
 
 // Fetch cart on mount
 onMounted(() => {
@@ -380,6 +458,72 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
 }
+
+const openSuggestionsIfNeeded = () => {
+  if (searchQuery.value.trim().length >= 2) {
+    showSuggestions.value = true
+  }
+}
+
+const fetchSuggestions = async (term: string) => {
+  if (term.trim().length < 2) {
+    suggestions.value = []
+    showSuggestions.value = false
+    return
+  }
+
+  suggestionLoading.value = true
+  try {
+    const data = await search(term, 3)
+    suggestions.value = buildSuggestions(data.results, 9)
+    showSuggestions.value = true
+  } catch {
+    suggestions.value = []
+    showSuggestions.value = true
+  } finally {
+    suggestionLoading.value = false
+  }
+}
+
+watch(searchQuery, (value) => {
+  if (suggestionTimer) clearTimeout(suggestionTimer)
+  suggestionTimer = setTimeout(() => {
+    fetchSuggestions(value)
+  }, 250)
+})
+
+const submitGlobalSearch = async () => {
+  const query = searchQuery.value.trim()
+  showSuggestions.value = false
+  await router.push({
+    path: '/search',
+    query: query ? { q: query } : {}
+  })
+}
+
+const openSuggestion = async (url: string) => {
+  showSuggestions.value = false
+  await navigateTo(url)
+}
+
+const onDocumentClick = (event: MouseEvent) => {
+  if (!searchBoxRef.value) return
+  const target = event.target as Node
+  if (!searchBoxRef.value.contains(target)) {
+    showSuggestions.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', onDocumentClick)
+})
+
+onUnmounted(() => {
+  if (suggestionTimer) {
+    clearTimeout(suggestionTimer)
+  }
+  document.removeEventListener('click', onDocumentClick)
+})
 </script>
 
 <style scoped>

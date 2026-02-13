@@ -23,7 +23,7 @@ test.describe('Regular user address management', () => {
     await page.getByLabel('Address Label').fill('Playwright Home')
     await page.getByLabel('Address Type').click()
     await page.getByRole('option', { name: 'Home' }).click()
-    await page.getByLabel("Recipient's Full Name").fill('Regular Demo')
+    await page.getByLabel('Recipient\'s Full Name').fill('Regular Demo')
     await page.getByLabel('Contact Number').fill('9876543210')
     await page.getByLabel('Flat / House / Building').fill('56 Experiment Avenue')
     await page.getByLabel('Street / Area / Colony (Optional)').fill('Playwright District')

@@ -68,7 +68,7 @@ const fetchPosts = async () => {
     if (activeCategory.value) params.set('category', activeCategory.value)
     if (search.value) params.set('search', search.value)
 
-    const response = await useSanctumFetch<{ data: PostItem[]; meta: PaginationMeta }>(
+    const response = await useSanctumFetch<{ data: PostItem[], meta: PaginationMeta }>(
       `${baseUrl.value}?${params.toString()}`
     )
 
@@ -114,9 +114,15 @@ const pageCount = computed(() => meta.value?.last_page || 1)
   <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
     <section class="theme-gradient-brand text-white py-16">
       <div class="mx-auto max-w-6xl px-6 text-center space-y-4">
-        <p class="text-sm uppercase tracking-[0.3em] text-white/70">{{ heroLabel }}</p>
-        <h1 class="text-4xl md:text-5xl font-black leading-tight">{{ title }}</h1>
-        <p class="text-lg text-white/80 max-w-3xl mx-auto">{{ subtitle }}</p>
+        <p class="text-sm uppercase tracking-[0.3em] text-white/70">
+          {{ heroLabel }}
+        </p>
+        <h1 class="text-4xl md:text-5xl font-black leading-tight">
+          {{ title }}
+        </h1>
+        <p class="text-lg text-white/80 max-w-3xl mx-auto">
+          {{ subtitle }}
+        </p>
       </div>
     </section>
 
@@ -149,7 +155,10 @@ const pageCount = computed(() => meta.value?.last_page || 1)
         />
       </div>
 
-      <div v-if="status === 'loading'" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        v-if="status === 'loading'"
+        class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+      >
         <div
           v-for="i in 6"
           :key="i"
@@ -161,15 +170,24 @@ const pageCount = computed(() => meta.value?.last_page || 1)
         </div>
       </div>
 
-      <div v-else-if="status === 'error'" class="text-center text-red-600 dark:text-red-400">
+      <div
+        v-else-if="status === 'error'"
+        class="text-center text-red-600 dark:text-red-400"
+      >
         {{ errorMessage }}
       </div>
 
-      <div v-else-if="posts.length === 0" class="text-center text-slate-600 dark:text-slate-300">
+      <div
+        v-else-if="posts.length === 0"
+        class="text-center text-slate-600 dark:text-slate-300"
+      >
         {{ getEmptyStateMessage(props.type === 'blog' ? 'general' : 'general', 'No posts found.') }}
       </div>
 
-      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        v-else
+        class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+      >
         <NuxtLink
           v-for="post in posts"
           :key="post.id"
@@ -183,8 +201,14 @@ const pageCount = computed(() => meta.value?.last_page || 1)
               :alt="post.title"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             >
-            <div v-else class="w-full h-full flex items-center justify-center text-slate-400">
-              <UIcon name="i-lucide-image" class="w-12 h-12" />
+            <div
+              v-else
+              class="w-full h-full flex items-center justify-center text-slate-400"
+            >
+              <UIcon
+                name="i-lucide-image"
+                class="w-12 h-12"
+              />
             </div>
           </div>
           <div class="p-6 space-y-3">
@@ -202,8 +226,15 @@ const pageCount = computed(() => meta.value?.last_page || 1)
         </NuxtLink>
       </div>
 
-      <div v-if="pageCount > 1" class="flex justify-center">
-        <UPagination v-model="currentPage" :page-count="pageCount" :max="5" />
+      <div
+        v-if="pageCount > 1"
+        class="flex justify-center"
+      >
+        <UPagination
+          v-model="currentPage"
+          :page-count="pageCount"
+          :max="5"
+        />
       </div>
     </section>
   </div>

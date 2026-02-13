@@ -577,7 +577,10 @@ onMounted(async () => {
               v-if="editingFormLoading"
               class="absolute inset-0 bg-white/90 dark:bg-slate-900/80 flex items-center justify-center z-10 rounded-lg"
             >
-              <UIcon name="i-lucide-loader-2" class="w-16 h-16 animate-spin text-primary-500" />
+              <UIcon
+                name="i-lucide-loader-2"
+                class="w-16 h-16 animate-spin text-primary-500"
+              />
             </div>
             <!-- Row 1: Title & Type -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -45,7 +45,7 @@ const sortBy = ref('discount_desc')
 const currentPage = ref(1)
 
 // Fetch deals
-const dealsResponse = ref<{ success: boolean; data: { stats: SaleStats; items: SaleProduct[]; pagination: { current_page: number; last_page: number; per_page: number; total: number; has_more: boolean } } } | null>(null)
+const dealsResponse = ref<{ success: boolean, data: { stats: SaleStats, items: SaleProduct[], pagination: { current_page: number, last_page: number, per_page: number, total: number, has_more: boolean } } } | null>(null)
 const dealsStatus = ref<'pending' | 'success' | 'error'>('pending')
 const loadDeals = async () => {
   dealsStatus.value = 'pending'
@@ -69,7 +69,7 @@ const loadDeals = async () => {
   }
 }
 
-const categoriesData = ref<{ success: boolean; data: Array<{ name: string; slug: string; product_count: number }> } | null>(null)
+const categoriesData = ref<{ success: boolean, data: Array<{ name: string, slug: string, product_count: number }> } | null>(null)
 const loadCategories = async () => {
   try {
     categoriesData.value = await useSanctumFetch('/api/catalog/categories')
@@ -521,8 +521,6 @@ const discountOptions = [
               >
                 View Product
               </UButton>
-
-
             </div>
           </div>
         </div>

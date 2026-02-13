@@ -10,7 +10,7 @@ const { fetchActive } = useDashboardChallenges()
 const { formatCurrency } = useBranding()
 const toast = useToast()
 
-const challenges = ref([] as Array<{ uuid: string; title: string; status: string; end_at?: string; reward: { value: number }; goal: { value: number }; meta?: Record<string, unknown> }>)
+const challenges = ref([] as Array<{ uuid: string, title: string, status: string, end_at?: string, reward: { value: number }, goal: { value: number }, meta?: Record<string, unknown> }>)
 const loading = ref(false)
 
 const getProgress = (challenge: typeof challenges.value[number]) => {
@@ -39,22 +39,33 @@ onMounted(loadChallenges)
   <div class="space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold">Challenges</h1>
+        <h1 class="text-2xl font-semibold">
+          Challenges
+        </h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">
           Motivate your team with measurable goals.
         </p>
       </div>
-      <UButton to="/challenges/new" color="primary">
+      <UButton
+        to="/challenges/new"
+        color="primary"
+      >
         Create Challenge
       </UButton>
     </div>
 
-    <div v-if="loading" class="glass-card p-6 space-y-3">
+    <div
+      v-if="loading"
+      class="glass-card p-6 space-y-3"
+    >
       <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 animate-pulse" />
       <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2 animate-pulse" />
     </div>
 
-    <div v-else-if="!challenges.length" class="glass-card p-6">
+    <div
+      v-else-if="!challenges.length"
+      class="glass-card p-6"
+    >
       <CommonEmptyState
         icon="i-lucide-flame"
         title="No active challenges"
@@ -64,7 +75,10 @@ onMounted(loadChallenges)
       />
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      v-else
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
       <div
         v-for="challenge in challenges"
         :key="challenge.uuid"
@@ -74,7 +88,10 @@ onMounted(loadChallenges)
           <h3 class="font-semibold text-slate-900 dark:text-white">
             {{ challenge.title }}
           </h3>
-          <UBadge color="warning" variant="soft">
+          <UBadge
+            color="warning"
+            variant="soft"
+          >
             {{ challenge.status }}
           </UBadge>
         </div>

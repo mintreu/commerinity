@@ -11,7 +11,7 @@ describe('Shop products page', async () => {
 
   it('renders product grid with items', async () => {
     const page = await createPage()
-    const responses: Array<{ url: string; status: number }> = []
+    const responses: Array<{ url: string, status: number }> = []
     const errors: string[] = []
     page.on('response', (response) => {
       if (response.url().includes('/api/catalog/products')) {
@@ -31,8 +31,8 @@ describe('Shop products page', async () => {
 
     await page.waitForFunction(() => {
       return Boolean(
-        document.querySelector('[data-testid="product-grid"]') ||
-        document.body.textContent?.includes('No products found')
+        document.querySelector('[data-testid="product-grid"]')
+        || document.body.textContent?.includes('No products found')
       )
     }, { timeout: 60000 })
 
@@ -40,7 +40,7 @@ describe('Shop products page', async () => {
       const errorDetails = errors.length ? ` Browser errors: ${errors.join(' | ')}` : ''
       throw new Error(`No /api/catalog/products request was observed in the browser.${errorDetails}`)
     }
-    const failed = responses.find((item) => item.status >= 400)
+    const failed = responses.find(item => item.status >= 400)
     if (failed) {
       throw new Error(`Catalog API failed: ${failed.status} for ${failed.url}`)
     }
@@ -61,8 +61,8 @@ describe('Shop products page', async () => {
 
     await page.waitForFunction(() => {
       return Boolean(
-        document.querySelector('[data-testid="product-price"]') ||
-        document.body.textContent?.includes('No products found')
+        document.querySelector('[data-testid="product-price"]')
+        || document.body.textContent?.includes('No products found')
       )
     }, { timeout: 60000 })
 

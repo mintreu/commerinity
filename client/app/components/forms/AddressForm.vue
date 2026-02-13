@@ -16,13 +16,13 @@
           </div>
         </div>
         <div class="flex-1">
-      <h4 class="font-semibold text-gray-900 dark:text-white mb-1">
-        Enable Location Access
-      </h4>
-      <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-        Allow location access to automatically detect your coordinates for more accurate delivery.
-        You can skip if you prefer to enter them manually.
-      </p>
+          <h4 class="font-semibold text-gray-900 dark:text-white mb-1">
+            Enable Location Access
+          </h4>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            Allow location access to automatically detect your coordinates for more accurate delivery.
+            You can skip if you prefer to enter them manually.
+          </p>
           <div class="flex gap-2">
             <UButton
               size="sm"
@@ -67,42 +67,42 @@
     >
       <!-- Full Name & Phone (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-      <UFormField
-        label="Full Name"
-        name="person_name"
-        required
-        class="w-full"
-      >
-        <UInput
-          v-model="formState.person_name"
-          placeholder="Enter recipient name"
-          size="lg"
-          icon="i-lucide-user"
+        <UFormField
+          label="Full Name"
+          name="person_name"
+          required
           class="w-full"
-        />
-        <template #hint>
-          <span class="text-xs text-gray-500">Name of the person receiving the delivery.</span>
-        </template>
-      </UFormField>
+        >
+          <UInput
+            v-model="formState.person_name"
+            placeholder="Enter recipient name"
+            size="lg"
+            icon="i-lucide-user"
+            class="w-full"
+          />
+          <template #hint>
+            <span class="text-xs text-gray-500">Name of the person receiving the delivery.</span>
+          </template>
+        </UFormField>
 
-      <UFormField
-        label="Phone Number"
-        name="person_mobile"
-        required
-        class="w-full"
-      >
-        <UInput
-          v-model="formState.person_mobile"
-          type="tel"
-          placeholder="10-digit mobile number"
-          size="lg"
-          icon="i-lucide-phone"
+        <UFormField
+          label="Phone Number"
+          name="person_mobile"
+          required
           class="w-full"
-        />
-        <template #hint>
-          <span class="text-xs text-gray-500">Enter the 10-digit mobile number.</span>
-        </template>
-      </UFormField>
+        >
+          <UInput
+            v-model="formState.person_mobile"
+            type="tel"
+            placeholder="10-digit mobile number"
+            size="lg"
+            icon="i-lucide-phone"
+            class="w-full"
+          />
+          <template #hint>
+            <span class="text-xs text-gray-500">Enter the 10-digit mobile number.</span>
+          </template>
+        </UFormField>
       </div>
 
       <!-- Address Line 1 (Full width) -->
@@ -141,138 +141,138 @@
 
       <!-- Country & State (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-      <UFormField
-        label="Country"
-        name="country_code"
-        required
-        class="w-full"
-      >
-        <USelectMenu
-          v-model="formState.country_code"
-          :items="countries"
-          placeholder="Select country"
-          size="lg"
-          icon="i-lucide-globe"
-          value-key="value"
-          label-key="label"
-          searchable
+        <UFormField
+          label="Country"
+          name="country_code"
+          required
           class="w-full"
-          @update:model-value="handleCountryChange"
-        />
+        >
+          <USelectMenu
+            v-model="formState.country_code"
+            :items="countries"
+            placeholder="Select country"
+            size="lg"
+            icon="i-lucide-globe"
+            value-key="value"
+            label-key="label"
+            searchable
+            class="w-full"
+            @update:model-value="handleCountryChange"
+          />
         </UFormField>
 
-      <UFormField
-        label="State / Province"
-        name="state_code"
-        required
-        class="w-full"
-      >
-        <USelectMenu
-          v-model="formState.state_code"
-          :items="states"
-          placeholder="Select state"
-          size="lg"
-          icon="i-lucide-map-pinned"
-          value-key="value"
-          label-key="label"
-          :loading="loadingStates"
-          :disabled="!formState.country_code || loadingStates"
-          searchable
+        <UFormField
+          label="State / Province"
+          name="state_code"
+          required
           class="w-full"
-          @update:model-value="handleStateChange"
-        />
+        >
+          <USelectMenu
+            v-model="formState.state_code"
+            :items="states"
+            placeholder="Select state"
+            size="lg"
+            icon="i-lucide-map-pinned"
+            value-key="value"
+            label-key="label"
+            :loading="loadingStates"
+            :disabled="!formState.country_code || loadingStates"
+            searchable
+            class="w-full"
+            @update:model-value="handleStateChange"
+          />
         </UFormField>
       </div>
 
       <!-- District & Block (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-      <UFormField
-        label="District"
-        name="district_id"
-        class="w-full"
-      >
-        <USelectMenu
-          v-model="formState.district_id"
-          :items="districts"
-          placeholder="Select district"
-          size="lg"
-          icon="i-lucide-map"
-          value-key="value"
-          label-key="label"
-          :loading="loadingDistricts"
-          :disabled="!formState.state_code || loadingDistricts"
-          searchable
+        <UFormField
+          label="District"
+          name="district_id"
           class="w-full"
-          @update:model-value="handleDistrictChange"
-        />
+        >
+          <USelectMenu
+            v-model="formState.district_id"
+            :items="districts"
+            placeholder="Select district"
+            size="lg"
+            icon="i-lucide-map"
+            value-key="value"
+            label-key="label"
+            :loading="loadingDistricts"
+            :disabled="!formState.state_code || loadingDistricts"
+            searchable
+            class="w-full"
+            @update:model-value="handleDistrictChange"
+          />
         </UFormField>
 
-      <UFormField
-        label="Block / Area"
-        name="block_id"
-        class="w-full"
-      >
-        <USelectMenu
-          v-model="formState.block_id"
-          :items="blocks"
-          placeholder="Select block"
-          size="lg"
-          icon="i-lucide-map"
-          value-key="value"
-          label-key="label"
-          :loading="loadingBlocks"
-          :disabled="!formState.district_id || loadingBlocks"
-          searchable
+        <UFormField
+          label="Block / Area"
+          name="block_id"
           class="w-full"
-          @update:model-value="handleBlockChange"
-        />
+        >
+          <USelectMenu
+            v-model="formState.block_id"
+            :items="blocks"
+            placeholder="Select block"
+            size="lg"
+            icon="i-lucide-map"
+            value-key="value"
+            label-key="label"
+            :loading="loadingBlocks"
+            :disabled="!formState.district_id || loadingBlocks"
+            searchable
+            class="w-full"
+            @update:model-value="handleBlockChange"
+          />
         </UFormField>
       </div>
 
       <!-- City & Postal (2 columns on desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-      <UFormField
-        label="City"
-        name="city"
-        required
-        class="w-full"
-      >
-        <UInput
-          v-model="formState.city"
-          placeholder="Enter city name"
-          size="lg"
-          icon="i-lucide-building-2"
+        <UFormField
+          label="City"
+          name="city"
+          required
           class="w-full"
-        />
+        >
+          <UInput
+            v-model="formState.city"
+            placeholder="Enter city name"
+            size="lg"
+            icon="i-lucide-building-2"
+            class="w-full"
+          />
         </UFormField>
 
-      <UFormField
-        label="Postal Code / ZIP"
-        name="postal_code"
-        required
-        class="w-full"
-      >
-        <UInput
-          v-model="formState.postal_code"
-          placeholder="Enter postal code"
-          size="lg"
-          icon="i-lucide-hash"
-          maxlength="10"
+        <UFormField
+          label="Postal Code / ZIP"
+          name="postal_code"
+          required
           class="w-full"
-        />
-        <template #hint>
-          <span class="text-xs text-gray-500">Ensure it matches your delivery zone.</span>
-        </template>
-      </UFormField>
+        >
+          <UInput
+            v-model="formState.postal_code"
+            placeholder="Enter postal code"
+            size="lg"
+            icon="i-lucide-hash"
+            maxlength="10"
+            class="w-full"
+          />
+          <template #hint>
+            <span class="text-xs text-gray-500">Ensure it matches your delivery zone.</span>
+          </template>
+        </UFormField>
       </div>
 
       <!-- Hidden lat/lng fields -->
       <input
-        v-model="formState.latitude"
+        :value="formState.latitude ?? ''"
         type="hidden"
       >
       <input
-        v-model="formState.longitude"
+        :value="formState.longitude ?? ''"
         type="hidden"
       >
     </UForm>
@@ -292,7 +292,6 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod'
 import type { GeoOption } from '~/composables/useGeoData'
 
 interface AddressFormData {
@@ -309,6 +308,8 @@ interface AddressFormData {
   latitude: number | null
   longitude: number | null
 }
+
+type SelectValue = string | number | { value?: string | number } | null | undefined
 
 interface Props {
   initialData?: Partial<AddressFormData>
@@ -367,61 +368,86 @@ const formState = reactive<AddressFormData>({
   longitude: props.initialData?.longitude || null
 })
 
-// Validation schema
-const schema = z.object({
-  person_name: z.string().min(2, 'Name must be at least 2 characters'),
-  person_mobile: z.string()
-    .min(10, 'Please enter a valid phone number')
-    .refine((value) => /^\d{10}$/.test(value), 'Use a 10-digit mobile number'),
-  address_1: z.string().min(5, 'Please enter your address'),
-  address_2: z.string().optional(),
-  city: z.string().min(2, 'Please enter your city'),
-  postal_code: z.string().min(4, 'Please enter a valid postal code'),
-  state_code: z.string().min(1, 'Please select your state'),
-  country_code: z.string().min(2, 'Please select your country'),
-  district_id: z.number().nullable().optional(),
-  block_id: z.number().nullable().optional(),
-  latitude: z.number().nullable().optional(),
-  longitude: z.number().nullable().optional()
+const normalizeSelectValue = (value: SelectValue): string | number | null => {
+  if (value === null || value === undefined || value === '') return null
+  if (typeof value === 'object') {
+    const raw = value.value
+    if (raw === null || raw === undefined || raw === '') return null
+    return raw
+  }
+  return value
+}
+
+const normalizeNumericValue = (value: SelectValue): number | null => {
+  const raw = normalizeSelectValue(value)
+  if (raw === null) return null
+  const parsed = Number(raw)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+const normalizeAddressData = (data: AddressFormData): AddressFormData => ({
+  ...data,
+  country_code: String(normalizeSelectValue(data.country_code) || ''),
+  state_code: String(normalizeSelectValue(data.state_code) || ''),
+  district_id: normalizeNumericValue(data.district_id),
+  block_id: normalizeNumericValue(data.block_id),
+  latitude: normalizeNumericValue(data.latitude),
+  longitude: normalizeNumericValue(data.longitude)
 })
+
+const normalizeMobile = (value: string): string => value.replace(/\D/g, '').slice(-10)
+
+const isProgressionValid = (data: AddressFormData): boolean => {
+  const normalized = normalizeAddressData(data)
+  return normalized.person_name.trim().length >= 2
+    && normalizeMobile(normalized.person_mobile).length === 10
+    && normalized.address_1.trim().length >= 5
+    && normalized.city.trim().length >= 2
+    && normalized.postal_code.trim().length >= 4
+    && normalized.country_code.trim().length >= 2
+    && normalized.state_code.trim().length >= 1
+}
 
 // Watch for changes and emit
 watch(
   () => ({ ...formState }),
   (newData) => {
-    emit('update:data', newData)
-
-    const result = schema.safeParse(formState)
-    emit('valid', result.success)
+    const normalized = normalizeAddressData(newData as AddressFormData)
+    emit('update:data', normalized)
+    emit('valid', isProgressionValid(normalized))
   },
   { deep: true, immediate: true }
 )
 
 // Handle country change
-const handleCountryChange = async (countryCode: string | number | null) => {
-  if (!countryCode) return
+const handleCountryChange = async (countryCode: SelectValue) => {
+  const normalizedCountry = normalizeSelectValue(countryCode)
+  if (!normalizedCountry) return
+  formState.country_code = String(normalizedCountry)
   formState.state_code = ''
   formState.district_id = null
   formState.block_id = null
   resetStates()
 
-  await fetchStates(String(countryCode))
+  await fetchStates(formState.country_code)
 }
 
 // Handle state change
-const handleStateChange = async (stateCode: string | number | null) => {
+const handleStateChange = async (stateCode: SelectValue) => {
+  const normalizedState = normalizeSelectValue(stateCode)
+  formState.state_code = normalizedState ? String(normalizedState) : ''
   formState.district_id = null
   formState.block_id = null
   resetDistricts()
 
-  if (stateCode) {
-    await fetchDistricts(String(stateCode))
+  if (formState.state_code) {
+    await fetchDistricts(formState.state_code)
   }
 }
 
 // Handle district change
-const handleDistrictChange = async (districtId: string | number | null) => {
-  formState.district_id = districtId ? Number(districtId) : null
+const handleDistrictChange = async (districtId: SelectValue) => {
+  formState.district_id = normalizeNumericValue(districtId)
   formState.block_id = null
   resetBlocks()
 
@@ -431,9 +457,11 @@ const handleDistrictChange = async (districtId: string | number | null) => {
 }
 
 // Handle block change (optional - may have coordinates)
-const handleBlockChange = (blockId: string | number | null) => {
-  if (!blockId) return
-  const block = blocks.value.find((b: GeoOption) => b.value === blockId)
+const handleBlockChange = (blockId: SelectValue) => {
+  formState.block_id = normalizeNumericValue(blockId)
+  if (!formState.block_id) return
+
+  const block = blocks.value.find((b: GeoOption) => Number(b.value) === formState.block_id)
   if (block?.coordinates) {
     formState.latitude = block.coordinates.lat
     formState.longitude = block.coordinates.lng
@@ -486,11 +514,10 @@ const dismissGeolocationPrompt = () => {
 
 // Expose methods
 const validate = (): boolean => {
-  const result = schema.safeParse(formState)
-  return result.success
+  return isProgressionValid(formState)
 }
 
-const getData = (): AddressFormData => ({ ...formState })
+const getData = (): AddressFormData => normalizeAddressData(formState)
 
 defineExpose({
   validate,

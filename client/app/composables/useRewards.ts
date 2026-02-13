@@ -15,11 +15,11 @@ export interface RewardEarning {
 export function useRewards() {
   const config = useRuntimeConfig()
   const rewards = ref<RewardEarning[]>([])
-  const meta = ref<{ current_page: number; last_page: number; per_page: number; total: number } | null>(null)
+  const meta = ref<{ current_page: number, last_page: number, per_page: number, total: number } | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const fetchRewards = async (params: { status?: string; reward_type?: string; used?: boolean; page?: number; per_page?: number } = {}) => {
+  const fetchRewards = async (params: { status?: string, reward_type?: string, used?: boolean, page?: number, per_page?: number } = {}) => {
     loading.value = true
     error.value = null
     try {
@@ -53,7 +53,7 @@ export function useRewards() {
       )
       if (response?.success) {
         const updated = response.data
-        rewards.value = rewards.value.map((r) => (r.uuid === uuid ? updated : r))
+        rewards.value = rewards.value.map(r => (r.uuid === uuid ? updated : r))
       }
       return response
     } catch (e: any) {

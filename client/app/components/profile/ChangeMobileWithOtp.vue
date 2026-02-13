@@ -107,7 +107,7 @@
 
           <div class="relative group focus-within:scale-[1.02] transition-transform duration-300">
             <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-300 flex items-center">
-              <span class="text-sm font-medium"></span>
+              <span class="text-sm font-medium" />
             </div>
             <input
               id="mobile"

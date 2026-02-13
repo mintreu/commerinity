@@ -115,7 +115,15 @@ useSeoMeta({
             To manage cookies, adjust your browser preferences. You can view, delete, or block cookies at any time. For detailed instructions, visit your browser's help section. Note that disabling cookies may affect website functionality and user experience.
           </p>
           <p>
-            For more information about cookies and how to manage them, visit <a href="https://www.allaboutcookies.org" target="_blank" class="text-violet-600 dark:text-violet-400 hover:underline">www.allaboutcookies.org</a> or <a href="https://www.aboutcookies.org" target="_blank" class="text-violet-600 dark:text-violet-400 hover:underline">www.aboutcookies.org</a>.
+            For more information about cookies and how to manage them, visit <a
+              href="https://www.allaboutcookies.org"
+              target="_blank"
+              class="text-violet-600 dark:text-violet-400 hover:underline"
+            >www.allaboutcookies.org</a> or <a
+              href="https://www.aboutcookies.org"
+              target="_blank"
+              class="text-violet-600 dark:text-violet-400 hover:underline"
+            >www.aboutcookies.org</a>.
           </p>
 
           <h2>6. Do Not Track Signals</h2>

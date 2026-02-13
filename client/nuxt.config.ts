@@ -1,10 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 
-  site: {
-    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in'
-  },
-
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
@@ -12,20 +8,6 @@ export default defineNuxtConfig({
     '@qirolab/nuxt-sanctum-authentication',
     '@nuxtjs/sitemap'
   ],
-
-  sitemap: {
-    exclude: [
-      '/dashboard/**',
-      '/auth/login',
-      '/auth/forgot-password',
-      '/auth/reset-password',
-      '/blogs',
-      '/news'
-    ],
-    sources: [
-      '/api/__sitemap__/products'
-    ]
-  },
 
   ssr: false,
 
@@ -35,10 +17,10 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'VVIndia - Affiliate & E-Commerce Platform',
+      title: 'VVIndia – Your Online Shopping Destination',
       titleTemplate: '%s | VVIndia',
       meta: [
-        { name: 'description', content: 'VVIndia - Premium Affiliate & E-Commerce Platform. Shop smart, earn more, grow your network.' },
+        { name: 'description', content: 'VVIndia – Your trusted online marketplace for quality products, smart deals, and rewarding shopping experiences.' },
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
         { name: 'theme-color', content: '#a855f7' },
@@ -55,30 +37,32 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-		{ rel: 'apple-touch-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'manifest', href: '/site.webmanifest' }
       ]
     }
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css'], site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in'
+  },
 
   runtimeConfig: {
     public: {
       // API Configuration
       // Development
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+      // apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
+      // siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       // Production
-      // apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
-      // siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in',
 
       // Branding (can be overridden via .env)
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'VVIndia',
       appShortName: process.env.NUXT_PUBLIC_APP_SHORT_NAME || 'VVIN',
       companyName: process.env.NUXT_PUBLIC_COMPANY_NAME || 'VVIndia',
       companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'VVIndia ',
-      tagline: process.env.NUXT_PUBLIC_TAGLINE || 'Shop Smart. Earn More. Grow Together.',
+      tagline: process.env.NUXT_PUBLIC_TAGLINE || 'India’s Smart Shopping Network.',
 
       // Contact Information
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL || 'support@vvindia.in',
@@ -150,9 +134,9 @@ export default defineNuxtConfig({
 
   laravelSanctum: {
     // Development
-    apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
+    // apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
     // Production
-    //apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+    apiUrl: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
     authMode: 'token',
     userResponseWrapperKey: 'data', // Laravel UserResource wraps response in { data: {...} }
     token: {
@@ -175,5 +159,19 @@ export default defineNuxtConfig({
     globalMiddleware: {
       enabled: false
     }
+  },
+
+  sitemap: {
+    exclude: [
+      '/dashboard/**',
+      '/auth/login',
+      '/auth/forgot-password',
+      '/auth/reset-password',
+      '/blogs',
+      '/news'
+    ],
+    sources: [
+      '/api/__sitemap__/products'
+    ]
   }
 })

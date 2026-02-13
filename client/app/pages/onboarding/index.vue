@@ -252,7 +252,7 @@ const addressData = ref<Record<string, unknown>>({})
 // Responsive check
 const isMobile = ref(false)
 
-const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout>
   const timeout = new Promise<T>((_, reject) => {
     timeoutId = setTimeout(() => reject(new Error(`${label} timeout`)), ms)
@@ -275,7 +275,7 @@ onMounted(async () => {
       router.push('/dashboard')
       return
     }
-  await withTimeout(fetchOnboardingStatus(), 15000, 'fetchOnboardingStatus')
+    await withTimeout(fetchOnboardingStatus(), 15000, 'fetchOnboardingStatus')
   } catch {
     // User not loaded, redirect to login
     router.push('/auth/login')

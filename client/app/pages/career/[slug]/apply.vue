@@ -34,8 +34,8 @@ interface Address {
   address_2: string | null
   city: string | null
   postal_code: string | null
-  state: { code?: string; name?: string } | null
-  country: { code?: string; name?: string } | null
+  state: { code?: string, name?: string } | null
+  country: { code?: string, name?: string } | null
   default: boolean
   full_address?: string
 }

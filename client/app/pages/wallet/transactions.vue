@@ -375,14 +375,26 @@ const openTxn = (txn: any) => {
             {{ formatDate(selectedTxn.created_at).date }} {{ formatDate(selectedTxn.created_at).time }}
           </span>
         </div>
-        <div v-if="selectedTxn.description" class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
-          <p class="text-xs text-slate-500 dark:text-slate-400">Description</p>
-          <p class="text-slate-700 dark:text-slate-300">{{ selectedTxn.description }}</p>
+        <div
+          v-if="selectedTxn.description"
+          class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60"
+        >
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Description
+          </p>
+          <p class="text-slate-700 dark:text-slate-300">
+            {{ selectedTxn.description }}
+          </p>
         </div>
       </div>
       <template #footer>
         <div class="flex items-center justify-end">
-          <UButton variant="ghost" @click="showTxnModal = false">Close</UButton>
+          <UButton
+            variant="ghost"
+            @click="showTxnModal = false"
+          >
+            Close
+          </UButton>
         </div>
       </template>
     </UCard>

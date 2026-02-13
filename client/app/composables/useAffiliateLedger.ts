@@ -16,11 +16,11 @@ export interface AffiliateLedgerEntry {
 export function useAffiliateLedger() {
   const config = useRuntimeConfig()
   const entries = ref<AffiliateLedgerEntry[]>([])
-  const meta = ref<{ current_page: number; last_page: number; per_page: number; total: number } | null>(null)
+  const meta = ref<{ current_page: number, last_page: number, per_page: number, total: number } | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const fetchLedger = async (params: { status?: string; page?: number; per_page?: number } = {}) => {
+  const fetchLedger = async (params: { status?: string, page?: number, per_page?: number } = {}) => {
     loading.value = true
     error.value = null
 

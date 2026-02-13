@@ -388,7 +388,7 @@
 
       <!-- Support -->
       <NuxtLink
-        to="/dashboard/support"
+        to="/dashboard/faq"
         class="menu-item"
         @click="isMoreMenuOpen = false"
       >

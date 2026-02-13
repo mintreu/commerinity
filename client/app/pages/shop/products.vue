@@ -92,8 +92,8 @@ const parseFilterOptionsFromQuery = (): Record<string, number[]> => {
   if (!rawFilters) return {}
 
   try {
-    const parsed =
-      typeof rawFilters === 'string'
+    const parsed
+      = typeof rawFilters === 'string'
         ? JSON.parse(rawFilters)
         : (rawFilters as Record<string, string | number[]>)
 
@@ -202,8 +202,8 @@ const filtersQuery = computed(() => {
 const filtersResponse = ref<{
   success: boolean
   data: {
-    price_range: { min: number; max: number }
-    sort_options: Array<{ value: string; label: string }>
+    price_range: { min: number, max: number }
+    sort_options: Array<{ value: string, label: string }>
     filter_options?: FilterGroup[]
   }
 } | null>(null)
@@ -284,7 +284,7 @@ const categoriesResponse = ref<{
     slug: string
     product_count: number
     thumbnail: string | null
-    children: Array<{ id: number; name: string; slug: string; product_count: number }>
+    children: Array<{ id: number, name: string, slug: string, product_count: number }>
   }>
 } | null>(null)
 const categoriesStatus = ref<'pending' | 'success' | 'error'>('pending')
@@ -470,7 +470,7 @@ const addToCart = async (product: typeof products.value[0]) => {
   addingToCart.value = product.slug
 
   try {
-    const response = await useSanctumFetch<{ success: boolean; message: string }>(
+    const response = await useSanctumFetch<{ success: boolean, message: string }>(
       `${config.public.apiBase}/api/cart`,
       {
         method: 'POST',
@@ -544,17 +544,29 @@ const addToCart = async (product: typeof products.value[0]) => {
           <!-- Categories -->
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg p-4 sticky top-24">
             <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <UIcon name="i-lucide-folder" class="w-5 h-5 text-primary-500" />
+              <UIcon
+                name="i-lucide-folder"
+                class="w-5 h-5 text-primary-500"
+              />
               Categories
             </h3>
-            <p v-if="categoriesError" class="text-xs text-red-600 dark:text-red-400 mb-2">
+            <p
+              v-if="categoriesError"
+              class="text-xs text-red-600 dark:text-red-400 mb-2"
+            >
               {{ categoriesError }}
             </p>
-            <p v-else-if="categoriesEmpty" class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <p
+              v-else-if="categoriesEmpty"
+              class="text-xs text-slate-500 dark:text-slate-400 mb-2"
+            >
               {{ getEmptyStateMessage('categories') }}
             </p>
             <ul class="space-y-1 max-h-64 overflow-y-auto">
-              <li v-for="cat in categories" :key="cat.id">
+              <li
+                v-for="cat in categories"
+                :key="cat.id"
+              >
                 <button
                   :class="[
                     'w-full text-left px-3 py-2 rounded-lg text-sm transition-all',
@@ -565,7 +577,10 @@ const addToCart = async (product: typeof products.value[0]) => {
                   @click="handleCategoryChange(cat.slug)"
                 >
                   {{ cat.name }}
-                  <span v-if="cat.product_count" class="text-xs opacity-70 ml-1">
+                  <span
+                    v-if="cat.product_count"
+                    class="text-xs opacity-70 ml-1"
+                  >
                     ({{ cat.product_count }})
                   </span>
                 </button>
@@ -584,12 +599,12 @@ const addToCart = async (product: typeof products.value[0]) => {
             :selected-filter-options="selectedFilterOptions"
             :show-sort="false"
             :loading="isFiltersLoading"
-            @update:selectedSort="updateSelectedSort"
-            @update:priceMin="updatePriceMin"
-            @update:priceMax="updatePriceMax"
-            @update:selectedFilterOptions="updateSelectedFilters"
-            @applyFilters="handleFiltersApplied"
-            @clearFilters="clearAllFilters"
+            @update:selected-sort="updateSelectedSort"
+            @update:price-min="updatePriceMin"
+            @update:price-max="updatePriceMax"
+            @update:selected-filter-options="updateSelectedFilters"
+            @apply-filters="handleFiltersApplied"
+            @clear-filters="clearAllFilters"
           />
         </aside>
 
@@ -625,7 +640,10 @@ const addToCart = async (product: typeof products.value[0]) => {
                 class="lg:hidden"
                 @click="showMobileFilters = true"
               >
-                <UIcon name="i-lucide-sliders-horizontal" class="w-4 h-4 mr-1" />
+                <UIcon
+                  name="i-lucide-sliders-horizontal"
+                  class="w-4 h-4 mr-1"
+                />
                 Filters
                 <span
                   v-if="activeFilterCount"
@@ -646,35 +664,71 @@ const addToCart = async (product: typeof products.value[0]) => {
           </div>
 
           <!-- Active Filters Display -->
-          <div v-if="priceMin || priceMax || selectedCategory || Object.keys(selectedFilterOptions).length" class="flex flex-wrap gap-2 mb-4">
-            <span v-if="selectedCategory" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
+          <div
+            v-if="priceMin || priceMax || selectedCategory || Object.keys(selectedFilterOptions).length"
+            class="flex flex-wrap gap-2 mb-4"
+          >
+            <span
+              v-if="selectedCategory"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium"
+            >
               {{ categories.find(c => c.slug === selectedCategory)?.name }}
-              <button class="hover:text-primary-500" @click="selectedCategory = ''">
-                <UIcon name="i-lucide-x" class="w-4 h-4" />
+              <button
+                class="hover:text-primary-500"
+                @click="selectedCategory = ''"
+              >
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4"
+                />
               </button>
             </span>
-            <span v-if="priceMin || priceMax" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
+            <span
+              v-if="priceMin || priceMax"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium"
+            >
               Price: {{ priceMin ? formatRupee(priceMin) : '₹0' }} - {{ priceMax ? formatRupee(priceMax) : 'Max' }}
-              <button class="hover:text-emerald-500" @click="priceMin = null; priceMax = null">
-                <UIcon name="i-lucide-x" class="w-4 h-4" />
+              <button
+                class="hover:text-emerald-500"
+                @click="priceMin = null; priceMax = null"
+              >
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4"
+                />
               </button>
             </span>
             <!-- Display selected filter options -->
-            <template v-for="(optionIds, filterName) in selectedFilterOptions" :key="filterName">
+            <template
+              v-for="(optionIds, filterName) in selectedFilterOptions"
+              :key="filterName"
+            >
               <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium">
                 {{ filterName }}: {{ optionIds.length }} selected
-                <button class="hover:text-violet-500" @click="removeFilterGroup(filterName)">
-                  <UIcon name="i-lucide-x" class="w-4 h-4" />
+                <button
+                  class="hover:text-violet-500"
+                  @click="removeFilterGroup(filterName)"
+                >
+                  <UIcon
+                    name="i-lucide-x"
+                    class="w-4 h-4"
+                  />
                 </button>
               </span>
             </template>
-            <button class="text-sm text-red-500 hover:text-red-600 font-medium" @click="clearAllFilters">
+            <button
+              class="text-sm text-red-500 hover:text-red-600 font-medium"
+              @click="clearAllFilters"
+            >
               Clear All
             </button>
           </div>
 
           <!-- Loading State -->
-          <div v-if="productsStatus === 'pending'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          <div
+            v-if="productsStatus === 'pending'"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+          >
             <div
               v-for="i in 8"
               :key="i"
@@ -727,10 +781,16 @@ const addToCart = async (product: typeof products.value[0]) => {
                   :alt="product.name"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
-                />
+                >
 
-                <div v-else class="w-full h-full flex items-center justify-center">
-                  <UIcon name="i-lucide-package" class="w-16 h-16 text-slate-300 dark:text-slate-600" />
+                <div
+                  v-else
+                  class="w-full h-full flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-lucide-package"
+                    class="w-16 h-16 text-slate-300 dark:text-slate-600"
+                  />
                 </div>
 
                 <!-- Out of Stock Overlay -->
@@ -762,7 +822,10 @@ const addToCart = async (product: typeof products.value[0]) => {
                   v-else-if="!isLoggedIn && product.reward_points > 0"
                   class="absolute top-2 right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
                 >
-                  <UIcon name="i-lucide-coins" class="w-3.5 h-3.5" />
+                  <UIcon
+                    name="i-lucide-coins"
+                    class="w-3.5 h-3.5"
+                  />
                   <span>Coins</span>
                 </div>
               </div>
@@ -781,7 +844,10 @@ const addToCart = async (product: typeof products.value[0]) => {
 
                 <!-- Price (Amazon/Flipkart style) -->
                 <div class="flex flex-wrap items-baseline gap-2 mb-2">
-                  <span class="text-lg font-bold text-slate-900 dark:text-white" data-testid="product-price">
+                  <span
+                    class="text-lg font-bold text-slate-900 dark:text-white"
+                    data-testid="product-price"
+                  >
                     {{ product.price_formatted }}
                   </span>
                   <span
@@ -817,7 +883,10 @@ const addToCart = async (product: typeof products.value[0]) => {
                   v-else-if="!isLoggedIn && product.reward_points > 0"
                   class="text-xs text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-1"
                 >
-                  <UIcon name="i-lucide-coins" class="w-3.5 h-3.5" />
+                  <UIcon
+                    name="i-lucide-coins"
+                    class="w-3.5 h-3.5"
+                  />
                   <span>Sign in to earn coins</span>
                 </div>
 
@@ -951,15 +1020,14 @@ const addToCart = async (product: typeof products.value[0]) => {
           :selected-filter-options="selectedFilterOptions"
           :show-sort="false"
           :loading="isFiltersLoading"
-          @update:selectedSort="updateSelectedSort"
-          @update:priceMin="updatePriceMin"
-          @update:priceMax="updatePriceMax"
-          @update:selectedFilterOptions="updateSelectedFilters"
-          @applyFilters="handleFiltersApplied"
-          @clearFilters="clearAllFilters"
+          @update:selected-sort="updateSelectedSort"
+          @update:price-min="updatePriceMin"
+          @update:price-max="updatePriceMax"
+          @update:selected-filter-options="updateSelectedFilters"
+          @apply-filters="handleFiltersApplied"
+          @clear-filters="clearAllFilters"
         />
       </div>
     </template>
   </USlideover>
 </template>
-

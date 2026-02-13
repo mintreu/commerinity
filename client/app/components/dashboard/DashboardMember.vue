@@ -384,7 +384,10 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
               </div>
               <span class="text-xs text-slate-500 dark:text-slate-400">L{{ entry.depth }}</span>
             </div>
-            <div v-if="recentLedger.length === 0" class="text-center text-sm text-slate-500">
+            <div
+              v-if="recentLedger.length === 0"
+              class="text-center text-sm text-slate-500"
+            >
               No ledger entries yet.
             </div>
           </div>
@@ -407,7 +410,10 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
               <span class="font-medium text-slate-900 dark:text-white capitalize">{{ account.fund_type }}</span>
               <span class="text-slate-700 dark:text-slate-300">{{ account.balance_formatted || formatCurrency(account.balance / 100) }}</span>
             </div>
-            <div v-if="fundAccounts.length === 0" class="text-center text-sm text-slate-500">
+            <div
+              v-if="fundAccounts.length === 0"
+              class="text-center text-sm text-slate-500"
+            >
               No fund accounts yet.
             </div>
           </div>
@@ -447,7 +453,10 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
                 Mark Used
               </UButton>
             </div>
-            <div v-if="rewards.length === 0" class="text-center text-sm text-slate-500">
+            <div
+              v-if="rewards.length === 0"
+              class="text-center text-sm text-slate-500"
+            >
               No rewards yet.
             </div>
           </div>
