@@ -191,8 +191,8 @@ const selectedRecipientName = computed(() => {
           </div>
         </div>
 
-        <!-- Subject (optional) -->
-        <UFormField label="Subject (optional)">
+        <!-- Subject -->
+        <UFormField label="Subject">
           <UInput
             v-model="subject"
             placeholder="Enter subject..."

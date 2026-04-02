@@ -562,7 +562,7 @@ function formatDob(dob: string | null | undefined): string {
               />
             </UFormField>
 
-            <UDivider label="Optional Information" />
+            <UDivider label="Additional Information" />
 
             <!-- Education Section -->
             <div>
@@ -724,7 +724,7 @@ function formatDob(dob: string | null | undefined): string {
                   Reference
                 </h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  Add a reference contact (optional)
+                  Add a reference contact
                 </p>
               </div>
 

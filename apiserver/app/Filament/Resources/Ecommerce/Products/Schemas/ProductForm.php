@@ -45,6 +45,7 @@ class ProductForm
             Grid::make(3)->schema([
                 $this->leftColumn(),
                 $this->rightColumn(),
+                $this->filterConfigurationFullWidth(),
             ])->columnSpanFull(),
         ];
     }
@@ -183,12 +184,6 @@ class ProductForm
                         ->pluck('name', 'id')
                         ->toArray()),
             ]),
-
-            Section::make('Filter Configuration')
-                ->description('Attach this product to a filter group so the storefront layers the correct filters.')
-                ->columnSpanFull()
-                ->schema(fn (Get $get, Set $set) => $this->filterConfigurationSection($get, $set)),
-
             Section::make('Order Qty')
                 ->description('Set how many can orders at a time')
                 ->collapsible()
@@ -299,4 +294,13 @@ class ProductForm
 
         ])->columnSpan(1);
     }
+
+    protected function filterConfigurationFullWidth(): Section
+    {
+        return Section::make('Filter Configuration')
+            ->description('Attach this product to a filter group so the storefront layers the correct filters.')
+            ->columnSpanFull()
+            ->schema(fn (Get $get, Set $set) => $this->filterConfigurationSection($get, $set));
+    }
+
 }

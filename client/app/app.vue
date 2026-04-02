@@ -7,6 +7,10 @@
       full-screen
     />
 
+    <ClientOnly>
+      <AdsSplashAdScreen />
+    </ClientOnly>
+
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

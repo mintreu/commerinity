@@ -195,7 +195,7 @@ onMounted(async () => {
               />
             </UFormField>
 
-            <UFormField label="Attachments (Optional)">
+            <UFormField label="Attachments">
               <div class="relative group cursor-pointer">
                 <input
                   type="file"

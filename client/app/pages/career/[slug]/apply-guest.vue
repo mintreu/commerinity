@@ -366,7 +366,7 @@ async function submitGuestApplication() {
               />
             </UFormField>
 
-            <UDivider label="Optional Information" />
+            <UDivider label="Additional Information" />
 
             <div>
               <div class="flex items-center justify-between mb-4">

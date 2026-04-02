@@ -656,7 +656,7 @@ onMounted(async () => {
             </UFormField>
 
             <UFormField
-              label="Street / Area / Colony (Optional)"
+              label="Street / Area / Colony"
               :error="formErrors.address_2"
             >
               <UInput
@@ -668,7 +668,7 @@ onMounted(async () => {
             </UFormField>
 
             <UFormField
-              label="Landmark (Optional)"
+              label="Landmark"
               :error="formErrors.landmark"
             >
               <UInput

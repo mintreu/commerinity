@@ -485,6 +485,8 @@ Route::prefix('catalog')->group(function () {
 // ========================================
 Route::prefix('ads')->group(function () {
     Route::get('/placements', [\App\Http\Controllers\Api\AdvertisementController::class, 'placements']);
+    Route::get('/position-types', [\App\Http\Controllers\Api\AdvertisementController::class, 'positionTypes']);
+    Route::get('/page-targets', [\App\Http\Controllers\Api\AdvertisementController::class, 'pageTargets']);
     Route::get('/page', [\App\Http\Controllers\Api\AdvertisementController::class, 'forPage']);
     Route::get('/{placement}', [\App\Http\Controllers\Api\AdvertisementController::class, 'forPlacement']);
     Route::get('/{placement}/{block}', [\App\Http\Controllers\Api\AdvertisementController::class, 'forBlock']);

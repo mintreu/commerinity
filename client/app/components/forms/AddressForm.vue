@@ -1,6 +1,6 @@
 <template>
   <div class="address-form">
-    <!-- Geolocation Permission Banner (Optional) -->
+    <!-- Geolocation Permission Banner -->
     <UCard
       v-if="showGeolocationPrompt && !geolocationDenied"
       class="mb-6"

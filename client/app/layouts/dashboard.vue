@@ -350,11 +350,25 @@
 
       <!-- Page Content -->
       <main class="flex-1 p-4 lg:p-6">
+        <div class="mb-4">
+          <AdsSlot
+            placement="dashboard_banner"
+            position-type="top_banner"
+            variant="compact"
+          />
+        </div>
         <slot />
       </main>
 
       <!-- Footer (Desktop Only) -->
       <footer class="hidden lg:block px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+        <div class="mb-4">
+          <AdsSlot
+            placement="dashboard_banner"
+            position-type="bottom_banner"
+            variant="compact"
+          />
+        </div>
         <div class="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
           <p>&copy; {{ currentYear }} {{ appName }}. All rights reserved.</p>
           <div class="flex items-center gap-4">
@@ -416,6 +430,14 @@
         </NuxtLink>
       </div>
     </nav>
+
+    <div class="fixed bottom-20 right-2 z-40 lg:hidden w-72 max-w-[calc(100vw-1rem)]">
+      <AdsSlot
+        placement="dashboard_sidebar"
+        position-type="sticky"
+        variant="compact"
+      />
+    </div>
   </div>
 </template>
 

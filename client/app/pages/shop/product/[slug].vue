@@ -1249,7 +1249,7 @@ onMounted(() => {
                 </div>
                 <UTextarea
                   v-model="reviewText"
-                  placeholder="Write your review (optional, max 2,000 characters)"
+                  placeholder="Write your review (max 2,000 characters)"
                   :rows="4"
                   maxlength="2000"
                   size="lg"

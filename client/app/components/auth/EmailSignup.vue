@@ -5,6 +5,7 @@ const emit = defineEmits<{
 
 const config = useRuntimeConfig()
 const toast = useToast()
+const route = useRoute()
 
 const currentStep = ref(1)
 const otpSent = ref(false)
@@ -21,8 +22,15 @@ const form = reactive({
   otp: '',
   password: '',
   password_confirmation: '',
-  referral_code: '',
   terms: false
+})
+
+const referralCodeFromUrl = computed(() => {
+  const value = route.query.ref || route.query.referral_code || route.query.code
+  if (typeof value !== 'string') {
+    return ''
+  }
+  return value.trim().toUpperCase()
 })
 
 // Password strength calculation
@@ -144,8 +152,10 @@ const handleRegister = async () => {
       payload.mobile = form.mobile
     }
 
-    if (form.referral_code) {
-      payload.referral_code = form.referral_code.toUpperCase()
+    const referralCode = referralCodeFromUrl.value
+
+    if (referralCode) {
+      payload.referral_code = referralCode.toUpperCase()
     }
 
     const response = await $fetch<{ success: boolean, data: { user: Record<string, unknown>, token: string } }>(`${config.public.apiBase}/api/auth/register-email`, {
@@ -196,7 +206,7 @@ const handleRegister = async () => {
       <!-- Step 1: Email & OTP -->
       <template v-if="currentStep === 1">
         <div class="space-y-2">
-          <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <label class="required-label flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
             <UIcon
               name="i-lucide-mail"
               class="w-4 h-4"
@@ -241,7 +251,7 @@ const handleRegister = async () => {
         <!-- OTP Input (after OTP sent) -->
         <template v-if="otpSent">
           <div class="space-y-2">
-            <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+            <label class="required-label flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
               <UIcon
                 name="i-lucide-shield-check"
                 class="w-4 h-4"
@@ -299,7 +309,7 @@ const handleRegister = async () => {
       <!-- Step 2: Personal Details -->
       <template v-if="currentStep === 2">
         <div class="space-y-2">
-          <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <label class="required-label flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
             <UIcon
               name="i-lucide-user"
               class="w-4 h-4"
@@ -327,7 +337,7 @@ const handleRegister = async () => {
               name="i-lucide-smartphone"
               class="w-4 h-4"
             />
-            <span>Mobile Number (Optional)</span>
+            <span>Mobile Number</span>
           </label>
           <div class="relative">
             <input
@@ -344,28 +354,6 @@ const handleRegister = async () => {
           <p class="text-xs text-slate-500 dark:text-slate-400">
             Enter a 10-digit mobile number.
           </p>
-        </div>
-
-        <div class="space-y-2">
-          <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <UIcon
-              name="i-lucide-gift"
-              class="w-4 h-4"
-            />
-            <span>Referral Code (Optional)</span>
-          </label>
-          <div class="relative">
-            <input
-              v-model="form.referral_code"
-              type="text"
-              placeholder="Enter referral code"
-              class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all uppercase"
-            >
-            <UIcon
-              name="i-lucide-ticket"
-              class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
-            />
-          </div>
         </div>
 
         <div class="flex gap-3">
@@ -398,7 +386,7 @@ const handleRegister = async () => {
       <!-- Step 3: Password & Submit -->
       <template v-if="currentStep === 3">
         <div class="space-y-2">
-          <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <label class="required-label flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
             <UIcon
               name="i-lucide-lock"
               class="w-4 h-4"
@@ -443,7 +431,7 @@ const handleRegister = async () => {
         </div>
 
         <div class="space-y-2">
-          <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <label class="required-label flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
             <UIcon
               name="i-lucide-lock"
               class="w-4 h-4"

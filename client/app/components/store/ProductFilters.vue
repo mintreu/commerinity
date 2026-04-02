@@ -34,6 +34,10 @@ interface Props {
   selectedSort?: string
   priceMin?: number | null
   priceMax?: number | null
+  minRating?: number | null
+  hasBvOnly?: boolean
+  hasPvOnly?: boolean
+  canSeeAffiliateFilters?: boolean
   selectedFilterOptions?: Record<string, number[]>
   loading?: boolean
   showSort?: boolean
@@ -45,6 +49,10 @@ const props = withDefaults(defineProps<Props>(), {
   selectedSort: 'popularity',
   priceMin: null,
   priceMax: null,
+  minRating: null,
+  hasBvOnly: false,
+  hasPvOnly: false,
+  canSeeAffiliateFilters: false,
   selectedFilterOptions: () => ({}),
   loading: false,
   showSort: true
@@ -54,6 +62,9 @@ const emit = defineEmits<{
   (e: 'update:selectedSort', value: string): void
   (e: 'update:priceMin', value: number | null): void
   (e: 'update:priceMax', value: number | null): void
+  (e: 'update:minRating', value: number | null): void
+  (e: 'update:hasBvOnly', value: boolean): void
+  (e: 'update:hasPvOnly', value: boolean): void
   (e: 'update:selectedFilterOptions', value: Record<string, number[]>): void
   (e: 'applyFilters'): void
   (e: 'clearFilters'): void
@@ -62,6 +73,9 @@ const emit = defineEmits<{
 // Local state for price inputs
 const localPriceMin = ref(props.priceMin)
 const localPriceMax = ref(props.priceMax)
+const localMinRating = ref<number | null>(props.minRating)
+const localHasBvOnly = ref(Boolean(props.hasBvOnly))
+const localHasPvOnly = ref(Boolean(props.hasPvOnly))
 const sortValue = ref(props.selectedSort)
 const localFilterOptions = ref<Record<string, number[]>>({ ...props.selectedFilterOptions })
 const syncingPriceFromProps = ref(false)
@@ -77,6 +91,9 @@ watch(() => props.priceMax, (val) => {
   localPriceMax.value = val
   syncingPriceFromProps.value = false
 })
+watch(() => props.minRating, (val) => { localMinRating.value = val ?? null })
+watch(() => props.hasBvOnly, (val) => { localHasBvOnly.value = Boolean(val) })
+watch(() => props.hasPvOnly, (val) => { localHasPvOnly.value = Boolean(val) })
 watch(() => props.selectedSort, (val) => { sortValue.value = val })
 watch(() => props.selectedFilterOptions, (val) => { localFilterOptions.value = { ...val } }, { deep: true })
 
@@ -95,9 +112,15 @@ const clearAllFilters = () => {
     sortValue.value = 'popularity'
     emit('update:selectedSort', 'popularity')
   }
+  localMinRating.value = null
+  localHasBvOnly.value = false
+  localHasPvOnly.value = false
   localFilterOptions.value = {}
   emit('update:priceMin', null)
   emit('update:priceMax', null)
+  emit('update:minRating', null)
+  emit('update:hasBvOnly', false)
+  emit('update:hasPvOnly', false)
   emit('update:selectedFilterOptions', {})
   emit('clearFilters')
 }
@@ -129,6 +152,30 @@ const toggleFilterOption = (filterName: string, optionId: number) => {
 // Check if option is selected
 const isOptionSelected = (filterName: string, optionId: number): boolean => {
   return (localFilterOptions.value[filterName] || []).includes(optionId)
+}
+
+const ratingOptions = [
+  { value: 4, label: '4+ Stars' },
+  { value: 3, label: '3+ Stars' },
+  { value: 2, label: '2+ Stars' }
+]
+
+const setMinRating = (rating: number) => {
+  localMinRating.value = localMinRating.value === rating ? null : rating
+  emit('update:minRating', localMinRating.value)
+  emit('applyFilters')
+}
+
+const toggleBvOnly = () => {
+  localHasBvOnly.value = !localHasBvOnly.value
+  emit('update:hasBvOnly', localHasBvOnly.value)
+  emit('applyFilters')
+}
+
+const togglePvOnly = () => {
+  localHasPvOnly.value = !localHasPvOnly.value
+  emit('update:hasPvOnly', localHasPvOnly.value)
+  emit('applyFilters')
 }
 
 const rupeeFormatter = new Intl.NumberFormat('en-IN', {
@@ -169,6 +216,9 @@ const priceRangeValue = computed<[number, number]>({
 const hasActiveFilters = computed(() => {
   return props.priceMin !== null
     || props.priceMax !== null
+    || props.minRating !== null
+    || props.hasBvOnly
+    || props.hasPvOnly
     || props.selectedSort !== 'popularity'
     || Object.keys(localFilterOptions.value).length > 0
 })
@@ -288,6 +338,59 @@ const selectedFilterCount = computed(() => {
         <p class="text-xs text-slate-400 mt-2">
           Range: {{ formatCurrencyValue(filters.price_range.min) }} - {{ formatCurrencyValue(filters.price_range.max) }}
         </p>
+      </div>
+
+      <!-- Rating -->
+      <div>
+        <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">
+          Rating
+        </h4>
+        <div class="space-y-2">
+          <button
+            v-for="option in ratingOptions"
+            :key="option.value"
+            :class="[
+              'w-full text-left px-3 py-2 rounded-lg text-sm transition-all',
+              localMinRating === option.value
+                ? 'bg-amber-500 text-white font-medium'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+            @click="setMinRating(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Affiliate Benefit Filters -->
+      <div v-if="props.canSeeAffiliateFilters">
+        <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">
+          Affiliate Benefits
+        </h4>
+        <div class="space-y-2">
+          <button
+            :class="[
+              'w-full text-left px-3 py-2 rounded-lg text-sm transition-all',
+              localHasBvOnly
+                ? 'bg-emerald-500 text-white font-medium'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+            @click="toggleBvOnly"
+          >
+            BV Products Only
+          </button>
+          <button
+            :class="[
+              'w-full text-left px-3 py-2 rounded-lg text-sm transition-all',
+              localHasPvOnly
+                ? 'bg-cyan-500 text-white font-medium'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+            ]"
+            @click="togglePvOnly"
+          >
+            PV Products Only
+          </button>
+        </div>
       </div>
 
       <!-- Dynamic Filter Options (Color, Size, etc.) - Flipkart Style -->

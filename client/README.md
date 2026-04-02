@@ -1,4 +1,4 @@
-# Commerinity Client App
+c# Commerinity Client App
 
 Nuxt 4 frontend for the Commerinity digital product.
 

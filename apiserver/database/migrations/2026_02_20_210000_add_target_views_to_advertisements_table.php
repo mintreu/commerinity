@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('advertisements', function (Blueprint $table): void {
+            $table->unsignedBigInteger('target_views')
+                ->nullable()
+                ->after('impressions');
+
+            $table->index(['is_active', 'target_views'], 'ads_active_target_views_idx');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('advertisements', function (Blueprint $table): void {
+            $table->dropIndex('ads_active_target_views_idx');
+            $table->dropColumn('target_views');
+        });
+    }
+};
+

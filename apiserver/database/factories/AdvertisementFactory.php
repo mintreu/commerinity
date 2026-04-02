@@ -6,6 +6,8 @@ namespace Database\Factories;
 
 use App\Casts\AdPlacementCast;
 use App\Casts\AdTypeCast;
+use App\Casts\AdvertisementPageCast;
+use App\Casts\AdvertisementPositionCast;
 use App\Models\Advertisement;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -22,12 +24,17 @@ class AdvertisementFactory extends Factory
         $name = fake()->words(3, true).' Ad';
         $type = fake()->randomElement(AdTypeCast::cases());
         $placement = fake()->randomElement(AdPlacementCast::cases());
+        $positionType = fake()->randomElement(AdvertisementPositionCast::cases());
+        $pageTarget = fake()->randomElement(AdvertisementPageCast::cases());
 
         return [
             'name' => $name,
             'slug' => Str::slug($name).'-'.fake()->unique()->numerify('###'),
             'type' => $type,
             'placement' => $placement,
+            'page_target' => $pageTarget,
+            'page_pattern' => $pageTarget === AdvertisementPageCast::CUSTOM ? '/shop/*' : null,
+            'position_type' => $positionType,
             'block' => fake()->optional(0.3)->word(),
             'is_active' => true,
             'is_premium' => fake()->boolean(20),
@@ -43,6 +50,7 @@ class AdvertisementFactory extends Factory
             'show_to_members' => true,
             'is_responsive' => true,
             'impressions' => fake()->numberBetween(0, 10000),
+            'target_views' => fake()->optional(0.35)->numberBetween(1000, 25000),
             'clicks' => fake()->numberBetween(0, 500),
         ];
     }
@@ -70,6 +78,12 @@ class AdvertisementFactory extends Factory
             'type' => AdTypeCast::GOOGLE,
             'ad_unit_id' => 'ca-pub-'.fake()->numerify('################'),
             'ad_code' => '<ins class="adsbygoogle" data-ad-client="ca-pub-1234567890" data-ad-slot="1234567890"></ins>',
+            'third_party_script_url' => 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
+            'third_party_config' => [
+                'client' => 'ca-pub-1234567890',
+                'slot' => fake()->numerify('##########'),
+                'format' => 'auto',
+            ],
         ]);
     }
 
@@ -81,6 +95,9 @@ class AdvertisementFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => AdTypeCast::CUSTOM_HTML,
             'ad_code' => '<div class="custom-ad"><a href="'.fake()->url().'"><img src="https://via.placeholder.com/728x90" alt="Ad"></a></div>',
+            'third_party_config' => [
+                'allow_inline_js' => true,
+            ],
         ]);
     }
 
@@ -173,4 +190,3 @@ class AdvertisementFactory extends Factory
         ]);
     }
 }
-

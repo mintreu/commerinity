@@ -87,6 +87,20 @@ const parseNumberFromQuery = (value?: string | string[]): number | null => {
   return Number.isFinite(parsed) ? parsed : null
 }
 
+const parseBooleanFromQuery = (value?: string | string[]): boolean => {
+  if (!value) return false
+  const normalized = String(Array.isArray(value) ? value[0] : value).toLowerCase()
+  return normalized === '1' || normalized === 'true' || normalized === 'yes'
+}
+
+const parseRatingFromQuery = (value?: string | string[]): number | null => {
+  const parsed = parseNumberFromQuery(value)
+  if (parsed === null) return null
+  const rounded = Math.floor(parsed)
+  if (rounded < 1 || rounded > 5) return null
+  return rounded
+}
+
 const parseFilterOptionsFromQuery = (): Record<string, number[]> => {
   const rawFilters = route.query.filters
   if (!rawFilters) return {}
@@ -149,6 +163,9 @@ const searchQuery = ref(normalizeQueryString(route.query.search))
 const currentPage = ref(Math.max(1, parseNumberFromQuery(route.query.page) || 1))
 const priceMin = ref<number | null>(parseNumberFromQuery(route.query.min_price) ?? parseNumberFromQuery(route.query.price_min))
 const priceMax = ref<number | null>(parseNumberFromQuery(route.query.max_price) ?? parseNumberFromQuery(route.query.price_max))
+const minRating = ref<number | null>(parseRatingFromQuery(route.query.min_rating))
+const hasBvOnly = ref(parseBooleanFromQuery(route.query.has_bv))
+const hasPvOnly = ref(parseBooleanFromQuery(route.query.has_pv))
 const selectedFilterOptions = ref<Record<string, number[]>>(parseFilterOptionsFromQuery())
 
 // Mobile filter drawer
@@ -192,6 +209,9 @@ const filtersQuery = computed(() => {
   const maxPrice = toPaisa(priceMax.value)
   if (minPrice !== null) params.min_price = minPrice
   if (maxPrice !== null) params.max_price = maxPrice
+  if (minRating.value !== null) params.min_rating = minRating.value
+  if (canSeeAffiliateBenefits.value && hasBvOnly.value) params.has_bv = 1
+  if (canSeeAffiliateBenefits.value && hasPvOnly.value) params.has_pv = 1
   const payload = buildFilterPayload(selectedFilterOptions.value)
   if (Object.keys(payload).length > 0) {
     params.filters = JSON.stringify(payload)
@@ -248,6 +268,9 @@ const queryParams = computed(() => {
   const maxPrice = toPaisa(priceMax.value)
   if (minPrice !== null) params.min_price = minPrice
   if (maxPrice !== null) params.max_price = maxPrice
+  if (minRating.value !== null) params.min_rating = minRating.value
+  if (canSeeAffiliateBenefits.value && hasBvOnly.value) params.has_bv = 1
+  if (canSeeAffiliateBenefits.value && hasPvOnly.value) params.has_pv = 1
 
   const filters = buildFilterPayload(selectedFilterOptions.value)
   if (Object.keys(filters).length > 0) {
@@ -331,6 +354,9 @@ const activeFilterCount = computed(() => {
   if (selectedSort.value !== 'popularity') count++
   if (searchQuery.value) count++
   if (priceMin.value !== null || priceMax.value !== null) count++
+  if (minRating.value !== null) count++
+  if (canSeeAffiliateBenefits.value && hasBvOnly.value) count++
+  if (canSeeAffiliateBenefits.value && hasPvOnly.value) count++
   count += Object.values(selectedFilterOptions.value).reduce((total, ids) => total + ids.length, 0)
   return count
 })
@@ -351,6 +377,9 @@ const buildQueryObject = () => {
   if (searchQuery.value) query.search = searchQuery.value
   if (priceMin.value !== null) query.min_price = String(toPaisa(priceMin.value) ?? 0)
   if (priceMax.value !== null) query.max_price = String(toPaisa(priceMax.value) ?? 0)
+  if (minRating.value !== null) query.min_rating = String(minRating.value)
+  if (canSeeAffiliateBenefits.value && hasBvOnly.value) query.has_bv = '1'
+  if (canSeeAffiliateBenefits.value && hasPvOnly.value) query.has_pv = '1'
   if (currentPage.value > 1) query.page = String(currentPage.value)
   if (Object.keys(selectedFilterOptions.value).length > 0) {
     query.filters = JSON.stringify(selectedFilterOptions.value)
@@ -379,7 +408,7 @@ const updateRouteQuery = () => {
   navigateTo({ path: route.path, query: nextQuery }, { replace: true })
 }
 
-watch([selectedCategory, selectedSort, searchQuery, priceMin, priceMax], () => {
+watch([selectedCategory, selectedSort, searchQuery, priceMin, priceMax, minRating, hasBvOnly, hasPvOnly], () => {
   currentPage.value = 1
   updateRouteQuery()
   loadProducts()
@@ -425,6 +454,18 @@ const updatePriceMax = (value: number | null) => {
   priceMax.value = value
 }
 
+const updateMinRating = (value: number | null) => {
+  minRating.value = value
+}
+
+const updateHasBvOnly = (value: boolean) => {
+  hasBvOnly.value = value
+}
+
+const updateHasPvOnly = (value: boolean) => {
+  hasPvOnly.value = value
+}
+
 const updateSelectedFilters = (value: Record<string, number[]>) => {
   selectedFilterOptions.value = cloneFilterMap(value)
 }
@@ -440,6 +481,9 @@ const clearAllFilters = () => {
   searchQuery.value = ''
   priceMin.value = null
   priceMax.value = null
+  minRating.value = null
+  hasBvOnly.value = false
+  hasPvOnly.value = false
   selectedFilterOptions.value = {}
   currentPage.value = 1
   showMobileFilters.value = false
@@ -537,10 +581,25 @@ const addToCart = async (product: typeof products.value[0]) => {
     </div>
 
     <UContainer class="py-8">
+      <AdsSlot
+        placement="shop_top_banner"
+        position-type="top_banner"
+        variant="default"
+        class="mb-6"
+      />
+
       <!-- Filters Row -->
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Filters Sidebar (Desktop) -->
         <aside class="hidden lg:block w-72 shrink-0 space-y-4">
+          <AdsSlot
+            placement="shop_sidebar"
+            position-type="sidebar"
+            mode="stack"
+            :limit="2"
+            variant="compact"
+          />
+
           <!-- Categories -->
           <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg p-4 sticky top-24">
             <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
@@ -596,12 +655,19 @@ const addToCart = async (product: typeof products.value[0]) => {
             :selected-sort="selectedSort"
             :price-min="priceMin"
             :price-max="priceMax"
+            :min-rating="minRating"
+            :has-bv-only="hasBvOnly"
+            :has-pv-only="hasPvOnly"
+            :can-see-affiliate-filters="canSeeAffiliateBenefits"
             :selected-filter-options="selectedFilterOptions"
             :show-sort="false"
             :loading="isFiltersLoading"
             @update:selected-sort="updateSelectedSort"
             @update:price-min="updatePriceMin"
             @update:price-max="updatePriceMax"
+            @update:min-rating="updateMinRating"
+            @update:has-bv-only="updateHasBvOnly"
+            @update:has-pv-only="updateHasPvOnly"
             @update:selected-filter-options="updateSelectedFilters"
             @apply-filters="handleFiltersApplied"
             @clear-filters="clearAllFilters"
@@ -665,7 +731,7 @@ const addToCart = async (product: typeof products.value[0]) => {
 
           <!-- Active Filters Display -->
           <div
-            v-if="priceMin || priceMax || selectedCategory || Object.keys(selectedFilterOptions).length"
+            v-if="priceMin || priceMax || selectedCategory || minRating || hasBvOnly || hasPvOnly || Object.keys(selectedFilterOptions).length"
             class="flex flex-wrap gap-2 mb-4"
           >
             <span
@@ -691,6 +757,51 @@ const addToCart = async (product: typeof products.value[0]) => {
               <button
                 class="hover:text-emerald-500"
                 @click="priceMin = null; priceMax = null"
+              >
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4"
+                />
+              </button>
+            </span>
+            <span
+              v-if="minRating"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-sm font-medium"
+            >
+              Rating: {{ minRating }}+ stars
+              <button
+                class="hover:text-amber-500"
+                @click="minRating = null"
+              >
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4"
+                />
+              </button>
+            </span>
+            <span
+              v-if="canSeeAffiliateBenefits && hasBvOnly"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 text-sm font-medium"
+            >
+              BV only
+              <button
+                class="hover:text-cyan-500"
+                @click="hasBvOnly = false"
+              >
+                <UIcon
+                  name="i-lucide-x"
+                  class="w-4 h-4"
+                />
+              </button>
+            </span>
+            <span
+              v-if="canSeeAffiliateBenefits && hasPvOnly"
+              class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 text-sm font-medium"
+            >
+              PV only
+              <button
+                class="hover:text-sky-500"
+                @click="hasPvOnly = false"
               >
                 <UIcon
                   name="i-lucide-x"
@@ -920,9 +1031,18 @@ const addToCart = async (product: typeof products.value[0]) => {
             </NuxtLink>
           </div>
 
+          <AdsSlot
+            placement="shop_top_banner"
+            position-type="grid_slot"
+            mode="stack"
+            :limit="2"
+            variant="compact"
+            class="mt-6"
+          />
+
           <!-- Empty State -->
           <div
-            v-else
+            v-if="productsStatus === 'success' && products.length === 0"
             class="text-center py-16"
           >
             <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-2xl shadow-lg max-w-md mx-auto p-8">
@@ -1017,12 +1137,19 @@ const addToCart = async (product: typeof products.value[0]) => {
           :selected-sort="selectedSort"
           :price-min="priceMin"
           :price-max="priceMax"
+          :min-rating="minRating"
+          :has-bv-only="hasBvOnly"
+          :has-pv-only="hasPvOnly"
+          :can-see-affiliate-filters="canSeeAffiliateBenefits"
           :selected-filter-options="selectedFilterOptions"
           :show-sort="false"
           :loading="isFiltersLoading"
           @update:selected-sort="updateSelectedSort"
           @update:price-min="updatePriceMin"
           @update:price-max="updatePriceMax"
+          @update:min-rating="updateMinRating"
+          @update:has-bv-only="updateHasBvOnly"
+          @update:has-pv-only="updateHasPvOnly"
           @update:selected-filter-options="updateSelectedFilters"
           @apply-filters="handleFiltersApplied"
           @clear-filters="clearAllFilters"

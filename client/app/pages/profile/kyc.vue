@@ -367,7 +367,7 @@ const statusDivider = computed(() => `text-${statusColor.value}-500`)
               </div>
 
               <UFormField
-                label="Institutional GSTIN (Optional)"
+                label="Institutional GSTIN"
                 hint="Goods & Services Tax Identifier"
               >
                 <UInput
@@ -473,7 +473,7 @@ const statusDivider = computed(() => `text-${statusColor.value}-500`)
                     </div>
                     <div class="text-center">
                       <p class="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-1">
-                        {{ gstFile ? 'GSTIN ATTACHED' : 'GST (OPTIONAL)' }}
+                        {{ gstFile ? 'GSTIN ATTACHED' : 'GST' }}
                       </p>
                       <p class="text-[8px] font-bold text-slate-400 truncate w-32">
                         {{ gstFile ? gstFile.name : 'REGISTRATION DOC' }}

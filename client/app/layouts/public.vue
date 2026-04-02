@@ -11,13 +11,41 @@
       <!-- Top Navbar -->
       <TopNavbar />
 
+      <div class="px-4 pt-3 md:px-6 lg:px-8">
+        <UContainer>
+          <AdsSlot
+            placement="header_strip"
+            position-type="top_banner"
+            variant="compact"
+          />
+        </UContainer>
+      </div>
+
       <!-- Main Content (Full Width) -->
       <main class="flex-1 pt-16">
+        <div class="px-4 pb-3 md:px-6 lg:px-8">
+          <UContainer>
+            <AdsSlot
+              placement="inline_content"
+              position-type="inline"
+              variant="compact"
+            />
+          </UContainer>
+        </div>
         <slot />
       </main>
 
       <!-- Footer -->
       <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl">
+        <div class="px-6 pt-6 md:px-12 lg:px-20">
+          <div class="mx-auto max-w-7xl">
+            <AdsSlot
+              placement="footer_banner"
+              position-type="bottom_banner"
+              variant="default"
+            />
+          </div>
+        </div>
         <div class="px-6 py-16 md:px-12 lg:px-20">
           <div class="mx-auto max-w-7xl">
             <!-- Main Footer Grid -->
@@ -242,6 +270,19 @@
         </NuxtLink>
       </div>
     </nav>
+
+    <div
+      class="fixed inset-x-2 z-40 lg:inset-x-auto lg:right-6"
+      :class="isLoggedIn ? 'bottom-20 lg:bottom-6' : 'bottom-4 lg:bottom-6'"
+    >
+      <div class="w-full max-w-sm lg:w-80">
+        <AdsSlot
+          placement="sticky_bottom"
+          position-type="sticky"
+          variant="compact"
+        />
+      </div>
+    </div>
 
     <!-- Scroll to Top Button -->
     <Transition name="fade">

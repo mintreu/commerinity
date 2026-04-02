@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Casts\AdPlacementCast;
+use App\Casts\AdvertisementPageCast;
+use App\Casts\AdvertisementPositionCast;
 use App\Models\Advertisement;
 use Illuminate\Database\Seeder;
 
@@ -26,6 +28,8 @@ class AdvertisementSeeder extends Seeder
                 'description' => 'Shop our biggest sale of the year. Limited time offer on premium products.',
                 'link_text' => 'Shop Now',
                 'link_url' => '/shop/deals',
+                'page_target' => AdvertisementPageCast::HOME,
+                'position_type' => AdvertisementPositionCast::HERO,
                 'position' => 0,
                 'is_premium' => true,
             ]);
@@ -40,6 +44,8 @@ class AdvertisementSeeder extends Seeder
                 'description' => 'Check out the latest products just added to our collection.',
                 'link_text' => 'Explore',
                 'link_url' => '/shop/products?sort=latest',
+                'page_target' => AdvertisementPageCast::HOME,
+                'position_type' => AdvertisementPositionCast::MIDDLE_BANNER,
                 'position' => 0,
             ]);
 
@@ -53,6 +59,8 @@ class AdvertisementSeeder extends Seeder
                 'description' => 'Fast delivery to your doorstep.',
                 'link_text' => 'Learn More',
                 'link_url' => '/shipping',
+                'page_target' => AdvertisementPageCast::SHOP_PRODUCTS,
+                'position_type' => AdvertisementPositionCast::TOP_BANNER,
                 'position' => 0,
             ]);
 
@@ -63,7 +71,15 @@ class AdvertisementSeeder extends Seeder
             ->create([
                 'name' => 'Product Sidebar - Google',
                 'slug' => 'product-sidebar-google',
+                'page_target' => AdvertisementPageCast::SHOP_PRODUCT_DETAIL,
+                'position_type' => AdvertisementPositionCast::SIDEBAR,
                 'ad_unit_id' => 'ca-pub-XXXXXXXXXXXXXXXX',
+                'third_party_script_url' => 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
+                'third_party_config' => [
+                    'client' => 'ca-pub-XXXXXXXXXXXXXXXX',
+                    'slot' => 'XXXXXXXXXX',
+                    'format' => 'auto',
+                ],
                 'position' => 0,
                 'is_active' => false, // Disabled until real ad unit is configured
             ]);
@@ -78,6 +94,8 @@ class AdvertisementSeeder extends Seeder
                 'title' => 'Partner Offers',
                 'description' => 'Exclusive deals from our trusted partners.',
                 'affiliate_network' => 'Amazon',
+                'page_target' => AdvertisementPageCast::ALL_PAGES,
+                'position_type' => AdvertisementPositionCast::BOTTOM_BANNER,
                 'position' => 0,
             ]);
 
@@ -93,6 +111,8 @@ class AdvertisementSeeder extends Seeder
                 'description' => 'Invite friends and earn bonus BV/PV on every referral purchase.',
                 'link_text' => 'Start Referring',
                 'link_url' => '/dashboard/referrals',
+                'page_target' => AdvertisementPageCast::DASHBOARD,
+                'position_type' => AdvertisementPositionCast::TOP_BANNER,
                 'position' => 0,
             ]);
 
@@ -108,6 +128,8 @@ class AdvertisementSeeder extends Seeder
                 'description' => 'Sign up today and earn points on your first purchase!',
                 'link_text' => 'Sign Up Free',
                 'link_url' => '/register',
+                'page_target' => AdvertisementPageCast::AUTH,
+                'position_type' => AdvertisementPositionCast::STICKY,
                 'position' => 0,
             ]);
 
@@ -118,4 +140,3 @@ class AdvertisementSeeder extends Seeder
             ->create();
     }
 }
-

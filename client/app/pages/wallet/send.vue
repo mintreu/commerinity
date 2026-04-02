@@ -234,7 +234,7 @@ const formattedAmount = computed(() => {
           </UInput>
         </UFormField>
 
-        <UFormField label="Note (Optional)">
+        <UFormField label="Note">
           <UInput
             v-model="formData.note"
             placeholder="Add a note for recipient"

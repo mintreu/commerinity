@@ -418,7 +418,7 @@ const submitAction = async () => {
         <p class="text-sm text-slate-600 dark:text-slate-400">
           {{ actionItem?.product_name || 'Selected item' }}
         </p>
-        <UFormField label="Reason (optional)">
+        <UFormField label="Reason">
           <UTextarea
             v-model="actionReason"
             :rows="3"

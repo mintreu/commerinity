@@ -17,7 +17,7 @@
         </p>
       </div>
 
-      <!-- Avatar Upload (Optional) -->
+      <!-- Avatar Upload -->
       <div class="flex justify-center mb-6">
         <div class="relative group">
           <div

@@ -277,7 +277,7 @@ const submit = async () => {
               Location Details
             </h2>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Optional venue and contact information
+              Venue and contact information
             </p>
           </div>
         </div>

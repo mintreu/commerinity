@@ -413,7 +413,6 @@ useSeoMeta({
                   <UFormField
                     label="Phone Number"
                     :error="userErrors.phone"
-                    hint="Optional"
                     class="contact-form-field"
                   >
                     <UInput
@@ -573,7 +572,6 @@ useSeoMeta({
                 <UFormField
                   label="Website"
                   :error="businessErrors.website"
-                  hint="Optional"
                   class="contact-form-field"
                 >
                   <UInput

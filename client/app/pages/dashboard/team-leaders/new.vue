@@ -492,7 +492,7 @@ const submit = async () => {
               Beneficiary Details
             </h2>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Bank account or UPI information (optional)
+              Bank account or UPI information
             </p>
           </div>
         </div>

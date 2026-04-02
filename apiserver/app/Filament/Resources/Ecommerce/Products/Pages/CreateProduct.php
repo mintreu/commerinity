@@ -7,15 +7,23 @@ namespace App\Filament\Resources\Ecommerce\Products\Pages;
 use App\Casts\ProductStatusCast;
 use App\Casts\ProductTypeCast;
 use App\Filament\Resources\Ecommerce\Products\ProductResource;
+use App\Filament\Resources\Ecommerce\Products\Schemas\ProductCreateForm;
 use App\Filament\Resources\Ecommerce\Products\Support\ProductFilterOptions;
 use App\Services\Ecommerce\ProductManager;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateProduct extends CreateRecord
 {
     protected static string $resource = ProductResource::class;
+
+
+    public function form(Schema $schema): Schema
+    {
+        return ProductCreateForm::configure($schema);
+    }
 
     protected function handleRecordCreation(array $data): Model
     {
@@ -42,4 +50,3 @@ class CreateProduct extends CreateRecord
         return $record;
     }
 }
-

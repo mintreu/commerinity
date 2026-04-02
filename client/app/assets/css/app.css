@@ -1092,6 +1092,21 @@ body {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
+/* Global Form Consistency */
+.required-label::after {
+  content: ' *';
+  color: #f43f5e;
+  font-weight: 700;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[data-part="input"]:focus-visible,
+[data-part="trigger"]:focus-visible {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18), 0 10px 25px -16px rgba(139, 92, 246, 0.45);
+}
+
 /* Form grid responsiveness */
 @media (max-width: 768px) {
   .contact-form-field {

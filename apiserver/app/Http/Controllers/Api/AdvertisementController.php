@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Casts\AdPlacementCast;
+use App\Casts\AdvertisementPageCast;
+use App\Casts\AdvertisementPositionCast;
 use App\Http\Controllers\Controller;
 use App\Models\Advertisement;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Advertisement API Controller
@@ -30,14 +34,25 @@ final class AdvertisementController extends Controller
     public function forPlacement(Request $request, string $placement): JsonResponse
     {
         $user = $request->user();
-        $cacheKey = $this->getCacheKey($placement, $user);
+        $positionType = $this->normalizePositionType($request->input('position_type'));
+        $pagePath = $this->normalizePagePath($request->input('page_path'));
+        $cacheKey = $this->getCacheKey(
+            $this->buildPlacementCacheSegment($placement, null, $positionType, $pagePath),
+            $user
+        );
 
-        $ads = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($placement, $user) {
+        $ads = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($placement, $positionType, $pagePath, $user) {
             $query = Advertisement::query()
                 ->active()
                 ->scheduled()
                 ->forPlacement($placement)
                 ->ordered();
+
+            if ($positionType) {
+                $query->forPositionType($positionType);
+            }
+
+            $query->forPagePath($pagePath);
 
             // Filter by user type
             if ($user) {
@@ -49,10 +64,8 @@ final class AdvertisementController extends Controller
             return $query->get();
         });
 
-        // Record impressions (outside cache)
-        foreach ($ads as $ad) {
-            $ad->recordImpression();
-        }
+        // Record impressions in one write query for large tables.
+        $this->recordImpressions($ads);
 
         return response()->json([
             'success' => true,
@@ -66,15 +79,26 @@ final class AdvertisementController extends Controller
     public function forBlock(Request $request, string $placement, string $block): JsonResponse
     {
         $user = $request->user();
-        $cacheKey = $this->getCacheKey("{$placement}_{$block}", $user);
+        $positionType = $this->normalizePositionType($request->input('position_type'));
+        $pagePath = $this->normalizePagePath($request->input('page_path'));
+        $cacheKey = $this->getCacheKey(
+            $this->buildPlacementCacheSegment($placement, $block, $positionType, $pagePath),
+            $user
+        );
 
-        $ads = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($placement, $block, $user) {
+        $ads = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($placement, $block, $positionType, $pagePath, $user) {
             $query = Advertisement::query()
                 ->active()
                 ->scheduled()
                 ->forPlacement($placement)
                 ->forBlock($block)
                 ->ordered();
+
+            if ($positionType) {
+                $query->forPositionType($positionType);
+            }
+
+            $query->forPagePath($pagePath);
 
             if ($user) {
                 $query->forMembers();
@@ -85,9 +109,7 @@ final class AdvertisementController extends Controller
             return $query->get();
         });
 
-        foreach ($ads as $ad) {
-            $ad->recordImpression();
-        }
+        $this->recordImpressions($ads);
 
         return response()->json([
             'success' => true,
@@ -112,15 +134,49 @@ final class AdvertisementController extends Controller
 
         $result = [];
 
-        foreach ($placements as $placement) {
-            $cacheKey = $this->getCacheKey($placement, $user);
+        foreach ($placements as $placementItem) {
+            $placement = null;
+            $block = null;
+            $positionType = null;
+            $pagePath = $this->normalizePagePath($request->input('page_path'));
 
-            $ads = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($placement, $user) {
+            if (is_string($placementItem)) {
+                $placement = $placementItem;
+            }
+
+            if (is_array($placementItem)) {
+                $placement = isset($placementItem['placement']) && is_string($placementItem['placement'])
+                    ? $placementItem['placement']
+                    : null;
+                $block = isset($placementItem['block']) && is_string($placementItem['block']) && $placementItem['block'] !== ''
+                    ? $placementItem['block']
+                    : null;
+                $positionType = $this->normalizePositionType($placementItem['position_type'] ?? null);
+            }
+
+            if (! is_string($placement) || $placement === '') {
+                continue;
+            }
+
+            $cacheSegment = $this->buildPlacementCacheSegment($placement, $block, $positionType, $pagePath);
+            $cacheKey = $this->getCacheKey($cacheSegment, $user);
+
+            $ads = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($placement, $block, $positionType, $pagePath, $user) {
                 $query = Advertisement::query()
                     ->active()
                     ->scheduled()
                     ->forPlacement($placement)
                     ->ordered();
+
+                if ($block) {
+                    $query->forBlock($block);
+                }
+
+                if ($positionType) {
+                    $query->forPositionType($positionType);
+                }
+
+                $query->forPagePath($pagePath);
 
                 if ($user) {
                     $query->forMembers();
@@ -131,12 +187,9 @@ final class AdvertisementController extends Controller
                 return $query->get();
             });
 
-            // Record impressions
-            foreach ($ads as $ad) {
-                $ad->recordImpression();
-            }
+            $this->recordImpressions($ads);
 
-            $result[$placement] = $ads->map(fn ($ad) => $this->formatAd($ad));
+            $result[$cacheSegment] = $ads->map(fn ($ad) => $this->formatAd($ad));
         }
 
         return response()->json([
@@ -182,6 +235,43 @@ final class AdvertisementController extends Controller
         ]);
     }
 
+    /**
+     * Get supported position types.
+     */
+    public function positionTypes(): JsonResponse
+    {
+        $positionTypes = collect(AdvertisementPositionCast::cases())->map(fn ($p) => [
+            'value' => $p->value,
+            'label' => $p->getLabel(),
+            'icon' => $p->getIcon(),
+            'color' => $p->getColor(),
+            'description' => $p->getDescription(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $positionTypes,
+        ]);
+    }
+
+    /**
+     * Get supported page targets.
+     */
+    public function pageTargets(): JsonResponse
+    {
+        $pageTargets = collect(AdvertisementPageCast::cases())->map(fn ($p) => [
+            'value' => $p->value,
+            'label' => $p->getLabel(),
+            'icon' => $p->getIcon(),
+            'color' => $p->getColor(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $pageTargets,
+        ]);
+    }
+
     // ========================================
     // Private Methods
     // ========================================
@@ -193,6 +283,71 @@ final class AdvertisementController extends Controller
         return "ads_{$placement}_{$userType}";
     }
 
+    private function buildPlacementCacheSegment(string $placement, ?string $block, ?string $positionType, ?string $pagePath = null): string
+    {
+        $segment = $placement;
+
+        if ($block) {
+            $segment .= "_block_{$block}";
+        }
+
+        if ($positionType) {
+            $segment .= "_position_{$positionType}";
+        }
+
+        if ($pagePath) {
+            $segment .= '_page_'.md5($pagePath);
+        }
+
+        return $segment;
+    }
+
+    private function normalizePositionType(mixed $positionType): ?string
+    {
+        if (! is_string($positionType) || $positionType === '') {
+            return null;
+        }
+
+        return AdvertisementPositionCast::tryFrom($positionType)?->value;
+    }
+
+    private function normalizePagePath(mixed $path): ?string
+    {
+        if (! is_string($path) || trim($path) === '') {
+            return null;
+        }
+
+        $normalized = '/'.ltrim(trim($path), '/');
+
+        return $normalized === '//' ? '/' : $normalized;
+    }
+
+    private function recordImpressions(EloquentCollection $ads): void
+    {
+        if ($ads->isEmpty()) {
+            return;
+        }
+
+        $ids = $ads->pluck('id')->filter()->unique()->values();
+        if ($ids->isEmpty()) {
+            return;
+        }
+
+        $now = now();
+
+        Advertisement::query()->whereIn('id', $ids)->update([
+            'impressions' => DB::raw('impressions + 1'),
+            'last_impression_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        foreach ($ads as $ad) {
+            $ad->impressions = (int) $ad->impressions + 1;
+            $ad->last_impression_at = $now;
+            $ad->updated_at = $now;
+        }
+    }
+
     private function formatAd(Advertisement $ad): array
     {
         $data = [
@@ -202,9 +357,17 @@ final class AdvertisementController extends Controller
             'type_label' => $ad->type->getLabel(),
             'placement' => $ad->placement->value,
             'placement_label' => $ad->placement->getLabel(),
+            'page_target' => $ad->page_target?->value,
+            'page_target_label' => $ad->page_target?->getLabel(),
+            'page_pattern' => $ad->page_pattern,
             'block' => $ad->block,
             'is_premium' => $ad->is_premium,
             'position' => $ad->position,
+            'position_type' => $ad->position_type?->value,
+            'position_type_label' => $ad->position_type?->getLabel(),
+            'position_config' => $ad->position_config ?? [],
+            'impressions' => $ad->impressions,
+            'target_views' => $ad->target_views,
         ];
 
         // Add type-specific data
@@ -224,6 +387,7 @@ final class AdvertisementController extends Controller
             $data = array_merge($data, [
                 'ad_code' => $ad->ad_code,
                 'ad_unit_id' => $ad->ad_unit_id,
+                'third_party' => $ad->getThirdPartyPayload(),
             ]);
         }
 

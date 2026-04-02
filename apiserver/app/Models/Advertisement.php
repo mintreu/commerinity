@@ -6,12 +6,15 @@ namespace App\Models;
 
 use App\Casts\AdPlacementCast;
 use App\Casts\AdTypeCast;
+use App\Casts\AdvertisementPageCast;
+use App\Casts\AdvertisementPositionCast;
 use Database\Factories\AdvertisementFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -39,6 +42,9 @@ class Advertisement extends Model implements HasMedia
         'slug',
         'type',
         'placement',
+        'page_target',
+        'page_pattern',
+        'position_type',
         'block',
         'is_active',
         'is_premium',
@@ -51,9 +57,12 @@ class Advertisement extends Model implements HasMedia
         'open_in_new_tab',
         'ad_code',
         'ad_unit_id',
+        'third_party_config',
+        'third_party_script_url',
         'affiliate_network',
         'affiliate_tracking_id',
         'position',
+        'position_config',
         'display_pages',
         'exclude_pages',
         'show_to_guests',
@@ -63,6 +72,7 @@ class Advertisement extends Model implements HasMedia
         'height',
         'is_responsive',
         'impressions',
+        'target_views',
         'clicks',
         'last_impression_at',
         'last_click_at',
@@ -75,18 +85,23 @@ class Advertisement extends Model implements HasMedia
         return [
             'type' => AdTypeCast::class,
             'placement' => AdPlacementCast::class,
+            'page_target' => AdvertisementPageCast::class,
+            'position_type' => AdvertisementPositionCast::class,
             'is_active' => 'boolean',
             'is_premium' => 'boolean',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'open_in_new_tab' => 'boolean',
+            'position_config' => 'array',
             'display_pages' => 'array',
             'exclude_pages' => 'array',
+            'third_party_config' => 'array',
             'show_to_guests' => 'boolean',
             'show_to_members' => 'boolean',
             'target_user_types' => 'array',
             'is_responsive' => 'boolean',
             'impressions' => 'integer',
+            'target_views' => 'integer',
             'clicks' => 'integer',
             'last_impression_at' => 'datetime',
             'last_click_at' => 'datetime',
@@ -148,13 +163,19 @@ class Advertisement extends Model implements HasMedia
     {
         $now = now();
 
-        return $query->where(function ($q) use ($now) {
-            $q->whereNull('starts_at')
-                ->orWhere('starts_at', '<=', $now);
-        })->where(function ($q) use ($now) {
-            $q->whereNull('ends_at')
-                ->orWhere('ends_at', '>=', $now);
-        });
+        return $query
+            ->where(function ($q) use ($now) {
+                $q->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $now);
+            })
+            ->where(function ($q) use ($now) {
+                $q->whereNull('ends_at')
+                    ->orWhere('ends_at', '>=', $now);
+            })
+            ->where(function ($q) {
+                $q->whereNull('target_views')
+                    ->orWhereColumn('impressions', '<', 'target_views');
+            });
     }
 
     /**
@@ -183,6 +204,105 @@ class Advertisement extends Model implements HasMedia
     public function scopeForBlock(Builder $query, string $block): Builder
     {
         return $query->where('block', $block);
+    }
+
+    /**
+     * Filter by render position type inside a placement.
+     */
+    public function scopeForPositionType(Builder $query, AdvertisementPositionCast|string $positionType): Builder
+    {
+        $value = $positionType instanceof AdvertisementPositionCast ? $positionType->value : $positionType;
+
+        return $query->where('position_type', $value);
+    }
+
+    /**
+     * Filter by route path based on page target and optional pattern.
+     */
+    public function scopeForPagePath(Builder $query, ?string $path): Builder
+    {
+        if (! is_string($path) || $path === '') {
+            return $query;
+        }
+
+        $pageTargets = self::resolvePageTargetsForPath($path);
+
+        return $query->where(function (Builder $q) use ($path, $pageTargets): void {
+            $q->whereNull('page_target')
+                ->orWhere('page_target', AdvertisementPageCast::ALL_PAGES->value)
+                ->orWhere(function (Builder $targeted) use ($path): void {
+                    $targeted->whereIn('page_target', $pageTargets)
+                        ->orWhere(function (Builder $qq) use ($path): void {
+                            $qq->where('page_target', AdvertisementPageCast::CUSTOM->value)
+                                ->whereNotNull('page_pattern')
+                                ->whereRaw('? like replace(page_pattern, \"*\", \"%\")', [$path]);
+                        });
+                });
+        });
+    }
+
+    /**
+     * Resolve all logical page targets for a concrete route path.
+     *
+     * @return array<int, string>
+     */
+    private static function resolvePageTargetsForPath(string $path): array
+    {
+        $targets = [];
+
+        if ($path === '/') {
+            $targets[] = AdvertisementPageCast::HOME->value;
+        }
+
+        if ($path === '/shop' || str_starts_with($path, '/shop/')) {
+            $targets[] = AdvertisementPageCast::SHOP->value;
+        }
+
+        if (str_starts_with($path, '/shop/products')) {
+            $targets[] = AdvertisementPageCast::SHOP_PRODUCTS->value;
+        }
+
+        if (str_starts_with($path, '/shop/product/')) {
+            $targets[] = AdvertisementPageCast::SHOP_PRODUCT_DETAIL->value;
+        }
+
+        if ($path === '/categories') {
+            $targets[] = AdvertisementPageCast::CATEGORIES->value;
+        }
+
+        if (str_starts_with($path, '/category/')) {
+            $targets[] = AdvertisementPageCast::CATEGORY_DETAIL->value;
+        }
+
+        if (str_starts_with($path, '/cart')) {
+            $targets[] = AdvertisementPageCast::CART->value;
+        }
+
+        if (str_starts_with($path, '/checkout')) {
+            $targets[] = AdvertisementPageCast::CHECKOUT->value;
+        }
+
+        if (str_starts_with($path, '/dashboard')) {
+            $targets[] = AdvertisementPageCast::DASHBOARD->value;
+        }
+
+        if (str_starts_with($path, '/profile')) {
+            $targets[] = AdvertisementPageCast::PROFILE->value;
+        }
+
+        if (str_starts_with($path, '/wallet')) {
+            $targets[] = AdvertisementPageCast::WALLET->value;
+        }
+
+        if (str_starts_with($path, '/helpdesk')) {
+            $targets[] = AdvertisementPageCast::HELPDESK->value;
+        }
+
+        if (str_starts_with($path, '/auth/')) {
+            $targets[] = AdvertisementPageCast::AUTH->value;
+        }
+
+        return array_values(array_unique($targets));
     }
 
     /**
@@ -240,6 +360,10 @@ class Advertisement extends Model implements HasMedia
             return false;
         }
 
+        if ($this->target_views !== null && $this->impressions >= $this->target_views) {
+            return false;
+        }
+
         return true;
     }
 
@@ -275,8 +399,17 @@ class Advertisement extends Model implements HasMedia
      */
     public function recordImpression(): void
     {
-        $this->increment('impressions');
-        $this->update(['last_impression_at' => now()]);
+        $now = now();
+
+        self::query()->whereKey($this->getKey())->update([
+            'impressions' => DB::raw('impressions + 1'),
+            'last_impression_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $this->impressions = (int) $this->impressions + 1;
+        $this->last_impression_at = $now;
+        $this->updated_at = $now;
     }
 
     /**
@@ -284,8 +417,17 @@ class Advertisement extends Model implements HasMedia
      */
     public function recordClick(): void
     {
-        $this->increment('clicks');
-        $this->update(['last_click_at' => now()]);
+        $now = now();
+
+        self::query()->whereKey($this->getKey())->update([
+            'clicks' => DB::raw('clicks + 1'),
+            'last_click_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $this->clicks = (int) $this->clicks + 1;
+        $this->last_click_at = $now;
+        $this->updated_at = $now;
     }
 
     /**
@@ -347,5 +489,18 @@ class Advertisement extends Model implements HasMedia
             AdTypeCast::AMAZON,
             AdTypeCast::CUSTOM_HTML,
         ]);
+    }
+
+    /**
+     * Returns third-party payload prepared for frontend integration.
+     */
+    public function getThirdPartyPayload(): array
+    {
+        return [
+            'code' => $this->ad_code,
+            'unit_id' => $this->ad_unit_id,
+            'script_url' => $this->third_party_script_url,
+            'config' => $this->third_party_config ?? [],
+        ];
     }
 }

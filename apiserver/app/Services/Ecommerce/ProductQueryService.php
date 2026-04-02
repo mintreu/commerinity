@@ -59,10 +59,33 @@ final class ProductQueryService
             $query->byCategory($request->input('category'));
         }
 
-        return $query->byPrice(
+        $query->byPrice(
             $request->input('min_price') ? (int) $request->input('min_price') * 100 : null,
             $request->input('max_price') ? (int) $request->input('max_price') * 100 : null
         );
+
+        $minRating = $request->input('min_rating');
+        if (is_numeric($minRating) && (float) $minRating > 0) {
+            $query->whereExists(function ($ratingQuery) use ($minRating): void {
+                $ratingQuery->selectRaw('1')
+                    ->from('product_engagements')
+                    ->whereColumn('product_engagements.product_id', 'products.id')
+                    ->whereNull('product_engagements.parent_id')
+                    ->whereNotNull('product_engagements.rating')
+                    ->groupBy('product_engagements.product_id')
+                    ->havingRaw('AVG(product_engagements.rating) >= ?', [(float) $minRating]);
+            });
+        }
+
+        if ($request->boolean('has_bv')) {
+            $query->where('bv', '>', 0);
+        }
+
+        if ($request->boolean('has_pv')) {
+            $query->where('pv', '>', 0);
+        }
+
+        return $query;
     }
 
     /**
@@ -86,4 +109,3 @@ final class ProductQueryService
             ->withStockInfo();
     }
 }
-

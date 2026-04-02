@@ -11,6 +11,8 @@ use Database\Seeders\Geo\StateSeeder;
 use Database\Seeders\RewardEarningSeeder;
 use Database\Seeders\ContentSeeder;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 /**
  * Main database seeder.
@@ -25,9 +27,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seeder runtime should never hit external SMTP providers.
+        config()->set('mail.default', 'array');
+        Mail::fake();
+
         $this->command->info('');
         $this->command->info('╔═══════════════════════════════════════════════════════════╗');
-        $this->command->info('║         COMMERINITY PRO - DATABASE SEEDER                 ║');
+        $appSeederName = Str::upper(config('app.name', 'APPLICATION'));
+        $this->command->info("║         {$appSeederName} - DATABASE SEEDER                 ║");
         $this->command->info('╚═══════════════════════════════════════════════════════════╝');
         $this->command->info('');
 
@@ -145,4 +152,3 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
-

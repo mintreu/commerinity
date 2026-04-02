@@ -220,7 +220,7 @@
                 class="w-4 h-4"
               />
               <span>Bio</span>
-              <span class="text-slate-500 text-xs">(Optional)</span>
+              <span class="text-slate-500 text-xs"></span>
             </label>
             <textarea
               v-model="form.bio"
@@ -249,7 +249,7 @@
                 class="w-4 h-4"
               />
               <span>Gender</span>
-              <span class="text-slate-500 text-xs">(Optional)</span>
+              <span class="text-slate-500 text-xs"></span>
             </label>
             <select
               v-model="form.gender"
@@ -285,7 +285,7 @@
                 class="w-4 h-4"
               />
               <span>Date of Birth</span>
-              <span class="text-slate-500 text-xs">(Optional)</span>
+              <span class="text-slate-500 text-xs"></span>
             </label>
             <input
               v-model="form.dob"

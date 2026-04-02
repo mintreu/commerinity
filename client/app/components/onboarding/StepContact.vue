@@ -181,7 +181,7 @@
           </div>
         </div>
 
-        <!-- Email Form (Optional) -->
+        <!-- Email Form -->
         <UForm
           v-if="!hasEmailVerified && !emailVerified"
           :state="emailFormState"
