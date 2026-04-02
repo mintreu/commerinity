@@ -96,14 +96,7 @@ final class SmsService
         $request = SmsRequest::otp($phone, $otp);
 
         if ($userId) {
-            $request = new SmsRequest(
-                recipients: [$phone],
-                message: $otp,
-                type: 'otp',
-                templateSlug: 'otp-verification',
-                variables: ['otp' => $otp],
-                user: \App\Models\User::find($userId),
-            );
+            $request = SmsRequest::otp($phone, $otp, \App\Models\User::find($userId));
         }
 
         return $this->send($request);

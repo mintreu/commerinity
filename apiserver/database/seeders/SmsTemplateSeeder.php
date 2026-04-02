@@ -50,36 +50,44 @@ class SmsTemplateSeeder extends Seeder
             // OTP TEMPLATES
             // ═══════════════════════════════════════════════════════════
             [
+                'name' => 'OTP Verification',
+                'slug' => 'otp-verification',
+                'message_id' => 'OTP_VERIFY_001',
+                'category' => 'otp',
+                'content' => 'Your OTP is {#otp#} for {#purpose#}. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['otp', 'purpose', 'app_name'],
+            ],
+            [
                 'name' => 'Login OTP',
                 'slug' => 'login-otp',
                 'message_id' => 'OTP_LOGIN_001',
                 'category' => 'otp',
-                'content' => '{#otp#} is your OTP to login to Commerinity Pro. Valid for {#validity#} minutes. Do not share with anyone. - COMMERINITY',
-                'variables' => ['otp', 'validity'],
+                'content' => 'Your OTP is {#otp#} for login. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['otp', 'app_name'],
             ],
             [
                 'name' => 'Registration OTP',
                 'slug' => 'registration-otp',
                 'message_id' => 'OTP_REG_001',
                 'category' => 'otp',
-                'content' => '{#otp#} is your OTP to verify your mobile number on Commerinity Pro. Valid for {#validity#} minutes. - COMMERINITY',
-                'variables' => ['otp', 'validity'],
+                'content' => 'Your OTP is {#otp#} for registration. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['otp', 'app_name'],
             ],
             [
                 'name' => 'Password Reset OTP',
                 'slug' => 'password-reset-otp',
                 'message_id' => 'OTP_PWD_001',
                 'category' => 'otp',
-                'content' => '{#otp#} is your OTP to reset your password on Commerinity Pro. Valid for {#validity#} minutes. Do not share. - COMMERINITY',
-                'variables' => ['otp', 'validity'],
+                'content' => 'Your OTP is {#otp#} for password reset. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['otp', 'app_name'],
             ],
             [
                 'name' => 'Transaction OTP',
                 'slug' => 'transaction-otp',
                 'message_id' => 'OTP_TXN_001',
                 'category' => 'otp',
-                'content' => '{#otp#} is your OTP for transaction of Rs.{#amount#} on Commerinity Pro. Valid for {#validity#} mins. Do not share. - COMMERINITY',
-                'variables' => ['otp', 'amount', 'validity'],
+                'content' => 'Your OTP is {#otp#} for {#purpose#} Rs {#amount#}. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['otp', 'purpose', 'amount', 'app_name'],
             ],
 
             // ═══════════════════════════════════════════════════════════
@@ -188,4 +196,3 @@ class SmsTemplateSeeder extends Seeder
         $this->command->info('Seeded '.count($templates).' SMS templates.');
     }
 }
-

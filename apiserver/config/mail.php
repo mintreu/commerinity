@@ -1,5 +1,8 @@
 <?php
 
+$defaultMailer = env('MAIL_MAILER', 'log');
+$smtpTransport = $defaultMailer === 'array' ? 'array' : 'smtp';
+
 return [
 
     /*
@@ -14,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => $defaultMailer,
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +41,7 @@ return [
     'mailers' => [
 
         'smtp' => [
-            'transport' => 'smtp',
+            'transport' => $smtpTransport,
             'scheme' => env('MAIL_SCHEME'),
             'url' => env('MAIL_URL'),
             'host' => env('MAIL_HOST', '127.0.0.1'),
