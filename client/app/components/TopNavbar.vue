@@ -5,7 +5,7 @@
     </div>
 
     <div class="relative z-10">
-      <nav class="w-full px-4 md:px-6 lg:px-12">
+      <nav class="mx-auto w-full max-w-[1680px] px-4 md:px-6 lg:px-8">
         <!-- Mobile Layout: Menu Toggle | Brand (Center) | Dark Mode -->
         <div class="flex lg:hidden h-16 items-center justify-between w-full">
           <!-- Left: Mobile Menu Toggle -->
@@ -47,9 +47,9 @@
         </div>
 
         <!-- Desktop Layout: Brand + Nav | Actions -->
-        <div class="hidden lg:flex h-16 items-center justify-between w-full">
+        <div class="hidden lg:flex h-16 items-center justify-between w-full gap-4">
           <!-- Left: Brand + Main Nav -->
-          <div class="flex items-center gap-8">
+          <div class="flex min-w-0 items-center gap-6">
             <!-- Brand Logo -->
             <NuxtLink
               to="/"
@@ -67,7 +67,7 @@
             </NuxtLink>
 
             <!-- Main Navigation Links (Desktop) -->
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-0.5">
               <NuxtLink
                 to="/"
                 class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-violet-600 dark:hover:text-violet-400 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-all duration-300"
@@ -122,88 +122,114 @@
           </div>
 
           <!-- Right: Actions (Desktop Only) -->
-          <div class="flex items-center gap-3">
-            <!-- Global Search -->
-            <div
-              ref="searchBoxRef"
-              class="relative"
+          <div
+            ref="searchBoxRef"
+            class="relative flex flex-shrink-0 items-center gap-2"
+          >
+            <button
+              type="button"
+              class="relative w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-gradient-to-r hover:from-violet-500 hover:to-fuchsia-500 text-slate-600 dark:text-slate-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300"
+              @click="toggleSearchPanel"
             >
-              <form
-                class="flex items-center rounded-xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-800"
-                @submit.prevent="submitGlobalSearch"
-              >
-                <UIcon
-                  name="i-lucide-search"
-                  class="h-4 w-4 text-slate-400"
-                />
-                <input
-                  v-model="searchQuery"
-                  type="text"
-                  placeholder="Search products, blogs, news"
-                  class="ml-2 w-64 bg-transparent text-sm text-slate-700 outline-none dark:text-slate-200"
-                  @focus="openSuggestionsIfNeeded"
-                >
-              </form>
+              <UIcon
+                name="i-lucide-search"
+                class="w-5 h-5"
+              />
+            </button>
 
+            <Transition name="fade">
               <div
-                v-if="showSuggestions"
-                class="absolute right-0 mt-2 w-96 max-w-[90vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+                v-if="searchPanelOpen"
+                class="absolute right-0 top-[calc(100%+0.75rem)] z-[70] w-[min(38rem,94vw)] overflow-hidden rounded-2xl border border-slate-200/70 bg-white/95 shadow-2xl shadow-slate-900/10 backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/95 dark:shadow-black/40"
               >
-                <div
-                  v-if="suggestionLoading"
-                  class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400"
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-fuchsia-500/10 dark:from-violet-400/10 dark:to-fuchsia-400/10" />
+                <div class="relative p-3">
+                <form
+                  class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+                  @submit.prevent="submitGlobalSearch"
                 >
-                  Searching...
-                </div>
-
-                <div
-                  v-else-if="suggestions.length === 0"
-                  class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400"
-                >
-                  No matches found.
-                </div>
-
-                <div v-else>
-                  <button
-                    v-for="item in suggestions"
-                    :key="`${item.type}-${item.id}`"
-                    type="button"
-                    class="flex w-full items-center gap-3 border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 last:border-b-0 dark:border-slate-800 dark:hover:bg-slate-800"
-                    @click="openSuggestion(item.url)"
+                  <UIcon
+                    name="i-lucide-search"
+                    class="h-4 w-4 shrink-0 text-slate-400"
+                  />
+                  <input
+                    ref="searchInputRef"
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search products, blogs, news"
+                    class="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
+                    @focus="openSuggestionsIfNeeded"
                   >
-                    <img
-                      v-if="item.thumbnail"
-                      :src="item.thumbnail"
-                      :alt="item.title"
-                      class="h-10 w-10 rounded-lg object-cover"
-                    >
-                    <div
-                      v-else
-                      class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
-                    >
-                      <UIcon
-                        :name="item.type === 'product' ? 'i-lucide-package' : item.type === 'blog' ? 'i-lucide-newspaper' : 'i-lucide-megaphone'"
-                        class="h-5 w-5 text-slate-400"
-                      />
-                    </div>
-                    <div class="min-w-0 flex-1">
-                      <p class="line-clamp-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
-                        {{ item.title }}
-                      </p>
-                      <p class="line-clamp-1 text-xs capitalize text-slate-500 dark:text-slate-400">
-                        {{ item.type }}
-                      </p>
-                    </div>
+                  <button
+                    type="submit"
+                    class="inline-flex h-9 items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-xs font-semibold text-white shadow-lg shadow-violet-500/25 transition-all hover:from-violet-700 hover:to-fuchsia-700"
+                  >
+                    Search
                   </button>
+                </form>
+
+                <div
+                  v-if="showSuggestions"
+                  class="mt-3 max-h-80 overflow-auto rounded-xl border border-slate-100 bg-white/90 dark:border-slate-800 dark:bg-slate-900/70"
+                >
+                  <div
+                    v-if="suggestionLoading"
+                    class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400"
+                  >
+                    Searching...
+                  </div>
+
+                  <div
+                    v-else-if="suggestions.length === 0"
+                    class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400"
+                  >
+                    No matches found.
+                  </div>
+
+                  <div v-else>
+                    <button
+                      v-for="item in suggestions"
+                      :key="`${item.type}-${item.id}`"
+                      type="button"
+                      class="flex w-full items-center gap-3 border-b border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 last:border-b-0 dark:border-slate-800 dark:hover:bg-slate-800"
+                      @click="openSuggestion(item.url)"
+                    >
+                      <img
+                        v-if="item.thumbnail"
+                        :src="item.thumbnail"
+                        :alt="item.title"
+                        class="h-10 w-10 rounded-lg object-cover"
+                      >
+                      <div
+                        v-else
+                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
+                      >
+                        <UIcon
+                          :name="item.type === 'product' ? 'i-lucide-package' : item.type === 'blog' ? 'i-lucide-newspaper' : 'i-lucide-megaphone'"
+                          class="h-5 w-5 text-slate-400"
+                        />
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <p class="line-clamp-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          {{ item.title }}
+                        </p>
+                        <p class="line-clamp-1 text-xs capitalize text-slate-500 dark:text-slate-400">
+                          {{ item.type }}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
                 </div>
               </div>
-            </div>
+            </Transition>
 
-            <!-- Cart -->
+            <!-- Cart (logged-in users only) -->
             <NuxtLink
+              v-if="isAuthenticated"
               to="/cart"
               data-cart-target
-              class="relative w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-green-500 text-slate-600 dark:text-slate-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-105"
+              class="relative w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-green-500 text-slate-600 dark:text-slate-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300"
             >
               <UIcon
                 name="i-lucide-shopping-cart"
@@ -437,12 +463,22 @@ const searchQuery = ref('')
 const suggestions = ref<GlobalSearchItem[]>([])
 const suggestionLoading = ref(false)
 const showSuggestions = ref(false)
+const searchPanelOpen = ref(false)
 const searchBoxRef = ref<HTMLElement | null>(null)
+const searchInputRef = ref<HTMLInputElement | null>(null)
 let suggestionTimer: ReturnType<typeof setTimeout> | null = null
 
 // Fetch cart on mount
 onMounted(() => {
-  fetchCart()
+  if (isAuthenticated.value) {
+    fetchCart()
+  }
+})
+
+watch(isAuthenticated, (value) => {
+  if (value) {
+    fetchCart()
+  }
 })
 
 const isDark = computed(() => colorMode.value === 'dark')
@@ -457,6 +493,18 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
+}
+
+const toggleSearchPanel = async () => {
+  searchPanelOpen.value = !searchPanelOpen.value
+
+  if (searchPanelOpen.value) {
+    await nextTick()
+    searchInputRef.value?.focus()
+    openSuggestionsIfNeeded()
+  } else {
+    showSuggestions.value = false
+  }
 }
 
 const openSuggestionsIfNeeded = () => {
@@ -495,6 +543,7 @@ watch(searchQuery, (value) => {
 const submitGlobalSearch = async () => {
   const query = searchQuery.value.trim()
   showSuggestions.value = false
+  searchPanelOpen.value = false
   await router.push({
     path: '/search',
     query: query ? { q: query } : {}
@@ -503,6 +552,7 @@ const submitGlobalSearch = async () => {
 
 const openSuggestion = async (url: string) => {
   showSuggestions.value = false
+  searchPanelOpen.value = false
   await navigateTo(url)
 }
 
@@ -511,6 +561,7 @@ const onDocumentClick = (event: MouseEvent) => {
   const target = event.target as Node
   if (!searchBoxRef.value.contains(target)) {
     showSuggestions.value = false
+    searchPanelOpen.value = false
   }
 }
 
