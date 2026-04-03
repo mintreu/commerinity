@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Transactions\Tables;
 
+use App\Filament\Exports\TransactionExporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
@@ -119,11 +122,19 @@ class TransactionsTable
                 ViewAction::make(),
                 EditAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(TransactionExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(3),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(TransactionExporter::class),
                 ]),
             ]);
     }

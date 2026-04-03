@@ -4,11 +4,14 @@ namespace App\Filament\Resources\Ecommerce\Products\Tables;
 
 use App\Casts\ProductTypeCast;
 use App\Filament\Exports\Ecommerce\ProductExporter;
+use App\Filament\Imports\Ecommerce\ProductImporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ExportBulkAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\ViewAction;
 use App\Services\Ecommerce\ProductManager;
 use Filament\Tables\Columns\IconColumn;
@@ -67,6 +70,14 @@ class ProductsTable
                 EditAction::make(),
                 DeleteAction::make()
                     ->action(fn ($record): bool => ProductManager::delete($record)),
+            ])
+            ->headerActions([
+                ImportAction::make()
+                    ->importer(ProductImporter::class),
+                ExportAction::make()
+                    ->exporter(ProductExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(3),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Filament\Exports\UserExporter;
+use App\Filament\Imports\UserImporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
@@ -80,9 +85,19 @@ class UsersTable
                 ViewAction::make(),
                 EditAction::make(),
             ])
+            ->headerActions([
+                ImportAction::make()
+                    ->importer(UserImporter::class),
+                ExportAction::make()
+                    ->exporter(UserExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(3),
+            ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(UserExporter::class),
                 ]),
             ]);
     }

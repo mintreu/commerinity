@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Affiliate\AffiliateCommissions\Tables;
 
+use App\Filament\Exports\Affiliate\AffiliateCommissionExporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
@@ -98,11 +101,19 @@ class AffiliateCommissionsTable
                 ViewAction::make(),
                 EditAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(AffiliateCommissionExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(3),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(AffiliateCommissionExporter::class),
                 ]),
             ]);
     }

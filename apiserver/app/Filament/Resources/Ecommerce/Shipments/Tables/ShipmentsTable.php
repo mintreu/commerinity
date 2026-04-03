@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Ecommerce\Shipments\Tables;
 
+use App\Filament\Exports\Ecommerce\ShipmentExporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -93,9 +96,17 @@ class ShipmentsTable
                 ViewAction::make(),
                 EditAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(ShipmentExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(3),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(ShipmentExporter::class),
                 ]),
             ]);
     }

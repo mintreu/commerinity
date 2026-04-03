@@ -2,9 +2,14 @@
 
 namespace App\Filament\Resources\Ecommerce\Categories\Tables;
 
+use App\Filament\Exports\Ecommerce\CategoryExporter;
+use App\Filament\Imports\Ecommerce\CategoryImporter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
@@ -99,9 +104,19 @@ class CategoriesTable
                 ViewAction::make(),
                 EditAction::make(),
             ])
+            ->headerActions([
+                ImportAction::make()
+                    ->importer(CategoryImporter::class),
+                ExportAction::make()
+                    ->exporter(CategoryExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(2),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(CategoryExporter::class),
                 ]),
             ]);
     }

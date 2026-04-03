@@ -15,6 +15,7 @@ use Filament\Notifications\Notification;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
@@ -218,6 +219,12 @@ class JobApplicationsTable
                             ->send();
                     }),
                 EditAction::make(),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(JobApplicationExporter::class)
+                    ->enableVisibleTableColumnsByDefault()
+                    ->columnMappingColumns(3),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
