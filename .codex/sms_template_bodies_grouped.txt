@@ -1,0 +1,68 @@
+SMS TEMPLATE BODIES (DLT Pattern Draft)
+Source: Pattern-aligned short SMS copy
+
+
+FINAL FORMATS:-
+
+==================================================
+OTP  [Final , Dont Alter]
+==================================================
+
+[otp-general]
+Your OTP is {#number#} for {#purpose#}. Valid for 10 minutes. Do not share it. - {#app_name#}
+DLT APPROVED FORMAT :-
+Your OTP is {#number#} for {#alphanumeric#}. Valid for 10 minutes. Do not share it. - VRIDDHI VIKASH
+
+[otp-transaction]
+Your OTP is {#number#} for {#alphanumeric#} Rs {#number#}. Valid for 10 minutes. Do not share it. - {#app_name#}
+DLT APPROVED FORMAT :-
+Your OTP is 123456 for credit Rs 250.00. Valid for 10 minutes. Do not share it. - VRIDDHI VIKASH
+
+
+OTP KEY MAPPING (USE 2 FORMAT ONLY)
+otp-verification -> otp-general
+login-otp -> otp-general
+registration-otp -> otp-general
+password-reset-otp -> otp-general
+transaction-otp -> otp-transaction
+
+
+==================================================
+TRANSACTIONAL
+==================================================
+
+[welcome]
+Welcome to {#app_name#}. Your account has been successfully created. Start using our services now. - {#app_name#}
+
+[wallet-update] [final dont change .. eta use korbo pore]
+Rs {#number#} {#alphanumeric#} to your wallet. Available balance: Rs {#number#} - {#app_name#}
+DLT APPROVED FORMAT :-
+Rs 200.00 credited to your wallet. Available balance: Rs 500.00 - VRIDDHI VIKASH
+
+
+
+[withdrawal-processed]
+Withdrawal of Rs {#number#} processed. Bank credit shortly. Ref {#alphanumeric#}. - {#app_name#}
+
+TXN KEY MAPPING (MEANINGFUL COMMON FORMAT)
+wallet-credit -> wallet-update (action=credited, type=wallet topup/purchase refund)
+wallet-debit -> wallet-update (action=debited, type=order/payment)
+commission-earned -> wallet-update (action=credited, type=commission)
+withdrawal-processed -> withdrawal-processed
+
+[kyc-approved]
+Dear {#alphanumeric#}, your KYC is approved. You can now access all features. - {#app_name#}
+
+[subscription-activated]
+Your subscription is now active. Please check app for plan details and validity. - {#app_name#}
+
+[job-application-received]
+Dear {#alphanumeric#}, your job application is received. We will contact you soon. - {#app_name#}
+
+
+==================================================
+SERVICE (Converted from Promotional)
+==================================================
+
+[referral-bonus]
+Your referral joined successfully. Rs {#number#} bonus credited to your wallet. - {#app_name#}

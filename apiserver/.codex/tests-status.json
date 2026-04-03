@@ -1,0 +1,804 @@
+[
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\AddressApiTest.php",
+    "filter": "Tests\\Feature\\AddressApiTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.67,
+    "executedAt": "2026-04-02 01:44:15"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\AddressManagementTest.php",
+    "filter": "Tests\\Feature\\AddressManagementTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.69,
+    "executedAt": "2026-04-02 01:44:33"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\AffiliateCommissionTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 81.05
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\AffiliateConfigServiceTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 113.25
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\AffiliateEndToEndTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 137.61
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\AffiliateGenealogyTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 106.59
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\AffiliateJourneyTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 135.91
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\AffiliateLifecycleTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 192.5
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Affiliate\\CommissionProcessorServiceTest.php",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 101.03
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Api\\BeneficiaryAccountTest.php",
+    "filter": "Tests\\Feature\\Api\\BeneficiaryAccountTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.91,
+    "executedAt": "2026-04-02 01:44:52"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Api\\GlobalSearchControllerTest.php",
+    "filter": "Tests\\Feature\\Api\\GlobalSearchControllerTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.59,
+    "executedAt": "2026-04-02 01:45:15"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Api\\HelpdeskModelTest.php",
+    "filter": "Tests\\Feature\\Api\\HelpdeskModelTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.75,
+    "executedAt": "2026-04-02 01:45:36"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Api\\InquiryControllerTest.php",
+    "filter": "Tests\\Feature\\Api\\InquiryControllerTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 17.84,
+    "executedAt": "2026-04-02 01:45:54"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Api\\RecruitmentTest.php",
+    "filter": "Tests\\Feature\\Api\\RecruitmentTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.92,
+    "executedAt": "2026-04-02 01:46:17"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Auth\\LoginTest.php",
+    "filter": "Tests\\Feature\\Auth\\LoginTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 31.22,
+    "executedAt": "2026-04-02 01:46:49"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Auth\\OtpManagerDeliveryTest.php",
+    "filter": "Tests\\Feature\\Auth\\OtpManagerDeliveryTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.02,
+    "executedAt": "2026-04-02 01:47:14"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Auth\\OtpTest.php",
+    "filter": "Tests\\Feature\\Auth\\OtpTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.89,
+    "executedAt": "2026-04-02 01:47:35"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Auth\\PasswordResetTest.php",
+    "filter": "Tests\\Feature\\Auth\\PasswordResetTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.8,
+    "executedAt": "2026-04-02 01:48:00"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Auth\\RegistrationTest.php",
+    "filter": "Tests\\Feature\\Auth\\RegistrationTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 21.06,
+    "executedAt": "2026-04-02 01:48:21"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Browser\\OrderViewTest.php",
+    "filter": "Tests\\Feature\\Browser\\OrderViewTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.45,
+    "executedAt": "2026-04-02 01:48:44"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Browser\\WalletTopupCompleteFlowTest.php",
+    "filter": "Tests\\Feature\\Browser\\WalletTopupCompleteFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.38,
+    "executedAt": "2026-04-02 01:49:11"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\CompleteWalletFlowTest.php",
+    "filter": "Tests\\Feature\\CompleteWalletFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.59,
+    "executedAt": "2026-04-02 01:49:35"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\CartApiTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\CartApiTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.05,
+    "executedAt": "2026-04-02 01:49:58"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\CartMetaTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\CartMetaTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 32.58,
+    "executedAt": "2026-04-02 01:50:31"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\CartRulesTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\CartRulesTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 30.74,
+    "executedAt": "2026-04-02 01:51:01"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\CartTaxShippingTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\CartTaxShippingTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.06,
+    "executedAt": "2026-04-02 01:51:19"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\CatalogFiltersTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\CatalogFiltersTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 31.41,
+    "executedAt": "2026-04-02 01:51:51"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\CatalogProductsTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\CatalogProductsTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 48.97,
+    "executedAt": "2026-04-02 01:52:40"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\OrderCoinsCheckoutTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\OrderCoinsCheckoutTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 49.59,
+    "executedAt": "2026-04-02 01:53:29"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\OrderReturnRefundTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\OrderReturnRefundTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 26.19,
+    "executedAt": "2026-04-02 01:53:56"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\PricingRegressionTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\PricingRegressionTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 21.17,
+    "executedAt": "2026-04-02 01:54:17"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\ProductBasicTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\ProductBasicTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 34.01,
+    "executedAt": "2026-04-02 01:54:51"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\ProductPricingTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\ProductPricingTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.58,
+    "executedAt": "2026-04-02 01:55:18"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\ProductStockSelectionTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\ProductStockSelectionTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.56,
+    "executedAt": "2026-04-02 01:55:50"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\ProductStockTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\ProductStockTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 28.19,
+    "executedAt": "2026-04-02 01:56:18"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\SalesTargetingTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\SalesTargetingTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.06,
+    "executedAt": "2026-04-02 01:56:43"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Ecommerce\\SalesVoucherTest.php",
+    "filter": "Tests\\Feature\\Ecommerce\\SalesVoucherTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.95,
+    "executedAt": "2026-04-02 01:57:07"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\ExampleTest.php",
+    "filter": "Tests\\Feature\\ExampleTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 28.42,
+    "executedAt": "2026-04-02 01:57:35"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Feature\\Ecommerce\\FilterApiTest.php",
+    "filter": "Tests\\Feature\\Feature\\Ecommerce\\FilterApiTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.44,
+    "executedAt": "2026-04-02 01:57:58"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Feature\\Ecommerce\\ProductBasicTest.php",
+    "filter": "Tests\\Feature\\Feature\\Ecommerce\\ProductBasicTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 24.22,
+    "executedAt": "2026-04-02 01:58:22"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Filament\\Ecommerce\\Products\\ProductResourceCrudTest.php",
+    "filter": "Tests\\Feature\\Filament\\Ecommerce\\Products\\ProductResourceCrudTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 28.33,
+    "executedAt": "2026-04-02 01:58:50"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\GeoDataTest.php",
+    "filter": "Tests\\Feature\\GeoDataTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.14,
+    "executedAt": "2026-04-02 01:59:15"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Helpers\\OtpManagerTest.php",
+    "filter": "Tests\\Feature\\Helpers\\OtpManagerTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 54.38,
+    "executedAt": "2026-04-02 02:00:10"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Imports\\BulkImportEndToEndTest.php",
+    "filter": "Tests\\Feature\\Imports\\BulkImportEndToEndTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 47.33,
+    "executedAt": "2026-04-02 02:00:57"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Imports\\EnhancedBulkJobApplicationImportTest.php",
+    "filter": "Tests\\Feature\\Imports\\EnhancedBulkJobApplicationImportTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 34.05,
+    "executedAt": "2026-04-02 02:01:31"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Imports\\JobApplicationImportFactory.php",
+    "filter": "Tests\\Feature\\Imports\\JobApplicationImportFactory",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.08,
+    "executedAt": "2026-04-02 02:01:58"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Jobs\\ProcessPayoutJobTest.php",
+    "filter": "Tests\\Feature\\Jobs\\ProcessPayoutJobTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.89,
+    "executedAt": "2026-04-02 02:02:17"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\KycApiTest.php",
+    "filter": "Tests\\Feature\\KycApiTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.45,
+    "executedAt": "2026-04-02 02:02:45"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Listeners\\SendSubscriptionActivatedNotificationsTest.php",
+    "filter": "Tests\\Feature\\Listeners\\SendSubscriptionActivatedNotificationsTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.66,
+    "executedAt": "2026-04-02 02:03:05"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Models\\Traits\\HasAddressTest.php",
+    "filter": "Tests\\Feature\\Models\\Traits\\HasAddressTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.89,
+    "executedAt": "2026-04-02 02:03:24"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Models\\Traits\\HasFingerprintTest.php",
+    "filter": "Tests\\Feature\\Models\\Traits\\HasFingerprintTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.33,
+    "executedAt": "2026-04-02 02:03:47"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Models\\Traits\\HasUniqueTest.php",
+    "filter": "Tests\\Feature\\Models\\Traits\\HasUniqueTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.23,
+    "executedAt": "2026-04-02 02:04:11"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Models\\UserTest.php",
+    "filter": "Tests\\Feature\\Models\\UserTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.72,
+    "executedAt": "2026-04-02 02:04:31"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Notifications\\JobApplicationNotificationFlowTest.php",
+    "filter": "Tests\\Feature\\Notifications\\JobApplicationNotificationFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.22,
+    "executedAt": "2026-04-02 02:04:57"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Notifications\\OrderInvoiceNotificationTest.php",
+    "filter": "Tests\\Feature\\Notifications\\OrderInvoiceNotificationTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.28,
+    "executedAt": "2026-04-02 02:05:16"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\OnboardingFlowTest.php",
+    "filter": "Tests\\Feature\\OnboardingFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.08,
+    "executedAt": "2026-04-02 02:05:36"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\OrderApiTest.php",
+    "filter": "Tests\\Feature\\OrderApiTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.49,
+    "executedAt": "2026-04-02 02:06:03"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\CashfreePaymentProviderTest.php",
+    "filter": "Tests\\Feature\\Payment\\CashfreePaymentProviderTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 31.09,
+    "executedAt": "2026-04-02 02:06:35"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\CashfreePayoutProviderTest.php",
+    "filter": "Tests\\Feature\\Payment\\CashfreePayoutProviderTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.81,
+    "executedAt": "2026-04-02 02:06:57"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\CashfreeWebhookTest.php",
+    "filter": "Tests\\Feature\\Payment\\CashfreeWebhookTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 30.2,
+    "executedAt": "2026-04-02 02:07:28"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\CompleteJobApplicationFlowTest.php",
+    "filter": "Tests\\Feature\\Payment\\CompleteJobApplicationFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 42.16,
+    "executedAt": "2026-04-02 02:08:10"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\CompleteOrderFlowTest.php",
+    "filter": "Tests\\Feature\\Payment\\CompleteOrderFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 55.69,
+    "executedAt": "2026-04-02 02:09:05"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\CompleteSubscriptionFlowTest.php",
+    "filter": "Tests\\Feature\\Payment\\CompleteSubscriptionFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 37.24,
+    "executedAt": "2026-04-02 02:09:43"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\NativePaymentProviderTest.php",
+    "filter": "Tests\\Feature\\Payment\\NativePaymentProviderTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.61,
+    "executedAt": "2026-04-02 02:10:06"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\NativePayoutProviderTest.php",
+    "filter": "Tests\\Feature\\Payment\\NativePayoutProviderTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 24.51,
+    "executedAt": "2026-04-02 02:10:31"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\OrderPaymentIdempotencyTest.php",
+    "filter": "Tests\\Feature\\Payment\\OrderPaymentIdempotencyTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.64,
+    "executedAt": "2026-04-02 02:10:53"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\PaymentRetryServiceTest.php",
+    "filter": "Tests\\Feature\\Payment\\PaymentRetryServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 30.86,
+    "executedAt": "2026-04-02 02:11:24"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\RazorpayPaymentProviderTest.php",
+    "filter": "Tests\\Feature\\Payment\\RazorpayPaymentProviderTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 29.74,
+    "executedAt": "2026-04-02 02:11:54"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\RazorpayPayoutProviderTest.php",
+    "filter": "Tests\\Feature\\Payment\\RazorpayPayoutProviderTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 26.95,
+    "executedAt": "2026-04-02 02:12:21"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\RazorpayWebhookTest.php",
+    "filter": "Tests\\Feature\\Payment\\RazorpayWebhookTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 26.75,
+    "executedAt": "2026-04-02 02:12:48"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Payment\\WalletTopupTest.php",
+    "filter": "Tests\\Feature\\Payment\\WalletTopupTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 26.19,
+    "executedAt": "2026-04-02 02:13:14"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Profile\\ChangePasswordTest.php",
+    "filter": "Tests\\Feature\\Profile\\ChangePasswordTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.73,
+    "executedAt": "2026-04-02 02:13:40"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Profile\\ProfileUpdateTest.php",
+    "filter": "Tests\\Feature\\Profile\\ProfileUpdateTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.84,
+    "executedAt": "2026-04-02 02:14:03"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Requests\\LoginRequestValidationTest.php",
+    "filter": "Tests\\Feature\\Requests\\LoginRequestValidationTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 22.76,
+    "executedAt": "2026-04-02 02:14:25"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\KycServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\KycServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.91,
+    "executedAt": "2026-04-02 02:14:51"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\SmsServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\SmsServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.08,
+    "executedAt": "2026-04-02 02:15:11"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\Trends\\AdminTrendServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\Trends\\AdminTrendServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 23.47,
+    "executedAt": "2026-04-02 02:15:35"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\Trends\\CommissionTrendServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\Trends\\CommissionTrendServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 27.98,
+    "executedAt": "2026-04-02 02:16:03"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\Trends\\TeamTrendServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\Trends\\TeamTrendServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 34.84,
+    "executedAt": "2026-04-02 02:16:38"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\Trends\\TransactionTrendServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\Trends\\TransactionTrendServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 65.25,
+    "executedAt": "2026-04-02 02:17:43"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\Trends\\WalletTrendServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\Trends\\WalletTrendServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 43.98,
+    "executedAt": "2026-04-02 02:18:27"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Services\\UserAuthServiceTest.php",
+    "filter": "Tests\\Feature\\Services\\UserAuthServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.95,
+    "executedAt": "2026-04-02 02:18:46"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\TokenDebugTest.php",
+    "filter": "Tests\\Feature\\TokenDebugTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 34.31,
+    "executedAt": "2026-04-02 02:19:20"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\TransactionTest.php",
+    "filter": "Tests\\Feature\\TransactionTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.0,
+    "executedAt": "2026-04-02 02:19:45"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Unit\\PriceCalculationTest.php",
+    "filter": "Tests\\Feature\\Unit\\PriceCalculationTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 17.33,
+    "executedAt": "2026-04-02 02:20:03"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\UserAddressTest.php",
+    "filter": "Tests\\Feature\\UserAddressTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 54.78,
+    "executedAt": "2026-04-02 02:20:57"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\WalletTest.php",
+    "filter": "Tests\\Feature\\WalletTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 21.34,
+    "executedAt": "2026-04-02 02:21:45"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\WalletTopupCheckoutFlowTest.php",
+    "filter": "Tests\\Feature\\WalletTopupCheckoutFlowTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.48,
+    "executedAt": "2026-04-02 02:22:03"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Feature\\Wallet\\WalletTransactionHistoryTest.php",
+    "filter": "Tests\\Feature\\Wallet\\WalletTransactionHistoryTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.91,
+    "executedAt": "2026-04-02 02:21:23"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Pest.php",
+    "filter": "Tests\\Pest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.83,
+    "executedAt": "2026-04-02 02:22:22"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\TestCase.php",
+    "filter": "Tests\\TestCase",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.59,
+    "executedAt": "2026-04-02 02:22:42"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\ExampleTest.php",
+    "filter": "Tests\\Unit\\ExampleTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.48,
+    "executedAt": "2026-04-02 02:23:01"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Exceptions\\AuthExceptionsTest.php",
+    "filter": "Tests\\Unit\\Exceptions\\AuthExceptionsTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.89,
+    "executedAt": "2026-04-02 02:23:21"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\AddressTest.php",
+    "filter": "Tests\\Unit\\Models\\AddressTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.22,
+    "executedAt": "2026-04-02 02:23:39"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\Geo\\BlockTest.php",
+    "filter": "Tests\\Unit\\Models\\Geo\\BlockTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.36,
+    "executedAt": "2026-04-02 02:23:59"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\Geo\\CountryTest.php",
+    "filter": "Tests\\Unit\\Models\\Geo\\CountryTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.03,
+    "executedAt": "2026-04-02 02:24:18"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\Geo\\DistrictTest.php",
+    "filter": "Tests\\Unit\\Models\\Geo\\DistrictTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.48,
+    "executedAt": "2026-04-02 02:24:36"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\Geo\\StateTest.php",
+    "filter": "Tests\\Unit\\Models\\Geo\\StateTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.62,
+    "executedAt": "2026-04-02 02:24:55"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\KycTest.php",
+    "filter": "Tests\\Unit\\Models\\KycTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 19.3,
+    "executedAt": "2026-04-02 02:25:14"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Models\\UserTest.php",
+    "filter": "Tests\\Unit\\Models\\UserTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 20.59,
+    "executedAt": "2026-04-02 02:25:35"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\MoneyServiceTest.php",
+    "filter": "Tests\\Unit\\MoneyServiceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 18.83,
+    "executedAt": "2026-04-02 02:25:53"
+  },
+  {
+    "file": "C:\\laragon\\www\\mintreu\\server\\commerinity\\apiserver\\tests\\Unit\\Resources\\UserResourceTest.php",
+    "filter": "Tests\\Unit\\Resources\\UserResourceTest",
+    "status": "pass",
+    "exitCode": 0,
+    "durationSeconds": 25.03,
+    "executedAt": "2026-04-02 02:26:18"
+  }
+]
