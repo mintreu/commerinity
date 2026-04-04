@@ -31,6 +31,15 @@ class ProductSeeder extends Seeder
         'cases-covers',
     ];
 
+    /**
+     * Local/legacy catalog entries that should never be seeded.
+     *
+     * @var array<int, string>
+     */
+    private array $excludedProductUrls = [
+        'pani-puri-masala',
+    ];
+
     public function run(): void
     {
         $this->command->info('🚀 Starting Master Product Seeding...');
@@ -84,6 +93,10 @@ class ProductSeeder extends Seeder
 
         $seededCount = 0;
         foreach ($products as $productData) {
+            if (in_array((string) ($productData->url ?? ''), $this->excludedProductUrls, true)) {
+                continue;
+            }
+
             try {
                 $product = $this->createProduct($productData, $category, $filterGroup);
                 $this->assignProductCategories($product, $category, $productData);
@@ -291,4 +304,3 @@ class ProductSeeder extends Seeder
             ->toArray();
     }
 }
-
