@@ -41,9 +41,15 @@ it('sends notification and sms when the gateway has balance', function () {
 
     $smsService = mock(NotificationSmsSenderInterface::class);
     $smsService->shouldReceive('canSend')->with(1)->andReturn(true);
-    $smsService->shouldReceive('sendSingle')
+    $smsService->shouldReceive('sendTemplate')
         ->once()
-        ->with($user->mobile, \Mockery::type('string'), 'transactional', $user->id)
+        ->with(
+            $user->mobile,
+            'subscription-status',
+            \Mockery::on(fn (array $variables): bool => isset($variables['status'], $variables['plan'], $variables['reference'])),
+            'transactional',
+            $user->id
+        )
         ->andReturn(SmsResponse::success());
 
     $listener = new SendSubscriptionActivatedNotifications($smsService);
@@ -73,7 +79,7 @@ it('skips sms when balance is insufficient', function () {
 
     $smsService = mock(NotificationSmsSenderInterface::class);
     $smsService->shouldReceive('canSend')->with(1)->andReturn(false);
-    $smsService->shouldReceive('sendSingle')->never();
+    $smsService->shouldReceive('sendTemplate')->never();
 
     $listener = new SendSubscriptionActivatedNotifications($smsService);
     $listener->handle(new SubscriptionActivated($subscription, collect()));

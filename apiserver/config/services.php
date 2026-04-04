@@ -56,6 +56,7 @@ return [
         'fast2sms' => [
             'api_key' => env('FAST2SMS_API_KEY', env('FAST2SMS')),
             'sender_id' => env('FAST2SMS_SENDER_ID'),
+            'dlt_sender_id' => env('FAST2SMS_DLT_SENDER_ID', env('FAST2SMS_SENDER_ID')),
             'entity_id' => env('FAST2SMS_ENTITY_ID'),
             'per_sms_cost' => env('FAST2SMS_PER_SMS_COST', 0.25),
             'min_balance_threshold' => env('FAST2SMS_MIN_BALANCE', 10.0),
@@ -74,6 +75,9 @@ return [
             // Demo mode (use static OTP 123456)
             'demo_mode' => env('SMS_DEMO_MODE', false),
             'demo_otp' => env('SMS_DEMO_OTP', '123456'),
+
+            // Enforce DLT route for all SMS in production workflows
+            'dlt_sms' => env('SMS_DLT_SMS', true),
         ],
 
         // Balance Alerts

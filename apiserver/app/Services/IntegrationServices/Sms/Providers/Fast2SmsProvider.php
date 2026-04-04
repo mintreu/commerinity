@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\IntegrationServices\Sms\Providers;
 
 use App\Models\Integration;
+use App\Models\Sms\SmsTemplate;
 use App\Services\IntegrationServices\Sms\Contracts\SmsProviderInterface;
 use App\Services\IntegrationServices\Sms\DTOs\BalanceInfo;
 use App\Services\IntegrationServices\Sms\DTOs\DeliveryReport;
@@ -38,6 +39,8 @@ final class Fast2SmsProvider implements SmsProviderInterface
     private const LOGS_URL = self::BASE_URL.'/sms_logs';
 
     private const DELIVERY_URL = self::BASE_URL.'/delivery';
+
+    private const DLR_URL = self::BASE_URL.'/dlr';
 
     private const ROUTE_DLT = 'dlt';
 
@@ -105,6 +108,14 @@ final class Fast2SmsProvider implements SmsProviderInterface
             );
         }
 
+        // DLT-first mode: all SMS must use template slug
+        if ((bool) config('services.sms.options.dlt_sms', true) && ! $request->usesTemplate()) {
+            return SmsResponse::failure(
+                message: 'DLT mode enabled: template slug is required for SMS sending',
+                errorCode: 'DLT_TEMPLATE_REQUIRED'
+            );
+        }
+
         // Route based on template usage
         if ($request->usesTemplate()) {
             return $this->sendDltFromRequest($request);
@@ -148,10 +159,11 @@ final class Fast2SmsProvider implements SmsProviderInterface
 
             $response = $this->httpClient()->post(self::BULK_URL, [
                 'route' => self::ROUTE_DLT,
-                'sender_id' => $senderId ?? $this->getSenderId(),
+                'sender_id' => $senderId ?? $this->getDltSenderId(),
                 'message' => $messageId,
                 'variables_values' => $variablesValues,
                 'numbers' => implode(',', $numbers),
+                'flash' => '0',
             ]);
 
             return $this->parseResponse($response->json(), $recipients);
@@ -238,6 +250,19 @@ final class Fast2SmsProvider implements SmsProviderInterface
                 }
             }
 
+            // Fallback to /dev/dlr/{REQUEST_ID}
+            $fallbackResponse = Http::get(self::DLR_URL."/{$requestId}", [
+                'authorization' => $this->getApiKey(),
+            ]);
+            $fallbackData = $fallbackResponse->json();
+
+            if ($fallbackResponse->successful() && ($fallbackData['return'] ?? false)) {
+                $reports = $fallbackData['data'] ?? [];
+                if (! empty($reports)) {
+                    return DeliveryReport::fromFast2Sms($reports[0]);
+                }
+            }
+
             return DeliveryReport::error(
                 $data['message'] ?? 'Delivery report not found',
                 $requestId
@@ -315,18 +340,38 @@ final class Fast2SmsProvider implements SmsProviderInterface
      */
     private function sendDltFromRequest(SmsRequest $request): SmsResponse
     {
-        // Get template from database if slug provided
         $template = $this->resolveTemplate($request->templateSlug);
 
         if (! $template) {
             return SmsResponse::failure("Template not found: {$request->templateSlug}");
         }
 
+        if (! $template->is_dlt_approved) {
+            return SmsResponse::failure(
+                message: "Template is not DLT approved: {$request->templateSlug}",
+                errorCode: 'DLT_NOT_APPROVED'
+            );
+        }
+
+        if (! $template->message_id || ! $template->sender_id) {
+            return SmsResponse::failure(
+                message: "Template missing DLT credentials: {$request->templateSlug}",
+                errorCode: 'DLT_TEMPLATE_INVALID'
+            );
+        }
+
+        $variablesValues = $template->getVariablesPipeString(
+            array_map(
+                static fn ($value): string => $value === null ? '' : (string) $value,
+                $request->variables ?? []
+            )
+        );
+
         return $this->sendDlt(
             recipients: $request->recipients,
-            messageId: $template['message_id'],
-            variablesValues: $request->getVariablesAsPipeString() ?: $request->message,
-            senderId: $template['sender_id'] ?? null,
+            messageId: $template->message_id,
+            variablesValues: $variablesValues !== '' ? $variablesValues : $request->message,
+            senderId: $template->sender_id ?: null,
         );
     }
 
@@ -428,17 +473,13 @@ final class Fast2SmsProvider implements SmsProviderInterface
      *
      * @return array<string, mixed>|null
      */
-    private function resolveTemplate(?string $slug): ?array
+    private function resolveTemplate(?string $slug): ?SmsTemplate
     {
         if (! $slug || ! $this->integration) {
-            // Return mock template for testing
-            return [
-                'message_id' => '123456', // Demo message ID
-                'sender_id' => $this->getSenderId(),
-            ];
+            return null;
         }
 
-        $template = \App\Models\Sms\SmsTemplate::query()
+        $template = SmsTemplate::query()
             ->where('integration_id', $this->integration->id)
             ->where('slug', $slug)
             ->where('is_active', true)
@@ -452,11 +493,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
         $template->increment('usage_count');
         $template->update(['last_used_at' => now()]);
 
-        return [
-            'message_id' => $template->message_id,
-            'sender_id' => $template->sender_id,
-            'entity_id' => $template->entity_id,
-        ];
+        return $template;
     }
 
     /**
@@ -535,6 +572,15 @@ final class Fast2SmsProvider implements SmsProviderInterface
         return $settings['sender_id']
             ?? $this->integration?->getCredential('sender_id')
             ?? $this->senderId;
+    }
+
+    private function getDltSenderId(): ?string
+    {
+        $settings = $this->integration?->settings ?? [];
+
+        return $settings['dlt_sender_id']
+            ?? config('services.sms.fast2sms.dlt_sender_id')
+            ?? $this->getSenderId();
     }
 
     /**

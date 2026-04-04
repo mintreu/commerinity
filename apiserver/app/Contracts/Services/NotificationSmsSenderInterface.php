@@ -11,4 +11,11 @@ interface NotificationSmsSenderInterface
     public function canSend(int $count = 1): bool;
 
     public function sendSingle(string $phone, string $message, string $type = 'transactional', ?int $userId = null): SmsResponse;
+
+    /**
+     * Send DLT template SMS by slug with ordered variables.
+     *
+     * @param  array<string, scalar|null>  $variables
+     */
+    public function sendTemplate(string $phone, string $templateSlug, array $variables, string $type = 'transactional', ?int $userId = null): SmsResponse;
 }

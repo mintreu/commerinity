@@ -65,11 +65,10 @@ final readonly class SmsRequest
             recipients: [$recipient],
             message: $otp, // Will be formatted by template
             type: 'otp',
-            templateSlug: 'otp-verification',
+            templateSlug: 'otp-general',
             variables: [
-                'otp' => $otp,
+                'number' => $otp,
                 'purpose' => 'verification',
-                'validity' => '10',
                 'app_name' => (string) config('app.name', 'Our App'),
             ],
             user: $user,

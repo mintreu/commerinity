@@ -10,11 +10,6 @@ use App\Models\Sms\SmsTemplate;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
-/**
- * Seed SMS templates for various notification types.
- *
- * Templates follow DLT format with {#var#} placeholders.
- */
 class SmsTemplateSeeder extends Seeder
 {
     public function run(): void
@@ -38,159 +33,106 @@ class SmsTemplateSeeder extends Seeder
             ->substr(0, 20)
             ->toString();
         $appSenderId = $appSenderId !== '' ? $appSenderId : 'APPNAME';
+
         $defaultSenderId = (string) ($integration->getCredential('sender_id')
+            ?? config('services.sms.fast2sms.dlt_sender_id')
             ?? config('services.sms.fast2sms.sender_id')
             ?? $appSenderId);
+
         $defaultEntityId = (string) ($integration->getCredential('entity_id')
             ?? config('services.sms.fast2sms.entity_id')
             ?? '');
 
         $templates = [
-            // ═══════════════════════════════════════════════════════════
-            // OTP TEMPLATES
-            // ═══════════════════════════════════════════════════════════
             [
-                'name' => 'OTP Verification',
-                'slug' => 'otp-verification',
-                'message_id' => 'OTP_VERIFY_001',
+                'name' => 'OTP General',
+                'slug' => 'otp-general',
+                'message_id' => 'OTP_GENERAL_001',
                 'category' => 'otp',
-                'content' => 'Your OTP is {#otp#} for {#purpose#}. Valid for 10 minutes. Do not share it. - {#app_name#}',
-                'variables' => ['otp', 'purpose', 'app_name'],
+                'content' => 'Your OTP is {#number#} for {#purpose#}. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['number', 'purpose', 'app_name'],
+                'is_dlt_approved' => true,
             ],
             [
-                'name' => 'Login OTP',
-                'slug' => 'login-otp',
-                'message_id' => 'OTP_LOGIN_001',
+                'name' => 'OTP Transaction',
+                'slug' => 'otp-transaction',
+                'message_id' => 'OTP_TRANSACTION_001',
                 'category' => 'otp',
-                'content' => 'Your OTP is {#otp#} for login. Valid for 10 minutes. Do not share it. - {#app_name#}',
-                'variables' => ['otp', 'app_name'],
+                'content' => 'Your OTP is {#number#} for {#purpose#} Rs {#amount#}. Valid for 10 minutes. Do not share it. - {#app_name#}',
+                'variables' => ['number', 'purpose', 'amount', 'app_name'],
+                'is_dlt_approved' => true,
             ],
             [
-                'name' => 'Registration OTP',
-                'slug' => 'registration-otp',
-                'message_id' => 'OTP_REG_001',
-                'category' => 'otp',
-                'content' => 'Your OTP is {#otp#} for registration. Valid for 10 minutes. Do not share it. - {#app_name#}',
-                'variables' => ['otp', 'app_name'],
-            ],
-            [
-                'name' => 'Password Reset OTP',
-                'slug' => 'password-reset-otp',
-                'message_id' => 'OTP_PWD_001',
-                'category' => 'otp',
-                'content' => 'Your OTP is {#otp#} for password reset. Valid for 10 minutes. Do not share it. - {#app_name#}',
-                'variables' => ['otp', 'app_name'],
-            ],
-            [
-                'name' => 'Transaction OTP',
-                'slug' => 'transaction-otp',
-                'message_id' => 'OTP_TXN_001',
-                'category' => 'otp',
-                'content' => 'Your OTP is {#otp#} for {#purpose#} Rs {#amount#}. Valid for 10 minutes. Do not share it. - {#app_name#}',
-                'variables' => ['otp', 'purpose', 'amount', 'app_name'],
-            ],
-
-            // ═══════════════════════════════════════════════════════════
-            // TRANSACTIONAL TEMPLATES
-            // ═══════════════════════════════════════════════════════════
-            [
-                'name' => 'Welcome Message',
-                'slug' => 'welcome',
-                'message_id' => 'TXN_WELCOME_001',
+                'name' => 'Wallet Update',
+                'slug' => 'wallet-update',
+                'message_id' => 'TXN_WALLET_UPDATE_001',
                 'category' => 'transactional',
-                'content' => 'Welcome to Commerinity Pro, {#name#}! Your account has been created. Start your journey at commerinity.com - COMMERINITY',
-                'variables' => ['name'],
-            ],
-            [
-                'name' => 'Wallet Credit',
-                'slug' => 'wallet-credit',
-                'message_id' => 'TXN_WCREDIT_001',
-                'category' => 'transactional',
-                'content' => 'Rs.{#amount#} credited to your Commerinity wallet. Txn ID: {#txn_id#}. New balance: Rs.{#balance#}. - COMMERINITY',
-                'variables' => ['amount', 'txn_id', 'balance'],
-            ],
-            [
-                'name' => 'Wallet Debit',
-                'slug' => 'wallet-debit',
-                'message_id' => 'TXN_WDEBIT_001',
-                'category' => 'transactional',
-                'content' => 'Rs.{#amount#} debited from your Commerinity wallet. Txn ID: {#txn_id#}. Available balance: Rs.{#balance#}. - COMMERINITY',
-                'variables' => ['amount', 'txn_id', 'balance'],
-            ],
-            [
-                'name' => 'Commission Earned',
-                'slug' => 'commission-earned',
-                'message_id' => 'TXN_COMM_001',
-                'category' => 'transactional',
-                'content' => 'Congratulations! You earned Rs.{#amount#} commission on {#type#}. Credited to your wallet. Total earnings: Rs.{#total#}. - COMMERINITY',
-                'variables' => ['amount', 'type', 'total'],
-            ],
-            [
-                'name' => 'Withdrawal Processed',
-                'slug' => 'withdrawal-processed',
-                'message_id' => 'TXN_WDRAW_001',
-                'category' => 'transactional',
-                'content' => 'Withdrawal of Rs.{#amount#} processed. Ref: {#ref_id#}. Amount will be credited to your bank in 24-48 hrs. - COMMERINITY',
-                'variables' => ['amount', 'ref_id'],
-            ],
-            [
-                'name' => 'KYC Approved',
-                'slug' => 'kyc-approved',
-                'message_id' => 'TXN_KYC_001',
-                'category' => 'transactional',
-                'content' => 'Dear {#name#}, your KYC verification is complete. You now have full access to all features on Commerinity Pro. - COMMERINITY',
-                'variables' => ['name'],
-            ],
-            [
-                'name' => 'Subscription Activated',
-                'slug' => 'subscription-activated',
-                'message_id' => 'TXN_SUB_001',
-                'category' => 'transactional',
-                'content' => 'Your {#plan#} subscription is now active on Commerinity Pro. Valid till {#expiry#}. Thank you for upgrading! - COMMERINITY',
-                'variables' => ['plan', 'expiry'],
+                'content' => 'Rs {#amount#} has been {#action#} to your wallet. Available balance Rs {#balance#}. - {#app_name#}',
+                'variables' => ['amount', 'action', 'balance', 'app_name'],
+                'is_dlt_approved' => true,
             ],
             [
                 'name' => 'Job Application Received',
                 'slug' => 'job-application-received',
-                'message_id' => 'TXN_JOB_001',
+                'message_id' => 'TXN_JOB_RECEIVED_001',
                 'category' => 'transactional',
-                'content' => 'Dear {#name#}, your application for {#position#} has been received. Application ID: {#app_id#}. We will contact you soon. - COMMERINITY',
-                'variables' => ['name', 'position', 'app_id'],
+                'content' => 'Dear {#name#}, application {#application_id#} received. We will contact you soon. - {#app_name#}',
+                'variables' => ['name', 'application_id', 'app_name'],
+                'is_dlt_approved' => true,
             ],
-
-            // ═══════════════════════════════════════════════════════════
-            // PROMOTIONAL TEMPLATES
-            // ═══════════════════════════════════════════════════════════
             [
-                'name' => 'Referral Bonus',
-                'slug' => 'referral-bonus',
-                'message_id' => 'PROMO_REF_001',
-                'category' => 'promotional',
-                'content' => 'Great news! Your referral {#referred_name#} joined Commerinity. Rs.{#bonus#} bonus added to your wallet. Keep sharing! - COMMERINITY',
-                'variables' => ['referred_name', 'bonus'],
+                'name' => 'Job Interview Scheduled',
+                'slug' => 'job-interview-scheduled',
+                'message_id' => 'TXN_JOB_INTERVIEW_001',
+                'category' => 'transactional',
+                'content' => 'Dear {#name#}, interview for application {#application_id#} on {#interview_datetime#} at {#interview_area#}. Venue: {#venue_address#}. - {#app_name#}',
+                'variables' => ['name', 'application_id', 'interview_datetime', 'interview_area', 'venue_address', 'app_name'],
+                'is_dlt_approved' => true,
+            ],
+            [
+                'name' => 'Withdrawal Status',
+                'slug' => 'withdrawal-status',
+                'message_id' => 'TXN_WITHDRAWAL_STATUS_001',
+                'category' => 'transactional',
+                'content' => 'Withdrawal Rs {#amount#} is {#status#}. Ref {#reference#}. - {#app_name#}',
+                'variables' => ['amount', 'status', 'reference', 'app_name'],
+                'is_dlt_approved' => true,
+            ],
+            [
+                'name' => 'Subscription Status',
+                'slug' => 'subscription-status',
+                'message_id' => 'TXN_SUBSCRIPTION_STATUS_001',
+                'category' => 'transactional',
+                'content' => 'Your subscription is {#status#}. Plan {#plan#}. Ref {#reference#}. - {#app_name#}',
+                'variables' => ['status', 'plan', 'reference', 'app_name'],
+                'is_dlt_approved' => true,
             ],
         ];
 
         foreach ($templates as $data) {
-            SmsTemplate::updateOrCreate(
-                ['slug' => $data['slug']],
-                [
-                    'integration_id' => $integration->id,
-                    'name' => $data['name'],
-                    'slug' => $data['slug'],
-                    'message_id' => $data['message_id'],
-                    'entity_id' => $defaultEntityId ?: null,
-                    'template_id' => Str::upper(Str::random(10)), // Placeholder - replace with actual DLT IDs
-                    'sender_id' => $defaultSenderId,
-                    'content' => $data['content'],
-                    'variables' => $data['variables'],
-                    'variable_count' => count($data['variables']),
-                    'category' => $data['category'],
-                    'language' => 'en',
-                    'is_active' => true,
-                    'is_dlt_approved' => false, // Set to true after DLT approval
-                ]
-            );
+            $template = SmsTemplate::withTrashed()->firstOrNew(['slug' => $data['slug']]);
+
+            if ($template->trashed()) {
+                $template->restore();
+            }
+
+            $template->integration_id = $integration->id;
+            $template->name = $data['name'];
+            $template->slug = $data['slug'];
+            $template->message_id = $template->message_id ?: $data['message_id'];
+            $template->entity_id = $template->entity_id ?: ($defaultEntityId ?: null);
+            $template->sender_id = $template->sender_id ?: $defaultSenderId;
+            $template->content = $data['content'];
+            $template->variables = $data['variables'];
+            $template->variable_count = count($data['variables']);
+            $template->category = $data['category'];
+            $template->language = 'en';
+            $template->is_active = true;
+            $template->is_dlt_approved = $template->exists
+                ? ($template->is_dlt_approved || (bool) $data['is_dlt_approved'])
+                : (bool) $data['is_dlt_approved'];
+
+            $template->save();
         }
 
         $this->command->info('Seeded '.count($templates).' SMS templates.');

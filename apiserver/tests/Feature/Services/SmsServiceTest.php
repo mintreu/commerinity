@@ -39,8 +39,12 @@ describe('SmsRequest DTO', function () {
         $request = SmsRequest::otp('+919876543210', '123456');
 
         expect($request->type)->toBe('otp')
-            ->and($request->templateSlug)->toBe('otp-verification')
-            ->and($request->variables)->toBe(['otp' => '123456'])
+            ->and($request->templateSlug)->toBe('otp-general')
+            ->and($request->variables)->toBe([
+                'number' => '123456',
+                'purpose' => 'verification',
+                'app_name' => config('app.name', 'Our App'),
+            ])
             ->and($request->usesTemplate())->toBeTrue();
     });
 
@@ -418,7 +422,7 @@ describe('SmsTemplate Model', function () {
         $template = SmsTemplate::create([
             'integration_id' => $integration->id,
             'name' => 'OTP Template',
-            'slug' => 'otp-verification',
+            'slug' => 'otp-general',
             'message_id' => '123456',
             'sender_id' => 'TESTSMS',
             'content' => 'Your OTP is {#var1#}. Valid for 10 minutes.',

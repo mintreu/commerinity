@@ -38,7 +38,13 @@ final class WalletTransactionNotificationService
         $this->sendSms(
             user: $user,
             title: $title,
-            message: "Wallet top-up successful. Amount {$amount}. Ref {$reference}. Balance {$balance}.",
+            templateSlug: 'wallet-update',
+            variables: [
+                'amount' => MoneyService::toRupeesString($transaction->amount),
+                'action' => 'credited',
+                'balance' => MoneyService::toRupeesString($wallet->fresh()->balance),
+                'app_name' => (string) config('app.name'),
+            ],
             context: [
                 'transaction_id' => $transaction->id,
                 'transaction_uuid' => $transaction->uuid,
@@ -47,7 +53,11 @@ final class WalletTransactionNotificationService
         );
     }
 
-    private function sendSms(User $user, string $title, string $message, array $context = []): void
+    /**
+     * @param  array<string, string>  $variables
+     * @param  array<string, mixed>  $context
+     */
+    private function sendSms(User $user, string $title, string $templateSlug, array $variables, array $context = []): void
     {
         if (! $user->mobile) {
             return;
@@ -63,9 +73,10 @@ final class WalletTransactionNotificationService
             return;
         }
 
-        $response = $this->smsService->sendSingle(
+        $response = $this->smsService->sendTemplate(
             phone: $user->mobile,
-            message: $message,
+            templateSlug: $templateSlug,
+            variables: $variables,
             type: 'transactional',
             userId: $user->id,
         );

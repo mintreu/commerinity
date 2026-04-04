@@ -47,12 +47,17 @@ final class SendSubscriptionActivatedNotifications implements ShouldQueue
             return;
         }
 
-        $message = $this->buildSmsMessage($subscription, $user);
-        $response = $this->smsService->sendSingle(
-            $user->mobile,
-            $message,
-            'transactional',
-            $user->id,
+        $response = $this->smsService->sendTemplate(
+            phone: $user->mobile,
+            templateSlug: 'subscription-status',
+            variables: [
+                'status' => 'activated',
+                'plan' => (string) ($subscription->stage?->name ?? 'Membership'),
+                'reference' => $this->subscriptionReference($subscription),
+                'app_name' => (string) config('app.name'),
+            ],
+            type: 'transactional',
+            userId: $user->id,
         );
 
         if (! $response->success) {
@@ -69,14 +74,10 @@ final class SendSubscriptionActivatedNotifications implements ShouldQueue
         return $subscription->user ?? $subscription->load('user')->user;
     }
 
-    /**
-     * Build the transactional SMS copy that the user will receive.
-     */
-    private function buildSmsMessage(UserSubscription $subscription, User $user): string
+    private function subscriptionReference(UserSubscription $subscription): string
     {
-        $stage = $subscription->stage?->name ?? 'your membership';
-        $level = $subscription->currentLevel?->full_name ?? $stage;
+        $compact = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', (string) $subscription->uuid), 0, 10));
 
-        return "Your {$stage} ({$level}) subscription is active. Visit ".config('app.client_url', config('app.url'))." to unlock deals.";
+        return $compact !== '' ? "SUB-{$compact}" : 'SUB-NA';
     }
 }

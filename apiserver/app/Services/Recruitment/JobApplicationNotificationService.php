@@ -41,16 +41,18 @@ final class JobApplicationNotificationService
 
         $this->sendSms(
             $user,
-            $requiresPayment
-                ? "Application No {$applicationNumber} created for {$jobTitle}. Please complete payment to submit."
-                : "Application No {$applicationNumber} submitted successfully for {$jobTitle}.",
+            'job-application-received',
+            [
+                'name' => (string) ($user->name ?? 'Applicant'),
+                'application_id' => (string) $applicationNumber,
+                'app_name' => (string) config('app.name'),
+            ],
         );
     }
 
     public function notifyPaymentConfirmed(User $user, JobApplication $application): void
     {
         $applicationNumber = $application->uuid;
-        $jobTitle = $application->recruitment?->title ?? 'the selected role';
         $applicationUrl = rtrim((string) config('app.client_url'), '/')."/career/applications/{$applicationNumber}";
 
         $user->notify(new GeneralNotification(
@@ -64,11 +66,19 @@ final class JobApplicationNotificationService
 
         $this->sendSms(
             $user,
-            "Payment confirmed for {$jobTitle}. Application No {$applicationNumber} is submitted.",
+            'job-application-received',
+            [
+                'name' => (string) ($user->name ?? 'Applicant'),
+                'application_id' => (string) $applicationNumber,
+                'app_name' => (string) config('app.name'),
+            ],
         );
     }
 
-    private function sendSms(User $user, string $message): void
+    /**
+     * @param  array<string, string>  $variables
+     */
+    private function sendSms(User $user, string $templateSlug, array $variables): void
     {
         if (! $user->mobile) {
             return;
@@ -82,9 +92,10 @@ final class JobApplicationNotificationService
             return;
         }
 
-        $response = $this->smsService->sendSingle(
+        $response = $this->smsService->sendTemplate(
             phone: $user->mobile,
-            message: $message,
+            templateSlug: $templateSlug,
+            variables: $variables,
             type: 'transactional',
             userId: $user->id,
         );
@@ -97,4 +108,3 @@ final class JobApplicationNotificationService
         }
     }
 }
-

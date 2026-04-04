@@ -21,4 +21,9 @@ final class NotificationSmsSender implements NotificationSmsSenderInterface
     {
         return $this->smsService->sendSingle($phone, $message, $type, $userId);
     }
+
+    public function sendTemplate(string $phone, string $templateSlug, array $variables, string $type = 'transactional', ?int $userId = null): SmsResponse
+    {
+        return $this->smsService->sendTemplateSingle($phone, $templateSlug, $variables, $type, $userId);
+    }
 }

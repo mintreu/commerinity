@@ -38,8 +38,15 @@ test('job application apply sends user notification with application number', fu
 
     $smsService = mock(NotificationSmsSenderInterface::class);
     $smsService->shouldReceive('canSend')->with(1)->andReturn(true);
-    $smsService->shouldReceive('sendSingle')
+    $smsService->shouldReceive('sendTemplate')
         ->once()
+        ->with(
+            \Mockery::type('string'),
+            'job-application-received',
+            \Mockery::on(fn (array $variables): bool => isset($variables['name'], $variables['application_id'])),
+            'transactional',
+            \Mockery::type('int')
+        )
         ->andReturn(SmsResponse::success());
     app()->instance(NotificationSmsSenderInterface::class, $smsService);
 
@@ -76,8 +83,15 @@ test('job application payment submission sends user notification with applicatio
 
     $smsService = mock(NotificationSmsSenderInterface::class);
     $smsService->shouldReceive('canSend')->with(1)->andReturn(true);
-    $smsService->shouldReceive('sendSingle')
+    $smsService->shouldReceive('sendTemplate')
         ->once()
+        ->with(
+            \Mockery::type('string'),
+            'job-application-received',
+            \Mockery::on(fn (array $variables): bool => isset($variables['name'], $variables['application_id'])),
+            'transactional',
+            \Mockery::type('int')
+        )
         ->andReturn(SmsResponse::success());
     app()->instance(NotificationSmsSenderInterface::class, $smsService);
 
@@ -132,8 +146,15 @@ test('job application payment confirmation is idempotent for duplicate events', 
 
     $smsService = mock(NotificationSmsSenderInterface::class);
     $smsService->shouldReceive('canSend')->with(1)->andReturn(true);
-    $smsService->shouldReceive('sendSingle')
+    $smsService->shouldReceive('sendTemplate')
         ->once()
+        ->with(
+            \Mockery::type('string'),
+            'job-application-received',
+            \Mockery::on(fn (array $variables): bool => isset($variables['name'], $variables['application_id'])),
+            'transactional',
+            \Mockery::type('int')
+        )
         ->andReturn(SmsResponse::success());
     app()->instance(NotificationSmsSenderInterface::class, $smsService);
 

@@ -133,6 +133,30 @@ final class SmsService
     }
 
     /**
+     * Send single SMS using template slug (DLT).
+     *
+     * @param  array<string, scalar|null>  $variables
+     */
+    public function sendTemplateSingle(
+        string $phone,
+        string $templateSlug,
+        array $variables,
+        string $type = 'transactional',
+        ?int $userId = null,
+    ): SmsResponse {
+        $request = SmsRequest::single(
+            recipient: $phone,
+            message: '',
+            type: $type,
+            templateSlug: $templateSlug,
+            variables: $variables,
+            user: $userId ? \App\Models\User::find($userId) : null,
+        );
+
+        return $this->send($request);
+    }
+
+    /**
      * Send bulk SMS with balance optimization.
      *
      * @param  array<string>  $phones
