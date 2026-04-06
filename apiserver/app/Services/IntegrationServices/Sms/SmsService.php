@@ -15,6 +15,7 @@ use App\Services\IntegrationServices\Sms\DTOs\SmsResponse;
 use App\Services\IntegrationServices\Sms\Providers\Fast2SmsProvider;
 use App\Services\IntegrationServices\Sms\Providers\LogSmsProvider;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -41,10 +42,37 @@ final class SmsService
      */
     public function send(SmsRequest $request): SmsResponse
     {
+        $dedupeWindowSeconds = max(0, (int) config('services.sms.options.dedupe_window_seconds', 20));
+        $dedupeKey = null;
+
+        if ($dedupeWindowSeconds > 0) {
+            $dedupeKey = $this->buildDedupeKey($request);
+
+            if (Cache::has($dedupeKey)) {
+                Log::warning('SmsService: Duplicate SMS request blocked', [
+                    'dedupe_key' => $dedupeKey,
+                    'type' => $request->type,
+                    'template' => $request->templateSlug,
+                    'recipients' => $request->recipients,
+                ]);
+
+                return SmsResponse::failure(
+                    message: 'Duplicate SMS request blocked',
+                    errorCode: 'DUPLICATE_REQUEST'
+                );
+            }
+
+            Cache::put($dedupeKey, true, now()->addSeconds($dedupeWindowSeconds));
+        }
+
         $providers = $this->getServiceableProviders($request->getRecipientCount());
 
         if ($providers->isEmpty()) {
             Log::error('SmsService: No serviceable providers available');
+
+            if ($dedupeKey !== null) {
+                Cache::forget($dedupeKey);
+            }
 
             return SmsResponse::providerUnavailable('none', 'No SMS providers available');
         }
@@ -83,6 +111,10 @@ final class SmsService
 
                 continue;
             }
+        }
+
+        if ($dedupeKey !== null) {
+            Cache::forget($dedupeKey);
         }
 
         return SmsResponse::failure('All SMS providers failed');
@@ -144,6 +176,18 @@ final class SmsService
         string $type = 'transactional',
         ?int $userId = null,
     ): SmsResponse {
+        if ($this->isNoSmsTemplate($templateSlug)) {
+            Log::info('SmsService: SMS blocked by no-SMS policy', [
+                'template' => $templateSlug,
+                'phone' => $phone,
+            ]);
+
+            return SmsResponse::failure(
+                message: "SMS disabled for template: {$templateSlug}",
+                errorCode: 'NO_SMS_POLICY'
+            );
+        }
+
         $request = SmsRequest::single(
             recipient: $phone,
             message: '',
@@ -366,6 +410,12 @@ final class SmsService
             return $this->providers;
         }
 
+        if ($this->shouldUseLogOnlyProvider()) {
+            $this->providers = collect([$this->getLogOnlyIntegration()]);
+
+            return $this->providers;
+        }
+
         $integrations = Integration::query()
             ->ofType(IntegrationTypeCast::SMS->value)
             ->orderByDesc('is_default')
@@ -473,6 +523,40 @@ final class SmsService
         return $integration;
     }
 
+    private function shouldUseLogOnlyProvider(): bool
+    {
+        if (app()->environment('testing')) {
+            return true;
+        }
+
+        return (bool) config('services.sms.options.force_log_provider', false);
+    }
+
+    private function getLogOnlyIntegration(): Integration
+    {
+        $integration = new Integration([
+            'name' => 'Log Provider',
+            'slug' => 'log',
+            'type' => IntegrationTypeCast::SMS->value,
+            'credentials' => [],
+            'settings' => [
+                'driver' => 'log',
+                'per_sms_cost' => 0.0,
+                'min_balance_threshold' => 0.0,
+                'balance' => 999999.99,
+                'priority' => 1,
+                'success_rate' => 100.0,
+                'consecutive_failures' => 0,
+            ],
+            'is_active' => true,
+            'is_default' => true,
+        ]);
+
+        $integration->exists = false;
+
+        return $integration;
+    }
+
     // =========================================================================
     // LOGGING
     // =========================================================================
@@ -561,6 +645,19 @@ final class SmsService
 
     private function canIntegrationSend(Integration $integration, int $count = 1): bool
     {
+        $settings = $integration->settings ?? [];
+
+        if (! array_key_exists('balance', $settings)) {
+            $liveBalance = $this->createDriver($integration)->getBalance();
+
+            if (! $liveBalance->success) {
+                return false;
+            }
+
+            $this->setSetting($integration, 'balance', $liveBalance->balance);
+            $this->setSetting($integration, 'balance_checked_at', now()->toDateTimeString());
+        }
+
         $perSmsCost = $this->getPerSmsCostForIntegration($integration);
         $required = $count * $perSmsCost;
 
@@ -718,12 +815,35 @@ final class SmsService
      */
     private function updateLog(SmsLog $log, SmsResponse $response, Integration $integration): void
     {
+        $existingMetadata = $log->metadata ?? [];
+        $existingMetadata['response_snapshot'] = [
+            'success' => $response->success,
+            'status' => $response->status,
+            'message' => $response->message,
+            'request_id' => $response->requestId,
+            'message_id' => $response->messageId,
+            'error_code' => $response->errorCode,
+            'error_message' => $response->errorMessage,
+            'cost' => $response->cost,
+            'segments' => $response->segments,
+            'provider_data' => $response->providerData,
+            'logged_at' => now()->toDateTimeString(),
+        ];
+
         if ($response->success) {
             $log->markAsSent($response->requestId, $response->messageId);
-            $log->update(['cost' => $response->cost]);
+            $log->update([
+                'cost' => $response->cost,
+                'segments' => max(1, $response->segments),
+                'metadata' => $existingMetadata,
+            ]);
             $this->recordSuccess($integration, 1, $response->cost);
         } else {
             $log->markAsFailed($response->errorMessage ?? $response->message, $response->errorCode);
+            $log->update([
+                'segments' => max(1, $response->segments),
+                'metadata' => $existingMetadata,
+            ]);
             $this->recordFailure($integration, $response->message);
         }
     }
@@ -778,5 +898,24 @@ final class SmsService
                 'chunks_processed' => count($chunks),
             ],
         );
+    }
+
+    private function buildDedupeKey(SmsRequest $request): string
+    {
+        $variables = $request->variables ?? [];
+        ksort($variables);
+
+        return 'sms:dedupe:'.hash('sha256', json_encode([
+            'recipients' => $request->recipients,
+            'type' => $request->type,
+            'template' => $request->templateSlug,
+            'message' => $request->message,
+            'variables' => $variables,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    }
+
+    private function isNoSmsTemplate(string $templateSlug): bool
+    {
+        return in_array($templateSlug, ['kyc-approved', 'referral-bonus'], true);
     }
 }

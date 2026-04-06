@@ -10,6 +10,8 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -21,39 +23,70 @@ class SmsTemplatesTable
             ->columns([
                 TextColumn::make('integration.name')
                     ->label('Integration')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->badge(),
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->weight('semibold'),
                 TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable()
+                    ->badge()
+                    ->color('gray'),
                 TextColumn::make('message_id')
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(),
+                TextColumn::make('dlt_template_id')
+                    ->label('DLT Template ID')
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(),
                 TextColumn::make('entity_id')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('template_id')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('sender_id')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color('warning'),
                 TextColumn::make('variable_count')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->badge()
+                    ->color('info'),
                 TextColumn::make('category')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge(),
                 TextColumn::make('language')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color('gray'),
                 IconColumn::make('is_active')
-                    ->boolean(),
+                    ->boolean()
+                    ->sortable(),
                 IconColumn::make('is_dlt_approved')
-                    ->boolean(),
+                    ->boolean()
+                    ->sortable(),
                 TextColumn::make('dlt_approved_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->since()
+                    ->toggleable(),
                 TextColumn::make('usage_count')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->badge()
+                    ->color('success'),
                 TextColumn::make('last_used_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->since()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -68,8 +101,20 @@ class SmsTemplatesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('category')
+                    ->options([
+                        'otp' => 'OTP',
+                        'transactional' => 'Transactional',
+                        'service' => 'Service',
+                        'promotional' => 'Promotional',
+                    ]),
+                TernaryFilter::make('is_active')
+                    ->label('Active'),
+                TernaryFilter::make('is_dlt_approved')
+                    ->label('DLT Approved'),
                 TrashedFilter::make(),
             ])
+            ->defaultSort('id', 'desc')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

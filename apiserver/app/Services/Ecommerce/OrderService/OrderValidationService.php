@@ -356,8 +356,17 @@ class OrderValidationService
             return;
         }
 
-        $message = $this->buildOrderSmsMessage($order);
-        $response = $smsSender->sendSingle($mobile, $message, 'transactional', $userId);
+        $response = $smsSender->sendTemplate(
+            phone: $mobile,
+            templateSlug: 'order-shipment-status',
+            variables: [
+                'order_number' => (string) $order->order_number,
+                'status' => 'confirmed',
+                'app_name' => (string) config('app.name'),
+            ],
+            type: 'transactional',
+            userId: $userId,
+        );
 
         if (! $response->success) {
             Log::warning('Order confirmation SMS failed', [
@@ -368,16 +377,4 @@ class OrderValidationService
         }
     }
 
-    private function buildOrderSmsMessage(Order $order): string
-    {
-        $url = $this->notificationsUrl();
-
-        return "Your order {$order->order_number} has been confirmed. Your invoice is now available. View details: {$url}";
-    }
-
-    private function notificationsUrl(): string
-    {
-        $base = config('app.client_url', 'http://localhost:3000');
-        return rtrim($base, '/').'/notifications';
-    }
 }

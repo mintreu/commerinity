@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $message_id
  * @property string|null $entity_id
  * @property string|null $template_id
+ * @property string|null $dlt_template_id
  * @property string $sender_id
  * @property string $content
  * @property array<string>|null $variables
@@ -48,6 +49,7 @@ class SmsTemplate extends Model
         'message_id',
         'entity_id',
         'template_id',
+        'dlt_template_id',
         'sender_id',
         'content',
         'variables',

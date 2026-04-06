@@ -78,6 +78,12 @@ return [
 
             // Enforce DLT route for all SMS in production workflows
             'dlt_sms' => env('SMS_DLT_SMS', true),
+
+            // Block rapid duplicate SMS requests with same payload
+            'dedupe_window_seconds' => env('SMS_DEDUPE_WINDOW_SECONDS', 30),
+
+            // Safety switch: force log provider and avoid real SMS API calls
+            'force_log_provider' => env('SMS_FORCE_LOG_PROVIDER', false),
         ],
 
         // Balance Alerts

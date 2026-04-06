@@ -121,7 +121,7 @@ class IntegrationSeeder extends Seeder
             ->toString();
         $appSenderId = $appSenderId !== '' ? $appSenderId : 'APPNAME';
 
-        Integration::firstOrCreate(
+        Integration::updateOrCreate(
             ['slug' => 'fast2sms'],
             [
                 'name' => 'Fast2SMS',
@@ -138,10 +138,9 @@ class IntegrationSeeder extends Seeder
                     'demo' => (bool) config('services.sms.options.demo_mode', false),
                 ],
                 'is_sandbox' => false,
-                'is_active' => false,
+                'is_active' => true,
                 'is_default' => true,
             ]
         );
     }
 }
-

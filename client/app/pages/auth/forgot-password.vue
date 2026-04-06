@@ -150,7 +150,7 @@
                   name="i-lucide-mail"
                   class="w-4 h-4"
                 />
-                <span>Email Address</span>
+                <span>Email Address <span class="text-red-500">*</span></span>
               </label>
               <div class="relative">
                 <input
@@ -165,6 +165,12 @@
                   class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
                 />
               </div>
+              <p
+                v-if="fieldErrors.email"
+                class="text-xs text-red-500 mt-1"
+              >
+                {{ fieldErrors.email }}
+              </p>
             </div>
 
             <!-- Error Alert -->
@@ -226,6 +232,7 @@ const config = useRuntimeConfig()
 const loading = ref(false)
 const success = ref(false)
 const error = ref<string | null>(null)
+const fieldErrors = reactive<Record<string, string>>({})
 
 const form = reactive({
   email: ''
@@ -234,6 +241,7 @@ const form = reactive({
 const handleForgotPassword = async () => {
   loading.value = true
   error.value = null
+  Object.keys(fieldErrors).forEach((key) => { delete fieldErrors[key] })
 
   try {
     await $fetch(`${config.public.apiBase}/api/auth/forgot-password`, {
@@ -245,8 +253,17 @@ const handleForgotPassword = async () => {
 
     success.value = true
   } catch (err: unknown) {
-    const fetchError = err as { data?: { message?: string } }
-    error.value = fetchError.data?.message || 'Failed to send reset link. Please try again.'
+    const fetchError = err as { data?: { message?: string, errors?: Record<string, string[]> } }
+    const apiErrors = fetchError.data?.errors || {}
+
+    if (Object.keys(apiErrors).length > 0) {
+      for (const [key, messages] of Object.entries(apiErrors)) {
+        fieldErrors[key] = messages?.[0] || 'Invalid value'
+      }
+      error.value = Object.values(apiErrors).flat()[0] as string
+    } else {
+      error.value = fetchError.data?.message || 'Failed to send reset link. Please try again.'
+    }
   } finally {
     loading.value = false
   }

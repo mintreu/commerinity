@@ -49,6 +49,12 @@ class SmsTemplateInfolist
                                         ->columnSpan(['md' => 6])
                                         ->placeholder('-'),
 
+                                    TextEntry::make('dlt_template_id')
+                                        ->label('DLT Template ID')
+                                        ->copyable()
+                                        ->columnSpan(['md' => 6])
+                                        ->placeholder('-'),
+
                                     TextEntry::make('sender_id')
                                         ->label('Sender ID')
                                         ->badge()

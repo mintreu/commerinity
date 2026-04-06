@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\SmsLogs\Tables;
 
+use Filament\Forms\Components\DatePicker;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class SmsLogsTable
 {
@@ -87,7 +90,23 @@ class SmsLogsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('created_at_range')
+                    ->label('Created Date')
+                    ->form([
+                        DatePicker::make('from_date')->label('From Date'),
+                        DatePicker::make('to_date')->label('To Date'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                filled($data['from_date'] ?? null),
+                                fn (Builder $query): Builder => $query->whereDate('created_at', '>=', $data['from_date'])
+                            )
+                            ->when(
+                                filled($data['to_date'] ?? null),
+                                fn (Builder $query): Builder => $query->whereDate('created_at', '<=', $data['to_date'])
+                            );
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),

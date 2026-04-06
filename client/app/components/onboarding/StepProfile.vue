@@ -83,6 +83,13 @@
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
             This will appear on invoices and your public profile.
           </p>
+          <p
+            v-for="message in fieldErrorsFor('name')"
+            :key="`name-${message}`"
+            class="text-xs text-red-500 mt-1"
+          >
+            {{ message }}
+          </p>
         </UFormField>
 
         <!-- Date of Birth & Gender (2 columns on desktop) -->
@@ -104,6 +111,13 @@
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
               You must be at least 13 years old.
             </p>
+            <p
+              v-for="message in fieldErrorsFor('dob')"
+              :key="`dob-${message}`"
+              class="text-xs text-red-500 mt-1"
+            >
+              {{ message }}
+            </p>
           </UFormField>
 
           <UFormField
@@ -112,13 +126,29 @@
             required
             class="w-full"
           >
-            <URadioGroup
-              v-model="formState.gender"
-              :items="genderOptions"
-              class="flex flex-wrap gap-3 mt-2"
-            />
+            <div class="grid grid-cols-3 gap-2 mt-2">
+              <button
+                v-for="option in genderOptions"
+                :key="option.value"
+                type="button"
+                :class="formState.gender === option.value
+                  ? 'bg-primary-500 text-white border-primary-500'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600'"
+                class="px-3 py-2 rounded-lg border text-sm font-medium transition-colors"
+                @click="formState.gender = option.value"
+              >
+                {{ option.label }}
+              </button>
+            </div>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
               Used to personalize recommendations.
+            </p>
+            <p
+              v-for="message in fieldErrorsFor('gender')"
+              :key="`gender-${message}`"
+              class="text-xs text-red-500 mt-1"
+            >
+              {{ message }}
             </p>
           </UFormField>
         </div>
@@ -158,6 +188,7 @@ interface ProfileData {
 
 interface Props {
   initialData?: Partial<ProfileData>
+  fieldErrors?: Record<string, string | string[]>
 }
 
 const props = defineProps<Props>()
@@ -192,11 +223,32 @@ const genderOptions = [
 ]
 
 const schema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+  name: z.string().min(3, 'Name must be at least 3 characters'),
   dob: z.string().min(1, 'Date of birth is required'),
   gender: z.string().min(1, 'Please select your gender'),
   bio: z.string().optional()
 })
+
+const fieldErrorsFor = (key: string): string[] => {
+  const messages: string[] = []
+
+  const zodResult = schema.safeParse(formState)
+  if (!zodResult.success) {
+    const zodIssue = zodResult.error.issues.find(issue => issue.path[0] === key)
+    if (zodIssue?.message) messages.push(zodIssue.message)
+  }
+
+  const serverValue = props.fieldErrors?.[key]
+  if (Array.isArray(serverValue)) {
+    for (const msg of serverValue) {
+      if (msg && !messages.includes(msg)) messages.push(msg)
+    }
+  } else if (typeof serverValue === 'string' && serverValue && !messages.includes(serverValue)) {
+    messages.push(serverValue)
+  }
+
+  return messages
+}
 
 // Watch for changes and emit data
 watch(

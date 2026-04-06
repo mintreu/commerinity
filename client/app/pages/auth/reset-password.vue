@@ -197,7 +197,7 @@
                   name="i-lucide-lock"
                   class="w-4 h-4"
                 />
-                <span>New Password</span>
+                <span>New Password <span class="text-red-500">*</span></span>
               </label>
               <div class="relative">
                 <input
@@ -222,6 +222,12 @@
                   />
                 </button>
               </div>
+              <p
+                v-if="fieldErrors.password"
+                class="text-xs text-red-500 mt-1"
+              >
+                {{ fieldErrors.password }}
+              </p>
             </div>
 
             <!-- Confirm Password -->
@@ -231,7 +237,7 @@
                   name="i-lucide-lock"
                   class="w-4 h-4"
                 />
-                <span>Confirm Password</span>
+                <span>Confirm Password <span class="text-red-500">*</span></span>
               </label>
               <div class="relative">
                 <input
@@ -256,6 +262,12 @@
                   />
                 </button>
               </div>
+              <p
+                v-if="fieldErrors.password_confirmation"
+                class="text-xs text-red-500 mt-1"
+              >
+                {{ fieldErrors.password_confirmation }}
+              </p>
             </div>
 
             <!-- Password Strength Indicator -->
@@ -341,6 +353,7 @@ const token = computed(() => route.query.token as string | undefined)
 const loading = ref(false)
 const success = ref(false)
 const error = ref<string | null>(null)
+const fieldErrors = reactive<Record<string, string>>({})
 const showPassword = ref(false)
 const showPasswordConfirm = ref(false)
 
@@ -392,6 +405,7 @@ const handleResetPassword = async () => {
 
   loading.value = true
   error.value = null
+  Object.keys(fieldErrors).forEach((key) => { delete fieldErrors[key] })
 
   try {
     await $fetch(`${config.public.apiBase}/api/auth/reset-password`, {
@@ -405,8 +419,17 @@ const handleResetPassword = async () => {
 
     success.value = true
   } catch (err: unknown) {
-    const fetchError = err as { data?: { message?: string } }
-    error.value = fetchError.data?.message || 'Failed to reset password. The link may have expired.'
+    const fetchError = err as { data?: { message?: string, errors?: Record<string, string[]> } }
+    const apiErrors = fetchError.data?.errors || {}
+
+    if (Object.keys(apiErrors).length > 0) {
+      for (const [key, messages] of Object.entries(apiErrors)) {
+        fieldErrors[key] = messages?.[0] || 'Invalid value'
+      }
+      error.value = Object.values(apiErrors).flat()[0] as string
+    } else {
+      error.value = fetchError.data?.message || 'Failed to reset password. The link may have expired.'
+    }
   } finally {
     loading.value = false
   }

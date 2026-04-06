@@ -202,7 +202,7 @@
                     name="i-lucide-smartphone"
                     class="w-4 h-4"
                   />
-                  <span>Mobile Number</span>
+                  <span>Mobile Number <span class="text-red-500">*</span></span>
                 </label>
                 <div class="relative">
                   <input
@@ -217,27 +217,25 @@
                     class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
                   />
                 </div>
+                <p
+                  v-if="fieldErrors.mobile"
+                  class="text-xs text-red-500 mt-1"
+                >
+                  {{ fieldErrors.mobile }}
+                </p>
               </div>
 
-              <!-- Auth Method Toggle -->
+              <!-- Auth Method Toggle (OTP login disabled for now) -->
+              <!--
               <div class="flex gap-2">
                 <button
                   type="button"
-                  :class="authMethod === 'password' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-400'"
-                  class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
-                  @click="authMethod = 'password'"
+                  class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white"
                 >
                   Password
                 </button>
-                <button
-                  type="button"
-                  :class="authMethod === 'otp' ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-400'"
-                  class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
-                  @click="authMethod = 'otp'"
-                >
-                  OTP
-                </button>
               </div>
+              -->
 
               <!-- Password Field -->
               <div
@@ -249,7 +247,7 @@
                     name="i-lucide-lock"
                     class="w-4 h-4"
                   />
-                  <span>Password</span>
+                  <span>Password <span class="text-red-500">*</span></span>
                 </label>
                 <div class="relative">
                   <input
@@ -274,72 +272,20 @@
                     />
                   </button>
                 </div>
+                <p
+                  v-if="fieldErrors.password && loginMethod === 'mobile'"
+                  class="text-xs text-red-500 mt-1"
+                >
+                  {{ fieldErrors.password }}
+                </p>
               </div>
 
-              <!-- OTP Section -->
+              <!-- OTP Section disabled for login -->
+              <!--
               <template v-if="authMethod === 'otp'">
-                <div
-                  v-if="!otpSent"
-                  class="space-y-2"
-                >
-                  <button
-                    type="button"
-                    :disabled="sendingOtp"
-                    class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
-                    @click="handleSendOtp"
-                  >
-                    <UIcon
-                      :name="sendingOtp ? 'i-lucide-loader-2' : 'i-lucide-send'"
-                      :class="{ 'animate-spin': sendingOtp }"
-                      class="w-5 h-5"
-                    />
-                    <span>{{ sendingOtp ? 'Sending...' : 'Send OTP' }}</span>
-                  </button>
-                </div>
-
-                <div
-                  v-else
-                  class="space-y-4"
-                >
-                  <div class="text-center">
-                    <p class="text-sm text-slate-600 dark:text-slate-400">
-                      OTP sent to your mobile
-                    </p>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      <UIcon
-                        name="i-lucide-shield-check"
-                        class="w-4 h-4"
-                      />
-                      <span>Enter OTP</span>
-                    </label>
-                    <div class="relative">
-                      <input
-                        v-model="form.otp"
-                        type="text"
-                        maxlength="6"
-                        required
-                        placeholder="123456"
-                        class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      >
-                      <UIcon
-                        name="i-lucide-hash"
-                        class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
-                    @click="handleResendOtp"
-                  >
-                    Resend OTP
-                  </button>
-                </div>
+                ...
               </template>
+              -->
             </template>
 
             <!-- Email Login -->
@@ -350,7 +296,7 @@
                     name="i-lucide-mail"
                     class="w-4 h-4"
                   />
-                  <span>Email Address</span>
+                  <span>Email Address <span class="text-red-500">*</span></span>
                 </label>
                 <div class="relative">
                   <input
@@ -365,6 +311,12 @@
                     class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400"
                   />
                 </div>
+                <p
+                  v-if="fieldErrors.email"
+                  class="text-xs text-red-500 mt-1"
+                >
+                  {{ fieldErrors.email }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -373,7 +325,7 @@
                     name="i-lucide-lock"
                     class="w-4 h-4"
                   />
-                  <span>Password</span>
+                  <span>Password <span class="text-red-500">*</span></span>
                 </label>
                 <div class="relative">
                   <input
@@ -398,6 +350,12 @@
                     />
                   </button>
                 </div>
+                <p
+                  v-if="fieldErrors.password && loginMethod === 'email'"
+                  class="text-xs text-red-500 mt-1"
+                >
+                  {{ fieldErrors.password }}
+                </p>
               </div>
             </template>
 
@@ -474,14 +432,15 @@ definePageMeta({
 
 const { login, user, refreshUser } = useSanctum()
 const router = useRouter()
-const config = useRuntimeConfig()
+// const config = useRuntimeConfig()
 
 const loginMethod = ref<'mobile' | 'email'>('mobile')
-const authMethod = ref<'password' | 'otp'>('password')
-const otpSent = ref(false)
-const sendingOtp = ref(false)
+const authMethod = ref<'password'>('password')
+// const otpSent = ref(false)
+// const sendingOtp = ref(false)
 const loading = ref(false)
 const error = ref<string | null>(null)
+const fieldErrors = reactive<Record<string, string>>({})
 const showMobilePassword = ref(false)
 const showEmailPassword = ref(false)
 
@@ -489,70 +448,32 @@ const form = reactive({
   mobile: '',
   email: '',
   password: '',
-  otp: '',
+  // otp: '',
   remember: false
 })
 
-const handleSendOtp = async () => {
-  if (!form.mobile) {
-    error.value = 'Please enter your mobile number'
-    return
-  }
-
-  sendingOtp.value = true
-  error.value = null
-
-  try {
-    const response = await $fetch(`${config.public.apiBase}/api/auth/send-otp`, {
-      method: 'POST',
-      body: {
-        type: 'mobile',
-        value: form.mobile
-      }
-    })
-
-    otpSent.value = true
-
-    useToast().add({
-      title: 'OTP Sent',
-      description: 'Check your mobile for the OTP',
-      color: 'green'
-    })
-  } catch (err: unknown) {
-    const fetchError = err as { data?: { message?: string } }
-    error.value = fetchError.data?.message || 'Failed to send OTP'
-  } finally {
-    sendingOtp.value = false
-  }
-}
-
-const handleResendOtp = () => {
-  otpSent.value = false
-  form.otp = ''
-  handleSendOtp()
-}
+// OTP login disabled for now.
+// const handleSendOtp = async () => {}
+// const handleResendOtp = () => {}
 
 const handleLogin = async () => {
   loading.value = true
   error.value = null
+  Object.keys(fieldErrors).forEach((key) => { delete fieldErrors[key] })
 
   try {
     interface LoginCredentials {
       mobile?: string
       email?: string
       password?: string
-      otp?: string
+      // otp?: string
     }
 
     const credentials: LoginCredentials = {}
 
     if (loginMethod.value === 'mobile') {
       credentials.mobile = form.mobile
-      if (authMethod.value === 'password') {
-        credentials.password = form.password
-      } else {
-        credentials.otp = form.otp
-      }
+      credentials.password = form.password
     } else {
       credentials.email = form.email
       credentials.password = form.password
@@ -577,8 +498,18 @@ const handleLogin = async () => {
     const { getDashboardRoute } = useUserType()
     await router.push(getDashboardRoute())
   } catch (err: unknown) {
-    const friendly = getContextualApiError(err, 'login')
-    error.value = friendly.message
+    const fetchError = err as { data?: { message?: string, errors?: Record<string, string[]> } }
+    const apiErrors = fetchError.data?.errors || {}
+
+    if (Object.keys(apiErrors).length > 0) {
+      for (const [key, messages] of Object.entries(apiErrors)) {
+        fieldErrors[key] = messages?.[0] || 'Invalid value'
+      }
+      error.value = Object.values(apiErrors).flat()[0] as string
+    } else {
+      const friendly = getContextualApiError(err, 'login')
+      error.value = friendly.message
+    }
     console.error('Login error:', err)
   } finally {
     loading.value = false

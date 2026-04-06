@@ -82,8 +82,16 @@ const handleSendOtp = async () => {
       color: 'success'
     })
   } catch (err: unknown) {
-    const fetchError = err as { data?: { message?: string } }
+    const fetchError = err as { statusCode?: number, data?: { message?: string } }
     error.value = fetchError.data?.message || 'Failed to send OTP'
+
+    const isRateLimited = fetchError.statusCode === 429 || /too many otp requests/i.test(error.value)
+
+    toast.add({
+      title: isRateLimited ? 'Too Many OTP Requests' : 'OTP Send Failed',
+      description: error.value,
+      color: isRateLimited ? 'warning' : 'error'
+    })
   } finally {
     sendingOtp.value = false
   }
@@ -264,7 +272,9 @@ const handleRegister = async () => {
                 type="text"
                 maxlength="6"
                 required
-                placeholder="123456"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                placeholder="******"
                 class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all tracking-widest text-center text-lg font-mono"
               >
               <UIcon

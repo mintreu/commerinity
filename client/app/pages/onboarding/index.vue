@@ -108,6 +108,7 @@
                 <OnboardingStepProfile
                   ref="profileStep"
                   :initial-data="profileInitialData"
+                  :field-errors="profileFieldErrors"
                   @update:data="handleProfileUpdate"
                   @valid="profileValid = $event"
                 />
@@ -245,6 +246,7 @@ const onboardingStatus = ref<any>(null)
 const profileValid = ref(false)
 const contactValid = ref(false)
 const addressValid = ref(false)
+const profileFieldErrors = ref<Record<string, string>>({})
 // Step data
 const profileData = ref<Record<string, unknown>>({})
 const contactData = ref<Record<string, unknown>>({})
@@ -350,7 +352,7 @@ const currentStepComponent = computed(() => {
 const currentStepProps = computed(() => {
   switch (currentStep.value) {
     case 0: return { userName: userName.value }
-    case 1: return { initialData: profileInitialData.value }
+    case 1: return { initialData: profileInitialData.value, fieldErrors: profileFieldErrors.value }
     case 2: return {
       signupMethod: signupMethod.value,
       userEmail: userEmail.value,
@@ -401,6 +403,7 @@ const canSkip = computed(() => false)
 // Data update handlers
 const handleProfileUpdate = (data: Record<string, unknown>) => {
   profileData.value = data
+  profileFieldErrors.value = {}
 }
 
 const handleContactUpdate = (data: Record<string, unknown>) => {
@@ -487,6 +490,7 @@ const mapStepToIndex = (step: string): number => {
 const saveProfile = async () => {
   submitting.value = true
   try {
+    profileFieldErrors.value = {}
     const payload = { ...profileData.value }
     const avatarFile = (payload as { avatar?: File | null }).avatar || null
     delete (payload as { avatar?: File | null }).avatar
@@ -509,10 +513,19 @@ const saveProfile = async () => {
     await refreshUser()
     await fetchOnboardingStatus()
   } catch (error: unknown) {
-    const err = error as { data?: { message?: string } }
+    const err = error as { data?: { message?: string, errors?: Record<string, string[]> } }
+    const apiErrors = err.data?.errors || {}
+    if (Object.keys(apiErrors).length > 0) {
+      profileFieldErrors.value = Object.fromEntries(
+        Object.entries(apiErrors).map(([field, messages]) => [field, messages?.[0] || 'Invalid value'])
+      )
+    }
+
+    const firstApiError = Object.values(apiErrors).flat()[0]
+
     toast.add({
       title: 'Error',
-      description: err.data?.message || 'Failed to save profile',
+      description: (typeof firstApiError === 'string' && firstApiError) || err.data?.message || 'Failed to save profile',
       color: 'error'
     })
     throw error

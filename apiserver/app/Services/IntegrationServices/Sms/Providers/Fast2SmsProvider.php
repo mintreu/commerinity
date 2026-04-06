@@ -189,9 +189,9 @@ final class Fast2SmsProvider implements SmsProviderInterface
         }
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::get(self::WALLET_URL, [
                 'authorization' => $this->getApiKey(),
-            ])->get(self::WALLET_URL);
+            ]);
 
             $data = $response->json();
 
@@ -234,9 +234,8 @@ final class Fast2SmsProvider implements SmsProviderInterface
         }
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::get(self::DELIVERY_URL, [
                 'authorization' => $this->getApiKey(),
-            ])->get(self::DELIVERY_URL, [
                 'request_id' => $requestId,
             ]);
 
@@ -297,9 +296,9 @@ final class Fast2SmsProvider implements SmsProviderInterface
 
         try {
             // Fast2SMS returns last 3 days of logs
-            $response = Http::withHeaders([
+            $response = Http::get(self::LOGS_URL, [
                 'authorization' => $this->getApiKey(),
-            ])->get(self::LOGS_URL);
+            ]);
 
             $data = $response->json();
 
@@ -353,7 +352,11 @@ final class Fast2SmsProvider implements SmsProviderInterface
             );
         }
 
-        if (! $template->message_id || ! $template->sender_id) {
+        // Fast2SMS DLT Single expects "message" to be Message ID (short numeric),
+        // while long DLT template ID is auxiliary metadata.
+        $dltTemplateId = $template->message_id ?: $template->dlt_template_id;
+
+        if (! $dltTemplateId || ! $template->sender_id) {
             return SmsResponse::failure(
                 message: "Template missing DLT credentials: {$request->templateSlug}",
                 errorCode: 'DLT_TEMPLATE_INVALID'
@@ -369,7 +372,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
 
         return $this->sendDlt(
             recipients: $request->recipients,
-            messageId: $template->message_id,
+            messageId: $dltTemplateId,
             variablesValues: $variablesValues !== '' ? $variablesValues : $request->message,
             senderId: $template->sender_id ?: null,
         );
@@ -417,7 +420,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
             return SmsResponse::success(
                 message: 'SMS sent successfully',
                 requestId: $data['request_id'] ?? null,
-                messageId: $data['message'][0] ?? null,
+                messageId: $data['message_id'] ?? null,
                 cost: $cost,
                 providerData: $data,
             );
@@ -442,6 +445,7 @@ final class Fast2SmsProvider implements SmsProviderInterface
     private function httpClient(): PendingRequest
     {
         return Http::withHeaders([
+            'accept' => 'application/json',
             'authorization' => $this->getApiKey(),
             'Content-Type' => 'application/json',
         ])->timeout(30);
