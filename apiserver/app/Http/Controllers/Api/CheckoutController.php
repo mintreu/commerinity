@@ -93,7 +93,7 @@ final class CheckoutController extends Controller
                     'provider' => $transaction->integration?->name ?? 'Cashfree',
                     'provider_slug' => $transaction->integration?->slug ?? 'cashfree',
                     'payment_session_id' => $paymentSessionId, // ⭐ CRITICAL for Cashfree SDK
-                    'is_sandbox' => $transaction->integration?->is_sandbox ?? true,
+                    'is_sandbox' => $this->cashfreeProvider->isSandboxMode($transaction->integration),
                 ],
                 'customer' => $metadata['customer'] ?? null,
                 'redirect' => [

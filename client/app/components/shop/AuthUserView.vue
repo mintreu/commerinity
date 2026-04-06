@@ -48,6 +48,8 @@ defineProps<Props>()
 
 const config = useRuntimeConfig()
 const { isLoggedIn } = useSanctum()
+const { isMember, isPromoter } = useUserType()
+const canSeeAffiliateBenefits = computed(() => isMember.value || isPromoter.value)
 
 // Filter state
 const activeFilters = ref<Record<string, any>>({})
@@ -282,7 +284,10 @@ const openMobileFilters = () => {
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <template v-if="isLoggedIn">
-              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-2">
+              <div
+                v-if="canSeeAffiliateBenefits"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-2"
+              >
                 <UIcon
                   name="i-lucide-sparkles"
                   class="w-3.5 h-3.5 text-yellow-300"
@@ -293,7 +298,7 @@ const openMobileFilters = () => {
                 Welcome, {{ userName }}!
               </h1>
               <p class="text-white/80 text-sm mt-0.5">
-                Earn BV/PV points on every purchase
+                {{ canSeeAffiliateBenefits ? 'Earn BV/PV points on every purchase' : 'Discover top picks and best offers for you' }}
               </p>
             </template>
             <template v-else>
@@ -308,7 +313,7 @@ const openMobileFilters = () => {
 
           <!-- Quick Stats -->
           <div
-            v-if="isLoggedIn"
+            v-if="isLoggedIn && canSeeAffiliateBenefits"
             class="flex gap-3"
           >
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">

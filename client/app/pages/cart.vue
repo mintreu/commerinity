@@ -207,6 +207,20 @@ const totalPv = computed(() => {
 
 const totalCoins = computed(() => cartTotals.value.coins || 0)
 
+const buildAddressLabel = (address: any): string => {
+  const primary = (address?.title || address?.person_name || 'Address').toString().trim()
+  const secondary = (address?.address_1 || '').toString().trim()
+
+  return secondary ? `${primary} - ${secondary}` : primary
+}
+
+const addressSelectItems = computed(() =>
+  addresses.value.map((address) => ({
+    label: buildAddressLabel(address),
+    value: address.uuid
+  }))
+)
+
 const applyCouponCode = async () => {
   if (!couponCode.value) return
   await applyCoupon(couponCode.value, { shippingAddressId: shippingAddressId.value })
@@ -732,7 +746,7 @@ useComprehensiveSeo({
                     >
                       <USelect
                         v-model="shippingAddressId"
-                        :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
+                        :items="addressSelectItems"
                         size="lg"
                         :ui="{ base: 'w-full' }"
                       />
@@ -750,7 +764,7 @@ useComprehensiveSeo({
                       >
                         <USelect
                           v-model="billingAddressId"
-                          :items="addresses.map(a => ({ label: `${a.title} — ${a.address_1}`, value: a.uuid }))"
+                          :items="addressSelectItems"
                           size="lg"
                           :ui="{ base: 'w-full' }"
                         />

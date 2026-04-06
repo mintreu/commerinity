@@ -97,7 +97,9 @@ return [
       'cashfree' => [
           'key' => env('CASH_FREE_PAYMENT_KEY'),
           'secret' => env('CASH_FREE_PAYMENT_SECRET'),
-          'sandbox' => env('APP_ENV') == 'local',
+          // Optional override. If null, integration.is_sandbox is used.
+          // Set true for sandbox, false for production.
+          'sandbox' => env('CASH_FREE_PAYMENT_SANDBOX'),
           'webhook' => env('CASH_FREE_PAYMENT_WEBHOOK'),
       ]
     ],

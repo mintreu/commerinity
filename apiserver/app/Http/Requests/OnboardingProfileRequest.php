@@ -17,6 +17,8 @@ final class OnboardingProfileRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->user();
+        $maxDob = now()->subYears(18)->toDateString();
+        $minDob = now()->subYears(100)->toDateString();
 
         return [
             'name' => ['required', 'string', 'max:255', 'min:3'],
@@ -28,7 +30,7 @@ final class OnboardingProfileRequest extends FormRequest
             ],
             'bio' => ['nullable', 'string', 'max:500'],
             'gender' => ['required', Rule::in(['male', 'female', 'other'])],
-            'dob' => ['required', 'date', 'before:today', 'after:1900-01-01'],
+            'dob' => ['required', 'date', "before_or_equal:{$maxDob}", "after_or_equal:{$minDob}"],
         ];
     }
 
@@ -40,8 +42,8 @@ final class OnboardingProfileRequest extends FormRequest
             'gender.required' => 'Please select your gender',
             'gender.in' => 'Please select a valid gender option',
             'dob.required' => 'Date of birth is required',
-            'dob.before' => 'Date of birth must be in the past',
-            'dob.after' => 'Please enter a valid date of birth',
+            'dob.before_or_equal' => 'You must be at least 18 years old',
+            'dob.after_or_equal' => 'Date of birth must be within the last 100 years',
             'email.unique' => 'This email is already registered',
         ];
     }

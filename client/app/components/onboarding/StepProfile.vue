@@ -105,11 +105,12 @@
               type="date"
               size="lg"
               icon="i-lucide-calendar"
+              :min="minDate"
               :max="maxDate"
               class="w-full"
             />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              You must be at least 13 years old.
+              You must be at least 18 years old.
             </p>
             <p
               v-for="message in fieldErrorsFor('dob')"
@@ -202,10 +203,16 @@ const fileInput = ref<HTMLInputElement>()
 const avatarPreview = ref<string | null>(null)
 const avatarFile = ref<File | null>(null)
 
-// Calculate max date (must be at least 13 years old)
+// Date of birth range: 18 to 100 years
+const minDate = computed(() => {
+  const date = new Date()
+  date.setFullYear(date.getFullYear() - 100)
+  return date.toISOString().split('T')[0]
+})
+
 const maxDate = computed(() => {
   const date = new Date()
-  date.setFullYear(date.getFullYear() - 13)
+  date.setFullYear(date.getFullYear() - 18)
   return date.toISOString().split('T')[0]
 })
 
@@ -224,7 +231,12 @@ const genderOptions = [
 
 const schema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
-  dob: z.string().min(1, 'Date of birth is required'),
+  dob: z
+    .string()
+    .min(1, 'Date of birth is required')
+    .refine((value) => value >= minDate.value && value <= maxDate.value, {
+      message: 'Date of birth must be between 18 and 100 years ago'
+    }),
   gender: z.string().min(1, 'Please select your gender'),
   bio: z.string().optional()
 })
