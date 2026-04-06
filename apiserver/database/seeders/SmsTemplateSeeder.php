@@ -36,14 +36,9 @@ class SmsTemplateSeeder extends Seeder
             ->toString();
         $appSenderId = $appSenderId !== '' ? $appSenderId : 'APPNAME';
 
-        $defaultSenderId = (string) ($integration->getCredential('sender_id')
-            ?? config('services.sms.fast2sms.dlt_sender_id')
-            ?? config('services.sms.fast2sms.sender_id')
-            ?? $appSenderId);
+        $defaultSenderId = (string) ($integration->getCredential('sender_id') ?? $appSenderId);
 
-        $defaultEntityId = (string) ($integration->getCredential('entity_id')
-            ?? config('services.sms.fast2sms.entity_id')
-            ?? '');
+        $defaultEntityId = (string) ($integration->getCredential('entity_id') ?? '');
 
         // Master template catalog from .codex/sms_template_bodies_grouped.txt
         // Slug is the single source identifier in app code.

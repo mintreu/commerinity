@@ -583,7 +583,6 @@ final class Fast2SmsProvider implements SmsProviderInterface
         $settings = $this->integration?->settings ?? [];
 
         return $settings['dlt_sender_id']
-            ?? config('services.sms.fast2sms.dlt_sender_id')
             ?? $this->getSenderId();
     }
 

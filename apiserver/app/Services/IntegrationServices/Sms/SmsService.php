@@ -502,8 +502,6 @@ final class SmsService
             'credentials' => [
                 'api_key' => config('services.sms.fast2sms.api_key'),
                 'api_secret' => config('services.sms.fast2sms.api_secret'),
-                'sender_id' => config('services.sms.fast2sms.sender_id'),
-                'entity_id' => config('services.sms.fast2sms.entity_id'),
             ],
             'settings' => [
                 'driver' => $providerName,
