@@ -54,9 +54,14 @@ withdrawal-processed -> withdrawal-processed
 Dear {#alphanumeric#}, your KYC is approved. You can now access all features. - {#app_name#}
 
 [subscription-activated]
-Your subscription is now active. Please check app for plan details and validity. - {#app_name#}
+Your subscription is now active. Please check your account for plan details and validity. - {#app_name#}
 
-[job-application-received]
+[subscription-expired]
+Your subscription has expired. Please check your account for plan details and validity. - {#app_name#}
+
+
+
+[job-application-received] [APPROVED]
 Dear {#alphanumeric#}, your job application is received. We will contact you soon. - {#app_name#}
 
 

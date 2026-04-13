@@ -27,7 +27,7 @@ class IntegrationSeeder extends Seeder
                     'secret' => config('services.payment.cashfree.secret'),
                 ],
                 'settings' => [],
-                'is_sandbox' => config('services.payment.cashfree.sandbox', true),
+                'is_sandbox' => app()->isLocal(),
                 'is_active' => true,
                 'is_default' => true,
             ]
@@ -44,7 +44,7 @@ class IntegrationSeeder extends Seeder
                     'secret' => config('services.payout.cashfree.secret'),
                 ],
                 'settings' => [],
-                'is_sandbox' => config('services.payout.cashfree.sandbox', true),
+                'is_sandbox' => app()->isLocal(),
                 'is_active' => true,
                 'is_default' => true,
             ]

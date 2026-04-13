@@ -44,6 +44,15 @@ class SmsTemplateSeeder extends Seeder
         // Slug is the single source identifier in app code.
         $templates = [
             [
+                'name' => 'Welcome',
+                'slug' => 'welcome',
+                'category' => 'general',
+                'content' => 'Welcome to {#app_name#}. Your account is successfully created. You can now use our services. - {#app_name#}',
+                'variables' => ['app_name'],
+                'send_sms' => true,
+            ],
+
+            [
                 'name' => 'OTP General',
                 'slug' => 'otp-general',
                 'category' => 'otp',
@@ -79,26 +88,66 @@ class SmsTemplateSeeder extends Seeder
                 'name' => 'Job Interview Scheduled',
                 'slug' => 'job-interview-scheduled',
                 'category' => 'transactional',
-                'content' => 'Dear {#name#}, interview for application {#application_id#} on {#interview_datetime#} at {#interview_area#}. Venue: {#venue_address#}. - {#app_name#}',
-                'variables' => ['name', 'application_id', 'interview_datetime', 'interview_area', 'venue_address', 'app_name'],
+                'content' => 'Dear {#alphanumeric#}, your interview is scheduled. Please check your account for details. - {#app_name#}',
+                'variables' => ['name'],
                 'send_sms' => true,
             ],
             [
-                'name' => 'Withdrawal Status',
-                'slug' => 'withdrawal-status',
+                'name' => 'Withdrawal Request Received',
+                'slug' => 'withdrawal-request',
                 'category' => 'transactional',
-                'content' => 'Withdrawal Rs {#amount#} is {#status#}. Ref {#reference#}. - {#app_name#}',
-                'variables' => ['amount', 'status', 'reference', 'app_name'],
+                'content' => 'Your withdrawal request of Rs {#number#} has been received. Please check your account for updates. - {#app_name#}',
+                'variables' => ['amount'],
                 'send_sms' => true,
             ],
+
             [
-                'name' => 'Subscription Status',
-                'slug' => 'subscription-status',
+                'name' => 'Withdrawal Processing',
+                'slug' => 'withdrawal-processing',
                 'category' => 'transactional',
-                'content' => 'Your subscription is {#status#}. Plan {#plan#}. Ref {#reference#}. - {#app_name#}',
-                'variables' => ['status', 'plan', 'reference', 'app_name'],
+                'content' => 'Your withdrawal of Rs {#number#} is under process. Please check your account for updates. - {#app_name#}',
+                'variables' => ['amount'],
                 'send_sms' => true,
             ],
+
+            [
+                'name' => 'Withdrawal Settled',
+                'slug' => 'withdrawal-settled',
+                'category' => 'transactional',
+                'content' => 'Your withdrawal of Rs {#number#} has been credited to your bank account. Please check your account for details. - {#app_name#}',
+                'variables' => ['amount'],
+                'send_sms' => true,
+            ],
+
+            [
+                'name' => 'Withdrawal Failed',
+                'slug' => 'withdrawal-failed',
+                'category' => 'transactional',
+                'content' => 'Your withdrawal of Rs {#number#} could not be processed. Please check your account for details. - {#app_name#}',
+                'variables' => ['amount'],
+                'send_sms' => true,
+            ],
+
+
+            [
+                'name' => 'Subscription Activated',
+                'slug' => 'subscription-activated',
+                'category' => 'transactional',
+                'content' => 'Your subscription is now active. Please check your account for plan details and validity. - {#app_name#}',
+                'variables' => ['app_name'],
+                'send_sms' => true,
+            ],
+
+            [
+                'name' => 'Subscription Expired',
+                'slug' => 'subscription-expired',
+                'category' => 'transactional',
+                'content' => 'Your subscription has expired. Please check your account for plan details and validity. - {#app_name#}',
+                'variables' => ['app_name'],
+                'send_sms' => true,
+            ],
+
+
             [
                 'name' => 'Order Shipment Status',
                 'slug' => 'order-shipment-status',
@@ -108,24 +157,6 @@ class SmsTemplateSeeder extends Seeder
                 'send_sms' => true,
             ]
 
-            // NOT REQUIRED AS SMS
-            //,
-//            [
-//                'name' => 'KYC Approved',
-//                'slug' => 'kyc-approved',
-//                'category' => 'transactional',
-//                'content' => 'Dear {#name#}, your KYC is approved. You can now access all features. - {#app_name#}',
-//                'variables' => ['name', 'app_name'],
-//                'send_sms' => false,
-//            ],
-//            [
-//                'name' => 'Referral Bonus',
-//                'slug' => 'referral-bonus',
-//                'category' => 'service',
-//                'content' => 'Your referral joined successfully. Rs {#amount#} bonus credited to your wallet. - {#app_name#}',
-//                'variables' => ['amount', 'app_name'],
-//                'send_sms' => false,
-//            ],
         ];
 
         $seeded = 0;
