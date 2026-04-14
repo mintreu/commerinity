@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\Services\NotificationSmsSenderInterface;
 use App\Helpers\OtpManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
@@ -30,6 +31,7 @@ final class WalletController extends Controller
     public function __construct(
         private readonly UserWalletService $walletService,
         private readonly OtpManager $otpManager,
+        private readonly NotificationSmsSenderInterface $smsService,
     ) {}
 
     /**
@@ -521,6 +523,18 @@ final class WalletController extends Controller
                 $transaction->id,
                 $beneficiary->id
             )->onQueue('payouts');
+
+            if ($user->mobile && $this->smsService->canSend(1)) {
+                $this->smsService->sendTemplate(
+                    phone: $user->mobile,
+                    templateSlug: 'withdrawal-request',
+                    variables: [
+                        'number' => MoneyService::toRupeesString($transaction->amount),
+                    ],
+                    type: 'transactional',
+                    userId: $user->id,
+                );
+            }
 
             return response()->json([
                 'success' => true,

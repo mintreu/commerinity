@@ -11,6 +11,8 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\WhatsAppMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
+use NotificationChannels\WebPush\WebPushChannel;
+use NotificationChannels\WebPush\WebPushMessage;
 
 final class JobApplicationWelcomeNotification extends Notification implements ShouldQueue
 {
@@ -23,7 +25,15 @@ final class JobApplicationWelcomeNotification extends Notification implements Sh
 
     public function via(User $notifiable): array
     {
-        $channels = ['mail'];
+        $channels = ['database'];
+
+        if (! empty($notifiable->email)) {
+            $channels[] = 'mail';
+        }
+
+        if (method_exists($notifiable, 'pushSubscriptions') && $notifiable->pushSubscriptions()->exists()) {
+            $channels[] = WebPushChannel::class;
+        }
 
         // Add WhatsApp if mobile exists and app supports it
         if (! empty($notifiable->mobile) && class_exists(WhatsAppMessage::class)) {
@@ -70,6 +80,20 @@ final class JobApplicationWelcomeNotification extends Notification implements Sh
             ->line('ð Login: '.$loginUrl)
             ->line('Password = Last 6 digits of this mobile OR MMYYYY from DOB')
             ->line('Please change password after first login!');
+    }
+
+    public function toWebPush(User $notifiable, $notification): WebPushMessage
+    {
+        $loginUrl = config('app.url');
+
+        return (new WebPushMessage)
+            ->title('Welcome to '.config('app.name'))
+            ->icon('/icon-192x192.png')
+            ->badge('/badge-72x72.png')
+            ->body('Your account is ready. Login to get started.')
+            ->data(['url' => $loginUrl])
+            ->action('Login Now', 'open_url')
+            ->options(['TTL' => 3600]);
     }
 
     public function toArray(User $notifiable): array

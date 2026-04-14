@@ -362,7 +362,6 @@ class OrderValidationService
             variables: [
                 'order_number' => (string) $order->order_number,
                 'status' => 'confirmed',
-                'app_name' => (string) config('app.name'),
             ],
             type: 'transactional',
             userId: $userId,

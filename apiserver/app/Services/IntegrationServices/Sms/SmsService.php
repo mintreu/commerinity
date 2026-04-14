@@ -139,10 +139,12 @@ final class SmsService
      */
     public function sendWelcome(string $phone, string $name): SmsResponse
     {
-        $appName = config('app.name');
-        $message = "Welcome to {$appName}, {$name}! Your account has been created successfully. Start exploring and enjoy exclusive benefits!";
-
-        return $this->sendSingle($phone, $message, 'transactional');
+        return $this->sendTemplateSingle(
+            phone: $phone,
+            templateSlug: 'welcome',
+            variables: [],
+            type: 'transactional',
+        );
     }
 
     /**

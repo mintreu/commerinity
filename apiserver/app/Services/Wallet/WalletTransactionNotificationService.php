@@ -43,7 +43,6 @@ final class WalletTransactionNotificationService
                 'amount' => MoneyService::toRupeesString($transaction->amount),
                 'action' => 'credited',
                 'balance' => MoneyService::toRupeesString($wallet->fresh()->balance),
-                'app_name' => (string) config('app.name'),
             ],
             context: [
                 'transaction_id' => $transaction->id,

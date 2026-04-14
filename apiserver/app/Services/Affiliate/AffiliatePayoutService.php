@@ -16,7 +16,9 @@ use App\Models\Affiliate\AffiliateVolumeLedger;
 use App\Models\Admin;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\GeneralNotification;
 use App\Notifications\Affiliate\AffiliatePayoutNotification;
+use App\Services\MoneyService;
 use App\Services\UserServices\UserWalletService;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
@@ -117,6 +119,15 @@ final class AffiliatePayoutService
                         'transaction_id' => $transaction->id,
                         'meta' => array_merge($payout->meta ?? [], ['split' => $split]),
                     ]);
+
+                    $user->notify(new GeneralNotification(
+                        title: 'Commission Disbursed',
+                        message: MoneyService::format($walletAmount).' credited to your wallet as affiliate commission.',
+                        actionUrl: rtrim((string) config('app.client_url'), '/').'/wallet',
+                        actionText: 'View Wallet',
+                        channels: ['database', 'push', 'mail'],
+                        type: 'success',
+                    ));
                 }
 
                 foreach ($split as $fundType => $amount) {

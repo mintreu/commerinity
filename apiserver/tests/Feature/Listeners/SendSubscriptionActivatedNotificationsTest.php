@@ -45,7 +45,7 @@ it('sends notification and sms when the gateway has balance', function () {
         ->once()
         ->with(
             $user->mobile,
-            'subscription-status',
+            'subscription-activated',
             \Mockery::on(fn (array $variables): bool => isset($variables['status'], $variables['plan'], $variables['reference'])),
             'transactional',
             $user->id

@@ -45,7 +45,6 @@ final class JobApplicationNotificationService
             [
                 'name' => (string) ($user->name ?? 'Applicant'),
                 'application_id' => (string) $applicationNumber,
-                'app_name' => (string) config('app.name'),
             ],
         );
     }
@@ -70,7 +69,6 @@ final class JobApplicationNotificationService
             [
                 'name' => (string) ($user->name ?? 'Applicant'),
                 'application_id' => (string) $applicationNumber,
-                'app_name' => (string) config('app.name'),
             ],
         );
     }

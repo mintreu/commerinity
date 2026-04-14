@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace App\Jobs\Wallet;
 
+use App\Contracts\Services\NotificationSmsSenderInterface;
 use App\Casts\PaymentMethodCast;
 use App\Casts\TransactionStatusCast;
 use App\Models\BeneficiaryAccount;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
 use App\Services\IntegrationServices\Payout\Contracts\PayoutProviderInterface;
 use App\Services\IntegrationServices\Payout\DTOs\PayoutRequest;
 use App\Services\IntegrationServices\Payout\DTOs\PayoutResponse;
 use App\Services\IntegrationServices\Payout\Providers\CashfreePayoutProvider;
 use App\Services\IntegrationServices\Payout\Providers\NativePayoutProvider;
+use App\Services\MoneyService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -179,6 +182,8 @@ final class ProcessPayoutJob implements ShouldQueue
                         'provider' => $providerSlug,
                         'utr' => $response->utrNumber,
                     ]);
+
+                    $this->sendWithdrawalSms($transaction, 'withdrawal-settled');
                 } else {
                     // Payout processing - keep transaction on hold
                     $transaction->update([
@@ -191,6 +196,8 @@ final class ProcessPayoutJob implements ShouldQueue
                         'provider' => $providerSlug,
                         'provider_id' => $response->providerPayoutId,
                     ]);
+
+                    $this->sendWithdrawalSms($transaction, 'withdrawal-processing');
                 }
             } else {
                 // Payout failed - refund the held amount
@@ -225,7 +232,36 @@ final class ProcessPayoutJob implements ShouldQueue
                     'reason' => $reason,
                 ]);
             }
+
+            $this->sendWithdrawalSms($transaction, 'withdrawal-failed');
         });
+    }
+
+    private function sendWithdrawalSms(Transaction $transaction, string $templateSlug): void
+    {
+        $wallet = $transaction->wallet;
+        $user = $wallet?->walletable;
+
+        if (! $user instanceof User || empty($user->mobile)) {
+            return;
+        }
+
+        /** @var NotificationSmsSenderInterface $sms */
+        $sms = app(NotificationSmsSenderInterface::class);
+
+        if (! $sms->canSend(1)) {
+            return;
+        }
+
+        $sms->sendTemplate(
+            phone: $user->mobile,
+            templateSlug: $templateSlug,
+            variables: [
+                'number' => MoneyService::toRupeesString($transaction->amount),
+            ],
+            type: 'transactional',
+            userId: $user->id,
+        );
     }
 
     /**

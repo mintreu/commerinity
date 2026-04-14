@@ -49,13 +49,8 @@ final class SendSubscriptionActivatedNotifications implements ShouldQueue
 
         $response = $this->smsService->sendTemplate(
             phone: $user->mobile,
-            templateSlug: 'subscription-status',
-            variables: [
-                'status' => 'activated',
-                'plan' => (string) ($subscription->stage?->name ?? 'Membership'),
-                'reference' => $this->subscriptionReference($subscription),
-                'app_name' => (string) config('app.name'),
-            ],
+            templateSlug: 'subscription-activated',
+            variables: [],
             type: 'transactional',
             userId: $user->id,
         );

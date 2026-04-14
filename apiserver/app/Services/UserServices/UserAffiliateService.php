@@ -9,6 +9,7 @@ use App\Casts\CommissionTypeCast;
 use App\Models\Affiliate\AffiliateCommission;
 use App\Models\Affiliate\AffiliateGenealogy;
 use App\Models\User;
+use App\Notifications\GeneralNotification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -147,6 +148,26 @@ final class UserAffiliateService implements \App\Contracts\Services\UserAffiliat
             // Update upline counters
             if ($sponsor) {
                 $this->incrementUplineCounters($newUser->id);
+
+                $sponsor->notify(new GeneralNotification(
+                    title: 'New Referral Joined',
+                    message: "{$newUser->name} joined your network.",
+                    actionUrl: rtrim((string) config('app.client_url'), '/').'/network',
+                    actionText: 'View Network',
+                    channels: ['database', 'push', 'mail'],
+                    type: 'success',
+                ));
+            }
+
+            if ($originator && $originator->id !== $sponsor?->id) {
+                $originator->notify(new GeneralNotification(
+                    title: 'New Originated Member Joined',
+                    message: "{$newUser->name} joined through your referral flow.",
+                    actionUrl: rtrim((string) config('app.client_url'), '/').'/network',
+                    actionText: 'View Network',
+                    channels: ['database', 'push', 'mail'],
+                    type: 'info',
+                ));
             }
 
             return $genealogy;

@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use App\Models\Address;
 use App\Models\BeneficiaryAccount;
+use App\Models\Ecommerce\Order;
+use App\Models\Kyc;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Observers\AddressObserver;
 use App\Observers\BeneficiaryAccountObserver;
+use App\Observers\KycObserver;
+use App\Observers\OrderObserver;
 use App\Observers\TransactionObserver;
 use App\Observers\UserObserver;
 use App\Services\Notification\NotificationSmsSender;
@@ -38,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
         Transaction::observe(TransactionObserver::class);
         BeneficiaryAccount::observe(BeneficiaryAccountObserver::class);
         Address::observe(AddressObserver::class);
+        Kyc::observe(KycObserver::class);
+        Order::observe(OrderObserver::class);
         if (! app()->environment('testing')) {
             User::observe(UserObserver::class);
         }
