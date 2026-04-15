@@ -110,11 +110,17 @@ class RecruitmentController extends Controller
         $application = $result->getApplication();
         $application->load(['recruitment', 'address']);
 
-        $this->jobApplicationNotificationService->notifyApplied(
-            $request->user(),
-            $application,
-            $result->requiresPayment(),
-        );
+        // If non payable then only send sms from here.. otherwise wait for payment verification area..
+        if (!$recruitment->is_payable)
+        {
+            $this->jobApplicationNotificationService->notifyApplied(
+                $request->user(),
+                $application,
+                $result->requiresPayment(),
+            );
+        }
+
+
 
         return response()->json([
             'message' => $result->requiresPayment()

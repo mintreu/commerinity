@@ -142,7 +142,7 @@ final class DemoUserSeeder extends Seeder
 
         User::create([
             'name' => 'Krishanu',
-            'mobile' => '9876543224',
+            'mobile' => '9800777600',
             'email' => 'krishanu@demo.com',
             'password' => Hash::make('password'),
             'type' => UserTypeCast::REGULAR->value,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Casts\BeneficiaryStatusCast;
+use App\Events\BeneficiarySyncRequested;
 use App\Models\BeneficiaryAccount;
 use App\Services\BeneficiaryAccountService;
 use Illuminate\Support\Facades\Log;
@@ -32,9 +33,11 @@ final class BeneficiaryAccountObserver
         ]);
 
         // If created as already verified (e.g., from admin), sync to Cashfree
-        if ($beneficiaryAccount->isVerified()) {
-            $this->syncToCashfree($beneficiaryAccount);
-        }
+//        if ($beneficiaryAccount->isVerified()) {
+//            $this->syncToCashfree($beneficiaryAccount);
+//        }
+        // auto sync with
+        $this->syncToCashfree($beneficiaryAccount);
     }
 
     /**
@@ -140,7 +143,9 @@ final class BeneficiaryAccountObserver
      */
     private function syncToCashfree(BeneficiaryAccount $beneficiaryAccount): void
     {
-            BeneficiaryAccountService::make($beneficiaryAccount)->sync();
+         //   BeneficiaryAccountService::make($beneficiaryAccount)->sync();
+
+        event(new BeneficiarySyncRequested($beneficiaryAccount));
 
         // This would call CashfreePayoutProvider::createBeneficiary()
         // For now, just log - actual implementation in PayoutService

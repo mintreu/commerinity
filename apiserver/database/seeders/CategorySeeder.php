@@ -66,6 +66,21 @@ class CategorySeeder extends Seeder
             }
         }
 
+
+        // active specific categories
+
+        Category::whereIn('url', [
+            'spices-masalas',
+            'ayurvedic-hair-care',
+            'ayurvedic-oral-care',
+            'mens-fashion',
+            'cases-covers',
+        ])->update([
+            'status' => true
+        ]);
+
+
+
         $this->command->info('Category seeding completed. Total: '.Category::count());
     }
 

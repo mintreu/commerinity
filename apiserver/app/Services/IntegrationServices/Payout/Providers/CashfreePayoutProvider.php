@@ -26,9 +26,9 @@ use Illuminate\Support\Str;
  */
 final class CashfreePayoutProvider implements PayoutProviderInterface
 {
-    private const SANDBOX_URL = 'https://payout-gamma.cashfree.com/payout/v1.2';
+    private const SANDBOX_URL = 'https://sandbox.cashfree.com/payout/';
 
-    private const PRODUCTION_URL = 'https://payout-api.cashfree.com/payout/v1.2';
+    private const PRODUCTION_URL = 'https://api.cashfree.com/payout/';
 
     private ?Integration $integration = null;
 
@@ -719,7 +719,7 @@ final class CashfreePayoutProvider implements PayoutProviderInterface
      */
     private function getBaseUrl(Integration $integration): string
     {
-        return $integration->is_sandbox ? self::SANDBOX_URL : self::PRODUCTION_URL;
+        return $integration->is_sandbox && app()->isLocal() ? self::SANDBOX_URL : self::PRODUCTION_URL;
     }
 
     /**

@@ -377,14 +377,14 @@ const companyValues = [
                 <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors line-clamp-2">
                   {{ job.title }}
                 </h3>
-                <UBadge
-                  v-if="job.is_payable"
-                  color="warning"
-                  size="sm"
-                  class="shrink-0"
-                >
-                  Paid
-                </UBadge>
+<!--                <UBadge-->
+<!--                  v-if="job.is_payable"-->
+<!--                  color="warning"-->
+<!--                  size="sm"-->
+<!--                  class="shrink-0"-->
+<!--                >-->
+<!--                  Paid-->
+<!--                </UBadge>-->
               </div>
 
               <!-- Job Details -->

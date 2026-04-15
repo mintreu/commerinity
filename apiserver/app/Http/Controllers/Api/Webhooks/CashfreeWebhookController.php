@@ -67,7 +67,7 @@ final class CashfreeWebhookController
         // 3. Route to appropriate handler
         try {
             match ($eventType) {
-                'PAYMENT_SUCCESS_WEBHOOK' => $this->handlePaymentSuccess($request),
+                'PAYMENT_SUCCESS_WEBHOOK,PAYMENT_VERIFICATION_UPDATE' => $this->handlePaymentSuccess($request),
                 'PAYMENT_FAILED_WEBHOOK' => $this->handlePaymentFailed($request),
                 'PAYMENT_USER_DROPPED_WEBHOOK' => $this->handlePaymentDropped($request),
                 'REFUND_STATUS_WEBHOOK' => $this->handleRefund($request),
@@ -213,7 +213,8 @@ final class CashfreeWebhookController
      */
     private function handlePaymentSuccess(Request $request): void
     {
-        $orderId = $request->input('data.order.order_id');
+        $orderId = $request->input('data.order_id') ?? $request->input('data.order.order_id');
+        $isPaid = $request->input('data.payment_status') == 'SUCCESS';
         $transaction = Transaction::where('uuid', $orderId)->first();
 
         if (! $transaction) {
@@ -230,7 +231,7 @@ final class CashfreeWebhookController
         }
 
         $transaction->update([
-            'status' => TransactionStatusCast::COMPLETED,
+            'status' => $isPaid ? TransactionStatusCast::COMPLETED : TransactionStatusCast::ON_HOLD,
             'provider_reference' => $request->input('data.payment.cf_payment_id'),
             'provider_response' => $request->all(),
             'completed_at' => now(),

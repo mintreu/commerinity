@@ -220,6 +220,8 @@ final class HandlePaymentCompleted
     }
 
     /**
+     * Verify Payment Transaction
+     * From Listener
      * Handle recruitment fee payment
      */
     private function handleRecruitmentPayment(mixed $transaction, JobApplication $application): void

@@ -2,7 +2,8 @@
 import type { User } from '~/types/user'
 
 definePageMeta({
-  middleware: ['auth-redirect']
+  middleware: ['auth-redirect'],
+  layout: 'public'
 })
 
 const route = useRoute()
@@ -88,7 +89,7 @@ watch(addresses, (addrs) => {
 
 const addressOptions = computed(() => {
   return addresses.value.map((addr: Address) => ({
-    label: `${addr.title} - ${addr.address_1}${addr.city ? `, ${addr.city}` : ''}`,
+    label: `${addr.address_1}${addr.city ? `, ${addr.city}` : ''}`,
     value: addr.uuid
   }))
 })

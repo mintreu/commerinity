@@ -22,5 +22,8 @@ class EventServiceProvider extends ServiceProvider
         CommissionProcessed::class => [
             SendCommissionProcessedNotification::class,
         ],
+        \App\Events\BeneficiarySyncRequested::class => [
+            \App\Listeners\SyncBeneficiaryToCashfreeListener::class,
+        ],
     ];
 }

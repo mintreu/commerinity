@@ -229,7 +229,7 @@ class CatalogController extends Controller
         return CategoryResource::collection(
             Category::with(['media', 'children' => $childrenQuery])
                 ->withCount(['catalogProducts as products_count'])
-                ->where('is_featured', true)
+                //->where('is_featured', true) // column removed
                 ->take(8)
                 ->get()
         );

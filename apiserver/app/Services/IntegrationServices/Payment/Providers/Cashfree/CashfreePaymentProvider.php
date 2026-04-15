@@ -339,7 +339,7 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
     {
         $resolvedIntegration = $integration ?? $this->getIntegration();
 
-        return (bool) ($resolvedIntegration?->is_sandbox ?? app()->isLocal());
+        return (bool) ($resolvedIntegration?->is_sandbox && app()->isLocal());
     }
 
     /**
