@@ -72,7 +72,7 @@ final class PublicStatsController extends Controller
      */
     private function getActiveCategoriesCount(): array
     {
-        $count = \App\Models\Ecommerce\Category::where('status', 'active')->count();
+        $count = \App\Models\Ecommerce\Category::where('status', true)->count();
 
         return [
             'value' => $count,
