@@ -57,6 +57,10 @@ class AppInstallerCommand extends Command
         // $this->call('laravel-geokit:seed');
         $this->call('db:seed');
 
+        // Create Vapid Webpush key
+        $this->call('webpush:vapid');
+        $this->info('Generating vapid webpush key');
+
         $this->info('Caching system configurations and optimizing system');
         $this->call('optimize');
         $this->info('System now cached and optimized');
