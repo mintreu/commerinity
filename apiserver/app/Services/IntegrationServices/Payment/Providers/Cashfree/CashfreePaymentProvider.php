@@ -335,24 +335,11 @@ final class CashfreePaymentProvider implements PaymentProviderInterface
         return $this->isSandboxMode($integration) ? self::SANDBOX_URL : self::PRODUCTION_URL;
     }
 
-    /**
-     * Resolve sandbox mode with env override support.
-     * Priority:
-     * 1) services.payment.cashfree.sandbox (CASH_FREE_PAYMENT_SANDBOX) when set
-     * 2) integration.is_sandbox
-     */
     public function isSandboxMode(?Integration $integration = null): bool
     {
-        $sandboxOverride = config('services.payment.cashfree.sandbox');
-
-        if ($sandboxOverride !== null && $sandboxOverride !== '') {
-            return filter_var($sandboxOverride, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE)
-                ?? (bool) $sandboxOverride;
-        }
-
         $resolvedIntegration = $integration ?? $this->getIntegration();
 
-        return (bool) ($resolvedIntegration?->is_sandbox ?? true);
+        return (bool) ($resolvedIntegration?->is_sandbox ?? app()->isLocal());
     }
 
     /**

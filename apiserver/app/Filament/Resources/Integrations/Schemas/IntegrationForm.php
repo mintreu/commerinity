@@ -94,7 +94,7 @@ class IntegrationForm
                             Toggle::make('is_sandbox')
                                 ->label('Sandbox')
                                 ->required()
-                                ->default(false)
+                                ->default(fn (): bool => app()->isLocal())
                                 ->onIcon('heroicon-o-check-circle')
                                 ->offIcon('heroicon-o-x-circle'),
 

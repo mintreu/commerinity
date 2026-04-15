@@ -222,18 +222,32 @@ class RecruitmentController extends Controller
             ], 400);
         }
 
-        // Create payment transaction
-        $result = JobApplicationService::initiatePayment(
-            $application,
-            $request->user(),
-            $request->input('payment_method')
-        );
+        try {
+            // Create payment transaction
+            $result = JobApplicationService::initiatePayment(
+                $application,
+                $request->user(),
+                $request->input('payment_method')
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment gateway is currently unavailable. Please try again later.',
+            ], 503);
+        }
 
         if (! $result['success']) {
+            $status = str_contains(strtolower((string) ($result['message'] ?? '')), 'gateway')
+                || str_contains(strtolower((string) ($result['message'] ?? '')), 'configured')
+                ? 503
+                : 422;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'] ?? 'Failed to initiate payment.',
-            ], 500);
+            ], $status);
         }
 
         return response()->json([

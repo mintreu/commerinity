@@ -58,6 +58,10 @@ class Integration extends Model
             if (! $integration->uuid) {
                 $integration->uuid = Str::uuid()->toString();
             }
+
+            if ($integration->is_sandbox === null) {
+                $integration->is_sandbox = app()->isLocal();
+            }
         });
     }
 

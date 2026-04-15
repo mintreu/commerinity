@@ -449,13 +449,14 @@ final class CommissionTrendService extends BaseTrendService
     public function getComparisonStats(int $userId, string $period = 'month'): array
     {
         $dates = $this->parsePeriod($period);
+        $periodDays = max(1, $dates['start']->diffInDays($dates['end']) + 1);
 
         $currentQuery = AffiliateCommission::query()
             ->where('user_id', $userId)
             ->where('status', '!=', CommissionStatusCast::REVERSED->value)
             ->whereBetween('commission_date', [$dates['start'], $dates['end']]);
 
-        $previousStart = $dates['start']->copy()->subDays($dates['days']);
+        $previousStart = $dates['start']->copy()->subDays($periodDays);
         $previousEnd = $dates['start']->copy()->subDay();
 
         $previousQuery = AffiliateCommission::query()
