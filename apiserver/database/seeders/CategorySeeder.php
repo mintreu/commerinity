@@ -28,7 +28,7 @@ class CategorySeeder extends Seeder
                 ['url' => Str::slug($item->name)],
                 [
                     'name' => $item->name,
-                    'status' => true,
+                    'status' => false,
                 ]
             );
 
@@ -42,7 +42,7 @@ class CategorySeeder extends Seeder
                         [
                             'name' => $child->name,
                             'parent_id' => $parentCategory->id,
-                            'status' => true,
+                            'status' => false,
                         ]
                     );
 
@@ -55,7 +55,7 @@ class CategorySeeder extends Seeder
                                 [
                                     'name' => $subChild->name,
                                     'parent_id' => $childCategory->id,
-                                    'status' => true,
+                                    'status' => false,
                                 ]
                             );
 
@@ -67,22 +67,56 @@ class CategorySeeder extends Seeder
         }
 
 
-        // active specific categories
+//        // active specific categories
+//
+//        Category::whereIn('url', [
+//            'spices-masalas',
+//            'ayurvedic-hair-care',
+//            'ayurvedic-oral-care',
+//            'mens-fashion',
+//            'cases-covers',
+//        ])->update([
+//            'status' => true
+//        ]);
 
-        Category::whereIn('url', [
+
+        self::activateWithParents([
             'spices-masalas',
             'ayurvedic-hair-care',
             'ayurvedic-oral-care',
             'mens-fashion',
             'cases-covers',
-        ])->update([
-            'status' => true
         ]);
-
 
 
         $this->command->info('Category seeding completed. Total: '.Category::count());
     }
+
+
+    public static function activateWithParents(array $urls): void
+    {
+        $ids = [];
+
+        $categories = Category::with('ancestors') // correct relation
+        ->whereIn('url', $urls)
+            ->get();
+
+        foreach ($categories as $category) {
+            // self + all parents
+            $ids[] = $category->id;
+
+            foreach ($category->ancestors as $parent) {
+                $ids[] = $parent->id;
+            }
+        }
+
+        Category::whereIn('id', array_unique($ids))
+            ->update(['status' => true]);
+    }
+
+
+
+
 
     /**
      * Attach thumbnail image using Spatie Media Library
