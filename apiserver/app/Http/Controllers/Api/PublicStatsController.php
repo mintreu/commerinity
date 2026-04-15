@@ -58,7 +58,7 @@ final class PublicStatsController extends Controller
      */
     private function getTotalProductsCount(): array
     {
-        $count = \App\Models\Ecommerce\Product::count();
+        $count = \App\Models\Ecommerce\Product::Purchasable()->count();
 
         return [
             'value' => $count,
