@@ -1,9 +1,0 @@
-{
-  "enabledMcpjsonServers": [
-    "intelligent-index",
-    "laravel-backend",
-    "nuxt-ui-remote",
-    "frontend-filesystem",
-    "puppeteer"
-  ]
-}
