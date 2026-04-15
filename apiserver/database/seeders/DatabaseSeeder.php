@@ -42,9 +42,11 @@ class DatabaseSeeder extends Seeder
         $this->runProductionSeeders();
 
         // Run staging seeders only in non-production environment
-        if (app()->environment(['local', 'staging', 'testing'])) {
-            $this->runStagingSeeders();
-        }
+//        if (app()->environment(['local', 'staging', 'testing'])) {
+//            $this->runStagingSeeders();
+//        }
+
+        $this->runStagingSeeders();
 
         $this->command->info('');
         $this->command->info('✅ Database seeding completed successfully!');
