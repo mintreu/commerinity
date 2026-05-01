@@ -56,11 +56,12 @@
                   to="/"
                   class="inline-flex items-center gap-3 mb-6 group"
                 >
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/25 group-hover:scale-105 transition-transform">
-                    <UIcon
-                      name="i-lucide-hexagon"
-                      class="w-6 h-6 text-white"
-                    />
+                  <div class="w-12 h-12 rounded-full  flex items-center justify-center  group-hover:scale-105 transition-transform">
+                    <img
+                      src="/logo.png"
+                      :alt="config.public.companyName"
+                      class="h-10 w-auto"
+                    >
                   </div>
                   <div>
                     <h3 class="text-2xl font-bold gradient-text-primary">{{ config.public.companyName }}</h3>

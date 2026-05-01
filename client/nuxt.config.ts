@@ -17,10 +17,10 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'VVIndia – Your Online Shopping Destination',
-      titleTemplate: '%s | VVIndia',
+      title: 'VRIDDHI VIKASH – Your Online Shopping Destination',
+      titleTemplate: '%s | VRIDDHI VIKASH',
       meta: [
-        { name: 'description', content: 'VVIndia – Your trusted online marketplace for quality products, smart deals, and rewarding shopping experiences.' },
+        { name: 'description', content: 'VRIDDHI VIKASH – Your trusted online marketplace for quality products, smart deals, and rewarding shopping experiences.' },
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=5' },
         { name: 'theme-color', content: '#a855f7' },
@@ -29,11 +29,11 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
         { name: 'apple-mobile-web-app-title', content: 'CMP' },
-        { name: 'application-name', content: 'VVIndia' },
+        { name: 'application-name', content: 'VRIDDHI VIKASH' },
         { name: 'msapplication-TileColor', content: '#a855f7' },
         // Open Graph
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'VVIndia' }
+        { property: 'og:site_name', content: 'VRIDDHI VIKASH' }
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -51,17 +51,17 @@ export default defineNuxtConfig({
     public: {
       // API Configuration
       // Development
-       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
-       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+      //  apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
+      //  siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       // Production
-      //apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
-      //siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://panel.vvindia.in',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://www.vvindia.in',
 
       // Branding (can be overridden via .env)
-      appName: process.env.NUXT_PUBLIC_APP_NAME || 'VVIndia',
+      appName: process.env.NUXT_PUBLIC_APP_NAME || 'VRIDDHI VIKASH',
       appShortName: process.env.NUXT_PUBLIC_APP_SHORT_NAME || 'VVIN',
-      companyName: process.env.NUXT_PUBLIC_COMPANY_NAME || 'VVIndia',
-      companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'VVIndia ',
+      companyName: process.env.NUXT_PUBLIC_COMPANY_NAME || 'VRIDDHI VIKASH',
+      companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'VRIDDHI VIKASH',
       tagline: process.env.NUXT_PUBLIC_TAGLINE || 'India’s Smart Shopping Network.',
 
       // Contact Information
