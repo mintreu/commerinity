@@ -922,22 +922,27 @@ const addToCart = async (product: typeof products.value[0]) => {
                   {{ product.discount_percent }}% OFF
                 </div>
 
-                <!-- BV/PV Badge -->
+                <!-- BV/PV or Coins Badge -->
                 <div
-                  v-if="canSeeAffiliateBenefits && product.bv > 0"
-                  class="absolute top-2 right-2 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded"
+                  v-if="canSeeAffiliateBenefits"
+                  class="absolute top-2 right-2 flex flex-col gap-1"
                 >
-                  {{ product.bv }} BV
-                </div>
-                <div
-                  v-else-if="!isLoggedIn && product.reward_points > 0"
-                  class="absolute top-2 right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
-                >
-                  <UIcon
-                    name="i-lucide-coins"
-                    class="w-3.5 h-3.5"
-                  />
-                  <span>Coins</span>
+                  <div
+                    v-if="product.bv > 0"
+                    class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded"
+                  >
+                    {{ product.bv }} BV
+                  </div>
+                  <div
+                    v-if="product.reward_points > 0"
+                    class="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
+                  >
+                    <UIcon
+                      name="i-lucide-coins"
+                      class="w-3.5 h-3.5"
+                    />
+                    <span>{{ product.reward_points }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -989,16 +994,6 @@ const addToCart = async (product: typeof products.value[0]) => {
                   class="text-xs text-emerald-600 dark:text-emerald-400 mb-3"
                 >
                   Earn {{ product.reward_points }} coins
-                </div>
-                <div
-                  v-else-if="!isLoggedIn && product.reward_points > 0"
-                  class="text-xs text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-1"
-                >
-                  <UIcon
-                    name="i-lucide-coins"
-                    class="w-3.5 h-3.5"
-                  />
-                  <span>Sign in to earn coins</span>
                 </div>
 
                 <!-- Add to Cart -->

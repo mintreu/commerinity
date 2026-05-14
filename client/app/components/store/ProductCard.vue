@@ -142,24 +142,27 @@ const truncatedDescription = computed(() => {
         {{ product.sale_name }}
       </div>
 
-      <!-- Affiliate Badge - Only for Member/Promoter -->
+      <!-- Affiliate Badges - Only for Member/Promoter -->
       <div
-        v-if="canEarnAffiliateBenefits && product.bv > 0"
-        class="absolute top-3 right-3 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg"
+        v-if="canEarnAffiliateBenefits"
+        class="absolute top-3 right-3 flex flex-col gap-1 items-end"
       >
-        {{ product.bv }} BV
-      </div>
-
-      <!-- Guest Coins Badge -->
-      <div
-        v-else-if="!isLoggedIn && product.reward_points > 0"
-        class="absolute top-3 right-3 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg"
-      >
-        <UIcon
-          name="i-lucide-coins"
-          class="w-3.5 h-3.5 mr-1 inline-block"
-        />
-        Coins
+        <div
+          v-if="product.bv > 0"
+          class="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg"
+        >
+          {{ product.bv }} BV
+        </div>
+        <div
+          v-if="product.reward_points > 0"
+          class="bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg flex items-center gap-1"
+        >
+          <UIcon
+            name="i-lucide-coins"
+            class="w-3.5 h-3.5"
+          />
+          {{ product.reward_points }}
+        </div>
       </div>
 
       <!-- Quick View on Hover -->
@@ -249,21 +252,8 @@ const truncatedDescription = computed(() => {
         </div>
       </div>
 
-      <!-- Guest: Encourage Sign In -->
-      <div
-        v-else-if="!isLoggedIn && product.reward_points > 0"
-        class="text-xs text-purple-600 dark:text-purple-400 font-semibold mb-2 bg-purple-50 dark:bg-purple-900/20 px-2 py-1.5 rounded-lg mt-auto"
-      >
-        <UIcon
-          name="i-lucide-coins"
-          class="w-3.5 h-3.5 mr-1 inline-block"
-        />
-        Sign in to earn coins
-      </div>
-
       <!-- Spacer for consistent card height -->
       <div
-        v-else
         class="mt-auto"
       />
 

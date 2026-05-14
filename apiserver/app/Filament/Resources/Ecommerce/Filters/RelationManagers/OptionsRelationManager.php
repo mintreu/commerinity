@@ -32,7 +32,6 @@ class OptionsRelationManager extends RelationManager
 
                 Toggle::make('is_required')->default(false),
 
-                Select::make('filter_id')->relationship('filter')->required(),
 
 
             ]);
@@ -48,7 +47,9 @@ class OptionsRelationManager extends RelationManager
                 TextColumn::make('value'),
                 IconColumn::make('is_required')
                     ->label('Required')
-                    ->default(false)->boolean()
+                    ->default(false)->boolean(),
+
+                TextColumn::make('filter.name')->badge()
 
             ])
             ->filters([])

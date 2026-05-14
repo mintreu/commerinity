@@ -6,6 +6,7 @@ use App\Filament\Resources\Ecommerce\FilterGroups\Pages\CreateFilterGroup;
 use App\Filament\Resources\Ecommerce\FilterGroups\Pages\EditFilterGroup;
 use App\Filament\Resources\Ecommerce\FilterGroups\Pages\ListFilterGroups;
 use App\Filament\Resources\Ecommerce\FilterGroups\Pages\ViewFilterGroup;
+use App\Filament\Resources\Ecommerce\FilterGroups\RelationManagers\FiltersRelationManager;
 use App\Filament\Resources\Ecommerce\FilterGroups\Schemas\FilterGroupForm;
 use App\Filament\Resources\Ecommerce\FilterGroups\Schemas\FilterGroupInfolist;
 use App\Filament\Resources\Ecommerce\FilterGroups\Tables\FilterGroupsTable;
@@ -42,7 +43,7 @@ class FilterGroupResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            FiltersRelationManager::class
         ];
     }
 

@@ -566,20 +566,23 @@ const showMobileFilters = ref(false)
                       </div>
                     </div>
 
-                    <!-- Right badges -->
-                    <div class="absolute top-2 right-2">
+                    <!-- Right badges (Member only) -->
+                    <div
+                      v-if="canSeeAffiliateBenefits"
+                      class="absolute top-2 right-2 flex flex-col gap-1 items-end"
+                    >
                       <div
-                        v-if="canSeeAffiliateBenefits && product.bv > 0"
+                        v-if="product.bv > 0"
                         class="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow"
                       >
                         {{ product.bv }} BV
                       </div>
                       <div
-                        v-else-if="!isLoggedIn && product.reward_points > 0"
+                        v-if="product.reward_points > 0"
                         class="bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow flex items-center gap-0.5"
                       >
                         <UIcon name="i-lucide-coins" class="w-3 h-3" />
-                        Coins
+                        {{ product.reward_points }}
                       </div>
                     </div>
                   </div>
@@ -600,20 +603,13 @@ const showMobileFilters = ref(false)
                         <span v-if="product.original_price_formatted" class="text-xs text-slate-400 line-through">{{ product.original_price_formatted }}</span>
                       </div>
 
-                      <!-- Reward info -->
+                      <!-- Reward info (Member only) -->
                       <div
                         v-if="canSeeAffiliateBenefits && product.reward_points > 0"
                         class="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1"
                       >
                         <UIcon name="i-lucide-coins" class="w-3 h-3" />
                         Earn {{ product.reward_points }} coins
-                      </div>
-                      <div
-                        v-else-if="!isLoggedIn && product.reward_points > 0"
-                        class="text-[11px] text-violet-600 dark:text-violet-400 flex items-center gap-1"
-                      >
-                        <UIcon name="i-lucide-coins" class="w-3 h-3" />
-                        Sign in to earn coins
                       </div>
                     </div>
                   </div>

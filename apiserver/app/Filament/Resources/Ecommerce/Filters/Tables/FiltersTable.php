@@ -20,6 +20,12 @@ class FiltersTable
                     ->searchable(),
                 IconColumn::make('is_required')
                     ->boolean(),
+
+                TextColumn::make('options_count')->label('Total Options')->counts('options')->badge(),
+
+                TextColumn::make('groups.name')->badge(),
+
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

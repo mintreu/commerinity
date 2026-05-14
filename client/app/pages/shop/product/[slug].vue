@@ -817,18 +817,6 @@ onMounted(() => {
               </span>
             </div>
 
-            <!-- Guest reward teaser -->
-            <div
-              v-else-if="!isLoggedIn && product.reward_points > 0"
-              class="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 font-medium bg-purple-50 dark:bg-purple-900/20 px-3 py-2 rounded-lg"
-            >
-              <UIcon
-                name="i-lucide-coins"
-                class="w-4 h-4"
-              />
-              Sign in to earn coins on this purchase
-            </div>
-
             <!-- Short Description -->
             <p
               v-if="product.short_description"

@@ -17,6 +17,11 @@ class FilterGroupsTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+
+                TextColumn::make('filters_count')->counts('filters')->badge(),
+
+
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

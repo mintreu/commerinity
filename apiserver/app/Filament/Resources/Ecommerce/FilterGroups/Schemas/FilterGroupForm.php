@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Ecommerce\FilterGroups\Schemas;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class FilterGroupForm
@@ -11,8 +12,13 @@ class FilterGroupForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required(),
+               Section::make('Filter Group Information')
+                ->aside()
+                   ->columnSpanFull()
+                ->schema([
+                    TextInput::make('name')
+                        ->required(),
+                ])
             ]);
     }
 }

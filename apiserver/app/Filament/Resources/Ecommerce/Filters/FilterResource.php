@@ -6,6 +6,7 @@ use App\Filament\Resources\Ecommerce\Filters\Pages\CreateFilter;
 use App\Filament\Resources\Ecommerce\Filters\Pages\EditFilter;
 use App\Filament\Resources\Ecommerce\Filters\Pages\ListFilters;
 use App\Filament\Resources\Ecommerce\Filters\Pages\ViewFilter;
+use App\Filament\Resources\Ecommerce\Filters\RelationManagers\OptionsRelationManager;
 use App\Filament\Resources\Ecommerce\Filters\Schemas\FilterForm;
 use App\Filament\Resources\Ecommerce\Filters\Schemas\FilterInfolist;
 use App\Filament\Resources\Ecommerce\Filters\Tables\FiltersTable;
@@ -42,7 +43,7 @@ class FilterResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OptionsRelationManager::class
         ];
     }
 

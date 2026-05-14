@@ -136,12 +136,12 @@ class ProductInfolist
                                 ->collapsible()
                                 ->collapsed()
                                 ->schema([
-                                    TextEntry::make('description')
+                                    TextEntry::make('flat.description')
                                         ->hiddenLabel()
                                         ->placeholder('-')
                                         ->html()
                                         ->alignJustify()
-                                        ->getStateUsing(fn(Model $record) => RichContentRenderer::make($record->description)->toHtml())
+                                        //->getStateUsing(fn(Model $record) => RichContentRenderer::make($record->description)->toHtml())
                                         ->columnSpanFull(),
                                 ])
                                 ->columnSpanFull(),
