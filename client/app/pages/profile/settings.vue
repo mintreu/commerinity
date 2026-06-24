@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Settings - Premium Mintreu Design
+ * Settings - Premium VRIDDHI VIKASH Design
  * Enhanced visual hierarchy with glassmorphic cards and polished typography
  */
 
@@ -155,7 +155,7 @@ const deleteAccount = async () => {
           </h3>
         </div>
         <p class="text-xs text-red-600/70 font-medium mb-6">
-          Deleting your account will purge all transaction history, active subscriptions, and network positions. This cannot be recovered.
+          Deleting your account will purge all transaction history, active subscriptions, and affiliate status. This cannot be recovered.
         </p>
         <UButton
           color="error"

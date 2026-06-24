@@ -64,7 +64,7 @@ const totalFundBalance = computed(() => accounts.value.reduce((sum, acc) => sum 
       <UTabs
         v-model="activeTab"
         :items="[
-          { label: 'Volume Ledger', value: 'ledger', icon: 'i-lucide-network' },
+          { label: 'Volume Ledger', value: 'ledger', icon: 'i-lucide-layers' },
           { label: 'Benefit Funds', value: 'funds', icon: 'i-lucide-vault' }
         ]"
         class="w-full"
@@ -126,11 +126,11 @@ const totalFundBalance = computed(() => accounts.value.reduce((sum, acc) => sum 
                 <span class="text-xs text-slate-500">{{ formatDate(entry.created_at, 'short') }}</span>
               </div>
               <div class="mt-2 text-sm text-slate-700 dark:text-slate-200">
-                BV <strong>{{ entry.bv }}</strong> • PV <strong>{{ entry.pv }}</strong>
+                Volume <strong>{{ entry.bv }}</strong> • Points <strong>{{ entry.pv }}</strong>
               </div>
             </div>
             <div class="text-xs text-slate-500">
-              Level {{ entry.depth }}
+              Tier {{ entry.depth }}
             </div>
           </div>
         </div>

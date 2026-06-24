@@ -151,7 +151,7 @@ const truncatedDescription = computed(() => {
           v-if="product.bv > 0"
           class="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-lg"
         >
-          {{ product.bv }} BV
+          {{ product.bv }} Vol
         </div>
         <div
           v-if="product.reward_points > 0"
@@ -229,10 +229,10 @@ const truncatedDescription = computed(() => {
             name="i-lucide-coins"
             class="w-3.5 h-3.5"
           />
-          Earn {{ product.reward_points }} coins
+          Earn {{ product.reward_points }} reward points
         </div>
 
-        <!-- BV/PV Info -->
+        <!-- Volume/Points Info -->
         <div
           v-if="product.bv > 0 || product.pv > 0"
           class="flex gap-1.5 text-xs mb-2"
@@ -241,13 +241,13 @@ const truncatedDescription = computed(() => {
             v-if="product.bv"
             class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded font-semibold"
           >
-            BV: {{ product.bv }}
+            Vol: {{ product.bv }}
           </span>
           <span
             v-if="product.pv"
             class="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded font-semibold"
           >
-            PV: {{ product.pv }}
+            Pts: {{ product.pv }}
           </span>
         </div>
       </div>

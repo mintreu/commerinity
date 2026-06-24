@@ -199,7 +199,10 @@
             <!-- Bottom Bar -->
             <div class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
               <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-600 dark:text-slate-400">
-                <p>&copy; {{ currentYear }} {{ config.public.companyName }}. All rights reserved.</p>
+                <div class="text-center md:text-left">
+                  <p>&copy; {{ currentYear }} {{ config.public.companyName }}. All rights reserved.</p>
+                  <p class="text-xs mt-1 opacity-80">Owned and Operated by <strong>{{ config.public.companyLegalName || config.public.companyName }}</strong></p>
+                </div>
                 <div class="flex items-center gap-6 flex-wrap justify-center">
                   <NuxtLink
                     to="/privacy"
@@ -218,6 +221,12 @@
                     class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
                   >
                     Cookie Policy
+                  </NuxtLink>
+                  <NuxtLink
+                    to="/rewards"
+                    class="hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
+                    Rewards Program
                   </NuxtLink>
                 </div>
               </div>
@@ -316,9 +325,9 @@ const showScrollTop = ref(false)
 
 // Site config
 const siteConfig = {
-  email: config.public.supportEmail || 'support@commerinity.com',
-  phone: config.public.phoneNumber || '+91 98765 43210',
-  address: config.public.address || 'Kolkata, West Bengal 700156, India'
+  email: config.public.supportEmail,
+  phone: config.public.supportPhone,
+  address: config.public.companyAddress
 }
 
 const socialLinks = [

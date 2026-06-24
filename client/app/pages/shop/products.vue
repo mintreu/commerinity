@@ -9,10 +9,11 @@ import { getContextualApiError, getEmptyStateMessage } from '~/utils/api-error'
 definePageMeta({
   layout: 'public'
 })
-
+const config = useRuntimeConfig()
+const companyName = config.public.companyName;
 useSeoMeta({
-  title: 'Shop - VVIN',
-  description: 'Explore our premium products. Quality products at great prices with Affiliate rewards.'
+  title: 'Shop - '.companyName,
+  description: 'Explore our premium products. Quality products at great prices with rewards.'
 })
 
 interface FilterOption {
@@ -77,7 +78,7 @@ interface CatalogProductsResponse {
   links?: Record<string, string | null>
 }
 
-const config = useRuntimeConfig()
+
 const route = useRoute()
 
 const parseNumberFromQuery = (value?: string | string[]): number | null => {
@@ -922,7 +923,7 @@ const addToCart = async (product: typeof products.value[0]) => {
                   {{ product.discount_percent }}% OFF
                 </div>
 
-                <!-- BV/PV or Coins Badge -->
+                <!-- Volume or Coins Badge -->
                 <div
                   v-if="canSeeAffiliateBenefits"
                   class="absolute top-2 right-2 flex flex-col gap-1"
@@ -931,7 +932,7 @@ const addToCart = async (product: typeof products.value[0]) => {
                     v-if="product.bv > 0"
                     class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded"
                   >
-                    {{ product.bv }} BV
+                    {{ product.bv }} Vol
                   </div>
                   <div
                     v-if="product.reward_points > 0"

@@ -16,7 +16,7 @@ const config = useRuntimeConfig()
         <div class="mb-4">
           <img
             src="/logo.png"
-            alt="Mintreu Logo"
+            alt="VRIDDHI VIKASH Logo"
             class="h-16 sm:h-20 md:h-24 w-auto mx-auto"
           >
         </div>
@@ -27,23 +27,23 @@ const config = useRuntimeConfig()
             name="i-lucide-sparkles"
             class="w-4 h-4 mr-2"
           />
-          <span>All-in-One Business Platform</span>
+          <span>Premium E-Commerce Destination</span>
         </div>
 
         <!-- Main Title -->
         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight tracking-tight">
-          <span class="block text-slate-900 dark:text-white">Transform Your</span>
-          <span class="block gradient-text-animated">Business Dreams</span>
-          <span class="block text-slate-900 dark:text-white">Into Reality</span>
+          <span class="block text-slate-900 dark:text-white">Discover Quality</span>
+          <span class="block gradient-text-animated">Premium Products</span>
+          <span class="block text-slate-900 dark:text-white">Delivered To You</span>
         </h1>
 
         <!-- Subtitle -->
         <p class="max-w-3xl text-slate-600 dark:text-slate-300 font-medium text-base sm:text-lg md:text-xl leading-relaxed">
-          The ultimate platform combining
-          <span class="font-bold text-pink-600 dark:text-pink-400">E-Commerce</span>, and
-          <span class="font-bold text-violet-600 dark:text-violet-400">Business Marketing</span>,
-          <span class="font-bold text-blue-600 dark:text-blue-400">Career Opportunities</span>
-          — all in one powerful ecosystem
+          The ultimate shopping destination for
+          <span class="font-bold text-pink-600 dark:text-pink-400">Quality Goods</span>,
+          <span class="font-bold text-violet-600 dark:text-violet-400">Exclusive Deals</span>, and
+          <span class="font-bold text-blue-600 dark:text-blue-400">Exceptional Service</span>
+          — all in one seamless experience
         </p>
 
         <!-- CTA Buttons -->

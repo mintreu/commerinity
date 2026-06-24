@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Profile Dashboard - Premium Mintreu Design
+ * Profile Dashboard - Premium VRIDDHI VIKASH Design
  * Displays user identity, status, and business metrics (PV, Rank, Directs)
  */
 
@@ -34,43 +34,43 @@ const currentStage = computed(() => genealogy.value?.stage)
 
 // Format PV with suffix
 const formatPV = (pv: number | undefined) => {
-  if (!pv) return '0 PV'
-  if (pv >= 1000) return `${(pv / 1000).toFixed(1)}k PV`
-  return `${pv} PV`
+  if (!pv) return '0 Points'
+  if (pv >= 1000) return `${(pv / 1000).toFixed(1)}k Points`
+  return `${pv} Points`
 }
 
-// Business metrics computed from genealogy
+// Business metrics computed from community data
 const businessStats = computed(() => {
   const g = genealogy.value
   if (!g) {
     return [
       { label: 'Direct Referrals', value: user.value?.team_summary?.direct_count || 0, icon: 'i-lucide-users', color: 'blue' },
-      { label: 'Network Points', value: '0 PV', icon: 'i-lucide-zap', color: 'amber' },
+      { label: 'Community Points', value: '0 Points', icon: 'i-lucide-zap', color: 'amber' },
       { label: 'Commission Earned', value: formatCurrency(0), icon: 'i-lucide-award', color: 'emerald' }
     ]
   }
 
   return [
     { label: 'Direct Referrals', value: g.direct_count, icon: 'i-lucide-users', color: 'blue' },
-    { label: 'Team Points (PV)', value: formatPV(g.team_pv), icon: 'i-lucide-zap', color: 'amber' },
+    { label: 'Team Points', value: formatPV(g.team_pv), icon: 'i-lucide-zap', color: 'amber' },
     { label: 'Total Earned', value: formatCurrency(g.total_team_sales), icon: 'i-lucide-award', color: 'emerald' }
   ]
 })
 
-// Network breakdown stats
+// Community breakdown stats
 const networkStats = computed(() => {
   const g = genealogy.value
   if (!g) return []
 
   return [
-    { label: 'Level 1', value: g.level_1_count, icon: 'i-lucide-circle-1' },
-    { label: 'Level 2', value: g.level_2_count, icon: 'i-lucide-circle-2' },
-    { label: 'Level 3', value: g.level_3_count, icon: 'i-lucide-circle-3' },
-    { label: 'Level 4', value: g.level_4_count, icon: 'i-lucide-circle-4' }
+    { label: 'Tier 1', value: g.level_1_count, icon: 'i-lucide-circle-1' },
+    { label: 'Tier 2', value: g.level_2_count, icon: 'i-lucide-circle-2' },
+    { label: 'Tier 3', value: g.level_3_count, icon: 'i-lucide-circle-3' },
+    { label: 'Tier 4', value: g.level_4_count, icon: 'i-lucide-circle-4' }
   ]
 })
 
-// PV Progress data
+// Points Progress data
 const pvProgress = computed(() => {
   const g = genealogy.value
   if (!g || !currentStage.value) return { personal: { current: 0, target: 100, percent: 0 }, team: { current: 0, target: 100, percent: 0 } }
@@ -395,7 +395,7 @@ const formatGender = (gender: string | null) => {
           </div>
         </div>
 
-        <!-- PV Progress -->
+        <!-- Points Progress -->
         <div
           v-if="genealogy"
           class="glass-card p-8 border-none ring-1 ring-slate-200 dark:ring-slate-800"
@@ -404,14 +404,14 @@ const formatGender = (gender: string | null) => {
             Progress to Next Level
           </h3>
 
-          <!-- Personal PV -->
+          <!-- Personal Points -->
           <div class="space-y-3 mb-6">
             <div class="flex justify-between items-center text-xs">
               <span class="font-black text-slate-900 dark:text-white uppercase flex items-center gap-2">
                 <UIcon
                   name="i-lucide-user"
                   class="w-4 h-4"
-                /> Personal PV
+                /> Personal Points
               </span>
               <span class="font-bold text-slate-400">{{ pvProgress.personal.current }} / {{ pvProgress.personal.target }}</span>
             </div>
@@ -423,14 +423,14 @@ const formatGender = (gender: string | null) => {
             </div>
           </div>
 
-          <!-- Team PV -->
+          <!-- Community Points -->
           <div class="space-y-3">
             <div class="flex justify-between items-center text-xs">
               <span class="font-black text-slate-900 dark:text-white uppercase flex items-center gap-2">
                 <UIcon
                   name="i-lucide-users"
                   class="w-4 h-4"
-                /> Team PV
+                /> Community Points
               </span>
               <span class="font-bold text-slate-400">{{ pvProgress.team.current }} / {{ pvProgress.team.target }}</span>
             </div>
@@ -443,13 +443,13 @@ const formatGender = (gender: string | null) => {
           </div>
         </div>
 
-        <!-- Network Breakdown -->
+        <!-- Community Breakdown -->
         <div
           v-if="genealogy"
           class="glass-card p-8 border-none ring-1 ring-slate-200 dark:ring-slate-800"
         >
           <h3 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">
-            Network Breakdown
+            Referral Breakdown
           </h3>
           <div class="grid grid-cols-2 gap-4">
             <div

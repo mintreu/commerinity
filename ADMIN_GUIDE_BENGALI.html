@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVIndia - অ্যাডমিন অপারেশন গাইড</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --secondary: #d946ef;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .category-section {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+            font-weight: 700;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-list {
+            list-style: none;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 12px;
+        }
+
+        .step-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--primary);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .impact-box {
+            background: #f0f9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #0ea5e9;
+        }
+
+        .impact-box strong {
+            color: #0369a1;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .badge-filament { background: #ffedd5; color: #9a3412; }
+        .badge-nuxt { background: #dcfce7; color: #166534; }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            body { padding: 10px; }
+        }
+
+        /* Smooth Scroll */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>VVIndia অ্যাডমিন গাইড</h1>
+        <p>আপনার পোর্টাল পরিচালনার সম্পূর্ণ বাংলা নির্দেশিকা</p>
+    </header>
+
+    <!-- ক্যাটাগরি ১: পণ্য ব্যবস্থাপনা -->
+    <section class="category-section">
+        <h2 class="category-title">১. পণ্য ব্যবস্থাপনা (Product Management)</h2>
+        
+        <div class="card">
+            <span class="badge badge-filament">Filament Side</span>
+            <h3>নতুন প্রোডাক্ট যোগ করা</h3>
+            <ul class="step-list">
+                <li>অ্যাডমিন প্যানেল থেকে <strong>Catalogue > Products</strong> এ যান।</li>
+                <li>'New Product' বাটনে ক্লিক করুন।</li>
+                <li><strong>General Info:</strong> নাম, SKU এবং ক্যাটাগরি সিলেক্ট করুন।</li>
+                <li><strong>Pricing & Volume:</strong> বেস প্রাইস এবং BV/PV (বিজনেস ভলিউম) সেট করুন।</li>
+                <li><strong>Media:</strong> থাম্বনেইল এবং গ্যালারি ইমেজ আপলোড করুন।</li>
+            </ul>
+            <div class="impact-box">
+                <strong>Nuxt Frontend Effect:</strong>
+                প্রোডাক্ট পাবলিশ হওয়ার সাথে সাথে এটি ওয়েবসাইট বা অ্যাপের হোমপেজ এবং সার্চ রেজাল্টে দেখা যাবে। গ্যালারি ইমেজগুলো স্লাইডার হিসেবে কাজ করবে।
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="badge badge-filament">Filament Side</span>
+            <h3>স্টক বা ইনভেন্টরি আপডেট</h3>
+            <ul class="step-list">
+                <li>প্রোডাক্ট লিস্ট থেকে নির্দিষ্ট প্রোডাক্টের <strong>'Manage Stock'</strong> এ যান।</li>
+                <li>নতুন স্টকের পরিমাণ লিখুন এবং আপডেট করুন।</li>
+            </ul>
+            <div class="impact-box">
+                <strong>Nuxt Frontend Effect:</strong>
+                স্টক যদি '০' হয়, তবে ফ্রন্টএন্ডে 'Out of Stock' দেখাবে এবং কাস্টমার অর্ডার করতে পারবে না।
+            </div>
+        </div>
+    </section>
+
+    <!-- ক্যাটাগরি ২: বিভাগ ও ফিল্টার -->
+    <section class="category-section">
+        <h2 class="category-title">২. ক্যাটাগরি ও ফিল্টার (Categories & Filters)</h2>
+        
+        <div class="card">
+            <span class="badge badge-filament">Filament Side</span>
+            <h3>বিভাগ বা ক্যাটাগরি তৈরি</h3>
+            <ul class="step-list">
+                <li><strong>Catalogue > Categories</strong> এ গিয়ে নতুন ক্যাটাগরি বানান।</li>
+                <li>ক্যাটাগরির ইমেজ এবং SEO মেটা ট্যাগ যুক্ত করুন।</li>
+            </ul>
+            <div class="impact-box">
+                <strong>Nuxt Frontend Effect:</strong>
+                ফ্রন্টএন্ডের মেইন মেনু এবং ক্যাটাগরি সাইডবারে স্বয়ংক্রিয়ভাবে এটি যুক্ত হয়ে যাবে। SEO ট্যাগগুলো গুগল সার্চে ভালো র‍্যাঙ্ক পেতে সাহায্য করবে।
+            </div>
+        </div>
+    </section>
+
+    <!-- ক্যাটাগরি ৩: অর্ডার ও পেমেন্ট -->
+    <section class="category-section">
+        <h2 class="category-title">৩. অর্ডার ও পেমেন্ট (Orders & Payments)</h2>
+        
+        <div class="card">
+            <span class="badge badge-filament">Filament Side</span>
+            <h3>অর্ডার প্রসেসিং</h3>
+            <ul class="step-list">
+                <li><strong>Ecommerce > Orders</strong> এ নতুন অর্ডারগুলো চেক করুন।</li>
+                <li>অর্ডারের স্ট্যাটাস 'Pending' থেকে 'Processing' বা 'Shipped' এ পরিবর্তন করুন।</li>
+                <li>শিপমেন্ট ডিটেইলস (Tracking Number) যুক্ত করুন।</li>
+            </ul>
+            <div class="impact-box">
+                <strong>Nuxt Frontend Effect:</strong>
+                কাস্টমার তার প্রোফাইল থেকে 'Track Order' অপশনে স্ট্যাটাস আপডেট দেখতে পাবেন এবং ইমেল/নোটিফিকেশন পাবেন।
+            </div>
+        </div>
+    </section>
+
+    <!-- ক্যাটাগরি ৪: অ্যাফিলিয়েট ও MLM -->
+    <section class="category-section">
+        <h2 class="category-title">৪. অ্যাফিলিয়েট ও MLM (Affiliate & MLM)</h2>
+        
+        <div class="card">
+            <span class="badge badge-filament">Filament Side</span>
+            <h3>মেম্বার ভেরিফিকেশন (KYC)</h3>
+            <ul class="step-list">
+                <li><strong>Account Management > Kycs</strong> এ যান।</li>
+                <li>মেম্বারের আপলোড করা ডকুমেন্টস চেক করে 'Approve' বা 'Reject' করুন।</li>
+            </ul>
+            <div class="impact-box">
+                <strong>Nuxt Frontend Effect:</strong>
+                KYC অ্যাপ্রুভ হওয়ার পর মেম্বার তার ড্যাশবোর্ড থেকে টাকা উইথড্র (Withdraw) করার অনুমতি পাবেন।
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="badge badge-filament">Filament Side</span>
+            <h3>কমিশন ক্যালকুলেশন</h3>
+            <ul class="step-list">
+                <li><strong>Affiliate Mgmt > Commissions</strong> এ গিয়ে জেনারেট হওয়া কমিশনগুলো দেখুন।</li>
+                <li>এটি মূলত সিস্টেম অটোমেটিক করে, তবে আপনি ম্যানুয়ালি চেক করতে পারেন।</li>
+            </ul>
+            <div class="impact-box">
+                <strong>Nuxt Frontend Effect:</strong>
+                মেম্বারের ওয়ালেটে ব্যালেন্স সাথে সাথে আপডেট হয়ে যাবে যা তারা তাদের ড্যাশবোর্ডে দেখতে পাবে।
+            </div>
+        </div>
+    </section>
+
+    <!-- ক্যাটাগরি ৫: ফ্রন্টএন্ড সিনক্রোনাইজেশন -->
+    <section class="category-section">
+        <h2 class="category-title">৫. ফ্রন্টএন্ড সিনক্রোনাইজেশন (Sync Tips)</h2>
+        
+        <div class="card">
+            <span class="badge badge-nuxt">Nuxt Side</span>
+            <h3>পরিবর্তন কেন দেখা যাচ্ছে না?</h3>
+            <p>কখনও কখনও অ্যাডমিন প্যানেলে পরিবর্তন করার পর ফ্রন্টএন্ডে তা সাথে সাথে দেখা যায় না। এর কারণ হতে পারে **Cache**।</p>
+            <ul class="step-list">
+                <li>ফিলমেন্ট প্যানেলের উপরের 'Cache Manager' প্লাগইন থেকে 'Clear Cache' এ ক্লিক করুন।</li>
+                <li>ফ্রন্টএন্ড ব্রাউজারটি হার্ড রিফ্রেশ (Ctrl + F5) করুন।</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 VVIndia - Vriddhi Vikash. All rights reserved.</p>
+        <p>ডিজাইন ও ডেভেলপমেন্ট: Gemini CLI Agent</p>
+    </footer>
+</div>
+
+</body>
+</html>

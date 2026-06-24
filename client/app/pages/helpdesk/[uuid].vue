@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Support Ticket Conversation - Premium Mintreu Design
+ * Support Ticket Conversation - Premium VRIDDHI VIKASH Design
  * Chat interface with ticket metadata and real-time styled replies
  */
 

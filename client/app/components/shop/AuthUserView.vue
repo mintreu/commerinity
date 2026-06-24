@@ -292,13 +292,13 @@ const openMobileFilters = () => {
                   name="i-lucide-sparkles"
                   class="w-3.5 h-3.5 text-yellow-300"
                 />
-                <span class="font-semibold text-xs text-yellow-100">Member Benefits Active</span>
+                <span class="font-semibold text-xs text-yellow-100">Loyalty Rewards Active</span>
               </div>
               <h1 class="text-xl md:text-2xl font-bold">
                 Welcome, {{ userName }}!
               </h1>
               <p class="text-white/80 text-sm mt-0.5">
-                {{ canSeeAffiliateBenefits ? 'Earn BV/PV points on every purchase' : 'Discover top picks and best offers for you' }}
+                {{ canSeeAffiliateBenefits ? 'Earn reward points on every purchase' : 'Discover top picks and best offers for you' }}
               </p>
             </template>
             <template v-else>
@@ -318,18 +318,18 @@ const openMobileFilters = () => {
           >
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
               <div class="text-lg font-bold text-yellow-300">
-                BV/PV
+                Points
               </div>
               <div class="text-[10px] text-white/70">
-                Earn Points
+                Earned
               </div>
             </div>
             <div class="text-center bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2">
               <div class="text-lg font-bold text-yellow-300">
-                Coins
+                Rewards
               </div>
               <div class="text-[10px] text-white/70">
-                Every Order
+                Redeemable
               </div>
             </div>
           </div>

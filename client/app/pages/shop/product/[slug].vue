@@ -795,7 +795,7 @@ onMounted(() => {
                 <UIcon
                   name="i-lucide-trending-up"
                   class="w-4 h-4 mr-1"
-                />{{ product.bv }} BV
+                />{{ product.bv }} Vol
               </span>
               <span
                 v-if="product.pv > 0"
@@ -804,7 +804,7 @@ onMounted(() => {
                 <UIcon
                   name="i-lucide-star"
                   class="w-4 h-4 mr-1"
-                />{{ product.pv }} PV
+                />{{ product.pv }} Pts
               </span>
               <span
                 v-if="product.reward_points > 0"

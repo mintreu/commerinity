@@ -377,7 +377,7 @@ const selectedFilterCount = computed(() => {
             ]"
             @click="toggleBvOnly"
           >
-            BV Products Only
+            Vol Products Only
           </button>
           <button
             :class="[
@@ -388,7 +388,7 @@ const selectedFilterCount = computed(() => {
             ]"
             @click="togglePvOnly"
           >
-            PV Products Only
+            Pts Products Only
           </button>
         </div>
       </div>

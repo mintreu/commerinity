@@ -24,8 +24,8 @@ interface FeaturedCategory {
 // SEO
 useComprehensiveSeo({
   title: 'Shop Premium Products Online',
-  description: 'Explore thousands of quality products across all categories. Fast delivery, secure payments, and exclusive member rewards await you.',
-  keywords: ['online shopping', 'e-commerce', 'premium products', 'member rewards', 'quality products'],
+  description: 'Explore thousands of quality products across all categories. Fast delivery, secure payments, and exclusive rewards await you.',
+  keywords: ['online shopping', 'e-commerce', 'premium products', 'exclusive rewards', 'quality products'],
   type: 'website'
 })
 
@@ -36,7 +36,7 @@ const user = useCurrentUser()
 // Get user's first name for greeting
 const userName = computed(() => {
   if (!isLoggedIn.value || !user.value) return ''
-  return user.value.name?.split(' ')[0] || user.value.name || 'Member'
+  return user.value.name?.split(' ')[0] || user.value.name || 'Customer'
 })
 
 const featuredCategoriesData = ref<{ success: boolean, data: FeaturedCategory[] } | null>(null)

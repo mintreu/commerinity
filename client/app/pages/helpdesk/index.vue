@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Support Center - Premium Mintreu Design
+ * Support Center - Premium VRIDDHI VIKASH Design
  * Displays user's support tickets with stats and quick filters
  */
 

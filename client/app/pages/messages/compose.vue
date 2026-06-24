@@ -148,7 +148,7 @@ const selectedRecipientName = computed(() => {
               No team members found
             </p>
             <p class="text-sm text-muted/70 mt-1">
-              You can only message your sponsor or direct referrals
+              You can only message your referrer or direct referrals
             </p>
           </div>
 

@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "./theme.css";
+@import "@/assets/css/themes/default.css";
+@import "@/assets/css/themes/amber.css";
+@import "@/assets/css/themes/emerald.css";
+@import "@/assets/css/themes/green.css";
+@import "@/assets/css/themes/rose.css";
+@import "@/assets/css/themes/blue.css";
+@import "./app.css";
+@import "./filament-component.css";

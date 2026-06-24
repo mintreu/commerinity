@@ -21,7 +21,11 @@
 @push('scripts')
     <script>
         const isDev = @js($mode); // true/false from backend
-        const cashfree = new Cashfree({ mode: isDev ? 'sandbox' : 'production' });
+        // const cashfree = new Cashfree({ mode: isDev ? 'sandbox' : 'production' });
+
+        const cashfree = new Cashfree({
+            mode: @js($mode)
+        });
 
         function getCashfreeCheckout() {
             return {

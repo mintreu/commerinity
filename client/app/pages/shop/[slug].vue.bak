@@ -174,8 +174,8 @@ const relatedLoading = computed(() => relatedStatus.value === 'pending')
 
 // SEO
 useSeoMeta({
-  title: () => product.value ? `${product.value.name} - Mintreu Shop` : 'Product - Mintreu Shop',
-  description: () => product.value?.short_description || product.value?.description?.slice(0, 160) || 'Shop premium products at Mintreu'
+  title: () => product.value ? `${product.value.name} - VRIDDHI VIKASH Shop` : 'Product - VRIDDHI VIKASH Shop',
+  description: () => product.value?.short_description || product.value?.description?.slice(0, 160) || 'Shop premium products at VRIDDHI VIKASH'
 })
 
 // Gallery state

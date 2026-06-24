@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VVIndia - Master Admin Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #a855f7;
+            --primary-dark: #7e22ce;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; padding: 30px 20px; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 40px; text-align: center; }
+        .nav-link { display: block; padding: 12px 15px; border-radius: 10px; color: #64748b; text-decoration: none; margin-bottom: 8px; font-weight: 500; transition: all 0.2s; }
+        .nav-link:hover { background: #f3e8ff; color: var(--primary); }
+        .nav-link.active { background: var(--primary); color: white; }
+
+        .main { margin-left: 280px; flex: 1; padding: 40px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 35px; box-shadow: var(--shadow); margin-bottom: 30px; border: 1px solid #f1f5f9; }
+        .card h2 { font-size: 28px; margin-bottom: 25px; color: var(--primary-dark); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        
+        .menu-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .menu-group { background: #fdfaff; border: 1px solid #f3e8ff; border-radius: 15px; padding: 20px; }
+        .menu-group h3 { color: var(--primary); margin-bottom: 15px; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+        .menu-items { list-style: none; }
+        .menu-items li { padding: 8px 0; border-bottom: 1px dashed #e2e8f0; color: #475569; font-size: 15px; }
+        .menu-items li:last-child { border-bottom: none; }
+        
+        .step-container { margin-top: 30px; }
+        .step { position: relative; padding-left: 50px; margin-bottom: 30px; }
+        .step-num { position: absolute; left: 0; top: 0; width: 35px; height: 35px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .step-content { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .step-content h4 { margin-bottom: 10px; color: var(--primary-dark); }
+
+        .sub-nav-box { background: #fff7ed; border: 1px solid #fed7aa; padding: 15px; border-radius: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">VVIndia Master Guide</div>
+    <nav>
+        <a href="index.html" class="nav-link active">🗺️ <span>মাস্টার নেভিগেশন ম্যাপ</span></a>
+        <a href="ecommerce.html" class="nav-link">🛒 <span>ই-কমার্স (Catalogue)</span></a>
+        <a href="affiliate.html" class="nav-link">📈 <span>অ্যাফিলিয়েট ও MLM</span></a>
+        <a href="users.html" class="nav-link">👥 <span>ইউজার ও KYC</span></a>
+        <a href="system.html" class="nav-link">⚙️ <span>সিস্টেম ও সেটিংস</span></a>
+    </nav>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2>📂 সিস্টেম হায়ারার্কি (System Hierarchy)</h2>
+        <p>অ্যাডমিন প্যানেলের বামদিকের মেনুতে কোন গ্রুপের ভেতরে কি কি আছে তা নিচে দেওয়া হলো। এটি আপনাকে দ্রুত অপশন খুঁজে পেতে সাহায্য করবে:</p>
+        
+        <div class="menu-map">
+            <div class="menu-group">
+                <h3>📦 Catalogue</h3>
+                <ul class="menu-items">
+                    <li>🔹 <strong>Products:</strong> সব পণ্য ও স্টক।</li>
+                    <li>🔹 <strong>Categories:</strong> পণ্যের বিভাগসমূহ।</li>
+                    <li>🔹 <strong>Filter Groups:</strong> সাইজ, কালার ইত্যাদি।</li>
+                </ul>
+            </div>
+            <div class="menu-group">
+                <h3>🛒 Ecommerce</h3>
+                <ul class="menu-items">
+                    <li>🔹 <strong>Orders:</strong> কাস্টমারদের ক্রয় তালিকা।</li>
+                    <li>🔹 <strong>Shipments:</strong> কুরিয়ার ও ট্র্যাকিং।</li>
+                    <li>🔹 <strong>Vouchers:</strong> ডিসকাউন্ট কুপন।</li>
+                    <li>🔹 <strong>Sales:</strong> বিশেষ অফার বা সেল।</li>
+                </ul>
+            </div>
+            <div class="menu-group">
+                <h3>📈 Affiliate Mgmt</h3>
+                <ul class="menu-items">
+                    <li>🔹 <strong>Commissions:</strong> উপার্জিত অর্থ।</li>
+                    <li>🔹 <strong>Genealogy:</strong> MLM নেটওয়ার্ক ট্রি।</li>
+                    <li>🔹 <strong>Payouts:</strong> টাকা তোলার রিকোয়েস্ট।</li>
+                </ul>
+            </div>
+            <div class="menu-group">
+                <h3>👥 Account Management</h3>
+                <ul class="menu-items">
+                    <li>🔹 <strong>Users:</strong> কাস্টমার ও অ্যাফিলিয়েট।</li>
+                    <li>🔹 <strong>Admins:</strong> অ্যাডমিন স্টাফ।</li>
+                    <li>🔹 <strong>KYCs:</strong> ডকুমেন্ট ভেরিফিকেশন।</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🚀 অপারেশন স্টেপ-বাই-স্টেপ (How to Operate)</h2>
+        <div class="step-container">
+            
+            <div class="step">
+                <div class="step-num">১</div>
+                <div class="step-content">
+                    <h4>রেকর্ড খুঁজে বের করা (Searching)</h4>
+                    <p>যেকোনো মডিউলে (যেমন Products) যাওয়ার পর উপরে একটি সার্চ বার পাবেন। সেখানে নাম বা আইডি লিখে খুঁজুন। ডানদিকের 'Filter' আইকন ব্যবহার করে নির্দিষ্ট তারিখ বা স্ট্যাটাস অনুযায়ী লিস্ট ছোট করুন।</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">২</div>
+                <div class="step-content">
+                    <h4>বিস্তারিত দেখা (Viewing & Sub-Nav)</h4>
+                    <p>লিস্টের ওপর ক্লিক করলে বিস্তারিত পেজ আসবে। অনেক সময় উপরে ছোট ছোট ট্যাব থাকে (যাকে Sub-Navigation বলে)।</p>
+                    <div class="sub-nav-box">
+                        <strong>উদাহরণ:</strong> প্রোডাক্ট ভিউ পেজের উপরে 'Edit' এবং 'Manage Stock' ট্যাব পাবেন। স্টক আপডেট করতে হলে এই 'Manage Stock' ট্যাবে যেতে হবে।
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">৩</div>
+                <div class="step-content">
+                    <h4>তথ্য পরিবর্তন (Modifying)</h4>
+                    <p>এডিট পেজে যাওয়ার পর আপনি ফিল্ডগুলো পরিবর্তন করতে পারবেন। কাজ শেষ হলে নিচে <strong>"Save Changes"</strong> বাটনে ক্লিক করতে ভুলবেন না। স্ক্রিনের উপরে একটি সবুজ সাকসেস মেসেজ আসবে।</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">৪</div>
+                <div class="step-content">
+                    <h4>অ্যাকশন বাটন (Actions)</h4>
+                    <p>প্রতিটি রেকর্ডের ডানপাশে তিনটি ডট (...) বা সরাসরি বাটন থাকে। এখান থেকে আপনি সরাসরি ডিলিট, ডুপ্লিকেট বা স্ট্যাটাস চেঞ্জ করতে পারবেন।</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>💡 প্রো-টিপস</h2>
+        <ul style="margin-left: 20px;">
+            <li><strong>Bulk Action:</strong> অনেকগুলো প্রোডাক্ট একসাথে ডিলিট বা ক্যাটাগরি চেঞ্জ করতে বামদিকের চেকবক্সগুলো ব্যবহার করুন।</li>
+            <li><strong>Global Search:</strong> প্যানেলের একদম উপরে একটি সার্চ বার আছে (Ctrl + K), যা দিয়ে আপনি যেকোনো মেনু বা রেকর্ড দ্রুত খুঁজে পাবেন।</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

@@ -61,13 +61,18 @@ export default defineNuxtConfig({
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'VRIDDHI VIKASH',
       appShortName: process.env.NUXT_PUBLIC_APP_SHORT_NAME || 'VVIN',
       companyName: process.env.NUXT_PUBLIC_COMPANY_NAME || 'VRIDDHI VIKASH',
-      companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'VRIDDHI VIKASH',
-      tagline: process.env.NUXT_PUBLIC_TAGLINE || 'India’s Smart Shopping Network.',
+      companyLegalName: process.env.NUXT_PUBLIC_COMPANY_LEGAL_NAME || 'M/S, VRIDDHI VIKASH',
+      tagline: process.env.NUXT_PUBLIC_TAGLINE || 'Your Premier Online Shopping Destination.',
 
       // Contact Information
       supportEmail: process.env.NUXT_PUBLIC_SUPPORT_EMAIL || 'support@vvindia.in',
-      supportPhone: process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 98765 43210',
-      companyAddress: process.env.NUXT_PUBLIC_COMPANY_ADDRESS || '123 Business Park, Tech Hub, City - 700001, India',
+      supportPhone: process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 700010 45407',
+      contactPhones: {
+        general: process.env.NUXT_PUBLIC_GENERAL_SUPPORT_PHONE || process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 90021 76580',
+        technical: process.env.NUXT_PUBLIC_TECHNICAL_SUPPORT_PHONE || process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 98007 77600',
+        support: process.env.NUXT_PUBLIC_CUSTOMER_SUPPORT_PHONE || process.env.NUXT_PUBLIC_SUPPORT_PHONE || '+91 82503 83701'
+      },
+      companyAddress: process.env.NUXT_PUBLIC_COMPANY_ADDRESS || 'Village/Para: Dighirpara, Police Station/Post Office: Amta, District: Howrah, PIN: 711401',
 
       // Currency
       currencyCode: process.env.NUXT_PUBLIC_CURRENCY_CODE || 'INR',

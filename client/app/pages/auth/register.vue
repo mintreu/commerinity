@@ -32,17 +32,17 @@
         <!-- Main Heading -->
         <h2 class="text-5xl xl:text-6xl font-bold mb-8 leading-tight">
           <span class="gradient-text-primary">
-            Join Our
+            Create Your
           </span>
           <br>
           <span class="gradient-text-accent">
-            Community!
+            Account!
           </span>
         </h2>
 
         <!-- Description -->
         <p class="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-          Create your account to start shopping, earn rewards, and grow your network with exclusive member benefits.
+          Create your account to start shopping, unlock exclusive deals, and enjoy premium loyalty rewards.
         </p>
 
         <!-- Features -->
@@ -56,10 +56,10 @@
             </div>
             <div>
               <h3 class="font-bold text-slate-900 dark:text-white mb-2">
-                Build Your Network
+                Referral Rewards
               </h3>
               <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                Invite friends and earn commissions on their purchases
+                Invite friends to shop with us and earn reward points on their purchases
               </p>
             </div>
           </div>
@@ -73,10 +73,10 @@
             </div>
             <div>
               <h3 class="font-bold text-slate-900 dark:text-white mb-2">
-                Earn Coins
+                Loyalty Perks
               </h3>
               <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                Get cashback, bonuses and level-based commissions
+                Unlock special bonuses, cashback, and exclusive loyalty incentives
               </p>
             </div>
           </div>
@@ -93,7 +93,7 @@
                 Exclusive Access
               </h3>
               <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                Member-only products, early sales, and special discounts
+                Premium products, early sales, and special discounts for our shoppers
               </p>
             </div>
           </div>

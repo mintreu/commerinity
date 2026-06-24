@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System & Settings Guide - VVIndia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #a855f7; --primary-dark: #7e22ce; --bg: #fdfaff; --text: #1e293b; --sidebar-bg: #ffffff; --card-bg: #ffffff; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; }
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; padding: 30px 20px; position: fixed; height: 100vh; }
+        .nav-link { display: block; padding: 12px 15px; border-radius: 10px; color: #64748b; text-decoration: none; margin-bottom: 8px; font-weight: 500; }
+        .nav-link.active { background: var(--primary); color: white; }
+        .main { margin-left: 280px; flex: 1; padding: 40px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 30px; box-shadow: var(--shadow); margin-bottom: 30px; }
+        .section-title { font-size: 24px; color: var(--primary-dark); margin-bottom: 20px; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .field-box { background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .field-name { font-weight: 700; color: var(--primary); }
+        .field-desc { font-size: 14px; color: #64748b; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 30px;">VVIndia Guide</div>
+    <nav>
+        <a href="index.html" class="nav-link">🏠 <span>সূচনা ও লগইন</span></a>
+        <a href="ecommerce.html" class="nav-link">🛒 <span>ই-কমার্স (Catalogue)</span></a>
+        <a href="affiliate.html" class="nav-link">📈 <span>অ্যাফিলিয়েট ও MLM</span></a>
+        <a href="users.html" class="nav-link">👥 <span>ইউজার ও KYC</span></a>
+        <a href="system.html" class="nav-link active">⚙️ <span>সিস্টেম ও সেটিংস</span></a>
+    </nav>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2 class="section-title">📢 বিজ্ঞাপন ও ব্যানার (Advertisements)</h2>
+        <p>ওয়েবসাইটের হোমপেজ এবং বিভিন্ন জায়গায় ব্যানার অ্যাড সেট করার নিয়ম:</p>
+        <br>
+        <div class="field-box">
+            <span class="field-name">Ad Placement:</span> ব্যানারটি কোথায় দেখাবে। <br> <span style="font-size: 13px;">Homepage Hero, Sidebar, Footer.</span>
+        </div>
+        <div class="field-box">
+            <span class="field-name">Link URL:</span> ব্যান্যারে ক্লিক করলে কোন পেজে যাবে।
+            <div class="field-desc">কেন: কোনো নির্দিষ্ট প্রোডাক্ট প্রোমোট করতে সেই প্রোডাক্টের লিংক এখানে দিন।</div>
+        </div>
+        <div class="field-box">
+            <span class="field-name">Image Upload:</span> ব্যানারের ছবি।
+            <div class="field-desc">পরামর্শ: ভালো রেজোলিউশনের ছবি ব্যবহার করুন যাতে ওয়েবসাইট প্রিমিয়াম লাগে।</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="section-title">✉️ এসএমএস ও নোটিফিকেশন (SMS Logs & Templates)</h2>
+        <div class="field-box">
+            <span class="field-name">SMS Templates:</span> ওটিপি (OTP) বা অর্ডার কনফার্মেশন মেসেজের ফরম্যাট।
+            <div class="field-desc"><strong>সতর্কতা:</strong> এখানে <code>{{ name }}</code> বা <code>{{ otp }}</code> কোডগুলো পরিবর্তন করবেন না, এগুলো সিস্টেম থেকে অটো-জেনারেট হয়।</div>
+        </div>
+        <div class="field-box">
+            <span class="field-name">SMS Logs:</span> কতগুলো মেসেজ পাঠানো হয়েছে এবং কতগুলো সাকসেসফুল হয়েছে।
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="section-title">🔧 সিস্টেম টুলস (System Tools)</h2>
+        <div class="field-box">
+            <span class="field-name">Cache Manager:</span> ওয়েবসাইটের স্পিড বাড়াতে মাঝেমধ্যে ক্যাশ ক্লিয়ার করুন।
+        </div>
+        <div class="field-box">
+            <span class="field-name">Command Runner:</span> এটি অ্যাডভান্সড ইউজারদের জন্য। সিস্টেম মেইনটেন্যান্স কমান্ড এখান থেকে রান করা যায়।
+        </div>
+        <div class="field-box">
+            <span class="field-name">Activity Log:</span> কোন অ্যাডমিন কখন কি পরিবর্তন করেছেন তার হিস্টোরি এখানে পাওয়া যাবে।
+            <div class="field-desc">কেন: সিস্টেমের সিকিউরিটি এবং স্বচ্ছতা নিশ্চিত করার জন্য এটি জরুরি।</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

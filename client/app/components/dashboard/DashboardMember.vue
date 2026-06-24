@@ -2,7 +2,7 @@
 /**
  * Member Dashboard Component
  * Affiliate-focused dashboard for subscribed members
- * Shows earnings, referrals, network overview, and progress to next level
+ * Shows earnings, referrals, community overview, and progress to next level
  * PWA-optimized with mobile-first design
  */
 
@@ -73,7 +73,7 @@ const loadRecentCommissions = async () => {
         id: c.uuid,
         type: 'commission' as const,
         title: c.type_label,
-        description: `From ${c.from_user?.name || 'Network'}`,
+        description: `From ${c.from_user?.name || 'Community'}`,
         amount: c.net_amount / 100, // paisa to rupees
         timestamp: new Date(c.created_at)
       }))
@@ -129,9 +129,9 @@ const quickActions = computed(() => [
     color: 'primary' as const
   },
   {
-    label: 'Network',
+    label: 'Community',
     icon: 'i-lucide-users',
-    to: '/network',
+    to: '/community',
     color: 'success' as const
   },
   {
@@ -200,11 +200,11 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
         :value="`${stats.activeReferrals}/${stats.referrals}`"
         icon="i-lucide-users"
         color="primary"
-        to="/network"
+        to="/community"
         :loading="loading"
       />
       <CommonStatCard
-        title="Pending"
+        title="Pending Rewards"
         :value="formatCurrency(stats.pendingCommission)"
         icon="i-lucide-clock"
         color="warning"
@@ -276,7 +276,7 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
 
     <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-      <!-- Left: Earnings & Network -->
+      <!-- Left: Earnings & Community -->
       <div class="lg:col-span-2 space-y-4 md:space-y-6">
         <!-- Order Volume Chart -->
         <div class="glass-card p-4 md:p-6">
@@ -307,7 +307,7 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
               Top Referrals
             </h2>
             <NuxtLink
-              to="/network"
+              to="/community"
               class="text-sm text-violet-600 dark:text-violet-400"
             >
               View all
@@ -356,15 +356,15 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
         <!-- Recent Activity -->
         <DashboardRecentActivity
           :activities="recentCommissions"
-          title="Recent Commissions"
+          title="Recent Rewards"
           view-all-link="/earnings/commissions"
         />
 
-        <!-- BV/PV Ledger -->
+        <!-- Volume Ledger -->
         <div class="glass-card p-4 md:p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-bold text-slate-900 dark:text-white">
-              BV/PV Ledger
+              Volume Ledger
             </h3>
             <span class="text-xs text-slate-500 dark:text-slate-400">Latest</span>
           </div>
@@ -376,13 +376,13 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
             >
               <div>
                 <p class="font-medium text-slate-900 dark:text-white">
-                  BV {{ entry.bv }} / PV {{ entry.pv }}
+                  Volume {{ entry.bv }} / Points {{ entry.pv }}
                 </p>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
                   {{ entry.status_label || entry.status }} • {{ formatDate(entry.created_at, 'short') }}
                 </p>
               </div>
-              <span class="text-xs text-slate-500 dark:text-slate-400">L{{ entry.depth }}</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400">Tier {{ entry.depth }}</span>
             </div>
             <div
               v-if="recentLedger.length === 0"
@@ -436,7 +436,7 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
               <div>
                 <p class="font-medium text-slate-900 dark:text-white">
                   {{ reward.reward_type_label || reward.reward_type }}
-                  <span v-if="reward.coins">• {{ reward.coins }} coins</span>
+                  <span v-if="reward.coins">• {{ reward.coins }} points</span>
                   <span v-if="reward.voucher_code">• {{ reward.voucher_code }}</span>
                 </p>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -479,7 +479,7 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
             />
           </div>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            Share this code to earn commissions
+            Share this code to earn rewards
           </p>
           <UButton
             block

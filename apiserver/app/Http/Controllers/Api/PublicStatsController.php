@@ -26,8 +26,18 @@ final class PublicStatsController extends Controller
         $stats = Cache::remember('public_homepage_stats', now()->addHour(), function () {
             return [
                 'members' => $this->getMemberCount(),
-                'careers' => $this->getTotalProductsCount(),
-                'payouts' => $this->getActiveCategoriesCount(),
+                'products' => $this->getTotalProductsCount(),
+                'categories' => $this->getActiveCategoriesCount(),
+                'shipping' => [
+                    'value' => 'Pan India',
+                    'formatted' => 'Pan India',
+                    'label' => 'Shipping',
+                ],
+                'uptime' => [
+                    'value' => '99.9%',
+                    'formatted' => '99.9%',
+                    'label' => 'Uptime',
+                ],
             ];
         });
 
@@ -49,7 +59,7 @@ final class PublicStatsController extends Controller
         return [
             'value' => $count,
             'formatted' => $this->formatNumber($count),
-            'label' => 'Total Users',
+            'label' => 'Happy Customers',
         ];
     }
 
@@ -63,7 +73,7 @@ final class PublicStatsController extends Controller
         return [
             'value' => $count,
             'formatted' => $this->formatNumber($count),
-            'label' => 'Total Products',
+            'label' => 'Products',
         ];
     }
 
@@ -77,7 +87,7 @@ final class PublicStatsController extends Controller
         return [
             'value' => $count,
             'formatted' => $this->formatNumber($count),
-            'label' => 'Active Categories',
+            'label' => 'Categories',
         ];
     }
 

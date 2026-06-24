@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Master Manual - VVIndia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #a855f7; --primary-dark: #7e22ce; --bg: #f8fafc; --text: #1e293b; --sidebar-bg: #ffffff; --card-bg: #ffffff; --shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; }
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; padding: 30px 20px; position: fixed; height: 100vh; overflow-y: auto; }
+        .nav-link { display: block; padding: 12px 15px; border-radius: 10px; color: #64748b; text-decoration: none; margin-bottom: 8px; font-weight: 500; }
+        .nav-link.active { background: var(--primary); color: white; }
+        .main { margin-left: 280px; flex: 1; padding: 40px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 35px; box-shadow: var(--shadow); margin-bottom: 30px; border: 1px solid #f1f5f9; }
+        .section-title { font-size: 28px; color: var(--primary-dark); margin-bottom: 25px; border-left: 8px solid var(--primary); padding-left: 15px; }
+        
+        .tab-box { background: #fdfaff; border: 2px solid #f3e8ff; border-radius: 15px; padding: 20px; margin-bottom: 30px; }
+        .tab-header { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .tab-btn { padding: 5px 15px; background: #f3e8ff; border-radius: 20px; font-size: 14px; font-weight: 700; color: var(--primary-dark); }
+
+        .field-group { margin-bottom: 30px; border-left: 3px solid #cbd5e1; padding-left: 20px; }
+        .field-group h3 { font-size: 22px; color: var(--text); margin-bottom: 15px; background: #f8fafc; padding: 5px 10px; border-radius: 5px; }
+        
+        .field-detail { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .field-name { font-weight: 800; color: var(--primary); font-size: 16px; display: block; margin-bottom: 5px; }
+        .field-desc { font-size: 15px; color: #475569; margin-bottom: 10px; line-height: 1.5; }
+        .field-instruction { background: #fff7ed; padding: 10px; border-radius: 8px; font-size: 14px; color: #9a3412; border: 1px solid #fed7aa; }
+        .field-instruction strong { color: #c2410c; }
+
+        .column-badge { display: inline-block; padding: 2px 10px; border-radius: 5px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .badge-left { background: #dcfce7; color: #166534; }
+        .badge-right { background: #e0f2fe; color: #0369a1; }
+        .badge-full { background: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 30px; text-align: center;">VVIndia Master Guide</div>
+    <nav>
+        <a href="index.html" class="nav-link">🗺️ <span>মাস্টার নেভিগেশন ম্যাপ</span></a>
+        <a href="ecommerce.html" class="nav-link active">🛒 <span>ই-কমার্স (Full Flow)</span></a>
+        <a href="affiliate.html" class="nav-link">📈 <span>অ্যাফিলিয়েট ও MLM</span></a>
+        <a href="users.html" class="nav-link">👥 <span>ইউজার ও KYC</span></a>
+        <a href="system.html" class="nav-link">⚙️ <span>সিস্টেম ও সেটিংস</span></a>
+    </nav>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2 class="section-title">📦 প্রোডাক্ট রিসোর্স: পূর্ণাঙ্গ ম্যানুয়াল (Product Master Manual)</h2>
+        <p>প্রোডাক্ট পেজটি ৩টি কলামে বিভক্ত। প্রতিটি কলাম এবং তার ভেতরের ফিল্ডগুলো নিচে বিস্তারিত আলোচনা করা হলো।</p>
+        <br>
+
+        <div class="tab-box">
+            <h4>📑 সাব-নেভিগেশন ট্যাব (Sub-Navigation)</h4>
+            <div class="tab-header">
+                <span class="tab-btn">View</span>
+                <span class="tab-btn">Edit</span>
+                <span class="tab-btn">Manage Stock</span>
+            </div>
+            <ul style="margin-left: 20px; font-size: 15px;">
+                <li><strong>View:</strong> এখানে প্রোডাক্টের সব তথ্য শুধু দেখা যায়। এটি রিড-ওনলি মোড।</li>
+                <li><strong>Edit:</strong> তথ্য পরিবর্তন করার জন্য এই ট্যাবে আসতে হবে।</li>
+                <li><strong>Manage Stock:</strong> প্রোডাক্টের ইনভেন্টরি বা কতটি মাল স্টকে আছে তা এখান থেকে আপডেট করতে হয়।</li>
+            </ul>
+        </div>
+
+        <!-- Left Column -->
+        <div class="field-group">
+            <span class="column-badge badge-left">Left Column: General & Content</span>
+            <h3>১. জেনারেল ইনফরমেশন (General Information)</h3>
+            
+            <div class="field-detail">
+                <span class="field-name">Name</span>
+                <div class="field-desc">পণ্যের পুরো নাম। এটি কাস্টমার ওয়েবসাইটে দেখতে পাবে।</div>
+                <div class="field-instruction"><strong>কিভাবে:</strong> এটি লিখলে নিচের 'Slug' ফিল্ডটি অটোমেটিক পূরণ হয়ে যাবে।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">Slug / URL Key</span>
+                <div class="field-desc">ব্রাউজারের অ্যাড্রেস বারে যে লিংকটি দেখাবে।</div>
+                <div class="field-instruction"><strong>কেন:</strong> এটি ইউনিক হতে হয়। একবার প্রোডাক্ট পাবলিশ হয়ে গেলে এটি পরিবর্তন না করাই ভালো, কারণ পুরনো লিংক কাজ করবে না।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">SKU (Stock Keeping Unit)</span>
+                <div class="field-desc">আপনার স্টোর বা গুদামের জন্য পণ্যের ইউনিক কোড।</div>
+                <div class="field-instruction"><strong>স্যাম্পল:</strong> IP15P-256-BLK। এটি ইনভেন্টরি ট্র্যাকিংয়ের জন্য ব্যবহার করা হয়।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">Type & Parent</span>
+                <div class="field-desc">প্রোডাক্টটি কি সাধারণ (Simple) নাকি কোনো ভ্যারিয়েন্ট।</div>
+                <div class="field-instruction"><strong>কখন:</strong> যদি একটি জুতোর বিভিন্ন সাইজ থাকে, তবে মেইন জুতোটি হবে 'Parent' আর সাইজগুলো হবে ভ্যারিয়েন্ট।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">Base Price (Paise)</span>
+                <div class="field-desc">পণ্যের আসল দাম।</div>
+                <div class="field-instruction"><strong>গুরুত্বপূর্ণ:</strong> এখানে দাম <strong>পয়সা</strong> হিসেবে লিখতে হবে। যদি দাম হয় ₹৫০০, তবে লিখুন <code>50000</code>। ভুল করলে ওয়েবসাইটে দাম ভুল দেখাবে।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">GST & HSN</span>
+                <div class="field-desc">ট্যাক্স ক্যালকুলেশন এবং সরকারি HSN কোড।</div>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <span class="column-badge badge-left">Left Column: Content & Media</span>
+            <h3>২. কন্টেন্ট ও মিডিয়া (Content & Media)</h3>
+            
+            <div class="field-detail">
+                <span class="field-name">Short Summary & Full Description</span>
+                <div class="field-desc">প্রোডাক্ট সম্পর্কে বিস্তারিত তথ্য।</div>
+                <div class="field-instruction"><strong>Rich Editor:</strong> এখানে আপনি লেখা বোল্ড করতে পারেন, ইমেজ যোগ করতে পারেন বা হিরো ব্লক (Hero Block) ব্যবহার করে ডিজাইন করতে পারেন।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">Media (Display & Gallery)</span>
+                <div class="field-desc">পণ্যের ছবি আপলোড করা।</div>
+                <div class="field-instruction"><strong>Display:</strong> এটি মেইন ছবি যা ক্যাটালগে দেখাবে। <br> <strong>Gallery:</strong> এগুলো স্লাইডার ছবি যা প্রোডাক্ট পেজে দেখাবে। ড্র্যাগ অ্যান্ড ড্রপ করে সাজানো যায়।</div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="field-group">
+            <span class="column-badge badge-right">Right Column: Status & Benefits</span>
+            <h3>৩. স্ট্যাটাস ও অর্গানাইজেশন (Organization)</h3>
+            
+            <div class="field-detail">
+                <span class="field-name">Status</span>
+                <div class="field-desc">Draft (তৈরি হচ্ছে), Published (সবাই দেখতে পাবে), বা Archived (বন্ধ)।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">Category & Additional Categories</span>
+                <div class="field-desc">প্রোডাক্টটি কোন বিভাগে থাকবে।</div>
+                <div class="field-instruction"><strong>Multi-select:</strong> একটি প্রোডাক্ট চাইলে একাধিক ক্যাটাগরিতে (যেমন: Mobile এবং Electronics) রাখা যায়।</div>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <span class="column-badge badge-right">Right Column: Rewards & MLM</span>
+            <h3>৪. বেনিফিট ও কমিশন (Benefits)</h3>
+            
+            <div class="field-detail">
+                <span class="field-name">Reward Points (Coins)</span>
+                <div class="field-desc">কেনার পর কাস্টমার কতগুলো কয়েন পাবে। এটি কাস্টমার লয়ালটি বাড়াতে সাহায্য করে।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">BV & PV (Business & Personal Volume)</span>
+                <div class="field-desc">অ্যাফিলিয়েট মেম্বারদের র‍্যাঙ্ক এবং ইনকাম পয়েন্ট।</div>
+                <div class="field-instruction"><strong>কেন:</strong> MLM সিস্টেমে এই পয়েন্টগুলোই আসল ইনকাম সোর্স।</div>
+            </div>
+
+            <div class="field-detail">
+                <span class="field-name">Commission Rate & Is Commissionable</span>
+                <div class="field-desc">এই প্রোডাক্টটি বিক্রি করলে মেম্বাররা কত % কমিশন পাবে।</div>
+                <div class="field-instruction"><strong>কখন:</strong> যদি কোনো স্পেশাল ডিলে কমিশন না দিতে চান, তবে 'Is Commissionable' অফ করে দিন।</div>
+            </div>
+        </div>
+
+        <!-- Full Width -->
+        <div class="field-group">
+            <span class="column-badge badge-full">Full Width: Filter Configuration</span>
+            <h3>৫. ফিল্টার কনফিগারেশন (Filter Configuration)</h3>
+            <p>প্রোডাক্টের সাথে সাইজ, কালার বা অন্যান্য ফিল্টার লিঙ্ক করা।</p>
+            <div class="field-detail">
+                <span class="field-name">Select Filters</span>
+                <div class="field-desc">এখানে আপনি চেকবক্স পাবেন। সঠিক অপশনগুলো টিক দিন।</div>
+                <div class="field-instruction"><strong>উদাহরণ:</strong> যদি টি-শার্টের সাইজ M এবং L হয়, তবে 'Clothing Size' গ্রুপ থেকে M এবং L টিক দিন। ফ্রন্টএন্ডে কাস্টমার এখন M এবং L দিয়ে এই প্রোডাক্টটি খুঁজে পাবে।</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -167,7 +167,7 @@ const statusOptions = [
               My Earnings
             </h1>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Track your commissions and earnings history
+              Track your rewards and earnings history
             </p>
           </div>
         </div>
@@ -267,7 +267,7 @@ const statusOptions = [
             {{ summary?.total_commissions || 0 }}
           </div>
           <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Total Commissions
+            Total Rewards
           </div>
         </div>
       </div>
@@ -416,13 +416,13 @@ const statusOptions = [
               </div>
             </div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No Commissions Yet
+              No Rewards Yet
             </h3>
             <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-              Start building your network and earning commissions. Your earnings chart will appear here.
+              Start building your community and earning rewards. Your earnings chart will appear here.
             </p>
             <NuxtLink
-              to="/network"
+              to="/community"
               class="mt-4 inline-block"
             >
               <UButton
@@ -433,7 +433,7 @@ const statusOptions = [
                   name="i-lucide-users"
                   class="w-4 h-4 mr-2"
                 />
-                Build Your Network
+                Build Your Community
               </UButton>
             </NuxtLink>
           </div>

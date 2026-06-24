@@ -169,7 +169,12 @@
           <!-- Bottom Bar -->
           <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-600 dark:text-gray-400">
-              <p>&copy; {{ currentYear }} {{ siteConfig.name }}. All rights reserved.</p>
+              <div class="text-center md:text-left">
+                <p>&copy; {{ currentYear }} {{ config.public.companyName }}. All rights reserved.</p>
+                <p class="text-xs mt-1 opacity-80">
+                  Owned and Operated by <strong>{{ config.public.companyLegalName || config.public.companyName }}</strong>
+                </p>
+              </div>
               <div class="flex items-center gap-6 flex-wrap justify-center">
                 <NuxtLink
                   to="/privacy"
@@ -189,19 +194,13 @@
                 >
                   Cookie Policy
                 </NuxtLink>
+                <NuxtLink
+                  to="/rewards"
+                  class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  Rewards Program
+                </NuxtLink>
               </div>
-
-              <!-- Added backlink (no removals) -->
-              <a
-                href="https://mintreu.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                aria-label="Built by Mintreu"
-              >
-                <span class="hidden sm:inline">Built by</span>
-                <span class="font-semibold">Mintreu</span>
-              </a>
             </div>
           </div>
         </div>
@@ -221,12 +220,12 @@ const currentYear = computed(() => new Date().getFullYear())
 
 // ✅ FROZEN CONFIG - Zero reactivity overhead
 const siteConfig = Object.freeze({
-  name: config.public.websiteName || 'VVIndia',
-  tagline: 'Your Premium Marketplace',
+  name: config.public.companyName || 'VRIDDHI VIKASH',
+  tagline: config.public.tagline || 'Your Premium Marketplace',
   description: 'Discover quality products at unbeatable prices. Shop with confidence with our secure payment system and fast delivery.',
-  email: config.public.supportEmail || 'support@vvindia.com',
-  phone: config.public.phoneNumber || '+91 98765 43210',
-  address: config.public.address || 'Kolkata, West Bengal 700156, India'
+  email: config.public.supportEmail,
+  phone: config.public.supportPhone,
+  address: config.public.companyAddress
 })
 
 const socialLinks = Object.freeze([

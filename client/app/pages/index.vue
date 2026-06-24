@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Homepage - Mintreu E-Commerce & Affiliate Platform
+ * Homepage - VRIDDHI VIKASH E-Commerce & Affiliate Platform
  * Premium landing page with:
  * - Hero Section
  * - Real-time Stats
@@ -12,12 +12,13 @@
 definePageMeta({
   layout: 'public'
 })
+const config = useRuntimeConfig()
 
 useSeoMeta({
-  title: 'VVIndia - Affiliate & E-Commerce Platform',
-  description: 'Transform your business dreams into reality with VVIndia. The ultimate platform combining  E-Commerce, Business Marketing, and Career Opportunities — all in one powerful ecosystem.',
-  ogTitle: 'VVIndia - Affiliate & E-Commerce Platform',
-  ogDescription: 'Join thousands of successful entrepreneurs. Network Marketing, E-Commerce & Career Opportunities all in one place.',
+  title: 'VRIDDHI VIKASH – Your Premier Online Shopping Destination',
+  description: 'Experience the best in online shopping with VRIDDHI VIKASH. Discover a wide range of premium products, exclusive deals, and a seamless shopping experience delivered right to your doorstep.',
+  ogTitle: 'VRIDDHI VIKASH - Your Premier Online Shopping Destination',
+  ogDescription: 'Shop the latest trends and premium quality products at VRIDDHI VIKASH. Quality products, fast delivery, and exceptional customer service.',
   ogImage: '/logo.png'
 })
 </script>

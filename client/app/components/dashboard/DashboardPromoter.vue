@@ -82,7 +82,7 @@ const loadRecentActivity = async () => {
         id: c.uuid,
         type: 'commission' as const,
         title: c.type_label,
-        description: `From ${c.from_user?.name || 'Network'}`,
+        description: `From ${c.from_user?.name || 'Community'}`,
         amount: c.net_amount / 100,
         timestamp: new Date(c.created_at)
       }))
@@ -378,11 +378,11 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
           view-all-link="/activity"
         />
 
-        <!-- BV/PV Ledger -->
+        <!-- Volume Ledger -->
         <div class="glass-card p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
-              BV/PV Ledger
+              Volume Ledger
             </h3>
             <span class="text-xs text-slate-500 dark:text-slate-400">Latest</span>
           </div>
@@ -394,13 +394,13 @@ const totalFundBalance = computed(() => fundAccounts.value.reduce((sum, acc) => 
             >
               <div>
                 <p class="font-medium text-slate-900 dark:text-white">
-                  BV {{ entry.bv }} / PV {{ entry.pv }}
+                  Vol {{ entry.bv }} / Pts {{ entry.pv }}
                 </p>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
                   {{ entry.status_label || entry.status }} • {{ formatDate(entry.created_at, 'short') }}
                 </p>
               </div>
-              <span class="text-xs text-slate-500 dark:text-slate-400">L{{ entry.depth }}</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400">Tier {{ entry.depth }}</span>
             </div>
             <div
               v-if="recentLedger.length === 0"

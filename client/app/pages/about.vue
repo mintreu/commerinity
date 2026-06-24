@@ -17,52 +17,96 @@ const tagline = config.public.tagline
 
 useSeoMeta({
   title: `About Us - ${appName}`,
-  description: `Learn about ${companyName}. Empowering entrepreneurs through innovative network marketing and e-commerce solutions.`
+  description: `Learn about ${companyName}. Your premier destination for high-quality products and an exceptional online shopping experience.`
 })
 
 // Company values
 const values = [
   {
     icon: 'i-lucide-heart-handshake',
-    title: 'Trust & Integrity',
-    description: 'Building lasting relationships through transparent and ethical business practices.',
+    title: 'Customer Obsession',
+    description: 'We put our customers at the heart of everything we do, ensuring a seamless and satisfying experience.',
     gradient: 'from-blue-500 to-cyan-500',
     bgColor: 'bg-blue-100 dark:bg-blue-900/30',
     textColor: 'text-blue-600 dark:text-blue-400'
   },
   {
     icon: 'i-lucide-sparkles',
-    title: 'Quality Products',
-    description: 'Curating only the best products that deliver real value to our customers.',
+    title: 'Premium Quality',
+    description: 'Curating only the best products that meet our rigorous standards for quality and durability.',
     gradient: 'from-emerald-500 to-green-500',
     bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
     textColor: 'text-emerald-600 dark:text-emerald-400'
   },
   {
-    icon: 'i-lucide-users',
-    title: 'Community First',
-    description: 'Fostering a supportive community where everyone can thrive and grow together.',
+    icon: 'i-lucide-shield-check',
+    title: 'Authenticity',
+    description: 'Every product on our platform is guaranteed authentic and sourced directly from trusted partners.',
     gradient: 'from-violet-500 to-purple-500',
     bgColor: 'bg-violet-100 dark:bg-violet-900/30',
     textColor: 'text-violet-600 dark:text-violet-400'
   },
   {
     icon: 'i-lucide-rocket',
-    title: 'Innovation',
-    description: 'Continuously evolving our platform with cutting-edge technology and features.',
+    title: 'Fast Delivery',
+    description: 'Optimized logistics and supply chain management to get your orders to you as quickly as possible.',
     gradient: 'from-rose-500 to-pink-500',
     bgColor: 'bg-rose-100 dark:bg-rose-900/30',
     textColor: 'text-rose-600 dark:text-rose-400'
   }
 ]
 
-// Stats
-const stats = [
-  { value: '10K+', label: 'Active Members', icon: 'i-lucide-users' },
-  { value: '500+', label: 'Products', icon: 'i-lucide-package' },
-  { value: '50+', label: 'Cities Served', icon: 'i-lucide-map-pin' },
-  { value: '99%', label: 'Satisfaction', icon: 'i-lucide-star' }
-]
+// Stats interface for API response
+interface StatItem {
+  value: any
+  formatted: string
+  label: string
+}
+
+interface StatsData {
+  members: StatItem
+  products: StatItem
+  categories: StatItem
+  shipping: StatItem
+  uptime: StatItem
+}
+
+// Fetch real stats from API
+const { data: statsResponse } = await useFetch<{ success: boolean, data: StatsData }>(
+  `${config.public.apiBase}/api/public/stats`,
+  {
+    lazy: true,
+    server: false
+  }
+)
+
+// Computed stats with fallback to placeholders
+const stats = computed(() => {
+  const data = statsResponse.value?.data
+
+  return [
+    {
+      value: data?.members?.formatted || '50K+',
+      label: 'Happy Customers',
+      icon: 'i-lucide-users'
+    },
+    {
+      value: data?.products?.formatted || '1,000+',
+      label: 'Products',
+      icon: 'i-lucide-package'
+    },
+    {
+      value: data?.shipping?.formatted || 'Global',
+      label: 'Shipping',
+      icon: 'i-lucide-globe'
+    },
+    {
+      value: data?.uptime?.formatted || '99.9%',
+      label: 'Uptime',
+      icon: 'i-lucide-zap'
+    }
+  ]
+})
 
 // Team principles
 const principles = [
@@ -151,14 +195,14 @@ const principles = [
               Our Mission
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-6">
-              Empowering Entrepreneurs Worldwide
+              Redefining Online Shopping
             </h2>
             <div class="policy-intro !mb-0">
               <p class="!mb-4">
-                At <strong>{{ appName }}</strong>, we believe in creating opportunities for everyone. Our platform combines the power of e-commerce with network marketing, enabling individuals to build sustainable businesses from anywhere.
+                At <strong>{{ appName }}</strong>, we are dedicated to bringing you a curated selection of premium products. Our mission is to provide an unparalleled shopping experience through innovation, quality, and exceptional customer service.
               </p>
               <p class="!mb-0">
-                We're committed to providing high-quality products, fair compensation plans, and the tools needed for success in the modern digital economy.
+                We're committed to sourcing only the finest goods, ensuring seamless delivery, and providing a platform where quality meets convenience in the modern digital economy.
               </p>
             </div>
           </div>
@@ -166,20 +210,20 @@ const principles = [
             <div class="relative">
               <div class="w-56 h-56 md:w-64 md:h-64 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 rounded-full flex items-center justify-center shadow-2xl">
                 <UIcon
-                  name="i-lucide-target"
+                  name="i-lucide-shopping-cart"
                   class="w-28 h-28 text-white"
                 />
               </div>
               <!-- Floating elements -->
               <div class="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg animate-float-slow">
                 <UIcon
-                  name="i-lucide-trending-up"
+                  name="i-lucide-package-check"
                   class="w-8 h-8 text-white"
                 />
               </div>
               <div class="absolute -bottom-4 -left-4 w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg animate-float-gentle">
                 <UIcon
-                  name="i-lucide-star"
+                  name="i-lucide-shield-check"
                   class="w-7 h-7 text-white"
                 />
               </div>
@@ -202,7 +246,7 @@ const principles = [
             What We Stand For
           </h2>
           <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Our core values guide everything we do, from product selection to member support.
+            Our core values guide everything we do, from product selection to customer care.
           </p>
         </div>
 
@@ -246,7 +290,7 @@ const principles = [
               Building the Future of Commerce
             </h2>
             <p class="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto text-lg leading-relaxed">
-              We envision a world where everyone has access to quality products and the opportunity to build their own business. Through innovative technology and a supportive community, we're making this vision a reality.
+              We envision a world where premium quality products are accessible to everyone at the click of a button. Through our state-of-the-art platform, we're making high-end shopping more personal, efficient, and reliable than ever before.
             </p>
           </div>
 
@@ -374,7 +418,7 @@ const principles = [
         <!-- CTA Section -->
         <div class="mt-10 text-center">
           <p class="text-slate-600 dark:text-slate-400 mb-6">
-            Ready to start your journey with us?
+            Ready to start shopping with us?
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <NuxtLink to="/shop">
@@ -399,11 +443,12 @@ const principles = [
                   name="i-lucide-user-plus"
                   class="w-5 h-5 mr-2"
                 />
-                Join Our Community
+                Create Account
               </UButton>
             </NuxtLink>
           </div>
         </div>
+
       </div>
     </UContainer>
   </div>

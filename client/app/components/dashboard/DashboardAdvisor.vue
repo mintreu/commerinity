@@ -50,7 +50,7 @@ const loadRecentActivity = async () => {
         id: c.uuid,
         type: 'commission' as const,
         title: c.type_label,
-        description: `From ${c.from_user?.name || 'Network'}`,
+        description: `From ${c.from_user?.name || 'Community'}`,
         amount: c.net_amount / 100,
         timestamp: new Date(c.created_at)
       }))

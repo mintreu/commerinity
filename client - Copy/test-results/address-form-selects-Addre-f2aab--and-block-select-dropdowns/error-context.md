@@ -1,0 +1,159 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation [ref=e8]:
+        - generic [ref=e9]:
+          - generic [ref=e10]:
+            - link "VVIndia VVIndia Your Shopping Destination" [ref=e11] [cursor=pointer]:
+              - /url: /
+              - img "VVIndia" [ref=e12]
+              - generic [ref=e13]:
+                - text: VVIndia
+                - paragraph [ref=e14]: Your Shopping Destination
+            - generic [ref=e15]:
+              - link "Home" [ref=e16] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e18]: Home
+              - link "Store" [ref=e19] [cursor=pointer]:
+                - /url: /shop
+                - generic [ref=e21]: Store
+              - link "Categories" [ref=e22] [cursor=pointer]:
+                - /url: /categories
+                - generic [ref=e24]: Categories
+              - link "Career" [ref=e25] [cursor=pointer]:
+                - /url: /career
+                - generic [ref=e27]: Career
+              - link "About" [ref=e28] [cursor=pointer]:
+                - /url: /about
+                - generic [ref=e30]: About
+          - generic [ref=e31]:
+            - textbox "Search products, blogs, news" [ref=e35]
+            - link [ref=e36] [cursor=pointer]:
+              - /url: /cart
+            - button [ref=e38]
+            - link "Sign In" [ref=e40] [cursor=pointer]:
+              - /url: /auth/login
+              - button "Sign In" [ref=e41]:
+                - generic [ref=e43]: Sign In
+            - link "Sign Up" [ref=e44] [cursor=pointer]:
+              - /url: /auth/register
+              - button "Sign Up" [ref=e45]:
+                - generic [ref=e47]: Sign Up
+    - main [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e52]:
+          - heading "Welcome Back!" [level=2] [ref=e53]:
+            - text: Welcome
+            - text: Back!
+          - paragraph [ref=e54]: Sign in to access your account, track orders, and continue your shopping journey with exclusive deals.
+          - generic [ref=e55]:
+            - generic [ref=e59]:
+              - heading "Track Your Orders" [level=3] [ref=e60]
+              - paragraph [ref=e61]: Real-time order tracking and delivery updates
+            - generic [ref=e65]:
+              - heading "Saved Wishlists" [level=3] [ref=e66]
+              - paragraph [ref=e67]: Access your favorite products and personalized recommendations
+            - generic [ref=e71]:
+              - heading "Exclusive Deals" [level=3] [ref=e72]
+              - paragraph [ref=e73]: Member-only discounts and early access to sales
+          - generic [ref=e74]:
+            - generic [ref=e77]: 100% Secure
+            - generic [ref=e80]: Quick Sign In
+            - generic [ref=e83]: Verified Platform
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - heading "Sign In" [level=2] [ref=e88]
+            - paragraph [ref=e89]: Welcome back to your account
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - button "Mobile" [ref=e92]:
+                - generic [ref=e94]: Mobile
+              - button "Email" [ref=e95]:
+                - generic [ref=e97]: Email
+            - generic [ref=e98]:
+              - generic [ref=e101]: Email Address
+              - textbox "you@example.com" [ref=e103]: e2e.address1@demo.com
+            - generic [ref=e105]:
+              - generic [ref=e108]: Password
+              - generic [ref=e109]:
+                - textbox "Enter your password" [ref=e110]: TestPass@123
+                - button [ref=e112]
+            - generic [ref=e114]:
+              - generic [ref=e115] [cursor=pointer]:
+                - checkbox "Remember me" [ref=e116]
+                - generic [ref=e117]: Remember me
+              - link "Forgot password?" [ref=e118] [cursor=pointer]:
+                - /url: /auth/forgot-password
+            - paragraph [ref=e121]: Login failed. Please check your credentials.
+            - button "Sign In" [ref=e122]:
+              - generic [ref=e124]: Sign In
+          - paragraph [ref=e126]:
+            - text: Don't have an account?
+            - link "Create Account" [ref=e127] [cursor=pointer]:
+              - /url: /auth/register
+    - contentinfo [ref=e128]:
+      - generic [ref=e130]:
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - heading "Company" [level=4] [ref=e133]
+            - list [ref=e134]:
+              - listitem [ref=e135]:
+                - link "About Us" [ref=e136] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e137]:
+                - link "Contact" [ref=e138] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e139]:
+            - heading "Legal" [level=4] [ref=e140]
+            - list [ref=e141]:
+              - listitem [ref=e142]:
+                - link "Privacy Policy" [ref=e143] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e144]:
+                - link "Terms & Conditions" [ref=e145] [cursor=pointer]:
+                  - /url: /terms
+          - generic [ref=e146]:
+            - heading "Support" [level=4] [ref=e147]
+            - list [ref=e148]:
+              - listitem [ref=e149]:
+                - link "Shipping Policy" [ref=e150] [cursor=pointer]:
+                  - /url: /shipping
+              - listitem [ref=e151]:
+                - link "Return & Refund" [ref=e152] [cursor=pointer]:
+                  - /url: /return-refund
+          - generic [ref=e153]:
+            - heading "Connect" [level=4] [ref=e154]
+            - generic [ref=e155]:
+              - link [ref=e156] [cursor=pointer]:
+                - /url: "#"
+              - link [ref=e158] [cursor=pointer]:
+                - /url: "#"
+              - link [ref=e160] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e163]:
+          - generic [ref=e166]: SSL Secured
+          - generic [ref=e169]: Banking Partners
+          - generic [ref=e172]: Fast Delivery
+        - paragraph [ref=e174]: © 2026 Commerinity Pro. All rights reserved.
+  - generic:
+    - img
+  - generic:
+    - generic:
+      - generic:
+        - button "Go to parent" [disabled]
+        - button "Open in editor"
+        - button "Close"
+  - generic [ref=e175]:
+    - button "Toggle Nuxt DevTools" [ref=e176] [cursor=pointer]:
+      - img [ref=e177]
+    - generic "Page load time" [ref=e180]:
+      - generic [ref=e181]: "240"
+      - generic [ref=e182]: ms
+    - button "Toggle Component Inspector" [ref=e184] [cursor=pointer]:
+      - img [ref=e185]
+  - region "Notifications (F8)":
+    - list
+```

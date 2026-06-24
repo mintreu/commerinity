@@ -132,9 +132,9 @@ const activities = computed(() => {
         to="/wallet"
       />
       <CommonStatCard
-        title="Coins Earned"
+        title="Reward Points"
         :value="loading ? '...' : stats.points.toLocaleString()"
-        icon="i-lucide-star"
+        icon="i-lucide-sparkles"
         color="warning"
         subtitle="Current Balance"
       />
@@ -287,7 +287,7 @@ const activities = computed(() => {
                 Complete Your Profile
               </h3>
               <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
-                Finish setting up your account to unlock personalized recommendations and exclusive member benefits.
+                Finish setting up your account to unlock personalized recommendations and exclusive reward points.
               </p>
             </div>
           </div>

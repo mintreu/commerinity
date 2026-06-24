@@ -2,7 +2,7 @@
 /**
  * Subscription Management Page
  * Shows current subscription status, available plans, and subscription history
- * Premium Mintreu Design with glassmorphism and animations
+ * Premium VRIDDHI VIKASH Design with glassmorphism and animations
  */
 
 definePageMeta({
@@ -590,7 +590,7 @@ const tabs = [
               No Active Membership
             </h3>
             <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-sm mx-auto">
-              Unlock the full potential of Mintreu by choosing a membership plan today.
+              Unlock the full potential of VRIDDHI VIKASH by choosing a membership plan today.
             </p>
             <UButton
               color="primary"

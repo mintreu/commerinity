@@ -6,15 +6,15 @@
         <div class="text-center mb-6">
           <div class="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <UIcon
-              name="i-lucide-share-2"
+              name="i-lucide-gift"
               class="w-8 h-8 text-primary-600 dark:text-primary-400"
             />
           </div>
           <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-            Share & Earn
+            Invite & Get Rewards
           </h3>
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Invite friends and earn commissions when they join
+            Invite friends and earn reward points when they shop
           </p>
         </div>
 

@@ -48,10 +48,10 @@ const loadPage = async (page: number) => {
         </div>
         <div>
           <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
-            BV / PV Ledger
+            Volume Ledger
           </h1>
           <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            Track pending and confirmed BV/PV volumes
+            Track pending and confirmed community volumes
           </p>
         </div>
       </div>
@@ -110,11 +110,11 @@ const loadPage = async (page: number) => {
               <span class="text-xs text-slate-500">{{ formatDate(entry.created_at, 'short') }}</span>
             </div>
             <div class="mt-2 text-sm text-slate-700 dark:text-slate-200">
-              BV <strong>{{ entry.bv }}</strong> • PV <strong>{{ entry.pv }}</strong>
+              Volume <strong>{{ entry.bv }}</strong> • Points <strong>{{ entry.pv }}</strong>
             </div>
           </div>
           <div class="text-xs text-slate-500">
-            Level {{ entry.depth }}
+            Tier {{ entry.depth }}
           </div>
         </div>
       </div>

@@ -6,6 +6,27 @@ definePageMeta({
 const config = useRuntimeConfig()
 const toast = useToast()
 
+const contactPhones = [
+  {
+    label: 'General Queries',
+    note: 'For common questions and account help',
+    value: config.public.contactPhones?.general || config.public.supportPhone,
+    icon: 'i-lucide-phone'
+  },
+  {
+    label: 'Technical Queries',
+    note: 'For app, website, or payment issues',
+    value: config.public.contactPhones?.technical || config.public.supportPhone,
+    icon: 'i-lucide-laptop'
+  },
+  {
+    label: 'HR & Recruitment',
+    note: 'For career, hiring, and job-related queries',
+    value: config.public.contactPhones?.support || config.public.supportPhone,
+    icon: 'i-lucide-briefcase'
+  }
+] as const
+
 // Form type toggle
 const activeTab = ref('user')
 
@@ -264,7 +285,7 @@ useSeoMeta({
 
           <!-- Phone Card -->
           <div class="glass-card p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 mb-4">
               <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/25">
                 <UIcon
                   name="i-lucide-phone"
@@ -286,6 +307,35 @@ useSeoMeta({
                 </a>
               </div>
             </div>
+
+            <div class="space-y-3 border-t border-slate-200/70 dark:border-slate-700/70 pt-4">
+              <div
+                v-for="phone in contactPhones"
+                :key="phone.label"
+                class="flex items-start gap-3 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 px-3 py-3"
+              >
+                <div class="mt-0.5 w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shrink-0">
+                  <UIcon
+                    :name="phone.icon"
+                    class="w-5 h-5 text-white"
+                  />
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-semibold text-slate-900 dark:text-white">
+                    {{ phone.label }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1.5">
+                    {{ phone.note }}
+                  </p>
+                  <a
+                    :href="`tel:${phone.value}`"
+                    class="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline break-all"
+                  >
+                    {{ phone.value }}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Address Card -->
@@ -305,7 +355,7 @@ useSeoMeta({
                   Visit us in person
                 </p>
                 <p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-relaxed">
-                  {{ config.public.companyAddress || '123 Business Park, Suite 456, New Delhi, India - 110001' }}
+                  {{ config.public.companyAddress }}
                 </p>
               </div>
             </div>
@@ -321,7 +371,7 @@ useSeoMeta({
                 />
               </div>
               <h3 class="font-bold text-slate-900 dark:text-white text-lg">
-                {{ config.public.companyName || 'Mintreu' }}
+                {{ config.public.companyLegalName || config.public.companyName }}
               </h3>
             </div>
             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">

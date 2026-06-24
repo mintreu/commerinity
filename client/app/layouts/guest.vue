@@ -68,6 +68,14 @@
                     Terms & Conditions
                   </NuxtLink>
                 </li>
+                <li>
+                  <NuxtLink
+                    to="/rewards"
+                    class="text-sm text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                  >
+                    Rewards Program
+                  </NuxtLink>
+                </li>
               </ul>
             </div>
 
@@ -163,7 +171,7 @@
           <!-- Copyright -->
           <div class="text-center">
             <p class="text-sm text-slate-600 dark:text-slate-400">
-              &copy; {{ currentYear }} Commerinity Pro. All rights reserved.
+              &copy; {{ currentYear }} {{ config.public.companyName }}. All rights reserved.
             </p>
           </div>
         </div>
@@ -174,4 +182,5 @@
 
 <script setup lang="ts">
 const currentYear = new Date().getFullYear()
+const config = useRuntimeConfig()
 </script>

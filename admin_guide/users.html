@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users & Finance Guide - VVIndia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #a855f7; --primary-dark: #7e22ce; --bg: #f8fafc; --text: #1e293b; --sidebar-bg: #ffffff; --card-bg: #ffffff; --shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); display: flex; }
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; padding: 30px 20px; position: fixed; height: 100vh; overflow-y: auto; }
+        .nav-link { display: block; padding: 12px 15px; border-radius: 10px; color: #64748b; text-decoration: none; margin-bottom: 8px; font-weight: 500; }
+        .nav-link.active { background: var(--primary); color: white; }
+        .main { margin-left: 280px; flex: 1; padding: 40px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 30px; box-shadow: var(--shadow); margin-bottom: 30px; border: 1px solid #f1f5f9; }
+        .section-title { font-size: 26px; color: var(--primary-dark); margin-bottom: 25px; border-left: 6px solid var(--primary); padding-left: 15px; }
+        .resource-box { background: #fdfaff; border: 1px solid #f3e8ff; border-radius: 15px; padding: 25px; margin-bottom: 30px; }
+        .resource-box h3 { color: var(--primary); margin-bottom: 15px; font-size: 22px; border-bottom: 1px solid #f3e8ff; padding-bottom: 10px; }
+        .flow-step { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .field-label { font-weight: 700; color: #475569; display: block; margin-bottom: 5px; }
+        .sample-data { display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 13px; color: #6366f1; }
+        .finance-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; background: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 30px; text-align: center;">VVIndia Master Guide</div>
+    <nav>
+        <a href="index.html" class="nav-link">🗺️ <span>মাস্টার নেভিগেশন ম্যাপ</span></a>
+        <a href="ecommerce.html" class="nav-link">🛒 <span>ই-কমার্স (Full Flow)</span></a>
+        <a href="affiliate.html" class="nav-link">📈 <span>অ্যাফিলিয়েট ও MLM</span></a>
+        <a href="users.html" class="nav-link active">👥 <span>ইউজার ও KYC</span></a>
+        <a href="system.html" class="nav-link">⚙️ <span>সিস্টেম ও সেটিংস</span></a>
+    </nav>
+</div>
+
+<div class="main">
+    <div class="card">
+        <h2 class="section-title">👥 ইউজার ও ফিন্যান্স গাইড (Step-by-Step)</h2>
+        
+        <!-- User Section -->
+        <div class="resource-box">
+            <h3>১. ইউজার ও অ্যাড্রেস (User & Address)</h3>
+            <p>ইউজারের প্রোফাইল এবং তার শিপিং অ্যাড্রেস ম্যানেজমেন্ট।</p>
+            <div class="flow-step">
+                <span class="field-label">User Profile:</span> ইউজারের নাম, মোবাইল এবং ইমেল। <span class="sample-data">Rahul Sharma, rahul@example.com</span>
+                <span class="field-label">Address:</span> ইউজারের বাড়ির ঠিকানা এবং পিনকোড। <span class="sample-data">123 Lane, Kolkata, 700001</span>
+                <div class="logic-hint">কিভাবে: ইউজারের বিস্তারিত পেজে 'Addresses' ট্যাব থেকে তার সব ঠিকানা দেখা যাবে। ভুল থাকলে এডিট করা যাবে।</div>
+            </div>
+        </div>
+
+        <!-- Wallet Section -->
+        <div class="resource-box">
+            <h3>২. ওয়ালেট (Wallet)</h3>
+            <p>প্রত্যেক ইউজারের একটি ডিজিটাল ওয়ালেট থাকে যেখানে তার ব্যালেন্স জমা হয়।</p>
+            <div class="flow-step">
+                <span class="field-label">Current Balance:</span> ওয়ালেটে কত টাকা আছে। <span class="sample-data">₹2,500.00</span>
+                <span class="field-label">Wallet Status:</span> ওয়ালেটটি সচল (Active) নাকি বন্ধ।
+                <div class="logic-hint">কেন: এই ওয়ালেট থেকেই ইউজার কেনাকাটা করতে পারে বা টাকা উইথড্র করতে পারে।</div>
+            </div>
+        </div>
+
+        <!-- Transaction Section -->
+        <div class="resource-box">
+            <h3>৩. ট্রানজাকশন (Transaction)</h3>
+            <p>ওয়ালেটে আসা-যাওয়ার প্রতিটি হিসাব এখানে থাকে।</p>
+            <div class="flow-step">
+                <span class="field-label">Type:</span> টাকা ঢুকেছে (Deposit/Commission) নাকি খরচ হয়েছে (Payment/Withdrawal)।
+                <span class="field-label">Amount:</span> কত টাকা লেনদেন হয়েছে। <span class="sample-data">₹500.00</span>
+                <span class="field-label">Status:</span> পেন্ডিং, সাকসেস নাকি ফেইল্ড।
+                <div class="logic-hint">পরামর্শ: কোনো ইউজারের ব্যালেন্স নিয়ে সন্দেহ থাকলে তার ট্রানজাকশন হিস্টোরি চেক করুন।</div>
+            </div>
+        </div>
+
+        <!-- KYC Section -->
+        <div class="resource-box">
+            <h3>৪. কেওয়াইসি (KYC Workflow)</h3>
+            <p>ইউজারের পরিচয়পত্র ভেরিফিকেশন।</p>
+            <div class="flow-step">
+                <span class="field-label">Document Review:</span> আপলোড করা আইডি কার্ডের ছবি চেক করুন।
+                <span class="field-label">Action:</span> তথ্য সঠিক হলে 'Approved' করুন। ভুল হলে কারণসহ 'Rejected' করুন।
+                <div class="logic-hint">কেন: কেওয়াইসি অ্যাপ্রুভ না হলে ইউজার টাকা উইথড্র করতে পারবে না।</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

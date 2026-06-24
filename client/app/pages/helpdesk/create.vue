@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Create Support Ticket - Premium Mintreu Design
+ * Create Support Ticket - Premium VRIDDHI VIKASH Design
  * Professional form for ticket submission with priority and topic selection
  */
 

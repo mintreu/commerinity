@@ -265,7 +265,7 @@
         </div>
         <div class="flex-1">
           <p class="font-medium text-slate-900 dark:text-white">My Team</p>
-          <p class="text-xs text-slate-500">Network & downline</p>
+          <p class="text-xs text-slate-500">Community & Team</p>
         </div>
         <Icon
           name="lucide:chevron-right"

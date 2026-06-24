@@ -1,0 +1,61 @@
+Subject: RE: Response to Ticket ID: 7992091 - Final Clarification and Audit Compliance
+
+Dear Muzaffar H.,
+
+Greetings from VRIDDHI VIKASH.
+
+Thank you for your detailed feedback. We understand that as part of the audit process, you require absolute clarity on the website’s content and features. We have streamlined our website to ensure all required details are visible and verifiable step-by-step.
+
+Please follow the verification steps below to clear all pending requirements:
+
+---
+STEP 1: Verify Product Descriptions (Product View URLs)
+We have ensured that every product listed has a unique "Product View" page with detailed descriptions (specifications, materials, and features). Below are direct links to active products for your immediate audit:
+
+- Product 1 (Men’s Premium Suit): https://vvindia.in/shop/product/mens-premium-suit
+- Product 2 (Men's Shirt): https://vvindia.in/shop/product/shirt01
+- Product 3 (Women's Anklet): https://vvindia.in/shop/product/anklet
+- Product 4 (Women's Ring): https://vvindia.in/shop/product/ring01
+
+You can also browse the full catalog here: https://vvindia.in/shop
+
+---
+STEP 2: Verify Business Legal Name Display
+The legal name "M/S, VRIDDHI VIKASH" is prominently displayed in the "Company Information" section of our Terms of Service. This ensures compliance with business transparency requirements.
+
+- Link to Legal Name: https://vvindia.in/terms
+(Scroll to "Section: Company Information" or the footer area).
+
+---
+STEP 3: Verify Privacy Policy
+The Privacy Policy is fully drafted and live. It can be accessed via the permanent footer link on every page of the website.
+
+- Link to Privacy Policy: https://vvindia.in/privacy
+
+---
+STEP 4: Step-by-Step Flow of "Join and Earn Coins" (Loyalty Program)
+To clear any doubts, here is the exact step-by-step flow of how this customer retention feature works. It is a standard e-commerce loyalty program (like Amazon/Flipkart):
+
+1. SHOPPING: A customer visits https://vvindia.in/shop and buys a product.
+2. EARNING: Upon a successful purchase, the customer earns "Loyalty Coins" (e.g., 10 coins). 
+   - These are strictly digital points.
+   - They have NO cash value and CANNOT be withdrawn to a bank account.
+3. REFERRING (Optional): If a customer refers a friend, they may earn a small bonus of coins.
+4. REDEEMING: During their NEXT purchase, the customer can use these coins to get a discount (e.g., 10 coins = ₹10 discount).
+
+PURPOSE: This is strictly to encourage customers to return to our store and shop again. It is NOT an investment, MLM, or financial scheme.
+Detailed Rewards Policy: https://vvindia.in/rewards
+
+---
+
+We have also submitted these direct URLs and the legal name confirmation via the prompt on our Cashfree Dashboard. 
+
+We trust this step-by-step breakdown provides the necessary clarity to proceed with our account activation. Please let us know if any further links or proofs are needed.
+
+Best Regards,
+
+[Your Name]
+VRIDDHI VIKASH
+Website: https://vvindia.in/
+Support: support@vvindia.in
+Ticket ID: 7992091

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * KYC (Know Your Customer) Page - Premium Mintreu Design
+ * KYC (Know Your Customer) Page - Premium VRIDDHI VIKASH Design
  * Only Personal KYC mode with individual image upload fields for PAN, Aadhaar, and GST.
  * Simplified for Nuxt frontend, leaving complex cases for the Admin panel.
  */
@@ -174,7 +174,7 @@ const statusDivider = computed(() => `text-${statusColor.value}-500`)
             Identity & <span class="bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent">Compliance</span>
           </h1>
           <p class="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-xl">
-            Confirm your professional identity to enable full liquidity cycles, high-tier network access, and direct institutional settlements.
+            Confirm your professional identity to enable full liquidity cycles, high-tier community access, and direct institutional settlements.
           </p>
         </div>
 
@@ -236,7 +236,7 @@ const statusDivider = computed(() => `text-${statusColor.value}-500`)
             <p class="text-slate-600 dark:text-slate-400 max-w-sm mx-auto font-medium text-lg leading-relaxed">
               {{ kycStatus.status === 'verified'
                 ? 'Professional credentials authorized. Your account is operating with full clearance and unrestricted liquidity.'
-                : 'Compliance audit in progress. Our team is synchronizing your identity with the primary network.'
+                : 'Compliance audit in progress. Our team is synchronizing your identity with the primary community.'
               }}
             </p>
           </div>
@@ -527,9 +527,9 @@ const statusDivider = computed(() => `text-${statusColor.value}-500`)
             <ul class="space-y-10">
               <li
                 v-for="(benefit, i) in [
-                  { title: 'Liquidity Matrix', desc: 'Verify to unlock synchronized wallet withdrawal nodes.', icon: 'i-lucide-zap' },
-                  { title: 'Network Pulse', desc: 'Expand your affiliate radius with unlimited depth.', icon: 'i-lucide-network' },
-                  { title: 'Clearing Tier', desc: 'Direct institutional settlements for top-tier advisors.', icon: 'i-lucide-landmark' }
+                  { title: 'Advanced Wallet', desc: 'Verify to unlock faster and secure wallet withdrawals.', icon: 'i-lucide-zap' },
+                  { title: 'Referral Rewards', desc: 'Unlock higher referral tiers and exclusive community rewards.', icon: 'i-lucide-network' },
+                  { title: 'Premium Status', desc: 'Direct settlements and priority support for top-tier partners.', icon: 'i-lucide-landmark' }
                 ]"
                 :key="i"
                 class="flex gap-6 group/item"

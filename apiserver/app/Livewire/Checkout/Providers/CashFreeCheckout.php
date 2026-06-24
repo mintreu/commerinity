@@ -18,7 +18,7 @@ class CashFreeCheckout extends Component
     {
 
         $this->transaction = $transaction;
-        $this->transaction->load('transactionable.customer');
+        $this->transaction->load(['transactionable.customer', 'integration']);
 
         $this->failureUrl = $this->transaction->failure_url;
         $this->successUrl = $this->transaction->success_url;
@@ -38,9 +38,17 @@ class CashFreeCheckout extends Component
 
     public function render()
     {
+
+        $integration = $this->transaction->integration;
+
         return view('livewire.checkout.providers.cash-free-checkout',[
             'payable' => !$this->transaction->verified,
-            'mode'  => config('laravel-integration.providers.payments.cash-free.dev', true),
+            // 'mode'  => config('laravel-integration.providers.payments.cash-free.dev', true),
+
+
+            'mode' => $integration?->is_sandbox ? 'sandbox' : 'production',
+
+
             'paymentSessionId' => $this->transaction->provider_gen_session, // Cashfree session
             'orderId'          => $this->transaction->provider_gen_id,      // Cashfree order
             'allowed_for_checkout' => !$this->transaction->verified && !$this->transaction->expires_at->isPast(),

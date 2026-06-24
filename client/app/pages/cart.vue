@@ -464,9 +464,9 @@ useComprehensiveSeo({
                       <div class="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
                         <span v-if="item.tax_formatted">GST: {{ item.tax_formatted }}</span>
                         <span v-if="item.discount && item.discount > 0">Discount: -{{ formatCurrency(item.discount / 100) }}</span>
-                        <span v-if="item.reward_points">Coins: {{ item.reward_points }}</span>
-                        <span v-if="isMemberPromoter">BV: {{ item.bv || 0 }}</span>
-                        <span v-if="isMemberPromoter">PV: {{ item.pv || 0 }}</span>
+                        <span v-if="item.reward_points">Rewards: {{ item.reward_points }}</span>
+                        <span v-if="isMemberPromoter">Vol: {{ item.bv || 0 }}</span>
+                        <span v-if="isMemberPromoter">Pts: {{ item.pv || 0 }}</span>
                       </div>
                     </div>
 
@@ -658,7 +658,7 @@ useComprehensiveSeo({
 
               <div class="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-slate-50/60 dark:bg-slate-800/50 p-4">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-slate-700 dark:text-slate-300 font-semibold">Coins Earned</span>
+                  <span class="text-slate-700 dark:text-slate-300 font-semibold">Reward Points</span>
                   <span class="text-slate-900 dark:text-white font-bold">{{ totalCoins }}</span>
                 </div>
               </div>

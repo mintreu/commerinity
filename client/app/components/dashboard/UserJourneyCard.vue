@@ -34,16 +34,16 @@ const journeySteps = computed((): JourneyStep[] => {
   switch (props.user.type) {
     case UserType.REGULAR:
       return [{
-        title: 'Become a Member',
-        description: 'Unlock exclusive benefits and start earning!',
+        title: 'Go Premium',
+        description: 'Unlock exclusive benefits and reward points!',
         icon: 'i-lucide-crown',
         benefits: [
-          'Enjoy discount on all products',
-          'Earn commissions by referring',
-          'Access to member-only deals',
+          'Exclusive discounts on all products',
+          'Earn reward points for referrals',
+          'Access to premium-only deals',
           'Priority customer support'
         ],
-        actionLabel: 'Subscribe Now',
+        actionLabel: 'Upgrade Now',
         actionTo: '/subscription',
         highlight: true,
         price: 299

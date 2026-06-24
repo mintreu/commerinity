@@ -158,9 +158,9 @@ export const useUserType = () => {
       ],
       [UserType.MEMBER]: [
         {
-          label: 'My Network',
+          label: 'My Community',
           icon: 'i-lucide-users',
-          to: '/network'
+          to: '/community'
         },
         {
           label: 'Earnings',
@@ -180,9 +180,9 @@ export const useUserType = () => {
       ],
       [UserType.PROMOTER]: [
         {
-          label: 'My Network',
+          label: 'My Community',
           icon: 'i-lucide-users',
-          to: '/network'
+          to: '/community'
         },
         {
           label: 'Earnings',

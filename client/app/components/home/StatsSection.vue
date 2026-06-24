@@ -7,8 +7,8 @@ interface StatItem {
 
 interface StatsData {
   members: StatItem
-  careers: StatItem
-  payouts: StatItem
+  products: StatItem
+  categories: StatItem
 }
 
 const config = useRuntimeConfig()
@@ -28,19 +28,22 @@ const stats = computed(() => {
   return [
     {
       ...data.members,
+      label: 'Happy Customers',
       icon: 'i-lucide-users',
       gradient: 'from-violet-500 to-purple-600',
       bgGradient: 'from-violet-500/10 to-purple-600/10'
     },
     {
-      ...data.careers,
-      icon: 'i-lucide-briefcase',
+      ...data.products,
+      label: 'Products',
+      icon: 'i-lucide-package',
       gradient: 'from-emerald-500 to-green-600',
       bgGradient: 'from-emerald-500/10 to-green-600/10'
     },
     {
-      ...data.payouts,
-      icon: 'i-lucide-wallet',
+      ...data.categories,
+      label: 'Categories',
+      icon: 'i-lucide-layers',
       gradient: 'from-amber-500 to-orange-600',
       bgGradient: 'from-amber-500/10 to-orange-600/10'
     }
